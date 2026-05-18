@@ -1,1 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 1 ICT Game</title>
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background: linear-gradient(to bottom right,#b3e5fc,#fff9c4);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.screen{
+    display:none;
+    background:white;
+    width:90%;
+    max-width:700px;
+    border-radius:20px;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+.active{
+    display:block;
+}
+
+.logo{
+    width:180px;
+}
+
+h1{
+    color:#1565c0;
+}
+
+button{
+    padding:12px 20px;
+    border:none;
+    border-radius:12px;
+    background:#1565c0;
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+    margin-top:15px;
+}
+
+.option{
+    background:#e3f2fd;
+    margin:10px;
+    padding:15px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:20px;
+}
+
+.option:hover{
+    background:#90caf9;
+}
+
+.sequence-btn{
+    background:#ffcc80;
+    margin:10px;
+}
+
+.drag-container{
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+}
+
+.draggable{
+    background:#81c784;
+    padding:15px;
+    border-radius:10px;
+    cursor:grab;
+    width:120px;
+}
+
+.dropzone{
+    background:#eeeeee;
+    border:2px dashed #999;
+    width:140px;
+    height:60px;
+    border-radius:10px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.badge{
+    font-size:100px;
+}
+
+</style>
+</head>
+
+<body>
+
+<audio id="correctSound" src="assets/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
+<!-- INTRO -->
+
+<div class="screen active" id="intro">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>Starting & Shutting Down a Computer</h1>
+
+<p>Grade 1 ICT Interactive Game</p>
+
+<button onclick="startGame()">Start Game</button>
+
+</div>
+
+<!-- GAME -->
+
+<div class="screen" id="game">
+
+<h2 id="questionText"></h2>
+
+<div id="optionsContainer"></div>
+
+</div>
+
+<!-- FINAL -->
+
+<div class="screen" id="final">
+
+<h1>Great Job!</h1>
+
+<div class="badge">🏆</div>
+
+<h2 id="scoreText"></h2>
+
+<button onclick="location.reload()">Play Again</button>
+
+</div>
+
+<script>
+
+let currentQuestion = 0;
+let score = 0;
+
+const questions = [
+
+{
+type:"mcq",
+question:"What should we press to start the computer?",
+options:["Power Button","Mouse","Keyboard"],
+answer:"Power Button"
+},
+
+{
+type:"truefalse",
+question:"We should pull the plug to shut down the computer.",
+options:["True","False"],
+answer:"False"
+},
+
+{
+type:"sequence",
+question:"Which comes FIRST when starting a computer?",
+options:["Desktop Appears","Press Power Button","Login Screen"],
+answer:"Press Power Button"
+},
+
+{
+type:"drag",
+question:"Drag the correct item to START the computer.",
+item:"Power Button",
+target:"START"
+},
+
+{
+type:"mcq",
+question:"What should we click before turning off the computer?",
+options:["Shut Down","Paint","Music"],
+answer:"Shut Down"
+}
+
+];
+
+function startGame(){
+    document.getElementById("intro").classList.remove("active");
+    document.getElementById("game").classList.add("active");
+    loadQuestion();
+}
+
+function loadQuestion(){
+
+    const q = questions[currentQuestion];
+
+    document.getElementById("questionText").innerText = q.question;
+
+    const container = document.getElementById("optionsContainer");
+
+    container.innerHTML = "";
+
+    if(q.type === "mcq" || q.type === "truefalse"){
+
+        q.options.forEach(option=>{
+
+            const div = document.createElement("div");
+            div.className = "option";
+            div.innerText = option;
+
+            div.onclick = ()=>checkAnswer(option,q.answer);
+
+            container.appendChild(div);
+
+        });
+
+    }
+
+    else if(q.type === "sequence"){
+
+        q.options.forEach(option=>{
+
+            const btn = document.createElement("div");
+            btn.className = "option sequence-btn";
+            btn.innerText = option;
+
+            btn.onclick = ()=>checkAnswer(option,q.answer);
+
+            container.appendChild(btn);
+
+        });
+
+    }
+
+    else if(q.type === "drag"){
+
+        container.innerHTML = `
+        <div class="drag-container">
+
+            <div draggable="true" id="drag1" class="draggable">
+                ${q.item}
+            </div>
+
+            <div class="dropzone" id="dropzone">
+                ${q.target}
+            </div>
+
+        </div>
+        `;
+
+        const dragItem = document.getElementById("drag1");
+        const dropzone = document.getElementById("dropzone");
+
+        dragItem.addEventListener("dragstart",(e)=>{
+            e.dataTransfer.setData("text","Power Button");
+        });
+
+        dropzone.addEventListener("dragover",(e)=>{
+            e.preventDefault();
+        });
+
+        dropzone.addEventListener("drop",(e)=>{
+            e.preventDefault();
+
+            let data = e.dataTransfer.getData("text");
+
+            if(data === "Power Button"){
+                correctAnswer();
+            }
+        });
+
+    }
+
+}
+
+function checkAnswer(selected,correct){
+
+    if(selected === correct){
+        correctAnswer();
+    }
+    else{
+        wrongAnswer();
+    }
+
+}
+
+function correctAnswer(){
+
+    score++;
+
+    document.getElementById("correctSound").play();
+
+    confetti({
+        particleCount:100,
+        spread:70
+    });
+
+    nextQuestion();
+
+}
+
+function wrongAnswer(){
+
+    document.getElementById("wrongSound").play();
+
+    alert("Oops! Try the next one!");
+
+    nextQuestion();
+
+}
+
+function nextQuestion(){
+
+    currentQuestion++;
+
+    if(currentQuestion < questions.length){
+        loadQuestion();
+    }
+    else{
+        endGame();
+    }
+
+}
+
+function endGame(){
+
+    document.getElementById("game").classList.remove("active");
+    document.getElementById("final").classList.add("active");
+
+    document.getElementById("scoreText").innerText =
+    "Your Score: " + score + " / " + questions.length;
+
+}
+
+</script>
+
+</body>
+</html>

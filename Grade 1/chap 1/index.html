@@ -1,1 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 1 ICT Game - Smart Machine</title>
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, sans-serif;
+}
+
+body{
+overflow:hidden;
+background:linear-gradient(-45deg,#89f7fe,#66a6ff,#f6d365,#fda085);
+background-size:400% 400%;
+animation:bg 12s ease infinite;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+@keyframes bg{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+.cloud{
+position:absolute;
+background:white;
+width:160px;
+height:60px;
+border-radius:50px;
+opacity:0.7;
+animation:moveCloud 30s linear infinite;
+}
+
+.cloud:before{
+content:'';
+position:absolute;
+background:white;
+width:80px;
+height:80px;
+top:-40px;
+left:20px;
+border-radius:50%;
+}
+
+.cloud:after{
+content:'';
+position:absolute;
+background:white;
+width:100px;
+height:100px;
+top:-50px;
+right:15px;
+border-radius:50%;
+}
+
+@keyframes moveCloud{
+from{left:-250px;}
+to{left:120%;}
+}
+
+.container{
+width:90%;
+max-width:900px;
+background:white;
+padding:30px;
+border-radius:25px;
+box-shadow:0 10px 30px rgba(0,0,0,0.3);
+text-align:center;
+position:relative;
+z-index:10;
+}
+
+h1{
+font-size:42px;
+color:#ff5722;
+margin-bottom:10px;
+}
+
+.subtitle{
+font-size:20px;
+margin-bottom:20px;
+color:#555;
+}
+
+.question{
+font-size:30px;
+margin-bottom:25px;
+color:#333;
+}
+
+.image{
+font-size:90px;
+margin-bottom:20px;
+}
+
+.options{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:15px;
+margin-top:20px;
+}
+
+.option{
+background:#f7f7f7;
+padding:15px;
+border-radius:20px;
+font-size:24px;
+cursor:pointer;
+transition:0.3s;
+border:4px solid transparent;
+}
+
+.option:hover{
+background:#fff3cd;
+transform:scale(1.05);
+}
+
+.feedback{
+font-size:28px;
+margin-top:20px;
+font-weight:bold;
+}
+
+.correct{
+color:green;
+}
+
+.wrong{
+color:red;
+}
+
+.timer{
+font-size:24px;
+color:#ff5722;
+margin-bottom:15px;
+font-weight:bold;
+}
+
+.nextBtn{
+margin-top:25px;
+padding:12px 25px;
+font-size:22px;
+background:#4CAF50;
+color:white;
+border:none;
+border-radius:15px;
+cursor:pointer;
+display:none;
+}
+
+.badges{
+margin-top:15px;
+font-size:28px;
+color:#ff9800;
+}
+
+.finalScreen{
+display:none;
+}
+
+.finalScreen h2{
+font-size:45px;
+color:#ff5722;
+margin-bottom:20px;
+}
+
+.playAgain{
+padding:15px 30px;
+font-size:22px;
+background:#2196F3;
+color:white;
+border:none;
+border-radius:15px;
+cursor:pointer;
+margin-top:20px;
+}
+
+.star{
+position:absolute;
+font-size:25px;
+animation:twinkle 2s infinite;
+}
+
+@keyframes twinkle{
+0%{opacity:0.2;}
+50%{opacity:1;}
+100%{opacity:0.2;}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="cloud" style="top:40px;"></div>
+<div class="cloud" style="top:160px; animation-delay:8s;"></div>
+<div class="cloud" style="top:300px; animation-delay:15s;"></div>
+
+<div class="container">
+
+<h1>💻 Smart Machine Game</h1>
+<p class="subtitle">Grade 1 ICT Interactive Game</p>
+
+<div id="gameArea">
+
+<div class="timer">
+⏰ Time Left: <span id="time">40</span>s
+</div>
+
+<div class="question" id="question"></div>
+
+<div class="image" id="image"></div>
+
+<div class="options" id="options"></div>
+
+<div class="feedback" id="feedback"></div>
+
+<button class="nextBtn" id="nextBtn">Next ➜</button>
+
+<div class="badges">
+🏅 Badges: <span id="badgeCount">0</span>
+</div>
+
+</div>
+
+<div class="finalScreen" id="finalScreen">
+<h2>🎉 Great Job! 🎉</h2>
+
+<p style="font-size:30px;">
+⭐ Your Score: <span id="score"></span>
+</p>
+
+<p style="font-size:30px;">
+🏅 Total Badges: <span id="finalBadges"></span>
+</p>
+
+<button class="playAgain" onclick="restartGame()">Play Again</button>
+</div>
+
+</div>
+
+<audio id="correctSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=success-fanfare-trumpets-6185.mp3"></audio>
+
+<audio id="wrongSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4d6e09f6d8.mp3?filename=wrong-answer-126515.mp3"></audio>
+
+<script>
+
+const questions = [
+
+{
+type:"identify",
+question:"Who am I?",
+image:"💻",
+options:["Computer","Tree","Bus","Fish"],
+answer:"Computer"
+},
+
+{
+type:"unscramble",
+question:"Unscramble the word",
+image:"🖥",
+options:["TOPDESK","DESKTOP","DOPSKET","DSETKOP"],
+answer:"DESKTOP"
+},
+
+{
+type:"identify",
+question:"Which one is a Natural Thing?",
+image:"🌳",
+options:["Tree","Laptop","Bus","Table"],
+answer:"Tree"
+},
+
+{
+type:"identify",
+question:"Which one is a Man-Made Thing?",
+image:"🚌",
+options:["Bus","Sun","Fish","Flower"],
+answer:"Bus"
+},
+
+{
+type:"unscramble",
+question:"Unscramble the word",
+image:"💻",
+options:["LTOPAP","LAPTOP","POTLAP","TOPLPA"],
+answer:"LAPTOP"
+},
+
+{
+type:"identify",
+question:"What does a computer use?",
+image:"⚡",
+options:["Electricity","Water","Milk","Chocolate"],
+answer:"Electricity"
+},
+
+{
+type:"identify",
+question:"Which posture is correct?",
+image:"🙂",
+options:["Sit Straight","Sleep","Jump","Stand on chair"],
+answer:"Sit Straight"
+},
+
+{
+type:"unscramble",
+question:"Unscramble the word",
+image:"📱",
+options:["TABLET","TBLAET","TLABET","BATLET"],
+answer:"TABLET"
+},
+
+{
+type:"identify",
+question:"What can we do on computer?",
+image:"🎨",
+options:["Draw Pictures","Cook Food","Fly","Swim"],
+answer:"Draw Pictures"
+},
+
+{
+type:"identify",
+question:"Computer is a...",
+image:"🤖",
+options:["Smart Machine","Fruit","Animal","Flower"],
+answer:"Smart Machine"
+}
+
+];
+
+let currentQuestion = 0;
+let score = 0;
+let badges = 0;
+let timer;
+let timeLeft = 40;
+
+const questionEl = document.getElementById('question');
+const imageEl = document.getElementById('image');
+const optionsEl = document.getElementById('options');
+const feedbackEl = document.getElementById('feedback');
+const nextBtn = document.getElementById('nextBtn');
+const badgeCount = document.getElementById('badgeCount');
+
+function shuffle(array){
+return array.sort(()=>Math.random()-0.5);
+}
+
+let shuffledQuestions = shuffle([...questions]);
+
+function startGame(){
+
+showQuestion();
+
+}
+
+function showQuestion(){
+
+clearInterval(timer);
+
+timeLeft = 40;
+document.getElementById('time').innerText = timeLeft;
+
+timer = setInterval(()=>{
+
+timeLeft--;
+document.getElementById('time').innerText = timeLeft;
+
+if(timeLeft<=0){
+
+clearInterval(timer);
+
+feedbackEl.innerHTML = "⏰ Time Up!";
+feedbackEl.className = "feedback wrong";
+
+document.querySelectorAll('.option').forEach(btn=>{
+btn.style.pointerEvents='none';
+});
+
+nextBtn.style.display='inline-block';
+
+}
+
+},1000);
+
+feedbackEl.innerHTML='';
+nextBtn.style.display='none';
+
+const q = shuffledQuestions[currentQuestion];
+
+questionEl.innerHTML = q.question;
+imageEl.innerHTML = q.image;
+
+optionsEl.innerHTML='';
+
+const shuffledOptions = shuffle([...q.options]);
+
+shuffledOptions.forEach(option=>{
+
+const btn = document.createElement('div');
+btn.classList.add('option');
+btn.innerHTML = option;
+
+btn.onclick = ()=>checkAnswer(option,q.answer,btn);
+
+optionsEl.appendChild(btn);
+
+});
+
+}
+
+function checkAnswer(selected,answer,btn){
+
+clearInterval(timer);
+
+document.querySelectorAll('.option').forEach(btn=>{
+btn.style.pointerEvents='none';
+});
+
+if(selected===answer){
+
+btn.style.border='4px solid green';
+
+feedbackEl.innerHTML='👏 Correct!';
+feedbackEl.className='feedback correct';
+
+document.getElementById('correctSound').play();
+
+score++;
+badges++;
+
+badgeCount.innerHTML = badges;
+
+confetti({
+particleCount:150,
+spread:90,
+origin:{y:0.6}
+});
+
+}else{
+
+btn.style.border='4px solid red';
+
+feedbackEl.innerHTML='❌ Wrong!';
+feedbackEl.className='feedback wrong';
+
+document.getElementById('wrongSound').play();
+
+}
+
+nextBtn.style.display='inline-block';
+
+}
+
+nextBtn.addEventListener('click',()=>{
+
+currentQuestion++;
+
+if(currentQuestion < shuffledQuestions.length){
+
+showQuestion();
+
+}else{
+
+showFinal();
+
+}
+
+});
+
+function showFinal(){
+
+document.getElementById('gameArea').style.display='none';
+document.getElementById('finalScreen').style.display='block';
+
+document.getElementById('score').innerHTML = score + " / " + shuffledQuestions.length;
+
+document.getElementById('finalBadges').innerHTML = badges;
+
+confetti({
+particleCount:300,
+spread:120
+});
+
+}
+
+function restartGame(){
+
+currentQuestion=0;
+score=0;
+badges=0;
+
+badgeCount.innerHTML=0;
+
+shuffledQuestions = shuffle([...questions]);
+
+document.getElementById('gameArea').style.display='block';
+document.getElementById('finalScreen').style.display='none';
+
+showQuestion();
+
+}
+
+function createStars(){
+
+for(let i=0;i<40;i++){
+
+const star = document.createElement('div');
+
+star.classList.add('star');
+
+star.innerHTML='⭐';
+
+star.style.left=Math.random()*100+'%';
+star.style.top=Math.random()*100+'%';
+
+document.body.appendChild(star);
+
+}
+
+}
+
+createStars();
+
+startGame();
+
+</script>
+
+</body>
+</html>

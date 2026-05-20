@@ -1,1 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>STEM Robots Adventure Game</title>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial, sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+overflow-x:hidden;
+min-height:100vh;
+color:white;
+}
+
+.stars{
+position:fixed;
+width:100%;
+height:100%;
+background-image:
+radial-gradient(white 1px, transparent 1px);
+background-size:40px 40px;
+animation:moveStars 30s linear infinite;
+z-index:-1;
+}
+
+@keyframes moveStars{
+from{transform:translateY(0);}
+to{transform:translateY(100px);}
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:20px;
+text-align:center;
+}
+
+.logo{
+width:140px;
+margin-bottom:15px;
+}
+
+h1{
+font-size:55px;
+color:#FFD700;
+text-shadow:3px 3px 10px black;
+}
+
+h2{
+font-size:28px;
+margin-bottom:20px;
+color:#fff;
+}
+
+.progress-bar{
+width:100%;
+height:25px;
+background:#222;
+border-radius:20px;
+overflow:hidden;
+margin-bottom:20px;
+}
+
+.progress{
+height:100%;
+width:0%;
+background:linear-gradient(to right,#00e5ff,#00ff95);
+transition:0.5s;
+}
+
+.stats{
+display:flex;
+justify-content:center;
+gap:40px;
+font-size:28px;
+margin-bottom:20px;
+}
+
+.timer{
+font-size:34px;
+font-weight:bold;
+color:#ffeb3b;
+margin-bottom:15px;
+}
+
+.card{
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(10px);
+padding:30px;
+border-radius:25px;
+box-shadow:0 0 20px rgba(255,255,255,0.2);
+}
+
+#question{
+font-size:34px;
+margin-bottom:20px;
+}
+
+.options{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
+margin-top:20px;
+}
+
+.option{
+background:white;
+color:black;
+padding:18px;
+border-radius:18px;
+cursor:pointer;
+font-size:24px;
+transition:0.3s;
+border:4px solid transparent;
+}
+
+.option:hover{
+transform:scale(1.05);
+background:#ffeb3b;
+}
+
+.gameImage{
+width:240px;
+height:240px;
+object-fit:contain;
+margin:15px auto;
+display:block;
+border-radius:20px;
+background:white;
+padding:10px;
+}
+
+#feedback{
+font-size:32px;
+font-weight:bold;
+margin-top:20px;
+}
+
+#nextBtn,#hintBtn{
+padding:14px 30px;
+font-size:22px;
+border:none;
+border-radius:15px;
+cursor:pointer;
+margin-top:20px;
+margin-right:10px;
+}
+
+#nextBtn{
+background:#4CAF50;
+color:white;
+display:none;
+}
+
+#hintBtn{
+background:#ff9800;
+color:white;
+}
+
+.drag-item{
+width:220px;
+padding:18px;
+background:#00e5ff;
+color:black;
+border-radius:15px;
+margin:20px auto;
+font-size:26px;
+cursor:grab;
+font-weight:bold;
+}
+
+.drop-box{
+width:280px;
+height:140px;
+border:4px dashed white;
+margin:20px auto;
+border-radius:20px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:26px;
+background:rgba(255,255,255,0.1);
+}
+
+.final-screen{
+display:none;
+background:white;
+color:black;
+padding:35px;
+border-radius:25px;
+margin-top:30px;
+}
+
+.final-screen h1{
+color:#ff5722;
+}
+
+button{
+transition:0.3s;
+}
+
+button:hover{
+transform:scale(1.05);
+}
+
+.robot{
+position:fixed;
+bottom:20px;
+right:20px;
+font-size:80px;
+animation:robotMove 3s infinite alternate;
+}
+
+@keyframes robotMove{
+from{transform:translateY(0);}
+to{transform:translateY(-20px);}
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="stars"></div>
+
+<div class="robot">🤖</div>
+
+<div class="container">
+
+<!-- CHANGE THIS PATH TO YOUR LOGO -->
+<img src="assets/images/innovine-logo.png" class="logo">
+
+<h1>🚀 STEM Robots Adventure</h1>
+<h2>Interactive Learning Game</h2>
+
+<div class="progress-bar">
+<div class="progress" id="progress"></div>
+</div>
+
+<div class="stats">
+<div>⭐ Stars: <span id="starsCount">0</span></div>
+<div>🏆 Trophies: <span id="trophyCount">0</span></div>
+</div>
+
+<div class="timer">
+⏰ <span id="time">45</span>s
+</div>
+
+<div class="card">
+
+<h3 id="question"></h3>
+
+<div id="imageArea"></div>
+
+<div id="options" class="options"></div>
+
+<div id="dragArea"></div>
+
+<div id="feedback"></div>
+
+<button id="hintBtn">💡 Hint</button>
+
+<button id="nextBtn">Next ➜</button>
+
+</div>
+
+<div class="final-screen" id="finalScreen">
+
+<h1>🎉 STEM Champion 🎉</h1>
+
+<h2>Your Score: <span id="finalScore"></span></h2>
+
+<h2>🏆 Total Trophies: <span id="finalTrophy"></span></h2>
+
+<h2>⭐ Total Stars: <span id="finalStars"></span></h2>
+
+<br>
+
+<button onclick="restartGame()" 
+style="background:#2196F3;color:white;padding:15px 30px;border:none;border-radius:15px;font-size:22px;">
+Play Again
+</button>
+
+</div>
+
+</div>
+
+<!-- CHANGE SOUND PATHS -->
+<audio id="correctSound" src="assets/sounds/correct.mp3"></audio>
+<audio id="wrongSound" src="assets/sounds/wrong.mp3"></audio>
+<audio id="levelSound" src="assets/sounds/levelup.mp3"></audio>
+
+<script>
+
+const questions = [
+
+{
+type:"mcq",
+question:"What does STEM stand for?",
+options:[
+"Science Technology Engineering Mathematics",
+"Sports Toys Energy Music",
+"Science Toys English Maths",
+"Space Train Engine Motor"
+],
+answer:"Science Technology Engineering Mathematics"
+},
+
+{
+type:"mcq",
+question:"Which subject uses numbers and counting?",
+options:[
+"Mathematics",
+"Cooking",
+"Dancing",
+"Singing"
+],
+answer:"Mathematics"
+},
+
+{
+type:"mcq",
+question:"Robotics is related to...",
+options:[
+"Robots",
+"Animals",
+"Fruits",
+"Plants"
+],
+answer:"Robots"
+},
+
+{
+type:"truefalse",
+question:"Robots can help humans.",
+options:["True","False"],
+answer:"True"
+},
+
+{
+type:"unscramble",
+question:"Unscramble this word",
+options:[
+"ROBOT",
+"TOBOR",
+"BOROT",
+"BOTRO"
+],
+answer:"ROBOT"
+},
+
+{
+type:"unscramble",
+question:"Unscramble this STEM word",
+options:[
+"SCIENCE",
+"SCNIECE",
+"SEICNCE",
+"CENSCIE"
+],
+answer:"SCIENCE"
+},
+
+{
+type:"mcq",
+question:"Which robot helps doctors?",
+options:[
+"Medical Robot",
+"Toy Robot",
+"Kitchen Robot",
+"Dance Robot"
+],
+answer:"Medical Robot"
+},
+
+{
+type:"mcq",
+question:"Which robot works in factories?",
+options:[
+"Factory Robot",
+"Helper Robot",
+"School Robot",
+"Flying Robot"
+],
+answer:"Factory Robot"
+},
+
+{
+type:"dragdrop",
+question:"Drag the correct word into the STEM Box",
+correct:"Technology"
+},
+
+{
+type:"mcq",
+question:"Which robot goes to space?",
+options:[
+"Exploration Robot",
+"Kitchen Robot",
+"Toy Robot",
+"Dance Robot"
+],
+answer:"Exploration Robot"
+}
+
+];
+
+let currentQuestion=0;
+let score=0;
+let trophies=0;
+let stars=0;
+
+let timer;
+let timeLeft=45;
+
+const questionEl=document.getElementById('question');
+const optionsEl=document.getElementById('options');
+const imageArea=document.getElementById('imageArea');
+const dragArea=document.getElementById('dragArea');
+const feedback=document.getElementById('feedback');
+
+function startTimer(){
+
+clearInterval(timer);
+
+timeLeft=45;
+
+document.getElementById('time').innerHTML=timeLeft;
+
+timer=setInterval(()=>{
+
+timeLeft--;
+
+document.getElementById('time').innerHTML=timeLeft;
+
+if(timeLeft<=0){
+
+clearInterval(timer);
+
+feedback.innerHTML='⏰ Time Up!';
+feedback.style.color='red';
+
+disableOptions();
+
+document.getElementById('nextBtn').style.display='inline-block';
+
+}
+
+},1000);
+
+}
+
+function showQuestion(){
+
+startTimer();
+
+const q=questions[currentQuestion];
+
+questionEl.innerHTML=q.question;
+
+optionsEl.innerHTML='';
+dragArea.innerHTML='';
+feedback.innerHTML='';
+imageArea.innerHTML='';
+
+document.getElementById('nextBtn').style.display='none';
+
+updateProgress();
+
+if(q.type==="dragdrop"){
+
+const item=document.createElement('div');
+
+item.className='drag-item';
+
+item.innerHTML=q.correct;
+
+item.draggable=true;
+
+item.addEventListener('dragstart',dragStart);
+
+const box=document.createElement('div');
+
+box.className='drop-box';
+
+box.innerHTML='Drop Here';
+
+box.addEventListener('dragover',(e)=>e.preventDefault());
+
+box.addEventListener('drop',()=>{
+
+correctAnswer();
+
+box.innerHTML=q.correct;
+
+});
+
+dragArea.appendChild(item);
+
+dragArea.appendChild(box);
+
+}else{
+
+q.options.sort(()=>Math.random()-0.5);
+
+q.options.forEach(option=>{
+
+const btn=document.createElement('div');
+
+btn.className='option';
+
+btn.innerHTML=option;
+
+btn.onclick=()=>{
+
+if(option===q.answer){
+
+correctAnswer();
+
+}else{
+
+wrongAnswer(btn);
+
+}
+
+};
+
+optionsEl.appendChild(btn);
+
+});
+
+}
+
+}
+
+function dragStart(e){
+
+e.dataTransfer.setData('text',e.target.innerHTML);
+
+}
+
+function correctAnswer(){
+
+clearInterval(timer);
+
+feedback.innerHTML='✅ Correct!';
+feedback.style.color='#00ff95';
+
+document.getElementById('correctSound').play();
+
+confetti({
+particleCount:250,
+spread:120
+});
+
+score++;
+stars+=10;
+trophies++;
+
+document.getElementById('starsCount').innerHTML=stars;
+document.getElementById('trophyCount').innerHTML=trophies;
+
+disableOptions();
+
+document.getElementById('nextBtn').style.display='inline-block';
+
+}
+
+function wrongAnswer(btn){
+
+clearInterval(timer);
+
+btn.style.border='4px solid red';
+
+feedback.innerHTML='❌ Wrong!';
+feedback.style.color='red';
+
+document.getElementById('wrongSound').play();
+
+disableOptions();
+
+document.getElementById('nextBtn').style.display='inline-block';
+
+}
+
+function disableOptions(){
+
+document.querySelectorAll('.option').forEach(opt=>{
+
+opt.style.pointerEvents='none';
+
+});
+
+}
+
+document.getElementById('nextBtn').addEventListener('click',()=>{
+
+currentQuestion++;
+
+if(currentQuestion<questions.length){
+
+showQuestion();
+
+}else{
+
+showFinal();
+
+}
+
+});
+
+function updateProgress(){
+
+let progress=((currentQuestion)/questions.length)*100;
+
+document.getElementById('progress').style.width=progress+'%';
+
+}
+
+document.getElementById('hintBtn').onclick=()=>{
+
+alert("💡 Read carefully and think about Robots and STEM learning.");
+
+};
+
+function showFinal(){
+
+document.querySelector('.card').style.display='none';
+
+document.getElementById('finalScreen').style.display='block';
+
+document.getElementById('finalScore').innerHTML=
+`${score}/${questions.length}`;
+
+document.getElementById('finalTrophy').innerHTML=trophies;
+
+document.getElementById('finalStars').innerHTML=stars;
+
+document.getElementById('levelSound').play();
+
+confetti({
+particleCount:500,
+spread:180
+});
+
+}
+
+function restartGame(){
+
+location.reload();
+
+}
+
+showQuestion();
+
+</script>
+
+</body>
+</html>

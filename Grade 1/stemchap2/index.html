@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>STEM Robot Adventure - Chapter 2</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -32,7 +33,6 @@ transition:1s;
 background:rgba(0,0,0,0.35);
 min-height:100vh;
 padding:15px;
-backdrop-filter:blur(2px);
 }
 
 .container{
@@ -42,7 +42,7 @@ padding-bottom:120px;
 }
 
 .logo{
-width:140px;
+width:130px;
 display:block;
 margin:auto;
 margin-bottom:10px;
@@ -50,9 +50,9 @@ margin-bottom:10px;
 
 h1{
 text-align:center;
-font-size:50px;
-margin-bottom:10px;
+font-size:48px;
 color:#FFD700;
+margin-bottom:15px;
 text-shadow:2px 2px 8px black;
 }
 
@@ -62,16 +62,15 @@ justify-content:center;
 gap:25px;
 flex-wrap:wrap;
 font-size:24px;
-margin-bottom:15px;
 background:rgba(255,255,255,0.15);
 padding:12px;
 border-radius:20px;
-backdrop-filter:blur(5px);
+margin-bottom:20px;
 }
 
 .progressBox{
 width:100%;
-height:22px;
+height:20px;
 background:#222;
 border-radius:20px;
 overflow:hidden;
@@ -89,14 +88,13 @@ transition:0.5s;
 background:rgba(255,255,255,0.18);
 padding:20px;
 border-radius:25px;
-backdrop-filter:blur(10px);
-border:2px solid rgba(255,255,255,0.2);
+backdrop-filter:blur(8px);
 }
 
 #question{
 font-size:30px;
-margin-bottom:20px;
 text-align:center;
+margin-bottom:20px;
 }
 
 #options{
@@ -117,7 +115,6 @@ padding:10px;
 border-radius:20px;
 cursor:pointer;
 transition:0.3s;
-box-shadow:0 5px 15px rgba(0,0,0,0.3);
 }
 
 .questionImage:hover{
@@ -131,7 +128,6 @@ font-size:22px;
 border:none;
 border-radius:15px;
 cursor:pointer;
-margin:10px;
 font-weight:bold;
 background:linear-gradient(135deg,#ffeb3b,#ff9800);
 color:black;
@@ -140,37 +136,6 @@ transition:0.3s;
 
 .optionBtn:hover{
 transform:scale(1.05);
-}
-
-.dragArea{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:30px;
-flex-wrap:wrap;
-margin-top:25px;
-}
-
-.dragItem{
-padding:18px 25px;
-background:linear-gradient(135deg,#00e5ff,#00ff95);
-border-radius:15px;
-font-size:24px;
-cursor:grab;
-color:black;
-font-weight:bold;
-}
-
-.dropBox{
-width:260px;
-height:130px;
-border:4px dashed #fff;
-border-radius:20px;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:24px;
-background:rgba(255,255,255,0.2);
 }
 
 .sequenceBox{
@@ -183,7 +148,7 @@ margin-top:20px;
 
 .sequenceItem{
 padding:15px 20px;
-background:#ff9800;
+background:#00e5ff;
 border-radius:15px;
 font-size:22px;
 cursor:pointer;
@@ -210,7 +175,7 @@ z-index:999;
 }
 
 #nextBtn{
-padding:15px 45px;
+padding:15px 40px;
 font-size:24px;
 border:none;
 border-radius:15px;
@@ -324,6 +289,11 @@ Play Again
 
 <script>
 
+const backgrounds=[
+"assets/robot-bg.jpg",
+"assets/robot-bg1.jpg"
+];
+
 const questions=[
 
 {
@@ -335,19 +305,6 @@ options:[
 "assets/medical-robot.PNG"
 ],
 answer:"assets/helper-robot.PNG"
-},
-
-{
-type:"drag",
-question:"Drag HELPER ROBOT into the box",
-drag:"HELPER ROBOT"
-},
-
-{
-type:"unscramble",
-question:"Unscramble the word",
-options:["ROBOT","TOBOR","BOROT"],
-answer:"ROBOT"
 },
 
 {
@@ -372,12 +329,13 @@ image:"assets/exploration-robot.PNG"
 
 {
 type:"sequence",
-question:"Arrange robot work from START to END",
+question:"Which comes FIRST?",
 sequence:[
 "Robot gets command",
-"Robot starts work",
-"Robot finishes task"
-]
+"Robot works",
+"Robot finishes work"
+],
+answer:"Robot gets command"
 },
 
 {
@@ -392,31 +350,58 @@ answer:"assets/factory-robot.PNG"
 },
 
 {
-type:"drag",
-question:"Drag FACTORY ROBOT into the box",
-drag:"FACTORY ROBOT"
+type:"fillblank",
+question:"Robots help ________.",
+options:[
+"Humans",
+"Clouds",
+"Trees"
+],
+answer:"Humans"
 },
 
 {
 type:"truefalse",
-question:"Robots help humans.",
+question:"Factory robots make toys and cars.",
 options:["True","False"],
 answer:"True",
-image:"assets/robots.PNG"
+image:"assets/factory-robot.PNG"
 },
 
 {
-type:"unscramble",
-question:"Unscramble the word",
-options:["MEDICAL","CALMEDI","MEDCALI"],
-answer:"MEDICAL"
+type:"list",
+question:"Choose the robot used in hospitals",
+options:[
+"Medical Robot",
+"Factory Robot",
+"Exploration Robot"
+],
+answer:"Medical Robot",
+image:"assets/medical-robot.PNG"
+},
+
+{
+type:"image",
+question:"Click the Exploration Robot",
+options:[
+"assets/exploration-robot.PNG",
+"assets/factory-robot.PNG",
+"assets/helper-robot.PNG"
+],
+answer:"assets/exploration-robot.PNG"
+},
+
+{
+type:"sorting",
+question:"Click the robot that helps at home",
+options:[
+"assets/helper-robot.PNG",
+"assets/exploration-robot.PNG",
+"assets/factory-robot.PNG"
+],
+answer:"assets/helper-robot.PNG"
 }
 
-];
-
-const backgrounds=[
-"assets/robot-bg.jpg",
-"assets/robot-bg1.jpg"
 ];
 
 let current=0;
@@ -486,7 +471,7 @@ imageArea.innerHTML=
 
 }
 
-if(q.type==="image"){
+if(q.type==="image" || q.type==="sorting"){
 
 q.options.forEach(opt=>{
 
@@ -520,50 +505,20 @@ options.appendChild(btn);
 
 }
 
-if(q.type==="drag"){
-
-const area=document.createElement('div');
-area.className='dragArea';
-
-const drag=document.createElement('div');
-drag.className='dragItem';
-drag.innerHTML=q.drag;
-drag.draggable=true;
-
-drag.addEventListener('dragstart',e=>{
-e.dataTransfer.setData('text',q.drag);
-});
-
-const drop=document.createElement('div');
-drop.className='dropBox';
-drop.innerHTML='Drop Here';
-
-drop.addEventListener('dragover',e=>e.preventDefault());
-
-drop.addEventListener('drop',()=>{
-
-correct();
-drop.innerHTML=q.drag;
-
-});
-
-area.appendChild(drag);
-area.appendChild(drop);
-
-options.appendChild(area);
-
-}
-
-if(q.type==="list"){
+if(q.type==="list" || q.type==="fillblank"){
 
 const select=document.createElement('select');
+
 select.className='optionBtn';
 
 q.options.forEach(opt=>{
+
 select.innerHTML+=`<option>${opt}</option>`;
+
 });
 
 const btn=document.createElement('button');
+
 btn.className='optionBtn';
 btn.innerHTML='Submit';
 
@@ -582,34 +537,10 @@ options.appendChild(btn);
 
 }
 
-if(q.type==="unscramble"){
-
-q.options.forEach(opt=>{
-
-const btn=document.createElement('button');
-
-btn.className='optionBtn';
-btn.innerHTML=opt;
-
-btn.onclick=()=>{
-
-if(opt===q.answer){
-correct();
-}else{
-wrong();
-}
-
-};
-
-options.appendChild(btn);
-
-});
-
-}
-
 if(q.type==="sequence"){
 
 const area=document.createElement('div');
+
 area.className='sequenceBox';
 
 q.sequence.forEach(item=>{
@@ -621,7 +552,11 @@ div.innerHTML=item;
 
 div.onclick=()=>{
 
+if(item===q.answer){
 correct();
+}else{
+wrong();
+}
 
 };
 

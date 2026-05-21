@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Grade 1 STEM Robot Adventure</title>
+<title>STEM Robot Adventure</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -18,47 +18,61 @@ font-family:'Comic Sans MS',sans-serif;
 }
 
 body{
-background:url('assets/robot-bg.jpg');
-background-size:cover;
-background-position:center;
+background:linear-gradient(135deg,#00c6ff,#0072ff,#ff6ec4,#7873f5);
+background-size:400% 400%;
+animation:bgMove 12s ease infinite;
 min-height:100vh;
 overflow-x:hidden;
 color:white;
-transition:1s;
+}
+
+@keyframes bgMove{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
 }
 
 .overlay{
-background:rgba(0,0,0,0.6);
+background:rgba(0,0,0,0.35);
 min-height:100vh;
-padding:20px;
+padding:15px;
 }
 
 .container{
-max-width:1100px;
+max-width:1200px;
 margin:auto;
-text-align:center;
+padding-bottom:120px;
 }
 
 .logo{
 width:140px;
+display:block;
+margin:auto;
 margin-bottom:10px;
 }
 
 h1{
+text-align:center;
 font-size:50px;
-color:#FFD700;
-text-shadow:3px 3px 10px black;
 margin-bottom:10px;
+color:#FFD700;
 }
 
-.subtitle{
-font-size:25px;
-margin-bottom:20px;
+.topbar{
+display:flex;
+justify-content:center;
+gap:25px;
+flex-wrap:wrap;
+font-size:24px;
+margin-bottom:15px;
+background:rgba(255,255,255,0.15);
+padding:12px;
+border-radius:20px;
 }
 
 .progressBox{
 width:100%;
-height:25px;
+height:22px;
 background:#222;
 border-radius:20px;
 overflow:hidden;
@@ -69,182 +83,162 @@ margin-bottom:20px;
 height:100%;
 width:0%;
 background:linear-gradient(to right,#00e5ff,#00ff95);
-transition:0.5s;
 }
 
-.topbar{
-display:flex;
-justify-content:center;
-gap:40px;
-flex-wrap:wrap;
-font-size:26px;
-margin-bottom:20px;
-}
-
-.gameCard{
-background:rgba(255,255,255,0.12);
-backdrop-filter:blur(10px);
-padding:25px;
+.card{
+background:rgba(255,255,255,0.18);
+padding:20px;
 border-radius:25px;
-box-shadow:0 0 20px rgba(255,255,255,0.2);
+backdrop-filter:blur(10px);
 }
 
 #question{
-font-size:32px;
+font-size:30px;
 margin-bottom:20px;
+text-align:center;
+}
+
+#options{
+display:flex;
+flex-direction:row;
+justify-content:center;
+align-items:center;
+gap:20px;
+flex-wrap:wrap;
+margin-top:20px;
 }
 
 .questionImage{
-width:240px;
-height:240px;
+width:220px;
+height:220px;
 object-fit:contain;
 background:white;
 padding:10px;
 border-radius:20px;
-margin:15px auto;
-display:block;
+cursor:pointer;
+transition:0.3s;
 }
 
-.options{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:15px;
-margin-top:20px;
+.questionImage:hover{
+transform:scale(1.08);
+background:#fff59d;
 }
 
 .optionBtn{
-padding:16px;
-font-size:24px;
-border:none;
-border-radius:18px;
-cursor:pointer;
-background:white;
-color:black;
-transition:0.3s;
-font-weight:bold;
-}
-
-.optionBtn:hover{
-transform:scale(1.05);
-background:#ffeb3b;
-}
-
-#feedback{
-font-size:30px;
-font-weight:bold;
-margin-top:20px;
-}
-
-#nextBtn{
-padding:15px 35px;
+padding:15px 25px;
 font-size:22px;
 border:none;
 border-radius:15px;
 cursor:pointer;
-background:#4CAF50;
-color:white;
-margin-top:20px;
-display:none;
+margin:10px;
+font-weight:bold;
+background:linear-gradient(135deg,#ffeb3b,#ff9800);
 }
 
-.drag-container{
+.dragArea{
 display:flex;
 justify-content:center;
-gap:20px;
+align-items:center;
+gap:30px;
 flex-wrap:wrap;
 margin-top:25px;
 }
 
-.drag-item{
-padding:15px 20px;
-background:#00e5ff;
+.dragItem{
+padding:18px 25px;
+background:linear-gradient(135deg,#00e5ff,#00ff95);
 border-radius:15px;
-cursor:grab;
 font-size:24px;
-font-weight:bold;
+cursor:grab;
 color:black;
+font-weight:bold;
 }
 
-.drop-box{
-width:250px;
-height:120px;
-border:4px dashed white;
+.dropBox{
+width:260px;
+height:130px;
+border:4px dashed #fff;
 border-radius:20px;
 display:flex;
 justify-content:center;
 align-items:center;
 font-size:24px;
-background:rgba(255,255,255,0.1);
+background:rgba(255,255,255,0.2);
 }
 
-.checkboxArea{
+.feedback{
+font-size:30px;
+font-weight:bold;
 margin-top:20px;
-font-size:25px;
-text-align:left;
+text-align:center;
 }
 
-.checkboxArea label{
-display:block;
-margin:10px;
+.nextArea{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+background:rgba(0,0,0,0.65);
+padding:10px;
+text-align:center;
+z-index:999;
 }
 
-select{
-padding:15px;
-font-size:22px;
-border-radius:12px;
-margin-top:20px;
-width:300px;
-}
-
-.timer{
-font-size:32px;
-color:#ffeb3b;
-margin-bottom:15px;
+#nextBtn{
+padding:15px 45px;
+font-size:24px;
+border:none;
+border-radius:15px;
+background:linear-gradient(135deg,#00ff95,#00c853);
+color:white;
+display:none;
+cursor:pointer;
+font-weight:bold;
 }
 
 .finalScreen{
 display:none;
-background:white;
+background:rgba(255,255,255,0.95);
 color:black;
 padding:30px;
 border-radius:25px;
+text-align:center;
 margin-top:30px;
 }
 
-.finalScreen h1{
-color:#ff5722;
-}
-
-.robot{
-position:fixed;
-bottom:10px;
-right:20px;
-font-size:90px;
-animation:robotJump 2s infinite alternate;
-}
-
-@keyframes robotJump{
-from{transform:translateY(0);}
-to{transform:translateY(-20px);}
+.playBtn{
+padding:15px 30px;
+font-size:22px;
+background:#2196F3;
+color:white;
+border:none;
+border-radius:15px;
+cursor:pointer;
+margin-top:20px;
 }
 
 @media(max-width:768px){
 
-h1{
-font-size:36px;
+.questionImage{
+width:140px;
+height:140px;
 }
 
-#question{
-font-size:24px;
+#options{
+gap:10px;
 }
 
 .optionBtn{
-font-size:20px;
+font-size:18px;
+padding:12px 18px;
 }
 
-.questionImage{
-width:180px;
-height:180px;
+h1{
+font-size:34px;
+}
+
+#question{
+font-size:22px;
 }
 
 }
@@ -256,58 +250,43 @@ height:180px;
 
 <div class="overlay">
 
-<div class="robot">🤖</div>
-
 <div class="container">
 
 <img src="assets/innovine-logo.png" class="logo">
 
 <h1>🚀 STEM Robot Adventure</h1>
 
-<div class="subtitle">
-Science • Technology • Engineering • Mathematics
+<div class="topbar">
+<div>⭐ Score: <span id="score">0</span></div>
+<div>🏆 Badges: <span id="badges">0</span></div>
+<div>⏰ <span id="timer">40</span>s</div>
 </div>
 
 <div class="progressBox">
 <div class="progress" id="progress"></div>
 </div>
 
-<div class="topbar">
-<div>⭐ Stars: <span id="stars">0</span></div>
-<div>🏆 Trophies: <span id="trophies">0</span></div>
-<div class="timer">⏰ <span id="time">40</span>s</div>
-</div>
-
-<div class="gameCard" id="gameCard">
+<div class="card" id="gameCard">
 
 <h2 id="question"></h2>
 
 <div id="imageArea"></div>
 
-<div id="options" class="options"></div>
+<div id="options"></div>
 
-<div id="extraArea"></div>
-
-<div id="feedback"></div>
-
-<button id="nextBtn">Next ➜</button>
+<div class="feedback" id="feedback"></div>
 
 </div>
 
 <div class="finalScreen" id="finalScreen">
 
-<h1>🎉 Congratulations STEM Hero 🎉</h1>
+<h1>🎉 Great Job!</h1>
 
-<h2>Your Score: <span id="finalScore"></span></h2>
+<h2 id="finalScore"></h2>
 
-<h2>Total Stars: <span id="finalStars"></span></h2>
+<h2 id="rank"></h2>
 
-<h2>Total Trophies: <span id="finalTrophies"></span></h2>
-
-<br>
-
-<button onclick="restartGame()"
-style="padding:15px 30px;font-size:22px;background:#2196F3;color:white;border:none;border-radius:15px;">
+<button onclick="location.reload()" class="playBtn">
 Play Again
 </button>
 
@@ -315,6 +294,8 @@ Play Again
 
 </div>
 
+<div class="nextArea">
+<button id="nextBtn">Next ➜</button>
 </div>
 
 <audio id="correctSound" src="assets/correct-1.mp3"></audio>
@@ -325,146 +306,108 @@ Play Again
 const questions=[
 
 {
-type:"mcq",
-question:"What does STEM stand for?",
+type:"image",
+question:"Click the Helper Robot",
 options:[
-"Science Technology Engineering Mathematics",
-"Sports Toys Energy Music",
-"Science Toys English Maths",
-"Space Train Engine Motor"
+"assets/helper-robot.PNG",
+"assets/factory-robot.PNG",
+"assets/medical-robot.PNG"
 ],
-answer:"Science Technology Engineering Mathematics",
-image:"assets/robots.PNG",
-bg:"assets/robot-bg.jpg"
+answer:"assets/helper-robot.PNG"
 },
 
 {
-type:"imageMcq",
-question:"Which picture shows Mathematics?",
-options:[
-"assets/mathematics.PNG",
-"assets/communication.PNG",
-"assets/engineering.PNG",
-"assets/education.PNG"
-],
-answer:"assets/mathematics.PNG",
-bg:"assets/robot-bg1.jpg"
-},
-
-{
-type:"dragdrop",
-question:"Drag the Helper Robot into the correct box",
-dragText:"Helper Robot",
-dropAnswer:"Helper Robot",
-image:"assets/helper-robot.PNG",
-bg:"assets/robot-bg.jpg"
-},
-
-{
-type:"checkbox",
-question:"Select TWO uses of robots",
-choices:[
-"Helping doctors",
-"Flying bananas",
-"Cleaning floors",
-"Eating houses"
-],
-answers:[
-"Helping doctors",
-"Cleaning floors"
-],
-image:"assets/medical-robot.PNG",
-bg:"assets/robot-bg1.jpg"
-},
-
-{
-type:"listbox",
-question:"Choose the robot used in factories",
-options:[
-"Medical Robot",
-"Factory Robot",
-"Helper Robot",
-"Exploration Robot"
-],
-answer:"Factory Robot",
-image:"assets/factory-robot.PNG",
-bg:"assets/robot-bg.jpg"
-},
-
-{
-type:"mcq",
-question:"Which robot goes to space?",
-options:[
-"Exploration Robot",
-"Kitchen Robot",
-"Toy Robot",
-"Dance Robot"
-],
-answer:"Exploration Robot",
-image:"assets/exploration-robot.PNG",
-bg:"assets/robot-bg1.jpg"
-},
-
-{
-type:"imageMcq",
-question:"Click the Engineering picture",
-options:[
-"assets/engineering.PNG",
-"assets/mathematics.PNG",
-"assets/communication.PNG",
-"assets/education.PNG"
-],
-answer:"assets/engineering.PNG",
-bg:"assets/robot-bg.jpg"
+type:"drag",
+question:"Drag FACTORY ROBOT into the box",
+drag:"FACTORY ROBOT"
 },
 
 {
 type:"truefalse",
-question:"Robots follow commands.",
+question:"Medical robots help doctors.",
 options:["True","False"],
 answer:"True",
-image:"assets/robots.PNG",
-bg:"assets/robot-bg1.jpg"
+image:"assets/medical-robot.PNG"
 },
 
 {
-type:"mcq",
-question:"Which robot helps doctors?",
+type:"list",
+question:"Choose the robot going to space",
+options:[
+"Exploration Robot",
+"Helper Robot",
+"Factory Robot"
+],
+answer:"Exploration Robot",
+image:"assets/exploration-robot.PNG"
+},
+
+{
+type:"image",
+question:"Click the Factory Robot",
+options:[
+"assets/factory-robot.PNG",
+"assets/helper-robot.PNG",
+"assets/medical-robot.PNG"
+],
+answer:"assets/factory-robot.PNG"
+},
+
+{
+type:"drag",
+question:"Drag HELPER ROBOT into the box",
+drag:"HELPER ROBOT"
+},
+
+{
+type:"truefalse",
+question:"Robots help humans.",
+options:["True","False"],
+answer:"True",
+image:"assets/robots.PNG"
+},
+
+{
+type:"list",
+question:"Choose the robot used in hospitals",
 options:[
 "Medical Robot",
 "Factory Robot",
-"Dance Robot",
-"Toy Robot"
+"Exploration Robot"
 ],
 answer:"Medical Robot",
-image:"assets/medical-robot.PNG",
-bg:"assets/robot-bg.jpg"
+image:"assets/medical-robot.PNG"
 },
 
 {
-type:"mcq",
-question:"Technology means tools and gadgets that help us.",
+type:"image",
+question:"Click the Exploration Robot",
 options:[
-"True",
-"False"
+"assets/exploration-robot.PNG",
+"assets/factory-robot.PNG",
+"assets/helper-robot.PNG"
 ],
+answer:"assets/exploration-robot.PNG"
+},
+
+{
+type:"truefalse",
+question:"Factory robots make cars and toys.",
+options:["True","False"],
 answer:"True",
-image:"assets/communication.PNG",
-bg:"assets/robot-bg1.jpg"
+image:"assets/factory-robot.PNG"
 }
 
 ];
 
-let currentQuestion=0;
+let current=0;
 let score=0;
-let stars=0;
-let trophies=0;
+let badges=0;
 let timer;
-let timeLeft=40;
+let time=40;
 
-const questionEl=document.getElementById('question');
-const optionsEl=document.getElementById('options');
-const extraArea=document.getElementById('extraArea');
+const question=document.getElementById('question');
+const options=document.getElementById('options');
 const imageArea=document.getElementById('imageArea');
 const feedback=document.getElementById('feedback');
 
@@ -472,24 +415,21 @@ function startTimer(){
 
 clearInterval(timer);
 
-timeLeft=40;
+time=40;
 
-document.getElementById('time').innerHTML=timeLeft;
+document.getElementById('timer').innerHTML=time;
 
 timer=setInterval(()=>{
 
-timeLeft--;
+time--;
 
-document.getElementById('time').innerHTML=timeLeft;
+document.getElementById('timer').innerHTML=time;
 
-if(timeLeft<=0){
+if(time<=0){
 
 clearInterval(timer);
 
-feedback.innerHTML="⏰ Time Up!";
-feedback.style.color="red";
-
-disableAll();
+feedback.innerHTML="⏰ Time Up";
 
 document.getElementById('nextBtn').style.display='inline-block';
 
@@ -503,20 +443,18 @@ function showQuestion(){
 
 startTimer();
 
-const q=questions[currentQuestion];
+const q=questions[current];
 
-document.body.style.background=`url('${q.bg}') center/cover`;
+question.innerHTML=q.question;
 
-questionEl.innerHTML=q.question;
-
-optionsEl.innerHTML='';
-extraArea.innerHTML='';
-feedback.innerHTML='';
+options.innerHTML='';
 imageArea.innerHTML='';
+feedback.innerHTML='';
 
 document.getElementById('nextBtn').style.display='none';
 
-updateProgress();
+document.getElementById('progress').style.width=
+((current)/questions.length)*100+'%';
 
 if(q.image){
 
@@ -525,144 +463,93 @@ imageArea.innerHTML=
 
 }
 
-if(q.type==="mcq" || q.type==="truefalse"){
+if(q.type==="truefalse"){
 
-q.options.forEach(option=>{
+q.options.forEach(opt=>{
 
 const btn=document.createElement('button');
 
 btn.className='optionBtn';
 
-btn.innerHTML=option;
+btn.innerHTML=opt;
 
-btn.onclick=()=>checkAnswer(option===q.answer,btn);
+btn.onclick=()=>check(opt===q.answer);
 
-optionsEl.appendChild(btn);
+options.appendChild(btn);
 
 });
 
 }
 
-else if(q.type==="imageMcq"){
+if(q.type==="image"){
 
-q.options.forEach(option=>{
+q.options.forEach(opt=>{
 
 const img=document.createElement('img');
 
-img.src=option;
+img.src=opt;
 
 img.className='questionImage';
 
-img.style.cursor='pointer';
+img.onclick=()=>check(opt===q.answer);
 
-img.onclick=()=>checkAnswer(option===q.answer,img);
-
-optionsEl.appendChild(img);
+options.appendChild(img);
 
 });
 
 }
 
-else if(q.type==="dragdrop"){
-
-const dragContainer=document.createElement('div');
-
-dragContainer.className='drag-container';
-
-const drag=document.createElement('div');
-
-drag.className='drag-item';
-
-drag.innerHTML=q.dragText;
-
-drag.draggable=true;
-
-drag.addEventListener('dragstart',dragStart);
-
-const drop=document.createElement('div');
-
-drop.className='drop-box';
-
-drop.innerHTML='Drop Here';
-
-drop.addEventListener('dragover',(e)=>e.preventDefault());
-
-drop.addEventListener('drop',()=>{
-
-correctAnswer();
-
-drop.innerHTML=q.dragText;
-
-});
-
-dragContainer.appendChild(drag);
-
-dragContainer.appendChild(drop);
-
-extraArea.appendChild(dragContainer);
-
-}
-
-else if(q.type==="checkbox"){
+if(q.type==="drag"){
 
 const area=document.createElement('div');
 
-area.className='checkboxArea';
+area.className='dragArea';
 
-q.choices.forEach(choice=>{
+const drag=document.createElement('div');
 
-const label=document.createElement('label');
+drag.className='dragItem';
 
-label.innerHTML=
-`<input type="checkbox" value="${choice}"> ${choice}`;
+drag.innerHTML=q.drag;
 
-area.appendChild(label);
+drag.draggable=true;
+
+drag.addEventListener('dragstart',e=>{
+e.dataTransfer.setData('text',q.drag);
+});
+
+const drop=document.createElement('div');
+
+drop.className='dropBox';
+
+drop.innerHTML='Drop Here';
+
+drop.addEventListener('dragover',e=>e.preventDefault());
+
+drop.addEventListener('drop',()=>{
+
+correct();
+
+drop.innerHTML=q.drag;
 
 });
 
-const btn=document.createElement('button');
+area.appendChild(drag);
 
-btn.className='optionBtn';
+area.appendChild(drop);
 
-btn.innerHTML='Submit';
-
-btn.onclick=()=>{
-
-const selected=[...document.querySelectorAll('input[type=checkbox]:checked')]
-.map(x=>x.value);
-
-selected.sort();
-q.answers.sort();
-
-if(JSON.stringify(selected)===JSON.stringify(q.answers)){
-
-correctAnswer();
-
-}else{
-
-wrongAnswer(btn);
+options.appendChild(area);
 
 }
 
-};
-
-extraArea.appendChild(area);
-extraArea.appendChild(btn);
-
-}
-
-else if(q.type==="listbox"){
+if(q.type==="list"){
 
 const select=document.createElement('select');
 
-q.options.forEach(option=>{
+select.className='optionBtn';
 
-const op=document.createElement('option');
+q.options.forEach(opt=>{
 
-op.value=option;
-op.innerHTML=option;
-
-select.appendChild(op);
+select.innerHTML+=`<option>${opt}</option>`;
 
 });
 
@@ -676,50 +563,44 @@ btn.onclick=()=>{
 
 if(select.value===q.answer){
 
-correctAnswer();
+correct();
 
 }else{
 
-wrongAnswer(btn);
+wrong();
 
 }
 
 };
 
-extraArea.appendChild(select);
-extraArea.appendChild(document.createElement('br'));
-extraArea.appendChild(btn);
+options.appendChild(select);
+options.appendChild(btn);
 
 }
 
 }
 
-function dragStart(e){
+function check(ans){
 
-e.dataTransfer.setData('text',e.target.innerHTML);
+if(ans){
 
-}
-
-function checkAnswer(correct,element){
-
-if(correct){
-
-correctAnswer(element);
+correct();
 
 }else{
 
-wrongAnswer(element);
+wrong();
 
 }
 
 }
 
-function correctAnswer(){
+function correct(){
 
 clearInterval(timer);
 
-feedback.innerHTML="✅ Correct!";
-feedback.style.color="#00ff95";
+feedback.innerHTML="✅ Correct";
+
+feedback.style.color='#00ff95';
 
 document.getElementById('correctSound').play();
 
@@ -729,54 +610,35 @@ spread:120
 });
 
 score++;
-stars+=10;
-trophies++;
+badges++;
 
-document.getElementById('stars').innerHTML=stars;
-document.getElementById('trophies').innerHTML=trophies;
+document.getElementById('score').innerHTML=score;
 
-disableAll();
+document.getElementById('badges').innerHTML=badges;
 
 document.getElementById('nextBtn').style.display='inline-block';
 
 }
 
-function wrongAnswer(el){
+function wrong(){
 
 clearInterval(timer);
 
-feedback.innerHTML="❌ Wrong!";
-feedback.style.color="red";
+feedback.innerHTML="❌ Wrong";
+
+feedback.style.color='red';
 
 document.getElementById('wrongSound').play();
-
-disableAll();
 
 document.getElementById('nextBtn').style.display='inline-block';
 
 }
 
-function disableAll(){
+document.getElementById('nextBtn').onclick=()=>{
 
-document.querySelectorAll('button').forEach(btn=>{
+current++;
 
-if(btn.id!=="nextBtn"){
-btn.disabled=true;
-}
-
-});
-
-document.querySelectorAll('img').forEach(img=>{
-img.style.pointerEvents='none';
-});
-
-}
-
-document.getElementById('nextBtn').addEventListener('click',()=>{
-
-currentQuestion++;
-
-if(currentQuestion<questions.length){
+if(current<questions.length){
 
 showQuestion();
 
@@ -786,15 +648,7 @@ showFinal();
 
 }
 
-});
-
-function updateProgress(){
-
-let progress=((currentQuestion)/questions.length)*100;
-
-document.getElementById('progress').style.width=progress+'%';
-
-}
+};
 
 function showFinal(){
 
@@ -803,22 +657,34 @@ document.getElementById('gameCard').style.display='none';
 document.getElementById('finalScreen').style.display='block';
 
 document.getElementById('finalScore').innerHTML=
-`${score}/${questions.length}`;
+`⭐ Your Score: ${score}/10`;
 
-document.getElementById('finalStars').innerHTML=stars;
+let rank='';
 
-document.getElementById('finalTrophies').innerHTML=trophies;
+if(score===10){
+
+rank='🏆 CHAMPION';
+
+}else if(score>=7){
+
+rank='👍 EXCELLENT';
+
+}else if(score>=4){
+
+rank='🙂 NEED TO IMPROVE';
+
+}else{
+
+rank='📘 BEGINNER';
+
+}
+
+document.getElementById('rank').innerHTML=rank;
 
 confetti({
 particleCount:500,
 spread:180
 });
-
-}
-
-function restartGame(){
-
-location.reload();
 
 }
 

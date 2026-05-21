@@ -122,6 +122,16 @@ transition:0.3s;
 transform:scale(1.05);
 }
 
+.radioBox{
+background:white;
+padding:15px;
+border-radius:15px;
+color:black;
+font-size:22px;
+width:260px;
+text-align:left;
+}
+
 .dragArea{
 display:flex;
 justify-content:center;
@@ -211,12 +221,6 @@ border-radius:15px;
 border:none;
 width:300px;
 text-align:center;
-margin-top:20px;
-}
-
-.wordGrid{
-width:300px;
-border-radius:20px;
 margin-top:20px;
 }
 
@@ -375,27 +379,15 @@ answer:"assets/drag-n-drop.PNG"
 },
 
 {
-type:"list",
-question:"Which mouse button opens menu?",
+type:"radio",
+question:"Which mouse button selects an item?",
 options:[
-"Right Click",
 "Left Click",
-"Scroll"
+"Right Click",
+"Scroll Wheel"
 ],
-answer:"Right Click",
-image:"assets/right-click.PNG"
-},
-
-{
-type:"wordgrid",
-question:"Find the word MOUSE in the grid",
-image:"assets/word-grid.PNG",
-options:[
-"MOUSE",
-"MONITOR",
-"KEYBOARD"
-],
-answer:"MOUSE"
+answer:"Left Click",
+image:"assets/left-click.PNG"
 },
 
 {
@@ -427,6 +419,14 @@ options:[
 "assets/left-click.PNG"
 ],
 answer:"assets/mouse finger.PNG"
+},
+
+{
+type:"truefalse",
+question:"Right click opens menu options.",
+options:["True","False"],
+answer:"True",
+image:"assets/right-click.PNG"
 }
 
 ];
@@ -502,17 +502,8 @@ document.getElementById('nextBtn').style.display='none';
 
 if(q.image){
 
-if(q.type==="wordgrid"){
-
-imageArea.innerHTML=
-`<img src="${q.image}" class="wordGrid">`;
-
-}else{
-
 imageArea.innerHTML=
 `<img src="${q.image}" class="questionImage">`;
-
-}
 
 }
 
@@ -551,7 +542,47 @@ options.appendChild(btn);
 
 }
 
-if(q.type==="list" || q.type==="wordgrid"){
+if(q.type==="radio"){
+
+const box=document.createElement('div');
+
+box.className='radioBox';
+
+q.options.forEach(opt=>{
+
+box.innerHTML+=`
+<label>
+<input type="radio" name="mouseRadio" value="${opt}">
+ ${opt}
+</label><br><br>
+`;
+
+});
+
+const btn=document.createElement('button');
+
+btn.className='optionBtn';
+
+btn.innerHTML='Submit';
+
+btn.onclick=()=>{
+
+const selected=document.querySelector('input[name="mouseRadio"]:checked');
+
+if(selected && selected.value===q.answer){
+correct();
+}else{
+wrong();
+}
+
+};
+
+options.appendChild(box);
+options.appendChild(btn);
+
+}
+
+if(q.type==="list"){
 
 const select=document.createElement('select');
 

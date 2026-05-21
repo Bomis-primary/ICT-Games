@@ -1,1 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MS Paint Adventure Game</title>
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Trebuchet MS',sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#ffecd2,#fcb69f,#a1c4fd);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:15px;
+}
+
+.screen{
+display:none;
+background:white;
+width:95%;
+max-width:900px;
+padding:25px;
+border-radius:30px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+text-align:center;
+animation:fade 0.5s;
+}
+
+.active{
+display:block;
+}
+
+@keyframes fade{
+from{opacity:0;transform:scale(0.95);}
+to{opacity:1;transform:scale(1);}
+}
+
+.logo{
+width:160px;
+margin-bottom:15px;
+}
+
+h1{
+color:#0d47a1;
+margin-bottom:10px;
+}
+
+.subtitle{
+font-size:20px;
+margin-bottom:20px;
+color:#444;
+}
+
+.form-box{
+display:flex;
+flex-direction:column;
+gap:15px;
+margin-top:20px;
+}
+
+input{
+padding:14px;
+border-radius:15px;
+border:2px solid #ccc;
+font-size:18px;
+}
+
+.btn{
+background:#1565c0;
+color:white;
+border:none;
+padding:15px;
+border-radius:50px;
+font-size:18px;
+cursor:pointer;
+font-weight:bold;
+transition:0.3s;
+}
+
+.btn:hover{
+background:#0d47a1;
+transform:scale(1.05);
+}
+
+.status{
+display:flex;
+justify-content:space-between;
+flex-wrap:wrap;
+gap:10px;
+margin-bottom:20px;
+font-weight:bold;
+font-size:18px;
+}
+
+.level{
+background:#ff9800;
+color:white;
+padding:10px 20px;
+border-radius:20px;
+display:inline-block;
+margin-bottom:15px;
+font-weight:bold;
+}
+
+.question{
+font-size:28px;
+font-weight:bold;
+color:#0d47a1;
+margin-bottom:20px;
+}
+
+.options{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:15px;
+margin-top:20px;
+}
+
+.option-btn{
+background:#e3f2fd;
+border:none;
+padding:15px 20px;
+border-radius:20px;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+min-width:200px;
+transition:0.3s;
+}
+
+.option-btn:hover{
+background:#90caf9;
+transform:scale(1.05);
+}
+
+.feedback{
+font-size:30px;
+font-weight:bold;
+margin:20px;
+height:40px;
+}
+
+.question-image{
+width:260px;
+height:220px;
+object-fit:contain;
+margin:10px auto;
+background:#f5f5f5;
+padding:10px;
+border-radius:20px;
+box-shadow:0 5px 15px rgba(0,0,0,0.15);
+}
+
+.final-score{
+font-size:80px;
+font-weight:bold;
+color:#ff6f00;
+margin:20px 0;
+}
+
+.badge{
+font-size:35px;
+margin-top:15px;
+}
+
+@media(max-width:700px){
+
+.question{
+font-size:22px;
+}
+
+.option-btn{
+width:100%;
+}
+
+.question-image{
+width:200px;
+height:170px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<audio id="correctSound" src="assets/correct-1.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="clapSound" src="assets/correct-1.mp3"></audio>
+
+<!-- INTRO SCREEN -->
+
+<div id="intro" class="screen active">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🎨 MS Paint Adventure Game</h1>
+
+<p class="subtitle">
+Chapter 7 & 8 - Introduction to MS Paint 1 & 2
+</p>
+
+<div class="form-box">
+
+<input type="text" id="studentName" placeholder="Enter Student Name">
+
+<input type="text" id="studentClass" placeholder="Enter Class">
+
+<input type="text" id="schoolName" placeholder="Enter School Name">
+
+<button class="btn" onclick="startGame()">
+🚀 Start Game
+</button>
+
+</div>
+
+</div>
+
+<!-- GAME SCREEN -->
+
+<div id="game" class="screen">
+
+<div class="status">
+
+<div>⭐ Score: <span id="score">0</span></div>
+
+<div>🏅 Badges: <span id="badges">0</span></div>
+
+<div>📚 Question: <span id="qno">1</span>/10</div>
+
+</div>
+
+<div class="level" id="levelText">
+Level 1
+</div>
+
+<div class="question" id="questionText"></div>
+
+<div id="imageContainer"></div>
+
+<div class="options" id="optionsBox"></div>
+
+<div class="feedback" id="feedback"></div>
+
+<button class="btn" id="nextBtn" onclick="nextQuestion()" style="display:none;">
+Next ➜
+</button>
+
+</div>
+
+<!-- FINAL SCREEN -->
+
+<div id="final" class="screen">
+
+<img src="assets/ribbon.PNG" class="logo">
+
+<h1>🏆 Congratulations!</h1>
+
+<p id="finalMessage"></p>
+
+<div class="final-score" id="finalScore"></div>
+
+<h2 id="categoryText"></h2>
+
+<div class="badge">🎖️ Trophy Awarded 🎖️</div>
+
+<br>
+
+<button class="btn" onclick="location.reload()">
+🔄 Play Again
+</button>
+
+</div>
+
+<script>
+
+const questions=[
+
+{
+level:"Level 1",
+question:"Which program is used for drawing pictures?",
+options:["MS Paint","Calculator","Music Player"],
+answer:"MS Paint",
+image:"assets/tools.PNG"
+},
+
+{
+level:"Level 1",
+question:"Which tool helps to draw with different thickness?",
+options:["Brush Tool","Eraser Tool","Fill Tool"],
+answer:"Brush Tool",
+image:"assets/brush.PNG"
+},
+
+{
+level:"Level 2",
+question:"Which tool fills colour inside a shape?",
+options:["Fill Tool","Zoom Tool","Text Tool"],
+answer:"Fill Tool",
+image:"assets/colour.PNG"
+},
+
+{
+level:"Level 2",
+question:"Which shortcut key selects the whole picture?",
+options:["Ctrl + A","Ctrl + C","Ctrl + X"],
+answer:"Ctrl + A",
+image:"assets/shapes.PNG"
+},
+
+{
+level:"Level 3",
+question:"Which shortcut key is used to cut a picture?",
+options:["Ctrl + X","Ctrl + V","Ctrl + B"],
+answer:"Ctrl + X",
+image:"assets/tools.PNG"
+},
+
+{
+level:"Level 3",
+question:"What does Flip mean in MS Paint?",
+options:["Rotate picture","Delete picture","Print picture"],
+answer:"Rotate picture",
+image:"assets/brush.PNG"
+},
+
+{
+level:"Level 4",
+question:"Which option sets a picture as desktop background?",
+options:["Fill","Save","Copy"],
+answer:"Fill",
+image:"assets/colour.PNG"
+},
+
+{
+level:"Level 4",
+question:"Which tool helps to choose colours?",
+options:["Colour Box","Brush Tool","Shapes Tool"],
+answer:"Colour Box",
+image:"assets/colour.PNG"
+},
+
+{
+level:"Level 5",
+question:"Which tool helps to draw shapes?",
+options:["Shapes Tool","Zoom Tool","Text Tool"],
+answer:"Shapes Tool",
+image:"assets/shapes.PNG"
+},
+
+{
+level:"Level 5",
+question:"Which button opens an existing drawing?",
+options:["Open","Save","Exit"],
+answer:"Open",
+image:"assets/tools.PNG"
+}
+
+];
+
+let currentQuestion=0;
+let score=0;
+let badges=0;
+
+let studentName="";
+let studentClass="";
+let schoolName="";
+
+function showScreen(id){
+
+document.querySelectorAll('.screen').forEach(screen=>{
+screen.classList.remove('active');
+});
+
+document.getElementById(id).classList.add('active');
+
+}
+
+function startGame(){
+
+studentName=document.getElementById('studentName').value;
+studentClass=document.getElementById('studentClass').value;
+schoolName=document.getElementById('schoolName').value;
+
+if(studentName==="" || studentClass==="" || schoolName===""){
+
+alert("Please fill all details.");
+return;
+
+}
+
+showScreen('game');
+
+loadQuestion();
+
+}
+
+function loadQuestion(){
+
+const q=questions[currentQuestion];
+
+document.getElementById('qno').innerText=currentQuestion+1;
+
+document.getElementById('score').innerText=score;
+
+document.getElementById('badges').innerText=badges;
+
+document.getElementById('levelText').innerText=q.level;
+
+document.getElementById('questionText').innerText=q.question;
+
+document.getElementById('feedback').innerText="";
+
+document.getElementById('nextBtn').style.display='none';
+
+document.getElementById('imageContainer').innerHTML=
+`<img src="${q.image}" class="question-image">`;
+
+const optionsBox=document.getElementById('optionsBox');
+
+optionsBox.innerHTML="";
+
+q.options.forEach(option=>{
+
+const btn=document.createElement('button');
+
+btn.className='option-btn';
+
+btn.innerText=option;
+
+btn.onclick=()=>checkAnswer(option,q.answer);
+
+optionsBox.appendChild(btn);
+
+});
+
+}
+
+function checkAnswer(selected,correct){
+
+const feedback=document.getElementById('feedback');
+
+if(selected===correct){
+
+score++;
+badges++;
+
+document.getElementById('score').innerText=score;
+document.getElementById('badges').innerText=badges;
+
+feedback.innerHTML="✅ Correct!";
+
+feedback.style.color="green";
+
+document.getElementById('correctSound').play();
+
+confetti({
+particleCount:80,
+spread:70,
+origin:{y:0.6}
+});
+
+}else{
+
+feedback.innerHTML="❌ Wrong!";
+
+feedback.style.color="red";
+
+document.getElementById('wrongSound').play();
+
+}
+
+document.getElementById('nextBtn').style.display='block';
+
+}
+
+function nextQuestion(){
+
+currentQuestion++;
+
+if(currentQuestion<questions.length){
+
+loadQuestion();
+
+}else{
+
+showFinal();
+
+}
+
+}
+
+function showFinal(){
+
+showScreen('final');
+
+document.getElementById('clapSound').play();
+
+document.getElementById('finalMessage').innerHTML=
+`
+🎉 Well Done <b>${studentName}</b><br><br>
+🏫 School: ${schoolName}<br>
+📘 Class: ${studentClass}
+`;
+
+document.getElementById('finalScore').innerText=
+`${score}/10`;
+
+let category="";
+
+if(score===10){
+
+category="🌟 Paint Master";
+
+}else if(score>=8){
+
+category="🎨 Creative Genius";
+
+}else if(score>=5){
+
+category="👍 Good Explorer";
+
+}else{
+
+category="📚 Keep Practicing";
+
+}
+
+document.getElementById('categoryText').innerText=category;
+
+confetti({
+particleCount:250,
+spread:120,
+origin:{y:0.6}
+});
+
+}
+
+</script>
+
+</body>
+</html>

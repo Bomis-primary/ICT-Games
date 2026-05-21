@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>STEM Robot Adventure</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -18,24 +17,22 @@ font-family:'Comic Sans MS',sans-serif;
 }
 
 body{
-background:linear-gradient(135deg,#00c6ff,#0072ff,#ff6ec4,#7873f5);
-background-size:400% 400%;
-animation:bgMove 12s ease infinite;
+background:url('assets/robot-bg.jpg');
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+background-attachment:fixed;
 min-height:100vh;
 overflow-x:hidden;
 color:white;
-}
-
-@keyframes bgMove{
-0%{background-position:0% 50%;}
-50%{background-position:100% 50%;}
-100%{background-position:0% 50%;}
+transition:1s;
 }
 
 .overlay{
 background:rgba(0,0,0,0.35);
 min-height:100vh;
 padding:15px;
+backdrop-filter:blur(2px);
 }
 
 .container{
@@ -56,6 +53,7 @@ text-align:center;
 font-size:50px;
 margin-bottom:10px;
 color:#FFD700;
+text-shadow:2px 2px 8px black;
 }
 
 .topbar{
@@ -68,6 +66,7 @@ margin-bottom:15px;
 background:rgba(255,255,255,0.15);
 padding:12px;
 border-radius:20px;
+backdrop-filter:blur(5px);
 }
 
 .progressBox{
@@ -83,6 +82,7 @@ margin-bottom:20px;
 height:100%;
 width:0%;
 background:linear-gradient(to right,#00e5ff,#00ff95);
+transition:0.5s;
 }
 
 .card{
@@ -90,6 +90,7 @@ background:rgba(255,255,255,0.18);
 padding:20px;
 border-radius:25px;
 backdrop-filter:blur(10px);
+border:2px solid rgba(255,255,255,0.2);
 }
 
 #question{
@@ -117,6 +118,7 @@ padding:10px;
 border-radius:20px;
 cursor:pointer;
 transition:0.3s;
+box-shadow:0 5px 15px rgba(0,0,0,0.3);
 }
 
 .questionImage:hover{
@@ -133,6 +135,12 @@ cursor:pointer;
 margin:10px;
 font-weight:bold;
 background:linear-gradient(135deg,#ffeb3b,#ff9800);
+color:black;
+transition:0.3s;
+}
+
+.optionBtn:hover{
+transform:scale(1.05);
 }
 
 .dragArea{
@@ -178,7 +186,7 @@ position:fixed;
 bottom:0;
 left:0;
 width:100%;
-background:rgba(0,0,0,0.65);
+background:rgba(0,0,0,0.7);
 padding:10px;
 text-align:center;
 z-index:999;
@@ -400,6 +408,11 @@ image:"assets/helper-robot.PNG"
 
 ];
 
+const backgrounds=[
+"assets/robot-bg.jpg",
+"assets/robot-bg1.jpg"
+];
+
 let current=0;
 let score=0;
 let badges=0;
@@ -442,6 +455,12 @@ document.getElementById('nextBtn').style.display='inline-block';
 function showQuestion(){
 
 startTimer();
+
+document.body.style.background=
+`url('${backgrounds[current % 2]}')`;
+
+document.body.style.backgroundSize='cover';
+document.body.style.backgroundPosition='center';
 
 const q=questions[current];
 
@@ -534,7 +553,6 @@ drop.innerHTML=q.drag;
 });
 
 area.appendChild(drag);
-
 area.appendChild(drop);
 
 options.appendChild(area);
@@ -542,56 +560,37 @@ options.appendChild(area);
 }
 
 if(q.type==="list"){
-
 const select=document.createElement('select');
-
 select.className='optionBtn';
 
 q.options.forEach(opt=>{
-
 select.innerHTML+=`<option>${opt}</option>`;
-
 });
 
 const btn=document.createElement('button');
-
 btn.className='optionBtn';
-
 btn.innerHTML='Submit';
 
 btn.onclick=()=>{
-
 if(select.value===q.answer){
-
 correct();
-
 }else{
-
 wrong();
-
 }
-
 };
 
 options.appendChild(select);
 options.appendChild(btn);
-
 }
 
 }
 
 function check(ans){
-
 if(ans){
-
 correct();
-
 }else{
-
 wrong();
-
 }
-
 }
 
 function correct(){
@@ -599,7 +598,6 @@ function correct(){
 clearInterval(timer);
 
 feedback.innerHTML="✅ Correct";
-
 feedback.style.color='#00ff95';
 
 document.getElementById('correctSound').play();
@@ -613,7 +611,6 @@ score++;
 badges++;
 
 document.getElementById('score').innerHTML=score;
-
 document.getElementById('badges').innerHTML=badges;
 
 document.getElementById('nextBtn').style.display='inline-block';
@@ -625,7 +622,6 @@ function wrong(){
 clearInterval(timer);
 
 feedback.innerHTML="❌ Wrong";
-
 feedback.style.color='red';
 
 document.getElementById('wrongSound').play();
@@ -639,13 +635,9 @@ document.getElementById('nextBtn').onclick=()=>{
 current++;
 
 if(current<questions.length){
-
 showQuestion();
-
 }else{
-
 showFinal();
-
 }
 
 };
@@ -662,21 +654,13 @@ document.getElementById('finalScore').innerHTML=
 let rank='';
 
 if(score===10){
-
 rank='🏆 CHAMPION';
-
 }else if(score>=7){
-
 rank='👍 EXCELLENT';
-
 }else if(score>=4){
-
 rank='🙂 NEED TO IMPROVE';
-
 }else{
-
 rank='📘 BEGINNER';
-
 }
 
 document.getElementById('rank').innerHTML=rank;

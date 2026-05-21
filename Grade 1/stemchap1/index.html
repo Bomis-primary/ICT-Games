@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>STEM Robot Adventure</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -24,6 +23,7 @@ background-position:center;
 min-height:100vh;
 overflow-x:hidden;
 color:white;
+transition:1s;
 }
 
 .overlay{
@@ -38,9 +38,16 @@ margin:auto;
 padding-bottom:120px;
 }
 
+.logo{
+width:140px;
+display:block;
+margin:auto;
+margin-bottom:10px;
+}
+
 h1{
 text-align:center;
-font-size:50px;
+font-size:48px;
 margin-bottom:10px;
 color:#FFD700;
 }
@@ -93,24 +100,18 @@ display:block;
 margin:auto;
 }
 
-.options{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:15px;
-margin-top:20px;
-}
-
 .optionBtn{
-padding:15px;
+padding:15px 20px;
 font-size:22px;
 border:none;
 border-radius:15px;
 cursor:pointer;
+margin:10px;
 font-weight:bold;
 }
 
 .optionBtn:hover{
-transform:scale(1.04);
+transform:scale(1.05);
 background:#ffeb3b;
 }
 
@@ -141,14 +142,6 @@ display:flex;
 justify-content:center;
 align-items:center;
 font-size:24px;
-}
-
-select{
-padding:14px;
-font-size:22px;
-border-radius:12px;
-margin-top:20px;
-width:280px;
 }
 
 .feedback{
@@ -190,17 +183,15 @@ text-align:center;
 margin-top:30px;
 }
 
-.robot{
-position:fixed;
-right:20px;
-bottom:90px;
-font-size:80px;
-animation:jump 2s infinite alternate;
-}
-
-@keyframes jump{
-from{transform:translateY(0);}
-to{transform:translateY(-20px);}
+.playBtn{
+padding:15px 30px;
+font-size:22px;
+background:#2196F3;
+color:white;
+border:none;
+border-radius:15px;
+cursor:pointer;
+margin-top:20px;
 }
 
 @media(max-width:768px){
@@ -213,10 +204,6 @@ font-size:34px;
 font-size:24px;
 }
 
-.optionBtn{
-font-size:18px;
-}
-
 .questionImage{
 width:170px;
 height:170px;
@@ -225,15 +212,16 @@ height:170px;
 }
 
 </style>
+
 </head>
 
 <body>
 
 <div class="overlay">
 
-<div class="robot">🤖</div>
-
 <div class="container">
+
+<img src="assets/innovine-logo.png" class="logo">
 
 <h1>🚀 STEM Robot Adventure</h1>
 
@@ -253,9 +241,7 @@ height:170px;
 
 <div id="imageArea"></div>
 
-<div class="options" id="options"></div>
-
-<div id="extraArea"></div>
+<div id="options"></div>
 
 <div class="feedback" id="feedback"></div>
 
@@ -269,9 +255,7 @@ height:170px;
 
 <h2 id="rank"></h2>
 
-<br>
-
-<button onclick="location.reload()" class="optionBtn">
+<button onclick="location.reload()" class="playBtn">
 Play Again
 </button>
 
@@ -291,61 +275,45 @@ Play Again
 const questions=[
 
 {
-type:"mcq",
-question:"What does STEM stand for?",
-options:[
-"Science Technology Engineering Mathematics",
-"Sports Toys Energy Music",
-"Science Toys English Maths",
-"Stars Technology Earth Moon"
-],
-answer:"Science Technology Engineering Mathematics",
-image:"assets/robots.PNG",
-bg:"assets/robot-bg.jpg"
-},
-
-{
 type:"image",
 question:"Click the Science picture",
 options:[
 "assets/science.PNG",
 "assets/mathematics.PNG",
-"assets/technology.PNG",
-"assets/engineering.PNG"
+"assets/technology.PNG"
 ],
 answer:"assets/science.PNG",
-bg:"assets/robot-bg1.jpg"
-},
-
-{
-type:"mcq",
-question:"What is Robotics?",
-options:[
-"Study of Robots",
-"Study of Flowers",
-"Study of Fruits",
-"Study of Cars"
-],
-answer:"Study of Robots",
-image:"assets/helper-robot.PNG",
 bg:"assets/robot-bg.jpg"
 },
 
 {
 type:"drag",
-question:"Drag the word COMMAND into the box",
+question:"Drag COMMAND into the box",
 drag:"COMMAND",
 answer:"COMMAND",
 bg:"assets/robot-bg1.jpg"
 },
 
 {
-type:"mcq",
-question:"Robots follow ________.",
-options:["Commands","Bananas","Candies","Balloons"],
-answer:"Commands",
-image:"assets/communication.PNG",
+type:"truefalse",
+question:"Robots follow commands.",
+options:["True","False"],
+answer:"True",
+image:"assets/robots.PNG",
 bg:"assets/robot-bg.jpg"
+},
+
+{
+type:"list",
+question:"Choose the subject using numbers",
+options:[
+"Mathematics",
+"Science",
+"Technology"
+],
+answer:"Mathematics",
+image:"assets/mathematics.PNG",
+bg:"assets/robot-bg1.jpg"
 },
 
 {
@@ -354,55 +322,60 @@ question:"Click the Technology picture",
 options:[
 "assets/technology.PNG",
 "assets/education.PNG",
-"assets/mathematics.PNG",
-"assets/communication.PNG"
+"assets/science.PNG"
 ],
 answer:"assets/technology.PNG",
-bg:"assets/robot-bg1.jpg"
-},
-
-{
-type:"list",
-question:"Choose the subject that uses numbers",
-options:[
-"Science",
-"Mathematics",
-"Robotics",
-"Technology"
-],
-answer:"Mathematics",
-image:"assets/mathematics.PNG",
 bg:"assets/robot-bg.jpg"
 },
 
 {
-type:"mcq",
-question:"Robots help humans by making work ________.",
-options:["Easier","Harder","Longer","Noisy"],
-answer:"Easier",
-image:"assets/robots.PNG",
+type:"drag",
+question:"Drag ROBOTICS into the box",
+drag:"ROBOTICS",
+answer:"ROBOTICS",
+bg:"assets/robot-bg1.jpg"
+},
+
+{
+type:"truefalse",
+question:"Technology means tools and gadgets.",
+options:["True","False"],
+answer:"True",
+image:"assets/technology.PNG",
+bg:"assets/robot-bg.jpg"
+},
+
+{
+type:"list",
+question:"Choose the subject solving problems",
+options:[
+"Engineering",
+"Entertainment",
+"Communication"
+],
+answer:"Engineering",
+image:"assets/engineering.PNG",
 bg:"assets/robot-bg1.jpg"
 },
 
 {
 type:"image",
-question:"Click the Engineering picture",
+question:"Click the Mathematics picture",
 options:[
-"assets/engineering.PNG",
-"assets/science.PNG",
-"assets/technology.PNG",
-"assets/education.PNG"
+"assets/mathematics.PNG",
+"assets/education.PNG",
+"assets/science.PNG"
 ],
-answer:"assets/engineering.PNG",
+answer:"assets/mathematics.PNG",
 bg:"assets/robot-bg.jpg"
 },
 
 {
 type:"truefalse",
-question:"Robots can help doctors.",
+question:"Robots help humans.",
 options:["True","False"],
 answer:"True",
-image:"assets/medical-robot.PNG",
+image:"assets/helper-robot.PNG",
 bg:"assets/robot-bg1.jpg"
 }
 
@@ -417,7 +390,6 @@ let time=40;
 const question=document.getElementById('question');
 const options=document.getElementById('options');
 const imageArea=document.getElementById('imageArea');
-const extraArea=document.getElementById('extraArea');
 const feedback=document.getElementById('feedback');
 
 function startTimer(){
@@ -454,13 +426,13 @@ startTimer();
 
 const q=questions[current];
 
-document.body.style.background=`url('${q.bg}') center/cover`;
+document.body.style.background=
+`url('${q.bg}') center/cover`;
 
 question.innerHTML=q.question;
 
 options.innerHTML='';
 imageArea.innerHTML='';
-extraArea.innerHTML='';
 feedback.innerHTML='';
 
 document.getElementById('nextBtn').style.display='none';
@@ -475,7 +447,7 @@ imageArea.innerHTML=
 
 }
 
-if(q.type==="mcq" || q.type==="truefalse"){
+if(q.type==="truefalse"){
 
 q.options.forEach(opt=>{
 
@@ -551,13 +523,15 @@ area.appendChild(drag);
 
 area.appendChild(drop);
 
-extraArea.appendChild(area);
+options.appendChild(area);
 
 }
 
 if(q.type==="list"){
 
 const select=document.createElement('select');
+
+select.className='optionBtn';
 
 q.options.forEach(opt=>{
 
@@ -585,13 +559,8 @@ wrong();
 
 };
 
-extraArea.appendChild(select);
-
-extraArea.appendChild(document.createElement('br'));
-
-extraArea.appendChild(document.createElement('br'));
-
-extraArea.appendChild(btn);
+options.appendChild(select);
+options.appendChild(btn);
 
 }
 
@@ -627,7 +596,6 @@ spread:120
 });
 
 score++;
-
 badges++;
 
 document.getElementById('score').innerHTML=score;
@@ -679,15 +647,15 @@ document.getElementById('finalScore').innerHTML=
 
 let rank='';
 
-if(score>=9){
+if(score===10){
 
 rank='🏆 CHAMPION';
 
-}else if(score>=6){
+}else if(score>=7){
 
 rank='👍 EXCELLENT';
 
-}else if(score>=3){
+}else if(score>=4){
 
 rank='🙂 NEED TO IMPROVE';
 

@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
 <title>Mouse & Keyboard Adventure</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -11,122 +12,100 @@
 
 :root{
 --primary:#1a237e;
---secondary:#ff6f00;
+--secondary:#d32f2f;
+--accent:#ff9800;
 --success:#2e7d32;
---danger:#d32f2f;
---light:#ffffff;
 }
 
 *{
-box-sizing:border-box;
-margin:0;
-padding:0;
 touch-action:manipulation;
+box-sizing:border-box;
 }
 
 body{
-font-family:'Comic Sans MS',sans-serif;
-background:linear-gradient(135deg,#4facfe,#00f2fe,#43e97b);
+margin:0;
+font-family:'Segoe UI',Arial,sans-serif;
+background:url('assets/Mouse-bg.jpg');
+background-size:cover;
+background-position:center;
 display:flex;
 justify-content:center;
 align-items:center;
 min-height:100vh;
-padding:10px;
 }
 
 .screen{
 display:none;
-width:100%;
-max-width:650px;
-background:white;
-border-radius:25px;
-padding:25px;
-box-shadow:0 10px 30px rgba(0,0,0,0.2);
 text-align:center;
+padding:25px;
+width:95%;
+max-width:700px;
+background:rgba(255,255,255,0.95);
+border-radius:25px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
 }
 
 .active{
-display:block;
+display:block !important;
 }
 
 .logo{
-width:120px;
-margin-bottom:10px;
-}
-
-h1{
-color:var(--primary);
+width:160px;
 margin-bottom:10px;
 }
 
 .info-card{
 background:#e8eaf6;
-padding:15px;
 border-radius:15px;
+padding:15px;
 margin-bottom:15px;
 text-align:left;
 border-left:6px solid var(--primary);
 }
 
-.rules{
-background:#fff3e0;
+.rules-container{
+background:#fff8e1;
+border:1px solid var(--accent);
 padding:15px;
 border-radius:15px;
-margin-bottom:20px;
 text-align:left;
+margin:15px 0;
 }
 
-.rules h3{
+.rules-container h3{
+margin-top:0;
 color:#e65100;
-margin-bottom:8px;
 }
 
-.btn{
-background:var(--secondary);
-color:white;
-border:none;
-padding:15px;
-width:100%;
-border-radius:50px;
-font-size:18px;
-font-weight:bold;
-cursor:pointer;
-margin-top:15px;
-}
-
-.btn:hover{
-opacity:0.9;
-}
-
-.status{
+.status-bar{
 display:flex;
 justify-content:space-between;
 margin-bottom:15px;
 font-weight:bold;
+font-size:18px;
 flex-wrap:wrap;
 gap:10px;
 }
 
-.question{
-font-size:24px;
-margin-bottom:15px;
+.question-title{
+font-size:28px;
+font-weight:bold;
 color:var(--primary);
+margin-bottom:15px;
 }
 
-.image-box{
-margin:15px 0;
-}
-
-.question-image{
-width:180px;
-height:150px;
+.big-image{
+width:260px;
+height:220px;
 object-fit:contain;
 background:#f5f5f5;
 padding:10px;
 border-radius:20px;
+margin-bottom:20px;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
 }
 
-.options{
+.option-row{
 display:flex;
 justify-content:center;
 gap:15px;
@@ -134,32 +113,38 @@ flex-wrap:wrap;
 margin-top:15px;
 }
 
-.option-btn{
-background:#e3f2fd;
-border:3px solid #90caf9;
-padding:12px 18px;
-border-radius:15px;
+.option-image{
+width:220px;
+height:180px;
+object-fit:contain;
+background:white;
+padding:10px;
+border-radius:20px;
 cursor:pointer;
-font-size:18px;
-font-weight:bold;
+border:4px solid transparent;
+transition:0.3s;
 }
 
-.option-btn:hover{
-background:#bbdefb;
+.option-image:hover{
+transform:scale(1.05);
+border-color:var(--accent);
 }
 
-.radio-group{
-text-align:left;
+.radio-container{
+display:flex;
+justify-content:center;
+gap:25px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.radio-option{
 background:#f5f5f5;
-padding:15px;
+padding:12px 20px;
 border-radius:15px;
-margin-top:15px;
-}
-
-.radio-group label{
-display:block;
-margin-bottom:10px;
-font-size:18px;
+font-size:20px;
+font-weight:bold;
+border:2px solid #ccc;
 }
 
 .answer-slots{
@@ -171,14 +156,14 @@ flex-wrap:wrap;
 }
 
 .slot{
-width:40px;
-height:50px;
-border-bottom:3px solid #999;
-font-size:28px;
+width:45px;
+height:55px;
+border-bottom:4px solid #999;
+font-size:30px;
 font-weight:bold;
 display:flex;
-align-items:center;
 justify-content:center;
+align-items:center;
 color:var(--primary);
 }
 
@@ -187,39 +172,50 @@ display:flex;
 justify-content:center;
 gap:10px;
 flex-wrap:wrap;
+margin-top:15px;
 }
 
-.tile{
-width:45px;
-height:45px;
+.letter-tile{
+width:50px;
+height:50px;
 background:var(--primary);
 color:white;
+border-radius:10px;
 display:flex;
 justify-content:center;
 align-items:center;
-border-radius:10px;
-font-size:22px;
+font-size:24px;
 cursor:pointer;
-box-shadow:0 4px #0d144d;
+box-shadow:0 4px #0a1040;
 }
 
-.tile.disabled{
+.letter-tile.disabled{
 opacity:0.2;
 pointer-events:none;
 }
 
 .feedback{
+height:30px;
 margin-top:15px;
-font-size:22px;
+font-size:24px;
 font-weight:bold;
-min-height:30px;
 }
 
-.final-score{
-font-size:50px;
+.btn-main{
+background:var(--secondary);
+color:white;
+border:none;
+padding:16px;
+font-size:1.1rem;
+border-radius:50px;
+cursor:pointer;
+width:100%;
 font-weight:bold;
-color:var(--secondary);
-margin:20px 0;
+margin-top:15px;
+}
+
+.btn-clear{
+background:#546e7a;
 }
 
 input{
@@ -231,34 +227,62 @@ font-size:18px;
 margin-top:15px;
 }
 
+@media(max-width:768px){
+
+.big-image{
+width:200px;
+height:170px;
+}
+
+.option-image{
+width:150px;
+height:130px;
+}
+
+.question-title{
+font-size:22px;
+}
+
+.radio-option{
+font-size:17px;
+}
+
+}
+
 </style>
 </head>
 
 <body>
 
-<audio id="correctSound" src="assets/correct-1.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="audio-correct" src="assets/correct-1.mp3"></audio>
+<audio id="audio-wrong" src="assets/wrong.mp3"></audio>
 
-<div id="start-screen" class="screen active">
+<!-- INTRO SCREEN -->
+
+<div id="intro-screen" class="screen active">
 
 <img src="assets/innovine-logo.png" class="logo">
 
-<h1>⌨️ Mouse & Keyboard Adventure 🖱️</h1>
+<h2 style="color:var(--primary);">
+⌨️ Mouse & Keyboard Adventure 🖱️
+</h2>
 
 <div class="info-card">
-<b>Grade:</b> 1<br>
-<b>Subject:</b> ICT<br>
-<b>Topic:</b> Mouse & Keyboard Keys
+
+<strong>Grade:</strong> 1 <br>
+<strong>Subject:</strong> ICT <br>
+<strong>Topic:</strong> Mouse & Keyboard Keys
+
 </div>
 
-<div class="rules">
+<div class="rules-container">
 
-<h3>📜 Rules</h3>
+<h3>📜 Rules of the Game</h3>
 
-<ul style="padding-left:20px;">
-<li>Answer image and keyboard questions.</li>
-<li>Some questions have 2 attempts.</li>
+<ul style="padding-left:20px; line-height:1.7;">
+<li>Answer image and radio questions.</li>
 <li>Unscramble the keyboard word.</li>
+<li>You have only 2 attempts for scramble.</li>
 <li>Earn badges and become champion!</li>
 </ul>
 
@@ -266,59 +290,67 @@ margin-top:15px;
 
 <input type="text" id="studentName" placeholder="Enter Your Name">
 
-<button class="btn" onclick="startGame()">
-Start Game
+<button class="btn-main" onclick="startGame()">
+I Understand - Play!
 </button>
 
 </div>
 
+<!-- GAME SCREEN -->
+
 <div id="game-screen" class="screen">
 
-<div class="status">
+<div class="status-bar">
 
-<div>⭐ Score: <span id="score">0</span></div>
+<span>⭐ Score: <span id="score">0</span></span>
 
-<div>🏆 Badges: <span id="badges">0</span></div>
+<span>🏆 Badges: <span id="badges">0</span></span>
 
-<div>🎮 Question: <span id="round">1</span>/10</div>
+<span>🎮 Question: <span id="round">1</span>/10</span>
 
 </div>
 
-<div class="question" id="question"></div>
+<div class="question-title" id="question-title"></div>
 
-<div class="image-box" id="image-box"></div>
+<div id="image-box"></div>
 
-<div id="content"></div>
+<div id="game-content"></div>
 
 <div class="feedback" id="feedback"></div>
 
-<button class="btn" id="nextBtn" style="display:none;" onclick="nextQuestion()">
+<button class="btn-main" id="next-btn" style="display:none;" onclick="nextQuestion()">
 Next ➜
 </button>
 
 </div>
 
+<!-- FINAL SCREEN -->
+
 <div id="final-screen" class="screen">
 
 <img src="assets/innovine-logo.png" class="logo">
 
-<h1>🎉 Game Completed 🎉</h1>
+<h2 style="color:var(--primary);">
+🎉 Challenge Over!
+</h2>
 
-<div id="final-msg"></div>
+<p id="final-msg"></p>
 
-<div class="final-score" id="final-score"></div>
+<div style="font-size:4rem; color:var(--secondary); font-weight:bold; margin:20px 0;" id="final-score">
+0
+</div>
 
 <h2 id="rank"></h2>
 
-<button class="btn" onclick="location.reload()">
-Play Again
+<button class="btn-main" onclick="window.location.reload()">
+Restart Game
 </button>
 
 </div>
 
 <script>
 
-const questions=[
+const gameData=[
 
 {
 type:"image",
@@ -362,7 +394,7 @@ answer:"True"
 },
 
 {
-type:"unscramble",
+type:"scramble",
 question:"Unscramble the keyboard word",
 word:"SHIFT"
 },
@@ -425,23 +457,9 @@ answer:"Shift Key"
 let current=0;
 let score=0;
 let badges=0;
-let student="";
 let attempts=2;
 let guess=[];
-
-function startGame(){
-
-student=document.getElementById('studentName').value;
-
-if(student===""){
-alert("Please Enter Name");
-return;
-}
-
-changeScreen('game-screen');
-loadQuestion();
-
-}
+let student="";
 
 function changeScreen(id){
 
@@ -453,20 +471,35 @@ document.getElementById(id).classList.add('active');
 
 }
 
+function startGame(){
+
+student=document.getElementById('studentName').value;
+
+if(student===""){
+alert("Please Enter Name");
+return;
+}
+
+changeScreen('game-screen');
+
+loadQuestion();
+
+}
+
 function loadQuestion(){
 
-document.getElementById('nextBtn').style.display='none';
-
-const q=questions[current];
+const q=gameData[current];
 
 document.getElementById('round').innerText=current+1;
 
-document.getElementById('question').innerText=q.question;
+document.getElementById('question-title').innerText=q.question;
 
 document.getElementById('feedback').innerText='';
 
+document.getElementById('next-btn').style.display='none';
+
 const imageBox=document.getElementById('image-box');
-const content=document.getElementById('content');
+const content=document.getElementById('game-content');
 
 imageBox.innerHTML='';
 content.innerHTML='';
@@ -474,42 +507,44 @@ content.innerHTML='';
 if(q.image){
 
 imageBox.innerHTML=
-`<img src="${q.image}" class="question-image">`;
+`<img src="${q.image}" class="big-image">`;
 
 }
 
 if(q.type==="image"){
 
-const div=document.createElement('div');
-div.className='options';
+const row=document.createElement('div');
+
+row.className='option-row';
 
 q.options.forEach(opt=>{
 
 const img=document.createElement('img');
 
 img.src=opt;
-img.className='question-image';
+
+img.className='option-image';
 
 img.onclick=()=>checkAnswer(opt===q.answer);
 
-div.appendChild(img);
+row.appendChild(img);
 
 });
 
-content.appendChild(div);
+content.appendChild(row);
 
 }
 
 if(q.type==="radio"){
 
-const box=document.createElement('div');
+const radio=document.createElement('div');
 
-box.className='radio-group';
+radio.className='radio-container';
 
 q.options.forEach(opt=>{
 
-box.innerHTML+=`
-<label>
+radio.innerHTML+=`
+<label class="radio-option">
 <input type="radio" name="radio" value="${opt}">
  ${opt}
 </label>
@@ -517,11 +552,12 @@ box.innerHTML+=`
 
 });
 
-content.appendChild(box);
+content.appendChild(radio);
 
 const btn=document.createElement('button');
 
-btn.className='btn';
+btn.className='btn-main';
+
 btn.innerText='Submit';
 
 btn.onclick=()=>{
@@ -542,34 +578,39 @@ content.appendChild(btn);
 
 if(q.type==="truefalse"){
 
-const div=document.createElement('div');
-div.className='options';
+const row=document.createElement('div');
+
+row.className='option-row';
 
 ['True','False'].forEach(opt=>{
 
 const btn=document.createElement('button');
 
-btn.className='option-btn';
+btn.className='btn-main';
+
+btn.style.width='180px';
 
 btn.innerText=opt;
 
 btn.onclick=()=>checkAnswer(opt===q.answer);
 
-div.appendChild(btn);
+row.appendChild(btn);
 
 });
 
-content.appendChild(div);
+content.appendChild(row);
 
 }
 
-if(q.type==="unscramble"){
+if(q.type==="scramble"){
 
 attempts=2;
 guess=[];
 
 const slots=document.createElement('div');
+
 slots.className='answer-slots';
+
 slots.id='slots';
 
 for(let i=0;i<q.word.length;i++){
@@ -579,13 +620,14 @@ slots.innerHTML+=`<div class="slot"></div>`;
 }
 
 const bank=document.createElement('div');
+
 bank.className='letter-bank';
 
 q.word.split('').sort(()=>Math.random()-0.5).forEach(letter=>{
 
 const tile=document.createElement('div');
 
-tile.className='tile';
+tile.className='letter-tile';
 
 tile.innerText=letter;
 
@@ -600,7 +642,7 @@ content.appendChild(bank);
 
 const clear=document.createElement('button');
 
-clear.className='btn';
+clear.className='btn-main btn-clear';
 
 clear.innerText='Clear Word';
 
@@ -638,7 +680,7 @@ document.querySelectorAll('.slot').forEach(s=>{
 s.innerText='';
 });
 
-document.querySelectorAll('.tile').forEach(t=>{
+document.querySelectorAll('.letter-tile').forEach(t=>{
 t.classList.remove('disabled');
 });
 
@@ -656,9 +698,11 @@ checkAnswer(true);
 
 attempts--;
 
+document.getElementById('audio-wrong').play();
+
 if(attempts>0){
 
-document.getElementById('feedback').innerText='Try Again!';
+document.getElementById('feedback').innerText='❌ Try Again!';
 document.getElementById('feedback').style.color='red';
 
 setTimeout(resetWord,1000);
@@ -686,10 +730,10 @@ document.getElementById('badges').innerText=badges;
 document.getElementById('feedback').innerText='👏 Correct!';
 document.getElementById('feedback').style.color='green';
 
-document.getElementById('correctSound').play();
+document.getElementById('audio-correct').play();
 
 confetti({
-particleCount:150,
+particleCount:120,
 spread:90
 });
 
@@ -698,11 +742,11 @@ spread:90
 document.getElementById('feedback').innerText='❌ Wrong!';
 document.getElementById('feedback').style.color='red';
 
-document.getElementById('wrongSound').play();
+document.getElementById('audio-wrong').play();
 
 }
 
-document.getElementById('nextBtn').style.display='block';
+document.getElementById('next-btn').style.display='block';
 
 }
 
@@ -710,7 +754,7 @@ function nextQuestion(){
 
 current++;
 
-if(current<questions.length){
+if(current<gameData.length){
 
 loadQuestion();
 
@@ -727,8 +771,7 @@ function showFinal(){
 changeScreen('final-screen');
 
 document.getElementById('final-msg').innerHTML=
-`Congratulations <b>${student}</b><br>
-You have scored`;
+`Congratulations <b>${student}</b><br>You have scored`;
 
 document.getElementById('final-score').innerText=
 `${score}/10`;

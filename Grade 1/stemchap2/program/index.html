@@ -14,7 +14,7 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:'Comic Sans MS',cursive;
+font-family:'Comic Sans MS',sans-serif;
 }
 
 body{
@@ -23,6 +23,7 @@ background-size:cover;
 background-position:center;
 min-height:100vh;
 overflow-x:hidden;
+color:white;
 }
 
 .overlay{
@@ -34,69 +35,62 @@ padding:15px;
 .container{
 max-width:1100px;
 margin:auto;
+padding-bottom:120px;
 }
 
 h1{
 text-align:center;
-color:#FFD700;
-font-size:42px;
+font-size:50px;
 margin-bottom:10px;
-text-shadow:2px 2px 8px black;
+color:#FFD700;
 }
 
 .topbar{
 display:flex;
-justify-content:space-between;
-align-items:center;
+justify-content:center;
+gap:30px;
 flex-wrap:wrap;
-gap:10px;
-margin-bottom:10px;
-color:white;
 font-size:24px;
+margin-bottom:15px;
 }
 
 .progressBox{
 width:100%;
-height:20px;
-background:#333;
+height:22px;
+background:#222;
 border-radius:20px;
 overflow:hidden;
-margin-bottom:15px;
+margin-bottom:20px;
 }
 
 .progress{
 height:100%;
 width:0%;
 background:linear-gradient(to right,#00e5ff,#00ff95);
-transition:0.5s;
 }
 
-.gameCard{
+.card{
 background:rgba(255,255,255,0.12);
-backdrop-filter:blur(8px);
-border-radius:25px;
 padding:20px;
-color:white;
-min-height:520px;
-position:relative;
-padding-bottom:90px;
+border-radius:25px;
+backdrop-filter:blur(8px);
 }
 
 #question{
 font-size:30px;
+margin-bottom:20px;
 text-align:center;
-margin-bottom:15px;
 }
 
 .questionImage{
 width:220px;
 height:220px;
 object-fit:contain;
+background:white;
+padding:10px;
+border-radius:20px;
 display:block;
 margin:auto;
-background:white;
-border-radius:20px;
-padding:10px;
 }
 
 .options{
@@ -113,54 +107,32 @@ border:none;
 border-radius:15px;
 cursor:pointer;
 font-weight:bold;
-transition:0.3s;
 }
 
 .optionBtn:hover{
-transform:scale(1.05);
+transform:scale(1.04);
 background:#ffeb3b;
 }
 
-#feedback{
-text-align:center;
-font-size:28px;
-font-weight:bold;
-margin-top:15px;
-}
-
-#nextBtn{
-position:absolute;
-bottom:20px;
-right:20px;
-padding:14px 28px;
-font-size:22px;
-border:none;
-border-radius:15px;
-background:#4CAF50;
-color:white;
-cursor:pointer;
-display:none;
-}
-
-.drag-container{
+.dragArea{
 display:flex;
 justify-content:center;
-gap:20px;
+gap:25px;
 flex-wrap:wrap;
 margin-top:25px;
 }
 
-.drag-item{
-padding:15px 20px;
+.dragItem{
+padding:18px;
 background:#00e5ff;
 border-radius:15px;
-font-size:22px;
-font-weight:bold;
+font-size:24px;
 cursor:grab;
 color:black;
+font-weight:bold;
 }
 
-.drop-box{
+.dropBox{
 width:240px;
 height:120px;
 border:4px dashed white;
@@ -172,11 +144,40 @@ font-size:24px;
 }
 
 select{
-padding:15px;
+padding:14px;
 font-size:22px;
-border-radius:15px;
+border-radius:12px;
 margin-top:20px;
-width:300px;
+width:280px;
+}
+
+.feedback{
+font-size:28px;
+font-weight:bold;
+margin-top:20px;
+text-align:center;
+}
+
+.nextArea{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+background:rgba(0,0,0,0.8);
+padding:12px;
+text-align:center;
+z-index:999;
+}
+
+#nextBtn{
+padding:14px 40px;
+font-size:24px;
+border:none;
+border-radius:15px;
+background:#4CAF50;
+color:white;
+display:none;
+cursor:pointer;
 }
 
 .finalScreen{
@@ -186,30 +187,26 @@ color:black;
 padding:30px;
 border-radius:25px;
 text-align:center;
-margin-top:20px;
-}
-
-.finalScreen h2{
-margin:15px;
+margin-top:30px;
 }
 
 .robot{
 position:fixed;
-bottom:10px;
-right:15px;
+right:20px;
+bottom:90px;
 font-size:80px;
 animation:jump 2s infinite alternate;
 }
 
 @keyframes jump{
 from{transform:translateY(0);}
-to{transform:translateY(-15px);}
+to{transform:translateY(-20px);}
 }
 
 @media(max-width:768px){
 
 h1{
-font-size:32px;
+font-size:34px;
 }
 
 #question{
@@ -223,11 +220,6 @@ font-size:18px;
 .questionImage{
 width:170px;
 height:170px;
-}
-
-#nextBtn{
-bottom:10px;
-right:10px;
 }
 
 }
@@ -246,51 +238,40 @@ right:10px;
 <h1>🚀 STEM Robot Adventure</h1>
 
 <div class="topbar">
-
 <div>⭐ Score: <span id="score">0</span></div>
-
-<div>🏆 Badges: <span id="badge">0</span></div>
-
+<div>🏆 Badges: <span id="badges">0</span></div>
 <div>⏰ <span id="timer">40</span>s</div>
-
 </div>
 
 <div class="progressBox">
 <div class="progress" id="progress"></div>
 </div>
 
-<div class="gameCard" id="gameCard">
+<div class="card" id="gameCard">
 
 <h2 id="question"></h2>
 
 <div id="imageArea"></div>
 
-<div id="options" class="options"></div>
+<div class="options" id="options"></div>
 
 <div id="extraArea"></div>
 
-<div id="feedback"></div>
-
-<button id="nextBtn">Next ➜</button>
+<div class="feedback" id="feedback"></div>
 
 </div>
 
 <div class="finalScreen" id="finalScreen">
 
-<h1>🎉 Game Completed 🎉</h1>
+<h1>🎉 Great Job!</h1>
 
 <h2 id="finalScore"></h2>
 
-<h2 id="performance"></h2>
+<h2 id="rank"></h2>
 
-<button onclick="location.reload()"
-style="padding:15px 30px;
-font-size:22px;
-background:#2196F3;
-color:white;
-border:none;
-border-radius:15px;
-cursor:pointer;">
+<br>
+
+<button onclick="location.reload()" class="optionBtn">
 Play Again
 </button>
 
@@ -298,6 +279,8 @@ Play Again
 
 </div>
 
+<div class="nextArea">
+<button id="nextBtn">Next ➜</button>
 </div>
 
 <audio id="correctSound" src="assets/correct-1.mp3"></audio>
@@ -312,9 +295,9 @@ type:"mcq",
 question:"What does STEM stand for?",
 options:[
 "Science Technology Engineering Mathematics",
-"Space Train Engine Motor",
 "Sports Toys Energy Music",
-"Science Toys English Maths"
+"Science Toys English Maths",
+"Stars Technology Earth Moon"
 ],
 answer:"Science Technology Engineering Mathematics",
 image:"assets/robots.PNG",
@@ -326,72 +309,66 @@ type:"image",
 question:"Click the Science picture",
 options:[
 "assets/science.PNG",
+"assets/mathematics.PNG",
 "assets/technology.PNG",
-"assets/engineering.PNG",
-"assets/mathematics.PNG"
+"assets/engineering.PNG"
 ],
 answer:"assets/science.PNG",
 bg:"assets/robot-bg1.jpg"
 },
 
 {
+type:"mcq",
+question:"What is Robotics?",
+options:[
+"Study of Robots",
+"Study of Flowers",
+"Study of Fruits",
+"Study of Cars"
+],
+answer:"Study of Robots",
+image:"assets/helper-robot.PNG",
+bg:"assets/robot-bg.jpg"
+},
+
+{
+type:"drag",
+question:"Drag the word COMMAND into the box",
+drag:"COMMAND",
+answer:"COMMAND",
+bg:"assets/robot-bg1.jpg"
+},
+
+{
+type:"mcq",
+question:"Robots follow ________.",
+options:["Commands","Bananas","Candies","Balloons"],
+answer:"Commands",
+image:"assets/communication.PNG",
+bg:"assets/robot-bg.jpg"
+},
+
+{
 type:"image",
 question:"Click the Technology picture",
 options:[
-"assets/science.PNG",
 "assets/technology.PNG",
-"assets/engineering.PNG",
-"assets/mathematics.PNG"
+"assets/education.PNG",
+"assets/mathematics.PNG",
+"assets/communication.PNG"
 ],
 answer:"assets/technology.PNG",
-bg:"assets/robot-bg.jpg"
-},
-
-{
-type:"mcq",
-question:"Who helps humans in many ways?",
-options:[
-"Robots",
-"Pencils",
-"Tables",
-"Books"
-],
-answer:"Robots",
-image:"assets/helper-robot.PNG",
 bg:"assets/robot-bg1.jpg"
 },
 
 {
-type:"dragdrop",
-question:"Drag the Robot into the Robot Box",
-dragText:"🤖 ROBOT",
-dropAnswer:"🤖 ROBOT",
-image:"assets/robots.PNG",
-bg:"assets/robot-bg.jpg"
-},
-
-{
-type:"mcq",
-question:"Robots follow special instructions called?",
-options:[
-"Commands",
-"Songs",
-"Games",
-"Stories"
-],
-answer:"Commands",
-image:"assets/communication.PNG",
-bg:"assets/robot-bg1.jpg"
-},
-
-{
-type:"listbox",
-question:"Choose the subject related to numbers",
+type:"list",
+question:"Choose the subject that uses numbers",
 options:[
 "Science",
-"Technology",
 "Mathematics",
-"Communication"
+"Robotics",
+"Technology"
 ],
 answer:"Mathematics",
 image:"assets/mathematics.PNG",
@@ -400,38 +377,32 @@ bg:"assets/robot-bg.jpg"
 
 {
 type:"mcq",
-question:"Engineering helps us to make useful things.",
-options:[
-"True",
-"False"
-],
-answer:"True",
-image:"assets/engineering.PNG",
+question:"Robots help humans by making work ________.",
+options:["Easier","Harder","Longer","Noisy"],
+answer:"Easier",
+image:"assets/robots.PNG",
 bg:"assets/robot-bg1.jpg"
 },
 
 {
-type:"mcq",
-question:"Technology means tools and gadgets.",
+type:"image",
+question:"Click the Engineering picture",
 options:[
-"True",
-"False"
+"assets/engineering.PNG",
+"assets/science.PNG",
+"assets/technology.PNG",
+"assets/education.PNG"
 ],
-answer:"True",
-image:"assets/technology.PNG",
+answer:"assets/engineering.PNG",
 bg:"assets/robot-bg.jpg"
 },
 
 {
-type:"image",
-question:"Click the Communication picture",
-options:[
-"assets/communication.PNG",
-"assets/science.PNG",
-"assets/engineering.PNG",
-"assets/mathematics.PNG"
-],
-answer:"assets/communication.PNG",
+type:"truefalse",
+question:"Robots can help doctors.",
+options:["True","False"],
+answer:"True",
+image:"assets/medical-robot.PNG",
 bg:"assets/robot-bg1.jpg"
 }
 
@@ -441,27 +412,35 @@ let current=0;
 let score=0;
 let badges=0;
 let timer;
-let timeLeft=40;
+let time=40;
+
+const question=document.getElementById('question');
+const options=document.getElementById('options');
+const imageArea=document.getElementById('imageArea');
+const extraArea=document.getElementById('extraArea');
+const feedback=document.getElementById('feedback');
 
 function startTimer(){
 
 clearInterval(timer);
 
-timeLeft=40;
+time=40;
 
-document.getElementById('timer').innerHTML=timeLeft;
+document.getElementById('timer').innerHTML=time;
 
 timer=setInterval(()=>{
 
-timeLeft--;
+time--;
 
-document.getElementById('timer').innerHTML=timeLeft;
+document.getElementById('timer').innerHTML=time;
 
-if(timeLeft<=0){
+if(time<=0){
 
 clearInterval(timer);
 
-showNext();
+feedback.innerHTML="⏰ Time Up";
+
+document.getElementById('nextBtn').style.display='inline-block';
 
 }
 
@@ -469,7 +448,7 @@ showNext();
 
 }
 
-function loadQuestion(){
+function showQuestion(){
 
 startTimer();
 
@@ -477,34 +456,38 @@ const q=questions[current];
 
 document.body.style.background=`url('${q.bg}') center/cover`;
 
-document.getElementById('question').innerHTML=q.question;
+question.innerHTML=q.question;
 
-document.getElementById('options').innerHTML='';
-
-document.getElementById('extraArea').innerHTML='';
-
-document.getElementById('feedback').innerHTML='';
+options.innerHTML='';
+imageArea.innerHTML='';
+extraArea.innerHTML='';
+feedback.innerHTML='';
 
 document.getElementById('nextBtn').style.display='none';
 
-document.getElementById('imageArea').innerHTML=q.image ?
-`<img src="${q.image}" class="questionImage">` : '';
+document.getElementById('progress').style.width=
+((current)/questions.length)*100+'%';
 
-updateProgress();
+if(q.image){
 
-if(q.type==="mcq"){
+imageArea.innerHTML=
+`<img src="${q.image}" class="questionImage">`;
 
-q.options.forEach(option=>{
+}
+
+if(q.type==="mcq" || q.type==="truefalse"){
+
+q.options.forEach(opt=>{
 
 const btn=document.createElement('button');
 
 btn.className='optionBtn';
 
-btn.innerHTML=option;
+btn.innerHTML=opt;
 
-btn.onclick=()=>checkAnswer(option===q.answer);
+btn.onclick=()=>check(opt===q.answer);
 
-document.getElementById('options').appendChild(btn);
+options.appendChild(btn);
 
 });
 
@@ -512,31 +495,73 @@ document.getElementById('options').appendChild(btn);
 
 if(q.type==="image"){
 
-q.options.forEach(option=>{
+q.options.forEach(opt=>{
 
 const img=document.createElement('img');
 
-img.src=option;
+img.src=opt;
 
 img.className='questionImage';
 
 img.style.cursor='pointer';
 
-img.onclick=()=>checkAnswer(option===q.answer);
+img.onclick=()=>check(opt===q.answer);
 
-document.getElementById('options').appendChild(img);
+options.appendChild(img);
 
 });
 
 }
 
-if(q.type==="listbox"){
+if(q.type==="drag"){
+
+const area=document.createElement('div');
+
+area.className='dragArea';
+
+const drag=document.createElement('div');
+
+drag.className='dragItem';
+
+drag.innerHTML=q.drag;
+
+drag.draggable=true;
+
+drag.addEventListener('dragstart',e=>{
+e.dataTransfer.setData('text',q.drag);
+});
+
+const drop=document.createElement('div');
+
+drop.className='dropBox';
+
+drop.innerHTML='Drop Here';
+
+drop.addEventListener('dragover',e=>e.preventDefault());
+
+drop.addEventListener('drop',()=>{
+
+correct();
+
+drop.innerHTML=q.drag;
+
+});
+
+area.appendChild(drag);
+
+area.appendChild(drop);
+
+extraArea.appendChild(area);
+
+}
+
+if(q.type==="list"){
 
 const select=document.createElement('select');
 
-q.options.forEach(option=>{
+q.options.forEach(opt=>{
 
-select.innerHTML+=`<option>${option}</option>`;
+select.innerHTML+=`<option>${opt}</option>`;
 
 });
 
@@ -546,99 +571,84 @@ btn.className='optionBtn';
 
 btn.innerHTML='Submit';
 
-btn.onclick=()=>checkAnswer(select.value===q.answer);
+btn.onclick=()=>{
 
-document.getElementById('extraArea').appendChild(select);
-document.getElementById('extraArea').appendChild(document.createElement('br'));
-document.getElementById('extraArea').appendChild(btn);
+if(select.value===q.answer){
+
+correct();
+
+}else{
+
+wrong();
 
 }
 
-if(q.type==="dragdrop"){
+};
 
-const container=document.createElement('div');
+extraArea.appendChild(select);
 
-container.className='drag-container';
+extraArea.appendChild(document.createElement('br'));
 
-const drag=document.createElement('div');
+extraArea.appendChild(document.createElement('br'));
 
-drag.className='drag-item';
-
-drag.innerHTML=q.dragText;
-
-drag.draggable=true;
-
-drag.addEventListener('dragstart',e=>{
-
-e.dataTransfer.setData('text',q.dragText);
-
-});
-
-const drop=document.createElement('div');
-
-drop.className='drop-box';
-
-drop.innerHTML='DROP HERE';
-
-drop.addEventListener('dragover',e=>e.preventDefault());
-
-drop.addEventListener('drop',()=>{
-
-checkAnswer(true);
-
-drop.innerHTML='🤖 Great Job';
-
-});
-
-container.appendChild(drag);
-container.appendChild(drop);
-
-document.getElementById('extraArea').appendChild(container);
+extraArea.appendChild(btn);
 
 }
 
 }
 
-function checkAnswer(correct){
+function check(ans){
+
+if(ans){
+
+correct();
+
+}else{
+
+wrong();
+
+}
+
+}
+
+function correct(){
 
 clearInterval(timer);
 
-if(correct){
+feedback.innerHTML="✅ Correct";
 
-document.getElementById('feedback').innerHTML='✅ Correct';
-
-document.getElementById('feedback').style.color='#00ff95';
+feedback.style.color='#00ff95';
 
 document.getElementById('correctSound').play();
-
-score++;
-badges++;
 
 confetti({
 particleCount:250,
 spread:120
 });
 
-}else{
+score++;
 
-document.getElementById('feedback').innerHTML='❌ Wrong';
+badges++;
 
-document.getElementById('feedback').style.color='red';
+document.getElementById('score').innerHTML=score;
+
+document.getElementById('badges').innerHTML=badges;
+
+document.getElementById('nextBtn').style.display='inline-block';
+
+}
+
+function wrong(){
+
+clearInterval(timer);
+
+feedback.innerHTML="❌ Wrong";
+
+feedback.style.color='red';
 
 document.getElementById('wrongSound').play();
 
-}
-
-document.getElementById('score').innerHTML=score;
-document.getElementById('badge').innerHTML=badges;
-
-showNext();
-
-}
-
-function showNext(){
-
-document.getElementById('nextBtn').style.display='block';
+document.getElementById('nextBtn').style.display='inline-block';
 
 }
 
@@ -648,7 +658,7 @@ current++;
 
 if(current<questions.length){
 
-loadQuestion();
+showQuestion();
 
 }else{
 
@@ -657,14 +667,6 @@ showFinal();
 }
 
 };
-
-function updateProgress(){
-
-let progress=((current)/questions.length)*100;
-
-document.getElementById('progress').style.width=progress+'%';
-
-}
 
 function showFinal(){
 
@@ -675,23 +677,27 @@ document.getElementById('finalScreen').style.display='block';
 document.getElementById('finalScore').innerHTML=
 `⭐ Your Score: ${score}/10`;
 
-let performance="";
+let rank='';
 
-if(score<=4){
+if(score>=9){
 
-performance="😔 Beginner - Need to Improve";
+rank='🏆 CHAMPION';
 
-}else if(score<=7){
+}else if(score>=6){
 
-performance="👍 Good Job - Keep Practicing";
+rank='👍 EXCELLENT';
+
+}else if(score>=3){
+
+rank='🙂 NEED TO IMPROVE';
 
 }else{
 
-performance="🏆 STEM Champion - Excellent Work!";
+rank='📘 BEGINNER';
 
 }
 
-document.getElementById('performance').innerHTML=performance;
+document.getElementById('rank').innerHTML=rank;
 
 confetti({
 particleCount:500,
@@ -700,7 +706,7 @@ spread:180
 
 }
 
-loadQuestion();
+showQuestion();
 
 </script>
 

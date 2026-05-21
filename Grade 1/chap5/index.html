@@ -2,213 +2,233 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Mouse & Keyboard Adventure</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
 
+:root{
+--primary:#1a237e;
+--secondary:#ff6f00;
+--success:#2e7d32;
+--danger:#d32f2f;
+--light:#ffffff;
+}
+
 *{
+box-sizing:border-box;
 margin:0;
 padding:0;
-box-sizing:border-box;
-font-family:'Comic Sans MS',sans-serif;
+touch-action:manipulation;
 }
 
 body{
+font-family:'Comic Sans MS',sans-serif;
 background:linear-gradient(135deg,#4facfe,#00f2fe,#43e97b);
-min-height:100vh;
-overflow-x:hidden;
-color:white;
-}
-
-.overlay{
-background:rgba(0,0,0,0.3);
-min-height:100vh;
-padding:15px;
-}
-
-.container{
-max-width:1200px;
-margin:auto;
-padding-bottom:120px;
-}
-
-.logo{
-width:130px;
-display:block;
-margin:auto;
-margin-bottom:10px;
-}
-
-h1{
-text-align:center;
-font-size:45px;
-color:#FFD700;
-text-shadow:2px 2px 8px black;
-margin-bottom:10px;
-}
-
-.topbar{
-display:flex;
-justify-content:center;
-gap:25px;
-flex-wrap:wrap;
-font-size:24px;
-background:rgba(255,255,255,0.15);
-padding:12px;
-border-radius:20px;
-margin-bottom:20px;
-backdrop-filter:blur(5px);
-}
-
-.card{
-background:rgba(255,255,255,0.18);
-padding:25px;
-border-radius:25px;
-backdrop-filter:blur(8px);
-text-align:center;
-}
-
-#question{
-font-size:30px;
-margin-bottom:20px;
-}
-
-#options{
 display:flex;
 justify-content:center;
 align-items:center;
-gap:20px;
-flex-wrap:wrap;
-margin-top:20px;
-}
-
-.questionImage{
-width:220px;
-height:180px;
-object-fit:contain;
-background:white;
+min-height:100vh;
 padding:10px;
-border-radius:20px;
-cursor:pointer;
-transition:0.3s;
-box-shadow:0 5px 15px rgba(0,0,0,0.3);
 }
 
-.questionImage:hover{
-transform:scale(1.08);
-background:#fff59d;
-}
-
-.optionBtn{
-padding:15px 25px;
-font-size:22px;
-border:none;
-border-radius:15px;
-cursor:pointer;
-font-weight:bold;
-background:linear-gradient(135deg,#ffeb3b,#ff9800);
-color:black;
-transition:0.3s;
-}
-
-.optionBtn:hover{
-transform:scale(1.05);
-}
-
-.radioBox{
-background:white;
-padding:15px;
-border-radius:15px;
-color:black;
-font-size:22px;
-width:260px;
-text-align:left;
-}
-
-.feedback{
-font-size:30px;
-font-weight:bold;
-margin-top:20px;
-text-align:center;
-}
-
-.nextArea{
-position:fixed;
-bottom:0;
-left:0;
+.screen{
+display:none;
 width:100%;
-background:rgba(0,0,0,0.7);
-padding:10px;
-text-align:center;
-z-index:999;
-}
-
-#nextBtn{
-padding:15px 45px;
-font-size:24px;
-border:none;
-border-radius:15px;
-background:linear-gradient(135deg,#00ff95,#00c853);
-color:white;
-display:none;
-cursor:pointer;
-font-weight:bold;
-}
-
-.finalScreen{
-display:none;
-background:rgba(255,255,255,0.95);
-color:black;
-padding:30px;
+max-width:650px;
+background:white;
 border-radius:25px;
+padding:25px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
 text-align:center;
-margin-top:30px;
 }
 
-.playBtn{
-padding:15px 30px;
-font-size:22px;
-background:#2196F3;
-color:white;
-border:none;
-border-radius:15px;
-cursor:pointer;
-margin-top:20px;
+.active{
+display:block;
 }
 
-input{
-padding:15px;
-font-size:24px;
-border-radius:15px;
-border:none;
-width:300px;
-text-align:center;
-margin-top:20px;
-}
-
-@media(max-width:768px){
-
-.questionImage{
-width:140px;
-height:120px;
-}
-
-.optionBtn{
-font-size:18px;
-padding:12px 18px;
+.logo{
+width:120px;
+margin-bottom:10px;
 }
 
 h1{
-font-size:32px;
+color:var(--primary);
+margin-bottom:10px;
 }
 
-#question{
+.info-card{
+background:#e8eaf6;
+padding:15px;
+border-radius:15px;
+margin-bottom:15px;
+text-align:left;
+border-left:6px solid var(--primary);
+}
+
+.rules{
+background:#fff3e0;
+padding:15px;
+border-radius:15px;
+margin-bottom:20px;
+text-align:left;
+}
+
+.rules h3{
+color:#e65100;
+margin-bottom:8px;
+}
+
+.btn{
+background:var(--secondary);
+color:white;
+border:none;
+padding:15px;
+width:100%;
+border-radius:50px;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+margin-top:15px;
+}
+
+.btn:hover{
+opacity:0.9;
+}
+
+.status{
+display:flex;
+justify-content:space-between;
+margin-bottom:15px;
+font-weight:bold;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.question{
+font-size:24px;
+margin-bottom:15px;
+color:var(--primary);
+}
+
+.image-box{
+margin:15px 0;
+}
+
+.question-image{
+width:180px;
+height:150px;
+object-fit:contain;
+background:#f5f5f5;
+padding:10px;
+border-radius:20px;
+}
+
+.options{
+display:flex;
+justify-content:center;
+gap:15px;
+flex-wrap:wrap;
+margin-top:15px;
+}
+
+.option-btn{
+background:#e3f2fd;
+border:3px solid #90caf9;
+padding:12px 18px;
+border-radius:15px;
+cursor:pointer;
+font-size:18px;
+font-weight:bold;
+}
+
+.option-btn:hover{
+background:#bbdefb;
+}
+
+.radio-group{
+text-align:left;
+background:#f5f5f5;
+padding:15px;
+border-radius:15px;
+margin-top:15px;
+}
+
+.radio-group label{
+display:block;
+margin-bottom:10px;
+font-size:18px;
+}
+
+.answer-slots{
+display:flex;
+justify-content:center;
+gap:8px;
+margin:20px 0;
+flex-wrap:wrap;
+}
+
+.slot{
+width:40px;
+height:50px;
+border-bottom:3px solid #999;
+font-size:28px;
+font-weight:bold;
+display:flex;
+align-items:center;
+justify-content:center;
+color:var(--primary);
+}
+
+.letter-bank{
+display:flex;
+justify-content:center;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.tile{
+width:45px;
+height:45px;
+background:var(--primary);
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+border-radius:10px;
 font-size:22px;
+cursor:pointer;
+box-shadow:0 4px #0d144d;
 }
 
+.tile.disabled{
+opacity:0.2;
+pointer-events:none;
+}
+
+.feedback{
+margin-top:15px;
+font-size:22px;
+font-weight:bold;
+min-height:30px;
+}
+
+.final-score{
+font-size:50px;
+font-weight:bold;
+color:var(--secondary);
+margin:20px 0;
+}
+
+input{
+padding:14px;
+width:100%;
+border-radius:12px;
+border:2px solid #ccc;
+font-size:18px;
+margin-top:15px;
 }
 
 </style>
@@ -219,76 +239,81 @@ font-size:22px;
 <audio id="correctSound" src="assets/correct-1.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 
-<div class="overlay">
-
-<div class="container">
+<div id="start-screen" class="screen active">
 
 <img src="assets/innovine-logo.png" class="logo">
 
-<div id="startScreen">
-
 <h1>⌨️ Mouse & Keyboard Adventure 🖱️</h1>
 
-<div class="card">
+<div class="info-card">
+<b>Grade:</b> 1<br>
+<b>Subject:</b> ICT<br>
+<b>Topic:</b> Mouse & Keyboard Keys
+</div>
 
-<h2>Enter Your Name</h2>
+<div class="rules">
 
-<input type="text" id="studentName" placeholder="Enter Name">
+<h3>📜 Rules</h3>
 
-<br><br>
+<ul style="padding-left:20px;">
+<li>Answer image and keyboard questions.</li>
+<li>Some questions have 2 attempts.</li>
+<li>Unscramble the keyboard word.</li>
+<li>Earn badges and become champion!</li>
+</ul>
 
-<button class="optionBtn" onclick="startGame()">
+</div>
+
+<input type="text" id="studentName" placeholder="Enter Your Name">
+
+<button class="btn" onclick="startGame()">
 Start Game
 </button>
 
 </div>
 
-</div>
+<div id="game-screen" class="screen">
 
-<div id="gameScreen" style="display:none;">
-
-<div class="topbar">
+<div class="status">
 
 <div>⭐ Score: <span id="score">0</span></div>
 
 <div>🏆 Badges: <span id="badges">0</span></div>
 
-<div>⏰ <span id="timer">40</span>s</div>
+<div>🎮 Question: <span id="round">1</span>/10</div>
 
 </div>
 
-<div class="card">
+<div class="question" id="question"></div>
 
-<h2 id="question"></h2>
+<div class="image-box" id="image-box"></div>
 
-<div id="imageArea"></div>
-
-<div id="options"></div>
+<div id="content"></div>
 
 <div class="feedback" id="feedback"></div>
 
-</div>
-
-</div>
-
-<div class="finalScreen" id="finalScreen">
-
-<h1>🎉 Great Job 🎉</h1>
-
-<h2 id="finalMessage"></h2>
-
-<h2 id="rank"></h2>
-
-<button onclick="location.reload()" class="playBtn">
-Play Again
+<button class="btn" id="nextBtn" style="display:none;" onclick="nextQuestion()">
+Next ➜
 </button>
 
 </div>
 
-</div>
+<div id="final-screen" class="screen">
 
-<div class="nextArea">
-<button id="nextBtn">Next ➜</button>
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🎉 Game Completed 🎉</h1>
+
+<div id="final-msg"></div>
+
+<div class="final-score" id="final-score"></div>
+
+<h2 id="rank"></h2>
+
+<button class="btn" onclick="location.reload()">
+Play Again
+</button>
+
 </div>
 
 <script>
@@ -307,46 +332,15 @@ answer:"assets/alphabet key.PNG"
 },
 
 {
-type:"image",
-question:"Click the Number Key",
-options:[
-"assets/number-key.PNG",
-"assets/backspace.PNG",
-"assets/spacebar.PNG"
-],
-answer:"assets/number-key.PNG"
-},
-
-{
 type:"radio",
-question:"Which key moves cursor to next line?",
+question:"Which key gives space between words?",
+image:"assets/spacebar.PNG",
 options:[
 "Enter Key",
-"Shift Key",
+"Spacebar",
 "Delete Key"
 ],
-answer:"Enter Key",
-image:"assets/enter.PNG"
-},
-
-{
-type:"truefalse",
-question:"Spacebar gives space between words.",
-options:["True","False"],
-answer:"True",
-image:"assets/spacebar.PNG"
-},
-
-{
-type:"list",
-question:"Which key deletes letters?",
-options:[
-"Delete Key",
-"Arrow Key",
-"Caps Lock"
-],
-answer:"Delete Key",
-image:"assets/delete.PNG"
+answer:"Spacebar"
 },
 
 {
@@ -361,35 +355,28 @@ answer:"assets/arrow-key.PNG"
 },
 
 {
-type:"radio",
-question:"Which key makes capital letters?",
-options:[
-"Caps Lock",
-"Spacebar",
-"Backspace"
-],
-answer:"Caps Lock",
-image:"assets/capslock.PNG"
-},
-
-{
 type:"truefalse",
-question:"Backspace removes letters from left side.",
-options:["True","False"],
-answer:"True",
-image:"assets/backspace.PNG"
+question:"Caps Lock makes capital letters.",
+image:"assets/capslock.PNG",
+answer:"True"
 },
 
 {
-type:"list",
-question:"Which key is used for big letters?",
+type:"unscramble",
+question:"Unscramble the keyboard word",
+word:"SHIFT"
+},
+
+{
+type:"radio",
+question:"Which key removes letters?",
+image:"assets/backspace.PNG",
 options:[
+"Delete Key",
 "Shift Key",
-"Arrow Key",
-"Delete Key"
+"Arrow Key"
 ],
-answer:"Shift Key",
-image:"assets/shift.PNG"
+answer:"Delete Key"
 },
 
 {
@@ -401,119 +388,115 @@ options:[
 "assets/backspace.PNG"
 ],
 answer:"assets/enter.PNG"
+},
+
+{
+type:"truefalse",
+question:"Number keys are used to type numbers.",
+image:"assets/number-key.PNG",
+answer:"True"
+},
+
+{
+type:"image",
+question:"Click the Delete Key",
+options:[
+"assets/delete.PNG",
+"assets/shift.PNG",
+"assets/alphabet key.PNG"
+],
+answer:"assets/delete.PNG"
+},
+
+{
+type:"radio",
+question:"Which key is used for capital letters?",
+image:"assets/shift.PNG",
+options:[
+"Shift Key",
+"Spacebar",
+"Arrow Key"
+],
+answer:"Shift Key"
 }
 
 ];
 
-let studentName="";
 let current=0;
 let score=0;
 let badges=0;
-let timer;
-let time=40;
-
-const question=document.getElementById('question');
-const options=document.getElementById('options');
-const imageArea=document.getElementById('imageArea');
-const feedback=document.getElementById('feedback');
+let student="";
+let attempts=2;
+let guess=[];
 
 function startGame(){
 
-studentName=document.getElementById('studentName').value;
+student=document.getElementById('studentName').value;
 
-if(studentName===""){
-alert("Please Enter Your Name");
+if(student===""){
+alert("Please Enter Name");
 return;
 }
 
-document.getElementById('startScreen').style.display='none';
-document.getElementById('gameScreen').style.display='block';
-
-showQuestion();
+changeScreen('game-screen');
+loadQuestion();
 
 }
 
-function startTimer(){
+function changeScreen(id){
 
-clearInterval(timer);
+document.querySelectorAll('.screen').forEach(s=>{
+s.classList.remove('active');
+});
 
-time=40;
-
-document.getElementById('timer').innerHTML=time;
-
-timer=setInterval(()=>{
-
-time--;
-
-document.getElementById('timer').innerHTML=time;
-
-if(time<=0){
-
-clearInterval(timer);
-
-feedback.innerHTML="⏰ Time Up!";
-document.getElementById('nextBtn').style.display='inline-block';
+document.getElementById(id).classList.add('active');
 
 }
 
-},1000);
-
-}
-
-function showQuestion(){
-
-startTimer();
-
-const q=questions[current];
-
-question.innerHTML=q.question;
-
-options.innerHTML='';
-imageArea.innerHTML='';
-feedback.innerHTML='';
+function loadQuestion(){
 
 document.getElementById('nextBtn').style.display='none';
 
+const q=questions[current];
+
+document.getElementById('round').innerText=current+1;
+
+document.getElementById('question').innerText=q.question;
+
+document.getElementById('feedback').innerText='';
+
+const imageBox=document.getElementById('image-box');
+const content=document.getElementById('content');
+
+imageBox.innerHTML='';
+content.innerHTML='';
+
 if(q.image){
 
-imageArea.innerHTML=
-`<img src="${q.image}" class="questionImage">`;
+imageBox.innerHTML=
+`<img src="${q.image}" class="question-image">`;
 
 }
 
 if(q.type==="image"){
+
+const div=document.createElement('div');
+div.className='options';
 
 q.options.forEach(opt=>{
 
 const img=document.createElement('img');
 
 img.src=opt;
+img.className='question-image';
 
-img.className='questionImage';
+img.onclick=()=>checkAnswer(opt===q.answer);
 
-img.onclick=()=>check(opt===q.answer);
-
-options.appendChild(img);
-
-});
-
-}
-
-if(q.type==="truefalse"){
-
-q.options.forEach(opt=>{
-
-const btn=document.createElement('button');
-
-btn.className='optionBtn';
-
-btn.innerHTML=opt;
-
-btn.onclick=()=>check(opt===q.answer);
-
-options.appendChild(btn);
+div.appendChild(img);
 
 });
+
+content.appendChild(div);
 
 }
 
@@ -521,131 +504,215 @@ if(q.type==="radio"){
 
 const box=document.createElement('div');
 
-box.className='radioBox';
+box.className='radio-group';
 
 q.options.forEach(opt=>{
 
 box.innerHTML+=`
 <label>
-<input type="radio" name="radioQuestion" value="${opt}">
+<input type="radio" name="radio" value="${opt}">
  ${opt}
-</label><br><br>
+</label>
 `;
 
 });
 
+content.appendChild(box);
+
 const btn=document.createElement('button');
 
-btn.className='optionBtn';
-
-btn.innerHTML='Submit';
+btn.className='btn';
+btn.innerText='Submit';
 
 btn.onclick=()=>{
 
-const selected=document.querySelector('input[name="radioQuestion"]:checked');
+const selected=document.querySelector('input[name="radio"]:checked');
 
 if(selected && selected.value===q.answer){
-correct();
+checkAnswer(true);
 }else{
-wrong();
+checkAnswer(false);
 }
 
 };
 
-options.appendChild(box);
-options.appendChild(btn);
+content.appendChild(btn);
 
 }
 
-if(q.type==="list"){
+if(q.type==="truefalse"){
 
-const select=document.createElement('select');
+const div=document.createElement('div');
+div.className='options';
 
-select.className='optionBtn';
-
-q.options.forEach(opt=>{
-
-select.innerHTML+=`<option>${opt}</option>`;
-
-});
+['True','False'].forEach(opt=>{
 
 const btn=document.createElement('button');
 
-btn.className='optionBtn';
+btn.className='option-btn';
 
-btn.innerHTML='Submit';
+btn.innerText=opt;
 
-btn.onclick=()=>{
+btn.onclick=()=>checkAnswer(opt===q.answer);
 
-if(select.value===q.answer){
-correct();
-}else{
-wrong();
-}
+div.appendChild(btn);
 
-};
-
-options.appendChild(select);
-options.appendChild(btn);
-
-}
-
-}
-
-function check(ans){
-
-if(ans){
-correct();
-}else{
-wrong();
-}
-
-}
-
-function correct(){
-
-clearInterval(timer);
-
-feedback.innerHTML="👏 Correct!";
-feedback.style.color='#00ff95';
-
-document.getElementById('correctSound').play();
-
-confetti({
-particleCount:250,
-spread:120
 });
+
+content.appendChild(div);
+
+}
+
+if(q.type==="unscramble"){
+
+attempts=2;
+guess=[];
+
+const slots=document.createElement('div');
+slots.className='answer-slots';
+slots.id='slots';
+
+for(let i=0;i<q.word.length;i++){
+
+slots.innerHTML+=`<div class="slot"></div>`;
+
+}
+
+const bank=document.createElement('div');
+bank.className='letter-bank';
+
+q.word.split('').sort(()=>Math.random()-0.5).forEach(letter=>{
+
+const tile=document.createElement('div');
+
+tile.className='tile';
+
+tile.innerText=letter;
+
+tile.onclick=()=>handleTile(letter,tile,q.word);
+
+bank.appendChild(tile);
+
+});
+
+content.appendChild(slots);
+content.appendChild(bank);
+
+const clear=document.createElement('button');
+
+clear.className='btn';
+
+clear.innerText='Clear Word';
+
+clear.onclick=resetWord;
+
+content.appendChild(clear);
+
+}
+
+}
+
+function handleTile(letter,tile,target){
+
+if(tile.classList.contains('disabled')) return;
+
+guess.push(letter);
+
+tile.classList.add('disabled');
+
+document.querySelectorAll('.slot')[guess.length-1].innerText=letter;
+
+if(guess.length===target.length){
+
+checkWord(target);
+
+}
+
+}
+
+function resetWord(){
+
+guess=[];
+
+document.querySelectorAll('.slot').forEach(s=>{
+s.innerText='';
+});
+
+document.querySelectorAll('.tile').forEach(t=>{
+t.classList.remove('disabled');
+});
+
+}
+
+function checkWord(target){
+
+const formed=guess.join('');
+
+if(formed===target){
+
+checkAnswer(true);
+
+}else{
+
+attempts--;
+
+if(attempts>0){
+
+document.getElementById('feedback').innerText='Try Again!';
+document.getElementById('feedback').style.color='red';
+
+setTimeout(resetWord,1000);
+
+}else{
+
+checkAnswer(false);
+
+}
+
+}
+
+}
+
+function checkAnswer(correct){
+
+if(correct){
 
 score++;
 badges++;
 
-document.getElementById('score').innerHTML=score;
-document.getElementById('badges').innerHTML=badges;
+document.getElementById('score').innerText=score;
+document.getElementById('badges').innerText=badges;
 
-document.getElementById('nextBtn').style.display='inline-block';
+document.getElementById('feedback').innerText='👏 Correct!';
+document.getElementById('feedback').style.color='green';
 
-}
+document.getElementById('correctSound').play();
 
-function wrong(){
+confetti({
+particleCount:150,
+spread:90
+});
 
-clearInterval(timer);
+}else{
 
-feedback.innerHTML="❌ Wrong!";
-feedback.style.color='red';
+document.getElementById('feedback').innerText='❌ Wrong!';
+document.getElementById('feedback').style.color='red';
 
 document.getElementById('wrongSound').play();
 
-document.getElementById('nextBtn').style.display='inline-block';
+}
+
+document.getElementById('nextBtn').style.display='block';
 
 }
 
-document.getElementById('nextBtn').onclick=()=>{
+function nextQuestion(){
 
 current++;
 
 if(current<questions.length){
 
-showQuestion();
+loadQuestion();
 
 }else{
 
@@ -653,17 +720,18 @@ showFinal();
 
 }
 
-};
+}
 
 function showFinal(){
 
-document.getElementById('gameScreen').style.display='none';
+changeScreen('final-screen');
 
-document.getElementById('finalScreen').style.display='block';
+document.getElementById('final-msg').innerHTML=
+`Congratulations <b>${student}</b><br>
+You have scored`;
 
-document.getElementById('finalMessage').innerHTML=
-`Congratulations ${studentName}! <br>
-You scored ${score}/10`;
+document.getElementById('final-score').innerText=
+`${score}/10`;
 
 let rank='';
 
@@ -673,7 +741,7 @@ rank='🏆 CHAMPION';
 
 }else if(score>=7){
 
-rank='👍 EXCELLENT';
+rank='🌟 EXCELLENT';
 
 }else if(score>=4){
 
@@ -685,11 +753,11 @@ rank='📘 BEGINNER';
 
 }
 
-document.getElementById('rank').innerHTML=rank;
+document.getElementById('rank').innerText=rank;
 
 confetti({
-particleCount:500,
-spread:180
+particleCount:400,
+spread:150
 });
 
 }

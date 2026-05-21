@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>STEM Robot Adventure</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -17,19 +18,25 @@ font-family:'Comic Sans MS',sans-serif;
 }
 
 body{
-background:url('assets/robot-bg.jpg');
-background-size:cover;
-background-position:center;
+background:linear-gradient(135deg,#00c6ff,#0072ff,#ff6ec4,#7873f5);
+background-size:400% 400%;
+animation:bgMove 12s ease infinite;
 min-height:100vh;
 overflow-x:hidden;
 color:white;
-transition:1s;
+}
+
+@keyframes bgMove{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
 }
 
 .overlay{
-background:rgba(0,0,0,0.65);
+background:rgba(0,0,0,0.35);
 min-height:100vh;
 padding:15px;
+backdrop-filter:blur(3px);
 }
 
 .container{
@@ -47,7 +54,7 @@ margin-bottom:10px;
 
 h1{
 text-align:center;
-font-size:48px;
+font-size:50px;
 margin-bottom:10px;
 color:#FFD700;
 }
@@ -55,10 +62,14 @@ color:#FFD700;
 .topbar{
 display:flex;
 justify-content:center;
-gap:30px;
+gap:25px;
 flex-wrap:wrap;
 font-size:24px;
 margin-bottom:15px;
+background:rgba(255,255,255,0.15);
+padding:12px;
+border-radius:20px;
+backdrop-filter:blur(5px);
 }
 
 .progressBox{
@@ -77,16 +88,27 @@ background:linear-gradient(to right,#00e5ff,#00ff95);
 }
 
 .card{
-background:rgba(255,255,255,0.12);
+background:rgba(255,255,255,0.18);
 padding:20px;
 border-radius:25px;
-backdrop-filter:blur(8px);
+backdrop-filter:blur(10px);
+border:2px solid rgba(255,255,255,0.2);
+box-shadow:0 0 20px rgba(255,255,255,0.2);
 }
 
 #question{
 font-size:30px;
 margin-bottom:20px;
 text-align:center;
+}
+
+#options{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:20px;
+flex-wrap:wrap;
+margin-top:20px;
 }
 
 .questionImage{
@@ -96,56 +118,69 @@ object-fit:contain;
 background:white;
 padding:10px;
 border-radius:20px;
-display:block;
-margin:auto;
+cursor:pointer;
+transition:0.3s;
+box-shadow:0 5px 15px rgba(0,0,0,0.3);
+}
+
+.questionImage:hover{
+transform:scale(1.08);
+background:#fff59d;
 }
 
 .optionBtn{
-padding:15px 20px;
+padding:15px 25px;
 font-size:22px;
 border:none;
 border-radius:15px;
 cursor:pointer;
 margin:10px;
 font-weight:bold;
+background:linear-gradient(135deg,#ffeb3b,#ff9800);
+color:black;
+transition:0.3s;
+box-shadow:0 5px 10px rgba(0,0,0,0.3);
 }
 
 .optionBtn:hover{
 transform:scale(1.05);
-background:#ffeb3b;
+background:linear-gradient(135deg,#00e5ff,#00ff95);
 }
 
 .dragArea{
 display:flex;
 justify-content:center;
-gap:25px;
+align-items:center;
+gap:30px;
 flex-wrap:wrap;
 margin-top:25px;
 }
 
 .dragItem{
-padding:18px;
-background:#00e5ff;
+padding:18px 25px;
+background:linear-gradient(135deg,#00e5ff,#00ff95);
 border-radius:15px;
 font-size:24px;
 cursor:grab;
 color:black;
 font-weight:bold;
+box-shadow:0 5px 10px rgba(0,0,0,0.3);
 }
 
 .dropBox{
-width:240px;
-height:120px;
-border:4px dashed white;
+width:260px;
+height:130px;
+border:4px dashed #fff;
 border-radius:20px;
 display:flex;
 justify-content:center;
 align-items:center;
 font-size:24px;
+background:rgba(255,255,255,0.2);
 }
 
 .feedback{
-font-size:28px;
+font-size:30px;
 font-weight:bold;
 margin-top:20px;
 text-align:center;
@@ -156,26 +191,27 @@ position:fixed;
 bottom:0;
 left:0;
 width:100%;
-background:rgba(0,0,0,0.8);
-padding:12px;
+background:rgba(0,0,0,0.65);
+padding:10px;
 text-align:center;
 z-index:999;
 }
 
 #nextBtn{
-padding:14px 40px;
+padding:15px 45px;
 font-size:24px;
 border:none;
 border-radius:15px;
-background:#4CAF50;
+background:linear-gradient(135deg,#00ff95,#00c853);
 color:white;
 display:none;
 cursor:pointer;
+font-weight:bold;
 }
 
 .finalScreen{
 display:none;
-background:white;
+background:rgba(255,255,255,0.95);
 color:black;
 padding:30px;
 border-radius:25px;
@@ -196,23 +232,27 @@ margin-top:20px;
 
 @media(max-width:768px){
 
+.questionImage{
+width:140px;
+height:140px;
+}
+
+.optionBtn{
+font-size:18px;
+padding:12px 18px;
+}
+
 h1{
 font-size:34px;
 }
 
 #question{
-font-size:24px;
-}
-
-.questionImage{
-width:170px;
-height:170px;
+font-size:22px;
 }
 
 }
 
 </style>
-
 </head>
 
 <body>
@@ -282,16 +322,13 @@ options:[
 "assets/mathematics.PNG",
 "assets/technology.PNG"
 ],
-answer:"assets/science.PNG",
-bg:"assets/robot-bg.jpg"
+answer:"assets/science.PNG"
 },
 
 {
 type:"drag",
 question:"Drag COMMAND into the box",
-drag:"COMMAND",
-answer:"COMMAND",
-bg:"assets/robot-bg1.jpg"
+drag:"COMMAND"
 },
 
 {
@@ -299,8 +336,7 @@ type:"truefalse",
 question:"Robots follow commands.",
 options:["True","False"],
 answer:"True",
-image:"assets/robots.PNG",
-bg:"assets/robot-bg.jpg"
+image:"assets/robots.PNG"
 },
 
 {
@@ -312,8 +348,7 @@ options:[
 "Technology"
 ],
 answer:"Mathematics",
-image:"assets/mathematics.PNG",
-bg:"assets/robot-bg1.jpg"
+image:"assets/mathematics.PNG"
 },
 
 {
@@ -324,16 +359,13 @@ options:[
 "assets/education.PNG",
 "assets/science.PNG"
 ],
-answer:"assets/technology.PNG",
-bg:"assets/robot-bg.jpg"
+answer:"assets/technology.PNG"
 },
 
 {
 type:"drag",
 question:"Drag ROBOTICS into the box",
-drag:"ROBOTICS",
-answer:"ROBOTICS",
-bg:"assets/robot-bg1.jpg"
+drag:"ROBOTICS"
 },
 
 {
@@ -341,8 +373,7 @@ type:"truefalse",
 question:"Technology means tools and gadgets.",
 options:["True","False"],
 answer:"True",
-image:"assets/technology.PNG",
-bg:"assets/robot-bg.jpg"
+image:"assets/technology.PNG"
 },
 
 {
@@ -354,8 +385,7 @@ options:[
 "Communication"
 ],
 answer:"Engineering",
-image:"assets/engineering.PNG",
-bg:"assets/robot-bg1.jpg"
+image:"assets/engineering.PNG"
 },
 
 {
@@ -366,8 +396,7 @@ options:[
 "assets/education.PNG",
 "assets/science.PNG"
 ],
-answer:"assets/mathematics.PNG",
-bg:"assets/robot-bg.jpg"
+answer:"assets/mathematics.PNG"
 },
 
 {
@@ -375,8 +404,7 @@ type:"truefalse",
 question:"Robots help humans.",
 options:["True","False"],
 answer:"True",
-image:"assets/helper-robot.PNG",
-bg:"assets/robot-bg1.jpg"
+image:"assets/helper-robot.PNG"
 }
 
 ];
@@ -426,9 +454,6 @@ startTimer();
 
 const q=questions[current];
 
-document.body.style.background=
-`url('${q.bg}') center/cover`;
-
 question.innerHTML=q.question;
 
 options.innerHTML='';
@@ -474,8 +499,6 @@ const img=document.createElement('img');
 img.src=opt;
 
 img.className='questionImage';
-
-img.style.cursor='pointer';
 
 img.onclick=()=>check(opt===q.answer);
 

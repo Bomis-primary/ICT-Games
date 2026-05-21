@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>STEM Robot Adventure</title>
+<title>STEM Robot Adventure - Chapter 2</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -18,24 +17,22 @@ font-family:'Comic Sans MS',sans-serif;
 }
 
 body{
-background:linear-gradient(135deg,#00c6ff,#0072ff,#ff6ec4,#7873f5);
-background-size:400% 400%;
-animation:bgMove 12s ease infinite;
+background:url('assets/robot-bg.jpg');
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+background-attachment:fixed;
 min-height:100vh;
 overflow-x:hidden;
 color:white;
-}
-
-@keyframes bgMove{
-0%{background-position:0% 50%;}
-50%{background-position:100% 50%;}
-100%{background-position:0% 50%;}
+transition:1s;
 }
 
 .overlay{
 background:rgba(0,0,0,0.35);
 min-height:100vh;
 padding:15px;
+backdrop-filter:blur(2px);
 }
 
 .container{
@@ -56,6 +53,7 @@ text-align:center;
 font-size:50px;
 margin-bottom:10px;
 color:#FFD700;
+text-shadow:2px 2px 8px black;
 }
 
 .topbar{
@@ -68,6 +66,7 @@ margin-bottom:15px;
 background:rgba(255,255,255,0.15);
 padding:12px;
 border-radius:20px;
+backdrop-filter:blur(5px);
 }
 
 .progressBox{
@@ -83,6 +82,7 @@ margin-bottom:20px;
 height:100%;
 width:0%;
 background:linear-gradient(to right,#00e5ff,#00ff95);
+transition:0.5s;
 }
 
 .card{
@@ -90,6 +90,7 @@ background:rgba(255,255,255,0.18);
 padding:20px;
 border-radius:25px;
 backdrop-filter:blur(10px);
+border:2px solid rgba(255,255,255,0.2);
 }
 
 #question{
@@ -100,7 +101,6 @@ text-align:center;
 
 #options{
 display:flex;
-flex-direction:row;
 justify-content:center;
 align-items:center;
 gap:20px;
@@ -117,6 +117,7 @@ padding:10px;
 border-radius:20px;
 cursor:pointer;
 transition:0.3s;
+box-shadow:0 5px 15px rgba(0,0,0,0.3);
 }
 
 .questionImage:hover{
@@ -133,6 +134,12 @@ cursor:pointer;
 margin:10px;
 font-weight:bold;
 background:linear-gradient(135deg,#ffeb3b,#ff9800);
+color:black;
+transition:0.3s;
+}
+
+.optionBtn:hover{
+transform:scale(1.05);
 }
 
 .dragArea{
@@ -166,6 +173,24 @@ font-size:24px;
 background:rgba(255,255,255,0.2);
 }
 
+.sequenceBox{
+display:flex;
+justify-content:center;
+gap:15px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.sequenceItem{
+padding:15px 20px;
+background:#ff9800;
+border-radius:15px;
+font-size:22px;
+cursor:pointer;
+font-weight:bold;
+color:black;
+}
+
 .feedback{
 font-size:30px;
 font-weight:bold;
@@ -178,7 +203,7 @@ position:fixed;
 bottom:0;
 left:0;
 width:100%;
-background:rgba(0,0,0,0.65);
+background:rgba(0,0,0,0.7);
 padding:10px;
 text-align:center;
 z-index:999;
@@ -222,10 +247,6 @@ margin-top:20px;
 .questionImage{
 width:140px;
 height:140px;
-}
-
-#options{
-gap:10px;
 }
 
 .optionBtn{
@@ -318,8 +339,15 @@ answer:"assets/helper-robot.PNG"
 
 {
 type:"drag",
-question:"Drag FACTORY ROBOT into the box",
-drag:"FACTORY ROBOT"
+question:"Drag HELPER ROBOT into the box",
+drag:"HELPER ROBOT"
+},
+
+{
+type:"unscramble",
+question:"Unscramble the word",
+options:["ROBOT","TOBOR","BOROT"],
+answer:"ROBOT"
 },
 
 {
@@ -332,14 +360,24 @@ image:"assets/medical-robot.PNG"
 
 {
 type:"list",
-question:"Choose the robot going to space",
+question:"Choose the robot used in space",
 options:[
+"Factory Robot",
 "Exploration Robot",
-"Helper Robot",
-"Factory Robot"
+"Medical Robot"
 ],
 answer:"Exploration Robot",
 image:"assets/exploration-robot.PNG"
+},
+
+{
+type:"sequence",
+question:"Arrange robot work from START to END",
+sequence:[
+"Robot gets command",
+"Robot starts work",
+"Robot finishes task"
+]
 },
 
 {
@@ -355,8 +393,8 @@ answer:"assets/factory-robot.PNG"
 
 {
 type:"drag",
-question:"Drag HELPER ROBOT into the box",
-drag:"HELPER ROBOT"
+question:"Drag FACTORY ROBOT into the box",
+drag:"FACTORY ROBOT"
 },
 
 {
@@ -368,36 +406,17 @@ image:"assets/robots.PNG"
 },
 
 {
-type:"list",
-question:"Choose the robot used in hospitals",
-options:[
-"Medical Robot",
-"Factory Robot",
-"Exploration Robot"
-],
-answer:"Medical Robot",
-image:"assets/medical-robot.PNG"
-},
-
-{
-type:"image",
-question:"Click the Exploration Robot",
-options:[
-"assets/exploration-robot.PNG",
-"assets/factory-robot.PNG",
-"assets/helper-robot.PNG"
-],
-answer:"assets/exploration-robot.PNG"
-},
-
-{
-type:"truefalse",
-question:"Factory robots make cars and toys.",
-options:["True","False"],
-answer:"True",
-image:"assets/factory-robot.PNG"
+type:"unscramble",
+question:"Unscramble the word",
+options:["MEDICAL","CALMEDI","MEDCALI"],
+answer:"MEDICAL"
 }
 
+];
+
+const backgrounds=[
+"assets/robot-bg.jpg",
+"assets/robot-bg1.jpg"
 ];
 
 let current=0;
@@ -429,8 +448,7 @@ if(time<=0){
 
 clearInterval(timer);
 
-feedback.innerHTML="⏰ Time Up";
-
+feedback.innerHTML="⏰ Time Up!";
 document.getElementById('nextBtn').style.display='inline-block';
 
 }
@@ -442,6 +460,11 @@ document.getElementById('nextBtn').style.display='inline-block';
 function showQuestion(){
 
 startTimer();
+
+document.body.style.background=
+`url('${backgrounds[current % 2]}')`;
+
+document.body.style.backgroundSize='cover';
 
 const q=questions[current];
 
@@ -463,24 +486,6 @@ imageArea.innerHTML=
 
 }
 
-if(q.type==="truefalse"){
-
-q.options.forEach(opt=>{
-
-const btn=document.createElement('button');
-
-btn.className='optionBtn';
-
-btn.innerHTML=opt;
-
-btn.onclick=()=>check(opt===q.answer);
-
-options.appendChild(btn);
-
-});
-
-}
-
 if(q.type==="image"){
 
 q.options.forEach(opt=>{
@@ -488,7 +493,6 @@ q.options.forEach(opt=>{
 const img=document.createElement('img');
 
 img.src=opt;
-
 img.className='questionImage';
 
 img.onclick=()=>check(opt===q.answer);
@@ -499,18 +503,31 @@ options.appendChild(img);
 
 }
 
+if(q.type==="truefalse"){
+
+q.options.forEach(opt=>{
+
+const btn=document.createElement('button');
+
+btn.className='optionBtn';
+btn.innerHTML=opt;
+
+btn.onclick=()=>check(opt===q.answer);
+
+options.appendChild(btn);
+
+});
+
+}
+
 if(q.type==="drag"){
 
 const area=document.createElement('div');
-
 area.className='dragArea';
 
 const drag=document.createElement('div');
-
 drag.className='dragItem';
-
 drag.innerHTML=q.drag;
-
 drag.draggable=true;
 
 drag.addEventListener('dragstart',e=>{
@@ -518,9 +535,7 @@ e.dataTransfer.setData('text',q.drag);
 });
 
 const drop=document.createElement('div');
-
 drop.className='dropBox';
-
 drop.innerHTML='Drop Here';
 
 drop.addEventListener('dragover',e=>e.preventDefault());
@@ -528,13 +543,11 @@ drop.addEventListener('dragover',e=>e.preventDefault());
 drop.addEventListener('drop',()=>{
 
 correct();
-
 drop.innerHTML=q.drag;
 
 });
 
 area.appendChild(drag);
-
 area.appendChild(drop);
 
 options.appendChild(area);
@@ -544,31 +557,22 @@ options.appendChild(area);
 if(q.type==="list"){
 
 const select=document.createElement('select');
-
 select.className='optionBtn';
 
 q.options.forEach(opt=>{
-
 select.innerHTML+=`<option>${opt}</option>`;
-
 });
 
 const btn=document.createElement('button');
-
 btn.className='optionBtn';
-
 btn.innerHTML='Submit';
 
 btn.onclick=()=>{
 
 if(select.value===q.answer){
-
 correct();
-
 }else{
-
 wrong();
-
 }
 
 };
@@ -578,18 +582,65 @@ options.appendChild(btn);
 
 }
 
+if(q.type==="unscramble"){
+
+q.options.forEach(opt=>{
+
+const btn=document.createElement('button');
+
+btn.className='optionBtn';
+btn.innerHTML=opt;
+
+btn.onclick=()=>{
+
+if(opt===q.answer){
+correct();
+}else{
+wrong();
+}
+
+};
+
+options.appendChild(btn);
+
+});
+
+}
+
+if(q.type==="sequence"){
+
+const area=document.createElement('div');
+area.className='sequenceBox';
+
+q.sequence.forEach(item=>{
+
+const div=document.createElement('div');
+
+div.className='sequenceItem';
+div.innerHTML=item;
+
+div.onclick=()=>{
+
+correct();
+
+};
+
+area.appendChild(div);
+
+});
+
+options.appendChild(area);
+
+}
+
 }
 
 function check(ans){
 
 if(ans){
-
 correct();
-
 }else{
-
 wrong();
-
 }
 
 }
@@ -598,8 +649,7 @@ function correct(){
 
 clearInterval(timer);
 
-feedback.innerHTML="✅ Correct";
-
+feedback.innerHTML="✅ Correct!";
 feedback.style.color='#00ff95';
 
 document.getElementById('correctSound').play();
@@ -613,7 +663,6 @@ score++;
 badges++;
 
 document.getElementById('score').innerHTML=score;
-
 document.getElementById('badges').innerHTML=badges;
 
 document.getElementById('nextBtn').style.display='inline-block';
@@ -624,8 +673,7 @@ function wrong(){
 
 clearInterval(timer);
 
-feedback.innerHTML="❌ Wrong";
-
+feedback.innerHTML="❌ Wrong!";
 feedback.style.color='red';
 
 document.getElementById('wrongSound').play();
@@ -639,13 +687,9 @@ document.getElementById('nextBtn').onclick=()=>{
 current++;
 
 if(current<questions.length){
-
 showQuestion();
-
 }else{
-
 showFinal();
-
 }
 
 };
@@ -662,21 +706,13 @@ document.getElementById('finalScore').innerHTML=
 let rank='';
 
 if(score===10){
-
 rank='🏆 CHAMPION';
-
 }else if(score>=7){
-
 rank='👍 EXCELLENT';
-
 }else if(score>=4){
-
 rank='🙂 NEED TO IMPROVE';
-
 }else{
-
 rank='📘 BEGINNER';
-
 }
 
 document.getElementById('rank').innerHTML=rank;

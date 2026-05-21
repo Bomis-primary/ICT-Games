@@ -1,1 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Grade 1 ICT - Chapter 8 Interactive Game</title>
 
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:url('assets/bg.jpg') no-repeat center center/cover;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.game-container{
+    width:90%;
+    max-width:900px;
+    background:rgba(255,255,255,0.92);
+    border-radius:20px;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 0 15px rgba(0,0,0,0.3);
+}
+
+.logo{
+    width:120px;
+    margin-bottom:10px;
+}
+
+h1{
+    color:#ff6600;
+    margin-bottom:15px;
+}
+
+#question{
+    font-size:28px;
+    margin:20px 0;
+    color:#333;
+}
+
+.option-btn{
+    width:80%;
+    padding:15px;
+    margin:10px;
+    border:none;
+    border-radius:12px;
+    font-size:20px;
+    cursor:pointer;
+    background:#4da6ff;
+    color:white;
+    transition:0.3s;
+}
+
+.option-btn:hover{
+    background:#0066cc;
+}
+
+.correct{
+    background:green !important;
+}
+
+.wrong{
+    background:red !important;
+}
+
+#nextBtn{
+    margin-top:20px;
+    padding:12px 30px;
+    border:none;
+    border-radius:10px;
+    background:#ff9900;
+    color:white;
+    font-size:20px;
+    cursor:pointer;
+    display:none;
+}
+
+.score-box{
+    font-size:24px;
+    margin-top:20px;
+    color:#222;
+}
+
+.image-options{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:20px;
+    margin-top:20px;
+}
+
+.image-options img{
+    width:150px;
+    height:150px;
+    object-fit:contain;
+    border:4px solid transparent;
+    border-radius:15px;
+    cursor:pointer;
+    background:white;
+    padding:10px;
+}
+
+.image-options img:hover{
+    transform:scale(1.05);
+}
+
+.result{
+    font-size:32px;
+    color:#ff3300;
+    margin-top:20px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="game-container">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>Grade 1 ICT - Chapter 8</h1>
+
+<div id="question">Question comes here</div>
+
+<div id="options"></div>
+
+<button id="nextBtn">Next</button>
+
+<div class="score-box">
+Score: <span id="score">0</span>
+</div>
+
+<div class="result" id="result"></div>
+
+</div>
+
+<audio id="correctSound" src="assets/correct-1.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
+<script>
+
+const questions = [
+
+{
+    type:"mcq",
+    question:"Which tool is used to draw in Paint?",
+    options:["Brush","Eraser","Stamp","Save"],
+    answer:"Brush"
+},
+
+{
+    type:"mcq",
+    question:"Which tool removes mistakes?",
+    options:["Brush","Eraser","Magic","Text"],
+    answer:"Eraser"
+},
+
+{
+    type:"mcq",
+    question:"Which button is used to save your drawing?",
+    options:["Open","Save","Undo","Exit"],
+    answer:"Save"
+},
+
+{
+    type:"mcq",
+    question:"Which tool adds ready-made pictures?",
+    options:["Stamp","Brush","Fill","Lines"],
+    answer:"Stamp"
+},
+
+{
+    type:"mcq",
+    question:"Which tool fills color inside a shape?",
+    options:["Text","Fill","Undo","Redo"],
+    answer:"Fill"
+},
+
+{
+    type:"mcq",
+    question:"Which tool is used to type words?",
+    options:["Text","Brush","Stamp","Shapes"],
+    answer:"Text"
+},
+
+{
+    type:"mcq",
+    question:"What should you do before closing Paint?",
+    options:["Delete drawing","Save drawing","Restart computer","Print screen"],
+    answer:"Save drawing"
+},
+
+{
+    type:"mcq",
+    question:"Which tool draws straight lines?",
+    options:["Magic","Line Tool","Fill","Stamp"],
+    answer:"Line Tool"
+},
+
+{
+    type:"mcq",
+    question:"Which tool helps make circles and squares?",
+    options:["Shapes Tool","Eraser","Undo","Text"],
+    answer:"Shapes Tool"
+},
+
+{
+    type:"mcq",
+    question:"Which icon is used to undo mistakes?",
+    options:["Undo","Save","Brush","Fill"],
+    answer:"Undo"
+},
+
+{
+    type:"image",
+    question:"Click the Brush Tool",
+    images:[
+        {src:"https://cdn-icons-png.flaticon.com/512/1827/1827933.png", correct:true},
+        {src:"https://cdn-icons-png.flaticon.com/512/54/54702.png", correct:false},
+        {src:"https://cdn-icons-png.flaticon.com/512/748/748113.png", correct:false},
+        {src:"https://cdn-icons-png.flaticon.com/512/1159/1159633.png", correct:false}
+    ]
+},
+
+{
+    type:"image",
+    question:"Click the Eraser Tool",
+    images:[
+        {src:"https://cdn-icons-png.flaticon.com/512/3176/3176363.png", correct:true},
+        {src:"https://cdn-icons-png.flaticon.com/512/1827/1827933.png", correct:false},
+        {src:"https://cdn-icons-png.flaticon.com/512/748/748113.png", correct:false},
+        {src:"https://cdn-icons-png.flaticon.com/512/1159/1159633.png", correct:false}
+    ]
+},
+
+{
+    type:"image",
+    question:"Click the Save Button",
+    images:[
+        {src:"https://cdn-icons-png.flaticon.com/512/84/84380.png", correct:true},
+        {src:"https://cdn-icons-png.flaticon.com/512/1827/1827933.png", correct:false},
+        {src:"https://cdn-icons-png.flaticon.com/512/748/748113.png", correct:false},
+        {src:"https://cdn-icons-png.flaticon.com/512/54/54702.png", correct:false}
+    ]
+},
+
+{
+    type:"image",
+    question:"Click the Stamp Tool",
+    images:[
+        {src:"https://cdn-icons-png.flaticon.com/512/565/565547.png", correct:true},
+        {src:"https://cdn-icons-png.flaticon.com/512/84/84380.png", correct:false},
+        {src:"https://cdn-icons-png.flaticon.com/512/3176/3176363.png", correct:false},
+        {src:"https://cdn-icons-png.flaticon.com/512/748/748113.png", correct:false}
+    ]
+},
+
+{
+    type:"image",
+    question:"Which picture is made using Paint?",
+    images:[
+        {src:"https://cdn.pixabay.com/photo/2016/03/31/19/58/art-1297405_1280.png", correct:true},
+        {src:"https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg", correct:false}
+    ]
+}
+
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+const questionEl = document.getElementById("question");
+const optionsEl = document.getElementById("options");
+const nextBtn = document.getElementById("nextBtn");
+const scoreEl = document.getElementById("score");
+const resultEl = document.getElementById("result");
+
+const correctSound = document.getElementById("correctSound");
+const wrongSound = document.getElementById("wrongSound");
+
+function loadQuestion(){
+
+    nextBtn.style.display = "none";
+    optionsEl.innerHTML = "";
+
+    const q = questions[currentQuestion];
+
+    questionEl.innerText = `Q${currentQuestion+1}. ${q.question}`;
+
+    if(q.type === "mcq"){
+
+        q.options.forEach(option => {
+
+            const btn = document.createElement("button");
+            btn.classList.add("option-btn");
+            btn.innerText = option;
+
+            btn.onclick = () => checkAnswer(btn, option, q.answer);
+
+            optionsEl.appendChild(btn);
+
+        });
+
+    }
+
+    else if(q.type === "image"){
+
+        const imageDiv = document.createElement("div");
+        imageDiv.classList.add("image-options");
+
+        q.images.forEach(imgData => {
+
+            const img = document.createElement("img");
+            img.src = imgData.src;
+
+            img.onclick = () => {
+
+                if(imgData.correct){
+
+                    img.style.border = "5px solid green";
+                    correctSound.play();
+                    score++;
+                    scoreEl.innerText = score;
+
+                }else{
+
+                    img.style.border = "5px solid red";
+                    wrongSound.play();
+
+                }
+
+                disableImages();
+                nextBtn.style.display = "inline-block";
+
+            };
+
+            imageDiv.appendChild(img);
+
+        });
+
+        optionsEl.appendChild(imageDiv);
+
+    }
+
+}
+
+function checkAnswer(button, selected, correct){
+
+    const allBtns = document.querySelectorAll(".option-btn");
+
+    allBtns.forEach(btn => btn.disabled = true);
+
+    if(selected === correct){
+
+        button.classList.add("correct");
+        correctSound.play();
+        score++;
+
+    }else{
+
+        button.classList.add("wrong");
+        wrongSound.play();
+
+        allBtns.forEach(btn => {
+
+            if(btn.innerText === correct){
+                btn.classList.add("correct");
+            }
+
+        });
+
+    }
+
+    scoreEl.innerText = score;
+
+    nextBtn.style.display = "inline-block";
+
+}
+
+function disableImages(){
+
+    const images = document.querySelectorAll(".image-options img");
+
+    images.forEach(img => {
+        img.style.pointerEvents = "none";
+    });
+
+}
+
+nextBtn.addEventListener("click", () => {
+
+    currentQuestion++;
+
+    if(currentQuestion < questions.length){
+
+        loadQuestion();
+
+    }else{
+
+        showResult();
+
+    }
+
+});
+
+function showResult(){
+
+    questionEl.style.display = "none";
+    optionsEl.style.display = "none";
+    nextBtn.style.display = "none";
+
+    resultEl.innerHTML = `
+    🎉 Game Over! <br><br>
+    Your Score: ${score} / ${questions.length}
+    `;
+
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>

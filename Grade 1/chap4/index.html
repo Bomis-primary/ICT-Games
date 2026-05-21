@@ -1,1 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Working With Mouse Game</title>
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Comic Sans MS',sans-serif;
+}
+
+body{
+background:url('assets/Mouse-bg.jpg');
+background-size:cover;
+background-position:center;
+background-repeat:no-repeat;
+background-attachment:fixed;
+min-height:100vh;
+overflow-x:hidden;
+color:white;
+}
+
+.overlay{
+background:rgba(0,0,0,0.35);
+min-height:100vh;
+padding:15px;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+padding-bottom:120px;
+}
+
+.logo{
+width:130px;
+display:block;
+margin:auto;
+margin-bottom:10px;
+}
+
+h1{
+text-align:center;
+font-size:45px;
+color:#FFD700;
+text-shadow:2px 2px 8px black;
+margin-bottom:10px;
+}
+
+.topbar{
+display:flex;
+justify-content:center;
+gap:25px;
+flex-wrap:wrap;
+font-size:24px;
+background:rgba(255,255,255,0.15);
+padding:12px;
+border-radius:20px;
+margin-bottom:20px;
+backdrop-filter:blur(5px);
+}
+
+.card{
+background:rgba(255,255,255,0.18);
+padding:25px;
+border-radius:25px;
+backdrop-filter:blur(8px);
+text-align:center;
+}
+
+#question{
+font-size:30px;
+margin-bottom:20px;
+}
+
+#options{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:20px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.questionImage{
+width:220px;
+height:180px;
+object-fit:contain;
+background:white;
+padding:10px;
+border-radius:20px;
+cursor:pointer;
+transition:0.3s;
+box-shadow:0 5px 15px rgba(0,0,0,0.3);
+}
+
+.questionImage:hover{
+transform:scale(1.08);
+background:#fff59d;
+}
+
+.optionBtn{
+padding:15px 25px;
+font-size:22px;
+border:none;
+border-radius:15px;
+cursor:pointer;
+font-weight:bold;
+background:linear-gradient(135deg,#ffeb3b,#ff9800);
+color:black;
+transition:0.3s;
+}
+
+.optionBtn:hover{
+transform:scale(1.05);
+}
+
+.dragArea{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:40px;
+flex-wrap:wrap;
+margin-top:25px;
+}
+
+.dragItem{
+padding:18px 25px;
+background:linear-gradient(135deg,#00e5ff,#00ff95);
+border-radius:15px;
+font-size:24px;
+cursor:grab;
+color:black;
+font-weight:bold;
+}
+
+.dropBox{
+width:250px;
+height:130px;
+border:4px dashed #fff;
+border-radius:20px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:24px;
+background:rgba(255,255,255,0.2);
+}
+
+.feedback{
+font-size:30px;
+font-weight:bold;
+margin-top:20px;
+text-align:center;
+}
+
+.nextArea{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+background:rgba(0,0,0,0.7);
+padding:10px;
+text-align:center;
+z-index:999;
+}
+
+#nextBtn{
+padding:15px 45px;
+font-size:24px;
+border:none;
+border-radius:15px;
+background:linear-gradient(135deg,#00ff95,#00c853);
+color:white;
+display:none;
+cursor:pointer;
+font-weight:bold;
+}
+
+.finalScreen{
+display:none;
+background:rgba(255,255,255,0.95);
+color:black;
+padding:30px;
+border-radius:25px;
+text-align:center;
+margin-top:30px;
+}
+
+.playBtn{
+padding:15px 30px;
+font-size:22px;
+background:#2196F3;
+color:white;
+border:none;
+border-radius:15px;
+cursor:pointer;
+margin-top:20px;
+}
+
+input{
+padding:15px;
+font-size:24px;
+border-radius:15px;
+border:none;
+width:300px;
+text-align:center;
+margin-top:20px;
+}
+
+.wordGrid{
+width:300px;
+border-radius:20px;
+margin-top:20px;
+}
+
+@media(max-width:768px){
+
+.questionImage{
+width:140px;
+height:120px;
+}
+
+.optionBtn{
+font-size:18px;
+padding:12px 18px;
+}
+
+h1{
+font-size:32px;
+}
+
+#question{
+font-size:22px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<audio id="correctSound" src="assets/correct-1.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
+<div class="overlay">
+
+<div class="container">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<div id="startScreen">
+
+<h1>🖱️ Working With Mouse Game</h1>
+
+<div class="card">
+
+<h2>Enter Your Name</h2>
+
+<input type="text" id="studentName" placeholder="Enter Name">
+
+<br>
+
+<button class="optionBtn" onclick="startGame()">
+Start Game
+</button>
+
+</div>
+
+</div>
+
+<div id="gameScreen" style="display:none;">
+
+<div class="topbar">
+
+<div>⭐ Score: <span id="score">0</span></div>
+
+<div>🏆 Badges: <span id="badges">0</span></div>
+
+<div>⏰ <span id="timer">40</span>s</div>
+
+</div>
+
+<div class="card">
+
+<h2 id="question"></h2>
+
+<div id="imageArea"></div>
+
+<div id="options"></div>
+
+<div class="feedback" id="feedback"></div>
+
+</div>
+
+</div>
+
+<div class="finalScreen" id="finalScreen">
+
+<h1>🎉 Congratulations 🎉</h1>
+
+<h2 id="finalMessage"></h2>
+
+<h2 id="rank"></h2>
+
+<button onclick="location.reload()" class="playBtn">
+Play Again
+</button>
+
+</div>
+
+</div>
+
+<div class="nextArea">
+<button id="nextBtn">Next ➜</button>
+</div>
+
+<script>
+
+const questions=[
+
+{
+type:"image",
+question:"Click the LEFT CLICK picture",
+options:[
+"assets/left-click.PNG",
+"assets/right-click.PNG",
+"assets/mouse finger.PNG"
+],
+answer:"assets/left-click.PNG"
+},
+
+{
+type:"image",
+question:"Click the RIGHT CLICK picture",
+options:[
+"assets/right-click.PNG",
+"assets/left-click.PNG",
+"assets/drag-n-drop.PNG"
+],
+answer:"assets/right-click.PNG"
+},
+
+{
+type:"drag",
+question:"Drag Mouse to DRAG AND DROP",
+drag:"Mouse",
+answer:"DRAG AND DROP"
+},
+
+{
+type:"truefalse",
+question:"Mouse helps us point and click.",
+options:["True","False"],
+answer:"True",
+image:"assets/mouse finger.PNG"
+},
+
+{
+type:"image",
+question:"Choose the Drag and Drop action",
+options:[
+"assets/drag-n-drop.PNG",
+"assets/right-click.PNG",
+"assets/left-click.PNG"
+],
+answer:"assets/drag-n-drop.PNG"
+},
+
+{
+type:"list",
+question:"Which mouse button opens menu?",
+options:[
+"Right Click",
+"Left Click",
+"Scroll"
+],
+answer:"Right Click",
+image:"assets/right-click.PNG"
+},
+
+{
+type:"wordgrid",
+question:"Find the word MOUSE in the grid",
+image:"assets/word-grid.PNG",
+options:[
+"MOUSE",
+"MONITOR",
+"KEYBOARD"
+],
+answer:"MOUSE"
+},
+
+{
+type:"truefalse",
+question:"We should hold mouse properly.",
+options:["True","False"],
+answer:"True",
+image:"assets/mouse finger.PNG"
+},
+
+{
+type:"list",
+question:"Which action is used to move object?",
+options:[
+"Drag and Drop",
+"Typing",
+"Printing"
+],
+answer:"Drag and Drop",
+image:"assets/drag-n-drop.PNG"
+},
+
+{
+type:"image",
+question:"Click the picture showing proper mouse use",
+options:[
+"assets/mouse finger.PNG",
+"assets/right-click.PNG",
+"assets/left-click.PNG"
+],
+answer:"assets/mouse finger.PNG"
+}
+
+];
+
+let studentName="";
+let current=0;
+let score=0;
+let badges=0;
+let timer;
+let time=40;
+
+const question=document.getElementById('question');
+const options=document.getElementById('options');
+const imageArea=document.getElementById('imageArea');
+const feedback=document.getElementById('feedback');
+
+function startGame(){
+
+studentName=document.getElementById('studentName').value;
+
+if(studentName===""){
+alert("Please Enter Your Name");
+return;
+}
+
+document.getElementById('startScreen').style.display='none';
+document.getElementById('gameScreen').style.display='block';
+
+showQuestion();
+
+}
+
+function startTimer(){
+
+clearInterval(timer);
+
+time=40;
+
+document.getElementById('timer').innerHTML=time;
+
+timer=setInterval(()=>{
+
+time--;
+
+document.getElementById('timer').innerHTML=time;
+
+if(time<=0){
+
+clearInterval(timer);
+
+feedback.innerHTML="⏰ Time Up!";
+document.getElementById('nextBtn').style.display='inline-block';
+
+}
+
+},1000);
+
+}
+
+function showQuestion(){
+
+startTimer();
+
+const q=questions[current];
+
+question.innerHTML=q.question;
+
+options.innerHTML='';
+imageArea.innerHTML='';
+feedback.innerHTML='';
+
+document.getElementById('nextBtn').style.display='none';
+
+if(q.image){
+
+if(q.type==="wordgrid"){
+
+imageArea.innerHTML=
+`<img src="${q.image}" class="wordGrid">`;
+
+}else{
+
+imageArea.innerHTML=
+`<img src="${q.image}" class="questionImage">`;
+
+}
+
+}
+
+if(q.type==="image"){
+
+q.options.forEach(opt=>{
+
+const img=document.createElement('img');
+
+img.src=opt;
+img.className='questionImage';
+
+img.onclick=()=>check(opt===q.answer);
+
+options.appendChild(img);
+
+});
+
+}
+
+if(q.type==="truefalse"){
+
+q.options.forEach(opt=>{
+
+const btn=document.createElement('button');
+
+btn.className='optionBtn';
+
+btn.innerHTML=opt;
+
+btn.onclick=()=>check(opt===q.answer);
+
+options.appendChild(btn);
+
+});
+
+}
+
+if(q.type==="list" || q.type==="wordgrid"){
+
+const select=document.createElement('select');
+
+select.className='optionBtn';
+
+q.options.forEach(opt=>{
+
+select.innerHTML+=`<option>${opt}</option>`;
+
+});
+
+const btn=document.createElement('button');
+
+btn.className='optionBtn';
+
+btn.innerHTML='Submit';
+
+btn.onclick=()=>{
+
+if(select.value===q.answer){
+correct();
+}else{
+wrong();
+}
+
+};
+
+options.appendChild(select);
+options.appendChild(btn);
+
+}
+
+if(q.type==="drag"){
+
+const area=document.createElement('div');
+
+area.className='dragArea';
+
+const drag=document.createElement('div');
+
+drag.className='dragItem';
+
+drag.innerHTML=q.drag;
+
+drag.draggable=true;
+
+drag.addEventListener('dragstart',e=>{
+e.dataTransfer.setData('text',q.drag);
+});
+
+const drop=document.createElement('div');
+
+drop.className='dropBox';
+
+drop.innerHTML=q.answer;
+
+drop.addEventListener('dragover',e=>e.preventDefault());
+
+drop.addEventListener('drop',()=>{
+
+correct();
+
+drop.innerHTML="✅ Correct";
+
+});
+
+area.appendChild(drag);
+area.appendChild(drop);
+
+options.appendChild(area);
+
+}
+
+}
+
+function check(ans){
+
+if(ans){
+correct();
+}else{
+wrong();
+}
+
+}
+
+function correct(){
+
+clearInterval(timer);
+
+feedback.innerHTML="👏 Correct!";
+feedback.style.color='#00ff95';
+
+document.getElementById('correctSound').play();
+
+confetti({
+particleCount:250,
+spread:120
+});
+
+score++;
+badges++;
+
+document.getElementById('score').innerHTML=score;
+document.getElementById('badges').innerHTML=badges;
+
+document.getElementById('nextBtn').style.display='inline-block';
+
+}
+
+function wrong(){
+
+clearInterval(timer);
+
+feedback.innerHTML="❌ Wrong!";
+feedback.style.color='red';
+
+document.getElementById('wrongSound').play();
+
+document.getElementById('nextBtn').style.display='inline-block';
+
+}
+
+document.getElementById('nextBtn').onclick=()=>{
+
+current++;
+
+if(current<questions.length){
+
+showQuestion();
+
+}else{
+
+showFinal();
+
+}
+
+};
+
+function showFinal(){
+
+document.getElementById('gameScreen').style.display='none';
+
+document.getElementById('finalScreen').style.display='block';
+
+document.getElementById('finalMessage').innerHTML=
+`Congratulations ${studentName}! <br>
+You scored ${score}/10`;
+
+let rank='';
+
+if(score===10){
+
+rank='🏆 CHAMPION';
+
+}else if(score>=7){
+
+rank='👍 EXCELLENT';
+
+}else if(score>=4){
+
+rank='🙂 NEED TO IMPROVE';
+
+}else{
+
+rank='📘 BEGINNER';
+
+}
+
+document.getElementById('rank').innerHTML=rank;
+
+confetti({
+particleCount:500,
+spread:180
+});
+
+}
+
+</script>
+
+</body>
+</html>

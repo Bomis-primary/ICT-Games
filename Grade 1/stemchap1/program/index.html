@@ -1,1 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>STEM Robot Adventure</title>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Comic Sans MS',cursive;
+}
+
+body{
+background:url('assets/robot-bg.jpg');
+background-size:cover;
+background-position:center;
+min-height:100vh;
+overflow-x:hidden;
+}
+
+.overlay{
+background:rgba(0,0,0,0.65);
+min-height:100vh;
+padding:15px;
+}
+
+.container{
+max-width:1100px;
+margin:auto;
+}
+
+h1{
+text-align:center;
+color:#FFD700;
+font-size:42px;
+margin-bottom:10px;
+text-shadow:2px 2px 8px black;
+}
+
+.topbar{
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:10px;
+margin-bottom:10px;
+color:white;
+font-size:24px;
+}
+
+.progressBox{
+width:100%;
+height:20px;
+background:#333;
+border-radius:20px;
+overflow:hidden;
+margin-bottom:15px;
+}
+
+.progress{
+height:100%;
+width:0%;
+background:linear-gradient(to right,#00e5ff,#00ff95);
+transition:0.5s;
+}
+
+.gameCard{
+background:rgba(255,255,255,0.12);
+backdrop-filter:blur(8px);
+border-radius:25px;
+padding:20px;
+color:white;
+min-height:520px;
+position:relative;
+padding-bottom:90px;
+}
+
+#question{
+font-size:30px;
+text-align:center;
+margin-bottom:15px;
+}
+
+.questionImage{
+width:220px;
+height:220px;
+object-fit:contain;
+display:block;
+margin:auto;
+background:white;
+border-radius:20px;
+padding:10px;
+}
+
+.options{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
+margin-top:20px;
+}
+
+.optionBtn{
+padding:15px;
+font-size:22px;
+border:none;
+border-radius:15px;
+cursor:pointer;
+font-weight:bold;
+transition:0.3s;
+}
+
+.optionBtn:hover{
+transform:scale(1.05);
+background:#ffeb3b;
+}
+
+#feedback{
+text-align:center;
+font-size:28px;
+font-weight:bold;
+margin-top:15px;
+}
+
+#nextBtn{
+position:absolute;
+bottom:20px;
+right:20px;
+padding:14px 28px;
+font-size:22px;
+border:none;
+border-radius:15px;
+background:#4CAF50;
+color:white;
+cursor:pointer;
+display:none;
+}
+
+.drag-container{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+margin-top:25px;
+}
+
+.drag-item{
+padding:15px 20px;
+background:#00e5ff;
+border-radius:15px;
+font-size:22px;
+font-weight:bold;
+cursor:grab;
+color:black;
+}
+
+.drop-box{
+width:240px;
+height:120px;
+border:4px dashed white;
+border-radius:20px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:24px;
+}
+
+select{
+padding:15px;
+font-size:22px;
+border-radius:15px;
+margin-top:20px;
+width:300px;
+}
+
+.finalScreen{
+display:none;
+background:white;
+color:black;
+padding:30px;
+border-radius:25px;
+text-align:center;
+margin-top:20px;
+}
+
+.finalScreen h2{
+margin:15px;
+}
+
+.robot{
+position:fixed;
+bottom:10px;
+right:15px;
+font-size:80px;
+animation:jump 2s infinite alternate;
+}
+
+@keyframes jump{
+from{transform:translateY(0);}
+to{transform:translateY(-15px);}
+}
+
+@media(max-width:768px){
+
+h1{
+font-size:32px;
+}
+
+#question{
+font-size:24px;
+}
+
+.optionBtn{
+font-size:18px;
+}
+
+.questionImage{
+width:170px;
+height:170px;
+}
+
+#nextBtn{
+bottom:10px;
+right:10px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="overlay">
+
+<div class="robot">🤖</div>
+
+<div class="container">
+
+<h1>🚀 STEM Robot Adventure</h1>
+
+<div class="topbar">
+
+<div>⭐ Score: <span id="score">0</span></div>
+
+<div>🏆 Badges: <span id="badge">0</span></div>
+
+<div>⏰ <span id="timer">40</span>s</div>
+
+</div>
+
+<div class="progressBox">
+<div class="progress" id="progress"></div>
+</div>
+
+<div class="gameCard" id="gameCard">
+
+<h2 id="question"></h2>
+
+<div id="imageArea"></div>
+
+<div id="options" class="options"></div>
+
+<div id="extraArea"></div>
+
+<div id="feedback"></div>
+
+<button id="nextBtn">Next ➜</button>
+
+</div>
+
+<div class="finalScreen" id="finalScreen">
+
+<h1>🎉 Game Completed 🎉</h1>
+
+<h2 id="finalScore"></h2>
+
+<h2 id="performance"></h2>
+
+<button onclick="location.reload()"
+style="padding:15px 30px;
+font-size:22px;
+background:#2196F3;
+color:white;
+border:none;
+border-radius:15px;
+cursor:pointer;">
+Play Again
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<audio id="correctSound" src="assets/correct-1.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
+<script>
+
+const questions=[
+
+{
+type:"mcq",
+question:"What does STEM stand for?",
+options:[
+"Science Technology Engineering Mathematics",
+"Space Train Engine Motor",
+"Sports Toys Energy Music",
+"Science Toys English Maths"
+],
+answer:"Science Technology Engineering Mathematics",
+image:"assets/robots.PNG",
+bg:"assets/robot-bg.jpg"
+},
+
+{
+type:"image",
+question:"Click the Science picture",
+options:[
+"assets/science.PNG",
+"assets/technology.PNG",
+"assets/engineering.PNG",
+"assets/mathematics.PNG"
+],
+answer:"assets/science.PNG",
+bg:"assets/robot-bg1.jpg"
+},
+
+{
+type:"image",
+question:"Click the Technology picture",
+options:[
+"assets/science.PNG",
+"assets/technology.PNG",
+"assets/engineering.PNG",
+"assets/mathematics.PNG"
+],
+answer:"assets/technology.PNG",
+bg:"assets/robot-bg.jpg"
+},
+
+{
+type:"mcq",
+question:"Who helps humans in many ways?",
+options:[
+"Robots",
+"Pencils",
+"Tables",
+"Books"
+],
+answer:"Robots",
+image:"assets/helper-robot.PNG",
+bg:"assets/robot-bg1.jpg"
+},
+
+{
+type:"dragdrop",
+question:"Drag the Robot into the Robot Box",
+dragText:"🤖 ROBOT",
+dropAnswer:"🤖 ROBOT",
+image:"assets/robots.PNG",
+bg:"assets/robot-bg.jpg"
+},
+
+{
+type:"mcq",
+question:"Robots follow special instructions called?",
+options:[
+"Commands",
+"Songs",
+"Games",
+"Stories"
+],
+answer:"Commands",
+image:"assets/communication.PNG",
+bg:"assets/robot-bg1.jpg"
+},
+
+{
+type:"listbox",
+question:"Choose the subject related to numbers",
+options:[
+"Science",
+"Technology",
+"Mathematics",
+"Communication"
+],
+answer:"Mathematics",
+image:"assets/mathematics.PNG",
+bg:"assets/robot-bg.jpg"
+},
+
+{
+type:"mcq",
+question:"Engineering helps us to make useful things.",
+options:[
+"True",
+"False"
+],
+answer:"True",
+image:"assets/engineering.PNG",
+bg:"assets/robot-bg1.jpg"
+},
+
+{
+type:"mcq",
+question:"Technology means tools and gadgets.",
+options:[
+"True",
+"False"
+],
+answer:"True",
+image:"assets/technology.PNG",
+bg:"assets/robot-bg.jpg"
+},
+
+{
+type:"image",
+question:"Click the Communication picture",
+options:[
+"assets/communication.PNG",
+"assets/science.PNG",
+"assets/engineering.PNG",
+"assets/mathematics.PNG"
+],
+answer:"assets/communication.PNG",
+bg:"assets/robot-bg1.jpg"
+}
+
+];
+
+let current=0;
+let score=0;
+let badges=0;
+let timer;
+let timeLeft=40;
+
+function startTimer(){
+
+clearInterval(timer);
+
+timeLeft=40;
+
+document.getElementById('timer').innerHTML=timeLeft;
+
+timer=setInterval(()=>{
+
+timeLeft--;
+
+document.getElementById('timer').innerHTML=timeLeft;
+
+if(timeLeft<=0){
+
+clearInterval(timer);
+
+showNext();
+
+}
+
+},1000);
+
+}
+
+function loadQuestion(){
+
+startTimer();
+
+const q=questions[current];
+
+document.body.style.background=`url('${q.bg}') center/cover`;
+
+document.getElementById('question').innerHTML=q.question;
+
+document.getElementById('options').innerHTML='';
+
+document.getElementById('extraArea').innerHTML='';
+
+document.getElementById('feedback').innerHTML='';
+
+document.getElementById('nextBtn').style.display='none';
+
+document.getElementById('imageArea').innerHTML=q.image ?
+`<img src="${q.image}" class="questionImage">` : '';
+
+updateProgress();
+
+if(q.type==="mcq"){
+
+q.options.forEach(option=>{
+
+const btn=document.createElement('button');
+
+btn.className='optionBtn';
+
+btn.innerHTML=option;
+
+btn.onclick=()=>checkAnswer(option===q.answer);
+
+document.getElementById('options').appendChild(btn);
+
+});
+
+}
+
+if(q.type==="image"){
+
+q.options.forEach(option=>{
+
+const img=document.createElement('img');
+
+img.src=option;
+
+img.className='questionImage';
+
+img.style.cursor='pointer';
+
+img.onclick=()=>checkAnswer(option===q.answer);
+
+document.getElementById('options').appendChild(img);
+
+});
+
+}
+
+if(q.type==="listbox"){
+
+const select=document.createElement('select');
+
+q.options.forEach(option=>{
+
+select.innerHTML+=`<option>${option}</option>`;
+
+});
+
+const btn=document.createElement('button');
+
+btn.className='optionBtn';
+
+btn.innerHTML='Submit';
+
+btn.onclick=()=>checkAnswer(select.value===q.answer);
+
+document.getElementById('extraArea').appendChild(select);
+document.getElementById('extraArea').appendChild(document.createElement('br'));
+document.getElementById('extraArea').appendChild(btn);
+
+}
+
+if(q.type==="dragdrop"){
+
+const container=document.createElement('div');
+
+container.className='drag-container';
+
+const drag=document.createElement('div');
+
+drag.className='drag-item';
+
+drag.innerHTML=q.dragText;
+
+drag.draggable=true;
+
+drag.addEventListener('dragstart',e=>{
+
+e.dataTransfer.setData('text',q.dragText);
+
+});
+
+const drop=document.createElement('div');
+
+drop.className='drop-box';
+
+drop.innerHTML='DROP HERE';
+
+drop.addEventListener('dragover',e=>e.preventDefault());
+
+drop.addEventListener('drop',()=>{
+
+checkAnswer(true);
+
+drop.innerHTML='🤖 Great Job';
+
+});
+
+container.appendChild(drag);
+container.appendChild(drop);
+
+document.getElementById('extraArea').appendChild(container);
+
+}
+
+}
+
+function checkAnswer(correct){
+
+clearInterval(timer);
+
+if(correct){
+
+document.getElementById('feedback').innerHTML='✅ Correct';
+
+document.getElementById('feedback').style.color='#00ff95';
+
+document.getElementById('correctSound').play();
+
+score++;
+badges++;
+
+confetti({
+particleCount:250,
+spread:120
+});
+
+}else{
+
+document.getElementById('feedback').innerHTML='❌ Wrong';
+
+document.getElementById('feedback').style.color='red';
+
+document.getElementById('wrongSound').play();
+
+}
+
+document.getElementById('score').innerHTML=score;
+document.getElementById('badge').innerHTML=badges;
+
+showNext();
+
+}
+
+function showNext(){
+
+document.getElementById('nextBtn').style.display='block';
+
+}
+
+document.getElementById('nextBtn').onclick=()=>{
+
+current++;
+
+if(current<questions.length){
+
+loadQuestion();
+
+}else{
+
+showFinal();
+
+}
+
+};
+
+function updateProgress(){
+
+let progress=((current)/questions.length)*100;
+
+document.getElementById('progress').style.width=progress+'%';
+
+}
+
+function showFinal(){
+
+document.getElementById('gameCard').style.display='none';
+
+document.getElementById('finalScreen').style.display='block';
+
+document.getElementById('finalScore').innerHTML=
+`⭐ Your Score: ${score}/10`;
+
+let performance="";
+
+if(score<=4){
+
+performance="😔 Beginner - Need to Improve";
+
+}else if(score<=7){
+
+performance="👍 Good Job - Keep Practicing";
+
+}else{
+
+performance="🏆 STEM Champion - Excellent Work!";
+
+}
+
+document.getElementById('performance').innerHTML=performance;
+
+confetti({
+particleCount:500,
+spread:180
+});
+
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>

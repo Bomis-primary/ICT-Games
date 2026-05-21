@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>STEM Robots Adventure Game</title>
+<title>STEM Robot Adventure</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -14,59 +14,49 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:Arial, sans-serif;
+font-family:'Comic Sans MS',sans-serif;
 }
 
 body{
-background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
-overflow-x:hidden;
+background:url('assets/robot-bg.jpg');
+background-size:cover;
+background-position:center;
 min-height:100vh;
+overflow-x:hidden;
 color:white;
 }
 
-.stars{
-position:fixed;
-width:100%;
-height:100%;
-background-image:
-radial-gradient(white 1px, transparent 1px);
-background-size:40px 40px;
-animation:moveStars 30s linear infinite;
-z-index:-1;
-}
-
-@keyframes moveStars{
-from{transform:translateY(0);}
-to{transform:translateY(100px);}
+.overlay{
+background:rgba(0,0,0,0.65);
+min-height:100vh;
+padding:15px;
 }
 
 .container{
 max-width:1100px;
 margin:auto;
-padding:20px;
-text-align:center;
-}
-
-.logo{
-width:140px;
-margin-bottom:15px;
+padding-bottom:120px;
 }
 
 h1{
-font-size:55px;
+text-align:center;
+font-size:50px;
+margin-bottom:10px;
 color:#FFD700;
-text-shadow:3px 3px 10px black;
 }
 
-h2{
-font-size:28px;
-margin-bottom:20px;
-color:#fff;
+.topbar{
+display:flex;
+justify-content:center;
+gap:30px;
+flex-wrap:wrap;
+font-size:24px;
+margin-bottom:15px;
 }
 
-.progress-bar{
+.progressBox{
 width:100%;
-height:25px;
+height:22px;
 background:#222;
 border-radius:20px;
 overflow:hidden;
@@ -77,35 +67,30 @@ margin-bottom:20px;
 height:100%;
 width:0%;
 background:linear-gradient(to right,#00e5ff,#00ff95);
-transition:0.5s;
-}
-
-.stats{
-display:flex;
-justify-content:center;
-gap:40px;
-font-size:28px;
-margin-bottom:20px;
-}
-
-.timer{
-font-size:34px;
-font-weight:bold;
-color:#ffeb3b;
-margin-bottom:15px;
 }
 
 .card{
 background:rgba(255,255,255,0.12);
-backdrop-filter:blur(10px);
-padding:30px;
+padding:20px;
 border-radius:25px;
-box-shadow:0 0 20px rgba(255,255,255,0.2);
+backdrop-filter:blur(8px);
 }
 
 #question{
-font-size:34px;
+font-size:30px;
 margin-bottom:20px;
+text-align:center;
+}
+
+.questionImage{
+width:220px;
+height:220px;
+object-fit:contain;
+background:white;
+padding:10px;
+border-radius:20px;
+display:block;
+margin:auto;
 }
 
 .options{
@@ -115,117 +100,128 @@ gap:15px;
 margin-top:20px;
 }
 
-.option{
-background:white;
-color:black;
-padding:18px;
-border-radius:18px;
-cursor:pointer;
-font-size:24px;
-transition:0.3s;
-border:4px solid transparent;
-}
-
-.option:hover{
-transform:scale(1.05);
-background:#ffeb3b;
-}
-
-.gameImage{
-width:240px;
-height:240px;
-object-fit:contain;
-margin:15px auto;
-display:block;
-border-radius:20px;
-background:white;
-padding:10px;
-}
-
-#feedback{
-font-size:32px;
-font-weight:bold;
-margin-top:20px;
-}
-
-#nextBtn,#hintBtn{
-padding:14px 30px;
+.optionBtn{
+padding:15px;
 font-size:22px;
 border:none;
 border-radius:15px;
 cursor:pointer;
-margin-top:20px;
-margin-right:10px;
-}
-
-#nextBtn{
-background:#4CAF50;
-color:white;
-display:none;
-}
-
-#hintBtn{
-background:#ff9800;
-color:white;
-}
-
-.drag-item{
-width:220px;
-padding:18px;
-background:#00e5ff;
-color:black;
-border-radius:15px;
-margin:20px auto;
-font-size:26px;
-cursor:grab;
 font-weight:bold;
 }
 
-.drop-box{
-width:280px;
-height:140px;
-border:4px dashed white;
-margin:20px auto;
-border-radius:20px;
-display:flex;
-align-items:center;
-justify-content:center;
-font-size:26px;
-background:rgba(255,255,255,0.1);
+.optionBtn:hover{
+transform:scale(1.04);
+background:#ffeb3b;
 }
 
-.final-screen{
+.dragArea{
+display:flex;
+justify-content:center;
+gap:25px;
+flex-wrap:wrap;
+margin-top:25px;
+}
+
+.dragItem{
+padding:18px;
+background:#00e5ff;
+border-radius:15px;
+font-size:24px;
+cursor:grab;
+color:black;
+font-weight:bold;
+}
+
+.dropBox{
+width:240px;
+height:120px;
+border:4px dashed white;
+border-radius:20px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:24px;
+}
+
+select{
+padding:14px;
+font-size:22px;
+border-radius:12px;
+margin-top:20px;
+width:280px;
+}
+
+.feedback{
+font-size:28px;
+font-weight:bold;
+margin-top:20px;
+text-align:center;
+}
+
+.nextArea{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+background:rgba(0,0,0,0.8);
+padding:12px;
+text-align:center;
+z-index:999;
+}
+
+#nextBtn{
+padding:14px 40px;
+font-size:24px;
+border:none;
+border-radius:15px;
+background:#4CAF50;
+color:white;
+display:none;
+cursor:pointer;
+}
+
+.finalScreen{
 display:none;
 background:white;
 color:black;
-padding:35px;
+padding:30px;
 border-radius:25px;
+text-align:center;
 margin-top:30px;
-}
-
-.final-screen h1{
-color:#ff5722;
-}
-
-button{
-transition:0.3s;
-}
-
-button:hover{
-transform:scale(1.05);
 }
 
 .robot{
 position:fixed;
-bottom:20px;
 right:20px;
+bottom:90px;
 font-size:80px;
-animation:robotMove 3s infinite alternate;
+animation:jump 2s infinite alternate;
 }
 
-@keyframes robotMove{
+@keyframes jump{
 from{transform:translateY(0);}
 to{transform:translateY(-20px);}
+}
+
+@media(max-width:768px){
+
+h1{
+font-size:34px;
+}
+
+#question{
+font-size:24px;
+}
+
+.optionBtn{
+font-size:18px;
+}
+
+.questionImage{
+width:170px;
+height:170px;
+}
+
 }
 
 </style>
@@ -233,63 +229,49 @@ to{transform:translateY(-20px);}
 
 <body>
 
-<div class="stars"></div>
+<div class="overlay">
 
 <div class="robot">🤖</div>
 
 <div class="container">
 
-<!-- CHANGE THIS PATH TO YOUR LOGO -->
-<img src="assets/images/innovine-logo.png" class="logo">
+<h1>🚀 STEM Robot Adventure</h1>
 
-<h1>🚀 STEM Robots Adventure</h1>
-<h2>Interactive Learning Game</h2>
+<div class="topbar">
+<div>⭐ Score: <span id="score">0</span></div>
+<div>🏆 Badges: <span id="badges">0</span></div>
+<div>⏰ <span id="timer">40</span>s</div>
+</div>
 
-<div class="progress-bar">
+<div class="progressBox">
 <div class="progress" id="progress"></div>
 </div>
 
-<div class="stats">
-<div>⭐ Stars: <span id="starsCount">0</span></div>
-<div>🏆 Trophies: <span id="trophyCount">0</span></div>
-</div>
+<div class="card" id="gameCard">
 
-<div class="timer">
-⏰ <span id="time">45</span>s
-</div>
-
-<div class="card">
-
-<h3 id="question"></h3>
+<h2 id="question"></h2>
 
 <div id="imageArea"></div>
 
-<div id="options" class="options"></div>
+<div class="options" id="options"></div>
 
-<div id="dragArea"></div>
+<div id="extraArea"></div>
 
-<div id="feedback"></div>
-
-<button id="hintBtn">💡 Hint</button>
-
-<button id="nextBtn">Next ➜</button>
+<div class="feedback" id="feedback"></div>
 
 </div>
 
-<div class="final-screen" id="finalScreen">
+<div class="finalScreen" id="finalScreen">
 
-<h1>🎉 STEM Champion 🎉</h1>
+<h1>🎉 Great Job!</h1>
 
-<h2>Your Score: <span id="finalScore"></span></h2>
+<h2 id="finalScore"></h2>
 
-<h2>🏆 Total Trophies: <span id="finalTrophy"></span></h2>
-
-<h2>⭐ Total Stars: <span id="finalStars"></span></h2>
+<h2 id="rank"></h2>
 
 <br>
 
-<button onclick="restartGame()" 
-style="background:#2196F3;color:white;padding:15px 30px;border:none;border-radius:15px;font-size:22px;">
+<button onclick="location.reload()" class="optionBtn">
 Play Again
 </button>
 
@@ -297,14 +279,16 @@ Play Again
 
 </div>
 
-<!-- CHANGE SOUND PATHS -->
-<audio id="correctSound" src="assets/sounds/correct.mp3"></audio>
-<audio id="wrongSound" src="assets/sounds/wrong.mp3"></audio>
-<audio id="levelSound" src="assets/sounds/levelup.mp3"></audio>
+<div class="nextArea">
+<button id="nextBtn">Next ➜</button>
+</div>
+
+<audio id="correctSound" src="assets/correct-1.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
 
 <script>
 
-const questions = [
+const questions=[
 
 {
 type:"mcq",
@@ -313,146 +297,148 @@ options:[
 "Science Technology Engineering Mathematics",
 "Sports Toys Energy Music",
 "Science Toys English Maths",
-"Space Train Engine Motor"
+"Stars Technology Earth Moon"
 ],
-answer:"Science Technology Engineering Mathematics"
+answer:"Science Technology Engineering Mathematics",
+image:"assets/robots.PNG",
+bg:"assets/robot-bg.jpg"
+},
+
+{
+type:"image",
+question:"Click the Science picture",
+options:[
+"assets/science.PNG",
+"assets/mathematics.PNG",
+"assets/technology.PNG",
+"assets/engineering.PNG"
+],
+answer:"assets/science.PNG",
+bg:"assets/robot-bg1.jpg"
 },
 
 {
 type:"mcq",
-question:"Which subject uses numbers and counting?",
+question:"What is Robotics?",
 options:[
+"Study of Robots",
+"Study of Flowers",
+"Study of Fruits",
+"Study of Cars"
+],
+answer:"Study of Robots",
+image:"assets/helper-robot.PNG",
+bg:"assets/robot-bg.jpg"
+},
+
+{
+type:"drag",
+question:"Drag the word COMMAND into the box",
+drag:"COMMAND",
+answer:"COMMAND",
+bg:"assets/robot-bg1.jpg"
+},
+
+{
+type:"mcq",
+question:"Robots follow ________.",
+options:["Commands","Bananas","Candies","Balloons"],
+answer:"Commands",
+image:"assets/communication.PNG",
+bg:"assets/robot-bg.jpg"
+},
+
+{
+type:"image",
+question:"Click the Technology picture",
+options:[
+"assets/technology.PNG",
+"assets/education.PNG",
+"assets/mathematics.PNG",
+"assets/communication.PNG"
+],
+answer:"assets/technology.PNG",
+bg:"assets/robot-bg1.jpg"
+},
+
+{
+type:"list",
+question:"Choose the subject that uses numbers",
+options:[
+"Science",
 "Mathematics",
-"Cooking",
-"Dancing",
-"Singing"
+"Robotics",
+"Technology"
 ],
-answer:"Mathematics"
+answer:"Mathematics",
+image:"assets/mathematics.PNG",
+bg:"assets/robot-bg.jpg"
 },
 
 {
 type:"mcq",
-question:"Robotics is related to...",
+question:"Robots help humans by making work ________.",
+options:["Easier","Harder","Longer","Noisy"],
+answer:"Easier",
+image:"assets/robots.PNG",
+bg:"assets/robot-bg1.jpg"
+},
+
+{
+type:"image",
+question:"Click the Engineering picture",
 options:[
-"Robots",
-"Animals",
-"Fruits",
-"Plants"
+"assets/engineering.PNG",
+"assets/science.PNG",
+"assets/technology.PNG",
+"assets/education.PNG"
 ],
-answer:"Robots"
+answer:"assets/engineering.PNG",
+bg:"assets/robot-bg.jpg"
 },
 
 {
 type:"truefalse",
-question:"Robots can help humans.",
+question:"Robots can help doctors.",
 options:["True","False"],
-answer:"True"
-},
-
-{
-type:"unscramble",
-question:"Unscramble this word",
-options:[
-"ROBOT",
-"TOBOR",
-"BOROT",
-"BOTRO"
-],
-answer:"ROBOT"
-},
-
-{
-type:"unscramble",
-question:"Unscramble this STEM word",
-options:[
-"SCIENCE",
-"SCNIECE",
-"SEICNCE",
-"CENSCIE"
-],
-answer:"SCIENCE"
-},
-
-{
-type:"mcq",
-question:"Which robot helps doctors?",
-options:[
-"Medical Robot",
-"Toy Robot",
-"Kitchen Robot",
-"Dance Robot"
-],
-answer:"Medical Robot"
-},
-
-{
-type:"mcq",
-question:"Which robot works in factories?",
-options:[
-"Factory Robot",
-"Helper Robot",
-"School Robot",
-"Flying Robot"
-],
-answer:"Factory Robot"
-},
-
-{
-type:"dragdrop",
-question:"Drag the correct word into the STEM Box",
-correct:"Technology"
-},
-
-{
-type:"mcq",
-question:"Which robot goes to space?",
-options:[
-"Exploration Robot",
-"Kitchen Robot",
-"Toy Robot",
-"Dance Robot"
-],
-answer:"Exploration Robot"
+answer:"True",
+image:"assets/medical-robot.PNG",
+bg:"assets/robot-bg1.jpg"
 }
 
 ];
 
-let currentQuestion=0;
+let current=0;
 let score=0;
-let trophies=0;
-let stars=0;
-
+let badges=0;
 let timer;
-let timeLeft=45;
+let time=40;
 
-const questionEl=document.getElementById('question');
-const optionsEl=document.getElementById('options');
+const question=document.getElementById('question');
+const options=document.getElementById('options');
 const imageArea=document.getElementById('imageArea');
-const dragArea=document.getElementById('dragArea');
+const extraArea=document.getElementById('extraArea');
 const feedback=document.getElementById('feedback');
 
 function startTimer(){
 
 clearInterval(timer);
 
-timeLeft=45;
+time=40;
 
-document.getElementById('time').innerHTML=timeLeft;
+document.getElementById('timer').innerHTML=time;
 
 timer=setInterval(()=>{
 
-timeLeft--;
+time--;
 
-document.getElementById('time').innerHTML=timeLeft;
+document.getElementById('timer').innerHTML=time;
 
-if(timeLeft<=0){
+if(time<=0){
 
 clearInterval(timer);
 
-feedback.innerHTML='⏰ Time Up!';
-feedback.style.color='red';
-
-disableOptions();
+feedback.innerHTML="⏰ Time Up";
 
 document.getElementById('nextBtn').style.display='inline-block';
 
@@ -466,96 +452,171 @@ function showQuestion(){
 
 startTimer();
 
-const q=questions[currentQuestion];
+const q=questions[current];
 
-questionEl.innerHTML=q.question;
+document.body.style.background=`url('${q.bg}') center/cover`;
 
-optionsEl.innerHTML='';
-dragArea.innerHTML='';
-feedback.innerHTML='';
+question.innerHTML=q.question;
+
+options.innerHTML='';
 imageArea.innerHTML='';
+extraArea.innerHTML='';
+feedback.innerHTML='';
 
 document.getElementById('nextBtn').style.display='none';
 
-updateProgress();
+document.getElementById('progress').style.width=
+((current)/questions.length)*100+'%';
 
-if(q.type==="dragdrop"){
+if(q.image){
 
-const item=document.createElement('div');
+imageArea.innerHTML=
+`<img src="${q.image}" class="questionImage">`;
 
-item.className='drag-item';
+}
 
-item.innerHTML=q.correct;
+if(q.type==="mcq" || q.type==="truefalse"){
 
-item.draggable=true;
+q.options.forEach(opt=>{
 
-item.addEventListener('dragstart',dragStart);
+const btn=document.createElement('button');
 
-const box=document.createElement('div');
+btn.className='optionBtn';
 
-box.className='drop-box';
+btn.innerHTML=opt;
 
-box.innerHTML='Drop Here';
+btn.onclick=()=>check(opt===q.answer);
 
-box.addEventListener('dragover',(e)=>e.preventDefault());
-
-box.addEventListener('drop',()=>{
-
-correctAnswer();
-
-box.innerHTML=q.correct;
+options.appendChild(btn);
 
 });
 
-dragArea.appendChild(item);
+}
 
-dragArea.appendChild(box);
+if(q.type==="image"){
 
-}else{
+q.options.forEach(opt=>{
 
-q.options.sort(()=>Math.random()-0.5);
+const img=document.createElement('img');
 
-q.options.forEach(option=>{
+img.src=opt;
 
-const btn=document.createElement('div');
+img.className='questionImage';
 
-btn.className='option';
+img.style.cursor='pointer';
 
-btn.innerHTML=option;
+img.onclick=()=>check(opt===q.answer);
+
+options.appendChild(img);
+
+});
+
+}
+
+if(q.type==="drag"){
+
+const area=document.createElement('div');
+
+area.className='dragArea';
+
+const drag=document.createElement('div');
+
+drag.className='dragItem';
+
+drag.innerHTML=q.drag;
+
+drag.draggable=true;
+
+drag.addEventListener('dragstart',e=>{
+e.dataTransfer.setData('text',q.drag);
+});
+
+const drop=document.createElement('div');
+
+drop.className='dropBox';
+
+drop.innerHTML='Drop Here';
+
+drop.addEventListener('dragover',e=>e.preventDefault());
+
+drop.addEventListener('drop',()=>{
+
+correct();
+
+drop.innerHTML=q.drag;
+
+});
+
+area.appendChild(drag);
+
+area.appendChild(drop);
+
+extraArea.appendChild(area);
+
+}
+
+if(q.type==="list"){
+
+const select=document.createElement('select');
+
+q.options.forEach(opt=>{
+
+select.innerHTML+=`<option>${opt}</option>`;
+
+});
+
+const btn=document.createElement('button');
+
+btn.className='optionBtn';
+
+btn.innerHTML='Submit';
 
 btn.onclick=()=>{
 
-if(option===q.answer){
+if(select.value===q.answer){
 
-correctAnswer();
+correct();
 
 }else{
 
-wrongAnswer(btn);
+wrong();
 
 }
 
 };
 
-optionsEl.appendChild(btn);
+extraArea.appendChild(select);
 
-});
+extraArea.appendChild(document.createElement('br'));
+
+extraArea.appendChild(document.createElement('br'));
+
+extraArea.appendChild(btn);
+
+}
+
+}
+
+function check(ans){
+
+if(ans){
+
+correct();
+
+}else{
+
+wrong();
 
 }
 
 }
 
-function dragStart(e){
-
-e.dataTransfer.setData('text',e.target.innerHTML);
-
-}
-
-function correctAnswer(){
+function correct(){
 
 clearInterval(timer);
 
-feedback.innerHTML='✅ Correct!';
+feedback.innerHTML="✅ Correct";
+
 feedback.style.color='#00ff95';
 
 document.getElementById('correctSound').play();
@@ -566,50 +627,36 @@ spread:120
 });
 
 score++;
-stars+=10;
-trophies++;
 
-document.getElementById('starsCount').innerHTML=stars;
-document.getElementById('trophyCount').innerHTML=trophies;
+badges++;
 
-disableOptions();
+document.getElementById('score').innerHTML=score;
+
+document.getElementById('badges').innerHTML=badges;
 
 document.getElementById('nextBtn').style.display='inline-block';
 
 }
 
-function wrongAnswer(btn){
+function wrong(){
 
 clearInterval(timer);
 
-btn.style.border='4px solid red';
+feedback.innerHTML="❌ Wrong";
 
-feedback.innerHTML='❌ Wrong!';
 feedback.style.color='red';
 
 document.getElementById('wrongSound').play();
 
-disableOptions();
-
 document.getElementById('nextBtn').style.display='inline-block';
 
 }
 
-function disableOptions(){
+document.getElementById('nextBtn').onclick=()=>{
 
-document.querySelectorAll('.option').forEach(opt=>{
+current++;
 
-opt.style.pointerEvents='none';
-
-});
-
-}
-
-document.getElementById('nextBtn').addEventListener('click',()=>{
-
-currentQuestion++;
-
-if(currentQuestion<questions.length){
+if(current<questions.length){
 
 showQuestion();
 
@@ -619,47 +666,43 @@ showFinal();
 
 }
 
-});
-
-function updateProgress(){
-
-let progress=((currentQuestion)/questions.length)*100;
-
-document.getElementById('progress').style.width=progress+'%';
-
-}
-
-document.getElementById('hintBtn').onclick=()=>{
-
-alert("💡 Read carefully and think about Robots and STEM learning.");
-
 };
 
 function showFinal(){
 
-document.querySelector('.card').style.display='none';
+document.getElementById('gameCard').style.display='none';
 
 document.getElementById('finalScreen').style.display='block';
 
 document.getElementById('finalScore').innerHTML=
-`${score}/${questions.length}`;
+`⭐ Your Score: ${score}/10`;
 
-document.getElementById('finalTrophy').innerHTML=trophies;
+let rank='';
 
-document.getElementById('finalStars').innerHTML=stars;
+if(score>=9){
 
-document.getElementById('levelSound').play();
+rank='🏆 CHAMPION';
+
+}else if(score>=6){
+
+rank='👍 EXCELLENT';
+
+}else if(score>=3){
+
+rank='🙂 NEED TO IMPROVE';
+
+}else{
+
+rank='📘 BEGINNER';
+
+}
+
+document.getElementById('rank').innerHTML=rank;
 
 confetti({
 particleCount:500,
 spread:180
 });
-
-}
-
-function restartGame(){
-
-location.reload();
 
 }
 

@@ -1,1 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Exploring the Desktop</title>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Trebuchet MS',sans-serif;
+}
+
+body{
+background:linear-gradient(135deg,#89f7fe,#66a6ff,#c3cfe2);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:15px;
+}
+
+.screen{
+display:none;
+background:white;
+width:95%;
+max-width:760px;
+padding:25px;
+border-radius:30px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+text-align:center;
+}
+
+.active{
+display:block;
+}
+
+.logo{
+width:140px;
+margin-bottom:10px;
+}
+
+.heading{
+font-size:2rem;
+color:#0d47a1;
+margin-bottom:15px;
+}
+
+.info{
+background:#e3f2fd;
+padding:15px;
+border-radius:15px;
+margin-bottom:15px;
+text-align:left;
+line-height:1.7;
+font-size:18px;
+}
+
+.rules{
+background:#fff8e1;
+padding:15px;
+border-radius:15px;
+border-left:6px solid orange;
+text-align:left;
+margin-bottom:20px;
+line-height:1.8;
+}
+
+input{
+width:100%;
+padding:14px;
+border-radius:12px;
+border:2px solid #ccc;
+font-size:18px;
+margin-bottom:15px;
+}
+
+.btn{
+background:#1565c0;
+color:white;
+border:none;
+padding:14px;
+width:100%;
+font-size:18px;
+border-radius:50px;
+cursor:pointer;
+font-weight:bold;
+transition:0.3s;
+}
+
+.btn:hover{
+background:#0d47a1;
+}
+
+.status{
+display:flex;
+justify-content:space-between;
+flex-wrap:wrap;
+gap:10px;
+margin-bottom:20px;
+font-weight:bold;
+font-size:18px;
+}
+
+.question{
+font-size:30px;
+font-weight:bold;
+color:#0d47a1;
+margin-bottom:20px;
+}
+
+.options{
+display:flex;
+justify-content:center;
+gap:15px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.option-btn{
+background:#e3f2fd;
+border:3px solid transparent;
+padding:15px 20px;
+border-radius:18px;
+font-size:20px;
+cursor:pointer;
+font-weight:bold;
+min-width:180px;
+transition:0.3s;
+}
+
+.option-btn:hover{
+background:#bbdefb;
+transform:scale(1.05);
+border-color:#1976d2;
+}
+
+.feedback{
+height:40px;
+margin-top:20px;
+font-size:28px;
+font-weight:bold;
+}
+
+.big-image{
+width:240px;
+height:200px;
+object-fit:contain;
+margin:10px auto;
+display:block;
+background:#f5f5f5;
+padding:10px;
+border-radius:20px;
+box-shadow:0 5px 15px rgba(0,0,0,0.15);
+}
+
+.final-score{
+font-size:70px;
+color:#ff6f00;
+font-weight:bold;
+margin:20px 0;
+}
+
+@media(max-width:700px){
+
+.question{
+font-size:22px;
+}
+
+.option-btn{
+width:100%;
+font-size:18px;
+}
+
+.big-image{
+width:180px;
+height:160px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<audio id="correctSound" src="assets/correct-1.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
+<!-- INTRO -->
+
+<div id="intro" class="screen active">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1 class="heading">🖥️ Exploring The Desktop</h1>
+
+<div class="info">
+
+<b>Grade:</b> 1 <br>
+<b>Subject:</b> ICT <br>
+<b>Chapter:</b> Exploring the Desktop
+
+</div>
+
+<div class="rules">
+
+<h3>📘 Rules</h3>
+
+<ul style="padding-left:20px;">
+<li>Answer all 5 questions.</li>
+<li>Click the correct option.</li>
+<li>Earn points and badges.</li>
+<li>Confetti celebration at the end.</li>
+</ul>
+
+</div>
+
+<input type="text" id="playerName" placeholder="Enter Your Name">
+
+<button class="btn" onclick="startGame()">Start Game</button>
+
+</div>
+
+<!-- GAME -->
+
+<div id="game" class="screen">
+
+<div class="status">
+
+<div>⭐ Score: <span id="score">0</span></div>
+
+<div>🏅 Badges: <span id="badges">0</span></div>
+
+<div>📚 Question: <span id="qno">1</span>/5</div>
+
+</div>
+
+<div class="question" id="questionText"></div>
+
+<div id="imageBox"></div>
+
+<div class="options" id="optionsBox"></div>
+
+<div class="feedback" id="feedback"></div>
+
+<button id="nextBtn" class="btn" onclick="nextQuestion()" style="display:none;">
+Next ➜
+</button>
+
+</div>
+
+<!-- FINAL -->
+
+<div id="final" class="screen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1 class="heading">🎉 Excellent Work!</h1>
+
+<p id="finalMsg"></p>
+
+<div class="final-score" id="finalScore"></div>
+
+<h2 id="rankText"></h2>
+
+<button class="btn" onclick="location.reload()">
+Play Again
+</button>
+
+</div>
+
+<script>
+
+const questions = [
+
+{
+question:"What is the first screen that appears after Windows starts?",
+options:["Desktop","Keyboard","Printer"],
+answer:"Desktop"
+},
+
+{
+question:"What are the small labelled pictures on the desktop called?",
+options:["Icons","Folders","Buttons"],
+answer:"Icons"
+},
+
+{
+question:"Which bar is present at the bottom of the desktop?",
+options:["Taskbar","Title Bar","Menu Bar"],
+answer:"Taskbar"
+},
+
+{
+question:"Which button opens the Start Menu?",
+options:["Start Button","Close Button","Shift Key"],
+answer:"Start Button"
+},
+
+{
+question:"What does the Date and Time section show?",
+options:["Current Date and Time","Games","Paint Tools"],
+answer:"Current Date and Time"
+}
+
+];
+
+let currentQuestion = 0;
+let score = 0;
+let badges = 0;
+let playerName = "";
+
+function showScreen(id){
+
+document.querySelectorAll('.screen').forEach(screen=>{
+screen.classList.remove('active');
+});
+
+document.getElementById(id).classList.add('active');
+
+}
+
+function startGame(){
+
+playerName = document.getElementById('playerName').value;
+
+if(playerName===""){
+
+alert("Please enter your name");
+return;
+
+}
+
+showScreen('game');
+
+loadQuestion();
+
+}
+
+function loadQuestion(){
+
+const q = questions[currentQuestion];
+
+document.getElementById('qno').innerText=currentQuestion+1;
+
+document.getElementById('questionText').innerText=q.question;
+
+document.getElementById('feedback').innerText='';
+
+document.getElementById('nextBtn').style.display='none';
+
+const optionsBox=document.getElementById('optionsBox');
+
+optionsBox.innerHTML='';
+
+q.options.forEach(option=>{
+
+const btn=document.createElement('button');
+
+btn.className='option-btn';
+
+btn.innerText=option;
+
+btn.onclick=()=>checkAnswer(option,q.answer);
+
+optionsBox.appendChild(btn);
+
+});
+
+}
+
+function checkAnswer(selected,correct){
+
+const feedback=document.getElementById('feedback');
+
+if(selected===correct){
+
+score++;
+badges++;
+
+document.getElementById('score').innerText=score;
+document.getElementById('badges').innerText=badges;
+
+feedback.innerText="✅ Correct!";
+feedback.style.color="green";
+
+document.getElementById('correctSound').play();
+
+}else{
+
+feedback.innerText="❌ Wrong!";
+feedback.style.color="red";
+
+document.getElementById('wrongSound').play();
+
+}
+
+document.getElementById('nextBtn').style.display='block';
+
+}
+
+function nextQuestion(){
+
+currentQuestion++;
+
+if(currentQuestion<questions.length){
+
+loadQuestion();
+
+}else{
+
+showFinal();
+
+}
+
+}
+
+function showFinal(){
+
+showScreen('final');
+
+document.getElementById('finalMsg').innerHTML=
+`Great job <b>${playerName}</b>! Your score is`;
+
+document.getElementById('finalScore').innerText=
+`${score}/5`;
+
+let rank="";
+
+if(score===5){
+
+rank="🏆 Desktop Champion";
+
+}else if(score>=4){
+
+rank="🌟 Excellent";
+
+}else if(score>=2){
+
+rank="🙂 Good Try";
+
+}else{
+
+rank="📘 Keep Practicing";
+
+}
+
+document.getElementById('rankText').innerText=rank;
+
+confetti({
+particleCount:120,
+spread:90,
+origin:{y:0.6}
+});
+
+}
+
+</script>
+
+</body>
+</html>

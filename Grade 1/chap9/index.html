@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grade 1 - Introduction to Tux Paint 1</title>
+<title>Tux Paint Fun Challenge</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -17,7 +17,7 @@ font-family:'Comic Sans MS', sans-serif;
 }
 
 body{
-background:linear-gradient(to bottom,#b3ecff,#ffe6ff);
+background:linear-gradient(to bottom,#b3f0ff,#ffe6ff);
 min-height:100vh;
 display:flex;
 justify-content:center;
@@ -25,14 +25,14 @@ align-items:center;
 padding:20px;
 }
 
-.game-container{
+.game-box{
 width:100%;
 max-width:950px;
 background:white;
-border-radius:25px;
 padding:25px;
-text-align:center;
+border-radius:25px;
 box-shadow:0 0 20px rgba(0,0,0,0.3);
+text-align:center;
 border:8px solid #ffcc00;
 }
 
@@ -43,76 +43,38 @@ margin-bottom:10px;
 
 h1{
 color:#ff6600;
-font-size:2rem;
-margin-bottom:15px;
+margin-bottom:20px;
 }
 
 #question{
 font-size:1.5rem;
-color:#333;
 margin:20px 0;
 min-height:80px;
+color:#333;
 }
 
 #options{
 margin-top:20px;
 }
 
-.option-btn{
-display:block;
-width:90%;
-margin:10px auto;
-padding:15px;
-border:none;
-border-radius:15px;
+.word-card{
+display:inline-block;
+padding:15px 25px;
 background:#4da6ff;
 color:white;
-font-size:1.1rem;
+border-radius:15px;
+margin:10px;
 cursor:pointer;
+font-size:1.2rem;
 transition:0.3s;
 }
 
-.option-btn:hover{
+.word-card:hover{
+transform:scale(1.05);
 background:#0077ff;
-transform:scale(1.03);
 }
 
-.correct{
-background:green !important;
-}
-
-.wrong{
-background:red !important;
-}
-
-.truefalse-container button{
-padding:15px 35px;
-margin:15px;
-font-size:1.2rem;
-border:none;
-border-radius:15px;
-cursor:pointer;
-background:#ff9900;
-color:white;
-}
-
-.truefalse-container button:hover{
-background:#ff7700;
-}
-
-.radio-container{
-text-align:left;
-padding-left:30%;
-}
-
-.radio-container label{
-display:block;
-margin:15px 0;
-font-size:1.2rem;
-cursor:pointer;
-}
-
-.drag-container{
+.image-grid{
 display:flex;
 justify-content:center;
 gap:20px;
@@ -120,37 +82,7 @@ flex-wrap:wrap;
 margin-top:20px;
 }
 
-.drag-item{
-padding:15px 20px;
-background:#4da6ff;
-color:white;
-border-radius:15px;
-cursor:grab;
-font-size:1.1rem;
-}
-
-.drop-box{
-width:260px;
-height:90px;
-border:3px dashed #666;
-border-radius:15px;
-display:flex;
-justify-content:center;
-align-items:center;
-background:#fff8dc;
-padding:10px;
-font-size:1rem;
-}
-
-.image-question{
-display:flex;
-justify-content:center;
-gap:20px;
-flex-wrap:wrap;
-margin-top:20px;
-}
-
-.image-question img{
+.image-grid img{
 width:180px;
 height:180px;
 object-fit:contain;
@@ -162,45 +94,42 @@ cursor:pointer;
 transition:0.3s;
 }
 
-.image-question img:hover{
+.image-grid img:hover{
 transform:scale(1.05);
 }
 
-.word-box{
+.drop-zone{
+width:250px;
+height:90px;
+border:3px dashed #666;
+border-radius:15px;
+margin:20px auto;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:1.1rem;
+background:#fff8dc;
+}
+
+.drag-item{
 display:inline-block;
-padding:12px 18px;
+padding:14px 20px;
 background:#4da6ff;
 color:white;
-border-radius:12px;
+border-radius:15px;
+cursor:grab;
 margin:10px;
-cursor:pointer;
 font-size:1.1rem;
 }
 
-.blank-space{
-display:inline-block;
-min-width:150px;
-border-bottom:3px solid #333;
-margin-left:10px;
-font-weight:bold;
-color:#ff3300;
-}
-
-#score{
-font-size:1.3rem;
+#scoreBoard{
 margin-top:20px;
+font-size:1.3rem;
 }
 
 #progress{
 margin-top:10px;
 font-size:1rem;
-color:#555;
-}
-
-.result{
-font-size:2rem;
-color:#ff3300;
-margin-top:25px;
 }
 
 #restartBtn{
@@ -219,24 +148,17 @@ display:none;
 background:#ff7700;
 }
 
+.result{
+font-size:2rem;
+color:#ff3300;
+margin-top:25px;
+}
+
 @media(max-width:768px){
 
-.radio-container{
-padding-left:10%;
-}
-
-.drag-container{
-flex-direction:column;
-align-items:center;
-}
-
-.image-question img{
-width:140px;
-height:140px;
-}
-
-h1{
-font-size:1.5rem;
+.image-grid img{
+width:130px;
+height:130px;
 }
 
 #question{
@@ -250,11 +172,11 @@ font-size:1.2rem;
 
 <body>
 
-<div class="game-container">
+<div class="game-box">
 
 <img src="assets/innovine-logo.png" class="logo">
 
-<h1>🎨 Introduction to Tux Paint - 1 🎨</h1>
+<h1>🎨 Tux Paint Fun Challenge 🎨</h1>
 
 <div id="question"></div>
 
@@ -262,7 +184,9 @@ font-size:1.2rem;
 
 <div id="progress"></div>
 
-<div id="score">⭐ Score: 0</div>
+<div id="scoreBoard">
+⭐ Score: <span id="score">0</span>
+</div>
 
 <button id="restartBtn">🔄 Restart Game</button>
 
@@ -278,103 +202,84 @@ font-size:1.2rem;
 const questions = [
 
 {
-type:"truefalse",
-question:"Tux Paint is used for drawing pictures.",
-answer:"True"
+type:"unscramble",
+question:"Unscramble the word for a drawing software.",
+scrambled:"XTU TPIAN",
+answer:"TUX PAINT"
 },
 
 {
-type:"truefalse",
-question:"Eraser Tool is used for colouring pictures.",
-answer:"False"
+type:"unscramble",
+question:"Unscramble the tool name.",
+scrambled:"HBSUR",
+answer:"BRUSH"
 },
 
 {
-type:"radio",
-question:"Choose the correct tool used for drawing.",
-options:["Brush Tool","Eraser Tool","Undo Tool"],
-answer:"Brush Tool"
+type:"unscramble",
+question:"Unscramble the word.",
+scrambled:"RSEEAR",
+answer:"ERASER"
 },
 
 {
-type:"radio",
-question:"Choose the correct tool used for removing mistakes.",
-options:["Paint Tool","Eraser Tool","Lines Tool"],
-answer:"Eraser Tool"
-},
-
-{
-type:"fillblank",
-question:"The tool used to draw straight lines is",
-correctWord:"Lines Tool",
-words:["Brush Tool","Lines Tool","Undo Tool"]
-},
-
-{
-type:"fillblank",
-question:"The software used for drawing pictures is",
-correctWord:"Tux Paint",
-words:["Calculator","Tux Paint","Notepad"]
-},
-
-{
-type:"dragdrop",
-question:"Match the tool with its work.",
-pairs:[
-{drag:"Brush Tool",drop:"Used for Drawing"},
-{drag:"Eraser Tool",drop:"Used for Removing Mistakes"}
-]
-},
-
-{
-type:"dragdrop",
-question:"Match the picture with the correct tool.",
-pairs:[
-{drag:"Lines Tool",drop:"Draw Straight Lines"},
-{drag:"Undo Tool",drop:"Go Back One Step"}
-]
-},
-
-{
-type:"image",
+type:"guessimage",
 question:"Click on the Brush Tool.",
 images:[
 {src:"assets/brush.PNG",correct:true},
-{src:"assets/eraser.PNG",correct:false},
-{src:"assets/undo.PNG",correct:false},
-{src:"assets/lines.PNG",correct:false}
-]
-},
-
-{
-type:"image",
-question:"Click on the Eraser Tool.",
-images:[
-{src:"assets/eraser.PNG",correct:true},
-{src:"assets/brush.PNG",correct:false},
-{src:"assets/paint.PNG",correct:false},
-{src:"assets/tux.PNG",correct:false}
-]
-},
-
-{
-type:"image",
-question:"Click on the Lines Tool.",
-images:[
-{src:"assets/lines.PNG",correct:true},
-{src:"assets/brush.PNG",correct:false},
 {src:"assets/eraser.PNG",correct:false},
 {src:"assets/undo.PNG",correct:false}
 ]
 },
 
 {
-type:"image",
-question:"Which picture shows Tux Paint?",
+type:"guessimage",
+question:"Click on the Eraser Tool.",
 images:[
-{src:"assets/tux.PNG",correct:true},
-{src:"assets/paint.PNG",correct:false}
+{src:"assets/eraser.PNG",correct:true},
+{src:"assets/brush.PNG",correct:false},
+{src:"assets/lines.PNG",correct:false}
 ]
+},
+
+{
+type:"guessimage",
+question:"Click on the Lines Tool.",
+images:[
+{src:"assets/lines.PNG",correct:true},
+{src:"assets/undo.PNG",correct:false},
+{src:"assets/brush.PNG",correct:false}
+]
+},
+
+{
+type:"dragdrop",
+question:"Drag the correct tool name to the picture.",
+answer:"Brush Tool",
+image:"assets/brush.PNG"
+},
+
+{
+type:"dragdrop",
+question:"Drag the correct tool name to the picture.",
+answer:"Eraser Tool",
+image:"assets/eraser.PNG"
+},
+
+{
+type:"memory",
+question:"Find the matching pair.",
+pairs:[
+{word:"Brush",image:"assets/brush.PNG"},
+{word:"Eraser",image:"assets/eraser.PNG"}
+]
+},
+
+{
+type:"tapfast",
+question:"Tap the correct tool quickly!",
+correct:"Undo Tool",
+options:["Undo Tool","Brush Tool","Paint Tool"]
 }
 
 ];
@@ -388,14 +293,11 @@ const questionEl=document.getElementById("question");
 const optionsEl=document.getElementById("options");
 const progressEl=document.getElementById("progress");
 const scoreEl=document.getElementById("score");
-const resultEl=document.getElementById("result");
 const restartBtn=document.getElementById("restartBtn");
+const resultEl=document.getElementById("result");
 
 const correctSound=document.getElementById("correctSound");
 const wrongSound=document.getElementById("wrongSound");
-
-correctSound.volume=1.0;
-wrongSound.volume=1.0;
 
 function loadQuestion(){
 
@@ -407,93 +309,38 @@ questionEl.innerHTML=`Q${currentQuestion+1}. ${q.question}`;
 
 progressEl.innerHTML=`Question ${currentQuestion+1} / ${questions.length}`;
 
-if(q.type==="truefalse"){
+if(q.type==="unscramble"){
 
-let container=document.createElement("div");
+let scramble=document.createElement("h2");
 
-container.classList.add("truefalse-container");
+scramble.style.color="#ff6600";
 
-["True","False"].forEach(option=>{
+scramble.innerText=q.scrambled;
+
+optionsEl.appendChild(scramble);
+
+let input=document.createElement("input");
+
+input.type="text";
+
+input.placeholder="Type Answer";
+
+input.style.padding="15px";
+input.style.marginTop="20px";
+input.style.fontSize="1.1rem";
+input.style.borderRadius="10px";
+
+optionsEl.appendChild(input);
 
 let btn=document.createElement("button");
 
-btn.innerText=option;
+btn.innerText="Check";
 
-btn.onclick=()=>checkAnswer(btn,option,q.answer);
+btn.classList.add("word-card");
 
-container.appendChild(btn);
+btn.onclick=()=>{
 
-});
-
-optionsEl.appendChild(container);
-
-}
-
-else if(q.type==="radio"){
-
-let container=document.createElement("div");
-
-container.classList.add("radio-container");
-
-q.options.forEach(option=>{
-
-let label=document.createElement("label");
-
-let radio=document.createElement("input");
-
-radio.type="radio";
-
-radio.name="radioQuestion";
-
-radio.value=option;
-
-radio.onclick=()=>{
-
-checkRadio(option,q.answer);
-
-};
-
-label.appendChild(radio);
-
-label.append(" "+option);
-
-container.appendChild(label);
-
-});
-
-optionsEl.appendChild(container);
-
-}
-
-else if(q.type==="fillblank"){
-
-let sentence=document.createElement("div");
-
-sentence.style.fontSize="1.3rem";
-sentence.style.marginTop="20px";
-
-sentence.innerHTML=`
-${q.question}
-<span class="blank-space" id="blankSpace">_____</span>
-`;
-
-optionsEl.appendChild(sentence);
-
-let wordContainer=document.createElement("div");
-
-q.words.forEach(word=>{
-
-let wordBox=document.createElement("div");
-
-wordBox.classList.add("word-box");
-
-wordBox.innerText=word;
-
-wordBox.onclick=()=>{
-
-document.getElementById("blankSpace").innerText=word;
-
-if(word===q.correctWord){
+if(input.value.toUpperCase()===q.answer){
 
 correctAnswer();
 
@@ -506,112 +353,15 @@ wrongAnswer();
 
 };
 
-wordContainer.appendChild(wordBox);
-
-});
-
-optionsEl.appendChild(wordContainer);
+optionsEl.appendChild(btn);
 
 }
 
-else if(q.type==="dragdrop"){
+else if(q.type==="guessimage"){
 
-let dragContainer=document.createElement("div");
+let grid=document.createElement("div");
 
-dragContainer.classList.add("drag-container");
-
-q.pairs.forEach((pair,index)=>{
-
-let drag=document.createElement("div");
-
-drag.classList.add("drag-item");
-
-drag.draggable=true;
-
-drag.id="drag"+index;
-
-drag.innerText=pair.drag;
-
-drag.addEventListener("dragstart",(e)=>{
-
-e.dataTransfer.setData("text",drag.id);
-
-});
-
-dragContainer.appendChild(drag);
-
-});
-
-optionsEl.appendChild(dragContainer);
-
-q.pairs.forEach((pair,index)=>{
-
-let drop=document.createElement("div");
-
-drop.classList.add("drop-box");
-
-drop.innerText=pair.drop;
-
-drop.dataset.answer=pair.drag;
-
-drop.addEventListener("dragover",(e)=>{
-
-e.preventDefault();
-
-});
-
-drop.addEventListener("drop",(e)=>{
-
-e.preventDefault();
-
-let draggedId=e.dataTransfer.getData("text");
-
-let draggedElement=document.getElementById(draggedId);
-
-if(draggedElement.innerText===drop.dataset.answer){
-
-drop.style.background="lightgreen";
-
-drop.innerHTML=`✅ ${pair.drop}`;
-
-draggedElement.style.display="none";
-
-correctSound.play();
-
-score++;
-
-scoreEl.innerHTML=`⭐ Score: ${score}`;
-
-confetti({
-particleCount:120,
-spread:80
-});
-
-}
-
-else{
-
-drop.style.background="pink";
-
-wrongSound.play();
-
-}
-
-checkDragCompletion();
-
-});
-
-optionsEl.appendChild(drop);
-
-});
-
-}
-
-else if(q.type==="image"){
-
-let imageContainer=document.createElement("div");
-
-imageContainer.classList.add("image-question");
+grid.classList.add("image-grid");
 
 q.images.forEach(imgData=>{
 
@@ -636,42 +386,215 @@ wrongAnswer();
 
 }
 
-disableImages();
-
 };
 
-imageContainer.appendChild(img);
+grid.appendChild(img);
 
 });
 
-optionsEl.appendChild(imageContainer);
+optionsEl.appendChild(grid);
 
 }
 
-}
+else if(q.type==="dragdrop"){
 
-function checkAnswer(button,selected,answer){
+let img=document.createElement("img");
 
-if(selected===answer){
+img.src=q.image;
 
-button.classList.add("correct");
+img.style.width="180px";
+img.style.marginTop="15px";
+
+optionsEl.appendChild(img);
+
+let drop=document.createElement("div");
+
+drop.classList.add("drop-zone");
+
+drop.innerText="Drop Correct Tool Here";
+
+optionsEl.appendChild(drop);
+
+["Brush Tool","Lines Tool","Eraser Tool"].forEach(tool=>{
+
+let drag=document.createElement("div");
+
+drag.classList.add("drag-item");
+
+drag.draggable=true;
+
+drag.innerText=tool;
+
+drag.addEventListener("dragstart",(e)=>{
+
+e.dataTransfer.setData("text",tool);
+
+});
+
+optionsEl.appendChild(drag);
+
+});
+
+drop.addEventListener("dragover",(e)=>{
+
+e.preventDefault();
+
+});
+
+drop.addEventListener("drop",(e)=>{
+
+e.preventDefault();
+
+let data=e.dataTransfer.getData("text");
+
+if(data===q.answer){
+
+drop.style.background="lightgreen";
+
+drop.innerHTML="✅ Correct!";
 
 correctAnswer();
 
 }
 else{
 
-button.classList.add("wrong");
+drop.style.background="pink";
 
 wrongAnswer();
 
 }
 
+});
+
 }
 
-function checkRadio(selected,answer){
+else if(q.type==="memory"){
 
-if(selected===answer){
+let cards=[];
+
+q.pairs.forEach(pair=>{
+
+cards.push(pair.word);
+
+cards.push(pair.image);
+
+});
+
+cards.sort(()=>Math.random()-0.5);
+
+let selected=[];
+
+let matched=[];
+
+let grid=document.createElement("div");
+
+grid.classList.add("image-grid");
+
+cards.forEach(card=>{
+
+let div=document.createElement("div");
+
+div.classList.add("word-card");
+
+div.style.width="150px";
+div.style.height="150px";
+div.style.display="flex";
+div.style.justifyContent="center";
+div.style.alignItems="center";
+
+div.innerHTML="?";
+
+div.onclick=()=>{
+
+if(div.innerHTML!=="?") return;
+
+if(card.includes(".PNG")){
+
+div.innerHTML=`<img src="${card}" width="80">`;
+
+}
+else{
+
+div.innerHTML=card;
+
+}
+
+selected.push({div,card});
+
+if(selected.length===2){
+
+setTimeout(()=>{
+
+let first=selected[0].card;
+let second=selected[1].card;
+
+if(
+(first==="Brush" && second==="assets/brush.PNG") ||
+(second==="Brush" && first==="assets/brush.PNG") ||
+(first==="Eraser" && second==="assets/eraser.PNG") ||
+(second==="Eraser" && first==="assets/eraser.PNG")
+){
+
+correctSound.play();
+
+score++;
+
+scoreEl.innerHTML=score;
+
+confetti({
+particleCount:100,
+spread:70
+});
+
+matched.push(first);
+
+if(matched.length===2){
+
+setTimeout(nextQuestion,1500);
+
+}
+
+}
+else{
+
+selected[0].div.innerHTML="?";
+selected[1].div.innerHTML="?";
+
+wrongSound.play();
+
+}
+
+selected=[];
+
+},800);
+
+}
+
+};
+
+grid.appendChild(div);
+
+});
+
+optionsEl.appendChild(grid);
+
+}
+
+else if(q.type==="tapfast"){
+
+q.options.sort(()=>Math.random()-0.5);
+
+q.options.forEach(option=>{
+
+let btn=document.createElement("button");
+
+btn.classList.add("option-btn");
+
+btn.innerText=option;
+
+btn.onclick=()=>{
+
+if(option===q.correct){
 
 correctAnswer();
 
@@ -679,6 +602,14 @@ correctAnswer();
 else{
 
 wrongAnswer();
+
+}
+
+};
+
+optionsEl.appendChild(btn);
+
+});
 
 }
 
@@ -690,7 +621,7 @@ correctSound.play();
 
 score++;
 
-scoreEl.innerHTML=`⭐ Score: ${score}`;
+scoreEl.innerHTML=score;
 
 confetti({
 particleCount:150,
@@ -706,32 +637,6 @@ function wrongAnswer(){
 wrongSound.play();
 
 setTimeout(nextQuestion,1500);
-
-}
-
-function disableImages(){
-
-let images=document.querySelectorAll(".image-question img");
-
-images.forEach(img=>{
-
-img.style.pointerEvents="none";
-
-});
-
-}
-
-function checkDragCompletion(){
-
-let hidden=document.querySelectorAll('.drag-item[style*="display: none"]');
-
-let q=questions[currentQuestion];
-
-if(hidden.length===q.pairs.length){
-
-setTimeout(nextQuestion,1500);
-
-}
 
 }
 

@@ -1,1 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 1 - Introduction to Tux Paint 1</title>
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Comic Sans MS', sans-serif;
+}
+
+body{
+background:linear-gradient(to bottom,#b3ecff,#ffe6ff);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.game-container{
+width:100%;
+max-width:950px;
+background:white;
+border-radius:25px;
+padding:25px;
+text-align:center;
+box-shadow:0 0 20px rgba(0,0,0,0.3);
+border:8px solid #ffcc00;
+}
+
+.logo{
+width:120px;
+margin-bottom:10px;
+}
+
+h1{
+color:#ff6600;
+font-size:2rem;
+margin-bottom:15px;
+}
+
+#question{
+font-size:1.5rem;
+color:#333;
+margin:20px 0;
+min-height:80px;
+}
+
+#options{
+margin-top:20px;
+}
+
+.option-btn{
+display:block;
+width:90%;
+margin:10px auto;
+padding:15px;
+border:none;
+border-radius:15px;
+background:#4da6ff;
+color:white;
+font-size:1.1rem;
+cursor:pointer;
+transition:0.3s;
+}
+
+.option-btn:hover{
+background:#0077ff;
+transform:scale(1.03);
+}
+
+.correct{
+background:green !important;
+}
+
+.wrong{
+background:red !important;
+}
+
+.truefalse-container button{
+padding:15px 35px;
+margin:15px;
+font-size:1.2rem;
+border:none;
+border-radius:15px;
+cursor:pointer;
+background:#ff9900;
+color:white;
+}
+
+.truefalse-container button:hover{
+background:#ff7700;
+}
+
+.radio-container{
+text-align:left;
+padding-left:30%;
+}
+
+.radio-container label{
+display:block;
+margin:15px 0;
+font-size:1.2rem;
+cursor:pointer;
+}
+
+.drag-container{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.drag-item{
+padding:15px 20px;
+background:#4da6ff;
+color:white;
+border-radius:15px;
+cursor:grab;
+font-size:1.1rem;
+}
+
+.drop-box{
+width:260px;
+height:90px;
+border:3px dashed #666;
+border-radius:15px;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#fff8dc;
+padding:10px;
+font-size:1rem;
+}
+
+.image-question{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.image-question img{
+width:180px;
+height:180px;
+object-fit:contain;
+background:#fff;
+padding:10px;
+border-radius:20px;
+border:5px solid transparent;
+cursor:pointer;
+transition:0.3s;
+}
+
+.image-question img:hover{
+transform:scale(1.05);
+}
+
+.word-box{
+display:inline-block;
+padding:12px 18px;
+background:#4da6ff;
+color:white;
+border-radius:12px;
+margin:10px;
+cursor:pointer;
+font-size:1.1rem;
+}
+
+.blank-space{
+display:inline-block;
+min-width:150px;
+border-bottom:3px solid #333;
+margin-left:10px;
+font-weight:bold;
+color:#ff3300;
+}
+
+#score{
+font-size:1.3rem;
+margin-top:20px;
+}
+
+#progress{
+margin-top:10px;
+font-size:1rem;
+color:#555;
+}
+
+.result{
+font-size:2rem;
+color:#ff3300;
+margin-top:25px;
+}
+
+#restartBtn{
+margin-top:25px;
+padding:15px 35px;
+border:none;
+border-radius:15px;
+background:#ff9900;
+color:white;
+font-size:1.2rem;
+cursor:pointer;
+display:none;
+}
+
+#restartBtn:hover{
+background:#ff7700;
+}
+
+@media(max-width:768px){
+
+.radio-container{
+padding-left:10%;
+}
+
+.drag-container{
+flex-direction:column;
+align-items:center;
+}
+
+.image-question img{
+width:140px;
+height:140px;
+}
+
+h1{
+font-size:1.5rem;
+}
+
+#question{
+font-size:1.2rem;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="game-container">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🎨 Introduction to Tux Paint - 1 🎨</h1>
+
+<div id="question"></div>
+
+<div id="options"></div>
+
+<div id="progress"></div>
+
+<div id="score">⭐ Score: 0</div>
+
+<button id="restartBtn">🔄 Restart Game</button>
+
+<div class="result" id="result"></div>
+
+</div>
+
+<audio id="correctSound" src="assets/correct-1.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
+<script>
+
+const questions = [
+
+{
+type:"truefalse",
+question:"Tux Paint is used for drawing pictures.",
+answer:"True"
+},
+
+{
+type:"truefalse",
+question:"Eraser Tool is used for colouring pictures.",
+answer:"False"
+},
+
+{
+type:"radio",
+question:"Choose the correct tool used for drawing.",
+options:["Brush Tool","Eraser Tool","Undo Tool"],
+answer:"Brush Tool"
+},
+
+{
+type:"radio",
+question:"Choose the correct tool used for removing mistakes.",
+options:["Paint Tool","Eraser Tool","Lines Tool"],
+answer:"Eraser Tool"
+},
+
+{
+type:"fillblank",
+question:"The tool used to draw straight lines is",
+correctWord:"Lines Tool",
+words:["Brush Tool","Lines Tool","Undo Tool"]
+},
+
+{
+type:"fillblank",
+question:"The software used for drawing pictures is",
+correctWord:"Tux Paint",
+words:["Calculator","Tux Paint","Notepad"]
+},
+
+{
+type:"dragdrop",
+question:"Match the tool with its work.",
+pairs:[
+{drag:"Brush Tool",drop:"Used for Drawing"},
+{drag:"Eraser Tool",drop:"Used for Removing Mistakes"}
+]
+},
+
+{
+type:"dragdrop",
+question:"Match the picture with the correct tool.",
+pairs:[
+{drag:"Lines Tool",drop:"Draw Straight Lines"},
+{drag:"Undo Tool",drop:"Go Back One Step"}
+]
+},
+
+{
+type:"image",
+question:"Click on the Brush Tool.",
+images:[
+{src:"assets/brush.PNG",correct:true},
+{src:"assets/eraser.PNG",correct:false},
+{src:"assets/undo.PNG",correct:false},
+{src:"assets/lines.PNG",correct:false}
+]
+},
+
+{
+type:"image",
+question:"Click on the Eraser Tool.",
+images:[
+{src:"assets/eraser.PNG",correct:true},
+{src:"assets/brush.PNG",correct:false},
+{src:"assets/paint.PNG",correct:false},
+{src:"assets/tux.PNG",correct:false}
+]
+},
+
+{
+type:"image",
+question:"Click on the Lines Tool.",
+images:[
+{src:"assets/lines.PNG",correct:true},
+{src:"assets/brush.PNG",correct:false},
+{src:"assets/eraser.PNG",correct:false},
+{src:"assets/undo.PNG",correct:false}
+]
+},
+
+{
+type:"image",
+question:"Which picture shows Tux Paint?",
+images:[
+{src:"assets/tux.PNG",correct:true},
+{src:"assets/paint.PNG",correct:false}
+]
+}
+
+];
+
+questions.sort(()=>Math.random()-0.5);
+
+let currentQuestion=0;
+let score=0;
+
+const questionEl=document.getElementById("question");
+const optionsEl=document.getElementById("options");
+const progressEl=document.getElementById("progress");
+const scoreEl=document.getElementById("score");
+const resultEl=document.getElementById("result");
+const restartBtn=document.getElementById("restartBtn");
+
+const correctSound=document.getElementById("correctSound");
+const wrongSound=document.getElementById("wrongSound");
+
+correctSound.volume=1.0;
+wrongSound.volume=1.0;
+
+function loadQuestion(){
+
+optionsEl.innerHTML="";
+
+let q=questions[currentQuestion];
+
+questionEl.innerHTML=`Q${currentQuestion+1}. ${q.question}`;
+
+progressEl.innerHTML=`Question ${currentQuestion+1} / ${questions.length}`;
+
+if(q.type==="truefalse"){
+
+let container=document.createElement("div");
+
+container.classList.add("truefalse-container");
+
+["True","False"].forEach(option=>{
+
+let btn=document.createElement("button");
+
+btn.innerText=option;
+
+btn.onclick=()=>checkAnswer(btn,option,q.answer);
+
+container.appendChild(btn);
+
+});
+
+optionsEl.appendChild(container);
+
+}
+
+else if(q.type==="radio"){
+
+let container=document.createElement("div");
+
+container.classList.add("radio-container");
+
+q.options.forEach(option=>{
+
+let label=document.createElement("label");
+
+let radio=document.createElement("input");
+
+radio.type="radio";
+
+radio.name="radioQuestion";
+
+radio.value=option;
+
+radio.onclick=()=>{
+
+checkRadio(option,q.answer);
+
+};
+
+label.appendChild(radio);
+
+label.append(" "+option);
+
+container.appendChild(label);
+
+});
+
+optionsEl.appendChild(container);
+
+}
+
+else if(q.type==="fillblank"){
+
+let sentence=document.createElement("div");
+
+sentence.style.fontSize="1.3rem";
+sentence.style.marginTop="20px";
+
+sentence.innerHTML=`
+${q.question}
+<span class="blank-space" id="blankSpace">_____</span>
+`;
+
+optionsEl.appendChild(sentence);
+
+let wordContainer=document.createElement("div");
+
+q.words.forEach(word=>{
+
+let wordBox=document.createElement("div");
+
+wordBox.classList.add("word-box");
+
+wordBox.innerText=word;
+
+wordBox.onclick=()=>{
+
+document.getElementById("blankSpace").innerText=word;
+
+if(word===q.correctWord){
+
+correctAnswer();
+
+}
+else{
+
+wrongAnswer();
+
+}
+
+};
+
+wordContainer.appendChild(wordBox);
+
+});
+
+optionsEl.appendChild(wordContainer);
+
+}
+
+else if(q.type==="dragdrop"){
+
+let dragContainer=document.createElement("div");
+
+dragContainer.classList.add("drag-container");
+
+q.pairs.forEach((pair,index)=>{
+
+let drag=document.createElement("div");
+
+drag.classList.add("drag-item");
+
+drag.draggable=true;
+
+drag.id="drag"+index;
+
+drag.innerText=pair.drag;
+
+drag.addEventListener("dragstart",(e)=>{
+
+e.dataTransfer.setData("text",drag.id);
+
+});
+
+dragContainer.appendChild(drag);
+
+});
+
+optionsEl.appendChild(dragContainer);
+
+q.pairs.forEach((pair,index)=>{
+
+let drop=document.createElement("div");
+
+drop.classList.add("drop-box");
+
+drop.innerText=pair.drop;
+
+drop.dataset.answer=pair.drag;
+
+drop.addEventListener("dragover",(e)=>{
+
+e.preventDefault();
+
+});
+
+drop.addEventListener("drop",(e)=>{
+
+e.preventDefault();
+
+let draggedId=e.dataTransfer.getData("text");
+
+let draggedElement=document.getElementById(draggedId);
+
+if(draggedElement.innerText===drop.dataset.answer){
+
+drop.style.background="lightgreen";
+
+drop.innerHTML=`✅ ${pair.drop}`;
+
+draggedElement.style.display="none";
+
+correctSound.play();
+
+score++;
+
+scoreEl.innerHTML=`⭐ Score: ${score}`;
+
+confetti({
+particleCount:120,
+spread:80
+});
+
+}
+
+else{
+
+drop.style.background="pink";
+
+wrongSound.play();
+
+}
+
+checkDragCompletion();
+
+});
+
+optionsEl.appendChild(drop);
+
+});
+
+}
+
+else if(q.type==="image"){
+
+let imageContainer=document.createElement("div");
+
+imageContainer.classList.add("image-question");
+
+q.images.forEach(imgData=>{
+
+let img=document.createElement("img");
+
+img.src=imgData.src;
+
+img.onclick=()=>{
+
+if(imgData.correct){
+
+img.style.border="5px solid green";
+
+correctAnswer();
+
+}
+else{
+
+img.style.border="5px solid red";
+
+wrongAnswer();
+
+}
+
+disableImages();
+
+};
+
+imageContainer.appendChild(img);
+
+});
+
+optionsEl.appendChild(imageContainer);
+
+}
+
+}
+
+function checkAnswer(button,selected,answer){
+
+if(selected===answer){
+
+button.classList.add("correct");
+
+correctAnswer();
+
+}
+else{
+
+button.classList.add("wrong");
+
+wrongAnswer();
+
+}
+
+}
+
+function checkRadio(selected,answer){
+
+if(selected===answer){
+
+correctAnswer();
+
+}
+else{
+
+wrongAnswer();
+
+}
+
+}
+
+function correctAnswer(){
+
+correctSound.play();
+
+score++;
+
+scoreEl.innerHTML=`⭐ Score: ${score}`;
+
+confetti({
+particleCount:150,
+spread:90
+});
+
+setTimeout(nextQuestion,1500);
+
+}
+
+function wrongAnswer(){
+
+wrongSound.play();
+
+setTimeout(nextQuestion,1500);
+
+}
+
+function disableImages(){
+
+let images=document.querySelectorAll(".image-question img");
+
+images.forEach(img=>{
+
+img.style.pointerEvents="none";
+
+});
+
+}
+
+function checkDragCompletion(){
+
+let hidden=document.querySelectorAll('.drag-item[style*="display: none"]');
+
+let q=questions[currentQuestion];
+
+if(hidden.length===q.pairs.length){
+
+setTimeout(nextQuestion,1500);
+
+}
+
+}
+
+function nextQuestion(){
+
+currentQuestion++;
+
+if(currentQuestion<questions.length){
+
+loadQuestion();
+
+}
+else{
+
+showResult();
+
+}
+
+}
+
+function showResult(){
+
+questionEl.style.display="none";
+optionsEl.style.display="none";
+progressEl.style.display="none";
+
+resultEl.innerHTML=`
+🎉 Game Finished! <br><br>
+Your Score: ${score} / ${questions.length}
+`;
+
+restartBtn.style.display="inline-block";
+
+}
+
+restartBtn.onclick=()=>{
+
+location.reload();
+
+};
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>

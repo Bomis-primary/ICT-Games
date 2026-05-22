@@ -58,23 +58,6 @@ color:#333;
 margin-top:20px;
 }
 
-.word-card{
-display:inline-block;
-padding:15px 25px;
-background:#4da6ff;
-color:white;
-border-radius:15px;
-margin:10px;
-cursor:pointer;
-font-size:1.2rem;
-transition:0.3s;
-}
-
-.word-card:hover{
-transform:scale(1.05);
-background:#0077ff;
-}
-
 .option-btn{
 display:block;
 width:90%;
@@ -92,6 +75,23 @@ transition:0.3s;
 .option-btn:hover{
 background:#0077ff;
 transform:scale(1.03);
+}
+
+.word-card{
+display:inline-block;
+padding:15px 25px;
+background:#4da6ff;
+color:white;
+border-radius:15px;
+margin:10px;
+cursor:pointer;
+font-size:1.2rem;
+transition:0.3s;
+}
+
+.word-card:hover{
+transform:scale(1.05);
+background:#0077ff;
 }
 
 .image-grid{
@@ -130,7 +130,7 @@ font-size:1.1rem;
 }
 
 .drop-zone{
-width:250px;
+width:260px;
 height:90px;
 border:3px dashed #666;
 border-radius:15px;
@@ -158,7 +158,7 @@ border-radius:20px;
 display:flex;
 justify-content:center;
 align-items:center;
-font-size:1.2rem;
+font-size:1.1rem;
 color:white;
 cursor:pointer;
 overflow:hidden;
@@ -181,6 +181,12 @@ margin-top:10px;
 font-size:1rem;
 }
 
+.result{
+font-size:2rem;
+color:#ff3300;
+margin-top:25px;
+}
+
 #restartBtn{
 margin-top:25px;
 padding:15px 35px;
@@ -197,13 +203,7 @@ display:none;
 background:#ff7700;
 }
 
-.result{
-font-size:2rem;
-color:#ff3300;
-margin-top:25px;
-}
-
-input{
+input,select{
 padding:15px;
 font-size:1.1rem;
 border-radius:10px;
@@ -265,17 +265,24 @@ font-size:1.2rem;
 const questions = [
 
 {
+type:"dropdown",
+question:"Choose the software used for drawing pictures.",
+options:["Calculator","Tux Paint","Notepad"],
+answer:"Tux Paint"
+},
+
+{
 type:"unscramble",
-question:"Unscramble the drawing software name.",
-scrambled:"XTU TPIAN",
-answer:"TUX PAINT"
+question:"Unscramble the word.",
+scrambled:"HBSUR",
+answer:"BRUSH"
 },
 
 {
 type:"unscramble",
 question:"Unscramble the tool name.",
-scrambled:"HBSUR",
-answer:"BRUSH"
+scrambled:"RSEEAR",
+answer:"ERASER"
 },
 
 {
@@ -314,7 +321,7 @@ image:"assets/linesimage.PNG"
 
 {
 type:"memory",
-question:"Match the tool name with the correct image.",
+question:"Match the tool with the correct image.",
 pairs:[
 {
 word:"Brush Tool",
@@ -332,6 +339,16 @@ type:"tapfast",
 question:"Tap the correct tool quickly!",
 correct:"Undo Tool",
 options:["Undo Tool","Brush Tool","Paint Tool"]
+},
+
+{
+type:"guessimage",
+question:"Click on Tux Paint.",
+images:[
+{src:"assets/tux.PNG",correct:true},
+{src:"assets/paint.PNG",correct:false},
+{src:"assets/undo.PNG",correct:false}
+]
 }
 
 ];
@@ -340,6 +357,8 @@ questions.sort(()=>Math.random()-0.5);
 
 let currentQuestion=0;
 let score=0;
+
+const TOTAL_QUESTIONS = questions.length;
 
 const questionEl=document.getElementById("question");
 const optionsEl=document.getElementById("options");
@@ -351,6 +370,12 @@ const resultEl=document.getElementById("result");
 const correctSound=document.getElementById("correctSound");
 const wrongSound=document.getElementById("wrongSound");
 
+function updateScore(){
+
+scoreEl.innerHTML=score;
+
+}
+
 function loadQuestion(){
 
 optionsEl.innerHTML="";
@@ -359,9 +384,51 @@ let q=questions[currentQuestion];
 
 questionEl.innerHTML=`Q${currentQuestion+1}. ${q.question}`;
 
-progressEl.innerHTML=`Question ${currentQuestion+1} / ${questions.length}`;
+progressEl.innerHTML=`Question ${currentQuestion+1} / ${TOTAL_QUESTIONS}`;
 
-if(q.type==="unscramble"){
+if(q.type==="dropdown"){
+
+let select=document.createElement("select");
+
+let defaultOption=document.createElement("option");
+
+defaultOption.innerText="Select Answer";
+defaultOption.disabled=true;
+defaultOption.selected=true;
+
+select.appendChild(defaultOption);
+
+q.options.forEach(option=>{
+
+let opt=document.createElement("option");
+
+opt.value=option;
+opt.innerText=option;
+
+select.appendChild(opt);
+
+});
+
+select.onchange=()=>{
+
+if(select.value===q.answer){
+
+correctAnswer();
+
+}
+else{
+
+wrongAnswer();
+
+}
+
+};
+
+optionsEl.appendChild(select);
+
+}
+
+else if(q.type==="unscramble"){
 
 let scramble=document.createElement("h2");
 
@@ -581,7 +648,7 @@ match:pair.word
 cards.sort(()=>Math.random()-0.5);
 
 let selectedCards=[];
-let matchedCount=0;
+let matchedPairs=0;
 
 let grid=document.createElement("div");
 
@@ -639,18 +706,18 @@ second.element.style.background="green";
 
 correctSound.play();
 
-matchedCount++;
+matchedPairs++;
 
 score++;
 
-scoreEl.innerHTML=score;
+updateScore();
 
 confetti({
 particleCount:100,
 spread:70
 });
 
-if(matchedCount===q.pairs.length){
+if(matchedPairs===q.pairs.length){
 
 setTimeout(nextQuestion,1500);
 
@@ -699,11 +766,11 @@ img.style.pointerEvents="none";
 
 function correctAnswer(){
 
-correctSound.play();
-
 score++;
 
-scoreEl.innerHTML=score;
+updateScore();
+
+correctSound.play();
 
 confetti({
 particleCount:150,
@@ -726,7 +793,7 @@ function nextQuestion(){
 
 currentQuestion++;
 
-if(currentQuestion<questions.length){
+if(currentQuestion<TOTAL_QUESTIONS){
 
 loadQuestion();
 
@@ -747,7 +814,7 @@ progressEl.style.display="none";
 
 resultEl.innerHTML=`
 🎉 Game Finished! <br><br>
-Your Score: ${score} / ${questions.length}
+Your Score: ${score} / ${TOTAL_QUESTIONS}
 `;
 
 restartBtn.style.display="inline-block";

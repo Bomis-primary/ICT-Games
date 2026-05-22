@@ -18,7 +18,7 @@ font-family:'Comic Sans MS', sans-serif;
 }
 
 body{
-background:url('https://img.freepik.com/free-vector/hand-drawn-back-school-background_23-2149464866.jpg') no-repeat center center/cover;
+background:url('https://img.freepik.com/free-vector/cartoon-school-background_23-2149464863.jpg') no-repeat center center/cover;
 min-height:100vh;
 display:flex;
 justify-content:center;
@@ -29,7 +29,7 @@ padding:20px;
 .game-container{
 width:100%;
 max-width:950px;
-background:rgba(255,255,255,0.95);
+background:rgba(255,255,255,0.96);
 border-radius:25px;
 padding:25px;
 box-shadow:0 0 20px rgba(0,0,0,0.3);
@@ -46,6 +46,7 @@ font-size:2rem;
 font-size:1.5rem;
 margin:20px 0;
 color:#333;
+min-height:80px;
 }
 
 .option-btn{
@@ -85,6 +86,70 @@ margin-top:10px;
 font-size:1rem;
 }
 
+.truefalse-container button{
+padding:14px 30px;
+margin:15px;
+font-size:1.2rem;
+border:none;
+border-radius:15px;
+cursor:pointer;
+background:#ff9900;
+color:white;
+}
+
+.truefalse-container button:hover{
+background:#ff7700;
+}
+
+.radio-container{
+margin-top:20px;
+text-align:left;
+padding-left:30%;
+}
+
+.radio-container label{
+display:block;
+margin:15px 0;
+font-size:1.2rem;
+cursor:pointer;
+}
+
+.drag-container{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.drag-item{
+padding:15px 20px;
+background:#4da6ff;
+color:white;
+border-radius:15px;
+cursor:grab;
+font-size:1.1rem;
+}
+
+.drop-box{
+width:250px;
+height:80px;
+border:3px dashed #666;
+border-radius:15px;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#fff8dc;
+font-size:1rem;
+padding:10px;
+}
+
+.result{
+font-size:2rem;
+color:#ff3300;
+margin-top:25px;
+}
+
 #restartBtn{
 margin-top:25px;
 padding:15px 35px;
@@ -101,59 +166,36 @@ display:none;
 background:#ff7700;
 }
 
-.drag-container{
-display:flex;
-justify-content:space-around;
-flex-wrap:wrap;
-gap:20px;
-margin-top:20px;
-}
-
-.drag-item{
-padding:15px 25px;
+.word-box{
+display:inline-block;
+padding:10px 20px;
 background:#4da6ff;
 color:white;
-border-radius:15px;
-cursor:grab;
+border-radius:12px;
+margin:10px;
+cursor:pointer;
 font-size:1.1rem;
 }
 
-.drop-box{
-width:220px;
-height:80px;
-border:3px dashed #666;
-border-radius:15px;
-display:flex;
-justify-content:center;
-align-items:center;
-background:#fff8dc;
-font-size:1rem;
-padding:10px;
-}
-
-select{
-padding:12px;
-font-size:1rem;
-border-radius:10px;
-margin-top:15px;
-width:250px;
-}
-
-.result{
-font-size:2rem;
+.blank-space{
+display:inline-block;
+min-width:120px;
+padding:8px;
+border-bottom:3px solid #333;
+margin-left:10px;
+font-weight:bold;
 color:#ff3300;
-margin-top:20px;
 }
 
 @media(max-width:768px){
 
+.radio-container{
+padding-left:10%;
+}
+
 .drag-container{
 flex-direction:column;
 align-items:center;
-}
-
-.drop-box{
-width:90%;
 }
 
 h1{
@@ -173,7 +215,7 @@ font-size:1.2rem;
 
 <div class="game-container">
 
-<h1>🎨 MS Paint Fun Game 🎨</h1>
+<h1>🎨 MS Paint Fun Learning 🎨</h1>
 
 <div id="question"></div>
 
@@ -197,52 +239,57 @@ font-size:1.2rem;
 const questions = [
 
 {
-type:"mcq",
-question:"Which shortcut key is used to COPY?",
-options:["CTRL + C","CTRL + V","CTRL + X","CTRL + S"],
-answer:"CTRL + C"
+type:"truefalse",
+question:"CTRL + C is used for Copy.",
+answer:"True"
 },
 
 {
-type:"mcq",
-question:"Which shortcut key is used to PASTE?",
-options:["CTRL + S","CTRL + O","CTRL + V","CTRL + X"],
-answer:"CTRL + V"
+type:"truefalse",
+question:"CTRL + V is used for Save.",
+answer:"False"
 },
 
 {
-type:"mcq",
-question:"Which shortcut key is used to CUT?",
-options:["CTRL + X","CTRL + C","CTRL + P","CTRL + O"],
-answer:"CTRL + X"
+type:"radio",
+question:"Choose the correct shortcut key for SAVE.",
+options:["CTRL + X","CTRL + S","CTRL + V"],
+answer:"CTRL + S"
 },
 
 {
-type:"dropdown",
-question:"Choose the correct shortcut key to SAVE a file.",
-answer:"CTRL + S",
-choices:["CTRL + P","CTRL + O","CTRL + S","CTRL + X"]
+type:"radio",
+question:"Choose the correct shortcut key for OPEN.",
+options:["CTRL + O","CTRL + C","CTRL + P"],
+answer:"CTRL + O"
 },
 
 {
-type:"dropdown",
-question:"Choose the correct shortcut key to OPEN a file.",
-answer:"CTRL + O",
-choices:["CTRL + V","CTRL + O","CTRL + S","CTRL + C"]
+type:"fillblank",
+question:"Shortcut key for CUT is",
+correctWord:"CTRL + X",
+words:["CTRL + V","CTRL + X","CTRL + S"]
+},
+
+{
+type:"fillblank",
+question:"Shortcut key for PASTE is",
+correctWord:"CTRL + V",
+words:["CTRL + C","CTRL + O","CTRL + V"]
 },
 
 {
 type:"dragdrop",
-question:"Match the tool with its work.",
+question:"Drag the correct tool to its work.",
 pairs:[
 {drag:"Brush Tool",drop:"Used for Drawing"},
-{drag:"Eraser Tool",drop:"Removes Mistakes"}
+{drag:"Eraser Tool",drop:"Used for Removing Mistakes"}
 ]
 },
 
 {
 type:"dragdrop",
-question:"Match the shortcut key.",
+question:"Match the shortcut key correctly.",
 pairs:[
 {drag:"CTRL + C",drop:"Copy"},
 {drag:"CTRL + V",drop:"Paste"}
@@ -250,127 +297,152 @@ pairs:[
 },
 
 {
-type:"mcq",
-question:"Which tool helps to draw pictures?",
-options:["Brush Tool","Save Tool","Open Tool","Close Tool"],
-answer:"Brush Tool"
+type:"truefalse",
+question:"Brush Tool is used for drawing pictures.",
+answer:"True"
 },
 
 {
-type:"mcq",
-question:"Which tool removes mistakes?",
-options:["Brush","Text","Eraser","Zoom"],
-answer:"Eraser"
-},
-
-{
-type:"dropdown",
-question:"Choose the correct shortcut key for CUT.",
-answer:"CTRL + X",
-choices:["CTRL + X","CTRL + V","CTRL + C","CTRL + O"]
+type:"radio",
+question:"Choose the correct tool used for erasing.",
+options:["Brush Tool","Text Tool","Eraser Tool"],
+answer:"Eraser Tool"
 }
 
 ];
 
-questions.sort(() => Math.random() - 0.5);
+questions.sort(()=>Math.random()-0.5);
 
-let currentQuestion = 0;
-let score = 0;
+let currentQuestion=0;
+let score=0;
 
-const questionEl = document.getElementById("question");
-const optionsEl = document.getElementById("options");
-const progressEl = document.getElementById("progress");
-const scoreEl = document.getElementById("score");
-const resultEl = document.getElementById("result");
-const restartBtn = document.getElementById("restartBtn");
+const questionEl=document.getElementById("question");
+const optionsEl=document.getElementById("options");
+const progressEl=document.getElementById("progress");
+const scoreEl=document.getElementById("score");
+const resultEl=document.getElementById("result");
+const restartBtn=document.getElementById("restartBtn");
 
-const correctSound = document.getElementById("correctSound");
-const wrongSound = document.getElementById("wrongSound");
+const correctSound=document.getElementById("correctSound");
+const wrongSound=document.getElementById("wrongSound");
 
-correctSound.volume = 1.0;
-wrongSound.volume = 1.0;
+correctSound.volume=1.0;
+wrongSound.volume=1.0;
 
 function loadQuestion(){
 
 optionsEl.innerHTML="";
 
-let q = questions[currentQuestion];
+let q=questions[currentQuestion];
 
 questionEl.innerHTML=`Q${currentQuestion+1}. ${q.question}`;
 
 progressEl.innerHTML=`Question ${currentQuestion+1} / ${questions.length}`;
 
-if(q.type==="mcq"){
+if(q.type==="truefalse"){
 
-q.options.forEach(option=>{
+let container=document.createElement("div");
+
+container.classList.add("truefalse-container");
+
+["True","False"].forEach(option=>{
 
 let btn=document.createElement("button");
-
-btn.classList.add("option-btn");
 
 btn.innerText=option;
 
 btn.onclick=()=>checkAnswer(btn,option,q.answer);
 
-optionsEl.appendChild(btn);
+container.appendChild(btn);
 
 });
 
-}
-
-else if(q.type==="dropdown"){
-
-let select=document.createElement("select");
-
-let defaultOption=document.createElement("option");
-
-defaultOption.innerText="Select Answer";
-
-defaultOption.disabled=true;
-defaultOption.selected=true;
-
-select.appendChild(defaultOption);
-
-q.choices.forEach(choice=>{
-
-let option=document.createElement("option");
-
-option.value=choice;
-
-option.innerText=choice;
-
-select.appendChild(option);
-
-});
-
-select.onchange=()=>{
-
-if(select.value===q.answer){
-
-correctSound.play();
-
-score++;
-
-scoreEl.innerHTML=`⭐ Score: ${score}`;
-
-confetti({
-particleCount:150,
-spread:90
-});
+optionsEl.appendChild(container);
 
 }
 
-else{
+else if(q.type==="radio"){
 
-wrongSound.play();
+let container=document.createElement("div");
 
-}
+container.classList.add("radio-container");
 
-setTimeout(nextQuestion,1500);
+q.options.forEach(option=>{
+
+let label=document.createElement("label");
+
+let radio=document.createElement("input");
+
+radio.type="radio";
+
+radio.name="radioQuestion";
+
+radio.value=option;
+
+radio.onclick=()=>{
+
+checkRadio(option,q.answer);
 
 };
 
-optionsEl.appendChild(select);
+label.appendChild(radio);
+
+label.append(" "+option);
+
+container.appendChild(label);
+
+});
+
+optionsEl.appendChild(container);
+
+}
+
+else if(q.type==="fillblank"){
+
+let sentence=document.createElement("div");
+
+sentence.style.fontSize="1.3rem";
+sentence.style.marginTop="20px";
+
+sentence.innerHTML=`
+${q.question}
+<span class="blank-space" id="blankSpace">_____</span>
+`;
+
+optionsEl.appendChild(sentence);
+
+let wordContainer=document.createElement("div");
+
+q.words.forEach(word=>{
+
+let wordBox=document.createElement("div");
+
+wordBox.classList.add("word-box");
+
+wordBox.innerText=word;
+
+wordBox.onclick=()=>{
+
+document.getElementById("blankSpace").innerText=word;
+
+if(word===q.correctWord){
+
+correctAnswer();
+
+}
+else{
+
+wrongAnswer();
+
+}
+
+};
+
+wordContainer.appendChild(wordBox);
+
+});
+
+optionsEl.appendChild(wordContainer);
 
 }
 
@@ -393,7 +465,9 @@ drag.id="drag"+index;
 drag.innerText=pair.drag;
 
 drag.addEventListener("dragstart",(e)=>{
+
 e.dataTransfer.setData("text",drag.id);
+
 });
 
 dragContainer.appendChild(drag);
@@ -413,7 +487,9 @@ drop.innerText=pair.drop;
 drop.dataset.answer=pair.drag;
 
 drop.addEventListener("dragover",(e)=>{
+
 e.preventDefault();
+
 });
 
 drop.addEventListener("drop",(e)=>{
@@ -430,6 +506,8 @@ drop.style.background="lightgreen";
 
 drop.innerHTML=`✅ ${pair.drop}`;
 
+draggedElement.style.display="none";
+
 correctSound.play();
 
 score++;
@@ -440,8 +518,6 @@ confetti({
 particleCount:120,
 spread:80
 });
-
-draggedElement.style.display="none";
 
 }
 
@@ -465,29 +541,41 @@ optionsEl.appendChild(drop);
 
 }
 
-function checkDragCompletion(){
-
-let hiddenDrags=document.querySelectorAll('.drag-item[style*="display: none"]');
-
-let q=questions[currentQuestion];
-
-if(hiddenDrags.length===q.pairs.length){
-
-setTimeout(nextQuestion,1500);
-
-}
-
-}
-
 function checkAnswer(button,selected,answer){
-
-let buttons=document.querySelectorAll(".option-btn");
-
-buttons.forEach(btn=>btn.disabled=true);
 
 if(selected===answer){
 
 button.classList.add("correct");
+
+correctAnswer();
+
+}
+else{
+
+button.classList.add("wrong");
+
+wrongAnswer();
+
+}
+
+}
+
+function checkRadio(selected,answer){
+
+if(selected===answer){
+
+correctAnswer();
+
+}
+else{
+
+wrongAnswer();
+
+}
+
+}
+
+function correctAnswer(){
 
 correctSound.play();
 
@@ -500,27 +588,29 @@ particleCount:150,
 spread:90
 });
 
+setTimeout(nextQuestion,1500);
+
 }
 
-else{
-
-button.classList.add("wrong");
+function wrongAnswer(){
 
 wrongSound.play();
 
-buttons.forEach(btn=>{
-
-if(btn.innerText===answer){
-
-btn.classList.add("correct");
+setTimeout(nextQuestion,1500);
 
 }
 
-});
+function checkDragCompletion(){
 
-}
+let hidden=document.querySelectorAll('.drag-item[style*="display: none"]');
+
+let q=questions[currentQuestion];
+
+if(hidden.length===q.pairs.length){
 
 setTimeout(nextQuestion,1500);
+
+}
 
 }
 
@@ -533,7 +623,6 @@ if(currentQuestion<questions.length){
 loadQuestion();
 
 }
-
 else{
 
 showResult();
@@ -545,9 +634,7 @@ showResult();
 function showResult(){
 
 questionEl.style.display="none";
-
 optionsEl.style.display="none";
-
 progressEl.style.display="none";
 
 resultEl.innerHTML=`

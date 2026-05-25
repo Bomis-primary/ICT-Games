@@ -115,12 +115,13 @@ border-radius:20px;
 display:flex;
 justify-content:center;
 align-items:center;
-font-size:22px;
+font-size:20px;
 font-weight:bold;
 cursor:pointer;
 color:white;
 transition:0.4s;
 padding:10px;
+text-align:center;
 }
 
 .card.flipped{
@@ -129,20 +130,19 @@ color:black;
 transform:rotateY(180deg);
 }
 
-.scramble-container{
-margin-top:20px;
+.memory-img{
+width:80px;
+height:80px;
+object-fit:contain;
 }
 
 .scramble-box{
-background:#e3f2fd;
-padding:20px;
-border-radius:20px;
-margin-bottom:20px;
+margin-top:20px;
 }
 
 .scramble-word{
-font-size:40px;
-letter-spacing:10px;
+font-size:42px;
+letter-spacing:8px;
 font-weight:bold;
 color:#1565c0;
 margin-bottom:20px;
@@ -156,7 +156,7 @@ flex-wrap:wrap;
 }
 
 .option-btn{
-background:#90caf9;
+background:#e3f2fd;
 padding:15px 20px;
 border:none;
 border-radius:18px;
@@ -166,7 +166,7 @@ cursor:pointer;
 }
 
 .option-btn:hover{
-background:#64b5f6;
+background:#90caf9;
 }
 
 .drag-container{
@@ -184,12 +184,12 @@ border-radius:20px;
 cursor:grab;
 font-size:20px;
 font-weight:bold;
-width:220px;
+width:200px;
 margin-bottom:15px;
 }
 
 .drop-box{
-width:260px;
+width:250px;
 height:90px;
 border:3px dashed #1565c0;
 border-radius:20px;
@@ -203,10 +203,40 @@ margin-bottom:15px;
 padding:10px;
 }
 
-.memory-img{
-width:90px;
-height:90px;
+.image-options{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.image-card{
+width:200px;
+height:180px;
+background:#e3f2fd;
+border-radius:20px;
+padding:15px;
+cursor:pointer;
+transition:0.3s;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+font-size:20px;
+font-weight:bold;
+}
+
+.image-card:hover{
+transform:scale(1.05);
+background:#90caf9;
+}
+
+.image-card img{
+width:100px;
+height:100px;
 object-fit:contain;
+margin-bottom:10px;
 }
 
 .final-score{
@@ -225,6 +255,11 @@ grid-template-columns:repeat(2,1fr);
 .drag-container{
 flex-direction:column;
 align-items:center;
+}
+
+.image-card{
+width:150px;
+height:150px;
 }
 
 }
@@ -281,6 +316,10 @@ Chapter 11 - Directions & Positions
 🧩 Drag & Drop Game
 </button>
 
+<button class="btn" onclick="startImageGame()">
+🖼️ Image Click Game
+</button>
+
 </div>
 
 <!-- MEMORY -->
@@ -317,9 +356,23 @@ Chapter 11 - Directions & Positions
 
 <h1>🔤 Unscramble Words</h1>
 
-<div class="scramble-container" id="scrambleContainer"></div>
+<div class="scramble-box">
+
+<h2 id="scrambleTitle">
+Arrange the Correct Word
+</h2>
+
+<div class="scramble-word" id="scrambleWord"></div>
+
+<div class="option-row" id="scrambleOptions"></div>
+
+</div>
 
 <div class="feedback" id="unscrambleFeedback"></div>
+
+<button class="btn" onclick="nextScramble()">
+Next Word ➜
+</button>
 
 <button class="btn" onclick="showMenu()">
 ⬅ Back
@@ -327,7 +380,7 @@ Chapter 11 - Directions & Positions
 
 </div>
 
-<!-- DRAG & DROP -->
+<!-- DRAG GAME -->
 
 <div id="dragGame" class="screen">
 
@@ -353,12 +406,8 @@ Backward
 Corner
 </div>
 
-<div class="drag-item" draggable="true" id="nextto">
+<div class="drag-item" draggable="true" id="next">
 Next To
-</div>
-
-<div class="drag-item" draggable="true" id="opposite">
-Opposite
 </div>
 
 </div>
@@ -377,12 +426,8 @@ Move Back
 Edge of Room
 </div>
 
-<div class="drop-box" data-answer="nextto">
+<div class="drop-box" data-answer="next">
 Beside Something
-</div>
-
-<div class="drop-box" data-answer="opposite">
-Facing Each Other
 </div>
 
 </div>
@@ -390,6 +435,51 @@ Facing Each Other
 </div>
 
 <div class="feedback" id="dragFeedback"></div>
+
+<button class="btn" onclick="showMenu()">
+⬅ Back
+</button>
+
+</div>
+
+<!-- IMAGE CLICK GAME -->
+
+<div id="imageGame" class="screen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🖼️ Click Correct Image</h1>
+
+<h2 id="imageQuestion">
+Click the picture showing FORWARD
+</h2>
+
+<div class="image-options">
+
+<div class="image-card" onclick="checkImageAnswer('forward')">
+
+<img src="assets/forward.png">
+FORWARD
+
+</div>
+
+<div class="image-card" onclick="checkImageAnswer('backward')">
+
+<img src="assets/backward.png">
+BACKWARD
+
+</div>
+
+<div class="image-card" onclick="checkImageAnswer('corner')">
+
+<img src="assets/corner.png">
+CORNER
+
+</div>
+
+</div>
+
+<div class="feedback" id="imageFeedback"></div>
 
 <button class="btn" onclick="showMenu()">
 ⬅ Back
@@ -447,7 +537,7 @@ showScreen('menu');
 
 }
 
-/* MEMORY GAME */
+/* MEMORY */
 
 const memoryItems=[
 
@@ -460,8 +550,8 @@ const memoryItems=[
 {img:'assets/corner.png',name:'Corner'},
 {img:'assets/corner.png',name:'Corner'},
 
-{img:'assets/opposite.png',name:'Opposite'},
-{img:'assets/opposite.png',name:'Opposite'}
+{img:'assets/next to.png',name:'Next To'},
+{img:'assets/next to.png',name:'Next To'}
 
 ];
 
@@ -525,7 +615,7 @@ flippedCards=[];
 
 if(matched===4){
 
-setTimeout(showFinal,1200);
+setTimeout(showFinal,1000);
 
 }
 
@@ -557,90 +647,75 @@ flippedCards=[];
 
 /* UNSCRAMBLE */
 
-const scrambleQuestions=[
+const scrambleData=[
 
 {
-word:"RFOWDAR",
-correct:"FORWARD",
-options:["FORWARD","BACKWARD","CORNER"]
+word:'RFOWDAR',
+answer:'FORWARD',
+options:['FORWARD','CORNER','BACKWARD']
 },
 
 {
-word:"KBCRAWAD",
-correct:"BACKWARD",
-options:["BETWEEN","BACKWARD","CORNER"]
+word:'KCBARDWA',
+answer:'BACKWARD',
+options:['FORWARD','BACKWARD','BETWEEN']
 },
 
 {
-word:"NROCER",
-correct:"CORNER",
-options:["CORNER","NEXT TO","FORWARD"]
+word:'RONCER',
+answer:'CORNER',
+options:['NEXT TO','CORNER','CROSS']
 },
 
 {
-word:"TXE NTO",
-correct:"NEXT TO",
-options:["NEXT TO","OPPOSITE","FORWARD"]
-},
-
-{
-word:"PETOIPOS",
-correct:"OPPOSITE",
-options:["BETWEEN","OPPOSITE","BACKWARD"]
+word:'TXEN TO',
+answer:'NEXT TO',
+options:['BETWEEN','NEXT TO','OPPOSITE']
 }
 
 ];
+
+let scrambleIndex=0;
 
 function startUnscrambleGame(){
 
 showScreen('unscrambleGame');
 
-const container=document.getElementById('scrambleContainer');
+scrambleIndex=0;
 
-container.innerHTML='';
+loadScramble();
 
-scrambleQuestions.forEach((q,index)=>{
+}
 
-const box=document.createElement('div');
+function loadScramble(){
 
-box.className='scramble-box';
+const q=scrambleData[scrambleIndex];
 
-box.innerHTML=`
+document.getElementById('scrambleWord').innerText=q.word;
 
-<h2>Question ${index+1}</h2>
+const options=document.getElementById('scrambleOptions');
 
-<div class="scramble-word">
-${q.word}
-</div>
+options.innerHTML='';
 
-<div class="option-row">
+q.options.forEach(opt=>{
 
-<button class="option-btn" onclick="checkScramble(this,'${q.correct}','${q.options[0]}')">
-${q.options[0]}
-</button>
+const btn=document.createElement('button');
 
-<button class="option-btn" onclick="checkScramble(this,'${q.correct}','${q.options[1]}')">
-${q.options[1]}
-</button>
+btn.className='option-btn';
 
-<button class="option-btn" onclick="checkScramble(this,'${q.correct}','${q.options[2]}')">
-${q.options[2]}
-</button>
+btn.innerText=opt;
 
-</div>
-`;
+btn.onclick=()=>checkScramble(opt,q.answer);
 
-container.appendChild(box);
+options.appendChild(btn);
 
 });
 
 }
 
-function checkScramble(button,correct,selected){
+function checkScramble(ans,correct){
 
-if(selected===correct){
-
-button.style.background='lightgreen';
+if(ans===correct){
 
 document.getElementById('correctSound').play();
 
@@ -651,12 +726,28 @@ totalScore++;
 
 }else{
 
-button.style.background='#ef5350';
-
 document.getElementById('wrongSound').play();
 
 document.getElementById('unscrambleFeedback').innerText='❌ Wrong!';
 document.getElementById('unscrambleFeedback').style.color='red';
+
+}
+
+}
+
+function nextScramble(){
+
+scrambleIndex++;
+
+if(scrambleIndex<scrambleData.length){
+
+document.getElementById('unscrambleFeedback').innerText='';
+
+loadScramble();
+
+}else{
+
+showFinal();
 
 }
 
@@ -706,12 +797,12 @@ correctDrops++;
 
 totalScore++;
 
-if(correctDrops===5){
+if(correctDrops===4){
 
 document.getElementById('dragFeedback').innerText='🎉 Completed!';
 document.getElementById('dragFeedback').style.color='green';
 
-setTimeout(showFinal,1200);
+setTimeout(showFinal,1000);
 
 }
 
@@ -728,6 +819,38 @@ document.getElementById('dragFeedback').style.color='red';
 
 });
 
+/* IMAGE GAME */
+
+function startImageGame(){
+
+showScreen('imageGame');
+
+}
+
+function checkImageAnswer(answer){
+
+if(answer==='forward'){
+
+document.getElementById('correctSound').play();
+
+document.getElementById('imageFeedback').innerText='🎉 Correct Image!';
+document.getElementById('imageFeedback').style.color='green';
+
+totalScore+=2;
+
+setTimeout(showFinal,1000);
+
+}else{
+
+document.getElementById('wrongSound').play();
+
+document.getElementById('imageFeedback').innerText='❌ Wrong Image!';
+document.getElementById('imageFeedback').style.color='red';
+
+}
+
+}
+
 /* FINAL */
 
 function showFinal(){
@@ -742,11 +865,11 @@ document.getElementById('finalScore').innerText=
 
 let rank='';
 
-if(totalScore>=12){
+if(totalScore>=10){
 
 rank='🏆 Direction Champion';
 
-}else if(totalScore>=7){
+}else if(totalScore>=6){
 
 rank='🌟 Excellent Explorer';
 

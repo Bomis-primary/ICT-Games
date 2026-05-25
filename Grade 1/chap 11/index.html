@@ -120,6 +120,7 @@ font-weight:bold;
 cursor:pointer;
 color:white;
 transition:0.4s;
+padding:10px;
 }
 
 .card.flipped{
@@ -128,12 +129,19 @@ color:black;
 transform:rotateY(180deg);
 }
 
-.scramble-box{
+.scramble-container{
 margin-top:20px;
 }
 
+.scramble-box{
+background:#e3f2fd;
+padding:20px;
+border-radius:20px;
+margin-bottom:20px;
+}
+
 .scramble-word{
-font-size:42px;
+font-size:40px;
 letter-spacing:10px;
 font-weight:bold;
 color:#1565c0;
@@ -148,7 +156,7 @@ flex-wrap:wrap;
 }
 
 .option-btn{
-background:#e3f2fd;
+background:#90caf9;
 padding:15px 20px;
 border:none;
 border-radius:18px;
@@ -158,7 +166,7 @@ cursor:pointer;
 }
 
 .option-btn:hover{
-background:#90caf9;
+background:#64b5f6;
 }
 
 .drag-container{
@@ -176,12 +184,12 @@ border-radius:20px;
 cursor:grab;
 font-size:20px;
 font-weight:bold;
-width:200px;
+width:220px;
 margin-bottom:15px;
 }
 
 .drop-box{
-width:240px;
+width:260px;
 height:90px;
 border:3px dashed #1565c0;
 border-radius:20px;
@@ -275,7 +283,7 @@ Chapter 11 - Directions & Positions
 
 </div>
 
-<!-- MEMORY GAME -->
+<!-- MEMORY -->
 
 <div id="memoryGame" class="screen">
 
@@ -287,7 +295,7 @@ Chapter 11 - Directions & Positions
 
 <div>⭐ Score: <span id="memoryScore">0</span></div>
 
-<div>🏅 Matches: <span id="matches">0</span>/3</div>
+<div>🏅 Matches: <span id="matches">0</span>/4</div>
 
 </div>
 
@@ -307,33 +315,9 @@ Chapter 11 - Directions & Positions
 
 <img src="assets/innovine-logo.png" class="logo">
 
-<h1>🔤 Unscramble Game</h1>
+<h1>🔤 Unscramble Words</h1>
 
-<div class="scramble-box">
-
-<h2>Arrange the Correct Word</h2>
-
-<div class="scramble-word" id="scrambleWord">
-RFOWDAR
-</div>
-
-<div class="option-row">
-
-<button class="option-btn" onclick="checkScramble('FORWARD')">
-FORWARD
-</button>
-
-<button class="option-btn" onclick="checkScramble('BACKWARD')">
-BACKWARD
-</button>
-
-<button class="option-btn" onclick="checkScramble('CORNER')">
-CORNER
-</button>
-
-</div>
-
-</div>
+<div class="scramble-container" id="scrambleContainer"></div>
 
 <div class="feedback" id="unscrambleFeedback"></div>
 
@@ -369,6 +353,14 @@ Backward
 Corner
 </div>
 
+<div class="drag-item" draggable="true" id="nextto">
+Next To
+</div>
+
+<div class="drag-item" draggable="true" id="opposite">
+Opposite
+</div>
+
 </div>
 
 <div>
@@ -383,6 +375,14 @@ Move Back
 
 <div class="drop-box" data-answer="corner">
 Edge of Room
+</div>
+
+<div class="drop-box" data-answer="nextto">
+Beside Something
+</div>
+
+<div class="drop-box" data-answer="opposite">
+Facing Each Other
 </div>
 
 </div>
@@ -458,7 +458,10 @@ const memoryItems=[
 {img:'assets/backward.png',name:'Backward'},
 
 {img:'assets/corner.png',name:'Corner'},
-{img:'assets/corner.png',name:'Corner'}
+{img:'assets/corner.png',name:'Corner'},
+
+{img:'assets/opposite.png',name:'Opposite'},
+{img:'assets/opposite.png',name:'Opposite'}
 
 ];
 
@@ -520,9 +523,9 @@ totalScore++;
 
 flippedCards=[];
 
-if(matched===3){
+if(matched===4){
 
-setTimeout(showFinal,1000);
+setTimeout(showFinal,1200);
 
 }
 
@@ -554,26 +557,101 @@ flippedCards=[];
 
 /* UNSCRAMBLE */
 
+const scrambleQuestions=[
+
+{
+word:"RFOWDAR",
+correct:"FORWARD",
+options:["FORWARD","BACKWARD","CORNER"]
+},
+
+{
+word:"KBCRAWAD",
+correct:"BACKWARD",
+options:["BETWEEN","BACKWARD","CORNER"]
+},
+
+{
+word:"NROCER",
+correct:"CORNER",
+options:["CORNER","NEXT TO","FORWARD"]
+},
+
+{
+word:"TXE NTO",
+correct:"NEXT TO",
+options:["NEXT TO","OPPOSITE","FORWARD"]
+},
+
+{
+word:"PETOIPOS",
+correct:"OPPOSITE",
+options:["BETWEEN","OPPOSITE","BACKWARD"]
+}
+
+];
+
 function startUnscrambleGame(){
 
 showScreen('unscrambleGame');
 
+const container=document.getElementById('scrambleContainer');
+
+container.innerHTML='';
+
+scrambleQuestions.forEach((q,index)=>{
+
+const box=document.createElement('div');
+
+box.className='scramble-box';
+
+box.innerHTML=`
+
+<h2>Question ${index+1}</h2>
+
+<div class="scramble-word">
+${q.word}
+</div>
+
+<div class="option-row">
+
+<button class="option-btn" onclick="checkScramble(this,'${q.correct}','${q.options[0]}')">
+${q.options[0]}
+</button>
+
+<button class="option-btn" onclick="checkScramble(this,'${q.correct}','${q.options[1]}')">
+${q.options[1]}
+</button>
+
+<button class="option-btn" onclick="checkScramble(this,'${q.correct}','${q.options[2]}')">
+${q.options[2]}
+</button>
+
+</div>
+`;
+
+container.appendChild(box);
+
+});
+
 }
 
-function checkScramble(ans){
+function checkScramble(button,correct,selected){
 
-if(ans==="FORWARD"){
+if(selected===correct){
+
+button.style.background='lightgreen';
 
 document.getElementById('correctSound').play();
 
 document.getElementById('unscrambleFeedback').innerText='🎉 Correct!';
 document.getElementById('unscrambleFeedback').style.color='green';
 
-totalScore+=2;
-
-setTimeout(showFinal,1000);
+totalScore++;
 
 }else{
+
+button.style.background='#ef5350';
 
 document.getElementById('wrongSound').play();
 
@@ -584,7 +662,7 @@ document.getElementById('unscrambleFeedback').style.color='red';
 
 }
 
-/* DRAG & DROP */
+/* DRAG DROP */
 
 function startDragGame(){
 
@@ -628,12 +706,12 @@ correctDrops++;
 
 totalScore++;
 
-if(correctDrops===3){
+if(correctDrops===5){
 
 document.getElementById('dragFeedback').innerText='🎉 Completed!';
 document.getElementById('dragFeedback').style.color='green';
 
-setTimeout(showFinal,1000);
+setTimeout(showFinal,1200);
 
 }
 
@@ -664,11 +742,11 @@ document.getElementById('finalScore').innerText=
 
 let rank='';
 
-if(totalScore>=7){
+if(totalScore>=12){
 
 rank='🏆 Direction Champion';
 
-}else if(totalScore>=4){
+}else if(totalScore>=7){
 
 rank='🌟 Excellent Explorer';
 
@@ -681,8 +759,8 @@ rank='📘 Keep Practicing';
 document.getElementById('rankText').innerText=rank;
 
 confetti({
-particleCount:160,
-spread:90
+particleCount:180,
+spread:100
 });
 
 }

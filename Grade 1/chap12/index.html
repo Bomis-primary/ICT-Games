@@ -1,1 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Chapter 12 ICT Adventure</title>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Comic Sans MS',cursive;
+}
+
+body{
+background:linear-gradient(135deg,#ffecd2,#fcb69f,#a1c4fd);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.screen{
+display:none;
+background:white;
+width:95%;
+max-width:1100px;
+padding:25px;
+border-radius:30px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+text-align:center;
+}
+
+.active{
+display:block;
+}
+
+.topbar{
+width:100%;
+display:flex;
+justify-content:center;
+margin-bottom:15px;
+}
+
+.logo{
+width:140px;
+}
+
+h1{
+color:#1565c0;
+margin-bottom:15px;
+}
+
+.btn{
+background:#ff7043;
+color:white;
+border:none;
+padding:14px 24px;
+border-radius:40px;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+margin:10px;
+}
+
+.btn:hover{
+transform:scale(1.05);
+}
+
+input{
+width:100%;
+padding:14px;
+border-radius:12px;
+border:2px solid #ccc;
+font-size:18px;
+margin:10px 0;
+}
+
+.image-options{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.image-card{
+width:220px;
+height:220px;
+background:#e3f2fd;
+border-radius:20px;
+padding:15px;
+cursor:pointer;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+transition:0.3s;
+}
+
+.image-card:hover{
+transform:scale(1.05);
+background:#90caf9;
+}
+
+.image-card img{
+width:110px;
+height:110px;
+object-fit:contain;
+margin-bottom:10px;
+}
+
+.feedback{
+font-size:28px;
+font-weight:bold;
+margin-top:20px;
+height:40px;
+}
+
+.drag-container{
+display:flex;
+justify-content:center;
+gap:40px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.drag-item{
+background:#c8e6c9;
+padding:15px;
+border-radius:20px;
+margin-bottom:15px;
+font-size:20px;
+font-weight:bold;
+width:220px;
+cursor:grab;
+}
+
+.drop-box{
+width:260px;
+height:90px;
+border:3px dashed #1565c0;
+border-radius:20px;
+display:flex;
+justify-content:center;
+align-items:center;
+margin-bottom:15px;
+font-size:18px;
+font-weight:bold;
+padding:10px;
+background:#f5f5f5;
+}
+
+.memory-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
+margin-top:20px;
+}
+
+.card{
+height:120px;
+background:#90caf9;
+border-radius:20px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+color:white;
+}
+
+.card.flipped{
+background:#fff3e0;
+color:black;
+}
+
+.maze{
+display:grid;
+grid-template-columns:repeat(5,70px);
+gap:5px;
+justify-content:center;
+margin-top:20px;
+}
+
+.cell{
+width:70px;
+height:70px;
+background:#bbdefb;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:28px;
+border-radius:10px;
+cursor:pointer;
+}
+
+.wall{
+background:#455a64;
+}
+
+.goal{
+background:#81c784;
+}
+
+.player{
+background:#ff7043;
+color:white;
+}
+
+.final-score{
+font-size:70px;
+font-weight:bold;
+color:#ff6f00;
+margin:20px 0;
+}
+
+@media(max-width:768px){
+
+.memory-grid{
+grid-template-columns:repeat(2,1fr);
+}
+
+.image-card{
+width:150px;
+height:150px;
+}
+
+.maze{
+grid-template-columns:repeat(5,55px);
+}
+
+.cell{
+width:55px;
+height:55px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<audio id="correctSound" src="assets/correct-1.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
+<!-- INTRO -->
+
+<div id="intro" class="screen active">
+
+<div class="topbar">
+<img src="assets/innovine-logo.png" class="logo">
+</div>
+
+<h1>🎮 Chapter 12 ICT Adventure</h1>
+
+<input type="text" id="studentName" placeholder="Enter Student Name">
+
+<button class="btn" onclick="showMenu()">
+🚀 Start Game
+</button>
+
+</div>
+
+<!-- MENU -->
+
+<div id="menu" class="screen">
+
+<div class="topbar">
+<img src="assets/innovine-logo.png" class="logo">
+</div>
+
+<h1>Choose Activity</h1>
+
+<button class="btn" onclick="startImageGame()">🖼️ Click Image</button>
+
+<button class="btn" onclick="startDragGame()">🧩 Drag & Drop</button>
+
+<button class="btn" onclick="startMemoryGame()">🧠 Memory Match</button>
+
+<button class="btn" onclick="startMazeGame()">🛣️ Maze Puzzle</button>
+
+</div>
+
+<!-- IMAGE GAME -->
+
+<div id="imageScreen" class="screen">
+
+<div class="topbar">
+<img src="assets/innovine-logo.png" class="logo">
+</div>
+
+<h1>🖼️ Click the Addition Symbol</h1>
+
+<div class="image-options">
+
+<div class="image-card" onclick="checkImage('addition')">
+<img src="assets/addition.png">
+Addition
+</div>
+
+<div class="image-card" onclick="checkImage('subtraction')">
+<img src="assets/subtraction.png">
+Subtraction
+</div>
+
+<div class="image-card" onclick="checkImage('equal')">
+<img src="assets/equal.png">
+Equal
+</div>
+
+</div>
+
+<div class="feedback" id="imageFeedback"></div>
+
+<button class="btn" onclick="showMenu()">
+⬅ Back
+</button>
+
+</div>
+
+<!-- DRAG DROP -->
+
+<div id="dragScreen" class="screen">
+
+<div class="topbar">
+<img src="assets/innovine-logo.png" class="logo">
+</div>
+
+<h1>🧩 Match Correct Function</h1>
+
+<div class="drag-container">
+
+<div>
+
+<div class="drag-item" draggable="true" id="play">
+▶ Play
+</div>
+
+<div class="drag-item" draggable="true" id="c">
+C
+</div>
+
+<div class="drag-item" draggable="true" id="ce">
+CE
+</div>
+
+<div class="drag-item" draggable="true" id="plus">
++
+</div>
+
+</div>
+
+<div>
+
+<div class="drop-box" data-answer="play">
+Play Music
+</div>
+
+<div class="drop-box" data-answer="c">
+Clear Screen
+</div>
+
+<div class="drop-box" data-answer="ce">
+Clear Entry
+</div>
+
+<div class="drop-box" data-answer="plus">
+Addition
+</div>
+
+</div>
+
+</div>
+
+<div class="feedback" id="dragFeedback"></div>
+
+<button class="btn" onclick="showMenu()">
+⬅ Back
+</button>
+
+</div>
+
+<!-- MEMORY -->
+
+<div id="memoryScreen" class="screen">
+
+<div class="topbar">
+<img src="assets/innovine-logo.png" class="logo">
+</div>
+
+<h1>🧠 Memory Match</h1>
+
+<div class="memory-grid" id="memoryGrid"></div>
+
+<div class="feedback" id="memoryFeedback"></div>
+
+<button class="btn" onclick="showMenu()">
+⬅ Back
+</button>
+
+</div>
+
+<!-- MAZE -->
+
+<div id="mazeScreen" class="screen">
+
+<div class="topbar">
+<img src="assets/innovine-logo.png" class="logo">
+</div>
+
+<h1>🛣️ Reach the Calculator</h1>
+
+<div class="maze" id="maze"></div>
+
+<div class="feedback" id="mazeFeedback"></div>
+
+<button class="btn" onclick="showMenu()">
+⬅ Back
+</button>
+
+</div>
+
+<!-- FINAL -->
+
+<div id="finalScreen" class="screen">
+
+<div class="topbar">
+<img src="assets/innovine-logo.png" class="logo">
+</div>
+
+<h1>🏆 Congratulations</h1>
+
+<h2 id="finalName"></h2>
+
+<div class="final-score" id="finalScore"></div>
+
+<h2 id="rank"></h2>
+
+<button class="btn" onclick="location.reload()">
+🔄 Play Again
+</button>
+
+</div>
+
+<script>
+
+let totalScore=0;
+let student='';
+
+/* SCREEN */
+
+function showScreen(id){
+
+document.querySelectorAll('.screen').forEach(screen=>{
+screen.classList.remove('active');
+});
+
+document.getElementById(id).classList.add('active');
+
+}
+
+function showMenu(){
+
+student=document.getElementById('studentName').value;
+
+if(student===''){
+alert('Enter Student Name');
+return;
+}
+
+showScreen('menu');
+
+}
+
+/* IMAGE GAME */
+
+function startImageGame(){
+showScreen('imageScreen');
+}
+
+function checkImage(ans){
+
+if(ans==='addition'){
+
+document.getElementById('correctSound').play();
+
+document.getElementById('imageFeedback').innerText='🎉 Correct';
+
+document.getElementById('imageFeedback').style.color='green';
+
+totalScore+=2;
+
+}else{
+
+document.getElementById('wrongSound').play();
+
+document.getElementById('imageFeedback').innerText='❌ Wrong';
+
+document.getElementById('imageFeedback').style.color='red';
+
+}
+
+}
+
+/* DRAG DROP */
+
+function startDragGame(){
+showScreen('dragScreen');
+}
+
+let correctDrops=0;
+
+document.querySelectorAll('.drag-item').forEach(item=>{
+
+item.addEventListener('dragstart',e=>{
+e.dataTransfer.setData('text',e.target.id);
+});
+
+});
+
+document.querySelectorAll('.drop-box').forEach(box=>{
+
+box.addEventListener('dragover',e=>{
+e.preventDefault();
+});
+
+box.addEventListener('drop',e=>{
+
+e.preventDefault();
+
+const data=e.dataTransfer.getData('text');
+
+if(data===box.dataset.answer){
+
+box.style.background='lightgreen';
+box.innerHTML='✅ Correct';
+
+correctDrops++;
+
+totalScore++;
+
+document.getElementById('correctSound').play();
+
+document.getElementById('dragFeedback').innerText='Good Job!';
+document.getElementById('dragFeedback').style.color='green';
+
+if(correctDrops===4){
+
+setTimeout(showFinal,1000);
+
+}
+
+}else{
+
+document.getElementById('wrongSound').play();
+
+document.getElementById('dragFeedback').innerText='Try Again';
+document.getElementById('dragFeedback').style.color='red';
+
+}
+
+});
+
+});
+
+/* MEMORY */
+
+const memoryData=[
+'Addition','Addition',
+'Play','Play',
+'Equal','Equal',
+'Music','Music'
+];
+
+let flipped=[];
+let matched=0;
+
+function startMemoryGame(){
+
+showScreen('memoryScreen');
+
+const grid=document.getElementById('memoryGrid');
+
+grid.innerHTML='';
+
+memoryData.sort(()=>0.5-Math.random());
+
+memoryData.forEach(item=>{
+
+const card=document.createElement('div');
+
+card.className='card';
+card.innerHTML='?';
+
+card.onclick=()=>flipCard(card,item);
+
+grid.appendChild(card);
+
+});
+
+}
+
+function flipCard(card,item){
+
+if(card.classList.contains('flipped')) return;
+
+card.classList.add('flipped');
+
+card.innerHTML=item;
+
+flipped.push({card,item});
+
+if(flipped.length===2){
+
+if(flipped[0].item===flipped[1].item){
+
+matched++;
+
+totalScore++;
+
+document.getElementById('correctSound').play();
+
+document.getElementById('memoryFeedback').innerText='✅ Match Found';
+document.getElementById('memoryFeedback').style.color='green';
+
+flipped=[];
+
+if(matched===4){
+setTimeout(showFinal,1000);
+}
+
+}else{
+
+setTimeout(()=>{
+
+flipped.forEach(f=>{
+f.card.classList.remove('flipped');
+f.card.innerHTML='?';
+});
+
+flipped=[];
+
+},1000);
+
+}
+
+}
+
+}
+
+/* MAZE */
+
+const mazeLayout=[
+['P','','','',''],
+['','W','W','',''],
+['','','W','',''],
+['W','','','','W'],
+['','','','', 'G']
+];
+
+let playerPos={x:0,y:0};
+
+function startMazeGame(){
+
+showScreen('mazeScreen');
+
+renderMaze();
+
+}
+
+function renderMaze(){
+
+const maze=document.getElementById('maze');
+
+maze.innerHTML='';
+
+mazeLayout.forEach((row,y)=>{
+
+row.forEach((cell,x)=>{
+
+const div=document.createElement('div');
+
+div.className='cell';
+
+if(cell==='W') div.classList.add('wall');
+
+if(cell==='G'){
+div.classList.add('goal');
+div.innerHTML='🧮';
+}
+
+if(playerPos.x===x && playerPos.y===y){
+div.classList.add('player');
+div.innerHTML='😀';
+}
+
+div.onclick=()=>movePlayer(x,y);
+
+maze.appendChild(div);
+
+});
+
+});
+
+}
+
+function movePlayer(x,y){
+
+if(mazeLayout[y][x]==='W'){
+
+document.getElementById('wrongSound').play();
+
+return;
+
+}
+
+const dx=Math.abs(playerPos.x-x);
+const dy=Math.abs(playerPos.y-y);
+
+if(dx+dy===1){
+
+playerPos={x,y};
+
+renderMaze();
+
+if(mazeLayout[y][x]==='G'){
+
+document.getElementById('correctSound').play();
+
+document.getElementById('mazeFeedback').innerText='🎉 You Reached Calculator!';
+document.getElementById('mazeFeedback').style.color='green';
+
+totalScore+=3;
+
+setTimeout(showFinal,1000);
+
+}
+
+}
+
+}
+
+/* FINAL */
+
+function showFinal(){
+
+showScreen('finalScreen');
+
+document.getElementById('finalName').innerHTML=
+`Amazing Work <b>${student}</b>`;
+
+document.getElementById('finalScore').innerText=
+`${totalScore} Points`;
+
+let rank='';
+
+if(totalScore>=10){
+
+rank='🏆 ICT Champion';
+
+}else if(totalScore>=6){
+
+rank='🌟 Smart Learner';
+
+}else{
+
+rank='👍 Keep Practicing';
+
+}
+
+document.getElementById('rank').innerText=rank;
+
+confetti({
+particleCount:200,
+spread:100
+});
+
+}
+
+</script>
+
+</body>
+</html>

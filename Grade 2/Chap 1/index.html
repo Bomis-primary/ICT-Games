@@ -1,1 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Grade 2 - Input Process Output Adventure</title>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Comic Sans MS',cursive;
+}
+
+body{
+background:linear-gradient(135deg,#74ebd5,#ACB6E5);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+}
+
+.screen{
+display:none;
+background:white;
+width:95%;
+max-width:1100px;
+padding:25px;
+border-radius:25px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+text-align:center;
+animation:fade 0.5s;
+}
+
+.active{
+display:block;
+}
+
+@keyframes fade{
+from{opacity:0;transform:scale(0.9);}
+to{opacity:1;transform:scale(1);}
+}
+
+.logo{
+width:140px;
+margin-bottom:10px;
+}
+
+h1{
+color:#1565c0;
+margin-bottom:15px;
+}
+
+.question{
+font-size:30px;
+font-weight:bold;
+margin:20px 0;
+color:#333;
+}
+
+.option-container{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.option{
+background:#e3f2fd;
+padding:15px;
+border-radius:20px;
+cursor:pointer;
+transition:0.3s;
+width:220px;
+font-size:22px;
+font-weight:bold;
+}
+
+.option:hover{
+transform:scale(1.05);
+background:#90caf9;
+}
+
+.option img{
+width:120px;
+height:120px;
+object-fit:contain;
+margin-bottom:10px;
+}
+
+.btn{
+background:#ff7043;
+color:white;
+border:none;
+padding:14px 28px;
+border-radius:40px;
+font-size:22px;
+font-weight:bold;
+cursor:pointer;
+margin-top:20px;
+}
+
+.btn:hover{
+transform:scale(1.05);
+}
+
+.feedback{
+font-size:32px;
+font-weight:bold;
+height:40px;
+margin-top:20px;
+}
+
+.score{
+font-size:26px;
+font-weight:bold;
+color:#ff6f00;
+margin-top:15px;
+}
+
+input{
+padding:14px;
+width:90%;
+border-radius:12px;
+border:2px solid #ccc;
+font-size:20px;
+margin-top:20px;
+}
+
+.drag-container{
+display:flex;
+justify-content:center;
+gap:40px;
+flex-wrap:wrap;
+margin-top:25px;
+}
+
+.drag-item{
+background:#c8e6c9;
+padding:15px;
+border-radius:15px;
+font-size:22px;
+font-weight:bold;
+cursor:grab;
+margin-bottom:15px;
+}
+
+.drop-box{
+width:240px;
+height:90px;
+border:3px dashed #1565c0;
+border-radius:20px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:22px;
+font-weight:bold;
+background:#f5f5f5;
+margin-bottom:15px;
+}
+
+.memory-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
+margin-top:20px;
+}
+
+.card{
+height:120px;
+background:#90caf9;
+border-radius:20px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:20px;
+font-weight:bold;
+cursor:pointer;
+color:white;
+}
+
+.card.flipped{
+background:#fff3e0;
+color:black;
+}
+
+.final-score{
+font-size:70px;
+font-weight:bold;
+color:#ff6f00;
+margin:20px 0;
+}
+
+@media(max-width:768px){
+
+.memory-grid{
+grid-template-columns:repeat(2,1fr);
+}
+
+.option{
+width:150px;
+font-size:18px;
+}
+
+.question{
+font-size:24px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<audio id="correctSound" src="assets/correct-1.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
+<!-- INTRO -->
+
+<div class="screen active" id="intro">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>💻 Input Process Output Adventure</h1>
+
+<input type="text" id="studentName" placeholder="Enter Student Name">
+
+<br>
+
+<button class="btn" onclick="startGame()">
+🚀 Start Game
+</button>
+
+</div>
+
+<!-- MENU -->
+
+<div class="screen" id="menu">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🎮 Choose Activity</h1>
+
+<button class="btn" onclick="startQuiz()">📝 Picture Quiz</button>
+
+<button class="btn" onclick="startDragGame()">🧩 Drag & Drop</button>
+
+<button class="btn" onclick="startMemoryGame()">🧠 Memory Match</button>
+
+<button class="btn" onclick="startSortingGame()">📦 Sorting Game</button>
+
+</div>
+
+<!-- QUIZ -->
+
+<div class="screen" id="quizScreen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<div class="question" id="question"></div>
+
+<div class="option-container" id="options"></div>
+
+<div class="feedback" id="feedback"></div>
+
+<div class="score" id="score">
+Score : 0
+</div>
+
+<button class="btn" onclick="nextQuestion()">
+Next ➜
+</button>
+
+</div>
+
+<!-- DRAG DROP -->
+
+<div class="screen" id="dragScreen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🧩 Match Correct Category</h1>
+
+<div class="drag-container">
+
+<div>
+
+<div class="drag-item" draggable="true" id="keyboard">
+Keyboard
+</div>
+
+<div class="drag-item" draggable="true" id="cpu">
+CPU
+</div>
+
+<div class="drag-item" draggable="true" id="monitor">
+Monitor
+</div>
+
+</div>
+
+<div>
+
+<div class="drop-box" data-answer="keyboard">
+INPUT
+</div>
+
+<div class="drop-box" data-answer="cpu">
+PROCESS
+</div>
+
+<div class="drop-box" data-answer="monitor">
+OUTPUT
+</div>
+
+</div>
+
+</div>
+
+<div class="feedback" id="dragFeedback"></div>
+
+<button class="btn" onclick="showMenu()">
+⬅ Back
+</button>
+
+</div>
+
+<!-- MEMORY -->
+
+<div class="screen" id="memoryScreen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🧠 Memory Match</h1>
+
+<div class="memory-grid" id="memoryGrid"></div>
+
+<div class="feedback" id="memoryFeedback"></div>
+
+<button class="btn" onclick="showMenu()">
+⬅ Back
+</button>
+
+</div>
+
+<!-- SORTING -->
+
+<div class="screen" id="sortingScreen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>📦 Sorting Game</h1>
+
+<div class="question">
+Click ONLY INPUT Devices
+</div>
+
+<div class="option-container">
+
+<div class="option" onclick="checkSort('keyboard')">
+
+<img src="assets/keyboard.png">
+
+Keyboard
+
+</div>
+
+<div class="option" onclick="checkSort('mouse')">
+
+<img src="assets/mouse.png">
+
+Mouse
+
+</div>
+
+<div class="option" onclick="checkSort('printer')">
+
+<img src="assets/printer.png">
+
+Printer
+
+</div>
+
+<div class="option" onclick="checkSort('speaker')">
+
+<img src="assets/speaker.png">
+
+Speaker
+
+</div>
+
+</div>
+
+<div class="feedback" id="sortFeedback"></div>
+
+<button class="btn" onclick="showMenu()">
+⬅ Back
+</button>
+
+</div>
+
+<!-- FINAL -->
+
+<div class="screen" id="finalScreen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🏆 Congratulations</h1>
+
+<h2 id="studentDisplay"></h2>
+
+<div class="final-score" id="finalScore"></div>
+
+<h2 id="rank"></h2>
+
+<button class="btn" onclick="location.reload()">
+🔄 Play Again
+</button>
+
+</div>
+
+<script>
+
+let student="";
+let score=0;
+let currentQuestion=0;
+
+/* QUESTIONS */
+
+const questions=[
+
+{
+question:"Which is an INPUT Device?",
+options:[
+{img:"assets/keyboard.png",text:"Keyboard"},
+{img:"assets/monitor.png",text:"Monitor"},
+{img:"assets/printer.png",text:"Printer"}
+],
+answer:"Keyboard"
+},
+
+{
+question:"Which is a PROCESS Device?",
+options:[
+{img:"assets/CPU.png",text:"CPU"},
+{img:"assets/speaker.png",text:"Speaker"},
+{img:"assets/monitor.png",text:"Monitor"}
+],
+answer:"CPU"
+},
+
+{
+question:"Which is an OUTPUT Device?",
+options:[
+{img:"assets/monitor.png",text:"Monitor"},
+{img:"assets/mouse.png",text:"Mouse"},
+{img:"assets/keyboard.png",text:"Keyboard"}
+],
+answer:"Monitor"
+},
+
+{
+question:"What makes juice from oranges?",
+options:[
+{img:"assets/juicer.png",text:"Juicer"},
+{img:"assets/clay.png",text:"Clay"},
+{img:"assets/CD.png",text:"CD"}
+],
+answer:"Juicer"
+},
+
+{
+question:"What is made from clay?",
+options:[
+{img:"assets/clay-toy.png",text:"Clay Toy"},
+{img:"assets/mouse.png",text:"Mouse"},
+{img:"assets/printer.png",text:"Printer"}
+],
+answer:"Clay Toy"
+}
+
+];
+
+/* START */
+
+function startGame(){
+
+student=document.getElementById("studentName").value;
+
+if(student===""){
+alert("Enter Student Name");
+return;
+}
+
+showMenu();
+
+}
+
+/* SCREEN */
+
+function showScreen(id){
+
+document.querySelectorAll(".screen").forEach(screen=>{
+screen.classList.remove("active");
+});
+
+document.getElementById(id).classList.add("active");
+
+}
+
+function showMenu(){
+showScreen("menu");
+}
+
+/* QUIZ */
+
+function startQuiz(){
+
+currentQuestion=0;
+
+showScreen("quizScreen");
+
+loadQuestion();
+
+}
+
+function loadQuestion(){
+
+let q=questions[currentQuestion];
+
+document.getElementById("question").innerHTML=q.question;
+
+let html="";
+
+q.options.forEach(option=>{
+
+html+=`
+
+<div class="option" onclick="checkAnswer('${option.text}')">
+
+<img src="${option.img}">
+
+${option.text}
+
+</div>
+
+`;
+
+});
+
+document.getElementById("options").innerHTML=html;
+
+document.getElementById("feedback").innerHTML="";
+
+document.getElementById("score").innerHTML=
+"Score : "+score;
+
+}
+
+function checkAnswer(selected){
+
+let q=questions[currentQuestion];
+
+if(selected===q.answer){
+
+document.getElementById("feedback").innerHTML=
+"✅ Correct";
+
+document.getElementById("feedback").style.color="green";
+
+document.getElementById("correctSound").play();
+
+score++;
+
+confetti({
+particleCount:150,
+spread:90
+});
+
+}else{
+
+document.getElementById("feedback").innerHTML=
+"❌ Wrong";
+
+document.getElementById("feedback").style.color="red";
+
+document.getElementById("wrongSound").play();
+
+}
+
+}
+
+function nextQuestion(){
+
+currentQuestion++;
+
+if(currentQuestion>=questions.length){
+
+showFinal();
+
+}else{
+
+loadQuestion();
+
+}
+
+}
+
+/* DRAG DROP */
+
+function startDragGame(){
+
+showScreen("dragScreen");
+
+}
+
+let correctDrops=0;
+
+document.querySelectorAll('.drag-item').forEach(item=>{
+
+item.addEventListener('dragstart',e=>{
+e.dataTransfer.setData('text',e.target.id);
+});
+
+});
+
+document.querySelectorAll('.drop-box').forEach(box=>{
+
+box.addEventListener('dragover',e=>{
+e.preventDefault();
+});
+
+box.addEventListener('drop',e=>{
+
+e.preventDefault();
+
+const data=e.dataTransfer.getData('text');
+
+if(data===box.dataset.answer){
+
+box.style.background='lightgreen';
+
+box.innerHTML='✅ Correct';
+
+document.getElementById("correctSound").play();
+
+score++;
+
+correctDrops++;
+
+document.getElementById("dragFeedback").innerHTML=
+"🎉 Good Job";
+
+document.getElementById("dragFeedback").style.color="green";
+
+if(correctDrops===3){
+
+confetti({
+particleCount:220,
+spread:120
+});
+
+}
+
+}else{
+
+document.getElementById("wrongSound").play();
+
+document.getElementById("dragFeedback").innerHTML=
+"❌ Wrong Match";
+
+document.getElementById("dragFeedback").style.color="red";
+
+}
+
+});
+
+});
+
+/* MEMORY */
+
+const memoryItems=[
+"Keyboard","Keyboard",
+"CPU","CPU",
+"Monitor","Monitor",
+"Mouse","Mouse"
+];
+
+let flipped=[];
+let matched=0;
+
+function startMemoryGame(){
+
+showScreen("memoryScreen");
+
+const grid=document.getElementById("memoryGrid");
+
+grid.innerHTML="";
+
+memoryItems.sort(()=>0.5-Math.random());
+
+memoryItems.forEach(item=>{
+
+const card=document.createElement("div");
+
+card.className="card";
+
+card.innerHTML="?";
+
+card.onclick=()=>flipCard(card,item);
+
+grid.appendChild(card);
+
+});
+
+}
+
+function flipCard(card,item){
+
+if(card.classList.contains("flipped")) return;
+
+card.classList.add("flipped");
+
+card.innerHTML=item;
+
+flipped.push({card,item});
+
+if(flipped.length===2){
+
+if(flipped[0].item===flipped[1].item){
+
+matched++;
+
+score++;
+
+document.getElementById("correctSound").play();
+
+document.getElementById("memoryFeedback").innerHTML=
+"✅ Match Found";
+
+document.getElementById("memoryFeedback").style.color="green";
+
+flipped=[];
+
+if(matched===4){
+
+confetti({
+particleCount:250,
+spread:130
+});
+
+}
+
+}else{
+
+document.getElementById("wrongSound").play();
+
+setTimeout(()=>{
+
+flipped.forEach(f=>{
+f.card.classList.remove("flipped");
+f.card.innerHTML="?";
+});
+
+flipped=[];
+
+},1000);
+
+}
+
+}
+
+}
+
+/* SORTING */
+
+function startSortingGame(){
+
+showScreen("sortingScreen");
+
+}
+
+function checkSort(device){
+
+if(device==="keyboard" || device==="mouse"){
+
+document.getElementById("correctSound").play();
+
+document.getElementById("sortFeedback").innerHTML=
+"✅ Correct Input Device";
+
+document.getElementById("sortFeedback").style.color="green";
+
+score++;
+
+confetti({
+particleCount:120,
+spread:80
+});
+
+}else{
+
+document.getElementById("wrongSound").play();
+
+document.getElementById("sortFeedback").innerHTML=
+"❌ Not an Input Device";
+
+document.getElementById("sortFeedback").style.color="red";
+
+}
+
+}
+
+/* FINAL */
+
+function showFinal(){
+
+showScreen("finalScreen");
+
+document.getElementById("studentDisplay").innerHTML=
+student;
+
+document.getElementById("finalScore").innerHTML=
+score+" Points";
+
+let rank="";
+
+if(score>=10){
+
+rank="🏆 ICT Champion";
+
+}else if(score>=6){
+
+rank="🌟 Smart Learner";
+
+}else{
+
+rank="👍 Keep Practicing";
+
+}
+
+document.getElementById("rank").innerHTML=rank;
+
+confetti({
+particleCount:350,
+spread:150
+});
+
+}
+
+</script>
+
+</body>
+</html>

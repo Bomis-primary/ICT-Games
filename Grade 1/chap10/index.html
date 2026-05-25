@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tux Paint Fun Games</title>
+
+<title>Tux Paint Super Adventure</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -19,17 +20,17 @@ font-family:'Comic Sans MS',cursive;
 body{
 background:linear-gradient(135deg,#ffecd2,#fcb69f,#a1c4fd);
 min-height:100vh;
-padding:20px;
 display:flex;
 justify-content:center;
 align-items:center;
+padding:20px;
 }
 
 .screen{
 display:none;
 background:white;
 width:95%;
-max-width:1000px;
+max-width:1100px;
 padding:25px;
 border-radius:30px;
 box-shadow:0 10px 25px rgba(0,0,0,0.2);
@@ -41,7 +42,7 @@ display:block;
 }
 
 .logo{
-width:150px;
+width:160px;
 margin-bottom:15px;
 }
 
@@ -83,6 +84,23 @@ font-size:18px;
 margin:12px 0;
 }
 
+.status{
+display:flex;
+justify-content:space-between;
+margin:15px 0;
+font-size:20px;
+font-weight:bold;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.feedback{
+font-size:28px;
+font-weight:bold;
+height:40px;
+margin-top:15px;
+}
+
 .card-grid{
 display:grid;
 grid-template-columns:repeat(4,1fr);
@@ -106,39 +124,72 @@ transition:0.4s;
 
 .card.flipped{
 background:#fff3e0;
-color:#000;
+color:black;
 transform:rotateY(180deg);
 }
 
-.status{
-display:flex;
-justify-content:space-between;
-margin:15px 0;
-font-size:20px;
-font-weight:bold;
-flex-wrap:wrap;
-gap:10px;
-}
-
-.puzzle-container{
-display:grid;
-grid-template-columns:repeat(3,120px);
-gap:5px;
-justify-content:center;
+.scramble-box{
 margin-top:20px;
 }
 
-.piece{
-width:120px;
-height:120px;
+.scramble-word{
+font-size:40px;
+letter-spacing:10px;
+font-weight:bold;
+color:#1565c0;
+margin-bottom:20px;
+}
+
+.option-row{
+display:flex;
+justify-content:center;
+gap:15px;
+flex-wrap:wrap;
+}
+
+.option-btn{
+background:#e3f2fd;
+padding:15px 20px;
+border:none;
+border-radius:18px;
+font-size:20px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.option-btn:hover{
+background:#90caf9;
+}
+
+.puzzle-area{
+display:flex;
+justify-content:center;
+gap:40px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.drag-item{
+padding:20px;
 background:#bbdefb;
+border-radius:20px;
+cursor:grab;
+font-size:20px;
+font-weight:bold;
+width:180px;
+}
+
+.drop-box{
+width:220px;
+height:90px;
+border:3px dashed #1565c0;
+border-radius:20px;
 display:flex;
 justify-content:center;
 align-items:center;
-font-size:40px;
+font-size:20px;
 font-weight:bold;
-cursor:pointer;
-border-radius:10px;
+background:#f5f5f5;
 }
 
 .canvas-box{
@@ -168,11 +219,24 @@ cursor:pointer;
 border:3px solid white;
 }
 
-.feedback{
-font-size:28px;
-font-weight:bold;
-height:40px;
-margin-top:15px;
+.stamp-box{
+display:flex;
+justify-content:center;
+gap:15px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.stamp{
+width:70px;
+height:70px;
+background:#ffe082;
+border-radius:15px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:35px;
+cursor:pointer;
 }
 
 .final-score{
@@ -186,16 +250,6 @@ margin:20px 0;
 
 .card-grid{
 grid-template-columns:repeat(2,1fr);
-}
-
-.puzzle-container{
-grid-template-columns:repeat(3,90px);
-}
-
-.piece{
-width:90px;
-height:90px;
-font-size:28px;
 }
 
 canvas{
@@ -213,13 +267,13 @@ height:auto;
 <audio id="correctSound" src="assets/correct-1.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
 
-<!-- INTRO SCREEN -->
+<!-- INTRO -->
 
 <div id="intro" class="screen active">
 
 <img src="assets/innovine-logo.png" class="logo">
 
-<h1>🎨 Tux Paint Fun Games</h1>
+<h1>🎨 Tux Paint Super Adventure</h1>
 
 <p class="subtitle">
 Chapter 10 - Introduction to Tux Paint 2
@@ -232,25 +286,25 @@ Chapter 10 - Introduction to Tux Paint 2
 <input type="text" id="schoolName" placeholder="Enter School Name">
 
 <button class="btn" onclick="showMenu()">
-Start Adventure 🚀
+🚀 Start Game
 </button>
 
 </div>
 
-<!-- MENU SCREEN -->
+<!-- MENU -->
 
 <div id="menu" class="screen">
 
 <img src="assets/innovine-logo.png" class="logo">
 
-<h1>🎮 Choose Your Game</h1>
+<h1>🎮 Choose Your Activity</h1>
 
 <button class="btn" onclick="startMemoryGame()">
-🧠 Memory Card Game
+🧠 Memory + Unscramble
 </button>
 
 <button class="btn" onclick="startPuzzleGame()">
-🧩 Puzzle Game
+🧩 Drag & Drop Puzzle
 </button>
 
 <button class="btn" onclick="startColoringGame()">
@@ -271,11 +325,37 @@ Start Adventure 🚀
 
 <div>⭐ Score: <span id="memoryScore">0</span></div>
 
-<div>🏅 Matches: <span id="matches">0</span>/4</div>
+<div>🏅 Matches: <span id="matches">0</span>/3</div>
 
 </div>
 
 <div class="card-grid" id="memoryGrid"></div>
+
+<div class="scramble-box">
+
+<h2>🔤 Unscramble the Word</h2>
+
+<div class="scramble-word">
+PMAST
+</div>
+
+<div class="option-row">
+
+<button class="option-btn" onclick="checkScramble('STAMP')">
+STAMP
+</button>
+
+<button class="option-btn" onclick="checkScramble('SHAPE')">
+SHAPE
+</button>
+
+<button class="option-btn" onclick="checkScramble('MAGIC')">
+MAGIC
+</button>
+
+</div>
+
+</div>
 
 <div class="feedback" id="memoryFeedback"></div>
 
@@ -291,17 +371,55 @@ Start Adventure 🚀
 
 <img src="assets/innovine-logo.png" class="logo">
 
-<h1>🧩 Puzzle Game</h1>
+<h1>🧩 Drag & Drop Puzzle</h1>
 
-<p>Arrange the numbers in order!</p>
+<p>Match the Tool with Correct Work</p>
 
-<div class="puzzle-container" id="puzzleBoard"></div>
+<div class="puzzle-area">
+
+<div>
+
+<div class="drag-item" draggable="true" id="brush">
+🖌 Brush Tool
+</div>
+
+<br>
+
+<div class="drag-item" draggable="true" id="shape">
+⬜ Shapes Tool
+</div>
+
+<br>
+
+<div class="drag-item" draggable="true" id="stamp">
+⭐ Stamp Tool
+</div>
+
+</div>
+
+<div>
+
+<div class="drop-box" data-answer="brush">
+Draw Freehand
+</div>
+
+<br>
+
+<div class="drop-box" data-answer="shape">
+Draw Shapes
+</div>
+
+<br>
+
+<div class="drop-box" data-answer="stamp">
+Insert Pictures
+</div>
+
+</div>
+
+</div>
 
 <div class="feedback" id="puzzleFeedback"></div>
-
-<button class="btn" onclick="shufflePuzzle()">
-🔄 Shuffle
-</button>
 
 <button class="btn" onclick="showMenu()">
 ⬅ Back
@@ -315,11 +433,11 @@ Start Adventure 🚀
 
 <img src="assets/innovine-logo.png" class="logo">
 
-<h1>🎨 Coloring Activity</h1>
+<h1>🎨 Tux Paint Coloring Activity</h1>
 
 <div class="canvas-box">
 
-<canvas id="paintCanvas" width="700" height="400"></canvas>
+<canvas id="paintCanvas" width="800" height="400"></canvas>
 
 </div>
 
@@ -334,12 +452,26 @@ Start Adventure 🚀
 
 </div>
 
+<h2 style="margin-top:20px;">
+⭐ Stamps & Shapes
+</h2>
+
+<div class="stamp-box">
+
+<div class="stamp" onclick="addStamp('⭐')">⭐</div>
+<div class="stamp" onclick="addStamp('❤️')">❤️</div>
+<div class="stamp" onclick="addStamp('🌈')">🌈</div>
+<div class="stamp" onclick="addStamp('⬜')">⬜</div>
+<div class="stamp" onclick="addStamp('⭕')">⭕</div>
+
+</div>
+
 <button class="btn" onclick="clearCanvas()">
-🧹 Clear
+🧹 Clear Canvas
 </button>
 
 <button class="btn" onclick="finishColoring()">
-✅ Finish
+✅ Finish Activity
 </button>
 
 <button class="btn" onclick="showMenu()">
@@ -388,7 +520,7 @@ function showMenu(){
 student=document.getElementById('studentName').value || student;
 
 if(student===""){
-alert("Please enter name");
+alert("Please enter your name");
 return;
 }
 
@@ -401,13 +533,11 @@ showScreen('menu');
 const memoryItems=[
 'Brush','Brush',
 'Magic','Magic',
-'Shapes','Shapes',
-'Stamp','Stamp'
+'Shapes','Shapes'
 ];
 
 let flippedCards=[];
 let matched=0;
-let memoryScore=0;
 
 function startMemoryGame(){
 
@@ -452,25 +582,18 @@ if(flippedCards.length===2){
 if(flippedCards[0].item===flippedCards[1].item){
 
 matched++;
-memoryScore++;
 
 document.getElementById('matches').innerText=matched;
-document.getElementById('memoryScore').innerText=memoryScore;
+document.getElementById('memoryScore').innerText=matched;
 
 document.getElementById('correctSound').play();
 
 document.getElementById('memoryFeedback').innerText='✅ Match Found!';
 document.getElementById('memoryFeedback').style.color='green';
 
+totalScore++;
+
 flippedCards=[];
-
-if(matched===4){
-
-totalScore+=memoryScore;
-
-setTimeout(showFinal,1000);
-
-}
 
 }else{
 
@@ -498,91 +621,93 @@ flippedCards=[];
 
 }
 
-/* PUZZLE GAME */
+function checkScramble(answer){
 
-let puzzle=[1,2,3,4,5,6,7,8,''];
+if(answer==="STAMP"){
+
+document.getElementById('correctSound').play();
+
+document.getElementById('memoryFeedback').innerText='🎉 Correct Unscramble!';
+document.getElementById('memoryFeedback').style.color='green';
+
+totalScore+=2;
+
+}else{
+
+document.getElementById('wrongSound').play();
+
+document.getElementById('memoryFeedback').innerText='❌ Wrong Answer!';
+document.getElementById('memoryFeedback').style.color='red';
+
+}
+
+}
+
+/* PUZZLE GAME */
 
 function startPuzzleGame(){
 
 showScreen('puzzleGame');
 
-shufflePuzzle();
-
 }
 
-function renderPuzzle(){
+let correctDrops=0;
 
-const board=document.getElementById('puzzleBoard');
+document.querySelectorAll('.drag-item').forEach(item=>{
 
-board.innerHTML='';
+item.addEventListener('dragstart',e=>{
 
-puzzle.forEach((num,index)=>{
-
-const piece=document.createElement('div');
-
-piece.className='piece';
-
-piece.innerHTML=num;
-
-piece.onclick=()=>movePiece(index);
-
-board.appendChild(piece);
+e.dataTransfer.setData('text',e.target.id);
 
 });
 
-}
+});
 
-function shufflePuzzle(){
+document.querySelectorAll('.drop-box').forEach(box=>{
 
-puzzle.sort(()=>Math.random()-0.5);
+box.addEventListener('dragover',e=>{
+e.preventDefault();
+});
 
-renderPuzzle();
+box.addEventListener('drop',e=>{
 
-}
+e.preventDefault();
 
-function movePiece(index){
+const data=e.dataTransfer.getData('text');
 
-const empty=puzzle.indexOf('');
+if(data===box.dataset.answer){
 
-const valid=[
-index-1,
-index+1,
-index-3,
-index+3
-];
+box.style.background='lightgreen';
 
-if(valid.includes(empty)){
-
-[puzzle[index],puzzle[empty]]=[puzzle[empty],puzzle[index]];
-
-renderPuzzle();
-
-checkPuzzle();
-
-}
-
-}
-
-function checkPuzzle(){
-
-const solved='1,2,3,4,5,6,7,8,';
-
-if(puzzle.toString()===solved){
+box.innerHTML='✅ Correct';
 
 document.getElementById('correctSound').play();
 
-document.getElementById('puzzleFeedback').innerText='🎉 Puzzle Solved!';
+correctDrops++;
+
+totalScore++;
+
+if(correctDrops===3){
+
+document.getElementById('puzzleFeedback').innerText='🎉 Puzzle Completed!';
 document.getElementById('puzzleFeedback').style.color='green';
 
-totalScore+=5;
+}
 
-setTimeout(showFinal,1000);
+}else{
+
+document.getElementById('wrongSound').play();
+
+document.getElementById('puzzleFeedback').innerText='❌ Wrong Match!';
+document.getElementById('puzzleFeedback').style.color='red';
 
 }
 
-}
+});
 
-/* COLORING */
+});
+
+/* COLORING GAME */
 
 function startColoringGame(){
 
@@ -637,7 +762,7 @@ ctx.moveTo(e.offsetX,e.offsetY);
 
 }
 
-function startTouch(e){
+function startTouch(){
 
 painting=true;
 
@@ -678,17 +803,25 @@ ctx.clearRect(0,0,canvas.width,canvas.height);
 
 }
 
+function addStamp(symbol){
+
+ctx.font='50px Arial';
+
+ctx.fillText(symbol,Math.random()*700,Math.random()*300);
+
+}
+
 function finishColoring(){
 
 document.getElementById('correctSound').play();
 
-totalScore+=5;
+totalScore+=3;
 
 showFinal();
 
 }
 
-/* FINAL */
+/* FINAL SCREEN */
 
 function showFinal(){
 
@@ -702,11 +835,11 @@ document.getElementById('finalScore').innerText=
 
 let rank='';
 
-if(totalScore>=9){
+if(totalScore>=10){
 
 rank='🏆 Tux Paint Champion';
 
-}else if(totalScore>=5){
+}else if(totalScore>=6){
 
 rank='🌟 Creative Artist';
 
@@ -719,8 +852,8 @@ rank='🎨 Good Explorer';
 document.getElementById('rankText').innerText=rank;
 
 confetti({
-particleCount:150,
-spread:90
+particleCount:180,
+spread:100
 });
 
 }

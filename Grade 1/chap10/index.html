@@ -1,1 +1,731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tux Paint Fun Games</title>
 
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Comic Sans MS',cursive;
+}
+
+body{
+background:linear-gradient(135deg,#ffecd2,#fcb69f,#a1c4fd);
+min-height:100vh;
+padding:20px;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.screen{
+display:none;
+background:white;
+width:95%;
+max-width:1000px;
+padding:25px;
+border-radius:30px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+text-align:center;
+}
+
+.active{
+display:block;
+}
+
+.logo{
+width:150px;
+margin-bottom:15px;
+}
+
+h1{
+color:#1565c0;
+margin-bottom:15px;
+}
+
+.subtitle{
+font-size:20px;
+margin-bottom:20px;
+color:#444;
+}
+
+.btn{
+background:#ff7043;
+color:white;
+border:none;
+padding:15px 25px;
+border-radius:50px;
+font-size:18px;
+cursor:pointer;
+font-weight:bold;
+margin:10px;
+transition:0.3s;
+}
+
+.btn:hover{
+transform:scale(1.05);
+background:#e64a19;
+}
+
+input{
+width:100%;
+padding:14px;
+border-radius:12px;
+border:2px solid #ccc;
+font-size:18px;
+margin:12px 0;
+}
+
+.card-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
+margin-top:20px;
+}
+
+.card{
+height:130px;
+background:#90caf9;
+border-radius:20px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:22px;
+font-weight:bold;
+cursor:pointer;
+color:white;
+transition:0.4s;
+}
+
+.card.flipped{
+background:#fff3e0;
+color:#000;
+transform:rotateY(180deg);
+}
+
+.status{
+display:flex;
+justify-content:space-between;
+margin:15px 0;
+font-size:20px;
+font-weight:bold;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.puzzle-container{
+display:grid;
+grid-template-columns:repeat(3,120px);
+gap:5px;
+justify-content:center;
+margin-top:20px;
+}
+
+.piece{
+width:120px;
+height:120px;
+background:#bbdefb;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:40px;
+font-weight:bold;
+cursor:pointer;
+border-radius:10px;
+}
+
+.canvas-box{
+margin-top:20px;
+}
+
+canvas{
+border:5px solid #333;
+border-radius:20px;
+background:white;
+touch-action:none;
+}
+
+.color-box{
+display:flex;
+justify-content:center;
+gap:10px;
+margin-top:15px;
+flex-wrap:wrap;
+}
+
+.color{
+width:40px;
+height:40px;
+border-radius:50%;
+cursor:pointer;
+border:3px solid white;
+}
+
+.feedback{
+font-size:28px;
+font-weight:bold;
+height:40px;
+margin-top:15px;
+}
+
+.final-score{
+font-size:70px;
+font-weight:bold;
+color:#ff6f00;
+margin:20px 0;
+}
+
+@media(max-width:768px){
+
+.card-grid{
+grid-template-columns:repeat(2,1fr);
+}
+
+.puzzle-container{
+grid-template-columns:repeat(3,90px);
+}
+
+.piece{
+width:90px;
+height:90px;
+font-size:28px;
+}
+
+canvas{
+width:100%;
+height:auto;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<audio id="correctSound" src="assets/correct-1.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
+<!-- INTRO SCREEN -->
+
+<div id="intro" class="screen active">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🎨 Tux Paint Fun Games</h1>
+
+<p class="subtitle">
+Chapter 10 - Introduction to Tux Paint 2
+</p>
+
+<input type="text" id="studentName" placeholder="Enter Student Name">
+
+<input type="text" id="studentClass" placeholder="Enter Class">
+
+<input type="text" id="schoolName" placeholder="Enter School Name">
+
+<button class="btn" onclick="showMenu()">
+Start Adventure 🚀
+</button>
+
+</div>
+
+<!-- MENU SCREEN -->
+
+<div id="menu" class="screen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🎮 Choose Your Game</h1>
+
+<button class="btn" onclick="startMemoryGame()">
+🧠 Memory Card Game
+</button>
+
+<button class="btn" onclick="startPuzzleGame()">
+🧩 Puzzle Game
+</button>
+
+<button class="btn" onclick="startColoringGame()">
+🎨 Coloring Activity
+</button>
+
+</div>
+
+<!-- MEMORY GAME -->
+
+<div id="memoryGame" class="screen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🧠 Memory Match Game</h1>
+
+<div class="status">
+
+<div>⭐ Score: <span id="memoryScore">0</span></div>
+
+<div>🏅 Matches: <span id="matches">0</span>/4</div>
+
+</div>
+
+<div class="card-grid" id="memoryGrid"></div>
+
+<div class="feedback" id="memoryFeedback"></div>
+
+<button class="btn" onclick="showMenu()">
+⬅ Back
+</button>
+
+</div>
+
+<!-- PUZZLE GAME -->
+
+<div id="puzzleGame" class="screen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🧩 Puzzle Game</h1>
+
+<p>Arrange the numbers in order!</p>
+
+<div class="puzzle-container" id="puzzleBoard"></div>
+
+<div class="feedback" id="puzzleFeedback"></div>
+
+<button class="btn" onclick="shufflePuzzle()">
+🔄 Shuffle
+</button>
+
+<button class="btn" onclick="showMenu()">
+⬅ Back
+</button>
+
+</div>
+
+<!-- COLORING GAME -->
+
+<div id="colorGame" class="screen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🎨 Coloring Activity</h1>
+
+<div class="canvas-box">
+
+<canvas id="paintCanvas" width="700" height="400"></canvas>
+
+</div>
+
+<div class="color-box">
+
+<div class="color" style="background:red" onclick="changeColor('red')"></div>
+<div class="color" style="background:blue" onclick="changeColor('blue')"></div>
+<div class="color" style="background:green" onclick="changeColor('green')"></div>
+<div class="color" style="background:yellow" onclick="changeColor('yellow')"></div>
+<div class="color" style="background:black" onclick="changeColor('black')"></div>
+<div class="color" style="background:pink" onclick="changeColor('pink')"></div>
+
+</div>
+
+<button class="btn" onclick="clearCanvas()">
+🧹 Clear
+</button>
+
+<button class="btn" onclick="finishColoring()">
+✅ Finish
+</button>
+
+<button class="btn" onclick="showMenu()">
+⬅ Back
+</button>
+
+</div>
+
+<!-- FINAL SCREEN -->
+
+<div id="final" class="screen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🏆 Congratulations!</h1>
+
+<p id="finalText"></p>
+
+<div class="final-score" id="finalScore"></div>
+
+<h2 id="rankText"></h2>
+
+<button class="btn" onclick="location.reload()">
+🔄 Play Again
+</button>
+
+</div>
+
+<script>
+
+let student="";
+let totalScore=0;
+
+function showScreen(id){
+
+document.querySelectorAll('.screen').forEach(screen=>{
+screen.classList.remove('active');
+});
+
+document.getElementById(id).classList.add('active');
+
+}
+
+function showMenu(){
+
+student=document.getElementById('studentName').value || student;
+
+if(student===""){
+alert("Please enter name");
+return;
+}
+
+showScreen('menu');
+
+}
+
+/* MEMORY GAME */
+
+const memoryItems=[
+'Brush','Brush',
+'Magic','Magic',
+'Shapes','Shapes',
+'Stamp','Stamp'
+];
+
+let flippedCards=[];
+let matched=0;
+let memoryScore=0;
+
+function startMemoryGame(){
+
+showScreen('memoryGame');
+
+const grid=document.getElementById('memoryGrid');
+
+grid.innerHTML='';
+
+memoryItems.sort(()=>0.5-Math.random());
+
+memoryItems.forEach(item=>{
+
+const card=document.createElement('div');
+
+card.className='card';
+
+card.dataset.name=item;
+
+card.innerHTML='?';
+
+card.onclick=()=>flipCard(card,item);
+
+grid.appendChild(card);
+
+});
+
+}
+
+function flipCard(card,item){
+
+if(card.classList.contains('flipped')) return;
+
+card.classList.add('flipped');
+
+card.innerHTML=item;
+
+flippedCards.push({card,item});
+
+if(flippedCards.length===2){
+
+if(flippedCards[0].item===flippedCards[1].item){
+
+matched++;
+memoryScore++;
+
+document.getElementById('matches').innerText=matched;
+document.getElementById('memoryScore').innerText=memoryScore;
+
+document.getElementById('correctSound').play();
+
+document.getElementById('memoryFeedback').innerText='✅ Match Found!';
+document.getElementById('memoryFeedback').style.color='green';
+
+flippedCards=[];
+
+if(matched===4){
+
+totalScore+=memoryScore;
+
+setTimeout(showFinal,1000);
+
+}
+
+}else{
+
+document.getElementById('wrongSound').play();
+
+document.getElementById('memoryFeedback').innerText='❌ Wrong Match!';
+document.getElementById('memoryFeedback').style.color='red';
+
+setTimeout(()=>{
+
+flippedCards.forEach(f=>{
+
+f.card.classList.remove('flipped');
+f.card.innerHTML='?';
+
+});
+
+flippedCards=[];
+
+},1000);
+
+}
+
+}
+
+}
+
+/* PUZZLE GAME */
+
+let puzzle=[1,2,3,4,5,6,7,8,''];
+
+function startPuzzleGame(){
+
+showScreen('puzzleGame');
+
+shufflePuzzle();
+
+}
+
+function renderPuzzle(){
+
+const board=document.getElementById('puzzleBoard');
+
+board.innerHTML='';
+
+puzzle.forEach((num,index)=>{
+
+const piece=document.createElement('div');
+
+piece.className='piece';
+
+piece.innerHTML=num;
+
+piece.onclick=()=>movePiece(index);
+
+board.appendChild(piece);
+
+});
+
+}
+
+function shufflePuzzle(){
+
+puzzle.sort(()=>Math.random()-0.5);
+
+renderPuzzle();
+
+}
+
+function movePiece(index){
+
+const empty=puzzle.indexOf('');
+
+const valid=[
+index-1,
+index+1,
+index-3,
+index+3
+];
+
+if(valid.includes(empty)){
+
+[puzzle[index],puzzle[empty]]=[puzzle[empty],puzzle[index]];
+
+renderPuzzle();
+
+checkPuzzle();
+
+}
+
+}
+
+function checkPuzzle(){
+
+const solved='1,2,3,4,5,6,7,8,';
+
+if(puzzle.toString()===solved){
+
+document.getElementById('correctSound').play();
+
+document.getElementById('puzzleFeedback').innerText='🎉 Puzzle Solved!';
+document.getElementById('puzzleFeedback').style.color='green';
+
+totalScore+=5;
+
+setTimeout(showFinal,1000);
+
+}
+
+}
+
+/* COLORING */
+
+function startColoringGame(){
+
+showScreen('colorGame');
+
+}
+
+const canvas=document.getElementById('paintCanvas');
+const ctx=canvas.getContext('2d');
+
+let painting=false;
+let currentColor='black';
+
+ctx.lineWidth=5;
+ctx.lineCap='round';
+
+canvas.addEventListener('mousedown',startPosition);
+canvas.addEventListener('mouseup',endPosition);
+canvas.addEventListener('mousemove',draw);
+
+canvas.addEventListener('touchstart',startTouch);
+canvas.addEventListener('touchend',endPosition);
+canvas.addEventListener('touchmove',drawTouch);
+
+function startPosition(e){
+
+painting=true;
+draw(e);
+
+}
+
+function endPosition(){
+
+painting=false;
+ctx.beginPath();
+
+}
+
+function draw(e){
+
+if(!painting) return;
+
+ctx.strokeStyle=currentColor;
+
+ctx.lineTo(e.offsetX,e.offsetY);
+
+ctx.stroke();
+
+ctx.beginPath();
+
+ctx.moveTo(e.offsetX,e.offsetY);
+
+}
+
+function startTouch(e){
+
+painting=true;
+
+}
+
+function drawTouch(e){
+
+e.preventDefault();
+
+if(!painting) return;
+
+const rect=canvas.getBoundingClientRect();
+
+const x=e.touches[0].clientX-rect.left;
+const y=e.touches[0].clientY-rect.top;
+
+ctx.strokeStyle=currentColor;
+
+ctx.lineTo(x,y);
+
+ctx.stroke();
+
+ctx.beginPath();
+
+ctx.moveTo(x,y);
+
+}
+
+function changeColor(color){
+
+currentColor=color;
+
+}
+
+function clearCanvas(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+}
+
+function finishColoring(){
+
+document.getElementById('correctSound').play();
+
+totalScore+=5;
+
+showFinal();
+
+}
+
+/* FINAL */
+
+function showFinal(){
+
+showScreen('final');
+
+document.getElementById('finalText').innerHTML=
+`🎉 Great Job <b>${student}</b>!`;
+
+document.getElementById('finalScore').innerText=
+`${totalScore} Points`;
+
+let rank='';
+
+if(totalScore>=9){
+
+rank='🏆 Tux Paint Champion';
+
+}else if(totalScore>=5){
+
+rank='🌟 Creative Artist';
+
+}else{
+
+rank='🎨 Good Explorer';
+
+}
+
+document.getElementById('rankText').innerText=rank;
+
+confetti({
+particleCount:150,
+spread:90
+});
+
+}
+
+</script>
+
+</body>
+</html>

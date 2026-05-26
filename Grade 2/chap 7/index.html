@@ -1,1 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Fun With Keyboard & Typing</title>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Comic Sans MS',cursive;
+}
+
+body{
+
+background:linear-gradient(135deg,#89f7fe,#66a6ff,#fbc2eb);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:10px;
+
+}
+
+#gameBox{
+
+width:100%;
+max-width:1200px;
+background:white;
+border-radius:30px;
+padding:20px;
+box-shadow:0 10px 35px rgba(0,0,0,0.25);
+
+}
+
+.logo{
+
+width:120px;
+display:block;
+margin:auto;
+margin-bottom:10px;
+
+}
+
+.screen{
+display:none;
+animation:fade 0.5s;
+}
+
+.active{
+display:block;
+}
+
+@keyframes fade{
+
+from{
+opacity:0;
+transform:translateY(20px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+h1,h2,h3{
+
+text-align:center;
+margin-bottom:15px;
+color:#6a1b9a;
+
+}
+
+.btn{
+
+background:#ff7043;
+color:white;
+border:none;
+padding:14px 24px;
+border-radius:40px;
+font-size:20px;
+font-weight:bold;
+cursor:pointer;
+margin:10px;
+transition:0.3s;
+
+}
+
+.btn:hover{
+
+transform:scale(1.05);
+
+}
+
+input{
+
+padding:14px;
+width:90%;
+max-width:350px;
+border-radius:12px;
+border:2px solid #ccc;
+font-size:18px;
+margin-top:15px;
+
+}
+
+.score{
+
+font-size:28px;
+font-weight:bold;
+text-align:center;
+color:#ff6f00;
+margin:10px 0;
+
+}
+
+.progress{
+
+width:100%;
+height:20px;
+background:#ddd;
+border-radius:20px;
+overflow:hidden;
+margin:20px 0;
+
+}
+
+.progress-bar{
+
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#00c853,#64dd17);
+transition:0.5s;
+
+}
+
+.question{
+
+font-size:28px;
+font-weight:bold;
+text-align:center;
+margin:20px 0;
+color:#4a148c;
+
+}
+
+.option-container{
+
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+
+}
+
+.option{
+
+background:#81d4fa;
+padding:18px 24px;
+border-radius:20px;
+font-size:22px;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+
+}
+
+.option:hover{
+
+transform:scale(1.05);
+background:#4fc3f7;
+
+}
+
+.feedback{
+
+font-size:28px;
+font-weight:bold;
+text-align:center;
+margin-top:20px;
+min-height:40px;
+
+}
+
+.typing-box{
+
+text-align:center;
+margin-top:20px;
+
+}
+
+.typing-input{
+
+padding:15px;
+font-size:24px;
+border-radius:15px;
+border:3px solid #7e57c2;
+width:300px;
+text-align:center;
+
+}
+
+.sequence-container{
+
+display:flex;
+justify-content:center;
+gap:15px;
+flex-wrap:wrap;
+margin-top:20px;
+
+}
+
+.sequence-item{
+
+background:#ffd54f;
+padding:15px 20px;
+border-radius:15px;
+font-size:22px;
+font-weight:bold;
+cursor:pointer;
+
+}
+
+.final-score{
+
+font-size:70px;
+font-weight:bold;
+text-align:center;
+color:#ff6f00;
+
+}
+
+.certificate{
+
+background:#fff8e1;
+border:8px dashed #ff9800;
+padding:30px;
+border-radius:25px;
+margin-top:20px;
+
+}
+
+.character{
+
+font-size:70px;
+text-align:center;
+
+}
+
+@media(max-width:768px){
+
+.question{
+font-size:22px;
+}
+
+.option{
+width:100%;
+font-size:18px;
+}
+
+.typing-input{
+width:100%;
+}
+
+.final-score{
+font-size:45px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="gameBox">
+
+<audio id="correctSound"
+src="assets/correct-1.mp3"></audio>
+
+<audio id="wrongSound"
+src="assets/wrong.mp3"></audio>
+
+<!-- INTRO -->
+
+<div class="screen active"
+id="intro">
+
+<img src="assets/innovine-logo.png"
+class="logo">
+
+<div class="character">🤖</div>
+
+<h1>Fun With Keyboard & Typing</h1>
+
+<h3>Grade 2 Interactive Game</h3>
+
+<h3>Pages 77 to 86</h3>
+
+<center>
+
+<input type="text"
+id="studentName"
+placeholder="Enter Student Name">
+
+<br>
+
+<button class="btn"
+onclick="startGame()">
+🚀 Start Game
+</button>
+
+</center>
+
+</div>
+
+<!-- GAME -->
+
+<div class="screen"
+id="gameScreen">
+
+<img src="assets/innovine-logo.png"
+class="logo">
+
+<div class="score">
+⭐ Score :
+<span id="score">0</span>
+</div>
+
+<div class="progress">
+
+<div class="progress-bar"
+id="progressBar"></div>
+
+</div>
+
+<div class="character"
+id="characterGuide">
+🐻
+</div>
+
+<div class="question"
+id="question"></div>
+
+<div id="gameArea"></div>
+
+<div class="feedback"
+id="feedback"></div>
+
+<center>
+
+<button class="btn"
+onclick="nextQuestion()">
+Next ➜
+</button>
+
+</center>
+
+</div>
+
+<!-- FINAL -->
+
+<div class="screen"
+id="finalScreen">
+
+<img src="assets/innovine-logo.png"
+class="logo">
+
+<div class="certificate">
+
+<h1>🏆 Certificate of Achievement</h1>
+
+<h2 id="studentDisplay"></h2>
+
+<div class="final-score"
+id="finalScore"></div>
+
+<h2 id="rank"></h2>
+
+<h3>
+🌟 Great job learning keyboard and typing skills!
+</h3>
+
+</div>
+
+<center>
+
+<button class="btn"
+onclick="location.reload()">
+🔄 Replay Game
+</button>
+
+</center>
+
+</div>
+
+</div>
+
+<script>
+
+let student="";
+let score=0;
+let currentQuestion=0;
+
+const questions=[
+
+{
+type:"mcq",
+q:"Which key gives space between words?",
+options:["Spacebar","Enter","Shift"],
+answer:"Spacebar"
+},
+
+{
+type:"mcq",
+q:"Which key deletes letters?",
+options:["Backspace","Shift","Arrow"],
+answer:"Backspace"
+},
+
+{
+type:"mcq",
+q:"Which key moves cursor to next line?",
+options:["Enter","Delete","Ctrl"],
+answer:"Enter"
+},
+
+{
+type:"typing",
+q:"Type the word: COMPUTER",
+answer:"COMPUTER"
+},
+
+{
+type:"typing",
+q:"Type the word: KEYBOARD",
+answer:"KEYBOARD"
+},
+
+{
+type:"typing",
+q:"Type the word: MOUSE",
+answer:"MOUSE"
+},
+
+{
+type:"sequence",
+q:"Arrange the typing steps correctly",
+items:["Sit Properly","Keep Hands Ready","Type Slowly"]
+},
+
+{
+type:"mcq",
+q:"Which key is used for capital letters?",
+options:["Shift","Spacebar","Arrow"],
+answer:"Shift"
+},
+
+{
+type:"mcq",
+q:"Which keys move the cursor?",
+options:["Arrow Keys","Caps Lock","Tab"],
+answer:"Arrow Keys"
+},
+
+{
+type:"sequence",
+q:"Arrange computer safety habits",
+items:["Wash Hands","Sit Straight","Take Eye Break"]
+}
+
+];
+
+/* START */
+
+function startGame(){
+
+student=
+document.getElementById("studentName").value;
+
+if(student===""){
+
+alert("Please Enter Student Name");
+return;
+
+}
+
+showScreen("gameScreen");
+
+loadQuestion();
+
+}
+
+/* SCREEN */
+
+function showScreen(id){
+
+document.querySelectorAll(".screen")
+.forEach(screen=>{
+screen.classList.remove("active");
+});
+
+document.getElementById(id)
+.classList.add("active");
+
+}
+
+/* LOAD QUESTION */
+
+function loadQuestion(){
+
+updateProgress();
+
+let q=questions[currentQuestion];
+
+document.getElementById("question")
+.innerHTML=
+"Q"+(currentQuestion+1)+". "+q.q;
+
+let html="";
+
+if(q.type==="mcq"){
+
+html=`<div class="option-container">`;
+
+q.options.forEach(opt=>{
+
+html+=`
+<div class="option"
+onclick="checkAnswer('${opt}')">
+${opt}
+</div>
+`;
+
+});
+
+html+=`</div>`;
+
+}
+
+else if(q.type==="typing"){
+
+html=`
+
+<div class="typing-box">
+
+<input type="text"
+id="typingInput"
+class="typing-input"
+placeholder="Type Here">
+
+<br>
+
+<button class="btn"
+onclick="checkTyping()">
+Submit
+</button>
+
+</div>
+
+`;
+
+}
+
+else if(q.type==="sequence"){
+
+html=`<div class="sequence-container">`;
+
+q.items.forEach(item=>{
+
+html+=`
+<div class="sequence-item">
+${item}
+</div>
+`;
+
+});
+
+html+=`</div>
+
+<center>
+
+<h3>
+✔ Click the steps in correct order
+</h3>
+
+</center>
+`;
+
+sequenceAnswer=[];
+
+document.getElementById("gameArea")
+.innerHTML=html;
+
+enableSequence(q.items);
+
+document.getElementById("feedback")
+.innerHTML="";
+
+return;
+
+}
+
+document.getElementById("gameArea")
+.innerHTML=html;
+
+document.getElementById("feedback")
+.innerHTML="";
+
+}
+
+/* SCORE */
+
+function updateScore(){
+
+document.getElementById("score")
+.innerHTML=score;
+
+}
+
+/* PROGRESS */
+
+function updateProgress(){
+
+let progress=
+(currentQuestion/questions.length)*100;
+
+document.getElementById("progressBar")
+.style.width=progress+"%";
+
+}
+
+/* CORRECT */
+
+function correctAnswer(){
+
+score+=2;
+
+updateScore();
+
+document.getElementById("correctSound")
+.play();
+
+document.getElementById("feedback")
+.innerHTML=
+"⭐ Correct Answer!";
+
+document.getElementById("feedback")
+.style.color="green";
+
+confetti({
+particleCount:180,
+spread:120
+});
+
+}
+
+/* WRONG */
+
+function wrongAnswer(){
+
+document.getElementById("wrongSound")
+.play();
+
+document.getElementById("feedback")
+.innerHTML=
+"❌ Wrong Answer";
+
+document.getElementById("feedback")
+.style.color="red";
+
+}
+
+/* MCQ */
+
+function checkAnswer(ans){
+
+let q=questions[currentQuestion];
+
+if(ans===q.answer){
+
+correctAnswer();
+
+}else{
+
+wrongAnswer();
+
+}
+
+}
+
+/* TYPING */
+
+function checkTyping(){
+
+let q=questions[currentQuestion];
+
+let value=
+document.getElementById("typingInput")
+.value
+.toUpperCase();
+
+if(value===q.answer){
+
+correctAnswer();
+
+}else{
+
+wrongAnswer();
+
+}
+
+}
+
+/* SEQUENCE */
+
+let sequenceAnswer=[];
+
+function enableSequence(correctOrder){
+
+document.querySelectorAll(".sequence-item")
+.forEach(item=>{
+
+item.onclick=function(){
+
+sequenceAnswer.push(this.innerHTML);
+
+this.style.background="#81c784";
+
+if(sequenceAnswer.length===correctOrder.length){
+
+let correct=true;
+
+for(let i=0;i<correctOrder.length;i++){
+
+if(sequenceAnswer[i]!==correctOrder[i]){
+
+correct=false;
+
+}
+
+}
+
+if(correct){
+
+correctAnswer();
+
+}else{
+
+wrongAnswer();
+
+}
+
+}
+
+};
+
+});
+
+}
+
+/* NEXT */
+
+function nextQuestion(){
+
+currentQuestion++;
+
+if(currentQuestion>=questions.length){
+
+showFinal();
+
+}else{
+
+loadQuestion();
+
+}
+
+}
+
+/* FINAL */
+
+function showFinal(){
+
+showScreen("finalScreen");
+
+document.getElementById("studentDisplay")
+.innerHTML=
+"👏 Congratulations "+student;
+
+document.getElementById("finalScore")
+.innerHTML=
+score+" Points";
+
+let rank="";
+
+if(score>=18){
+
+rank="🏆 Keyboard Champion";
+
+}else if(score>=10){
+
+rank="🌟 Typing Star";
+
+}else{
+
+rank="👍 Keep Practicing";
+
+}
+
+document.getElementById("rank")
+.innerHTML=rank;
+
+confetti({
+particleCount:500,
+spread:220
+});
+
+}
+
+</script>
+
+</body>
+</html>

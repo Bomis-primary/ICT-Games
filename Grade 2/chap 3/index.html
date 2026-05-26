@@ -1,1 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Fun With MS Paint 2</title>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Comic Sans MS',cursive;
+}
+
+body{
+background:linear-gradient(135deg,#ff9a9e,#fad0c4,#fbc2eb,#a18cd1);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+overflow-x:hidden;
+}
+
+.screen{
+display:none;
+background:white;
+width:95%;
+max-width:1200px;
+padding:25px;
+border-radius:25px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+text-align:center;
+animation:fade 0.5s;
+}
+
+.active{
+display:block;
+}
+
+@keyframes fade{
+from{
+opacity:0;
+transform:scale(0.9);
+}
+to{
+opacity:1;
+transform:scale(1);
+}
+}
+
+.logo{
+width:150px;
+margin-bottom:15px;
+}
+
+h1{
+color:#1565c0;
+margin-bottom:15px;
+}
+
+.question{
+font-size:30px;
+font-weight:bold;
+margin:20px 0;
+color:#333;
+}
+
+.option-container{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.option{
+background:#e3f2fd;
+padding:18px;
+border-radius:20px;
+cursor:pointer;
+transition:0.3s;
+width:220px;
+font-size:22px;
+font-weight:bold;
+}
+
+.option:hover{
+transform:scale(1.05);
+background:#90caf9;
+}
+
+.btn{
+background:#ff7043;
+color:white;
+border:none;
+padding:14px 28px;
+border-radius:40px;
+font-size:22px;
+font-weight:bold;
+cursor:pointer;
+margin-top:20px;
+}
+
+.btn:hover{
+transform:scale(1.05);
+}
+
+.feedback{
+font-size:30px;
+font-weight:bold;
+height:40px;
+margin-top:20px;
+}
+
+.score{
+font-size:26px;
+font-weight:bold;
+margin-top:15px;
+color:#ff6f00;
+}
+
+input{
+padding:14px;
+width:90%;
+border-radius:12px;
+border:2px solid #ccc;
+font-size:20px;
+margin-top:20px;
+}
+
+.drag-container{
+display:flex;
+justify-content:center;
+gap:30px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.drag-item{
+background:#c8e6c9;
+padding:15px;
+border-radius:15px;
+font-size:22px;
+font-weight:bold;
+cursor:grab;
+margin-bottom:15px;
+}
+
+.drop-box{
+width:240px;
+height:80px;
+border:3px dashed #1565c0;
+border-radius:20px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:20px;
+font-weight:bold;
+background:#f5f5f5;
+margin-bottom:15px;
+}
+
+.memory-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
+margin-top:20px;
+}
+
+.card{
+height:120px;
+background:#90caf9;
+border-radius:20px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:22px;
+font-weight:bold;
+cursor:pointer;
+color:white;
+transition:0.4s;
+}
+
+.card.flipped{
+background:#fff3e0;
+color:black;
+transform:rotateY(180deg);
+}
+
+.paint-board{
+margin:auto;
+width:90%;
+height:350px;
+background:white;
+border:5px solid #1565c0;
+border-radius:20px;
+position:relative;
+overflow:hidden;
+}
+
+.paint-shape{
+position:absolute;
+cursor:pointer;
+transition:0.3s;
+}
+
+.paint-shape:hover{
+transform:scale(1.1);
+}
+
+.toolbar{
+display:flex;
+justify-content:center;
+gap:15px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.tool{
+background:#bbdefb;
+padding:12px 18px;
+border-radius:15px;
+font-size:20px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.final-score{
+font-size:70px;
+font-weight:bold;
+color:#ff6f00;
+margin:20px 0;
+}
+
+@media(max-width:768px){
+
+.memory-grid{
+grid-template-columns:repeat(2,1fr);
+}
+
+.option{
+width:150px;
+font-size:18px;
+}
+
+.question{
+font-size:22px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<audio id="correctSound" src="assets/correct-1.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
+<!-- INTRO -->
+
+<div class="screen active" id="intro">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🎨 Fun With MS Paint 2</h1>
+
+<input type="text" id="studentName" placeholder="Enter Student Name">
+
+<br>
+
+<button class="btn" onclick="startGame()">
+🚀 Start Game
+</button>
+
+</div>
+
+<!-- MENU -->
+
+<div class="screen" id="menu">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🎮 Choose Activity</h1>
+
+<button class="btn" onclick="startPictureGame()">
+🖼️ Picture Click
+</button>
+
+<button class="btn" onclick="startShortcutGame()">
+⌨️ Shortcut Match
+</button>
+
+<button class="btn" onclick="startMemoryGame()">
+🧠 Memory Match
+</button>
+
+<button class="btn" onclick="startPaintGame()">
+🎨 Drawing Activity
+</button>
+
+<button class="btn" onclick="startFlipGame()">
+🔄 Flip Picture Puzzle
+</button>
+
+</div>
+
+<!-- PICTURE GAME -->
+
+<div class="screen" id="pictureScreen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<div class="question" id="pictureQuestion"></div>
+
+<div class="option-container" id="pictureOptions"></div>
+
+<div class="feedback" id="pictureFeedback"></div>
+
+<div class="score" id="scoreDisplay">
+Score : 0
+</div>
+
+<button class="btn" onclick="nextPictureQuestion()">
+Next ➜
+</button>
+
+</div>
+
+<!-- SHORTCUT GAME -->
+
+<div class="screen" id="shortcutScreen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>⌨️ Match Shortcut Keys</h1>
+
+<div class="drag-container">
+
+<div>
+
+<div class="drag-item" draggable="true" id="copy">
+Ctrl + C
+</div>
+
+<div class="drag-item" draggable="true" id="paste">
+Ctrl + V
+</div>
+
+<div class="drag-item" draggable="true" id="save">
+Ctrl + S
+</div>
+
+<div class="drag-item" draggable="true" id="cut">
+Ctrl + X
+</div>
+
+</div>
+
+<div>
+
+<div class="drop-box" data-answer="copy">
+Copy
+</div>
+
+<div class="drop-box" data-answer="paste">
+Paste
+</div>
+
+<div class="drop-box" data-answer="save">
+Save File
+</div>
+
+<div class="drop-box" data-answer="cut">
+Cut
+</div>
+
+</div>
+
+</div>
+
+<div class="feedback" id="shortcutFeedback"></div>
+
+<button class="btn" onclick="showMenu()">
+⬅ Back
+</button>
+
+</div>
+
+<!-- MEMORY GAME -->
+
+<div class="screen" id="memoryScreen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🧠 Memory Match</h1>
+
+<div class="memory-grid" id="memoryGrid"></div>
+
+<div class="feedback" id="memoryFeedback"></div>
+
+<button class="btn" onclick="showMenu()">
+⬅ Back
+</button>
+
+</div>
+
+<!-- DRAWING ACTIVITY -->
+
+<div class="screen" id="paintScreen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🎨 Drawing Activity</h1>
+
+<div class="question">
+Click Shapes to Paint the Board
+</div>
+
+<div class="paint-board" id="paintBoard">
+
+<div class="paint-shape"
+style="width:80px;height:80px;background:red;
+border-radius:50%;top:40px;left:50px;">
+</div>
+
+<div class="paint-shape"
+style="width:100px;height:100px;background:blue;
+top:120px;left:250px;">
+</div>
+
+<div class="paint-shape"
+style="width:0;height:0;
+border-left:60px solid transparent;
+border-right:60px solid transparent;
+border-bottom:120px solid green;
+top:120px;right:120px;">
+</div>
+
+</div>
+
+<div class="toolbar">
+
+<div class="tool" onclick="changeBoard('pink')">
+Pink
+</div>
+
+<div class="tool" onclick="changeBoard('yellow')">
+Yellow
+</div>
+
+<div class="tool" onclick="changeBoard('lightblue')">
+Blue
+</div>
+
+<div class="tool" onclick="changeBoard('lightgreen')">
+Green
+</div>
+
+</div>
+
+<div class="feedback" id="paintFeedback"></div>
+
+<button class="btn" onclick="showMenu()">
+⬅ Back
+</button>
+
+</div>
+
+<!-- FLIP GAME -->
+
+<div class="screen" id="flipScreen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🔄 Flip Picture Puzzle</h1>
+
+<div class="question">
+Click Cards to Find Matching Tools
+</div>
+
+<div class="memory-grid" id="flipGrid"></div>
+
+<div class="feedback" id="flipFeedback"></div>
+
+<button class="btn" onclick="showFinal()">
+🏁 Finish Game
+</button>
+
+</div>
+
+<!-- FINAL -->
+
+<div class="screen" id="finalScreen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🏆 Congratulations</h1>
+
+<h2 id="studentDisplay"></h2>
+
+<div class="final-score" id="finalScore"></div>
+
+<h2 id="rank"></h2>
+
+<button class="btn" onclick="location.reload()">
+🔄 Play Again
+</button>
+
+</div>
+
+<script>
+
+let student="";
+let score=0;
+
+/* QUESTIONS */
+
+const pictureQuestions=[
+
+{
+question:"Which tool is used for FREE FORM drawing?",
+options:["Brush","Text Tool","Save Tool"],
+answer:"Brush"
+},
+
+{
+question:"Which option is used to SAVE a file?",
+options:["Save","Paste","Copy"],
+answer:"Save"
+},
+
+{
+question:"Which option is used to OPEN a file?",
+options:["Open","Cut","Close"],
+answer:"Open"
+},
+
+{
+question:"Which tool writes TEXT?",
+options:["Text Tool","Brush","Fill"],
+answer:"Text Tool"
+}
+
+];
+
+let pictureIndex=0;
+
+/* START */
+
+function startGame(){
+
+student=document.getElementById("studentName").value;
+
+if(student===""){
+alert("Please Enter Student Name");
+return;
+}
+
+showScreen("menu");
+
+}
+
+/* SCREEN */
+
+function showScreen(id){
+
+document.querySelectorAll(".screen").forEach(screen=>{
+screen.classList.remove("active");
+});
+
+document.getElementById(id).classList.add("active");
+
+}
+
+/* PICTURE GAME */
+
+function startPictureGame(){
+
+pictureIndex=0;
+
+showScreen("pictureScreen");
+
+loadPictureQuestion();
+
+}
+
+function loadPictureQuestion(){
+
+let q=pictureQuestions[pictureIndex];
+
+document.getElementById("pictureQuestion").innerHTML=q.question;
+
+let html="";
+
+q.options.forEach(option=>{
+
+html+=`
+
+<div class="option"
+onclick="checkPictureAnswer('${option}')">
+
+${option}
+
+</div>
+
+`;
+
+});
+
+document.getElementById("pictureOptions").innerHTML=html;
+
+document.getElementById("pictureFeedback").innerHTML="";
+
+document.getElementById("scoreDisplay").innerHTML=
+"Score : "+score;
+
+}
+
+function checkPictureAnswer(selected){
+
+let q=pictureQuestions[pictureIndex];
+
+if(selected===q.answer){
+
+document.getElementById("pictureFeedback").innerHTML=
+"✅ Correct";
+
+document.getElementById("pictureFeedback").style.color="green";
+
+document.getElementById("correctSound").play();
+
+score++;
+
+confetti({
+particleCount:120,
+spread:90,
+origin:{y:0.6}
+});
+
+}else{
+
+document.getElementById("pictureFeedback").innerHTML=
+"❌ Wrong";
+
+document.getElementById("pictureFeedback").style.color="red";
+
+document.getElementById("wrongSound").play();
+
+}
+
+}
+
+function nextPictureQuestion(){
+
+pictureIndex++;
+
+if(pictureIndex>=pictureQuestions.length){
+
+startShortcutGame();
+
+}else{
+
+loadPictureQuestion();
+
+}
+
+}
+
+/* SHORTCUT GAME */
+
+function startShortcutGame(){
+
+showScreen("shortcutScreen");
+
+}
+
+let correctDrops=0;
+
+document.querySelectorAll('.drag-item').forEach(item=>{
+
+item.addEventListener('dragstart',e=>{
+e.dataTransfer.setData('text',e.target.id);
+});
+
+});
+
+document.querySelectorAll('.drop-box').forEach(box=>{
+
+box.addEventListener('dragover',e=>{
+e.preventDefault();
+});
+
+box.addEventListener('drop',e=>{
+
+e.preventDefault();
+
+const data=e.dataTransfer.getData('text');
+
+if(data===box.dataset.answer){
+
+box.style.background='lightgreen';
+
+box.innerHTML='✅ '+data;
+
+document.getElementById("correctSound").play();
+
+score++;
+
+correctDrops++;
+
+document.getElementById("shortcutFeedback").innerHTML=
+"🎉 Correct Match";
+
+document.getElementById("shortcutFeedback").style.color="green";
+
+confetti({
+particleCount:80,
+spread:70,
+shapes:['circle']
+});
+
+}else{
+
+document.getElementById("wrongSound").play();
+
+document.getElementById("shortcutFeedback").innerHTML=
+"❌ Wrong Match";
+
+document.getElementById("shortcutFeedback").style.color="red";
+
+}
+
+});
+
+});
+
+/* MEMORY */
+
+const memoryItems=[
+"Brush","Brush",
+"Copy","Copy",
+"Paste","Paste",
+"Save","Save"
+];
+
+let flipped=[];
+let matched=0;
+
+function startMemoryGame(){
+
+showScreen("memoryScreen");
+
+const grid=document.getElementById("memoryGrid");
+
+grid.innerHTML="";
+
+memoryItems.sort(()=>0.5-Math.random());
+
+memoryItems.forEach(item=>{
+
+const card=document.createElement("div");
+
+card.className="card";
+
+card.innerHTML="?";
+
+card.onclick=()=>flipCard(card,item);
+
+grid.appendChild(card);
+
+});
+
+}
+
+function flipCard(card,item){
+
+if(card.classList.contains("flipped")) return;
+
+card.classList.add("flipped");
+
+card.innerHTML=item;
+
+flipped.push({card,item});
+
+if(flipped.length===2){
+
+if(flipped[0].item===flipped[1].item){
+
+matched++;
+
+score++;
+
+document.getElementById("correctSound").play();
+
+document.getElementById("memoryFeedback").innerHTML=
+"✅ Match Found";
+
+document.getElementById("memoryFeedback").style.color="green";
+
+confetti({
+particleCount:60,
+spread:50
+});
+
+flipped=[];
+
+}else{
+
+document.getElementById("wrongSound").play();
+
+setTimeout(()=>{
+
+flipped.forEach(f=>{
+f.card.classList.remove("flipped");
+f.card.innerHTML="?";
+});
+
+flipped=[];
+
+},1000);
+
+}
+
+}
+
+}
+
+/* DRAW */
+
+function startPaintGame(){
+
+showScreen("paintScreen");
+
+}
+
+function changeBoard(color){
+
+document.getElementById("paintBoard").style.background=color;
+
+document.getElementById("paintFeedback").innerHTML=
+"🎨 Beautiful Painting";
+
+document.getElementById("paintFeedback").style.color="green";
+
+document.getElementById("correctSound").play();
+
+score++;
+
+confetti({
+particleCount:100,
+spread:100,
+shapes:['square']
+});
+
+}
+
+/* FLIP GAME */
+
+const flipItems=[
+"Cut","Cut",
+"Copy","Copy",
+"Paste","Paste",
+"Open","Open"
+];
+
+let flipFlipped=[];
+let flipMatched=0;
+
+function startFlipGame(){
+
+showScreen("flipScreen");
+
+const grid=document.getElementById("flipGrid");
+
+grid.innerHTML="";
+
+flipItems.sort(()=>0.5-Math.random());
+
+flipItems.forEach(item=>{
+
+const card=document.createElement("div");
+
+card.className="card";
+
+card.innerHTML="?";
+
+card.onclick=()=>flipPuzzle(card,item);
+
+grid.appendChild(card);
+
+});
+
+}
+
+function flipPuzzle(card,item){
+
+if(card.classList.contains("flipped")) return;
+
+card.classList.add("flipped");
+
+card.innerHTML=item;
+
+flipFlipped.push({card,item});
+
+if(flipFlipped.length===2){
+
+if(flipFlipped[0].item===flipFlipped[1].item){
+
+flipMatched++;
+
+score++;
+
+document.getElementById("correctSound").play();
+
+document.getElementById("flipFeedback").innerHTML=
+"🎉 Great Match";
+
+document.getElementById("flipFeedback").style.color="green";
+
+confetti({
+particleCount:90,
+spread:120,
+origin:{x:Math.random(),y:Math.random()}
+});
+
+flipFlipped=[];
+
+}else{
+
+document.getElementById("wrongSound").play();
+
+setTimeout(()=>{
+
+flipFlipped.forEach(f=>{
+f.card.classList.remove("flipped");
+f.card.innerHTML="?";
+});
+
+flipFlipped=[];
+
+},1000);
+
+}
+
+}
+
+}
+
+/* FINAL */
+
+function showFinal(){
+
+showScreen("finalScreen");
+
+document.getElementById("studentDisplay").innerHTML=
+student;
+
+document.getElementById("finalScore").innerHTML=
+score+" Points";
+
+let rank="";
+
+if(score>=12){
+
+rank="🏆 MS Paint Master";
+
+}else if(score>=8){
+
+rank="🌟 Excellent Artist";
+
+}else{
+
+rank="👍 Keep Practicing";
+
+}
+
+document.getElementById("rank").innerHTML=rank;
+
+confetti({
+particleCount:400,
+spread:180,
+origin:{y:0.6}
+});
+
+}
+
+</script>
+
+</body>
+</html>

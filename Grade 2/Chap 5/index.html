@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Kid Pix Tool Race</title>
+<title>Kid Pix Race Challenge</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -19,14 +19,13 @@ font-family:'Comic Sans MS',cursive;
 }
 
 body{
-background:
-linear-gradient(135deg,#89f7fe,#66a6ff,#fbc2eb,#a6c1ee);
+background:linear-gradient(135deg,#89f7fe,#66a6ff,#fbc2eb,#a6c1ee);
 min-height:100vh;
 padding:10px;
-overflow-x:hidden;
 display:flex;
 justify-content:center;
 align-items:center;
+overflow-x:hidden;
 }
 
 #gameBox{
@@ -78,15 +77,15 @@ font-size:28px;
 font-weight:bold;
 text-align:center;
 margin:20px 0;
-color:#4a148c;
 line-height:1.4;
+color:#4a148c;
 }
 
 .btn{
 background:#ff7043;
 color:white;
 border:none;
-padding:14px 24px;
+padding:14px 25px;
 border-radius:40px;
 font-size:20px;
 font-weight:bold;
@@ -119,7 +118,7 @@ margin-bottom:10px;
 
 .raceTrack{
 width:100%;
-height:150px;
+height:140px;
 background:
 repeating-linear-gradient(
 90deg,
@@ -193,6 +192,30 @@ margin-top:20px;
 min-height:50px;
 }
 
+.game-image{
+width:220px;
+height:180px;
+object-fit:contain;
+border-radius:20px;
+background:#fff3e0;
+padding:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+cursor:pointer;
+transition:0.3s;
+}
+
+.game-image:hover{
+transform:scale(1.05);
+}
+
+.dropdown{
+padding:14px;
+font-size:20px;
+border-radius:12px;
+margin-top:20px;
+width:300px;
+}
+
 .final-score{
 font-size:70px;
 font-weight:bold;
@@ -206,32 +229,6 @@ font-size:30px;
 font-weight:bold;
 text-align:center;
 color:#1565c0;
-}
-
-.toolImage{
-width:180px;
-height:180px;
-object-fit:contain;
-cursor:pointer;
-border-radius:20px;
-border:5px solid transparent;
-transition:0.3s;
-background:#f8f8f8;
-padding:10px;
-}
-
-.toolImage:hover{
-transform:scale(1.08);
-border-color:#ff7043;
-}
-
-.dropdown{
-padding:15px;
-font-size:20px;
-border-radius:15px;
-margin-top:20px;
-width:300px;
-max-width:90%;
 }
 
 @media(max-width:768px){
@@ -249,13 +246,13 @@ font-size:18px;
 font-size:50px;
 }
 
-.final-score{
-font-size:50px;
+.game-image{
+width:150px;
+height:130px;
 }
 
-.toolImage{
-width:120px;
-height:120px;
+.final-score{
+font-size:50px;
 }
 
 }
@@ -282,7 +279,7 @@ id="intro">
 <img src="assets/innovine-logo.png"
 class="logo">
 
-<h1>🏁 Kid Pix Tool Race</h1>
+<h1>🏁 Kid Pix Race Challenge</h1>
 
 <h3>Grade 2 | Chapter 5</h3>
 
@@ -305,7 +302,7 @@ onclick="startGame()">
 
 </div>
 
-<!-- GAME -->
+<!-- GAME SCREEN -->
 
 <div class="screen"
 id="gameScreen">
@@ -392,13 +389,13 @@ const questions=[
 {
 type:"mcq",
 q:"Which tool is used to draw freehand pictures?",
-options:["Brush Tool","Text Tool","Eraser Tool"],
+options:["Brush Tool","Text Tool","Stamp Tool"],
 answer:"Brush Tool"
 },
 
 {
 type:"image",
-q:"Click the Brush Tool Image",
+q:"Click the Brush Tool image",
 images:[
 {
 src:"assets/brush.png",
@@ -409,7 +406,7 @@ src:"assets/text.png",
 correct:false
 },
 {
-src:"assets/eraser.png",
+src:"assets/stamp.png",
 correct:false
 }
 ]
@@ -417,22 +414,22 @@ correct:false
 
 {
 type:"dropdown",
-q:"Choose the tool used for typing text.",
+q:"Select the tool used to type words",
 options:[
 "Brush Tool",
 "Text Tool",
-"Line Tool"
+"Eraser Tool"
 ],
 answer:"Text Tool"
 },
 
 {
 type:"mcq",
-q:"Which tool helps to erase mistakes?",
+q:"Which tool is used to erase mistakes?",
 options:[
-"Stamp Tool",
 "Eraser Tool",
-"Brush Tool"
+"Brush Tool",
+"Line Tool"
 ],
 answer:"Eraser Tool"
 },
@@ -450,7 +447,7 @@ src:"assets/brush.png",
 correct:false
 },
 {
-src:"assets/text.png",
+src:"assets/eraser.png",
 correct:false
 }
 ]
@@ -458,35 +455,65 @@ correct:false
 
 {
 type:"dropdown",
-q:"Select the tool used for drawing shapes.",
-options:[
-"Shape Tool",
-"Text Tool",
-"Eraser Tool"
-],
-answer:"Shape Tool"
-},
-
-{
-type:"mcq",
-q:"Which tool fills color in drawing?",
+q:"Select the tool used to fill colors",
 options:[
 "Paint Bucket",
 "Text Tool",
-"Brush Tool"
+"Shape Tool"
 ],
 answer:"Paint Bucket"
 },
 
 {
 type:"mcq",
-q:"Which tool creates straight lines?",
+q:"Which tool draws straight lines?",
 options:[
 "Line Tool",
-"Stamp Tool",
-"Mixer Tool"
+"Brush Tool",
+"Text Tool"
 ],
 answer:"Line Tool"
+},
+
+{
+type:"image",
+q:"Click the Eraser Tool image",
+images:[
+{
+src:"assets/eraser.png",
+correct:true
+},
+{
+src:"assets/stamp.png",
+correct:false
+},
+{
+src:"assets/text.png",
+correct:false
+}
+]
+},
+
+{
+type:"mcq",
+q:"Which tool adds ready-made pictures?",
+options:[
+"Stamp Tool",
+"Brush Tool",
+"Shape Tool"
+],
+answer:"Stamp Tool"
+},
+
+{
+type:"dropdown",
+q:"Select the tool used for typing stories",
+options:[
+"Text Tool",
+"Stamp Tool",
+"Brush Tool"
+],
+answer:"Text Tool"
 }
 
 ];
@@ -552,13 +579,13 @@ ${opt}
 
 }
 
-if(q.type==="image"){
+else if(q.type==="image"){
 
 q.images.forEach(img=>{
 
 html+=`
 <img src="${img.src}"
-class="toolImage"
+class="game-image"
 onclick="checkImage(${img.correct})">
 `;
 
@@ -566,37 +593,26 @@ onclick="checkImage(${img.correct})">
 
 }
 
-if(q.type==="dropdown"){
+else if(q.type==="dropdown"){
 
-html+=`
+html=`
 <center>
 
-<select class="dropdown"
-id="dropAnswer">
+<select id="dropdownAnswer"
+class="dropdown">
 
-<option value="">
-Select Answer
-</option>
+<option value="">Select Answer</option>
 
-`;
+${q.options.map(opt=>
+`<option value="${opt}">${opt}</option>`
+).join("")}
 
-q.options.forEach(opt=>{
-
-html+=`
-<option value="${opt}">
-${opt}
-</option>
-`;
-
-});
-
-html+=`
 </select>
 
 <br>
 
 <button class="btn"
-onclick="checkDropdown('${q.answer}')">
+onclick="checkDropdown()">
 Submit
 </button>
 
@@ -613,7 +629,7 @@ document.getElementById("feedback")
 
 }
 
-/* CORRECT */
+/* CHECK ANSWER */
 
 function correctAnswer(){
 
@@ -642,13 +658,11 @@ document.getElementById("feedback")
 .style.color="green";
 
 confetti({
-particleCount:180,
+particleCount:150,
 spread:120
 });
 
 }
-
-/* WRONG */
 
 function wrongAnswer(){
 
@@ -682,7 +696,7 @@ document.getElementById("feedback")
 
 }
 
-/* CHECK MCQ */
+/* MCQ */
 
 function checkAnswer(ans){
 
@@ -700,7 +714,7 @@ wrongAnswer();
 
 }
 
-/* CHECK IMAGE */
+/* IMAGE */
 
 function checkImage(correct){
 
@@ -716,14 +730,16 @@ wrongAnswer();
 
 }
 
-/* CHECK DROPDOWN */
+/* DROPDOWN */
 
-function checkDropdown(answer){
+function checkDropdown(){
 
-let val=
-document.getElementById("dropAnswer").value;
+let value=
+document.getElementById("dropdownAnswer").value;
 
-if(val===answer){
+let q=questions[currentQuestion];
+
+if(value===q.answer){
 
 correctAnswer();
 
@@ -769,11 +785,11 @@ score+" Points";
 
 let rank="";
 
-if(score>=14){
+if(score>=18){
 
 rank="🏆 Kid Pix Champion";
 
-}else if(score>=8){
+}else if(score>=10){
 
 rank="🌟 Creative Racer";
 

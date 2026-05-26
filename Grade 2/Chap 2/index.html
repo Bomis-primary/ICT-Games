@@ -5,7 +5,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MS Paint Adventure Game</title>
+<title>Grade 2 - MS Paint Adventure</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -19,7 +19,7 @@ font-family:'Comic Sans MS',cursive;
 }
 
 body{
-background:linear-gradient(135deg,#89f7fe,#66a6ff);
+background:linear-gradient(135deg,#74ebd5,#ACB6E5);
 min-height:100vh;
 display:flex;
 justify-content:center;
@@ -31,27 +31,15 @@ padding:20px;
 display:none;
 background:white;
 width:95%;
-max-width:1100px;
+max-width:1200px;
 padding:25px;
 border-radius:25px;
 box-shadow:0 10px 30px rgba(0,0,0,0.2);
 text-align:center;
-animation:fade 0.5s;
 }
 
 .active{
 display:block;
-}
-
-@keyframes fade{
-from{
-opacity:0;
-transform:scale(0.9);
-}
-to{
-opacity:1;
-transform:scale(1);
-}
 }
 
 .logo{
@@ -65,10 +53,9 @@ margin-bottom:15px;
 }
 
 .question{
-font-size:30px;
+font-size:28px;
 font-weight:bold;
 margin:20px 0;
-color:#333;
 }
 
 .option-container{
@@ -119,17 +106,17 @@ transform:scale(1.05);
 }
 
 .feedback{
-font-size:32px;
+font-size:30px;
 font-weight:bold;
 height:40px;
 margin-top:20px;
 }
 
 .score{
-font-size:26px;
+font-size:24px;
 font-weight:bold;
-color:#ff6f00;
 margin-top:15px;
+color:#ff6f00;
 }
 
 input{
@@ -141,32 +128,93 @@ font-size:20px;
 margin-top:20px;
 }
 
-.answer-box{
-padding:15px;
-font-size:22px;
-border-radius:12px;
-border:2px solid #999;
-width:300px;
-margin-top:20px;
-text-align:center;
-}
-
-.label-container{
+.drag-container{
 display:flex;
 justify-content:center;
 gap:30px;
 flex-wrap:wrap;
-margin-top:20px;
+margin-top:25px;
 }
 
-.label-box{
-background:#fff3e0;
-padding:15px;
+.drag-item{
+background:#c8e6c9;
+padding:12px;
 border-radius:15px;
-font-size:20px;
+font-size:22px;
 font-weight:bold;
-cursor:pointer;
-width:200px;
+cursor:grab;
+margin-bottom:15px;
+}
+
+.drop-box{
+width:220px;
+height:80px;
+border:3px dashed #1565c0;
+border-radius:15px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:22px;
+font-weight:bold;
+background:#f5f5f5;
+margin-bottom:15px;
+}
+
+.paint-window{
+position:relative;
+width:100%;
+max-width:900px;
+height:450px;
+background:#f5f5f5;
+border:5px solid #1565c0;
+margin:auto;
+border-radius:20px;
+overflow:hidden;
+}
+
+.paint-top{
+background:#1976d2;
+height:60px;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+font-size:30px;
+font-weight:bold;
+}
+
+.paint-toolbar{
+height:90px;
+background:#bbdefb;
+display:flex;
+justify-content:space-around;
+align-items:center;
+}
+
+.paint-toolbar img{
+width:70px;
+height:70px;
+object-fit:contain;
+}
+
+.paint-canvas{
+height:300px;
+background:white;
+position:relative;
+}
+
+.label-target{
+position:absolute;
+width:170px;
+height:50px;
+border:3px dashed #ff7043;
+border-radius:15px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:18px;
+font-weight:bold;
+background:rgba(255,255,255,0.9);
 }
 
 .final-score{
@@ -184,11 +232,11 @@ font-size:18px;
 }
 
 .question{
-font-size:24px;
+font-size:22px;
 }
 
-.answer-box{
-width:90%;
+.paint-window{
+height:500px;
 }
 
 }
@@ -208,7 +256,7 @@ width:90%;
 
 <img src="assets/innovine-logo.png" class="logo">
 
-<h1>🎨 MS Paint Quest </h1>
+<h1>🎨 MS Paint Adventure</h1>
 
 <input type="text" id="studentName" placeholder="Enter Student Name">
 
@@ -220,24 +268,143 @@ width:90%;
 
 </div>
 
-<!-- GAME -->
+<!-- MENU -->
 
-<div class="screen" id="gameScreen">
+<div class="screen" id="menu">
 
 <img src="assets/innovine-logo.png" class="logo">
 
-<div class="question" id="question"></div>
+<h1>🎮 Choose Activity</h1>
 
-<div id="gameArea"></div>
+<button class="btn" onclick="startPictureGame()">
+🖼️ Picture Identification
+</button>
 
-<div class="feedback" id="feedback"></div>
+<button class="btn" onclick="startWordGame()">
+⌨️ One Word Answer
+</button>
 
-<div class="score" id="score">
+<button class="btn" onclick="startLabelGame()">
+🧩 Label MS Paint Window
+</button>
+
+</div>
+
+<!-- PICTURE IDENTIFICATION -->
+
+<div class="screen" id="pictureScreen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<div class="question" id="pictureQuestion"></div>
+
+<div class="option-container" id="pictureOptions"></div>
+
+<div class="feedback" id="pictureFeedback"></div>
+
+<div class="score" id="scoreDisplay">
 Score : 0
 </div>
 
-<button class="btn" onclick="nextQuestion()">
+<button class="btn" onclick="nextPictureQuestion()">
 Next ➜
+</button>
+
+</div>
+
+<!-- ONE WORD -->
+
+<div class="screen" id="wordScreen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<div class="question" id="wordQuestion"></div>
+
+<img id="wordImage" src="" style="width:180px;height:180px;object-fit:contain;">
+
+<br>
+
+<input type="text" id="wordInput" placeholder="Type your answer">
+
+<br>
+
+<button class="btn" onclick="checkWordAnswer()">
+Submit
+</button>
+
+<div class="feedback" id="wordFeedback"></div>
+
+</div>
+
+<!-- LABEL GAME -->
+
+<div class="screen" id="labelScreen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🧩 Label the MS Paint Window</h1>
+
+<div class="paint-window">
+
+<div class="paint-top">
+MS Paint
+</div>
+
+<div class="paint-toolbar">
+
+<img src="assets/pencil.png">
+<img src="assets/eraser.png">
+<img src="assets/color .png">
+<img src="assets/text-tool.png">
+<img src="assets/fill-with-color.png">
+
+</div>
+
+<div class="paint-canvas">
+
+<div class="label-target" data-answer="Pencil"
+style="top:20px;left:20px;">
+Drop Here
+</div>
+
+<div class="label-target" data-answer="Eraser"
+style="top:100px;right:20px;">
+Drop Here
+</div>
+
+<div class="label-target" data-answer="Color"
+style="bottom:20px;left:40%;">
+Drop Here
+</div>
+
+</div>
+
+</div>
+
+<div class="drag-container">
+
+<div>
+
+<div class="drag-item" draggable="true" id="Pencil">
+Pencil
+</div>
+
+<div class="drag-item" draggable="true" id="Eraser">
+Eraser
+</div>
+
+<div class="drag-item" draggable="true" id="Color">
+Color
+</div>
+
+</div>
+
+</div>
+
+<div class="feedback" id="labelFeedback"></div>
+
+<button class="btn" onclick="showFinal()">
+Finish Game
 </button>
 
 </div>
@@ -266,89 +433,97 @@ Next ➜
 
 let student="";
 let score=0;
-let currentQuestion=0;
 
-const questions=[
+/* PICTURE QUESTIONS */
+
+const pictureQuestions=[
 
 {
-type:"picture-click",
 question:"Click the Pencil Tool",
 options:[
-{img:"assets/pencil.png",answer:"yes"},
-{img:"assets/eraser.png",answer:"no"},
-{img:"assets/color .png",answer:"no"}
-]
+{img:"assets/pencil.png",text:"Pencil"},
+{img:"assets/eraser.png",text:"Eraser"},
+{img:"assets/color .png",text:"Color"}
+],
+answer:"Pencil"
 },
 
 {
-type:"picture-click",
 question:"Click the Eraser Tool",
 options:[
-{img:"assets/text-tool.png",answer:"no"},
-{img:"assets/eraser.png",answer:"yes"},
-{img:"assets/fill-with-color.png",answer:"no"}
-]
+{img:"assets/text-tool.png",text:"Text"},
+{img:"assets/eraser.png",text:"Eraser"},
+{img:"assets/triangle.png",text:"Triangle"}
+],
+answer:"Eraser"
 },
 
 {
-type:"one-word",
-question:"Which tool is used to fill color?",
-answer:"fill"
-},
-
-{
-type:"one-word",
-question:"Which tool is used to write text?",
-answer:"text"
-},
-
-{
-type:"picture-click",
-question:"Click the Triangle Shape",
+question:"Click the Fill With Color Tool",
 options:[
-{img:"assets/triangle.png",answer:"yes"},
-{img:"assets/pencil.png",answer:"no"},
-{img:"assets/color .png",answer:"no"}
-]
+{img:"assets/fill-with-color.png",text:"Fill"},
+{img:"assets/close.png",text:"Close"},
+{img:"assets/minimize.png",text:"Minimize"}
+],
+answer:"Fill"
 },
 
 {
-type:"one-word",
-question:"Which button closes the MS Paint window?",
-answer:"close"
-},
-
-{
-type:"picture-click",
-question:"Click the Minimize Button",
+question:"Click the Maximize Button",
 options:[
-{img:"assets/minimize.png",answer:"yes"},
-{img:"assets/maximize.png",answer:"no"},
-{img:"assets/close.png",answer:"no"}
-]
-},
-
-{
-type:"label",
-question:"Label the Components of MS Paint Window"
+{img:"assets/minimize.png",text:"Minimize"},
+{img:"assets/maximize.png",text:"Maximize"},
+{img:"assets/close.png",text:"Close"}
+],
+answer:"Maximize"
 }
 
 ];
+
+let pictureIndex=0;
+
+/* WORD QUESTIONS */
+
+const wordQuestions=[
+
+{
+question:"Type the name of this tool",
+img:"assets/pencil.png",
+answer:"pencil"
+},
+
+{
+question:"Type the name of this shape",
+img:"assets/triangle.png",
+answer:"triangle"
+},
+
+{
+question:"Type the name of this tool",
+img:"assets/eraser.png",
+answer:"eraser"
+}
+
+];
+
+let wordIndex=0;
+
+/* START */
 
 function startGame(){
 
 student=document.getElementById("studentName").value;
 
 if(student===""){
-alert("Enter Student Name");
+alert("Please Enter Student Name");
 return;
 }
 
-showScreen("gameScreen");
-
-loadQuestion();
+showScreen("menu");
 
 }
+
+/* SCREEN */
 
 function showScreen(id){
 
@@ -360,31 +535,36 @@ document.getElementById(id).classList.add("active");
 
 }
 
-function loadQuestion(){
+/* PICTURE GAME */
 
-let q=questions[currentQuestion];
+function startPictureGame(){
 
-document.getElementById("question").innerHTML=q.question;
+pictureIndex=0;
 
-document.getElementById("feedback").innerHTML="";
+showScreen("pictureScreen");
 
-document.getElementById("score").innerHTML=
-"Score : "+score;
+loadPictureQuestion();
+
+}
+
+function loadPictureQuestion(){
+
+let q=pictureQuestions[pictureIndex];
+
+document.getElementById("pictureQuestion").innerHTML=q.question;
 
 let html="";
-
-if(q.type==="picture-click"){
-
-html+=`<div class="option-container">`;
 
 q.options.forEach(option=>{
 
 html+=`
 
 <div class="option"
-onclick="checkPicture('${option.answer}')">
+onclick="checkPictureAnswer('${option.text}')">
 
 <img src="${option.img}">
+
+${option.text}
 
 </div>
 
@@ -392,158 +572,205 @@ onclick="checkPicture('${option.answer}')">
 
 });
 
-html+=`</div>`;
+document.getElementById("pictureOptions").innerHTML=html;
+
+document.getElementById("pictureFeedback").innerHTML="";
+
+document.getElementById("scoreDisplay").innerHTML=
+"Score : "+score;
 
 }
 
-else if(q.type==="one-word"){
+function checkPictureAnswer(selected){
 
-html+=`
+let q=pictureQuestions[pictureIndex];
 
-<input type="text"
-id="wordAnswer"
-class="answer-box"
-placeholder="Type One Word Answer">
+if(selected===q.answer){
 
-<br>
-
-<button class="btn"
-onclick="checkWordAnswer('${q.answer}')">
-Submit
-</button>
-
-`;
-
-}
-
-else if(q.type==="label"){
-
-html+=`
-
-<div class="label-container">
-
-<div class="label-box"
-onclick="checkLabel('correct')">
-
-🎨 Drawing Area
-
-</div>
-
-<div class="label-box"
-onclick="checkLabel('wrong')">
-
-🚗 Car Tool
-
-</div>
-
-<div class="label-box"
-onclick="checkLabel('wrong')">
-
-📱 Mobile Tool
-
-</div>
-
-</div>
-
-`;
-
-}
-
-document.getElementById("gameArea").innerHTML=html;
-
-}
-
-function checkPicture(answer){
-
-if(answer==="yes"){
-
-correctAnswer();
-
-}else{
-
-wrongAnswer();
-
-}
-
-}
-
-function checkWordAnswer(correct){
-
-let ans=document.getElementById("wordAnswer")
-.value
-.toLowerCase()
-.trim();
-
-if(ans.includes(correct)){
-
-correctAnswer();
-
-}else{
-
-wrongAnswer();
-
-}
-
-}
-
-function checkLabel(answer){
-
-if(answer==="correct"){
-
-correctAnswer();
-
-}else{
-
-wrongAnswer();
-
-}
-
-}
-
-function correctAnswer(){
-
-document.getElementById("feedback").innerHTML=
+document.getElementById("pictureFeedback").innerHTML=
 "✅ Correct";
 
-document.getElementById("feedback").style.color="green";
+document.getElementById("pictureFeedback").style.color="green";
 
 document.getElementById("correctSound").play();
 
 score++;
 
 confetti({
-particleCount:180,
-spread:100
+particleCount:150,
+spread:90
 });
 
-}
+}else{
 
-function wrongAnswer(){
-
-document.getElementById("feedback").innerHTML=
+document.getElementById("pictureFeedback").innerHTML=
 "❌ Wrong";
 
-document.getElementById("feedback").style.color="red";
+document.getElementById("pictureFeedback").style.color="red";
 
 document.getElementById("wrongSound").play();
 
 }
 
-function nextQuestion(){
+}
 
-currentQuestion++;
+function nextPictureQuestion(){
 
-if(currentQuestion>=questions.length){
+pictureIndex++;
 
-showFinal();
+if(pictureIndex>=pictureQuestions.length){
+
+startWordGame();
 
 }else{
 
-loadQuestion();
+loadPictureQuestion();
 
 }
 
 }
+
+/* WORD GAME */
+
+function startWordGame(){
+
+wordIndex=0;
+
+showScreen("wordScreen");
+
+loadWordQuestion();
+
+}
+
+function loadWordQuestion(){
+
+let q=wordQuestions[wordIndex];
+
+document.getElementById("wordQuestion").innerHTML=q.question;
+
+document.getElementById("wordImage").src=q.img;
+
+document.getElementById("wordInput").value="";
+
+document.getElementById("wordFeedback").innerHTML="";
+
+}
+
+function checkWordAnswer(){
+
+let q=wordQuestions[wordIndex];
+
+let ans=document.getElementById("wordInput").value.toLowerCase();
+
+if(ans===q.answer){
+
+document.getElementById("wordFeedback").innerHTML=
+"✅ Correct";
+
+document.getElementById("wordFeedback").style.color="green";
+
+document.getElementById("correctSound").play();
+
+score++;
+
+confetti({
+particleCount:120,
+spread:80
+});
+
+}else{
+
+document.getElementById("wordFeedback").innerHTML=
+"❌ Wrong";
+
+document.getElementById("wordFeedback").style.color="red";
+
+document.getElementById("wrongSound").play();
+
+}
+
+wordIndex++;
+
+if(wordIndex<wordQuestions.length){
+
+setTimeout(loadWordQuestion,1200);
+
+}else{
+
+setTimeout(startLabelGame,1200);
+
+}
+
+}
+
+/* LABEL GAME */
+
+function startLabelGame(){
+
+showScreen("labelScreen");
+
+}
+
+let correctDrops=0;
+
+document.querySelectorAll('.drag-item').forEach(item=>{
+
+item.addEventListener('dragstart',e=>{
+e.dataTransfer.setData('text',e.target.id);
+});
+
+});
+
+document.querySelectorAll('.label-target').forEach(box=>{
+
+box.addEventListener('dragover',e=>{
+e.preventDefault();
+});
+
+box.addEventListener('drop',e=>{
+
+e.preventDefault();
+
+const data=e.dataTransfer.getData('text');
+
+if(data===box.dataset.answer){
+
+box.style.background='lightgreen';
+
+box.innerHTML='✅ '+data;
+
+document.getElementById("correctSound").play();
+
+score++;
+
+correctDrops++;
+
+document.getElementById("labelFeedback").innerHTML=
+"🎉 Correct Label";
+
+document.getElementById("labelFeedback").style.color="green";
+
+confetti({
+particleCount:120,
+spread:70
+});
+
+}else{
+
+document.getElementById("wrongSound").play();
+
+document.getElementById("labelFeedback").innerHTML=
+"❌ Wrong Label";
+
+document.getElementById("labelFeedback").style.color="red";
+
+}
+
+});
+
+});
+
+/* FINAL */
 
 function showFinal(){
 
@@ -553,17 +780,17 @@ document.getElementById("studentDisplay").innerHTML=
 student;
 
 document.getElementById("finalScore").innerHTML=
-score+" / "+questions.length;
+score+" Points";
 
 let rank="";
 
-if(score>=7){
+if(score>=8){
 
 rank="🏆 MS Paint Champion";
 
 }else if(score>=5){
 
-rank="🌟 Excellent Learner";
+rank="🌟 Excellent";
 
 }else{
 

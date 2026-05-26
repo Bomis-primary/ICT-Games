@@ -33,7 +33,7 @@ overflow-x:hidden;
 #gameBox{
 
 width:100%;
-max-width:1150px;
+max-width:1200px;
 background:white;
 border-radius:30px;
 padding:20px;
@@ -43,7 +43,7 @@ box-shadow:0 10px 35px rgba(0,0,0,0.25);
 
 .logo{
 
-width:120px;
+width:130px;
 display:block;
 margin:auto;
 margin-bottom:10px;
@@ -128,7 +128,7 @@ margin-top:20px;
 
 display:flex;
 justify-content:center;
-gap:25px;
+gap:20px;
 flex-wrap:wrap;
 margin-top:20px;
 
@@ -136,18 +136,19 @@ margin-top:20px;
 
 .habit{
 
-padding:15px 20px;
+padding:15px 25px;
 background:#81d4fa;
 border-radius:20px;
 cursor:grab;
 font-size:22px;
 font-weight:bold;
+user-select:none;
 
 }
 
 .drop-box{
 
-width:280px;
+width:300px;
 min-height:220px;
 padding:20px;
 border-radius:25px;
@@ -227,10 +228,50 @@ background:#ffcdd2;
 
 .score{
 
-font-size:26px;
+font-size:28px;
 font-weight:bold;
 text-align:center;
 color:#ff6f00;
+
+}
+
+.question-box{
+
+background:#f3e5f5;
+padding:20px;
+border-radius:25px;
+margin-top:20px;
+text-align:center;
+
+}
+
+.option-container{
+
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+margin-top:20px;
+
+}
+
+.option{
+
+background:#81d4fa;
+padding:15px 25px;
+border-radius:20px;
+font-size:22px;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+
+}
+
+.option:hover{
+
+transform:scale(1.05);
+
+background:#4fc3f7;
 
 }
 
@@ -264,6 +305,10 @@ height:70px;
 font-size:28px;
 }
 
+.option{
+width:100%;
+}
+
 .final-score{
 font-size:45px;
 }
@@ -293,6 +338,8 @@ id="intro">
 class="logo">
 
 <h1>💻 Computer Safety Adventure</h1>
+
+<h3>Grade 2 Interactive Game</h3>
 
 <center>
 
@@ -331,6 +378,11 @@ onclick="showScreen('dragGame')">
 <button class="btn"
 onclick="showScreen('mazeGame')">
 🧩 Computer Lab Maze
+</button>
+
+<button class="btn"
+onclick="startQuizGame()">
+❓ Safety Quiz
 </button>
 
 </div>
@@ -385,6 +437,18 @@ Wash Hands
 draggable="true"
 id="habit4">
 Pull Wires
+</div>
+
+<div class="habit"
+draggable="true"
+id="habit5">
+Take Eye Breaks
+</div>
+
+<div class="habit"
+draggable="true"
+id="habit6">
+Run In Lab
 </div>
 
 </div>
@@ -504,6 +568,49 @@ onclick="showScreen('menu')">
 
 </div>
 
+<!-- QUIZ GAME -->
+
+<div class="screen"
+id="quizGame">
+
+<img src="assets/innovine-logo.png"
+class="logo">
+
+<h1>❓ Safety Quiz Challenge</h1>
+
+<div class="score">
+⭐ Score :
+<span id="score3">0</span>
+</div>
+
+<div class="question-box">
+
+<h2 id="quizQuestion"></h2>
+
+<div class="option-container"
+id="quizOptions"></div>
+
+<div class="feedback"
+id="quizFeedback"></div>
+
+</div>
+
+<center>
+
+<button class="btn"
+onclick="nextQuestion()">
+Next ➜
+</button>
+
+<button class="btn"
+onclick="showScreen('menu')">
+⬅ Back
+</button>
+
+</center>
+
+</div>
+
 <!-- FINAL -->
 
 <div class="screen"
@@ -597,16 +704,28 @@ spread:120
 
 }
 
+/* UPDATE SCORE */
+
+function updateScore(){
+
+document.getElementById("score").innerHTML=score;
+document.getElementById("score2").innerHTML=score;
+document.getElementById("score3").innerHTML=score;
+
+}
+
 /* DRAG GAME */
 
 const safeHabits=[
 "Sit Straight",
-"Wash Hands"
+"Wash Hands",
+"Take Eye Breaks"
 ];
 
 const unsafeHabits=[
 "Eat Near Keyboard",
-"Pull Wires"
+"Pull Wires",
+"Run In Lab"
 ];
 
 const habits=
@@ -620,8 +739,10 @@ habit.addEventListener("dragstart",dragStart);
 
 function dragStart(e){
 
-e.dataTransfer.setData("text",
-e.target.innerHTML);
+e.dataTransfer.setData(
+"text/plain",
+e.target.innerHTML
+);
 
 }
 
@@ -634,7 +755,11 @@ document.getElementById("unsafeBox");
 [safeBox,unsafeBox].forEach(box=>{
 
 box.addEventListener("dragover",
-e=>e.preventDefault());
+function(e){
+
+e.preventDefault();
+
+});
 
 box.addEventListener("drop",dropHabit);
 
@@ -645,7 +770,7 @@ function dropHabit(e){
 e.preventDefault();
 
 let text=
-e.dataTransfer.getData("text");
+e.dataTransfer.getData("text/plain");
 
 if(
 safeHabits.includes(text)
@@ -662,6 +787,7 @@ document.getElementById("dragFeedback")
 .style.color="green";
 
 correct();
+
 celebrate();
 
 }
@@ -681,6 +807,7 @@ document.getElementById("dragFeedback")
 .style.color="green";
 
 correct();
+
 celebrate();
 
 }
@@ -725,7 +852,7 @@ celebrate();
 
 document.getElementById("mazeFeedback")
 .innerHTML=
-"❌ Oops! Unsafe Item";
+"❌ Unsafe Item!";
 
 document.getElementById("mazeFeedback")
 .style.color="red";
@@ -738,15 +865,151 @@ updateScore();
 
 }
 
-/* SCORE */
+/* QUIZ */
 
-function updateScore(){
+const quizQuestions=[
 
-document.getElementById("score")
-.innerHTML=score;
+{
+q:"How should we sit at computer?",
+options:[
+"Sit Straight",
+"Lie Down",
+"Jump"
+],
+answer:"Sit Straight"
+},
 
-document.getElementById("score2")
-.innerHTML=score;
+{
+q:"Should we touch wires?",
+options:[
+"No",
+"Yes",
+"Always"
+],
+answer:"No"
+},
+
+{
+q:"What should we do before using computer?",
+options:[
+"Wash Hands",
+"Eat Food",
+"Run"
+],
+answer:"Wash Hands"
+},
+
+{
+q:"What should we do for eyes?",
+options:[
+"Take Breaks",
+"Watch All Day",
+"Sleep Near Screen"
+],
+answer:"Take Breaks"
+},
+
+{
+q:"How should we use mouse and keyboard?",
+options:[
+"Gently",
+"Throw Them",
+"Hit Hard"
+],
+answer:"Gently"
+}
+
+];
+
+let currentQuestion=0;
+
+function startQuizGame(){
+
+currentQuestion=0;
+
+showScreen("quizGame");
+
+loadQuestion();
+
+}
+
+function loadQuestion(){
+
+let q=quizQuestions[currentQuestion];
+
+document.getElementById("quizQuestion")
+.innerHTML=q.q;
+
+let html="";
+
+q.options.forEach(opt=>{
+
+html+=`
+<div class="option"
+onclick="checkAnswer('${opt}')">
+${opt}
+</div>
+`;
+
+});
+
+document.getElementById("quizOptions")
+.innerHTML=html;
+
+document.getElementById("quizFeedback")
+.innerHTML="";
+
+}
+
+function checkAnswer(ans){
+
+let q=quizQuestions[currentQuestion];
+
+if(ans===q.answer){
+
+score+=2;
+
+document.getElementById("quizFeedback")
+.innerHTML=
+"⭐ Correct Answer!";
+
+document.getElementById("quizFeedback")
+.style.color="green";
+
+correct();
+
+celebrate();
+
+}else{
+
+document.getElementById("quizFeedback")
+.innerHTML=
+"❌ Wrong Answer";
+
+document.getElementById("quizFeedback")
+.style.color="red";
+
+wrong();
+
+}
+
+updateScore();
+
+}
+
+function nextQuestion(){
+
+currentQuestion++;
+
+if(currentQuestion>=quizQuestions.length){
+
+showScreen("menu");
+
+}else{
+
+loadQuestion();
+
+}
 
 }
 
@@ -766,11 +1029,11 @@ score+" Points";
 
 let rank="";
 
-if(score>=16){
+if(score>=20){
 
 rank="🏆 Safety Champion";
 
-}else if(score>=8){
+}else if(score>=10){
 
 rank="🌟 Smart Computer User";
 

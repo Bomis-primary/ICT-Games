@@ -31,7 +31,7 @@ align-items:center;
 
 #gameBox{
 width:100%;
-max-width:1100px;
+max-width:1150px;
 background:white;
 border-radius:30px;
 padding:20px;
@@ -119,7 +119,7 @@ margin-bottom:10px;
 
 .raceTrack{
 width:100%;
-height:140px;
+height:150px;
 background:
 repeating-linear-gradient(
 90deg,
@@ -208,6 +208,32 @@ text-align:center;
 color:#1565c0;
 }
 
+.toolImage{
+width:180px;
+height:180px;
+object-fit:contain;
+cursor:pointer;
+border-radius:20px;
+border:5px solid transparent;
+transition:0.3s;
+background:#f8f8f8;
+padding:10px;
+}
+
+.toolImage:hover{
+transform:scale(1.08);
+border-color:#ff7043;
+}
+
+.dropdown{
+padding:15px;
+font-size:20px;
+border-radius:15px;
+margin-top:20px;
+width:300px;
+max-width:90%;
+}
+
 @media(max-width:768px){
 
 .question{
@@ -225,6 +251,11 @@ font-size:50px;
 
 .final-score{
 font-size:50px;
+}
+
+.toolImage{
+width:120px;
+height:120px;
 }
 
 }
@@ -253,6 +284,11 @@ class="logo">
 
 <h1>🏁 Kid Pix Tool Race</h1>
 
+<h3>Grade 2 | Chapter 5</h3>
+
+<h3>Pages 54 to 65</h3>
+
+<center>
 
 <input type="text"
 id="studentName"
@@ -354,63 +390,103 @@ let position=10;
 const questions=[
 
 {
-q:"Which tool is used to draw freehand pictures in Kid Pix?",
+type:"mcq",
+q:"Which tool is used to draw freehand pictures?",
 options:["Brush Tool","Text Tool","Eraser Tool"],
 answer:"Brush Tool"
 },
 
 {
+type:"image",
+q:"Click the Brush Tool Image",
+images:[
+{
+src:"assets/brush.png",
+correct:true
+},
+{
+src:"assets/text.png",
+correct:false
+},
+{
+src:"assets/eraser.png",
+correct:false
+}
+]
+},
+
+{
+type:"dropdown",
+q:"Choose the tool used for typing text.",
+options:[
+"Brush Tool",
+"Text Tool",
+"Line Tool"
+],
+answer:"Text Tool"
+},
+
+{
+type:"mcq",
 q:"Which tool helps to erase mistakes?",
-options:["Brush Tool","Eraser Tool","Stamp Tool"],
+options:[
+"Stamp Tool",
+"Eraser Tool",
+"Brush Tool"
+],
 answer:"Eraser Tool"
 },
 
 {
-q:"Which tool is used to type words?",
-options:["Text Tool","Brush Tool","Mixer Tool"],
-answer:"Text Tool"
+type:"image",
+q:"Click the Stamp Tool",
+images:[
+{
+src:"assets/stamp.png",
+correct:true
+},
+{
+src:"assets/brush.png",
+correct:false
+},
+{
+src:"assets/text.png",
+correct:false
+}
+]
 },
 
 {
-q:"Which tool adds ready-made pictures?",
-options:["Stamp Tool","Eraser Tool","Line Tool"],
-answer:"Stamp Tool"
-},
-
-{
-q:"Which tool fills color in drawing?",
-options:["Paint Bucket","Text Tool","Brush Tool"],
-answer:"Paint Bucket"
-},
-
-{
-q:"Which tool makes straight lines?",
-options:["Line Tool","Stamp Tool","Brush Tool"],
-answer:"Line Tool"
-},
-
-{
-q:"Which tool creates funny sound effects?",
-options:["Sound Tool","Brush Tool","Text Tool"],
-answer:"Sound Tool"
-},
-
-{
-q:"Which tool helps to draw shapes?",
-options:["Shape Tool","Text Tool","Mixer Tool"],
+type:"dropdown",
+q:"Select the tool used for drawing shapes.",
+options:[
+"Shape Tool",
+"Text Tool",
+"Eraser Tool"
+],
 answer:"Shape Tool"
 },
 
 {
-q:"Which tool is used for typing stories?",
-options:["Text Tool","Stamp Tool","Brush Tool"],
-answer:"Text Tool"
+type:"mcq",
+q:"Which tool fills color in drawing?",
+options:[
+"Paint Bucket",
+"Text Tool",
+"Brush Tool"
+],
+answer:"Paint Bucket"
 },
 
 {
-q:"Which tool helps decorate pictures?",
-options:["Stamp Tool","Eraser Tool","Brush Tool"],
-answer:"Stamp Tool"
+type:"mcq",
+q:"Which tool creates straight lines?",
+options:[
+"Line Tool",
+"Stamp Tool",
+"Mixer Tool"
+],
+answer:"Line Tool"
 }
 
 ];
@@ -461,6 +537,8 @@ document.getElementById("question")
 
 let html="";
 
+if(q.type==="mcq"){
+
 q.options.forEach(opt=>{
 
 html+=`
@@ -472,6 +550,61 @@ ${opt}
 
 });
 
+}
+
+if(q.type==="image"){
+
+q.images.forEach(img=>{
+
+html+=`
+<img src="${img.src}"
+class="toolImage"
+onclick="checkImage(${img.correct})">
+`;
+
+});
+
+}
+
+if(q.type==="dropdown"){
+
+html+=`
+<center>
+
+<select class="dropdown"
+id="dropAnswer">
+
+<option value="">
+Select Answer
+</option>
+
+`;
+
+q.options.forEach(opt=>{
+
+html+=`
+<option value="${opt}">
+${opt}
+</option>
+`;
+
+});
+
+html+=`
+</select>
+
+<br>
+
+<button class="btn"
+onclick="checkDropdown('${q.answer}')">
+Submit
+</button>
+
+</center>
+`;
+
+}
+
 document.getElementById("options")
 .innerHTML=html;
 
@@ -480,13 +613,9 @@ document.getElementById("feedback")
 
 }
 
-/* CHECK ANSWER */
+/* CORRECT */
 
-function checkAnswer(ans){
-
-let q=questions[currentQuestion];
-
-if(ans===q.answer){
+function correctAnswer(){
 
 score+=2;
 
@@ -513,11 +642,15 @@ document.getElementById("feedback")
 .style.color="green";
 
 confetti({
-particleCount:150,
+particleCount:180,
 spread:120
 });
 
-}else{
+}
+
+/* WRONG */
+
+function wrongAnswer(){
 
 score--;
 
@@ -546,6 +679,57 @@ document.getElementById("feedback")
 
 document.getElementById("feedback")
 .style.color="red";
+
+}
+
+/* CHECK MCQ */
+
+function checkAnswer(ans){
+
+let q=questions[currentQuestion];
+
+if(ans===q.answer){
+
+correctAnswer();
+
+}else{
+
+wrongAnswer();
+
+}
+
+}
+
+/* CHECK IMAGE */
+
+function checkImage(correct){
+
+if(correct){
+
+correctAnswer();
+
+}else{
+
+wrongAnswer();
+
+}
+
+}
+
+/* CHECK DROPDOWN */
+
+function checkDropdown(answer){
+
+let val=
+document.getElementById("dropAnswer").value;
+
+if(val===answer){
+
+correctAnswer();
+
+}else{
+
+wrongAnswer();
 
 }
 
@@ -585,11 +769,11 @@ score+" Points";
 
 let rank="";
 
-if(score>=18){
+if(score>=14){
 
 rank="🏆 Kid Pix Champion";
 
-}else if(score>=10){
+}else if(score>=8){
 
 rank="🌟 Creative Racer";
 

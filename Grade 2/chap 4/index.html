@@ -1,27 +1,6 @@
-<!-- =========================================================
-GRADE 2 - FUN WITH KIDPIX 1
-CHAPTER 4 | PAGE 40-53
-Interactive Game
-Activities:
-1. Memory Match
-2. Maze Game
-3. Crossword Puzzle
-
-SAVE AS:
-index.html
-
-ASSETS FOLDER:
-assets/
- ├── innovine-logo.png
- ├── correct-1.mp3
- └── wrong.mp3
-========================================================= -->
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -31,6 +10,14 @@ assets/
 
 <style>
 
+:root{
+--primary:#1a73e8;
+--secondary:#ff7043;
+--success:#43a047;
+--danger:#e53935;
+--light:#f4f7fb;
+}
+
 *{
 margin:0;
 padding:0;
@@ -39,24 +26,36 @@ font-family:'Comic Sans MS',cursive;
 }
 
 body{
-background:linear-gradient(135deg,#ffecd2,#fcb69f,#a1c4fd,#c2e9fb);
+background:
+linear-gradient(135deg,#ffecd2,#fcb69f,#a1c4fd,#c2e9fb);
 min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-padding:20px;
+padding:15px;
 overflow-x:hidden;
+}
+
+#gameBox{
+width:100%;
+max-width:900px;
+background:white;
+border-radius:25px;
+padding:25px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+position:relative;
+overflow:hidden;
+}
+
+.logo{
+width:130px;
+display:block;
+margin:auto;
+margin-bottom:10px;
 }
 
 .screen{
 display:none;
-background:white;
-width:95%;
-max-width:1200px;
-padding:25px;
-border-radius:25px;
-box-shadow:0 10px 30px rgba(0,0,0,0.2);
-text-align:center;
 animation:fade 0.5s;
 }
 
@@ -67,38 +66,35 @@ display:block;
 @keyframes fade{
 from{
 opacity:0;
-transform:scale(0.9);
+transform:translateY(15px);
 }
 to{
 opacity:1;
-transform:scale(1);
+transform:translateY(0);
 }
 }
 
-.logo{
-width:150px;
+h1,h2,h3{
+color:var(--primary);
 margin-bottom:15px;
-}
-
-h1{
-color:#1565c0;
-margin-bottom:15px;
+text-align:center;
 }
 
 .question{
 font-size:28px;
 font-weight:bold;
+text-align:center;
 margin:20px 0;
 color:#333;
 }
 
 .btn{
-background:#ff7043;
+background:var(--secondary);
 color:white;
 border:none;
-padding:14px 28px;
+padding:14px 24px;
 border-radius:40px;
-font-size:22px;
+font-size:20px;
 font-weight:bold;
 cursor:pointer;
 margin-top:20px;
@@ -109,27 +105,61 @@ transition:0.3s;
 transform:scale(1.05);
 }
 
-.feedback{
-font-size:28px;
-font-weight:bold;
-height:40px;
-margin-top:20px;
-}
-
-.score{
-font-size:26px;
-font-weight:bold;
-color:#ff6f00;
-margin-top:15px;
-}
-
 input{
 padding:14px;
 width:90%;
 border-radius:12px;
 border:2px solid #ccc;
-font-size:20px;
+font-size:18px;
+margin-top:15px;
+}
+
+.scoreBox{
+font-size:24px;
+font-weight:bold;
+color:#ff6f00;
+text-align:center;
+margin-bottom:10px;
+}
+
+.progress{
+height:10px;
+background:#ddd;
+border-radius:20px;
+overflow:hidden;
+margin-bottom:20px;
+}
+
+.bar{
+height:100%;
+width:0%;
+background:linear-gradient(to right,#00c853,#64dd17);
+transition:0.5s;
+}
+
+.option-container{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
 margin-top:20px;
+}
+
+.option{
+background:#e3f2fd;
+padding:18px;
+border-radius:20px;
+cursor:pointer;
+font-size:20px;
+font-weight:bold;
+min-width:180px;
+transition:0.3s;
+box-shadow:0 4px 8px rgba(0,0,0,0.1);
+}
+
+.option:hover{
+background:#90caf9;
+transform:scale(1.05);
 }
 
 .memory-grid{
@@ -140,9 +170,9 @@ margin-top:20px;
 }
 
 .card{
-height:120px;
+height:110px;
 background:#90caf9;
-border-radius:20px;
+border-radius:18px;
 display:flex;
 justify-content:center;
 align-items:center;
@@ -183,22 +213,28 @@ transition:0.3s;
 background:#64b5f6;
 }
 
-.crossword-grid{
-display:grid;
-grid-template-columns:repeat(5,60px);
-gap:5px;
+.crossword{
+display:flex;
 justify-content:center;
-margin-top:20px;
+gap:8px;
+margin-top:25px;
+flex-wrap:wrap;
 }
 
-.crossword-grid input{
+.crossword input{
 width:60px;
 height:60px;
+font-size:28px;
 text-align:center;
+font-weight:bold;
+}
+
+.feedback{
 font-size:28px;
 font-weight:bold;
-border:2px solid #1565c0;
-border-radius:10px;
+margin-top:20px;
+height:40px;
+text-align:center;
 }
 
 .final-score{
@@ -206,6 +242,14 @@ font-size:70px;
 font-weight:bold;
 color:#ff6f00;
 margin:20px 0;
+text-align:center;
+}
+
+.rank{
+font-size:28px;
+font-weight:bold;
+text-align:center;
+color:#1565c0;
 }
 
 @media(max-width:768px){
@@ -218,23 +262,29 @@ grid-template-columns:repeat(2,1fr);
 grid-template-columns:repeat(3,1fr);
 }
 
-.crossword-grid{
-grid-template-columns:repeat(5,45px);
+.option{
+min-width:140px;
+font-size:18px;
 }
 
-.crossword-grid input{
+.question{
+font-size:22px;
+}
+
+.crossword input{
 width:45px;
 height:45px;
-font-size:20px;
+font-size:22px;
 }
 
 }
 
 </style>
-
 </head>
 
 <body>
+
+<div id="gameBox">
 
 <audio id="correctSound" src="assets/correct-1.mp3"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3"></audio>
@@ -247,13 +297,18 @@ font-size:20px;
 
 <h1>🎨 Fun With KidPix 1</h1>
 
-<input type="text" id="studentName" placeholder="Enter Student Name">
+<h3>Grade 2 | Chapter 4</h3>
 
-<br>
+<center>
+<input type="text" id="studentName"
+placeholder="Enter Student Name">
+</center>
 
+<center>
 <button class="btn" onclick="startGame()">
 🚀 Start Game
 </button>
+</center>
 
 </div>
 
@@ -263,23 +318,40 @@ font-size:20px;
 
 <img src="assets/innovine-logo.png" class="logo">
 
+<div class="scoreBox">
+⭐ Score :
+<span id="scoreVal">0</span>
+</div>
+
+<div class="progress">
+<div class="bar" id="progressBar"></div>
+</div>
+
 <h1>🎮 Choose Activity</h1>
 
-<button class="btn" onclick="startMemoryGame()">
+<center>
+
+<button class="btn" onclick="startMemory()">
 🧠 Memory Match
 </button>
 
-<button class="btn" onclick="startMazeGame()">
+<br>
+
+<button class="btn" onclick="startMaze()">
 🌀 KidPix Maze
 </button>
 
-<button class="btn" onclick="startCrosswordGame()">
+<br>
+
+<button class="btn" onclick="startCrossword()">
 ✏️ Crossword Puzzle
 </button>
 
+</center>
+
 </div>
 
-<!-- MEMORY GAME -->
+<!-- MEMORY -->
 
 <div class="screen" id="memoryScreen">
 
@@ -295,13 +367,15 @@ Match the KidPix Tools
 
 <div class="feedback" id="memoryFeedback"></div>
 
-<button class="btn" onclick="showMenu()">
+<center>
+<button class="btn" onclick="backMenu()">
 ⬅ Back
 </button>
+</center>
 
 </div>
 
-<!-- MAZE GAME -->
+<!-- MAZE -->
 
 <div class="screen" id="mazeScreen">
 
@@ -310,16 +384,18 @@ Match the KidPix Tools
 <h1>🌀 KidPix Maze</h1>
 
 <div class="question">
-Find the Correct Paint Brush
+Find the Correct Brush Tool
 </div>
 
 <div class="maze" id="mazeBoard"></div>
 
 <div class="feedback" id="mazeFeedback"></div>
 
-<button class="btn" onclick="showMenu()">
+<center>
+<button class="btn" onclick="backMenu()">
 ⬅ Back
 </button>
+</center>
 
 </div>
 
@@ -332,10 +408,10 @@ Find the Correct Paint Brush
 <h1>✏️ Crossword Puzzle</h1>
 
 <div class="question">
-Fill the word: BRUSH
+Complete the word: BRUSH
 </div>
 
-<div class="crossword-grid">
+<div class="crossword">
 
 <input maxlength="1" id="c1">
 <input maxlength="1" id="c2">
@@ -345,17 +421,23 @@ Fill the word: BRUSH
 
 </div>
 
-<br>
+<center>
 
 <button class="btn" onclick="checkCrossword()">
 Submit
 </button>
 
+</center>
+
 <div class="feedback" id="crosswordFeedback"></div>
+
+<center>
 
 <button class="btn" onclick="showFinal()">
 🏁 Finish Game
 </button>
+
+</center>
 
 </div>
 
@@ -371,18 +453,24 @@ Submit
 
 <div class="final-score" id="finalScore"></div>
 
-<h2 id="rank"></h2>
+<div class="rank" id="rank"></div>
+
+<center>
 
 <button class="btn" onclick="location.reload()">
 🔄 Play Again
 </button>
 
+</center>
+
+</div>
+
 </div>
 
 <script>
 
-let student="";
 let score=0;
+let student="";
 
 /* START */
 
@@ -403,15 +491,56 @@ showScreen("menu");
 
 function showScreen(id){
 
-document.querySelectorAll(".screen").forEach(screen=>{
+document.querySelectorAll(".screen")
+.forEach(screen=>{
 screen.classList.remove("active");
 });
 
-document.getElementById(id).classList.add("active");
+document.getElementById(id)
+.classList.add("active");
 
 }
 
-/* MEMORY GAME */
+/* SCORE */
+
+function updateScore(){
+
+document.getElementById("scoreVal").innerHTML=score;
+
+let progress=(score/10)*100;
+
+if(progress>100) progress=100;
+
+document.getElementById("progressBar")
+.style.width=progress+"%";
+
+}
+
+/* SOUND */
+
+function playCorrect(){
+
+document.getElementById("correctSound").play();
+
+}
+
+function playWrong(){
+
+document.getElementById("wrongSound").play();
+
+}
+
+/* MENU */
+
+function backMenu(){
+
+showScreen("menu");
+
+updateScore();
+
+}
+
+/* MEMORY */
 
 const memoryItems=[
 "Brush","Brush",
@@ -423,7 +552,7 @@ const memoryItems=[
 let flipped=[];
 let matched=0;
 
-function startMemoryGame(){
+function startMemory(){
 
 showScreen("memoryScreen");
 
@@ -467,23 +596,26 @@ matched++;
 
 score++;
 
-document.getElementById("correctSound").play();
+updateScore();
 
-document.getElementById("memoryFeedback").innerHTML=
-"✅ Match Found";
+playCorrect();
 
-document.getElementById("memoryFeedback").style.color="green";
+document.getElementById("memoryFeedback")
+.innerHTML="✅ Match Found";
+
+document.getElementById("memoryFeedback")
+.style.color="green";
 
 confetti({
-particleCount:100,
-spread:80
+particleCount:120,
+spread:90
 });
 
 flipped=[];
 
 }else{
 
-document.getElementById("wrongSound").play();
+playWrong();
 
 setTimeout(()=>{
 
@@ -504,7 +636,7 @@ flipped=[];
 
 /* MAZE */
 
-function startMazeGame(){
+function startMaze(){
 
 showScreen("mazeScreen");
 
@@ -518,9 +650,9 @@ const cell=document.createElement("div");
 
 cell.className="maze-cell";
 
-if(i===13){
+if(i===12){
 
-cell.innerHTML="🖌️ Brush";
+cell.innerHTML="🖌️";
 
 cell.dataset.correct="yes";
 
@@ -544,26 +676,30 @@ if(cell.dataset.correct==="yes"){
 
 score++;
 
-document.getElementById("correctSound").play();
+updateScore();
 
-document.getElementById("mazeFeedback").innerHTML=
-"🎉 You Found the Brush";
+playCorrect();
 
-document.getElementById("mazeFeedback").style.color="green";
+document.getElementById("mazeFeedback")
+.innerHTML="🎉 Correct Brush Found";
+
+document.getElementById("mazeFeedback")
+.style.color="green";
 
 confetti({
-particleCount:120,
+particleCount:140,
 spread:100
 });
 
 }else{
 
-document.getElementById("wrongSound").play();
+playWrong();
 
-document.getElementById("mazeFeedback").innerHTML=
-"❌ Try Again";
+document.getElementById("mazeFeedback")
+.innerHTML="❌ Try Again";
 
-document.getElementById("mazeFeedback").style.color="red";
+document.getElementById("mazeFeedback")
+.style.color="red";
 
 }
 
@@ -571,7 +707,7 @@ document.getElementById("mazeFeedback").style.color="red";
 
 /* CROSSWORD */
 
-function startCrosswordGame(){
+function startCrossword(){
 
 showScreen("crosswordScreen");
 
@@ -592,26 +728,30 @@ if(word==="BRUSH"){
 
 score++;
 
-document.getElementById("correctSound").play();
+updateScore();
 
-document.getElementById("crosswordFeedback").innerHTML=
-"✅ Correct Word";
+playCorrect();
 
-document.getElementById("crosswordFeedback").style.color="green";
+document.getElementById("crosswordFeedback")
+.innerHTML="✅ Correct Word";
+
+document.getElementById("crosswordFeedback")
+.style.color="green";
 
 confetti({
-particleCount:150,
-spread:120
+particleCount:180,
+spread:130
 });
 
 }else{
 
-document.getElementById("wrongSound").play();
+playWrong();
 
-document.getElementById("crosswordFeedback").innerHTML=
-"❌ Wrong Word";
+document.getElementById("crosswordFeedback")
+.innerHTML="❌ Wrong Word";
 
-document.getElementById("crosswordFeedback").style.color="red";
+document.getElementById("crosswordFeedback")
+.style.color="red";
 
 }
 
@@ -623,11 +763,11 @@ function showFinal(){
 
 showScreen("finalScreen");
 
-document.getElementById("studentDisplay").innerHTML=
-student;
+document.getElementById("studentDisplay")
+.innerHTML=student;
 
-document.getElementById("finalScore").innerHTML=
-score+" Points";
+document.getElementById("finalScore")
+.innerHTML=score+" Points";
 
 let rank="";
 
@@ -645,11 +785,12 @@ rank="👍 Keep Practicing";
 
 }
 
-document.getElementById("rank").innerHTML=rank;
+document.getElementById("rank")
+.innerHTML=rank;
 
 confetti({
-particleCount:350,
-spread:160
+particleCount:400,
+spread:180
 });
 
 }

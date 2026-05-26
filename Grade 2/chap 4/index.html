@@ -1,1 +1,660 @@
+<!-- =========================================================
+GRADE 2 - FUN WITH KIDPIX 1
+CHAPTER 4 | PAGE 40-53
+Interactive Game
+Activities:
+1. Memory Match
+2. Maze Game
+3. Crossword Puzzle
 
+SAVE AS:
+index.html
+
+ASSETS FOLDER:
+assets/
+ ├── innovine-logo.png
+ ├── correct-1.mp3
+ └── wrong.mp3
+========================================================= -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Fun With KidPix 1</title>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Comic Sans MS',cursive;
+}
+
+body{
+background:linear-gradient(135deg,#ffecd2,#fcb69f,#a1c4fd,#c2e9fb);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+overflow-x:hidden;
+}
+
+.screen{
+display:none;
+background:white;
+width:95%;
+max-width:1200px;
+padding:25px;
+border-radius:25px;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+text-align:center;
+animation:fade 0.5s;
+}
+
+.active{
+display:block;
+}
+
+@keyframes fade{
+from{
+opacity:0;
+transform:scale(0.9);
+}
+to{
+opacity:1;
+transform:scale(1);
+}
+}
+
+.logo{
+width:150px;
+margin-bottom:15px;
+}
+
+h1{
+color:#1565c0;
+margin-bottom:15px;
+}
+
+.question{
+font-size:28px;
+font-weight:bold;
+margin:20px 0;
+color:#333;
+}
+
+.btn{
+background:#ff7043;
+color:white;
+border:none;
+padding:14px 28px;
+border-radius:40px;
+font-size:22px;
+font-weight:bold;
+cursor:pointer;
+margin-top:20px;
+transition:0.3s;
+}
+
+.btn:hover{
+transform:scale(1.05);
+}
+
+.feedback{
+font-size:28px;
+font-weight:bold;
+height:40px;
+margin-top:20px;
+}
+
+.score{
+font-size:26px;
+font-weight:bold;
+color:#ff6f00;
+margin-top:15px;
+}
+
+input{
+padding:14px;
+width:90%;
+border-radius:12px;
+border:2px solid #ccc;
+font-size:20px;
+margin-top:20px;
+}
+
+.memory-grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:15px;
+margin-top:20px;
+}
+
+.card{
+height:120px;
+background:#90caf9;
+border-radius:20px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:22px;
+font-weight:bold;
+cursor:pointer;
+color:white;
+transition:0.4s;
+}
+
+.card.flipped{
+background:#fff3e0;
+color:black;
+transform:rotateY(180deg);
+}
+
+.maze{
+display:grid;
+grid-template-columns:repeat(5,1fr);
+gap:10px;
+margin-top:20px;
+}
+
+.maze-cell{
+height:80px;
+background:#bbdefb;
+border-radius:15px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:18px;
+font-weight:bold;
+cursor:pointer;
+transition:0.3s;
+}
+
+.maze-cell:hover{
+background:#64b5f6;
+}
+
+.crossword-grid{
+display:grid;
+grid-template-columns:repeat(5,60px);
+gap:5px;
+justify-content:center;
+margin-top:20px;
+}
+
+.crossword-grid input{
+width:60px;
+height:60px;
+text-align:center;
+font-size:28px;
+font-weight:bold;
+border:2px solid #1565c0;
+border-radius:10px;
+}
+
+.final-score{
+font-size:70px;
+font-weight:bold;
+color:#ff6f00;
+margin:20px 0;
+}
+
+@media(max-width:768px){
+
+.memory-grid{
+grid-template-columns:repeat(2,1fr);
+}
+
+.maze{
+grid-template-columns:repeat(3,1fr);
+}
+
+.crossword-grid{
+grid-template-columns:repeat(5,45px);
+}
+
+.crossword-grid input{
+width:45px;
+height:45px;
+font-size:20px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<audio id="correctSound" src="assets/correct-1.mp3"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+
+<!-- INTRO -->
+
+<div class="screen active" id="intro">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🎨 Fun With KidPix 1</h1>
+
+<input type="text" id="studentName" placeholder="Enter Student Name">
+
+<br>
+
+<button class="btn" onclick="startGame()">
+🚀 Start Game
+</button>
+
+</div>
+
+<!-- MENU -->
+
+<div class="screen" id="menu">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🎮 Choose Activity</h1>
+
+<button class="btn" onclick="startMemoryGame()">
+🧠 Memory Match
+</button>
+
+<button class="btn" onclick="startMazeGame()">
+🌀 KidPix Maze
+</button>
+
+<button class="btn" onclick="startCrosswordGame()">
+✏️ Crossword Puzzle
+</button>
+
+</div>
+
+<!-- MEMORY GAME -->
+
+<div class="screen" id="memoryScreen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🧠 Memory Match</h1>
+
+<div class="question">
+Match the KidPix Tools
+</div>
+
+<div class="memory-grid" id="memoryGrid"></div>
+
+<div class="feedback" id="memoryFeedback"></div>
+
+<button class="btn" onclick="showMenu()">
+⬅ Back
+</button>
+
+</div>
+
+<!-- MAZE GAME -->
+
+<div class="screen" id="mazeScreen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🌀 KidPix Maze</h1>
+
+<div class="question">
+Find the Correct Paint Brush
+</div>
+
+<div class="maze" id="mazeBoard"></div>
+
+<div class="feedback" id="mazeFeedback"></div>
+
+<button class="btn" onclick="showMenu()">
+⬅ Back
+</button>
+
+</div>
+
+<!-- CROSSWORD -->
+
+<div class="screen" id="crosswordScreen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>✏️ Crossword Puzzle</h1>
+
+<div class="question">
+Fill the word: BRUSH
+</div>
+
+<div class="crossword-grid">
+
+<input maxlength="1" id="c1">
+<input maxlength="1" id="c2">
+<input maxlength="1" id="c3">
+<input maxlength="1" id="c4">
+<input maxlength="1" id="c5">
+
+</div>
+
+<br>
+
+<button class="btn" onclick="checkCrossword()">
+Submit
+</button>
+
+<div class="feedback" id="crosswordFeedback"></div>
+
+<button class="btn" onclick="showFinal()">
+🏁 Finish Game
+</button>
+
+</div>
+
+<!-- FINAL -->
+
+<div class="screen" id="finalScreen">
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<h1>🏆 Congratulations</h1>
+
+<h2 id="studentDisplay"></h2>
+
+<div class="final-score" id="finalScore"></div>
+
+<h2 id="rank"></h2>
+
+<button class="btn" onclick="location.reload()">
+🔄 Play Again
+</button>
+
+</div>
+
+<script>
+
+let student="";
+let score=0;
+
+/* START */
+
+function startGame(){
+
+student=document.getElementById("studentName").value;
+
+if(student===""){
+alert("Please Enter Student Name");
+return;
+}
+
+showScreen("menu");
+
+}
+
+/* SCREEN */
+
+function showScreen(id){
+
+document.querySelectorAll(".screen").forEach(screen=>{
+screen.classList.remove("active");
+});
+
+document.getElementById(id).classList.add("active");
+
+}
+
+/* MEMORY GAME */
+
+const memoryItems=[
+"Brush","Brush",
+"Color","Color",
+"Text","Text",
+"Shape","Shape"
+];
+
+let flipped=[];
+let matched=0;
+
+function startMemoryGame(){
+
+showScreen("memoryScreen");
+
+const grid=document.getElementById("memoryGrid");
+
+grid.innerHTML="";
+
+memoryItems.sort(()=>0.5-Math.random());
+
+memoryItems.forEach(item=>{
+
+const card=document.createElement("div");
+
+card.className="card";
+
+card.innerHTML="?";
+
+card.onclick=()=>flipCard(card,item);
+
+grid.appendChild(card);
+
+});
+
+}
+
+function flipCard(card,item){
+
+if(card.classList.contains("flipped")) return;
+
+card.classList.add("flipped");
+
+card.innerHTML=item;
+
+flipped.push({card,item});
+
+if(flipped.length===2){
+
+if(flipped[0].item===flipped[1].item){
+
+matched++;
+
+score++;
+
+document.getElementById("correctSound").play();
+
+document.getElementById("memoryFeedback").innerHTML=
+"✅ Match Found";
+
+document.getElementById("memoryFeedback").style.color="green";
+
+confetti({
+particleCount:100,
+spread:80
+});
+
+flipped=[];
+
+}else{
+
+document.getElementById("wrongSound").play();
+
+setTimeout(()=>{
+
+flipped.forEach(f=>{
+f.card.classList.remove("flipped");
+f.card.innerHTML="?";
+});
+
+flipped=[];
+
+},1000);
+
+}
+
+}
+
+}
+
+/* MAZE */
+
+function startMazeGame(){
+
+showScreen("mazeScreen");
+
+const maze=document.getElementById("mazeBoard");
+
+maze.innerHTML="";
+
+for(let i=1;i<=15;i++){
+
+const cell=document.createElement("div");
+
+cell.className="maze-cell";
+
+if(i===13){
+
+cell.innerHTML="🖌️ Brush";
+
+cell.dataset.correct="yes";
+
+}else{
+
+cell.innerHTML="🎨";
+
+}
+
+cell.onclick=()=>checkMaze(cell);
+
+maze.appendChild(cell);
+
+}
+
+}
+
+function checkMaze(cell){
+
+if(cell.dataset.correct==="yes"){
+
+score++;
+
+document.getElementById("correctSound").play();
+
+document.getElementById("mazeFeedback").innerHTML=
+"🎉 You Found the Brush";
+
+document.getElementById("mazeFeedback").style.color="green";
+
+confetti({
+particleCount:120,
+spread:100
+});
+
+}else{
+
+document.getElementById("wrongSound").play();
+
+document.getElementById("mazeFeedback").innerHTML=
+"❌ Try Again";
+
+document.getElementById("mazeFeedback").style.color="red";
+
+}
+
+}
+
+/* CROSSWORD */
+
+function startCrosswordGame(){
+
+showScreen("crosswordScreen");
+
+}
+
+function checkCrossword(){
+
+let word=
+document.getElementById("c1").value+
+document.getElementById("c2").value+
+document.getElementById("c3").value+
+document.getElementById("c4").value+
+document.getElementById("c5").value;
+
+word=word.toUpperCase();
+
+if(word==="BRUSH"){
+
+score++;
+
+document.getElementById("correctSound").play();
+
+document.getElementById("crosswordFeedback").innerHTML=
+"✅ Correct Word";
+
+document.getElementById("crosswordFeedback").style.color="green";
+
+confetti({
+particleCount:150,
+spread:120
+});
+
+}else{
+
+document.getElementById("wrongSound").play();
+
+document.getElementById("crosswordFeedback").innerHTML=
+"❌ Wrong Word";
+
+document.getElementById("crosswordFeedback").style.color="red";
+
+}
+
+}
+
+/* FINAL */
+
+function showFinal(){
+
+showScreen("finalScreen");
+
+document.getElementById("studentDisplay").innerHTML=
+student;
+
+document.getElementById("finalScore").innerHTML=
+score+" Points";
+
+let rank="";
+
+if(score>=8){
+
+rank="🏆 KidPix Champion";
+
+}else if(score>=5){
+
+rank="🌟 Creative Artist";
+
+}else{
+
+rank="👍 Keep Practicing";
+
+}
+
+document.getElementById("rank").innerHTML=rank;
+
+confetti({
+particleCount:350,
+spread:160
+});
+
+}
+
+</script>
+
+</body>
+</html>

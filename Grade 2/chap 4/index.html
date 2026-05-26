@@ -3,7 +3,8 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>KidPix Creative World</title>
 
@@ -25,23 +26,23 @@ min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-padding:15px;
+padding:10px;
 overflow-x:hidden;
 }
 
 #gameBox{
 width:100%;
-max-width:1050px;
+max-width:1100px;
 background:white;
 border-radius:30px;
-padding:25px;
+padding:20px;
 box-shadow:0 10px 35px rgba(0,0,0,0.2);
 overflow:hidden;
 position:relative;
 }
 
 .logo{
-width:130px;
+width:120px;
 display:block;
 margin:auto;
 margin-bottom:10px;
@@ -79,20 +80,21 @@ font-weight:bold;
 text-align:center;
 margin:20px 0;
 color:#4a148c;
+line-height:1.4;
 }
 
 .btn{
 background:#ff7043;
 color:white;
 border:none;
-padding:14px 28px;
+padding:14px 24px;
 border-radius:40px;
 font-size:20px;
 font-weight:bold;
 cursor:pointer;
-margin-top:15px;
+margin:10px;
 transition:0.3s;
-margin-right:10px;
+display:inline-block;
 }
 
 .btn:hover{
@@ -102,6 +104,7 @@ transform:scale(1.05);
 input{
 padding:14px;
 width:90%;
+max-width:400px;
 border-radius:12px;
 border:2px solid #ccc;
 font-size:18px;
@@ -117,7 +120,7 @@ margin-bottom:10px;
 }
 
 .timer{
-font-size:26px;
+font-size:24px;
 font-weight:bold;
 text-align:center;
 color:#d32f2f;
@@ -171,6 +174,7 @@ font-size:22px;
 font-weight:bold;
 transition:0.3s;
 min-width:180px;
+text-align:center;
 box-shadow:0 5px 10px rgba(0,0,0,0.1);
 }
 
@@ -206,18 +210,37 @@ color:black;
 transform:rotateY(180deg);
 }
 
-.color-box{
-width:140px;
-height:140px;
-border-radius:25px;
-cursor:pointer;
-transition:0.3s;
-border:6px solid white;
-box-shadow:0 5px 12px rgba(0,0,0,0.2);
+.color-container{
+display:flex;
+justify-content:center;
+gap:25px;
+flex-wrap:wrap;
+margin-top:20px;
 }
 
-.color-box:hover{
-transform:scale(1.08);
+.brush-box{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:10px;
+}
+
+.brush{
+font-size:90px;
+cursor:pointer;
+transition:0.3s;
+}
+
+.brush:hover{
+transform:scale(1.15);
+}
+
+.color-label{
+font-size:24px;
+font-weight:bold;
+padding:10px 20px;
+background:#f3e5f5;
+border-radius:15px;
 }
 
 .final-score{
@@ -235,14 +258,53 @@ text-align:center;
 color:#1565c0;
 }
 
-@media(max-width:768px){
+@media(max-width:900px){
 
 .question{
-font-size:22px;
+font-size:24px;
 }
 
 .option{
+font-size:18px;
 min-width:140px;
+}
+
+.memory-grid{
+grid-template-columns:repeat(2,1fr);
+}
+
+.card{
+height:100px;
+font-size:20px;
+}
+
+.brush{
+font-size:70px;
+}
+
+.color-label{
+font-size:20px;
+}
+
+.btn{
+font-size:18px;
+padding:12px 20px;
+}
+
+}
+
+@media(max-width:600px){
+
+.question{
+font-size:20px;
+}
+
+.option-container{
+gap:10px;
+}
+
+.option{
+width:100%;
 font-size:18px;
 }
 
@@ -250,9 +312,21 @@ font-size:18px;
 grid-template-columns:repeat(2,1fr);
 }
 
-.color-box{
-width:100px;
-height:100px;
+.card{
+height:90px;
+font-size:18px;
+}
+
+.brush{
+font-size:60px;
+}
+
+.final-score{
+font-size:50px;
+}
+
+.rank{
+font-size:24px;
 }
 
 }
@@ -265,18 +339,23 @@ height:100px;
 
 <div id="gameBox">
 
-<audio id="correctSound" src="assets/correct-1.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="correctSound"
+src="assets/correct-1.mp3"></audio>
+
+<audio id="wrongSound"
+src="assets/wrong.mp3"></audio>
 
 <!-- INTRO -->
 
-<div class="screen active" id="intro">
+<div class="screen active"
+id="intro">
 
-<img src="assets/innovine-logo.png" class="logo">
+<img src="assets/innovine-logo.png"
+class="logo">
 
 <h1>🎨 KidPix Creative World</h1>
 
-<h3> Fun With KidPix </h3>
+<h3>Grade 2 | Fun With KidPix-1</h3>
 
 <center>
 
@@ -297,12 +376,14 @@ onclick="startGame()">
 
 <!-- MENU -->
 
-<div class="screen" id="menu">
+<div class="screen"
+id="menu">
 
-<img src="assets/innovine-logo.png" class="logo">
+<img src="assets/innovine-logo.png"
+class="logo">
 
 <div class="score-box">
-⭐ Final Score :
+⭐ Total Score :
 <span id="score">0</span>
 </div>
 
@@ -315,28 +396,20 @@ onclick="startCatchGame()">
 🎈 Catch The Paint Tool
 </button>
 
-<br>
-
 <button class="btn"
 onclick="startEmojiQuiz()">
 😄 Emoji Puzzle
 </button>
 
-<br>
-
 <button class="btn"
 onclick="startMemoryGame()">
-🧠 Magic Memory Match
+🧠 Memory Match
 </button>
-
-<br>
 
 <button class="btn"
 onclick="startColorGame()">
-🌈 Rainbow Color Hunt
+🌈 Color The Brush
 </button>
-
-<br>
 
 <button class="btn"
 onclick="showFinal()">
@@ -349,9 +422,11 @@ onclick="showFinal()">
 
 <!-- CATCH GAME -->
 
-<div class="screen" id="catchScreen">
+<div class="screen"
+id="catchScreen">
 
-<img src="assets/innovine-logo.png" class="logo">
+<img src="assets/innovine-logo.png"
+class="logo">
 
 <h1>🎈 Catch The Paint Tool</h1>
 
@@ -368,7 +443,8 @@ Catch ONLY Paint Brushes
 style="position:relative;height:420px;overflow:hidden;">
 </div>
 
-<div class="feedback" id="catchFeedback"></div>
+<div class="feedback"
+id="catchFeedback"></div>
 
 <center>
 
@@ -381,19 +457,24 @@ onclick="backMenu()">
 
 </div>
 
-<!-- EMOJI QUIZ -->
+<!-- EMOJI -->
 
-<div class="screen" id="emojiScreen">
+<div class="screen"
+id="emojiScreen">
 
-<img src="assets/innovine-logo.png" class="logo">
+<img src="assets/innovine-logo.png"
+class="logo">
 
 <h1>😄 Emoji Puzzle</h1>
 
-<div class="question" id="emojiQuestion"></div>
+<div class="question"
+id="emojiQuestion"></div>
 
-<div class="option-container" id="emojiOptions"></div>
+<div class="option-container"
+id="emojiOptions"></div>
 
-<div class="feedback" id="emojiFeedback"></div>
+<div class="feedback"
+id="emojiFeedback"></div>
 
 <center>
 
@@ -413,11 +494,13 @@ onclick="backMenu()">
 
 <!-- MEMORY -->
 
-<div class="screen" id="memoryScreen">
+<div class="screen"
+id="memoryScreen">
 
-<img src="assets/innovine-logo.png" class="logo">
+<img src="assets/innovine-logo.png"
+class="logo">
 
-<h1>🧠 Magic Memory Match</h1>
+<h1>🧠 Memory Match</h1>
 
 <div class="question">
 Match Same KidPix Icons
@@ -440,38 +523,62 @@ onclick="backMenu()">
 
 </div>
 
-<!-- COLOR GAME -->
+<!-- COLOR BRUSH -->
 
-<div class="screen" id="colorScreen">
+<div class="screen"
+id="colorScreen">
 
-<img src="assets/innovine-logo.png" class="logo">
+<img src="assets/innovine-logo.png"
+class="logo">
 
-<h1>🌈 Rainbow Color Hunt</h1>
+<h1>🌈 Color The Brush Tool</h1>
 
 <div class="question">
-Click ONLY Warm Colors
+Click the RED Brush Tool
 </div>
 
-<div class="option-container">
+<div class="color-container">
 
-<div class="color-box"
-style="background:red"
-onclick="checkColor('warm')">
+<div class="brush-box">
+
+<div class="brush"
+style="color:red"
+onclick="checkBrush('red')">
+🖌️
 </div>
 
-<div class="color-box"
-style="background:blue"
-onclick="checkColor('cold')">
+<div class="color-label">
+RED
 </div>
 
-<div class="color-box"
-style="background:orange"
-onclick="checkColor('warm')">
 </div>
 
-<div class="color-box"
-style="background:green"
-onclick="checkColor('cold')">
+<div class="brush-box">
+
+<div class="brush"
+style="color:blue"
+onclick="checkBrush('blue')">
+🖌️
+</div>
+
+<div class="color-label">
+BLUE
+</div>
+
+</div>
+
+<div class="brush-box">
+
+<div class="brush"
+style="color:green"
+onclick="checkBrush('green')">
+🖌️
+</div>
+
+<div class="color-label">
+GREEN
+</div>
+
 </div>
 
 </div>
@@ -952,7 +1059,7 @@ flipped=[];
 
 }
 
-/* COLOR GAME */
+/* COLOR BRUSH */
 
 function startColorGame(){
 
@@ -963,9 +1070,9 @@ document.getElementById("colorFeedback")
 
 }
 
-function checkColor(type){
+function checkBrush(color){
 
-if(type==="warm"){
+if(color==="red"){
 
 score+=2;
 
@@ -975,14 +1082,14 @@ correct();
 
 document.getElementById("colorFeedback")
 .innerHTML=
-"🌈 Correct Warm Color";
+"🌈 Correct Red Brush Tool";
 
 document.getElementById("colorFeedback")
 .style.color="green";
 
 confetti({
-particleCount:150,
-spread:120
+particleCount:180,
+spread:130
 });
 
 }else{
@@ -997,7 +1104,7 @@ wrong();
 
 document.getElementById("colorFeedback")
 .innerHTML=
-"❌ Cold Color";
+"❌ Wrong Brush Color";
 
 document.getElementById("colorFeedback")
 .style.color="red";

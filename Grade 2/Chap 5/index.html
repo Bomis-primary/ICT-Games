@@ -1,1 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Kid Pix Tool Race</title>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Comic Sans MS',cursive;
+}
+
+body{
+background:
+linear-gradient(135deg,#89f7fe,#66a6ff,#fbc2eb,#a6c1ee);
+min-height:100vh;
+padding:10px;
+overflow-x:hidden;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+#gameBox{
+width:100%;
+max-width:1100px;
+background:white;
+border-radius:30px;
+padding:20px;
+box-shadow:0 10px 35px rgba(0,0,0,0.2);
+overflow:hidden;
+position:relative;
+}
+
+.logo{
+width:120px;
+display:block;
+margin:auto;
+margin-bottom:10px;
+}
+
+.screen{
+display:none;
+animation:fade 0.5s;
+}
+
+.active{
+display:block;
+}
+
+@keyframes fade{
+from{
+opacity:0;
+transform:translateY(20px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+h1,h2,h3{
+text-align:center;
+color:#4a148c;
+margin-bottom:15px;
+}
+
+.question{
+font-size:28px;
+font-weight:bold;
+text-align:center;
+margin:20px 0;
+color:#4a148c;
+line-height:1.4;
+}
+
+.btn{
+background:#ff7043;
+color:white;
+border:none;
+padding:14px 24px;
+border-radius:40px;
+font-size:20px;
+font-weight:bold;
+cursor:pointer;
+margin:10px;
+transition:0.3s;
+}
+
+.btn:hover{
+transform:scale(1.05);
+}
+
+input{
+padding:14px;
+width:90%;
+max-width:400px;
+border-radius:12px;
+border:2px solid #ccc;
+font-size:18px;
+margin-top:15px;
+}
+
+.scoreBox{
+font-size:24px;
+font-weight:bold;
+text-align:center;
+color:#ff6f00;
+margin-bottom:10px;
+}
+
+.raceTrack{
+width:100%;
+height:140px;
+background:
+repeating-linear-gradient(
+90deg,
+#90caf9 0px,
+#90caf9 80px,
+#64b5f6 80px,
+#64b5f6 160px
+);
+border-radius:20px;
+position:relative;
+overflow:hidden;
+margin-top:20px;
+border:5px solid white;
+}
+
+.finishLine{
+position:absolute;
+right:0;
+top:0;
+height:100%;
+width:80px;
+background:
+repeating-linear-gradient(
+45deg,
+black 0px,
+black 10px,
+white 10px,
+white 20px
+);
+}
+
+.runner{
+position:absolute;
+left:10px;
+top:35px;
+font-size:65px;
+transition:0.5s;
+}
+
+.option-container{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.option{
+background:#f3e5f5;
+padding:18px;
+border-radius:20px;
+cursor:pointer;
+font-size:22px;
+font-weight:bold;
+min-width:180px;
+text-align:center;
+transition:0.3s;
+box-shadow:0 5px 10px rgba(0,0,0,0.1);
+}
+
+.option:hover{
+background:#ce93d8;
+transform:scale(1.05);
+}
+
+.feedback{
+font-size:28px;
+font-weight:bold;
+text-align:center;
+margin-top:20px;
+min-height:50px;
+}
+
+.final-score{
+font-size:70px;
+font-weight:bold;
+text-align:center;
+color:#ff6f00;
+margin:20px 0;
+}
+
+.rank{
+font-size:30px;
+font-weight:bold;
+text-align:center;
+color:#1565c0;
+}
+
+@media(max-width:768px){
+
+.question{
+font-size:22px;
+}
+
+.option{
+width:100%;
+font-size:18px;
+}
+
+.runner{
+font-size:50px;
+}
+
+.final-score{
+font-size:50px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="gameBox">
+
+<audio id="correctSound"
+src="assets/happy.mp3"></audio>
+
+<audio id="wrongSound"
+src="assets/sad.mp3"></audio>
+
+<!-- INTRO -->
+
+<div class="screen active"
+id="intro">
+
+<img src="assets/innovine-logo.png"
+class="logo">
+
+<h1>🏁 Kid Pix Tool Race</h1>
+
+<h3>Grade 2 | Chapter 5</h3>
+
+<h3>Pages 54 to 65</h3>
+
+<center>
+
+<input type="text"
+id="studentName"
+placeholder="Enter Student Name">
+
+<br>
+
+<button class="btn"
+onclick="startGame()">
+🚀 Start Race
+</button>
+
+</center>
+
+</div>
+
+<!-- GAME -->
+
+<div class="screen"
+id="gameScreen">
+
+<img src="assets/innovine-logo.png"
+class="logo">
+
+<div class="scoreBox">
+⭐ Score :
+<span id="score">0</span>
+</div>
+
+<div class="raceTrack">
+
+<div class="runner"
+id="runner">
+🏃
+</div>
+
+<div class="finishLine"></div>
+
+</div>
+
+<div class="question"
+id="question"></div>
+
+<div class="option-container"
+id="options"></div>
+
+<div class="feedback"
+id="feedback"></div>
+
+<center>
+
+<button class="btn"
+onclick="nextQuestion()">
+Next ➜
+</button>
+
+</center>
+
+</div>
+
+<!-- FINAL -->
+
+<div class="screen"
+id="finalScreen">
+
+<img src="assets/innovine-logo.png"
+class="logo">
+
+<h1>🏆 Race Complete!</h1>
+
+<h2 id="studentDisplay"></h2>
+
+<div class="final-score"
+id="finalScore"></div>
+
+<div class="rank"
+id="rank"></div>
+
+<center>
+
+<button class="btn"
+onclick="location.reload()">
+🔄 Play Again
+</button>
+
+</center>
+
+</div>
+
+</div>
+
+<script>
+
+let student="";
+let score=0;
+let currentQuestion=0;
+let position=10;
+
+const questions=[
+
+{
+q:"Which tool is used to draw freehand pictures in Kid Pix?",
+options:["Brush Tool","Text Tool","Eraser Tool"],
+answer:"Brush Tool"
+},
+
+{
+q:"Which tool helps to erase mistakes?",
+options:["Brush Tool","Eraser Tool","Stamp Tool"],
+answer:"Eraser Tool"
+},
+
+{
+q:"Which tool is used to type words?",
+options:["Text Tool","Brush Tool","Mixer Tool"],
+answer:"Text Tool"
+},
+
+{
+q:"Which tool adds ready-made pictures?",
+options:["Stamp Tool","Eraser Tool","Line Tool"],
+answer:"Stamp Tool"
+},
+
+{
+q:"Which tool fills color in drawing?",
+options:["Paint Bucket","Text Tool","Brush Tool"],
+answer:"Paint Bucket"
+},
+
+{
+q:"Which tool makes straight lines?",
+options:["Line Tool","Stamp Tool","Brush Tool"],
+answer:"Line Tool"
+},
+
+{
+q:"Which tool creates funny sound effects?",
+options:["Sound Tool","Brush Tool","Text Tool"],
+answer:"Sound Tool"
+},
+
+{
+q:"Which tool helps to draw shapes?",
+options:["Shape Tool","Text Tool","Mixer Tool"],
+answer:"Shape Tool"
+},
+
+{
+q:"Which tool is used for typing stories?",
+options:["Text Tool","Stamp Tool","Brush Tool"],
+answer:"Text Tool"
+},
+
+{
+q:"Which tool helps decorate pictures?",
+options:["Stamp Tool","Eraser Tool","Brush Tool"],
+answer:"Stamp Tool"
+}
+
+];
+
+/* START */
+
+function startGame(){
+
+student=
+document.getElementById("studentName").value;
+
+if(student===""){
+
+alert("Please Enter Student Name");
+return;
+
+}
+
+showScreen("gameScreen");
+
+loadQuestion();
+
+}
+
+/* SCREEN */
+
+function showScreen(id){
+
+document.querySelectorAll(".screen")
+.forEach(screen=>{
+screen.classList.remove("active");
+});
+
+document.getElementById(id)
+.classList.add("active");
+
+}
+
+/* LOAD QUESTION */
+
+function loadQuestion(){
+
+let q=questions[currentQuestion];
+
+document.getElementById("question")
+.innerHTML=
+"Q"+(currentQuestion+1)+". "+q.q;
+
+let html="";
+
+q.options.forEach(opt=>{
+
+html+=`
+<div class="option"
+onclick="checkAnswer('${opt}')">
+${opt}
+</div>
+`;
+
+});
+
+document.getElementById("options")
+.innerHTML=html;
+
+document.getElementById("feedback")
+.innerHTML="";
+
+}
+
+/* CHECK ANSWER */
+
+function checkAnswer(ans){
+
+let q=questions[currentQuestion];
+
+if(ans===q.answer){
+
+score+=2;
+
+document.getElementById("score")
+.innerHTML=score;
+
+position+=70;
+
+if(position>850){
+position=850;
+}
+
+document.getElementById("runner")
+.style.left=position+"px";
+
+document.getElementById("correctSound")
+.play();
+
+document.getElementById("feedback")
+.innerHTML=
+"🎉 Correct! Speed Boost";
+
+document.getElementById("feedback")
+.style.color="green";
+
+confetti({
+particleCount:150,
+spread:120
+});
+
+}else{
+
+score--;
+
+if(score<0){
+score=0;
+}
+
+document.getElementById("score")
+.innerHTML=score;
+
+position-=25;
+
+if(position<10){
+position=10;
+}
+
+document.getElementById("runner")
+.style.left=position+"px";
+
+document.getElementById("wrongSound")
+.play();
+
+document.getElementById("feedback")
+.innerHTML=
+"😢 Wrong! Speed Slowed";
+
+document.getElementById("feedback")
+.style.color="red";
+
+}
+
+}
+
+/* NEXT */
+
+function nextQuestion(){
+
+currentQuestion++;
+
+if(currentQuestion>=questions.length){
+
+showFinal();
+
+}else{
+
+loadQuestion();
+
+}
+
+}
+
+/* FINAL */
+
+function showFinal(){
+
+showScreen("finalScreen");
+
+document.getElementById("studentDisplay")
+.innerHTML=
+"👏 "+student;
+
+document.getElementById("finalScore")
+.innerHTML=
+score+" Points";
+
+let rank="";
+
+if(score>=18){
+
+rank="🏆 Kid Pix Champion";
+
+}else if(score>=10){
+
+rank="🌟 Creative Racer";
+
+}else{
+
+rank="👍 Keep Practicing";
+
+}
+
+document.getElementById("rank")
+.innerHTML=rank;
+
+confetti({
+particleCount:500,
+spread:200
+});
+
+}
+
+</script>
+
+</body>
+</html>

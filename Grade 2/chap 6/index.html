@@ -1,1 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Health & Safety While Computing</title>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Comic Sans MS',cursive;
+}
+
+body{
+
+background:linear-gradient(135deg,#74ebd5,#ACB6E5,#fbc2eb);
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:10px;
+overflow-x:hidden;
+
+}
+
+#gameBox{
+
+width:100%;
+max-width:1150px;
+background:white;
+border-radius:30px;
+padding:20px;
+box-shadow:0 10px 35px rgba(0,0,0,0.25);
+overflow:hidden;
+position:relative;
+
+}
+
+.logo{
+
+width:120px;
+display:block;
+margin:auto;
+margin-bottom:10px;
+
+}
+
+.screen{
+display:none;
+animation:fade 0.5s;
+}
+
+.active{
+display:block;
+}
+
+@keyframes fade{
+
+from{
+opacity:0;
+transform:translateY(20px);
+}
+
+to{
+opacity:1;
+transform:translateY(0);
+}
+
+}
+
+h1,h2,h3{
+
+text-align:center;
+color:#6a1b9a;
+margin-bottom:15px;
+
+}
+
+.question{
+
+font-size:28px;
+font-weight:bold;
+text-align:center;
+margin:20px 0;
+line-height:1.4;
+color:#4a148c;
+
+}
+
+.btn{
+
+background:#ff7043;
+color:white;
+border:none;
+padding:14px 24px;
+border-radius:40px;
+font-size:20px;
+font-weight:bold;
+cursor:pointer;
+margin:10px;
+transition:0.3s;
+
+}
+
+.btn:hover{
+
+transform:scale(1.05);
+
+}
+
+input{
+
+padding:14px;
+width:90%;
+max-width:400px;
+border-radius:12px;
+border:2px solid #ccc;
+font-size:18px;
+margin-top:15px;
+
+}
+
+.scoreBox{
+
+font-size:24px;
+font-weight:bold;
+text-align:center;
+color:#ff6f00;
+margin-bottom:10px;
+
+}
+
+.progress{
+
+width:100%;
+height:20px;
+background:#ddd;
+border-radius:20px;
+overflow:hidden;
+margin:15px 0;
+
+}
+
+.progress-bar{
+
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#00c853,#64dd17);
+transition:0.5s;
+
+}
+
+.option-container{
+
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+margin-top:20px;
+
+}
+
+.option{
+
+background:#f3e5f5;
+padding:18px;
+border-radius:20px;
+cursor:pointer;
+font-size:22px;
+font-weight:bold;
+min-width:180px;
+text-align:center;
+transition:0.3s;
+box-shadow:0 5px 10px rgba(0,0,0,0.1);
+
+}
+
+.option:hover{
+
+background:#ce93d8;
+transform:scale(1.05);
+
+}
+
+.feedback{
+
+font-size:28px;
+font-weight:bold;
+text-align:center;
+margin-top:20px;
+min-height:50px;
+
+}
+
+.game-image{
+
+width:220px;
+height:180px;
+object-fit:contain;
+border-radius:20px;
+background:#fff3e0;
+padding:10px;
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+cursor:pointer;
+transition:0.3s;
+
+}
+
+.game-image:hover{
+
+transform:scale(1.08);
+
+}
+
+.drag-container{
+
+display:flex;
+justify-content:center;
+gap:30px;
+flex-wrap:wrap;
+margin-top:20px;
+
+}
+
+.drag-item{
+
+padding:15px 25px;
+background:#81d4fa;
+border-radius:20px;
+cursor:grab;
+font-size:22px;
+font-weight:bold;
+
+}
+
+.drop-box{
+
+width:250px;
+height:120px;
+border:3px dashed #7b1fa2;
+border-radius:20px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:22px;
+font-weight:bold;
+background:#f3e5f5;
+
+}
+
+.final-score{
+
+font-size:70px;
+font-weight:bold;
+text-align:center;
+color:#ff6f00;
+margin:20px 0;
+
+}
+
+.rank{
+
+font-size:30px;
+font-weight:bold;
+text-align:center;
+color:#1565c0;
+
+}
+
+.star{
+
+position:absolute;
+font-size:35px;
+animation:floatStar 3s linear infinite;
+
+}
+
+@keyframes floatStar{
+
+0%{
+transform:translateY(0);
+opacity:1;
+}
+
+100%{
+transform:translateY(-120px);
+opacity:0;
+}
+
+}
+
+@media(max-width:768px){
+
+.question{
+font-size:22px;
+}
+
+.option{
+width:100%;
+font-size:18px;
+}
+
+.game-image{
+width:150px;
+height:120px;
+}
+
+.drop-box{
+width:100%;
+}
+
+.final-score{
+font-size:50px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="gameBox">
+
+<audio id="correctSound"
+src="assets/correct-1.mp3"></audio>
+
+<audio id="wrongSound"
+src="assets/wrong.mp3"></audio>
+
+<!-- INTRO -->
+
+<div class="screen active"
+id="intro">
+
+<img src="assets/innovine-logo.png"
+class="logo">
+
+<h1>💻 Health & Safety While Computing</h1>
+
+<h3>Grade 2 Interactive Game</h3>
+
+<h3>Chapter 6 | Pages 66 to 76</h3>
+
+<center>
+
+<input type="text"
+id="studentName"
+placeholder="Enter Student Name">
+
+<br>
+
+<button class="btn"
+onclick="startGame()">
+🚀 Start Game
+</button>
+
+</center>
+
+</div>
+
+<!-- GAME SCREEN -->
+
+<div class="screen"
+id="gameScreen">
+
+<img src="assets/innovine-logo.png"
+class="logo">
+
+<div class="scoreBox">
+
+⭐ Score :
+<span id="score">0</span>
+
+</div>
+
+<div class="progress">
+
+<div class="progress-bar"
+id="progressBar"></div>
+
+</div>
+
+<div class="question"
+id="question"></div>
+
+<div class="option-container"
+id="options"></div>
+
+<div class="feedback"
+id="feedback"></div>
+
+<center>
+
+<button class="btn"
+onclick="nextQuestion()">
+Next ➜
+</button>
+
+</center>
+
+</div>
+
+<!-- FINAL -->
+
+<div class="screen"
+id="finalScreen">
+
+<img src="assets/innovine-logo.png"
+class="logo">
+
+<h1>🏆 Excellent Work!</h1>
+
+<h2 id="studentDisplay"></h2>
+
+<div class="final-score"
+id="finalScore"></div>
+
+<div class="rank"
+id="rank"></div>
+
+<center>
+
+<button class="btn"
+onclick="location.reload()">
+🔄 Replay Game
+</button>
+
+</center>
+
+</div>
+
+</div>
+
+<script>
+
+let student="";
+let score=0;
+let currentQuestion=0;
+
+const questions=[
+
+{
+type:"mcq",
+q:"How should we sit while using the computer?",
+options:[
+"Sit Straight",
+"Lie Down",
+"Sit Very Close"
+],
+answer:"Sit Straight"
+},
+
+{
+type:"mcq",
+q:"Should we touch electric wires?",
+options:[
+"No",
+"Yes",
+"Sometimes"
+],
+answer:"No"
+},
+
+{
+type:"dropdown",
+q:"Select the correct computer habit",
+options:[
+"Wash Hands Before Using Computer",
+"Eat Near Computer",
+"Pull Wires"
+],
+answer:"Wash Hands Before Using Computer"
+},
+
+{
+type:"mcq",
+q:"What should we do to protect our eyes?",
+options:[
+"Take Eye Breaks",
+"Use Computer All Day",
+"Sit Too Close"
+],
+answer:"Take Eye Breaks"
+},
+
+{
+type:"mcq",
+q:"How should we keep the computer table?",
+options:[
+"Clean",
+"Messy",
+"Dirty"
+],
+answer:"Clean"
+},
+
+{
+type:"drag",
+q:"Drag SAFE HABIT into the safety box",
+dragText:"SAFE HABIT"
+},
+
+{
+type:"mcq",
+q:"Should we eat near the computer?",
+options:[
+"No",
+"Yes",
+"Always"
+],
+answer:"No"
+},
+
+{
+type:"dropdown",
+q:"Select the correct safety rule",
+options:[
+"Handle Devices Carefully",
+"Hit Keyboard",
+"Touch Plug"
+],
+answer:"Handle Devices Carefully"
+},
+
+{
+type:"mcq",
+q:"What should we do after using computer for long time?",
+options:[
+"Rest Eyes",
+"Keep Watching",
+"Sleep On Keyboard"
+],
+answer:"Rest Eyes"
+},
+
+{
+type:"mcq",
+q:"How should we use the mouse and keyboard?",
+options:[
+"Gently",
+"Throw Them",
+"Hit Hard"
+],
+answer:"Gently"
+}
+
+];
+
+/* START */
+
+function startGame(){
+
+student=
+document.getElementById("studentName").value;
+
+if(student===""){
+
+alert("Please Enter Student Name");
+return;
+
+}
+
+showScreen("gameScreen");
+
+loadQuestion();
+
+}
+
+/* SCREEN */
+
+function showScreen(id){
+
+document.querySelectorAll(".screen")
+.forEach(screen=>{
+screen.classList.remove("active");
+});
+
+document.getElementById(id)
+.classList.add("active");
+
+}
+
+/* LOAD QUESTION */
+
+function loadQuestion(){
+
+let q=questions[currentQuestion];
+
+document.getElementById("question")
+.innerHTML=
+"Q"+(currentQuestion+1)+". "+q.q;
+
+let html="";
+
+updateProgress();
+
+if(q.type==="mcq"){
+
+q.options.forEach(opt=>{
+
+html+=`
+<div class="option"
+onclick="checkAnswer('${opt}')">
+${opt}
+</div>
+`;
+
+});
+
+}
+
+else if(q.type==="dropdown"){
+
+html=`
+
+<center>
+
+<select id="dropdownAnswer"
+class="option">
+
+<option value="">
+Select Answer
+</option>
+
+${q.options.map(opt=>
+`<option value="${opt}">
+${opt}
+</option>`
+).join("")}
+
+</select>
+
+<br>
+
+<button class="btn"
+onclick="checkDropdown()">
+Submit
+</button>
+
+</center>
+
+`;
+
+}
+
+else if(q.type==="drag"){
+
+html=`
+
+<div class="drag-container">
+
+<div class="drag-item"
+draggable="true"
+id="dragItem">
+${q.dragText}
+</div>
+
+<div class="drop-box"
+id="dropBox">
+DROP HERE
+</div>
+
+</div>
+
+`;
+
+setTimeout(enableDragDrop,100);
+
+}
+
+document.getElementById("options")
+.innerHTML=html;
+
+document.getElementById("feedback")
+.innerHTML="";
+
+}
+
+/* PROGRESS */
+
+function updateProgress(){
+
+let progress=
+((currentQuestion)/questions.length)*100;
+
+document.getElementById("progressBar")
+.style.width=progress+"%";
+
+}
+
+/* STAR EFFECT */
+
+function createStars(){
+
+for(let i=0;i<8;i++){
+
+let star=document.createElement("div");
+
+star.className="star";
+
+star.innerHTML="⭐";
+
+star.style.left=
+Math.random()*window.innerWidth+"px";
+
+star.style.top=
+(window.innerHeight-100)+"px";
+
+document.body.appendChild(star);
+
+setTimeout(()=>{
+star.remove();
+},3000);
+
+}
+
+}
+
+/* CORRECT */
+
+function correctAnswer(){
+
+score+=2;
+
+document.getElementById("score")
+.innerHTML=score;
+
+document.getElementById("correctSound")
+.play();
+
+document.getElementById("feedback")
+.innerHTML=
+"⭐ Correct! Great Job!";
+
+document.getElementById("feedback")
+.style.color="green";
+
+createStars();
+
+confetti({
+particleCount:180,
+spread:120
+});
+
+}
+
+/* WRONG */
+
+function wrongAnswer(){
+
+document.getElementById("wrongSound")
+.play();
+
+document.getElementById("feedback")
+.innerHTML=
+"❌ Oops! Try Again";
+
+document.getElementById("feedback")
+.style.color="red";
+
+}
+
+/* MCQ */
+
+function checkAnswer(ans){
+
+let q=questions[currentQuestion];
+
+if(ans===q.answer){
+
+correctAnswer();
+
+}else{
+
+wrongAnswer();
+
+}
+
+}
+
+/* DROPDOWN */
+
+function checkDropdown(){
+
+let value=
+document.getElementById("dropdownAnswer").value;
+
+let q=questions[currentQuestion];
+
+if(value===q.answer){
+
+correctAnswer();
+
+}else{
+
+wrongAnswer();
+
+}
+
+}
+
+/* DRAG DROP */
+
+function enableDragDrop(){
+
+let dragItem=
+document.getElementById("dragItem");
+
+let dropBox=
+document.getElementById("dropBox");
+
+dragItem.addEventListener("dragstart",
+function(e){
+
+e.dataTransfer.setData("text",
+dragItem.innerHTML);
+
+});
+
+dropBox.addEventListener("dragover",
+function(e){
+
+e.preventDefault();
+
+});
+
+dropBox.addEventListener("drop",
+function(e){
+
+e.preventDefault();
+
+correctAnswer();
+
+dropBox.innerHTML=
+"✅ SAFE HABIT";
+
+});
+
+}
+
+/* NEXT */
+
+function nextQuestion(){
+
+currentQuestion++;
+
+if(currentQuestion>=questions.length){
+
+showFinal();
+
+}else{
+
+loadQuestion();
+
+}
+
+}
+
+/* FINAL */
+
+function showFinal(){
+
+showScreen("finalScreen");
+
+document.getElementById("studentDisplay")
+.innerHTML=
+"👏 "+student;
+
+document.getElementById("finalScore")
+.innerHTML=
+score+" Points";
+
+let rank="";
+
+if(score>=18){
+
+rank="🏆 Safety Superstar";
+
+}else if(score>=10){
+
+rank="🌟 Smart Computer User";
+
+}else{
+
+rank="👍 Keep Practicing";
+
+}
+
+document.getElementById("rank")
+.innerHTML=rank;
+
+confetti({
+particleCount:500,
+spread:220
+});
+
+}
+
+</script>
+
+</body>
+</html>

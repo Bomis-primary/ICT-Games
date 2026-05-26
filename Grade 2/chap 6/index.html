@@ -143,16 +143,33 @@ cursor:grab;
 font-size:22px;
 font-weight:bold;
 user-select:none;
+transition:0.3s;
+
+}
+
+.habit:hover{
+
+transform:scale(1.05);
+
+}
+
+.drop-area{
+
+display:flex;
+justify-content:center;
+gap:30px;
+flex-wrap:wrap;
+margin-top:30px;
 
 }
 
 .drop-box{
 
-width:300px;
-min-height:220px;
+width:320px;
+min-height:250px;
 padding:20px;
 border-radius:25px;
-font-size:24px;
+font-size:26px;
 font-weight:bold;
 text-align:center;
 
@@ -161,14 +178,22 @@ text-align:center;
 .safe{
 
 background:#c8f7c5;
-border:4px dashed green;
+border:5px dashed green;
 
 }
 
 .unsafe{
 
 background:#ffcdd2;
-border:4px dashed red;
+border:5px dashed red;
+
+}
+
+.drop-items{
+
+margin-top:15px;
+font-size:22px;
+line-height:1.8;
 
 }
 
@@ -270,7 +295,6 @@ transition:0.3s;
 .option:hover{
 
 transform:scale(1.05);
-
 background:#4fc3f7;
 
 }
@@ -417,52 +441,62 @@ class="logo">
 
 <div class="habit"
 draggable="true"
-id="habit1">
+data-type="safe">
 Sit Straight
 </div>
 
 <div class="habit"
 draggable="true"
-id="habit2">
+data-type="unsafe">
 Eat Near Keyboard
 </div>
 
 <div class="habit"
 draggable="true"
-id="habit3">
+data-type="safe">
 Wash Hands
 </div>
 
 <div class="habit"
 draggable="true"
-id="habit4">
+data-type="unsafe">
 Pull Wires
 </div>
 
 <div class="habit"
 draggable="true"
-id="habit5">
+data-type="safe">
 Take Eye Breaks
 </div>
 
 <div class="habit"
 draggable="true"
-id="habit6">
+data-type="unsafe">
 Run In Lab
 </div>
 
 </div>
 
-<div class="drag-container">
+<div class="drop-area">
 
 <div class="drop-box safe"
-id="safeBox">
+data-box="safe">
+
 ✅ SAFE HABITS
+
+<div class="drop-items"
+id="safeItems"></div>
+
 </div>
 
 <div class="drop-box unsafe"
-id="unsafeBox">
+data-box="unsafe">
+
 ❌ UNSAFE HABITS
+
+<div class="drop-items"
+id="unsafeItems"></div>
+
 </div>
 
 </div>
@@ -568,7 +602,7 @@ onclick="showScreen('menu')">
 
 </div>
 
-<!-- QUIZ GAME -->
+<!-- QUIZ -->
 
 <div class="screen"
 id="quizGame">
@@ -681,13 +715,13 @@ document.getElementById(id)
 
 /* SOUND */
 
-function correct(){
+function playCorrect(){
 
 document.getElementById("correctSound").play();
 
 }
 
-function wrong(){
+function playWrong(){
 
 document.getElementById("wrongSound").play();
 
@@ -698,8 +732,8 @@ document.getElementById("wrongSound").play();
 function celebrate(){
 
 confetti({
-particleCount:180,
-spread:120
+particleCount:150,
+spread:100
 });
 
 }
@@ -714,45 +748,23 @@ document.getElementById("score3").innerHTML=score;
 
 }
 
-/* DRAG GAME */
+/* DRAG AND DROP */
 
-const safeHabits=[
-"Sit Straight",
-"Wash Hands",
-"Take Eye Breaks"
-];
+let draggedItem=null;
 
-const unsafeHabits=[
-"Eat Near Keyboard",
-"Pull Wires",
-"Run In Lab"
-];
+document.querySelectorAll(".habit")
+.forEach(item=>{
 
-const habits=
-document.querySelectorAll(".habit");
+item.addEventListener("dragstart",function(){
 
-habits.forEach(habit=>{
-
-habit.addEventListener("dragstart",dragStart);
+draggedItem=this;
 
 });
 
-function dragStart(e){
+});
 
-e.dataTransfer.setData(
-"text/plain",
-e.target.innerHTML
-);
-
-}
-
-const safeBox=
-document.getElementById("safeBox");
-
-const unsafeBox=
-document.getElementById("unsafeBox");
-
-[safeBox,unsafeBox].forEach(box=>{
+document.querySelectorAll(".drop-box")
+.forEach(box=>{
 
 box.addEventListener("dragover",
 function(e){
@@ -761,73 +773,66 @@ e.preventDefault();
 
 });
 
-box.addEventListener("drop",dropHabit);
-
-});
-
-function dropHabit(e){
+box.addEventListener("drop",
+function(e){
 
 e.preventDefault();
 
-let text=
-e.dataTransfer.getData("text/plain");
+let itemType=
+draggedItem.getAttribute("data-type");
 
-if(
-safeHabits.includes(text)
-&& e.target.id==="safeBox"
-){
+let boxType=
+this.getAttribute("data-box");
+
+if(itemType===boxType){
 
 score+=2;
 
+updateScore();
+
+playCorrect();
+
+celebrate();
+
 document.getElementById("dragFeedback")
 .innerHTML=
-"⭐ Correct Safe Habit!";
+"⭐ Correct Match!";
 
 document.getElementById("dragFeedback")
 .style.color="green";
 
-correct();
+if(boxType==="safe"){
 
-celebrate();
+document.getElementById("safeItems")
+.innerHTML+=
+"✅ "+draggedItem.innerHTML+"<br>";
 
-}
+}else{
 
-else if(
-unsafeHabits.includes(text)
-&& e.target.id==="unsafeBox"
-){
-
-score+=2;
-
-document.getElementById("dragFeedback")
-.innerHTML=
-"⭐ Correct Unsafe Habit!";
-
-document.getElementById("dragFeedback")
-.style.color="green";
-
-correct();
-
-celebrate();
+document.getElementById("unsafeItems")
+.innerHTML+=
+"❌ "+draggedItem.innerHTML+"<br>";
 
 }
 
-else{
+draggedItem.remove();
+
+}else{
+
+playWrong();
 
 document.getElementById("dragFeedback")
 .innerHTML=
-"❌ Wrong Box!";
+"❌ Wrong Box! Try Again";
 
 document.getElementById("dragFeedback")
 .style.color="red";
 
-wrong();
-
 }
 
-updateScore();
+});
 
-}
+});
 
 /* MAZE */
 
@@ -837,18 +842,22 @@ if(correctItem){
 
 score+=2;
 
+updateScore();
+
+playCorrect();
+
+celebrate();
+
 document.getElementById("mazeFeedback")
 .innerHTML=
-"⭐ Great! Safe Item Collected";
+"⭐ Safe Item Collected!";
 
 document.getElementById("mazeFeedback")
 .style.color="green";
 
-correct();
-
-celebrate();
-
 }else{
+
+playWrong();
 
 document.getElementById("mazeFeedback")
 .innerHTML=
@@ -857,11 +866,7 @@ document.getElementById("mazeFeedback")
 document.getElementById("mazeFeedback")
 .style.color="red";
 
-wrong();
-
 }
-
-updateScore();
 
 }
 
@@ -969,6 +974,12 @@ if(ans===q.answer){
 
 score+=2;
 
+updateScore();
+
+playCorrect();
+
+celebrate();
+
 document.getElementById("quizFeedback")
 .innerHTML=
 "⭐ Correct Answer!";
@@ -976,11 +987,9 @@ document.getElementById("quizFeedback")
 document.getElementById("quizFeedback")
 .style.color="green";
 
-correct();
-
-celebrate();
-
 }else{
+
+playWrong();
 
 document.getElementById("quizFeedback")
 .innerHTML=
@@ -989,11 +998,7 @@ document.getElementById("quizFeedback")
 document.getElementById("quizFeedback")
 .style.color="red";
 
-wrong();
-
 }
-
-updateScore();
 
 }
 

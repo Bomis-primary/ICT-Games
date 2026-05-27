@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scratch Jr Adventure Game</title>
+<title>Scratch Jr Robot Coding Factory</title>
 
 <style>
 
@@ -18,7 +18,7 @@ body{
 overflow:hidden;
 background:linear-gradient(45deg,#ff9a9e,#fad0c4,#fbc2eb,#84fab0,#8fd3f4,#a18cd1);
 background-size:400% 400%;
-animation:bgMove 10s infinite alternate;
+animation:bgMove 12s infinite alternate;
 height:100vh;
 }
 
@@ -27,12 +27,42 @@ height:100vh;
 100%{background-position:right;}
 }
 
+.sparkles{
+position:fixed;
+width:100%;
+height:100%;
+pointer-events:none;
+overflow:hidden;
+z-index:0;
+}
+
+.sparkle{
+position:absolute;
+width:10px;
+height:10px;
+background:white;
+border-radius:50%;
+animation:sparkleMove 5s linear infinite;
+opacity:0.7;
+}
+
+@keyframes sparkleMove{
+0%{
+transform:translateY(100vh) scale(0);
+}
+100%{
+transform:translateY(-100px) scale(1);
+}
+}
+
 .screen{
 display:none;
 width:100%;
 height:100vh;
 padding:20px;
 overflow:auto;
+position:relative;
+z-index:2;
 }
 
 .active{
@@ -43,7 +73,7 @@ display:block;
 position:fixed;
 top:10px;
 left:10px;
-width:110px;
+width:120px;
 z-index:999;
 }
 
@@ -62,13 +92,13 @@ box-shadow:0 0 10px rgba(0,0,0,0.3);
 
 .header{
 text-align:center;
-margin-top:50px;
+margin-top:40px;
 color:white;
 text-shadow:3px 3px 5px black;
 }
 
 .header h1{
-font-size:50px;
+font-size:55px;
 }
 
 .levelBox{
@@ -120,16 +150,19 @@ background:limegreen !important;
 background:red !important;
 }
 
-.teacher{
-width:170px;
-display:block;
-margin:auto;
-animation:bounce 2s infinite;
+.characterArea{
+text-align:center;
+margin-top:30px;
 }
 
-@keyframes bounce{
-0%,100%{transform:translateY(0);}
-50%{transform:translateY(-10px);}
+.robot{
+width:120px;
+transition:1s;
+}
+
+.goal{
+font-size:80px;
+margin-left:250px;
 }
 
 .progress{
@@ -148,46 +181,25 @@ background:linear-gradient(to right,#00f260,#0575e6);
 transition:0.5s;
 }
 
-.characterArea{
-text-align:center;
-margin-top:30px;
+.nextBtn{
+display:none;
+margin:30px auto;
 }
 
-.character{
-font-size:70px;
-transition:0.5s;
-display:inline-block;
-}
-
-.goal{
-font-size:70px;
-margin-left:250px;
-}
-
-.dragContainer{
-display:flex;
-justify-content:center;
-gap:20px;
-flex-wrap:wrap;
-margin-top:30px;
-}
-
-.dragItem{
-padding:20px;
-background:#ffeb3b;
-border-radius:20px;
-font-size:24px;
-cursor:pointer;
-}
-
-.dropZone{
-padding:20px;
-border:4px dashed purple;
-border-radius:20px;
-min-width:220px;
-min-height:90px;
-font-size:24px;
+.imageOption{
+width:160px;
+height:160px;
+object-fit:contain;
 background:white;
+padding:15px;
+border-radius:20px;
+cursor:pointer;
+transition:0.3s;
+box-shadow:0 5px 10px rgba(0,0,0,0.3);
+}
+
+.imageOption:hover{
+transform:scale(1.1);
 }
 
 .confetti{
@@ -209,14 +221,9 @@ opacity:0;
 }
 }
 
-.nextBtn{
-display:none;
-margin:30px auto;
-}
-
 .finalScreen{
 text-align:center;
-margin-top:80px;
+margin-top:70px;
 color:white;
 }
 
@@ -245,6 +252,46 @@ cursor:pointer;
 margin-top:30px;
 }
 
+.factBox{
+background:#fff3cd;
+padding:20px;
+border-radius:20px;
+margin-top:20px;
+font-size:24px;
+line-height:1.6;
+}
+
+.maze{
+display:grid;
+grid-template-columns:repeat(5,80px);
+gap:5px;
+justify-content:center;
+margin-top:20px;
+}
+
+.cell{
+width:80px;
+height:80px;
+background:white;
+border-radius:10px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:35px;
+}
+
+.wall{
+background:black;
+}
+
+.player{
+background:#ffeb3b;
+}
+
+.goalCell{
+background:#00e676;
+}
+
 @media(max-width:768px){
 
 .question{
@@ -261,11 +308,22 @@ width:80px;
 }
 
 .header h1{
-font-size:30px;
+font-size:32px;
 }
 
-.goal{
-margin-left:120px;
+.imageOption{
+width:110px;
+height:110px;
+}
+
+.maze{
+grid-template-columns:repeat(5,55px);
+}
+
+.cell{
+width:55px;
+height:55px;
+font-size:24px;
 }
 
 }
@@ -275,10 +333,12 @@ margin-left:120px;
 
 <body>
 
+<div class="sparkles" id="sparkles"></div>
+
 <img src="assets/innovine-logo.png" class="logo">
 
 <div class="scoreBox">
-⭐ Score: <span id="score">0</span>/7
+⭐ Score: <span id="score">0</span>/8
 </div>
 
 <!-- START SCREEN -->
@@ -286,20 +346,47 @@ margin-left:120px;
 <div class="screen active" id="startScreen">
 
 <div class="header">
-<h1>🌈 Scratch Jr Adventure 🌈</h1>
-<h2>Coding Fun Games</h2>
+<h1>🤖 Scratch Jr Coding Factory 🌈</h1>
+<h2>Adventure + Coding + Maze Game</h2>
 </div>
 
 <div class="levelBox">
 
-<img src="assets/teacher.png" class="teacher">
+<div style="text-align:center;">
+<img src="assets/scratch-Jr.png" width="220">
+</div>
+
+<div class="factBox">
+
+🌟 Scratch Jr helps children learn coding in a fun way!
+
+✅ Move characters  
+✅ Use coding blocks  
+✅ Create animations  
+✅ Solve puzzles  
+✅ Make games and stories
+
+</div>
 
 <div class="question">
-Help all Scratch Jr characters complete coding adventures!
+🧩 PUZZLE TIME!<br><br>
+Which picture is called a SPRITE in Scratch Jr?
 </div>
 
 <div class="buttonArea">
-<button class="gameBtn" onclick="startGame()">START GAME</button>
+
+<img src="assets/sprite.png"
+class="imageOption"
+onclick="checkStartAnswer(true,this)">
+
+<img src="assets/sound.png"
+class="imageOption"
+onclick="checkStartAnswer(false,this)">
+
+<img src="assets/commands.png"
+class="imageOption"
+onclick="checkStartAnswer(false,this)">
+
 </div>
 
 </div>
@@ -338,13 +425,13 @@ Help all Scratch Jr characters complete coding adventures!
 
 <div class="finalScreen">
 
-<h1>🎉 AWESOME CODING 🎉</h1>
+<h1>🎉 AMAZING CODING 🎉</h1>
 
 <h2 id="finalScore"></h2>
 
 <div class="badge">🏅 Coding Hero</div>
-<div class="badge">🤖 Scratch Jr Master</div>
-<div class="badge">🌈 Adventure Winner</div>
+<div class="badge">🤖 Robot Master</div>
+<div class="badge">🌈 Scratch Jr Champion</div>
 
 <br>
 
@@ -365,59 +452,107 @@ let score = 0;
 const questions = [
 
 {
-title:"Level 1 - Jungle Coding Adventure",
-question:"Which block moves monkey FORWARD?",
-options:["Move","Jump","Spin"],
-correct:"Move"
+title:"Level 1 - Coding Blocks",
+question:"Click the FORWARD command block",
+image:"assets/forward.png"
 },
 
 {
-title:"Level 2 - Space Rocket Mission",
-question:"Click the correct rocket direction!",
-options:["UP","DOWN","LEFT"],
-correct:"UP"
+title:"Level 2 - Sound Block",
+question:"Which image is SOUND block?",
+image:"assets/sound.png"
 },
 
 {
-title:"Level 3 - Cat Dance Party",
-question:"Which action makes cat DANCE?",
-options:["Dance","Sleep","Stop"],
-correct:"Dance"
+title:"Level 3 - Sprite Hunt",
+question:"Click the SPRITE image",
+image:"assets/sprite.png"
 },
 
 {
-title:"Level 4 - Princess Castle Escape",
-question:"Drag KEY into castle door!",
-type:"drag"
-},
-
-{
-title:"Level 5 - Robot Coding Factory",
-question:"Move robot to charging station!",
+title:"Level 4 - Robot Factory",
+question:"Move robot to battery station!",
 type:"robot"
 },
 
 {
-title:"Level 6 - Penguin Ice Adventure",
-question:"Help penguin reach fish!",
-type:"penguin"
+title:"Level 5 - Maze Adventure",
+question:"Help robot reach trophy!",
+type:"maze"
 },
 
 {
-title:"Level 7 - Pizza Chef Coding",
-question:"Click pizza making steps in order!",
+title:"Level 6 - Coding Puzzle",
+question:"Which picture shows COMMANDS?",
+image:"assets/commands.png"
+},
+
+{
+title:"Level 7 - Cooking Coding",
+question:"Click pizza steps in order!",
 type:"cooking"
+},
+
+{
+title:"Level 8 - Scratch Jr Master",
+question:"Which app is Scratch Jr?",
+image:"assets/scratch-Jr.png"
 }
 
 ];
 
-function startGame(){
+function createSparkles(){
 
-document.getElementById("startScreen").classList.remove("active");
+for(let i=0;i<50;i++){
 
-document.getElementById("gameScreen").classList.add("active");
+const sparkle = document.createElement("div");
+
+sparkle.classList.add("sparkle");
+
+sparkle.style.left = Math.random()*100+"%";
+
+sparkle.style.animationDuration =
+(Math.random()*5+3)+"s";
+
+sparkle.style.opacity = Math.random();
+
+document.getElementById("sparkles").appendChild(sparkle);
+
+}
+
+}
+
+createSparkles();
+
+function checkStartAnswer(correct,element){
+
+if(correct){
+
+element.style.border="8px solid limegreen";
+
+correctSound.play();
+
+confettiBlast();
+
+setTimeout(()=>{
+
+document.getElementById("startScreen")
+.classList.remove("active");
+
+document.getElementById("gameScreen")
+.classList.add("active");
 
 loadQuestion();
+
+},1500);
+
+}else{
+
+element.style.border="8px solid red";
+
+wrongSound.play();
+
+}
 
 }
 
@@ -430,110 +565,63 @@ return;
 
 }
 
-document.getElementById("nextBtn").style.display = "none";
+document.getElementById("nextBtn").style.display="none";
 
 const q = questions[currentQuestion];
 
-document.getElementById("levelTitle").innerHTML = q.title;
+document.getElementById("levelTitle").innerHTML=q.title;
 
-document.getElementById("questionText").innerHTML = q.question;
+document.getElementById("questionText").innerHTML=q.question;
 
 document.getElementById("progressBar").style.width =
 (currentQuestion/questions.length)*100 + "%";
 
 const gameArea = document.getElementById("gameArea");
 
-gameArea.innerHTML = "";
+gameArea.innerHTML="";
 
-if(q.options){
-
-const area = document.createElement("div");
-
-area.className = "buttonArea";
-
-q.options.forEach(option=>{
-
-const btn = document.createElement("button");
-
-btn.className = "gameBtn";
-
-btn.innerHTML = option;
-
-btn.onclick = ()=>{
-
-if(option === q.correct){
-
-btn.classList.add("correct");
-
-correctSound.play();
-
-score++;
-
-document.getElementById("score").innerHTML = score;
-
-confettiBlast();
-
-}else{
-
-btn.classList.add("wrong");
-
-wrongSound.play();
-
-}
-
-disableButtons();
-
-showNextButton();
-
-};
-
-area.appendChild(btn);
-
-});
-
-gameArea.appendChild(area);
-
-}
-
-else if(q.type === "drag"){
+if(q.image){
 
 gameArea.innerHTML = `
 
-<div class="dragContainer">
+<div class="buttonArea">
 
-<div class="dragItem" draggable="true" id="key">🗝 KEY</div>
+<img src="${q.image}"
+class="imageOption"
+onclick="correctImage(this)">
 
-<div class="dropZone" id="castle">🏰 CASTLE</div>
+<img src="assets/sound.png"
+class="imageOption"
+onclick="wrongImage(this)">
+
+<img src="assets/commands.png"
+class="imageOption"
+onclick="wrongImage(this)">
 
 </div>
 
 `;
 
-const dragItem = document.getElementById("key");
-
-const dropZone = document.getElementById("castle");
-
-dragItem.addEventListener("dragstart", dragStart);
-
-dropZone.addEventListener("dragover", dragOver);
-
-dropZone.addEventListener("drop", dropped);
-
 }
 
-else if(q.type === "robot"){
+else if(q.type==="robot"){
 
 gameArea.innerHTML = `
 
 <div class="characterArea">
 
-<span class="character" id="robot">🤖</span>
+<img src="assets/sprite.png"
+class="robot"
+id="robot">
 
 <span class="goal">🔋</span>
 
 <div class="buttonArea">
 
-<button class="gameBtn" onclick="moveRobot()">MOVE ➡</button>
+<button class="gameBtn"
+onclick="moveRobot()">
+MOVE ➡
+</button>
 
 </div>
 
@@ -543,69 +631,264 @@ gameArea.innerHTML = `
 
 }
 
-else if(q.type === "penguin"){
+else if(q.type==="maze"){
+
+createMaze();
+
+}
+
+else if(q.type==="cooking"){
 
 gameArea.innerHTML = `
-
-<div class="characterArea">
-
-<span class="character" id="penguin">🐧</span>
-
-<span class="goal">🐟</span>
 
 <div class="buttonArea">
 
-<button class="gameBtn" onclick="movePenguin()">SLIDE ➡</button>
+<button class="gameBtn"
+onclick="cook(this,'dough')">
+🍞 Dough
+</button>
 
-</div>
+<button class="gameBtn"
+onclick="cook(this,'cheese')">
+🧀 Cheese
+</button>
 
-</div>
-
-`;
-
-}
-
-else if(q.type === "cooking"){
-
-gameArea.innerHTML = `
-
-<div class="dragContainer">
-
-<div class="food" onclick="cook(this,'dough')">🍞 Dough</div>
-
-<div class="food" onclick="cook(this,'cheese')">🧀 Cheese</div>
-
-<div class="food" onclick="cook(this,'pizza')">🍕 Bake Pizza</div>
+<button class="gameBtn"
+onclick="cook(this,'pizza')">
+🍕 Bake Pizza
+</button>
 
 </div>
 
 `;
 
-cookStep = 0;
+cookStep=0;
 
 }
 
 }
 
-function disableButtons(){
+function correctImage(element){
 
-const buttons = document.querySelectorAll(".gameBtn");
+element.style.border="8px solid limegreen";
 
-buttons.forEach(btn=>{
+correctSound.play();
 
-if(!btn.id){
+score++;
 
-btn.disabled = true;
+document.getElementById("score").innerHTML=score;
+
+confettiBlast();
+
+showNextButton();
 
 }
 
-});
+function wrongImage(element){
+
+element.style.border="8px solid red";
+
+wrongSound.play();
+
+showNextButton();
+
+}
+
+function moveRobot(){
+
+const robot=document.getElementById("robot");
+
+robot.style.transform="translateX(300px)";
+
+correctSound.play();
+
+score++;
+
+document.getElementById("score").innerHTML=score;
+
+confettiBlast();
+
+showNextButton();
+
+}
+
+let cookStep=0;
+
+function cook(element,item){
+
+if(
+(cookStep===0 && item==="dough") ||
+(cookStep===1 && item==="cheese") ||
+(cookStep===2 && item==="pizza")
+){
+
+element.classList.add("correct");
+
+correctSound.play();
+
+cookStep++;
+
+if(cookStep===3){
+
+score++;
+
+document.getElementById("score").innerHTML=score;
+
+confettiBlast();
+
+showNextButton();
+
+}
+
+}else{
+
+element.classList.add("wrong");
+
+wrongSound.play();
+
+showNextButton();
+
+}
+
+}
+
+let mazeMap=[];
+let player={x:0,y:0};
+
+function createMaze(){
+
+const gameArea=document.getElementById("gameArea");
+
+gameArea.innerHTML=`
+
+<div class="maze" id="maze"></div>
+
+<div class="buttonArea">
+
+<button class="gameBtn"
+onclick="movePlayer('up')">⬆️</button>
+
+<button class="gameBtn"
+onclick="movePlayer('left')">⬅️</button>
+
+<button class="gameBtn"
+onclick="movePlayer('right')">➡️</button>
+
+<button class="gameBtn"
+onclick="movePlayer('down')">⬇️</button>
+
+</div>
+
+`;
+
+mazeMap=[
+
+[0,0,0,1,0],
+[1,1,0,1,0],
+[0,0,0,0,0],
+[0,1,1,1,0],
+[0,0,0,1,2]
+
+];
+
+player={x:0,y:0};
+
+drawMaze();
+
+}
+
+function drawMaze(){
+
+const maze=document.getElementById("maze");
+
+maze.innerHTML="";
+
+for(let y=0;y<5;y++){
+
+for(let x=0;x<5;x++){
+
+const cell=document.createElement("div");
+
+cell.classList.add("cell");
+
+if(mazeMap[y][x]===1){
+
+cell.classList.add("wall");
+
+}
+
+if(player.x===x && player.y===y){
+
+cell.classList.add("player");
+
+cell.innerHTML="🤖";
+
+}
+
+if(mazeMap[y][x]===2){
+
+cell.classList.add("goalCell");
+
+cell.innerHTML="🏆";
+
+}
+
+maze.appendChild(cell);
+
+}
+
+}
+
+}
+
+function movePlayer(direction){
+
+let newX=player.x;
+let newY=player.y;
+
+if(direction==="up") newY--;
+if(direction==="down") newY++;
+if(direction==="left") newX--;
+if(direction==="right") newX++;
+
+if(
+newX>=0 &&
+newX<5 &&
+newY>=0 &&
+newY<5 &&
+mazeMap[newY][newX]!==1
+){
+
+player.x=newX;
+player.y=newY;
+
+drawMaze();
+
+if(mazeMap[newY][newX]===2){
+
+correctSound.play();
+
+score++;
+
+document.getElementById("score").innerHTML=score;
+
+confettiBlast();
+
+showNextButton();
+
+}
+
+}else{
+
+wrongSound.play();
+
+}
 
 }
 
 function showNextButton(){
 
-document.getElementById("nextBtn").style.display = "block";
+document.getElementById("nextBtn").style.display="block";
 
 }
 
@@ -617,136 +900,20 @@ loadQuestion();
 
 }
 
-function moveRobot(){
-
-const robot = document.getElementById("robot");
-
-robot.style.transform = "translateX(260px)";
-
-correctSound.play();
-
-score++;
-
-document.getElementById("score").innerHTML = score;
-
-confettiBlast();
-
-showNextButton();
-
-}
-
-function movePenguin(){
-
-const penguin = document.getElementById("penguin");
-
-penguin.style.transform = "translateX(260px)";
-
-correctSound.play();
-
-score++;
-
-document.getElementById("score").innerHTML = score;
-
-confettiBlast();
-
-showNextButton();
-
-}
-
-let cookStep = 0;
-
-function cook(element,item){
-
-if(
-(cookStep===0 && item==="dough") ||
-(cookStep===1 && item==="cheese") ||
-(cookStep===2 && item==="pizza")
-){
-
-element.style.background="limegreen";
-
-correctSound.play();
-
-cookStep++;
-
-if(cookStep===3){
-
-score++;
-
-document.getElementById("score").innerHTML = score;
-
-confettiBlast();
-
-showNextButton();
-
-}
-
-}else{
-
-element.style.background="red";
-
-wrongSound.play();
-
-showNextButton();
-
-}
-
-}
-
-function dragStart(e){
-
-e.dataTransfer.setData("text", e.target.id);
-
-}
-
-function dragOver(e){
-
-e.preventDefault();
-
-}
-
-function dropped(e){
-
-e.preventDefault();
-
-const data = e.dataTransfer.getData("text");
-
-if(data === "key"){
-
-correctSound.play();
-
-score++;
-
-document.getElementById("score").innerHTML = score;
-
-confettiBlast();
-
-showNextButton();
-
-}else{
-
-wrongSound.play();
-
-showNextButton();
-
-}
-
-}
-
 function confettiBlast(){
 
 for(let i=0;i<100;i++){
 
-const confetti = document.createElement("div");
+const confetti=document.createElement("div");
 
 confetti.classList.add("confetti");
 
-confetti.style.left = Math.random()*window.innerWidth+"px";
+confetti.style.left=Math.random()*window.innerWidth+"px";
 
-confetti.style.background =
+confetti.style.background=
 `hsl(${Math.random()*360},100%,50%)`;
 
-confetti.style.animationDuration =
+confetti.style.animationDuration=
 (Math.random()*3+2)+"s";
 
 document.body.appendChild(confetti);
@@ -761,11 +928,13 @@ confetti.remove();
 
 function showFinal(){
 
-document.getElementById("gameScreen").classList.remove("active");
+document.getElementById("gameScreen")
+.classList.remove("active");
 
-document.getElementById("finalScreen").classList.add("active");
+document.getElementById("finalScreen")
+.classList.add("active");
 
-document.getElementById("finalScore").innerHTML =
+document.getElementById("finalScore").innerHTML=
 `⭐ You scored ${score} out of ${questions.length}`;
 
 confettiBlast();

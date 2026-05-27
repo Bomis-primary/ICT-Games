@@ -43,7 +43,7 @@ display:block;
 position:fixed;
 top:10px;
 left:10px;
-width:120px;
+width:110px;
 z-index:999;
 }
 
@@ -68,7 +68,7 @@ text-shadow:3px 3px 5px black;
 }
 
 .header h1{
-font-size:50px;
+font-size:52px;
 }
 
 .levelBox{
@@ -76,9 +76,10 @@ max-width:1100px;
 margin:20px auto;
 background:rgba(255,255,255,0.95);
 padding:25px;
-border-radius:25px;
+border-radius:30px;
 box-shadow:0 0 20px rgba(0,0,0,0.3);
 animation:pop 0.5s;
+min-height:550px;
 }
 
 @keyframes pop{
@@ -87,9 +88,9 @@ to{transform:scale(1);}
 }
 
 .question{
-font-size:30px;
+font-size:34px;
 text-align:center;
-margin:20px 0;
+margin:30px 0;
 color:#333;
 }
 
@@ -98,12 +99,12 @@ display:flex;
 justify-content:center;
 flex-wrap:wrap;
 gap:20px;
-margin-top:20px;
+margin-top:30px;
 }
 
 .gameBtn{
-padding:18px 30px;
-font-size:24px;
+padding:18px 35px;
+font-size:26px;
 border:none;
 border-radius:20px;
 cursor:pointer;
@@ -115,6 +116,14 @@ box-shadow:0 5px 10px rgba(0,0,0,0.3);
 
 .gameBtn:hover{
 transform:scale(1.1);
+}
+
+.correct{
+background:limegreen !important;
+}
+
+.wrong{
+background:red !important;
 }
 
 .teacher{
@@ -143,14 +152,6 @@ height:100%;
 width:0%;
 background:linear-gradient(to right,#00f260,#0575e6);
 transition:0.5s;
-}
-
-.correct{
-background:limegreen !important;
-}
-
-.wrong{
-background:red !important;
 }
 
 .confetti{
@@ -203,26 +204,19 @@ cursor:pointer;
 margin-top:30px;
 }
 
-.canvasBox{
-display:flex;
-justify-content:center;
-margin-top:20px;
-}
-
-canvas{
-background:white;
-border:5px solid purple;
-border-radius:20px;
-}
-
 .robotArea{
 text-align:center;
-margin-top:20px;
+margin-top:30px;
 }
 
 .robot{
-font-size:60px;
-margin:20px;
+font-size:70px;
+transition:0.5s;
+}
+
+.goal{
+font-size:70px;
+margin-left:300px;
 }
 
 .cookItems{
@@ -230,7 +224,7 @@ display:flex;
 justify-content:center;
 gap:20px;
 flex-wrap:wrap;
-margin-top:20px;
+margin-top:30px;
 }
 
 .food{
@@ -239,12 +233,53 @@ background:#ffeb3b;
 border-radius:20px;
 font-size:24px;
 cursor:pointer;
+transition:0.3s;
+}
+
+.food:hover{
+transform:scale(1.1);
+}
+
+.maze{
+display:grid;
+grid-template-columns:repeat(5,80px);
+gap:5px;
+justify-content:center;
+margin-top:20px;
+}
+
+.cell{
+width:80px;
+height:80px;
+background:white;
+border-radius:10px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:35px;
+}
+
+.wall{
+background:black;
+}
+
+.player{
+background:#ffeb3b;
+}
+
+.goalCell{
+background:#00e676;
+}
+
+.nextBtn{
+display:none;
+margin:30px auto;
 }
 
 @media(max-width:768px){
 
 .question{
-font-size:22px;
+font-size:24px;
 }
 
 .gameBtn{
@@ -253,15 +288,21 @@ padding:15px;
 }
 
 .logo{
-width:90px;
+width:80px;
 }
 
 .header h1{
 font-size:32px;
 }
 
-canvas{
-width:90%;
+.maze{
+grid-template-columns:repeat(5,55px);
+}
+
+.cell{
+width:55px;
+height:55px;
+font-size:24px;
 }
 
 }
@@ -291,7 +332,7 @@ width:90%;
 <img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" class="teacher">
 
 <div class="question">
-Help the turtle robot complete all coding missions!
+Help Turtle Robot complete all coding missions!
 </div>
 
 <div class="buttonArea">
@@ -319,7 +360,9 @@ Help the turtle robot complete all coding missions!
 <div id="gameArea"></div>
 
 <div class="buttonArea">
-<button class="gameBtn" onclick="nextQuestion()">➡ NEXT</button>
+<button class="gameBtn nextBtn" id="nextBtn" onclick="nextQuestion()">
+➡ NEXT QUESTION
+</button>
 </div>
 
 </div>
@@ -381,20 +424,20 @@ correct:"LT"
 
 {
 title:"Level 4 - Backward Move",
-question:"Which command moves turtle BACK?",
+question:"Which command moves turtle BACKWARD?",
 options:["FD","BK","RT"],
 correct:"BK"
 },
 
 {
-title:"Level 5 - Robot Coding",
-question:"Click arrows to move robot to treasure!",
+title:"Level 5 - Robot Coding Adventure",
+question:"Move robot to treasure!",
 type:"robot"
 },
 
 {
-title:"Level 6 - Cooking Game",
-question:"Click food items in correct order to make pizza!",
+title:"Level 6 - Cooking Pizza Game",
+question:"Click items in correct pizza making order!",
 type:"cooking"
 },
 
@@ -407,19 +450,19 @@ correct:"Square"
 
 {
 title:"Level 8 - Maze Adventure",
-question:"Help turtle reach the goal!",
+question:"Help turtle reach the trophy!",
 type:"maze"
 },
 
 {
-title:"Level 9 - Pen Command",
+title:"Level 9 - Pen Up Command",
 question:"Which command lifts pen UP?",
 options:["PU","PD","FD"],
 correct:"PU"
 },
 
 {
-title:"Level 10 - Pen Down",
+title:"Level 10 - Pen Down Command",
 question:"Which command puts pen DOWN?",
 options:["PU","PD","BK"],
 correct:"PD"
@@ -445,6 +488,8 @@ showFinal();
 return;
 
 }
+
+document.getElementById("nextBtn").style.display = "none";
 
 const q = questions[currentQuestion];
 
@@ -495,7 +540,9 @@ wrongSound.play();
 
 }
 
-disableButtons();
+disableOptionButtons();
+
+showNextButton();
 
 };
 
@@ -513,9 +560,13 @@ gameArea.innerHTML = `
 
 <div class="robotArea">
 
-<div class="robot" id="robot">🤖</div>
+<div>
 
-<div class="robot">🏆</div>
+<span class="robot" id="robot">🤖</span>
+
+<span class="goal">🏆</span>
+
+</div>
 
 <div class="buttonArea">
 
@@ -535,17 +586,17 @@ gameArea.innerHTML = `
 
 <div class="cookItems">
 
-<div class="food" onclick="cookItem(this,'dough')">🍞 Dough</div>
+<div class="food" onclick="cook(this,'dough')">🍞 Dough</div>
 
-<div class="food" onclick="cookItem(this,'cheese')">🧀 Cheese</div>
+<div class="food" onclick="cook(this,'cheese')">🧀 Cheese</div>
 
-<div class="food" onclick="cookItem(this,'pizza')">🍕 Bake Pizza</div>
+<div class="food" onclick="cook(this,'pizza')">🍕 Bake Pizza</div>
 
 </div>
 
 `;
 
-cookingStep = 0;
+cookStep = 0;
 
 }
 
@@ -557,15 +608,25 @@ createMaze();
 
 }
 
-function disableButtons(){
+function disableOptionButtons(){
 
 const buttons = document.querySelectorAll(".gameBtn");
 
 buttons.forEach(btn=>{
 
+if(!btn.id){
+
 btn.disabled = true;
 
+}
+
 });
+
+}
+
+function showNextButton(){
+
+document.getElementById("nextBtn").style.display = "block";
 
 }
 
@@ -591,31 +652,35 @@ document.getElementById("score").innerHTML = score;
 
 confettiBlast();
 
+showNextButton();
+
 }
 
-let cookingStep = 0;
+let cookStep = 0;
 
-function cookItem(element,item){
+function cook(element,item){
 
 if(
-(cookingStep===0 && item==="dough") ||
-(cookingStep===1 && item==="cheese") ||
-(cookingStep===2 && item==="pizza")
+(cookStep===0 && item==="dough") ||
+(cookStep===1 && item==="cheese") ||
+(cookStep===2 && item==="pizza")
 ){
 
 element.style.background="limegreen";
 
 correctSound.play();
 
-cookingStep++;
+cookStep++;
 
-if(cookingStep===3){
+if(cookStep===3){
 
 score++;
 
 document.getElementById("score").innerHTML = score;
 
 confettiBlast();
+
+showNextButton();
 
 }
 
@@ -625,9 +690,14 @@ element.style.background="red";
 
 wrongSound.play();
 
+showNextButton();
+
 }
 
 }
+
+let mazeMap = [];
+let player = {x:0,y:0};
 
 function createMaze(){
 
@@ -635,70 +705,108 @@ const gameArea = document.getElementById("gameArea");
 
 gameArea.innerHTML = `
 
-<div class="canvasBox">
-
-<canvas id="mazeCanvas" width="400" height="400"></canvas>
-
-</div>
+<div class="maze" id="maze"></div>
 
 <div class="buttonArea">
 
-<button class="gameBtn" onclick="move('up')">⬆️</button>
+<button class="gameBtn" onclick="movePlayer('up')">⬆️</button>
 
-<button class="gameBtn" onclick="move('left')">⬅️</button>
+<button class="gameBtn" onclick="movePlayer('left')">⬅️</button>
 
-<button class="gameBtn" onclick="move('right')">➡️</button>
+<button class="gameBtn" onclick="movePlayer('right')">➡️</button>
 
-<button class="gameBtn" onclick="move('down')">⬇️</button>
+<button class="gameBtn" onclick="movePlayer('down')">⬇️</button>
 
 </div>
 
 `;
 
-canvas = document.getElementById("mazeCanvas");
+const maze = document.getElementById("maze");
 
-ctx = canvas.getContext("2d");
+mazeMap = [
 
-playerX = 0;
-playerY = 0;
+[0,0,0,1,0],
+[1,1,0,1,0],
+[0,0,0,0,0],
+[0,1,1,1,0],
+[0,0,0,1,2]
+
+];
+
+player = {x:0,y:0};
 
 drawMaze();
 
 }
-
-let canvas,ctx;
-let playerX=0;
-let playerY=0;
 
 function drawMaze(){
 
-ctx.clearRect(0,0,400,400);
+const maze = document.getElementById("maze");
 
-ctx.fillStyle="green";
+maze.innerHTML = "";
 
-ctx.fillRect(350,350,40,40);
+for(let y=0;y<5;y++){
 
-ctx.fillStyle="blue";
+for(let x=0;x<5;x++){
 
-ctx.fillRect(playerX,playerY,40,40);
+const cell = document.createElement("div");
+
+cell.classList.add("cell");
+
+if(mazeMap[y][x]===1){
+
+cell.classList.add("wall");
 
 }
 
-function move(dir){
+if(player.x===x && player.y===y){
 
-if(dir==="right") playerX += 40;
-if(dir==="left") playerX -= 40;
-if(dir==="up") playerY -= 40;
-if(dir==="down") playerY += 40;
+cell.classList.add("player");
 
-if(playerX<0) playerX=0;
-if(playerY<0) playerY=0;
-if(playerX>360) playerX=360;
-if(playerY>360) playerY=360;
+cell.innerHTML="🐢";
+
+}
+
+if(mazeMap[y][x]===2){
+
+cell.classList.add("goalCell");
+
+cell.innerHTML="🏆";
+
+}
+
+maze.appendChild(cell);
+
+}
+
+}
+
+}
+
+function movePlayer(direction){
+
+let newX = player.x;
+let newY = player.y;
+
+if(direction==="up") newY--;
+if(direction==="down") newY++;
+if(direction==="left") newX--;
+if(direction==="right") newX++;
+
+if(
+newX>=0 &&
+newX<5 &&
+newY>=0 &&
+newY<5 &&
+mazeMap[newY][newX]!==1
+){
+
+player.x = newX;
+player.y = newY;
 
 drawMaze();
 
-if(playerX===360 && playerY===360){
+if(mazeMap[newY][newX]===2){
 
 correctSound.play();
 
@@ -707,6 +815,14 @@ score++;
 document.getElementById("score").innerHTML = score;
 
 confettiBlast();
+
+showNextButton();
+
+}
+
+}else{
+
+wrongSound.play();
 
 }
 

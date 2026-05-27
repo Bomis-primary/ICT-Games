@@ -1,1 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MS Logo Adventure Game</title>
 
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Comic Sans MS', cursive;
+}
+
+body{
+overflow:hidden;
+background:linear-gradient(45deg,#ff9a9e,#fad0c4,#fbc2eb,#84fab0,#8fd3f4,#a18cd1);
+background-size:400% 400%;
+animation:bgMove 10s infinite alternate;
+height:100vh;
+}
+
+@keyframes bgMove{
+0%{background-position:left;}
+100%{background-position:right;}
+}
+
+.screen{
+display:none;
+width:100%;
+height:100vh;
+padding:20px;
+overflow:auto;
+}
+
+.active{
+display:block;
+}
+
+.logo{
+position:fixed;
+top:10px;
+left:10px;
+width:120px;
+z-index:999;
+}
+
+.scoreBox{
+position:fixed;
+top:10px;
+right:10px;
+background:white;
+padding:10px 20px;
+border-radius:20px;
+font-size:24px;
+font-weight:bold;
+z-index:999;
+box-shadow:0 0 10px rgba(0,0,0,0.3);
+}
+
+.header{
+text-align:center;
+margin-top:50px;
+color:white;
+text-shadow:3px 3px 5px black;
+}
+
+.header h1{
+font-size:50px;
+}
+
+.levelBox{
+max-width:1100px;
+margin:20px auto;
+background:rgba(255,255,255,0.95);
+padding:25px;
+border-radius:25px;
+box-shadow:0 0 20px rgba(0,0,0,0.3);
+animation:pop 0.5s;
+}
+
+@keyframes pop{
+from{transform:scale(0.5);}
+to{transform:scale(1);}
+}
+
+.question{
+font-size:30px;
+text-align:center;
+margin:20px 0;
+color:#333;
+}
+
+.buttonArea{
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+gap:20px;
+margin-top:20px;
+}
+
+.gameBtn{
+padding:18px 30px;
+font-size:24px;
+border:none;
+border-radius:20px;
+cursor:pointer;
+background:linear-gradient(to right,#ff758c,#ff7eb3);
+color:white;
+transition:0.3s;
+box-shadow:0 5px 10px rgba(0,0,0,0.3);
+}
+
+.gameBtn:hover{
+transform:scale(1.1);
+}
+
+.teacher{
+width:170px;
+display:block;
+margin:auto;
+animation:bounce 2s infinite;
+}
+
+@keyframes bounce{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(-10px);}
+}
+
+.progress{
+width:100%;
+height:25px;
+background:#ddd;
+border-radius:20px;
+overflow:hidden;
+margin-top:15px;
+}
+
+.progressBar{
+height:100%;
+width:0%;
+background:linear-gradient(to right,#00f260,#0575e6);
+transition:0.5s;
+}
+
+.correct{
+background:limegreen !important;
+}
+
+.wrong{
+background:red !important;
+}
+
+.confetti{
+position:fixed;
+width:10px;
+height:10px;
+animation:fall 4s linear forwards;
+z-index:9999;
+}
+
+@keyframes fall{
+0%{
+transform:translateY(-100px) rotate(0deg);
+opacity:1;
+}
+100%{
+transform:translateY(100vh) rotate(720deg);
+opacity:0;
+}
+}
+
+.finalScreen{
+text-align:center;
+margin-top:80px;
+color:white;
+}
+
+.finalScreen h1{
+font-size:60px;
+text-shadow:4px 4px black;
+}
+
+.badge{
+display:inline-block;
+padding:20px;
+margin:15px;
+background:gold;
+border-radius:20px;
+font-size:28px;
+}
+
+.replay{
+padding:20px 40px;
+font-size:30px;
+border:none;
+border-radius:20px;
+background:#00c853;
+color:white;
+cursor:pointer;
+margin-top:30px;
+}
+
+.canvasBox{
+display:flex;
+justify-content:center;
+margin-top:20px;
+}
+
+canvas{
+background:white;
+border:5px solid purple;
+border-radius:20px;
+}
+
+.robotArea{
+text-align:center;
+margin-top:20px;
+}
+
+.robot{
+font-size:60px;
+margin:20px;
+}
+
+.cookItems{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+margin-top:20px;
+}
+
+.food{
+padding:20px;
+background:#ffeb3b;
+border-radius:20px;
+font-size:24px;
+cursor:pointer;
+}
+
+@media(max-width:768px){
+
+.question{
+font-size:22px;
+}
+
+.gameBtn{
+font-size:18px;
+padding:15px;
+}
+
+.logo{
+width:90px;
+}
+
+.header h1{
+font-size:32px;
+}
+
+canvas{
+width:90%;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<div class="scoreBox">
+⭐ Score: <span id="score">0</span>/10
+</div>
+
+<!-- START SCREEN -->
+
+<div class="screen active" id="startScreen">
+
+<div class="header">
+<h1>🌈 MS LOGO ADVENTURE 🌈</h1>
+<h2>Robot Coding & Cooking Game</h2>
+</div>
+
+<div class="levelBox">
+
+<img src="https://cdn-icons-png.flaticon.com/512/4140/4140048.png" class="teacher">
+
+<div class="question">
+Help the turtle robot complete all coding missions!
+</div>
+
+<div class="buttonArea">
+<button class="gameBtn" onclick="startGame()">START GAME</button>
+</div>
+
+</div>
+
+</div>
+
+<!-- GAME SCREEN -->
+
+<div class="screen" id="gameScreen">
+
+<div class="progress">
+<div class="progressBar" id="progressBar"></div>
+</div>
+
+<div class="levelBox">
+
+<h2 id="levelTitle"></h2>
+
+<div class="question" id="questionText"></div>
+
+<div id="gameArea"></div>
+
+<div class="buttonArea">
+<button class="gameBtn" onclick="nextQuestion()">➡ NEXT</button>
+</div>
+
+</div>
+
+</div>
+
+<!-- FINAL SCREEN -->
+
+<div class="screen" id="finalScreen">
+
+<div class="finalScreen">
+
+<h1>🎉 GREAT JOB 🎉</h1>
+
+<h2 id="finalScore"></h2>
+
+<div class="badge">🏅 MS Logo Hero</div>
+<div class="badge">🤖 Robot Coder</div>
+<div class="badge">🍕 Cooking Master</div>
+
+<br>
+
+<button class="replay" onclick="location.reload()">PLAY AGAIN</button>
+
+</div>
+
+</div>
+
+<script>
+
+const correctSound = new Audio("assets/correct-1.mp3");
+const wrongSound = new Audio("assets/wrong.mp3");
+
+let currentQuestion = 0;
+let score = 0;
+
+const questions = [
+
+{
+title:"Level 1 - Turtle Command",
+question:"Which command moves turtle FORWARD?",
+options:["FD","BK","RT"],
+correct:"FD"
+},
+
+{
+title:"Level 2 - Turn Right",
+question:"Which command turns turtle RIGHT?",
+options:["LT","RT","FD"],
+correct:"RT"
+},
+
+{
+title:"Level 3 - Turn Left",
+question:"Which command turns turtle LEFT?",
+options:["FD","RT","LT"],
+correct:"LT"
+},
+
+{
+title:"Level 4 - Backward Move",
+question:"Which command moves turtle BACK?",
+options:["FD","BK","RT"],
+correct:"BK"
+},
+
+{
+title:"Level 5 - Robot Coding",
+question:"Click arrows to move robot to treasure!",
+type:"robot"
+},
+
+{
+title:"Level 6 - Cooking Game",
+question:"Click food items in correct order to make pizza!",
+type:"cooking"
+},
+
+{
+title:"Level 7 - Draw Square",
+question:"Which shape has 4 equal sides?",
+options:["Triangle","Square","Circle"],
+correct:"Square"
+},
+
+{
+title:"Level 8 - Maze Adventure",
+question:"Help turtle reach the goal!",
+type:"maze"
+},
+
+{
+title:"Level 9 - Pen Command",
+question:"Which command lifts pen UP?",
+options:["PU","PD","FD"],
+correct:"PU"
+},
+
+{
+title:"Level 10 - Pen Down",
+question:"Which command puts pen DOWN?",
+options:["PU","PD","BK"],
+correct:"PD"
+}
+
+];
+
+function startGame(){
+
+document.getElementById("startScreen").classList.remove("active");
+
+document.getElementById("gameScreen").classList.add("active");
+
+loadQuestion();
+
+}
+
+function loadQuestion(){
+
+if(currentQuestion >= questions.length){
+
+showFinal();
+return;
+
+}
+
+const q = questions[currentQuestion];
+
+document.getElementById("levelTitle").innerHTML = q.title;
+
+document.getElementById("questionText").innerHTML = q.question;
+
+document.getElementById("progressBar").style.width =
+(currentQuestion/questions.length)*100 + "%";
+
+const gameArea = document.getElementById("gameArea");
+
+gameArea.innerHTML = "";
+
+if(q.options){
+
+const area = document.createElement("div");
+
+area.className = "buttonArea";
+
+q.options.forEach(option=>{
+
+const btn = document.createElement("button");
+
+btn.className = "gameBtn";
+
+btn.innerHTML = option;
+
+btn.onclick = ()=>{
+
+if(option === q.correct){
+
+btn.classList.add("correct");
+
+correctSound.play();
+
+score++;
+
+document.getElementById("score").innerHTML = score;
+
+confettiBlast();
+
+}else{
+
+btn.classList.add("wrong");
+
+wrongSound.play();
+
+}
+
+disableButtons();
+
+};
+
+area.appendChild(btn);
+
+});
+
+gameArea.appendChild(area);
+
+}
+
+else if(q.type === "robot"){
+
+gameArea.innerHTML = `
+
+<div class="robotArea">
+
+<div class="robot" id="robot">🤖</div>
+
+<div class="robot">🏆</div>
+
+<div class="buttonArea">
+
+<button class="gameBtn" onclick="moveRobot()">MOVE ➡</button>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+else if(q.type === "cooking"){
+
+gameArea.innerHTML = `
+
+<div class="cookItems">
+
+<div class="food" onclick="cookItem(this,'dough')">🍞 Dough</div>
+
+<div class="food" onclick="cookItem(this,'cheese')">🧀 Cheese</div>
+
+<div class="food" onclick="cookItem(this,'pizza')">🍕 Bake Pizza</div>
+
+</div>
+
+`;
+
+cookingStep = 0;
+
+}
+
+else if(q.type === "maze"){
+
+createMaze();
+
+}
+
+}
+
+function disableButtons(){
+
+const buttons = document.querySelectorAll(".gameBtn");
+
+buttons.forEach(btn=>{
+
+btn.disabled = true;
+
+});
+
+}
+
+function nextQuestion(){
+
+currentQuestion++;
+
+loadQuestion();
+
+}
+
+function moveRobot(){
+
+const robot = document.getElementById("robot");
+
+robot.style.transform = "translateX(300px)";
+
+correctSound.play();
+
+score++;
+
+document.getElementById("score").innerHTML = score;
+
+confettiBlast();
+
+}
+
+let cookingStep = 0;
+
+function cookItem(element,item){
+
+if(
+(cookingStep===0 && item==="dough") ||
+(cookingStep===1 && item==="cheese") ||
+(cookingStep===2 && item==="pizza")
+){
+
+element.style.background="limegreen";
+
+correctSound.play();
+
+cookingStep++;
+
+if(cookingStep===3){
+
+score++;
+
+document.getElementById("score").innerHTML = score;
+
+confettiBlast();
+
+}
+
+}else{
+
+element.style.background="red";
+
+wrongSound.play();
+
+}
+
+}
+
+function createMaze(){
+
+const gameArea = document.getElementById("gameArea");
+
+gameArea.innerHTML = `
+
+<div class="canvasBox">
+
+<canvas id="mazeCanvas" width="400" height="400"></canvas>
+
+</div>
+
+<div class="buttonArea">
+
+<button class="gameBtn" onclick="move('up')">⬆️</button>
+
+<button class="gameBtn" onclick="move('left')">⬅️</button>
+
+<button class="gameBtn" onclick="move('right')">➡️</button>
+
+<button class="gameBtn" onclick="move('down')">⬇️</button>
+
+</div>
+
+`;
+
+canvas = document.getElementById("mazeCanvas");
+
+ctx = canvas.getContext("2d");
+
+playerX = 0;
+playerY = 0;
+
+drawMaze();
+
+}
+
+let canvas,ctx;
+let playerX=0;
+let playerY=0;
+
+function drawMaze(){
+
+ctx.clearRect(0,0,400,400);
+
+ctx.fillStyle="green";
+
+ctx.fillRect(350,350,40,40);
+
+ctx.fillStyle="blue";
+
+ctx.fillRect(playerX,playerY,40,40);
+
+}
+
+function move(dir){
+
+if(dir==="right") playerX += 40;
+if(dir==="left") playerX -= 40;
+if(dir==="up") playerY -= 40;
+if(dir==="down") playerY += 40;
+
+if(playerX<0) playerX=0;
+if(playerY<0) playerY=0;
+if(playerX>360) playerX=360;
+if(playerY>360) playerY=360;
+
+drawMaze();
+
+if(playerX===360 && playerY===360){
+
+correctSound.play();
+
+score++;
+
+document.getElementById("score").innerHTML = score;
+
+confettiBlast();
+
+}
+
+}
+
+function confettiBlast(){
+
+for(let i=0;i<100;i++){
+
+const confetti = document.createElement("div");
+
+confetti.classList.add("confetti");
+
+confetti.style.left = Math.random()*window.innerWidth+"px";
+
+confetti.style.background =
+`hsl(${Math.random()*360},100%,50%)`;
+
+confetti.style.animationDuration =
+(Math.random()*3+2)+"s";
+
+document.body.appendChild(confetti);
+
+setTimeout(()=>{
+confetti.remove();
+},5000);
+
+}
+
+}
+
+function showFinal(){
+
+document.getElementById("gameScreen").classList.remove("active");
+
+document.getElementById("finalScreen").classList.add("active");
+
+document.getElementById("finalScore").innerHTML =
+`⭐ You scored ${score} out of ${questions.length}`;
+
+confettiBlast();
+
+}
+
+</script>
+
+</body>
+</html>

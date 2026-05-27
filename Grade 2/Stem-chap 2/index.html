@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>⚡ Robo STEM Circuit Universe ⚡</title>
 
@@ -42,8 +41,8 @@ animation:bgMove 12s infinite alternate;
 position:fixed;
 width:100%;
 height:100%;
-pointer-events:none;
 overflow:hidden;
+pointer-events:none;
 z-index:0;
 }
 
@@ -129,7 +128,7 @@ text-shadow:3px 3px 5px black;
 }
 
 .header h1{
-font-size:58px;
+font-size:60px;
 }
 
 .levelBox{
@@ -194,10 +193,12 @@ transform:scale(1.1);
 
 .correct{
 border:8px solid limegreen;
+background:limegreen !important;
 }
 
 .wrong{
 border:8px solid red;
+background:red !important;
 }
 
 .nextBtn{
@@ -265,6 +266,34 @@ opacity:0;
 }
 }
 
+.dragArea{
+display:flex;
+justify-content:center;
+gap:30px;
+flex-wrap:wrap;
+margin-top:30px;
+}
+
+.dragBox{
+width:220px;
+height:180px;
+border:5px dashed purple;
+border-radius:20px;
+background:white;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:28px;
+}
+
+.dragItem{
+padding:20px;
+background:#ffeb3b;
+border-radius:20px;
+font-size:24px;
+cursor:pointer;
+}
+
 .riverArea{
 position:relative;
 width:100%;
@@ -296,49 +325,6 @@ transition:0.3s;
 
 .stone:hover{
 transform:scale(1.1);
-}
-
-.robo{
-position:absolute;
-left:20px;
-bottom:30px;
-font-size:60px;
-transition:0.5s;
-}
-
-.finish{
-position:absolute;
-right:20px;
-top:20px;
-font-size:60px;
-}
-
-.dragArea{
-display:flex;
-justify-content:center;
-gap:30px;
-flex-wrap:wrap;
-margin-top:30px;
-}
-
-.dragBox{
-width:220px;
-height:180px;
-border:5px dashed purple;
-border-radius:20px;
-background:white;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:28px;
-}
-
-.dragItem{
-padding:20px;
-background:#ffeb3b;
-border-radius:20px;
-font-size:24px;
-cursor:pointer;
 }
 
 @media(max-width:768px){
@@ -392,7 +378,7 @@ id="guideBox">
 🤖 Great Job!
 </div>
 
-<!-- START -->
+<!-- START SCREEN -->
 
 <div class="screen active"
 id="startScreen">
@@ -402,7 +388,7 @@ id="startScreen">
 <h1>⚡ Robo STEM Circuit Universe ⚡</h1>
 
 <h2>
-Electricity Adventure for Young Innovators
+Electricity Adventure for Grade 2 Learners
 </h2>
 
 </div>
@@ -411,7 +397,7 @@ Electricity Adventure for Young Innovators
 
 <div class="question">
 
-🤖 Welcome Young Scientist!
+🌈 Welcome Young STEM Hero!
 
 <br><br>
 
@@ -420,10 +406,11 @@ Learn through:
 
 ⚡ Circuit Builder  
 🧩 Sorting Games  
-🌉 River Crossing Adventures  
+🌉 River Rescue Adventure  
 🔎 Detective Missions  
 🏃 Speed Challenges  
-🎮 Drag & Drop STEM Fun
+🎮 Drag & Drop STEM Fun  
+🌞 Solar Energy Missions
 
 </div>
 
@@ -449,7 +436,7 @@ START ADVENTURE
 
 </div>
 
-<!-- GAME -->
+<!-- GAME SCREEN -->
 
 <div class="screen"
 id="gameScreen">
@@ -493,7 +480,7 @@ onclick="nextQuestion()">
 
 </div>
 
-<!-- FINAL -->
+<!-- FINAL SCREEN -->
 
 <div class="screen"
 id="finalScreen">
@@ -545,14 +532,14 @@ type:"circuit"
 
 {
 title:"🧩 Sorting Game",
-question:"Sort CLOSED and OPEN circuits",
+question:"Find the CLOSED circuit",
 type:"sorting"
 },
 
 {
-title:"🌉 River Crossing Adventure",
-question:"Help Robo cross electricity river",
-type:"river"
+title:"🌉 River Wire Rescue",
+question:"Help Robo repair broken electric bridge",
+type:"wirebridge"
 },
 
 {
@@ -608,8 +595,7 @@ createSparkles();
 function startGame(){
 
 playerName =
-document.getElementById("playerName")
-.value;
+document.getElementById("playerName").value;
 
 if(playerName===""){
 
@@ -639,11 +625,11 @@ playerName +
 ": " +
 message;
 
-guide.style.display = "block";
+guide.style.display="block";
 
 setTimeout(()=>{
 
-guide.style.display = "none";
+guide.style.display="none";
 
 },3000);
 
@@ -651,7 +637,7 @@ guide.style.display = "none";
 
 function loadQuestion(){
 
-if(currentQuestion >= questions.length){
+if(currentQuestion>=questions.length){
 
 showFinal();
 return;
@@ -661,7 +647,8 @@ return;
 document.getElementById("nextBtn")
 .style.display="none";
 
-const q = questions[currentQuestion];
+const q =
+questions[currentQuestion];
 
 document.getElementById("levelTitle")
 .innerHTML=q.title;
@@ -722,44 +709,51 @@ onclick="correctAnswer(this,
 
 }
 
-else if(q.type==="river"){
+else if(q.type==="wirebridge"){
 
 gameArea.innerHTML=`
 
 <div class="riverArea">
 
-<div class="stone"
-style="left:120px;top:180px;"
-onclick="jumpStone(1,this)">
-1
-</div>
-
-<div class="stone"
-style="left:300px;top:120px;"
-onclick="jumpStone(2,this)">
-2
-</div>
-
-<div class="stone"
-style="left:500px;top:180px;"
-onclick="jumpStone(3,this)">
-3
-</div>
-
-<div class="stone"
-style="left:700px;top:100px;"
-onclick="jumpStone(4,this)">
-4
-</div>
-
-<div class="robo"
-id="riverRobo">
+<div style="
+position:absolute;
+left:40px;
+top:120px;
+font-size:70px;">
 
 🤖
 
 </div>
 
-<div class="finish">
+<div style="
+position:absolute;
+right:30px;
+top:120px;
+font-size:70px;">
+
+💡
+
+</div>
+
+<div class="stone"
+style="left:180px;top:130px;"
+onclick="repairWire(1,this)">
+
+🔌
+
+</div>
+
+<div class="stone"
+style="left:360px;top:130px;"
+onclick="repairWire(2,this)">
+
+⚡
+
+</div>
+
+<div class="stone"
+style="left:560px;top:130px;"
+onclick="repairWire(3,this)">
 
 💡
 
@@ -769,7 +763,7 @@ id="riverRobo">
 
 `;
 
-riverStep=1;
+wireStep=1;
 
 }
 
@@ -806,7 +800,9 @@ gameArea.innerHTML=`
 <div style="text-align:center;">
 
 <h1 id="timer"
-style="color:red;font-size:50px;">
+style="
+color:red;
+font-size:50px;">
 
 5
 
@@ -913,7 +909,7 @@ correctSound.play();
 showGuide(message);
 
 document.getElementById("tipBox")
-.innerHTML = tip;
+.innerHTML=tip;
 
 score++;
 
@@ -938,48 +934,43 @@ wrongSound.play();
 showGuide(message);
 
 document.getElementById("tipBox")
-.innerHTML = tip;
+.innerHTML=tip;
 
 showNextButton();
 
 }
 
-let riverStep=1;
+let wireStep=1;
 
-function jumpStone(number,element){
+function repairWire(number,element){
 
-if(number===riverStep){
+if(number===wireStep){
 
-element.style.background =
-"limegreen";
+element.style.background="limegreen";
 
 correctSound.play();
 
 showGuide(
-"Robo " + playerName +
-" crossed safely!"
+"Great job! Electricity is flowing!"
 );
 
-riverStep++;
+wireStep++;
 
-if(riverStep===5){
-
-document.getElementById("riverRobo")
-.style.left="820px";
-
-showGuide(
-"Switch ON to light the bulb!"
-);
+if(wireStep===4){
 
 document.getElementById("tipBox")
 .innerHTML =
-"💡 Electricity needs a complete path.";
+"⚡ Electricity flows through connected wires.";
 
 score++;
 
 updateScore();
 
 confettiBlast();
+
+showGuide(
+"Awesome! You completed the circuit!"
+);
 
 showNextButton();
 
@@ -992,7 +983,7 @@ element.style.background="red";
 wrongSound.play();
 
 showGuide(
-"Oh no! Wrong stone."
+"Oh no! The wire is broken!"
 );
 
 }
@@ -1114,7 +1105,7 @@ if(data==="switchItem"){
 correctSound.play();
 
 showGuide(
-"Great job! Electricity is flowing!"
+"Switch ON to light the bulb!"
 );
 
 document.getElementById("tipBox")
@@ -1126,6 +1117,10 @@ score++;
 updateScore();
 
 confettiBlast();
+
+showGuide(
+"Great job! Electricity is flowing!"
+);
 
 showNextButton();
 
@@ -1205,17 +1200,17 @@ document.getElementById("finalScreen")
 .classList.add("active");
 
 document.getElementById("finalName")
-.innerHTML = playerName;
+.innerHTML=playerName;
 
 document.getElementById("finalScore")
 .innerHTML =
 `⭐ Total Score: ${score} / ${questions.length}`;
 
-let badgeText = "";
+let badgeText="";
 
 if(score===7){
 
-badgeText =
+badgeText=
 `<div class="badge">
 🏆 Ultimate STEM Champion
 </div>`;
@@ -1224,7 +1219,7 @@ badgeText =
 
 else if(score>=5){
 
-badgeText =
+badgeText=
 `<div class="badge">
 ⚡ Circuit Master
 </div>`;
@@ -1233,7 +1228,7 @@ badgeText =
 
 else if(score>=3){
 
-badgeText =
+badgeText=
 `<div class="badge">
 🌈 Electricity Hero
 </div>`;
@@ -1242,7 +1237,7 @@ badgeText =
 
 else{
 
-badgeText =
+badgeText=
 `<div class="badge">
 🔋 Robo Explorer
 </div>`;
@@ -1250,7 +1245,7 @@ badgeText =
 }
 
 document.getElementById("badgeArea")
-.innerHTML = badgeText;
+.innerHTML=badgeText;
 
 confettiBlast();
 

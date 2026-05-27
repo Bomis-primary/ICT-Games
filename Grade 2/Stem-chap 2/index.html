@@ -5,7 +5,7 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title>⚡ Robo Circuit Quest ⚡</title>
+<title>⚡ Robo STEM Circuit Universe ⚡</title>
 
 <style>
 
@@ -101,6 +101,26 @@ z-index:999;
 box-shadow:0 0 10px rgba(0,0,0,0.3);
 }
 
+.guideBox{
+position:fixed;
+bottom:20px;
+left:20px;
+background:white;
+padding:15px 20px;
+border-radius:20px;
+font-size:22px;
+max-width:450px;
+display:none;
+z-index:999;
+box-shadow:0 0 15px rgba(0,0,0,0.3);
+animation:flash 1s infinite alternate;
+}
+
+@keyframes flash{
+from{transform:scale(1);}
+to{transform:scale(1.05);}
+}
+
 .header{
 text-align:center;
 margin-top:40px;
@@ -118,8 +138,9 @@ margin:20px auto;
 background:rgba(255,255,255,0.95);
 padding:25px;
 border-radius:30px;
-min-height:600px;
+min-height:620px;
 box-shadow:0 0 20px rgba(0,0,0,0.3);
+position:relative;
 }
 
 .question{
@@ -190,26 +211,6 @@ top:20px;
 right:20px;
 }
 
-.guideBox{
-position:fixed;
-bottom:20px;
-left:20px;
-background:white;
-padding:15px 20px;
-border-radius:20px;
-font-size:22px;
-max-width:420px;
-display:none;
-z-index:999;
-box-shadow:0 0 15px rgba(0,0,0,0.3);
-animation:flash 1s infinite alternate;
-}
-
-@keyframes flash{
-from{transform:scale(1);}
-to{transform:scale(1.05);}
-}
-
 .confetti{
 position:fixed;
 width:10px;
@@ -229,6 +230,15 @@ transform:translateY(100vh)
 rotate(720deg);
 opacity:0;
 }
+}
+
+.tipBox{
+background:#fff3cd;
+padding:15px;
+border-radius:20px;
+margin-top:20px;
+font-size:24px;
+text-align:center;
 }
 
 .platformArea{
@@ -292,13 +302,15 @@ width:300px;
 text-align:center;
 }
 
-.tipBox{
-background:#fff3cd;
-padding:15px;
-border-radius:20px;
-margin-top:20px;
-font-size:24px;
+.speedBox{
 text-align:center;
+margin-top:40px;
+}
+
+.timer{
+font-size:40px;
+color:#ff1744;
+font-weight:bold;
 }
 
 @media(max-width:768px){
@@ -344,24 +356,25 @@ class="logo">
 
 <div class="scoreBox">
 ⭐ Score:
-<span id="score">0</span>/5
+<span id="score">0</span>/7
 </div>
 
-<div class="guideBox" id="guideBox">
+<div class="guideBox"
+id="guideBox">
 🤖 Great Job!
 </div>
 
-<!-- START SCREEN -->
+<!-- START -->
 
 <div class="screen active"
 id="startScreen">
 
 <div class="header">
 
-<h1>⚡ Robo Circuit Quest ⚡</h1>
+<h1>⚡ Robo STEM Circuit Universe ⚡</h1>
 
 <h2>
-Classic STEM Adventure for Smart Learners
+Classic Electricity Adventure for Grade 2
 </h2>
 
 </div>
@@ -370,12 +383,19 @@ Classic STEM Adventure for Smart Learners
 
 <div class="question">
 
-🤖 Welcome Future Scientist!
+🤖 Welcome Young STEM Hero!
 
 <br><br>
 
-Enter your name to begin
-your electricity adventure.
+Learn through:
+<br><br>
+
+⚡ Circuit Builder  
+🧩 Sorting Games  
+🌌 Space Missions  
+🏃 Speed Challenges  
+🔎 Detective Adventures  
+🎮 Platform Mazes
 
 </div>
 
@@ -401,7 +421,7 @@ START ADVENTURE
 
 </div>
 
-<!-- GAME SCREEN -->
+<!-- GAME -->
 
 <div class="screen"
 id="gameScreen">
@@ -445,7 +465,7 @@ onclick="nextQuestion()">
 
 </div>
 
-<!-- FINAL SCREEN -->
+<!-- FINAL -->
 
 <div class="screen"
 id="finalScreen">
@@ -490,40 +510,52 @@ let playerName = "";
 const questions = [
 
 {
-title:"Game 1 - Circuit Builder",
-question:"Build a CLOSED circuit!",
+title:"⚡ Circuit Builder",
+question:"Choose the CLOSED CIRCUIT",
 type:"circuit"
 },
 
 {
-title:"Game 2 - Circuit Maze",
-question:"Help electricity reach bulb!",
-type:"maze"
+title:"🧩 Sorting Game",
+question:"Sort OPEN and CLOSED circuits",
+type:"sorting"
 },
 
 {
-title:"Game 3 - Space Energy Mission",
-question:"Charge the rocket!",
+title:"🎮 Platform Adventure",
+question:"Jump to glowing bulb",
+type:"platform"
+},
+
+{
+title:"🔎 Detective Game",
+question:"Find electrical components",
+type:"detective"
+},
+
+{
+title:"🚀 Space Mission",
+question:"Charge the rocket",
 type:"space"
 },
 
 {
-title:"Game 4 - Solar Panel Challenge",
-question:"Click the SOLAR PANEL",
-type:"solar"
+title:"🏃 Speed Challenge",
+question:"Click POWER SOURCE quickly!",
+type:"speed"
 },
 
 {
-title:"Game 5 - Switch Hero",
-question:"Choose the correct switch",
-type:"switch"
+title:"🌞 Solar Energy Mission",
+question:"Choose SOLAR PANEL",
+type:"solar"
 }
 
 ];
 
 function createSparkles(){
 
-for(let i=0;i<60;i++){
+for(let i=0;i<70;i++){
 
 const sparkle =
 document.createElement("div");
@@ -601,8 +633,7 @@ return;
 document.getElementById("nextBtn")
 .style.display="none";
 
-const q =
-questions[currentQuestion];
+const q = questions[currentQuestion];
 
 document.getElementById("levelTitle")
 .innerHTML=q.title;
@@ -630,8 +661,8 @@ onclick="correctAnswer(this,
 <img src="assets/open circuit.png"
 class="imageCard"
 onclick="wrongAnswer(this,
-'Oh no! Electricity stopped flowing.',
-'⚡ Open circuits break electricity flow.')">
+'Oh no! The wire is broken!',
+'⚡ Open circuits stop electricity flow.')">
 
 </div>
 
@@ -639,7 +670,31 @@ onclick="wrongAnswer(this,
 
 }
 
-else if(q.type==="maze"){
+else if(q.type==="sorting"){
+
+gameArea.innerHTML=`
+
+<div class="buttonArea">
+
+<img src="assets/open circuit.png"
+class="imageCard"
+onclick="wrongAnswer(this,
+'Oh no! The wire is broken!',
+'⚡ Open circuits stop electricity.')">
+
+<img src="assets/closed-circuit.png"
+class="imageCard"
+onclick="correctAnswer(this,
+'Great job! Electricity is flowing!',
+'💡 Electricity flows in closed circuits.')">
+
+</div>
+
+`;
+
+}
+
+else if(q.type==="platform"){
 
 gameArea.innerHTML=`
 
@@ -689,6 +744,32 @@ platformStep=0;
 
 }
 
+else if(q.type==="detective"){
+
+gameArea.innerHTML=`
+
+<div class="buttonArea">
+
+<img src="assets/power source.png"
+class="imageCard"
+onclick="detectiveCorrect(this)">
+
+<img src="assets/switches.png"
+class="imageCard"
+onclick="detectiveCorrect(this)">
+
+<img src="assets/circuits.png"
+class="imageCard"
+onclick="detectiveCorrect(this)">
+
+</div>
+
+`;
+
+detectiveCount=0;
+
+}
+
 else if(q.type==="space"){
 
 gameArea.innerHTML=`
@@ -724,6 +805,33 @@ CHARGE ⚡
 
 }
 
+else if(q.type==="speed"){
+
+gameArea.innerHTML=`
+
+<div class="speedBox">
+
+<div class="timer"
+id="timer">
+
+5
+
+</div>
+
+<br>
+
+<img src="assets/power source.png"
+class="imageCard"
+onclick="speedClick(this)">
+
+</div>
+
+`;
+
+startTimer();
+
+}
+
 else if(q.type==="solar"){
 
 gameArea.innerHTML=`
@@ -733,44 +841,14 @@ gameArea.innerHTML=`
 <img src="assets/solar-panel.png"
 class="imageCard"
 onclick="correctAnswer(this,
-'Excellent! Solar energy powers circuits.',
+'You are a STEM Hero!',
 '☀ Solar panels use sunlight for energy.')">
-
-<img src="assets/power source.png"
-class="imageCard"
-onclick="wrongAnswer(this,
-'Try again Robo Explorer!',
-'🔋 Power source gives electricity.')">
 
 <img src="assets/circuits.png"
 class="imageCard"
 onclick="wrongAnswer(this,
-'That is a circuit image!',
+'Try again Robo Explorer!',
 '⚡ Circuits connect electrical parts.')">
-
-</div>
-
-`;
-
-}
-
-else if(q.type==="switch"){
-
-gameArea.innerHTML=`
-
-<div class="buttonArea">
-
-<img src="assets/switches.png"
-class="imageCard"
-onclick="correctAnswer(this,
-'Great job! Electricity is flowing!',
-'🔌 Switches control electricity flow.')">
-
-<img src="assets/open circuit.png"
-class="imageCard"
-onclick="wrongAnswer(this,
-'Oh no! Bulb is OFF.',
-'❌ Open circuits stop electricity.')">
 
 </div>
 
@@ -839,7 +917,7 @@ player.style.left="120px";
 player.style.bottom="120px";
 
 showGuide(
-"Nice jump Robo " + playerName + "!"
+"Electricity is moving!"
 );
 
 }
@@ -850,7 +928,7 @@ player.style.left="300px";
 player.style.bottom="180px";
 
 showGuide(
-"Electricity is moving!"
+"Keep jumping Robo " + playerName
 );
 
 }
@@ -861,7 +939,7 @@ player.style.left="500px";
 player.style.bottom="140px";
 
 showGuide(
-"Almost there!"
+"Almost at the bulb!"
 );
 
 }
@@ -874,12 +952,44 @@ player.style.bottom="210px";
 correctSound.play();
 
 showGuide(
-"Fantastic! Bulb is glowing!"
+"Switch ON to light the bulb!"
 );
 
 document.getElementById("tipBox")
 .innerHTML =
 "💡 Electricity needs a complete path.";
+
+score++;
+
+updateScore();
+
+confettiBlast();
+
+showNextButton();
+
+}
+
+}
+
+let detectiveCount=0;
+
+function detectiveCorrect(element){
+
+element.classList.add("correct");
+
+correctSound.play();
+
+showGuide(
+"You are a STEM Hero!"
+);
+
+detectiveCount++;
+
+if(detectiveCount===3){
+
+document.getElementById("tipBox")
+.innerHTML =
+"🔎 Detectives observe electrical parts carefully.";
 
 score++;
 
@@ -904,12 +1014,69 @@ rocket.style.transform =
 correctSound.play();
 
 showGuide(
-"Rocket powered successfully!"
+"Great job! Electricity is flowing!"
 );
 
 document.getElementById("tipBox")
 .innerHTML =
 "🚀 Electricity powers machines and rockets.";
+
+score++;
+
+updateScore();
+
+confettiBlast();
+
+showNextButton();
+
+}
+
+let timerValue = 5;
+let timerInterval;
+
+function startTimer(){
+
+timerValue = 5;
+
+timerInterval =
+setInterval(()=>{
+
+timerValue--;
+
+document.getElementById("timer")
+.innerHTML = timerValue;
+
+if(timerValue<=0){
+
+clearInterval(timerInterval);
+
+showGuide(
+"Oh no! Time is over."
+);
+
+showNextButton();
+
+}
+
+},1000);
+
+}
+
+function speedClick(element){
+
+clearInterval(timerInterval);
+
+element.classList.add("correct");
+
+correctSound.play();
+
+showGuide(
+"Awesome! Fast thinking STEM Hero!"
+);
+
+document.getElementById("tipBox")
+.innerHTML =
+"⚡ Power sources give energy to circuits.";
 
 score++;
 
@@ -1001,11 +1168,20 @@ document.getElementById("finalScore")
 
 let badgeText = "";
 
-if(score===5){
+if(score===7){
 
 badgeText =
 `<div class="badge">
-🏆 Ultimate Circuit Master
+🏆 Ultimate STEM Champion
+</div>`;
+
+}
+
+else if(score>=5){
+
+badgeText =
+`<div class="badge">
+⚡ Circuit Master
 </div>`;
 
 }
@@ -1014,7 +1190,7 @@ else if(score>=3){
 
 badgeText =
 `<div class="badge">
-⚡ Electricity Hero
+🌈 Electricity Hero
 </div>`;
 
 }
@@ -1023,7 +1199,7 @@ else{
 
 badgeText =
 `<div class="badge">
-🌈 STEM Explorer
+🔋 Robo Explorer
 </div>`;
 
 }

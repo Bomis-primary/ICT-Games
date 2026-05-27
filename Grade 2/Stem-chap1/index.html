@@ -1,1 +1,958 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Electricity STEM Game</title>
 
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Comic Sans MS', cursive;
+}
+
+body{
+overflow:hidden;
+background:linear-gradient(45deg,#6a11cb,#2575fc,#ff758c,#ffd200);
+background-size:400% 400%;
+animation:bgMove 10s infinite alternate;
+height:100vh;
+}
+
+@keyframes bgMove{
+0%{background-position:left;}
+100%{background-position:right;}
+}
+
+.screen{
+display:none;
+width:100%;
+height:100vh;
+padding:20px;
+overflow:auto;
+}
+
+.active{
+display:block;
+}
+
+.logo{
+position:fixed;
+top:10px;
+left:10px;
+width:120px;
+z-index:999;
+}
+
+.scoreBox{
+position:fixed;
+top:10px;
+right:10px;
+background:white;
+padding:10px 20px;
+border-radius:20px;
+font-size:24px;
+font-weight:bold;
+z-index:999;
+}
+
+.header{
+text-align:center;
+margin-top:40px;
+color:white;
+text-shadow:3px 3px 5px black;
+}
+
+.header h1{
+font-size:55px;
+}
+
+.levelBox{
+max-width:1100px;
+margin:20px auto;
+background:rgba(255,255,255,0.95);
+padding:25px;
+border-radius:30px;
+min-height:550px;
+box-shadow:0 0 20px rgba(0,0,0,0.3);
+}
+
+.question{
+font-size:30px;
+text-align:center;
+margin:25px 0;
+}
+
+.buttonArea{
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+gap:20px;
+margin-top:25px;
+}
+
+.gameBtn{
+padding:18px 35px;
+font-size:24px;
+border:none;
+border-radius:20px;
+cursor:pointer;
+background:linear-gradient(to right,#ff758c,#ff7eb3);
+color:white;
+transition:0.3s;
+}
+
+.gameBtn:hover{
+transform:scale(1.1);
+}
+
+.imageCard{
+width:180px;
+height:180px;
+background:white;
+border-radius:20px;
+padding:10px;
+cursor:pointer;
+transition:0.3s;
+box-shadow:0 5px 10px rgba(0,0,0,0.3);
+object-fit:contain;
+}
+
+.imageCard:hover{
+transform:scale(1.1);
+}
+
+.correct{
+border:8px solid limegreen;
+}
+
+.wrong{
+border:8px solid red;
+}
+
+.nextBtn{
+display:none;
+margin:30px auto;
+}
+
+.confetti{
+position:fixed;
+width:10px;
+height:10px;
+animation:fall 4s linear forwards;
+z-index:9999;
+}
+
+@keyframes fall{
+0%{
+transform:translateY(-100px) rotate(0deg);
+opacity:1;
+}
+100%{
+transform:translateY(100vh) rotate(720deg);
+opacity:0;
+}
+}
+
+.sparkles{
+position:fixed;
+width:100%;
+height:100%;
+overflow:hidden;
+pointer-events:none;
+}
+
+.sparkle{
+position:absolute;
+width:10px;
+height:10px;
+background:white;
+border-radius:50%;
+animation:sparkleMove 5s linear infinite;
+}
+
+@keyframes sparkleMove{
+0%{
+transform:translateY(100vh);
+}
+100%{
+transform:translateY(-100px);
+}
+}
+
+.maze{
+display:grid;
+grid-template-columns:repeat(5,80px);
+gap:5px;
+justify-content:center;
+margin-top:20px;
+}
+
+.cell{
+width:80px;
+height:80px;
+background:white;
+border-radius:10px;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:35px;
+}
+
+.wall{
+background:black;
+}
+
+.player{
+background:#ffeb3b;
+}
+
+.goalCell{
+background:#00e676;
+}
+
+.finalScreen{
+text-align:center;
+margin-top:70px;
+color:white;
+}
+
+.finalScreen h1{
+font-size:60px;
+text-shadow:4px 4px black;
+}
+
+.badge{
+display:inline-block;
+padding:20px;
+margin:15px;
+background:gold;
+border-radius:20px;
+font-size:28px;
+}
+
+.replay{
+padding:20px 40px;
+font-size:30px;
+border:none;
+border-radius:20px;
+background:#00c853;
+color:white;
+cursor:pointer;
+margin-top:30px;
+}
+
+@media(max-width:768px){
+
+.question{
+font-size:22px;
+}
+
+.gameBtn{
+font-size:18px;
+padding:15px;
+}
+
+.logo{
+width:80px;
+}
+
+.header h1{
+font-size:32px;
+}
+
+.imageCard{
+width:120px;
+height:120px;
+}
+
+.maze{
+grid-template-columns:repeat(5,55px);
+}
+
+.cell{
+width:55px;
+height:55px;
+font-size:24px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sparkles" id="sparkles"></div>
+
+<img src="assets/innovine-logo.png" class="logo">
+
+<div class="scoreBox">
+⭐ Score: <span id="score">0</span>/5
+</div>
+
+<!-- START SCREEN -->
+
+<div class="screen active" id="startScreen">
+
+<div class="header">
+<h1>⚡ Electricity Adventure ⚡</h1>
+<h2>Grade 2 STEM Fun Game</h2>
+</div>
+
+<div class="levelBox">
+
+<div class="question">
+
+🌟 Welcome Young Scientist! 🌟
+
+<br><br>
+
+Learn about:
+<br><br>
+
+⚡ Electricity  
+💡 Circuits  
+🔋 Batteries  
+🚫 Safety Rules  
+🏠 Electric Appliances
+
+</div>
+
+<div class="buttonArea">
+
+<button class="gameBtn"
+onclick="startGame()">
+
+START GAME
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- GAME SCREEN -->
+
+<div class="screen" id="gameScreen">
+
+<div class="levelBox">
+
+<h2 id="levelTitle"></h2>
+
+<div class="question" id="questionText"></div>
+
+<div id="gameArea"></div>
+
+<div class="buttonArea">
+
+<button class="gameBtn nextBtn"
+id="nextBtn"
+onclick="nextQuestion()">
+
+➡ NEXT LEVEL
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- FINAL SCREEN -->
+
+<div class="screen" id="finalScreen">
+
+<div class="finalScreen">
+
+<h1>🎉 AWESOME 🎉</h1>
+
+<h2 id="finalScore"></h2>
+
+<div class="badge">⚡ Electricity Hero</div>
+<div class="badge">🔋 STEM Explorer</div>
+<div class="badge">🌈 Science Champion</div>
+
+<br>
+
+<button class="replay"
+onclick="location.reload()">
+
+PLAY AGAIN
+
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const correctSound =
+new Audio("assets/correct-1.mp3");
+
+const wrongSound =
+new Audio("assets/wrong.mp3");
+
+let currentQuestion = 0;
+let score = 0;
+
+const questions = [
+
+{
+title:"Level 1 - Electrical Appliances",
+question:"Click appliances that use electricity",
+type:"appliances"
+},
+
+{
+title:"Level 2 - Circuit Maze",
+question:"Help electricity reach the bulb",
+type:"maze"
+},
+
+{
+title:"Level 3 - Closed Circuit",
+question:"Click the CLOSED CIRCUIT picture",
+type:"circuit"
+},
+
+{
+title:"Level 4 - Safety Hero",
+question:"Choose SAFE electricity actions",
+type:"safety"
+},
+
+{
+title:"Level 5 - Space Power Mission",
+question:"Charge the spaceship battery",
+type:"space"
+}
+
+];
+
+function createSparkles(){
+
+for(let i=0;i<50;i++){
+
+const sparkle =
+document.createElement("div");
+
+sparkle.classList.add("sparkle");
+
+sparkle.style.left =
+Math.random()*100+"%";
+
+sparkle.style.animationDuration =
+(Math.random()*5+3)+"s";
+
+document.getElementById("sparkles")
+.appendChild(sparkle);
+
+}
+
+}
+
+createSparkles();
+
+function startGame(){
+
+document.getElementById("startScreen")
+.classList.remove("active");
+
+document.getElementById("gameScreen")
+.classList.add("active");
+
+loadQuestion();
+
+}
+
+function loadQuestion(){
+
+if(currentQuestion >= questions.length){
+
+showFinal();
+return;
+
+}
+
+document.getElementById("nextBtn")
+.style.display="none";
+
+const q = questions[currentQuestion];
+
+document.getElementById("levelTitle")
+.innerHTML=q.title;
+
+document.getElementById("questionText")
+.innerHTML=q.question;
+
+const gameArea =
+document.getElementById("gameArea");
+
+gameArea.innerHTML="";
+
+if(q.type==="appliances"){
+
+gameArea.innerHTML=`
+
+<div class="buttonArea">
+
+<img src="assets/fan.png"
+class="imageCard"
+onclick="checkAppliance(true,this)">
+
+<img src="assets/fridge.jpeg"
+class="imageCard"
+onclick="checkAppliance(true,this)">
+
+<img src="assets/laptop.png"
+class="imageCard"
+onclick="checkAppliance(true,this)">
+
+<img src="assets/microwave.jpg"
+class="imageCard"
+onclick="checkAppliance(true,this)">
+
+</div>
+
+`;
+
+}
+
+else if(q.type==="maze"){
+
+createMaze();
+
+}
+
+else if(q.type==="circuit"){
+
+gameArea.innerHTML=`
+
+<div class="buttonArea">
+
+<img src="assets/closed circuits.png"
+class="imageCard"
+onclick="correctCircuit(this)">
+
+<img src="assets/fan.png"
+class="imageCard"
+onclick="wrongCircuit(this)">
+
+</div>
+
+`;
+
+}
+
+else if(q.type==="safety"){
+
+gameArea.innerHTML=`
+
+<div class="buttonArea">
+
+<button class="gameBtn"
+onclick="checkSafety(true,this)">
+🙌 Dry Hands
+</button>
+
+<button class="gameBtn"
+onclick="checkSafety(false,this)">
+💧 Wet Hands
+</button>
+
+<button class="gameBtn"
+onclick="checkSafety(true,this)">
+🔌 Safe Plug
+</button>
+
+<button class="gameBtn"
+onclick="checkSafety(false,this)">
+⚡ Touch Wire
+</button>
+
+</div>
+
+`;
+
+safeCount=0;
+
+}
+
+else if(q.type==="space"){
+
+gameArea.innerHTML=`
+
+<div style="text-align:center;
+margin-top:40px;">
+
+<div style="font-size:100px;"
+id="rocket">
+
+🚀
+
+</div>
+
+<div style="font-size:90px;">
+🔋
+</div>
+
+<div class="buttonArea">
+
+<button class="gameBtn"
+onclick="chargeRocket()">
+
+CHARGE ⚡
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+}
+
+let applianceCount=0;
+
+function checkAppliance(correct,element){
+
+if(correct){
+
+element.classList.add("correct");
+
+correctSound.play();
+
+applianceCount++;
+
+if(applianceCount===4){
+
+score++;
+
+document.getElementById("score")
+.innerHTML=score;
+
+confettiBlast();
+
+showNextButton();
+
+}
+
+}else{
+
+element.classList.add("wrong");
+
+wrongSound.play();
+
+}
+
+}
+
+function correctCircuit(element){
+
+element.classList.add("correct");
+
+correctSound.play();
+
+score++;
+
+document.getElementById("score")
+.innerHTML=score;
+
+confettiBlast();
+
+showNextButton();
+
+}
+
+function wrongCircuit(element){
+
+element.classList.add("wrong");
+
+wrongSound.play();
+
+showNextButton();
+
+}
+
+let safeCount=0;
+
+function checkSafety(correct,element){
+
+if(correct){
+
+element.classList.add("correct");
+
+correctSound.play();
+
+safeCount++;
+
+if(safeCount===2){
+
+score++;
+
+document.getElementById("score")
+.innerHTML=score;
+
+confettiBlast();
+
+showNextButton();
+
+}
+
+}else{
+
+element.classList.add("wrong");
+
+wrongSound.play();
+
+}
+
+}
+
+let mazeMap=[];
+let player={x:0,y:0};
+
+function createMaze(){
+
+const gameArea=
+document.getElementById("gameArea");
+
+gameArea.innerHTML=`
+
+<div class="maze"
+id="maze"></div>
+
+<div class="buttonArea">
+
+<button class="gameBtn"
+onclick="movePlayer('up')">
+⬆️
+</button>
+
+<button class="gameBtn"
+onclick="movePlayer('left')">
+⬅️
+</button>
+
+<button class="gameBtn"
+onclick="movePlayer('right')">
+➡️
+</button>
+
+<button class="gameBtn"
+onclick="movePlayer('down')">
+⬇️
+</button>
+
+</div>
+
+`;
+
+mazeMap=[
+
+[0,0,0,1,0],
+[1,1,0,1,0],
+[0,0,0,0,0],
+[0,1,1,1,0],
+[0,0,0,1,2]
+
+];
+
+player={x:0,y:0};
+
+drawMaze();
+
+}
+
+function drawMaze(){
+
+const maze=
+document.getElementById("maze");
+
+maze.innerHTML="";
+
+for(let y=0;y<5;y++){
+
+for(let x=0;x<5;x++){
+
+const cell=
+document.createElement("div");
+
+cell.classList.add("cell");
+
+if(mazeMap[y][x]===1){
+
+cell.classList.add("wall");
+
+}
+
+if(player.x===x &&
+player.y===y){
+
+cell.classList.add("player");
+
+cell.innerHTML="⚡";
+
+}
+
+if(mazeMap[y][x]===2){
+
+cell.classList.add("goalCell");
+
+cell.innerHTML="💡";
+
+}
+
+maze.appendChild(cell);
+
+}
+
+}
+
+}
+
+function movePlayer(direction){
+
+let newX=player.x;
+let newY=player.y;
+
+if(direction==="up") newY--;
+if(direction==="down") newY++;
+if(direction==="left") newX--;
+if(direction==="right") newX++;
+
+if(
+newX>=0 &&
+newX<5 &&
+newY>=0 &&
+newY<5 &&
+mazeMap[newY][newX]!==1
+){
+
+player.x=newX;
+player.y=newY;
+
+drawMaze();
+
+if(mazeMap[newY][newX]===2){
+
+correctSound.play();
+
+score++;
+
+document.getElementById("score")
+.innerHTML=score;
+
+confettiBlast();
+
+showNextButton();
+
+}
+
+}else{
+
+wrongSound.play();
+
+}
+
+}
+
+function chargeRocket(){
+
+const rocket=
+document.getElementById("rocket");
+
+rocket.style.transform=
+"translateY(-150px)";
+
+correctSound.play();
+
+score++;
+
+document.getElementById("score")
+.innerHTML=score;
+
+confettiBlast();
+
+showNextButton();
+
+}
+
+function showNextButton(){
+
+document.getElementById("nextBtn")
+.style.display="block";
+
+}
+
+function nextQuestion(){
+
+currentQuestion++;
+
+applianceCount=0;
+safeCount=0;
+
+loadQuestion();
+
+}
+
+function confettiBlast(){
+
+for(let i=0;i<100;i++){
+
+const confetti=
+document.createElement("div");
+
+confetti.classList.add("confetti");
+
+confetti.style.left=
+Math.random()*window.innerWidth+"px";
+
+confetti.style.background=
+`hsl(${Math.random()*360},
+100%,50%)`;
+
+confetti.style.animationDuration=
+(Math.random()*3+2)+"s";
+
+document.body.appendChild(confetti);
+
+setTimeout(()=>{
+confetti.remove();
+},5000);
+
+}
+
+}
+
+function showFinal(){
+
+document.getElementById("gameScreen")
+.classList.remove("active");
+
+document.getElementById("finalScreen")
+.classList.add("active");
+
+document.getElementById("finalScore")
+.innerHTML=
+`⭐ You scored ${score} out of ${questions.length}`;
+
+confettiBlast();
+
+}
+
+</script>
+
+</body>
+</html>

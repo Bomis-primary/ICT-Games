@@ -1,695 +1,563 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Formatting Fun Kingdom</title>
-
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Rainbow Writer Adventure - OpenOffice Writer 2</title>
 
 <style>
-
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:'Comic Sans MS',cursive;
+font-family:'Comic Sans MS', cursive;
 }
 
 body{
-
-background:linear-gradient(135deg,#ffecd2,#fcb69f,#a18cd1,#fbc2eb);
+overflow-x:hidden;
+background:linear-gradient(45deg,#ff9a9e,#fad0c4,#fbc2eb,#a18cd1,#84fab0,#8fd3f4);
+background-size:400% 400%;
+animation:bgMove 10s infinite alternate;
 min-height:100vh;
-padding:10px;
-display:flex;
-justify-content:center;
-align-items:center;
-
 }
 
-#gameBox{
+@keyframes bgMove{
+0%{background-position:left;}
+100%{background-position:right;}
+}
 
-width:100%;
-max-width:1300px;
-background:white;
-border-radius:30px;
-padding:20px;
-box-shadow:0 10px 35px rgba(0,0,0,0.3);
-
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px 20px;
+background:rgba(255,255,255,0.4);
+backdrop-filter:blur(10px);
+position:sticky;
+top:0;
+z-index:1000;
 }
 
 .logo{
-
-width:120px;
-display:block;
-margin:auto;
-margin-bottom:10px;
-
+height:70px;
 }
 
-.screen{
+.title{
+font-size:35px;
+font-weight:bold;
+color:#fff;
+text-shadow:3px 3px 5px #000;
+}
+
+.game-container{
+padding:20px;
+max-width:1200px;
+margin:auto;
+}
+
+.level{
 display:none;
-animation:fade 0.5s;
+background:rgba(255,255,255,0.3);
+backdrop-filter:blur(10px);
+border-radius:25px;
+padding:25px;
+margin-top:20px;
+box-shadow:0 0 20px rgba(0,0,0,0.2);
+animation:fadeIn 1s;
 }
 
 .active{
 display:block;
 }
 
-@keyframes fade{
-
-from{
-opacity:0;
-transform:translateY(20px);
+@keyframes fadeIn{
+from{opacity:0; transform:scale(0.8);}
+to{opacity:1; transform:scale(1);}
 }
 
-to{
-opacity:1;
-transform:translateY(0);
+.teacher{
+width:130px;
+animation:bounce 2s infinite;
 }
 
+@keyframes bounce{
+0%,100%{transform:translateY(0);}
+50%{transform:translateY(-10px);}
 }
 
-h1,h2,h3{
-
-text-align:center;
-color:#6a1b9a;
+h2{
+font-size:35px;
 margin-bottom:15px;
-
+color:#fff;
+text-shadow:2px 2px 5px #000;
 }
 
-.btn{
-
-background:linear-gradient(45deg,#ff7043,#ff4081);
-color:white;
-border:none;
-padding:14px 24px;
-border-radius:40px;
-font-size:20px;
-font-weight:bold;
-cursor:pointer;
-margin:10px;
-transition:0.3s;
-
+.instructions{
+font-size:24px;
+margin-bottom:20px;
+color:#fff;
 }
 
-.btn:hover{
-
-transform:scale(1.05);
-
-}
-
-input{
-
-padding:14px;
-width:90%;
-max-width:350px;
-border-radius:12px;
-border:2px solid #ccc;
-font-size:18px;
-margin-top:15px;
-
-}
-
-.score{
-
-font-size:28px;
-font-weight:bold;
-text-align:center;
-color:#ff6f00;
-margin:10px 0;
-
-}
-
-.question{
-
-font-size:30px;
-font-weight:bold;
-text-align:center;
-margin:20px 0;
-color:#4a148c;
-
-}
-
-.option-container{
-
+.toolbar{
 display:flex;
-justify-content:center;
 gap:20px;
 flex-wrap:wrap;
+justify-content:center;
 margin-top:20px;
-
 }
 
-.option{
+.tool-btn{
+padding:20px 35px;
+font-size:30px;
+border:none;
+border-radius:20px;
+cursor:pointer;
+background:linear-gradient(to right,#ffecd2,#fcb69f);
+box-shadow:0 0 15px gold;
+transition:0.3s;
+}
 
-background:#81d4fa;
-padding:16px 22px;
+.tool-btn:hover{
+transform:scale(1.1);
+}
+
+.drop-zone{
+width:200px;
+height:80px;
+border:4px dashed white;
+margin:20px auto;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:25px;
+color:white;
+border-radius:20px;
+}
+
+.draggable{
+padding:15px 30px;
+background:#fff;
+border-radius:20px;
+cursor:grab;
+font-size:30px;
+font-weight:bold;
+margin:10px;
+display:inline-block;
+}
+
+.score-board{
+position:fixed;
+right:10px;
+top:100px;
+background:#fff;
+padding:15px;
 border-radius:20px;
 font-size:22px;
-font-weight:bold;
+box-shadow:0 0 15px rgba(0,0,0,0.3);
+}
+
+.next-btn{
+margin-top:30px;
+padding:15px 35px;
+font-size:25px;
+border:none;
+border-radius:20px;
+background:linear-gradient(to right,#00f260,#0575e6);
+color:white;
 cursor:pointer;
-transition:0.3s;
-
+display:none;
 }
 
-.option:hover{
-
-transform:scale(1.08);
-background:#4fc3f7;
-
-}
-
-.feedback{
-
-font-size:28px;
-font-weight:bold;
-text-align:center;
+.typing-box{
+padding:15px;
+font-size:30px;
+border-radius:15px;
+border:none;
 margin-top:20px;
-min-height:50px;
-
+width:300px;
+text-align:center;
 }
 
-.badge{
+.confetti{
+position:fixed;
+width:10px;
+height:10px;
+background:red;
+top:-10px;
+animation:fall linear forwards;
+z-index:9999;
+}
 
-font-size:40px;
+@keyframes fall{
+to{
+transform:translateY(100vh) rotate(720deg);
+opacity:0;
+}
+}
+
+.match-area{
+display:flex;
+justify-content:center;
+gap:50px;
+flex-wrap:wrap;
+margin-top:30px;
+}
+
+.match-box{
+background:white;
+padding:20px;
+border-radius:20px;
+font-size:25px;
+width:180px;
 text-align:center;
-margin-top:10px;
-
 }
 
 .progress{
-
 width:100%;
-height:20px;
-background:#ddd;
+height:25px;
+background:#fff;
 border-radius:20px;
+margin-top:20px;
 overflow:hidden;
-margin:20px 0;
-
 }
 
 .progress-bar{
-
 height:100%;
 width:0%;
-background:linear-gradient(90deg,#00c853,#64dd17);
-transition:0.5s;
-
+background:linear-gradient(to right,#ff512f,#dd2476);
+transition:1s;
 }
 
-.kingdom-box{
-
-background:#fff8e1;
-padding:25px;
-border-radius:25px;
+.badge{
+font-size:30px;
 margin-top:20px;
-border:5px dashed #ff9800;
-
-}
-
-.final-score{
-
-font-size:65px;
-font-weight:bold;
-text-align:center;
-color:#ff6f00;
-
-}
-
-.certificate{
-
-background:#fff8e1;
-border:8px dashed #ff9800;
-padding:30px;
-border-radius:25px;
-
-}
-
-.character{
-
-font-size:70px;
-text-align:center;
-
+display:none;
 }
 
 @media(max-width:768px){
 
-.question{
+.title{
+font-size:24px;
+}
+
+.tool-btn{
 font-size:22px;
+padding:15px;
 }
 
-.option{
-width:100%;
-font-size:18px;
-}
-
-.final-score{
-font-size:45px;
+.instructions{
+font-size:20px;
 }
 
 }
-
 </style>
-
 </head>
 
 <body>
 
-<div id="gameBox">
+<header>
+<img src="assets/innovine-logo.png" class="logo">
+<div class="title">🌈 Rainbow Writer Adventure</div>
+</header>
 
-<audio id="correctSound"
-src="assets/correct-1.mp3"></audio>
+<div class="score-board">
+⭐ Score: <span id="score">0</span><br><br>
+🏆 Level: <span id="levelNo">1</span>
+</div>
 
-<audio id="wrongSound"
-src="assets/wrong.mp3"></audio>
+<div class="game-container">
 
-<!-- INTRO -->
+<!-- LEVEL 1 -->
+<div class="level active" id="level1">
+<img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" class="teacher">
 
-<div class="screen active"
-id="intro">
+<h2>LEVEL 1 - Bold Magic</h2>
 
-<img src="assets/innovine-logo.png"
-class="logo">
+<div class="instructions">
+Click the BOLD button!
+</div>
 
-<div class="character">🏰</div>
+<div class="toolbar">
+<button class="tool-btn" onclick="checkAnswer(true,1)">B</button>
+<button class="tool-btn" onclick="wrong()">I</button>
+<button class="tool-btn" onclick="wrong()">U</button>
+</div>
 
-<h1>Formatting Fun Kingdom</h1>
+<button class="next-btn" id="next1" onclick="nextLevel(1)">Next Level</button>
+</div>
 
-<h3>Grade 2 Interactive Game</h3>
+<!-- LEVEL 2 -->
+<div class="level" id="level2">
 
-<h3>
-Bold • Italic • Underline • Alignment • Bullets
-</h3>
+<img src="https://cdn-icons-png.flaticon.com/512/3135/3135789.png" class="teacher">
 
-<center>
+<h2>LEVEL 2 - Italic Race</h2>
 
-<input type="text"
-id="studentName"
-placeholder="Enter Student Name">
+<div class="instructions">
+Type Shortcut for Italic
+</div>
+
+<input type="text" class="typing-box" id="italicInput" placeholder="Type here">
 
 <br>
 
-<button class="btn"
-onclick="startGame()">
-🚀 Enter Kingdom
-</button>
+<button class="tool-btn" onclick="checkItalic()">Submit</button>
 
-</center>
+<button class="next-btn" id="next2" onclick="nextLevel(2)">Next Level</button>
 
 </div>
 
-<!-- GAME -->
+<!-- LEVEL 3 -->
+<div class="level" id="level3">
 
-<div class="screen"
-id="gameScreen">
+<h2>LEVEL 3 - Underline Detective</h2>
 
-<img src="assets/innovine-logo.png"
-class="logo">
+<div class="instructions">
+Click the UNDERLINED word
+</div>
 
-<div class="score">
-⭐ Stars :
-<span id="score">0</span>
+<div style="font-size:40px; margin-top:20px;">
+<span onclick="wrong()">Rainbow</span>
+<span onclick="checkAnswer(true,3)" style="text-decoration:underline; cursor:pointer;">Writer</span>
+<span onclick="wrong()">Magic</span>
+</div>
+
+<button class="next-btn" id="next3" onclick="nextLevel(3)">Next Level</button>
+
+</div>
+
+<!-- LEVEL 4 -->
+<div class="level" id="level4">
+
+<h2>LEVEL 4 - Drag & Drop</h2>
+
+<div class="instructions">
+Drag B to Bold Box
+</div>
+
+<div class="draggable" draggable="true" id="dragB">B</div>
+
+<div class="drop-zone" id="dropBold">Drop Here</div>
+
+<button class="next-btn" id="next4" onclick="nextLevel(4)">Next Level</button>
+
+</div>
+
+<!-- LEVEL 5 -->
+<div class="level" id="level5">
+
+<h2>LEVEL 5 - Alignment Challenge</h2>
+
+<div class="instructions">
+Which alignment keeps text in center?
+</div>
+
+<div class="toolbar">
+<button class="tool-btn" onclick="wrong()">Left</button>
+<button class="tool-btn" onclick="checkAnswer(true,5)">Center</button>
+<button class="tool-btn" onclick="wrong()">Right</button>
+<button class="tool-btn" onclick="wrong()">Justify</button>
+</div>
+
+<button class="next-btn" id="next5" onclick="nextLevel(5)">Next Level</button>
+
+</div>
+
+<!-- LEVEL 6 -->
+<div class="level" id="level6">
+
+<h2>LEVEL 6 - Shortcut Blast</h2>
+
+<div class="instructions">
+Type Shortcut for Underline
+</div>
+
+<input type="text" class="typing-box" id="underlineInput">
+
+<br>
+
+<button class="tool-btn" onclick="checkUnderline()">Submit</button>
+
+<button class="next-btn" id="next6" onclick="nextLevel(6)">Next Level</button>
+
+</div>
+
+<!-- LEVEL 7 -->
+<div class="level" id="level7">
+
+<h2>LEVEL 7 - Bullets Party</h2>
+
+<div class="instructions">
+Which list uses BULLETS?
+</div>
+
+<div class="match-area">
+
+<div class="match-box" onclick="checkAnswer(true,7)">
+• Apple<br>
+• Mango<br>
+• Banana
+</div>
+
+<div class="match-box" onclick="wrong()">
+1. Cat<br>
+2. Dog<br>
+3. Rat
+</div>
+
+</div>
+
+<div class="badge" id="finalBadge">
+🏅 Writer Wizard Badge Earned!
+</div>
+
 </div>
 
 <div class="progress">
-
-<div class="progress-bar"
-id="progressBar"></div>
-
-</div>
-
-<div class="character"
-id="character">
-🧙
-</div>
-
-<div class="question"
-id="question">
-Question
-</div>
-
-<div class="kingdom-box">
-
-<div id="gameArea"></div>
-
-</div>
-
-<div class="feedback"
-id="feedback"></div>
-
-<div class="badge"
-id="badge"></div>
-
-<center>
-
-<button class="btn"
-onclick="nextQuestion()">
-Next ➜
-</button>
-
-</center>
-
-</div>
-
-<!-- FINAL -->
-
-<div class="screen"
-id="finalScreen">
-
-<img src="assets/innovine-logo.png"
-class="logo">
-
-<div class="certificate">
-
-<h1>🏆 Formatting Champion Certificate</h1>
-
-<h2 id="studentDisplay"></h2>
-
-<div class="final-score"
-id="finalScore"></div>
-
-<h2 id="rank"></h2>
-
-<h3>
-🌈 You saved the Formatting Kingdom!
-</h3>
-
-</div>
-
-<center>
-
-<button class="btn"
-onclick="location.reload()">
-🔄 Replay
-</button>
-
-</center>
-
+<div class="progress-bar" id="progressBar"></div>
 </div>
 
 </div>
 
 <script>
 
-let student="";
-let score=0;
-let currentQuestion=0;
+let score = 0;
 
-const questions=[
-
-{
-type:"mcq",
-q:"Which tool makes text dark?",
-options:["Bold","Italic","Underline"],
-answer:"Bold",
-badge:"⭐ Bold Badge"
-},
-
-{
-type:"mcq",
-q:"Which tool slants text?",
-options:["Underline","Italic","Bold"],
-answer:"Italic",
-badge:"🌈 Italic Badge"
-},
-
-{
-type:"mcq",
-q:"Which tool draws line below text?",
-options:["Bold","Underline","Redo"],
-answer:"Underline",
-badge:"✨ Underline Badge"
-},
-
-{
-type:"mcq",
-q:"Which alignment keeps text in center?",
-options:["Center","Left","Right"],
-answer:"Center",
-badge:"🎯 Alignment Badge"
-},
-
-{
-type:"mcq",
-q:"Which alignment starts text from left side?",
-options:["Right","Left","Center"],
-answer:"Left",
-badge:"🏆 Left Align Badge"
-},
-
-{
-type:"mcq",
-q:"Which option creates points in list?",
-options:["Bullets","Paste","Save"],
-answer:"Bullets",
-badge:"🌟 Bullets Badge"
-},
-
-{
-type:"mcq",
-q:"Which command finds a word?",
-options:["Find","Copy","Italic"],
-answer:"Find",
-badge:"🔍 Find Badge"
-},
-
-{
-type:"mcq",
-q:"Which command changes one word into another?",
-options:["Replace","Save","Bold"],
-answer:"Replace",
-badge:"🪄 Replace Badge"
-},
-
-{
-type:"mcq",
-q:"Shortcut key for Copy is?",
-options:["Ctrl + C","Ctrl + V","Ctrl + B"],
-answer:"Ctrl + C",
-badge:"⌨ Copy Master"
-},
-
-{
-type:"mcq",
-q:"Shortcut key for Paste is?",
-options:["Ctrl + P","Ctrl + V","Ctrl + U"],
-answer:"Ctrl + V",
-badge:"📋 Paste Master"
-}
-
-];
-
-/* START */
-
-function startGame(){
-
-student=
-document.getElementById("studentName").value;
-
-if(student===""){
-
-alert("Please Enter Student Name");
-return;
-
-}
-
-showScreen("gameScreen");
-
-loadQuestion();
-
-}
-
-/* SCREEN */
-
-function showScreen(id){
-
-document.querySelectorAll(".screen")
-.forEach(screen=>{
-screen.classList.remove("active");
-});
-
-document.getElementById(id)
-.classList.add("active");
-
-}
-
-/* LOAD QUESTION */
-
-function loadQuestion(){
-
-updateProgress();
-
-let q=questions[currentQuestion];
-
-document.getElementById("question")
-.innerHTML=
-"Q"+(currentQuestion+1)+". "+q.q;
-
-let html=`<div class="option-container">`;
-
-q.options.forEach(opt=>{
-
-html+=`
-<div class="option"
-onclick="checkAnswer('${opt}')">
-${opt}
-</div>
-`;
-
-});
-
-html+=`</div>`;
-
-document.getElementById("gameArea")
-.innerHTML=html;
-
-document.getElementById("feedback")
-.innerHTML="";
-
-}
-
-/* SCORE */
+const correctSound = new Audio("assets/correct-1.mp3");
+const wrongSound = new Audio("assets/wrong.mp3");
 
 function updateScore(){
-
-document.getElementById("score")
-.innerHTML=score;
-
+document.getElementById("score").innerText = score;
 }
 
-/* PROGRESS */
+function checkAnswer(correct, level){
 
-function updateProgress(){
+if(correct){
 
-let progress=
-(currentQuestion/questions.length)*100;
-
-document.getElementById("progressBar")
-.style.width=progress+"%";
-
-}
-
-/* CORRECT */
-
-function correctAnswer(badge){
-
-score+=2;
+score += 10;
 
 updateScore();
 
-document.getElementById("correctSound").play();
+correctSound.play();
 
-document.getElementById("feedback")
-.innerHTML=
-"⭐ Correct Answer!";
+confettiBlast();
 
-document.getElementById("feedback")
-.style.color="green";
+document.getElementById("next"+level).style.display = "inline-block";
 
-document.getElementById("badge")
-.innerHTML=badge;
+}
+}
 
-confetti({
-particleCount:180,
-spread:120
+function wrong(){
+
+wrongSound.play();
+
+alert("Oops! Try Again 😊");
+
+}
+
+function nextLevel(current){
+
+document.getElementById("level"+current).classList.remove("active");
+
+document.getElementById("level"+(current+1)).classList.add("active");
+
+document.getElementById("levelNo").innerText = current+1;
+
+let progress = ((current)/7)*100;
+
+document.getElementById("progressBar").style.width = progress+"%";
+
+}
+
+function checkItalic(){
+
+let val = document.getElementById("italicInput").value.toLowerCase();
+
+if(val=="ctrl+i" || val=="ctrl + i"){
+
+checkAnswer(true,2);
+
+}else{
+
+wrong();
+
+}
+
+}
+
+function checkUnderline(){
+
+let val = document.getElementById("underlineInput").value.toLowerCase();
+
+if(val=="ctrl+u" || val=="ctrl + u"){
+
+checkAnswer(true,6);
+
+}else{
+
+wrong();
+
+}
+
+}
+
+function confettiBlast(){
+
+for(let i=0;i<100;i++){
+
+let confetti = document.createElement("div");
+
+confetti.classList.add("confetti");
+
+document.body.appendChild(confetti);
+
+confetti.style.left = Math.random()*window.innerWidth+"px";
+
+confetti.style.background = `hsl(${Math.random()*360},100%,50%)`;
+
+confetti.style.animationDuration = Math.random()*3+2+"s";
+
+setTimeout(()=>{
+confetti.remove();
+},5000);
+
+}
+
+}
+
+const dragB = document.getElementById("dragB");
+const dropBold = document.getElementById("dropBold");
+
+dragB.addEventListener("dragstart",(e)=>{
+e.dataTransfer.setData("text","B");
 });
 
-}
-
-/* WRONG */
-
-function wrongAnswer(){
-
-document.getElementById("wrongSound").play();
-
-document.getElementById("feedback")
-.innerHTML=
-"❌ Wrong Answer";
-
-document.getElementById("feedback")
-.style.color="red";
-
-document.getElementById("badge")
-.innerHTML="";
-
-}
-
-/* CHECK ANSWER */
-
-function checkAnswer(ans){
-
-let q=questions[currentQuestion];
-
-if(ans===q.answer){
-
-correctAnswer(q.badge);
-
-}else{
-
-wrongAnswer();
-
-}
-
-}
-
-/* NEXT */
-
-function nextQuestion(){
-
-currentQuestion++;
-
-if(currentQuestion>=questions.length){
-
-showFinal();
-
-}else{
-
-loadQuestion();
-
-}
-
-}
-
-/* FINAL */
-
-function showFinal(){
-
-showScreen("finalScreen");
-
-document.getElementById("studentDisplay")
-.innerHTML=
-"👏 Congratulations "+student;
-
-document.getElementById("finalScore")
-.innerHTML=
-score+" Stars";
-
-let rank="";
-
-if(score>=18){
-
-rank="🏆 Formatting Kingdom Hero";
-
-}else if(score>=10){
-
-rank="🌟 Writer Wizard";
-
-}else{
-
-rank="👍 Keep Practicing";
-
-}
-
-document.getElementById("rank")
-.innerHTML=rank;
-
-confetti({
-particleCount:600,
-spread:250
+dropBold.addEventListener("dragover",(e)=>{
+e.preventDefault();
 });
+
+dropBold.addEventListener("drop",(e)=>{
+e.preventDefault();
+
+let data = e.dataTransfer.getData("text");
+
+if(data=="B"){
+
+checkAnswer(true,4);
+
+dropBold.innerHTML = "✅ Correct!";
+
+}else{
+
+wrong();
+
+}
+
+});
+
+window.onload = ()=>{
+
+alert("🌈 Welcome to Rainbow Writer Adventure!");
 
 }
 

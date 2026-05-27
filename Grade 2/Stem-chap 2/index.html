@@ -211,27 +211,6 @@ top:20px;
 right:20px;
 }
 
-.confetti{
-position:fixed;
-width:10px;
-height:10px;
-animation:fall 4s linear forwards;
-z-index:9999;
-}
-
-@keyframes fall{
-0%{
-transform:translateY(-100px)
-rotate(0deg);
-opacity:1;
-}
-100%{
-transform:translateY(100vh)
-rotate(720deg);
-opacity:0;
-}
-}
-
 .tipBox{
 background:#fff3cd;
 padding:15px;
@@ -239,43 +218,6 @@ border-radius:20px;
 margin-top:20px;
 font-size:24px;
 text-align:center;
-}
-
-.platformArea{
-position:relative;
-width:100%;
-height:320px;
-background:linear-gradient(
-to bottom,
-#87ceeb,
-#fff
-);
-border-radius:20px;
-overflow:hidden;
-margin-top:30px;
-}
-
-.player{
-position:absolute;
-left:20px;
-bottom:20px;
-font-size:60px;
-transition:0.5s;
-}
-
-.platform{
-position:absolute;
-width:120px;
-height:20px;
-background:#8e44ad;
-border-radius:20px;
-}
-
-.goal{
-position:absolute;
-right:20px;
-top:20px;
-font-size:60px;
 }
 
 .badge{
@@ -302,15 +244,101 @@ width:300px;
 text-align:center;
 }
 
-.speedBox{
-text-align:center;
-margin-top:40px;
+.confetti{
+position:fixed;
+width:10px;
+height:10px;
+animation:fall 4s linear forwards;
+z-index:9999;
 }
 
-.timer{
+@keyframes fall{
+0%{
+transform:translateY(-100px)
+rotate(0deg);
+opacity:1;
+}
+100%{
+transform:translateY(100vh)
+rotate(720deg);
+opacity:0;
+}
+}
+
+.riverArea{
+position:relative;
+width:100%;
+height:320px;
+background:linear-gradient(
+to bottom,
+#4fc3f7,
+#81d4fa
+);
+border-radius:20px;
+overflow:hidden;
+margin-top:30px;
+}
+
+.stone{
+position:absolute;
+width:100px;
+height:100px;
+background:#8d6e63;
+border-radius:50%;
+display:flex;
+justify-content:center;
+align-items:center;
 font-size:40px;
-color:#ff1744;
-font-weight:bold;
+color:white;
+cursor:pointer;
+transition:0.3s;
+}
+
+.stone:hover{
+transform:scale(1.1);
+}
+
+.robo{
+position:absolute;
+left:20px;
+bottom:30px;
+font-size:60px;
+transition:0.5s;
+}
+
+.finish{
+position:absolute;
+right:20px;
+top:20px;
+font-size:60px;
+}
+
+.dragArea{
+display:flex;
+justify-content:center;
+gap:30px;
+flex-wrap:wrap;
+margin-top:30px;
+}
+
+.dragBox{
+width:220px;
+height:180px;
+border:5px dashed purple;
+border-radius:20px;
+background:white;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:28px;
+}
+
+.dragItem{
+padding:20px;
+background:#ffeb3b;
+border-radius:20px;
+font-size:24px;
+cursor:pointer;
 }
 
 @media(max-width:768px){
@@ -374,7 +402,7 @@ id="startScreen">
 <h1>⚡ Robo STEM Circuit Universe ⚡</h1>
 
 <h2>
-Classic Electricity Adventure for Grade 2
+Electricity Adventure for Young Innovators
 </h2>
 
 </div>
@@ -383,7 +411,7 @@ Classic Electricity Adventure for Grade 2
 
 <div class="question">
 
-🤖 Welcome Young STEM Hero!
+🤖 Welcome Young Scientist!
 
 <br><br>
 
@@ -392,10 +420,10 @@ Learn through:
 
 ⚡ Circuit Builder  
 🧩 Sorting Games  
-🌌 Space Missions  
+🌉 River Crossing Adventures  
+🔎 Detective Missions  
 🏃 Speed Challenges  
-🔎 Detective Adventures  
-🎮 Platform Mazes
+🎮 Drag & Drop STEM Fun
 
 </div>
 
@@ -517,26 +545,20 @@ type:"circuit"
 
 {
 title:"🧩 Sorting Game",
-question:"Sort OPEN and CLOSED circuits",
+question:"Sort CLOSED and OPEN circuits",
 type:"sorting"
 },
 
 {
-title:"🎮 Platform Adventure",
-question:"Jump to glowing bulb",
-type:"platform"
+title:"🌉 River Crossing Adventure",
+question:"Help Robo cross electricity river",
+type:"river"
 },
 
 {
-title:"🔎 Detective Game",
+title:"🔎 Detective Mission",
 question:"Find electrical components",
 type:"detective"
-},
-
-{
-title:"🚀 Space Mission",
-question:"Charge the rocket",
-type:"space"
 },
 
 {
@@ -549,6 +571,12 @@ type:"speed"
 title:"🌞 Solar Energy Mission",
 question:"Choose SOLAR PANEL",
 type:"solar"
+},
+
+{
+title:"🎮 Drag & Drop STEM",
+question:"Drag SWITCH to correct box",
+type:"drag"
 }
 
 ];
@@ -694,32 +722,44 @@ onclick="correctAnswer(this,
 
 }
 
-else if(q.type==="platform"){
+else if(q.type==="river"){
 
 gameArea.innerHTML=`
 
-<div class="platformArea">
+<div class="riverArea">
 
-<div class="platform"
-style="left:80px;bottom:80px;"></div>
+<div class="stone"
+style="left:120px;top:180px;"
+onclick="jumpStone(1,this)">
+1
+</div>
 
-<div class="platform"
-style="left:250px;bottom:140px;"></div>
+<div class="stone"
+style="left:300px;top:120px;"
+onclick="jumpStone(2,this)">
+2
+</div>
 
-<div class="platform"
-style="left:450px;bottom:100px;"></div>
+<div class="stone"
+style="left:500px;top:180px;"
+onclick="jumpStone(3,this)">
+3
+</div>
 
-<div class="platform"
-style="left:650px;bottom:170px;"></div>
+<div class="stone"
+style="left:700px;top:100px;"
+onclick="jumpStone(4,this)">
+4
+</div>
 
-<div class="player"
-id="platformPlayer">
+<div class="robo"
+id="riverRobo">
 
-⚡
+🤖
 
 </div>
 
-<div class="goal">
+<div class="finish">
 
 💡
 
@@ -727,20 +767,9 @@ id="platformPlayer">
 
 </div>
 
-<div class="buttonArea">
-
-<button class="gameBtn"
-onclick="movePlatformPlayer()">
-
-JUMP ➡
-
-</button>
-
-</div>
-
 `;
 
-platformStep=0;
+riverStep=1;
 
 }
 
@@ -770,53 +799,18 @@ detectiveCount=0;
 
 }
 
-else if(q.type==="space"){
-
-gameArea.innerHTML=`
-
-<div style="text-align:center;
-margin-top:40px;">
-
-<div style="font-size:110px;"
-id="rocket">
-
-🚀
-
-</div>
-
-<div style="font-size:90px;">
-🔋
-</div>
-
-<div class="buttonArea">
-
-<button class="gameBtn"
-onclick="chargeRocket()">
-
-CHARGE ⚡
-
-</button>
-
-</div>
-
-</div>
-
-`;
-
-}
-
 else if(q.type==="speed"){
 
 gameArea.innerHTML=`
 
-<div class="speedBox">
+<div style="text-align:center;">
 
-<div class="timer"
-id="timer">
+<h1 id="timer"
+style="color:red;font-size:50px;">
 
 5
 
-</div>
+</h1>
 
 <br>
 
@@ -853,6 +847,54 @@ onclick="wrongAnswer(this,
 </div>
 
 `;
+
+}
+
+else if(q.type==="drag"){
+
+gameArea.innerHTML=`
+
+<div class="dragArea">
+
+<div class="dragItem"
+draggable="true"
+id="switchItem">
+
+🔌 SWITCH
+
+</div>
+
+<div class="dragBox"
+id="switchBox">
+
+DROP HERE
+
+</div>
+
+</div>
+
+`;
+
+const dragItem =
+document.getElementById("switchItem");
+
+const dropBox =
+document.getElementById("switchBox");
+
+dragItem.addEventListener(
+"dragstart",
+dragStart
+);
+
+dropBox.addEventListener(
+"dragover",
+dragOver
+);
+
+dropBox.addEventListener(
+"drop",
+dropItem
+);
 
 }
 
@@ -902,54 +944,28 @@ showNextButton();
 
 }
 
-let platformStep=0;
+let riverStep=1;
 
-function movePlatformPlayer(){
+function jumpStone(number,element){
 
-const player =
-document.getElementById("platformPlayer");
+if(number===riverStep){
 
-platformStep++;
-
-if(platformStep===1){
-
-player.style.left="120px";
-player.style.bottom="120px";
-
-showGuide(
-"Electricity is moving!"
-);
-
-}
-
-if(platformStep===2){
-
-player.style.left="300px";
-player.style.bottom="180px";
-
-showGuide(
-"Keep jumping Robo " + playerName
-);
-
-}
-
-if(platformStep===3){
-
-player.style.left="500px";
-player.style.bottom="140px";
-
-showGuide(
-"Almost at the bulb!"
-);
-
-}
-
-if(platformStep===4){
-
-player.style.left="720px";
-player.style.bottom="210px";
+element.style.background =
+"limegreen";
 
 correctSound.play();
+
+showGuide(
+"Robo " + playerName +
+" crossed safely!"
+);
+
+riverStep++;
+
+if(riverStep===5){
+
+document.getElementById("riverRobo")
+.style.left="820px";
 
 showGuide(
 "Switch ON to light the bulb!"
@@ -966,6 +982,18 @@ updateScore();
 confettiBlast();
 
 showNextButton();
+
+}
+
+}else{
+
+element.style.background="red";
+
+wrongSound.play();
+
+showGuide(
+"Oh no! Wrong stone."
+);
 
 }
 
@@ -1003,48 +1031,19 @@ showNextButton();
 
 }
 
-function chargeRocket(){
-
-const rocket =
-document.getElementById("rocket");
-
-rocket.style.transform =
-"translateY(-180px)";
-
-correctSound.play();
-
-showGuide(
-"Great job! Electricity is flowing!"
-);
-
-document.getElementById("tipBox")
-.innerHTML =
-"🚀 Electricity powers machines and rockets.";
-
-score++;
-
-updateScore();
-
-confettiBlast();
-
-showNextButton();
-
-}
-
-let timerValue = 5;
+let timerValue=5;
 let timerInterval;
 
 function startTimer(){
 
-timerValue = 5;
+timerValue=5;
 
-timerInterval =
-setInterval(()=>{
+timerInterval=setInterval(()=>{
 
 timerValue--;
 
 document.getElementById("timer")
-.innerHTML = timerValue;
+.innerHTML=timerValue;
 
 if(timerValue<=0){
 
@@ -1085,6 +1084,52 @@ updateScore();
 confettiBlast();
 
 showNextButton();
+
+}
+
+function dragStart(e){
+
+e.dataTransfer.setData(
+"text",
+e.target.id
+);
+
+}
+
+function dragOver(e){
+
+e.preventDefault();
+
+}
+
+function dropItem(e){
+
+e.preventDefault();
+
+const data =
+e.dataTransfer.getData("text");
+
+if(data==="switchItem"){
+
+correctSound.play();
+
+showGuide(
+"Great job! Electricity is flowing!"
+);
+
+document.getElementById("tipBox")
+.innerHTML =
+"🔌 Switches control electricity flow.";
+
+score++;
+
+updateScore();
+
+confettiBlast();
+
+showNextButton();
+
+}
 
 }
 

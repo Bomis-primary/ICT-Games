@@ -1,1 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
+<title>⚡ Robo Circuit Quest ⚡</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Comic Sans MS',cursive;
+}
+
+body{
+overflow:hidden;
+height:100vh;
+background:linear-gradient(
+45deg,
+#ff9a9e,
+#fad0c4,
+#fbc2eb,
+#84fab0,
+#8fd3f4,
+#a18cd1
+);
+
+background-size:400% 400%;
+animation:bgMove 12s infinite alternate;
+}
+
+@keyframes bgMove{
+0%{background-position:left;}
+100%{background-position:right;}
+}
+
+.sparkles{
+position:fixed;
+width:100%;
+height:100%;
+pointer-events:none;
+overflow:hidden;
+z-index:0;
+}
+
+.sparkle{
+position:absolute;
+width:10px;
+height:10px;
+background:white;
+border-radius:50%;
+animation:sparkleMove 6s linear infinite;
+opacity:0.8;
+}
+
+@keyframes sparkleMove{
+0%{
+transform:translateY(100vh);
+}
+100%{
+transform:translateY(-100px);
+}
+}
+
+.screen{
+display:none;
+width:100%;
+height:100vh;
+padding:20px;
+overflow:auto;
+position:relative;
+z-index:2;
+}
+
+.active{
+display:block;
+}
+
+.logo{
+position:fixed;
+top:10px;
+left:10px;
+width:120px;
+z-index:999;
+}
+
+.scoreBox{
+position:fixed;
+top:10px;
+right:10px;
+background:white;
+padding:10px 20px;
+border-radius:20px;
+font-size:24px;
+font-weight:bold;
+z-index:999;
+box-shadow:0 0 10px rgba(0,0,0,0.3);
+}
+
+.header{
+text-align:center;
+margin-top:40px;
+color:white;
+text-shadow:3px 3px 5px black;
+}
+
+.header h1{
+font-size:58px;
+}
+
+.levelBox{
+max-width:1150px;
+margin:20px auto;
+background:rgba(255,255,255,0.95);
+padding:25px;
+border-radius:30px;
+min-height:600px;
+box-shadow:0 0 20px rgba(0,0,0,0.3);
+}
+
+.question{
+font-size:30px;
+text-align:center;
+margin:25px 0;
+}
+
+.buttonArea{
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+gap:20px;
+margin-top:25px;
+}
+
+.gameBtn{
+padding:18px 35px;
+font-size:24px;
+border:none;
+border-radius:20px;
+cursor:pointer;
+background:linear-gradient(
+to right,
+#ff758c,
+#ff7eb3
+);
+color:white;
+transition:0.3s;
+}
+
+.gameBtn:hover{
+transform:scale(1.1);
+}
+
+.imageCard{
+width:180px;
+height:180px;
+background:white;
+border-radius:20px;
+padding:10px;
+cursor:pointer;
+transition:0.3s;
+box-shadow:0 5px 10px rgba(0,0,0,0.3);
+object-fit:contain;
+}
+
+.imageCard:hover{
+transform:scale(1.1);
+}
+
+.correct{
+border:8px solid limegreen;
+}
+
+.wrong{
+border:8px solid red;
+}
+
+.nextBtn{
+display:none;
+margin:30px auto;
+}
+
+.backBtn{
+position:absolute;
+top:20px;
+right:20px;
+}
+
+.guideBox{
+position:fixed;
+bottom:20px;
+left:20px;
+background:white;
+padding:15px 20px;
+border-radius:20px;
+font-size:22px;
+max-width:420px;
+display:none;
+z-index:999;
+box-shadow:0 0 15px rgba(0,0,0,0.3);
+animation:flash 1s infinite alternate;
+}
+
+@keyframes flash{
+from{transform:scale(1);}
+to{transform:scale(1.05);}
+}
+
+.confetti{
+position:fixed;
+width:10px;
+height:10px;
+animation:fall 4s linear forwards;
+z-index:9999;
+}
+
+@keyframes fall{
+0%{
+transform:translateY(-100px)
+rotate(0deg);
+opacity:1;
+}
+100%{
+transform:translateY(100vh)
+rotate(720deg);
+opacity:0;
+}
+}
+
+.platformArea{
+position:relative;
+width:100%;
+height:320px;
+background:linear-gradient(
+to bottom,
+#87ceeb,
+#fff
+);
+border-radius:20px;
+overflow:hidden;
+margin-top:30px;
+}
+
+.player{
+position:absolute;
+left:20px;
+bottom:20px;
+font-size:60px;
+transition:0.5s;
+}
+
+.platform{
+position:absolute;
+width:120px;
+height:20px;
+background:#8e44ad;
+border-radius:20px;
+}
+
+.goal{
+position:absolute;
+right:20px;
+top:20px;
+font-size:60px;
+}
+
+.badge{
+display:inline-block;
+padding:20px;
+margin:15px;
+background:gold;
+border-radius:20px;
+font-size:28px;
+}
+
+.finalScreen{
+text-align:center;
+margin-top:60px;
+color:white;
+}
+
+.nameInput{
+padding:15px;
+font-size:24px;
+border-radius:20px;
+border:none;
+width:300px;
+text-align:center;
+}
+
+.tipBox{
+background:#fff3cd;
+padding:15px;
+border-radius:20px;
+margin-top:20px;
+font-size:24px;
+text-align:center;
+}
+
+@media(max-width:768px){
+
+.question{
+font-size:22px;
+}
+
+.gameBtn{
+font-size:18px;
+padding:15px;
+}
+
+.logo{
+width:80px;
+}
+
+.header h1{
+font-size:34px;
+}
+
+.imageCard{
+width:120px;
+height:120px;
+}
+
+.guideBox{
+font-size:16px;
+max-width:280px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sparkles" id="sparkles"></div>
+
+<img src="assets/innovine-logo.png"
+class="logo">
+
+<div class="scoreBox">
+⭐ Score:
+<span id="score">0</span>/5
+</div>
+
+<div class="guideBox" id="guideBox">
+🤖 Great Job!
+</div>
+
+<!-- START SCREEN -->
+
+<div class="screen active"
+id="startScreen">
+
+<div class="header">
+
+<h1>⚡ Robo Circuit Quest ⚡</h1>
+
+<h2>
+Classic STEM Adventure for Smart Learners
+</h2>
+
+</div>
+
+<div class="levelBox">
+
+<div class="question">
+
+🤖 Welcome Future Scientist!
+
+<br><br>
+
+Enter your name to begin
+your electricity adventure.
+
+</div>
+
+<div style="text-align:center;">
+
+<input type="text"
+id="playerName"
+class="nameInput"
+placeholder="Enter Your Name">
+
+<br><br>
+
+<button class="gameBtn"
+onclick="startGame()">
+
+START ADVENTURE
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- GAME SCREEN -->
+
+<div class="screen"
+id="gameScreen">
+
+<div class="levelBox">
+
+<button class="gameBtn backBtn"
+onclick="goBack()">
+
+⬅ BACK
+
+</button>
+
+<h2 id="levelTitle"></h2>
+
+<div class="question"
+id="questionText"></div>
+
+<div id="gameArea"></div>
+
+<div class="tipBox"
+id="tipBox">
+
+💡 STEM Tip appears here!
+
+</div>
+
+<div class="buttonArea">
+
+<button class="gameBtn nextBtn"
+id="nextBtn"
+onclick="nextQuestion()">
+
+➡ NEXT GAME
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- FINAL SCREEN -->
+
+<div class="screen"
+id="finalScreen">
+
+<div class="finalScreen">
+
+<h1>
+🏆 Congratulations
+<span id="finalName"></span>
+🏆
+</h1>
+
+<h2 id="finalScore"></h2>
+
+<div id="badgeArea"></div>
+
+<br>
+
+<button class="gameBtn"
+onclick="location.reload()">
+
+PLAY AGAIN
+
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+const correctSound =
+new Audio("assets/correct-1.mp3");
+
+const wrongSound =
+new Audio("assets/wrong.mp3");
+
+let currentQuestion = 0;
+let score = 0;
+let playerName = "";
+
+const questions = [
+
+{
+title:"Game 1 - Circuit Builder",
+question:"Build a CLOSED circuit!",
+type:"circuit"
+},
+
+{
+title:"Game 2 - Circuit Maze",
+question:"Help electricity reach bulb!",
+type:"maze"
+},
+
+{
+title:"Game 3 - Space Energy Mission",
+question:"Charge the rocket!",
+type:"space"
+},
+
+{
+title:"Game 4 - Solar Panel Challenge",
+question:"Click the SOLAR PANEL",
+type:"solar"
+},
+
+{
+title:"Game 5 - Switch Hero",
+question:"Choose the correct switch",
+type:"switch"
+}
+
+];
+
+function createSparkles(){
+
+for(let i=0;i<60;i++){
+
+const sparkle =
+document.createElement("div");
+
+sparkle.classList.add("sparkle");
+
+sparkle.style.left =
+Math.random()*100+"%";
+
+sparkle.style.animationDuration =
+(Math.random()*5+3)+"s";
+
+document.getElementById("sparkles")
+.appendChild(sparkle);
+
+}
+
+}
+
+createSparkles();
+
+function startGame(){
+
+playerName =
+document.getElementById("playerName")
+.value;
+
+if(playerName===""){
+
+alert("Please enter your name!");
+return;
+
+}
+
+document.getElementById("startScreen")
+.classList.remove("active");
+
+document.getElementById("gameScreen")
+.classList.add("active");
+
+loadQuestion();
+
+}
+
+function showGuide(message){
+
+const guide =
+document.getElementById("guideBox");
+
+guide.innerHTML =
+"🤖 Robo " +
+playerName +
+": " +
+message;
+
+guide.style.display = "block";
+
+setTimeout(()=>{
+
+guide.style.display = "none";
+
+},3000);
+
+}
+
+function loadQuestion(){
+
+if(currentQuestion >= questions.length){
+
+showFinal();
+return;
+
+}
+
+document.getElementById("nextBtn")
+.style.display="none";
+
+const q =
+questions[currentQuestion];
+
+document.getElementById("levelTitle")
+.innerHTML=q.title;
+
+document.getElementById("questionText")
+.innerHTML=q.question;
+
+const gameArea =
+document.getElementById("gameArea");
+
+gameArea.innerHTML="";
+
+if(q.type==="circuit"){
+
+gameArea.innerHTML=`
+
+<div class="buttonArea">
+
+<img src="assets/closed-circuit.png"
+class="imageCard"
+onclick="correctAnswer(this,
+'Awesome! You completed the circuit!',
+'💡 Closed circuits allow electricity to flow.')">
+
+<img src="assets/open circuit.png"
+class="imageCard"
+onclick="wrongAnswer(this,
+'Oh no! Electricity stopped flowing.',
+'⚡ Open circuits break electricity flow.')">
+
+</div>
+
+`;
+
+}
+
+else if(q.type==="maze"){
+
+gameArea.innerHTML=`
+
+<div class="platformArea">
+
+<div class="platform"
+style="left:80px;bottom:80px;"></div>
+
+<div class="platform"
+style="left:250px;bottom:140px;"></div>
+
+<div class="platform"
+style="left:450px;bottom:100px;"></div>
+
+<div class="platform"
+style="left:650px;bottom:170px;"></div>
+
+<div class="player"
+id="platformPlayer">
+
+⚡
+
+</div>
+
+<div class="goal">
+
+💡
+
+</div>
+
+</div>
+
+<div class="buttonArea">
+
+<button class="gameBtn"
+onclick="movePlatformPlayer()">
+
+JUMP ➡
+
+</button>
+
+</div>
+
+`;
+
+platformStep=0;
+
+}
+
+else if(q.type==="space"){
+
+gameArea.innerHTML=`
+
+<div style="text-align:center;
+margin-top:40px;">
+
+<div style="font-size:110px;"
+id="rocket">
+
+🚀
+
+</div>
+
+<div style="font-size:90px;">
+🔋
+</div>
+
+<div class="buttonArea">
+
+<button class="gameBtn"
+onclick="chargeRocket()">
+
+CHARGE ⚡
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+else if(q.type==="solar"){
+
+gameArea.innerHTML=`
+
+<div class="buttonArea">
+
+<img src="assets/solar-panel.png"
+class="imageCard"
+onclick="correctAnswer(this,
+'Excellent! Solar energy powers circuits.',
+'☀ Solar panels use sunlight for energy.')">
+
+<img src="assets/power source.png"
+class="imageCard"
+onclick="wrongAnswer(this,
+'Try again Robo Explorer!',
+'🔋 Power source gives electricity.')">
+
+<img src="assets/circuits.png"
+class="imageCard"
+onclick="wrongAnswer(this,
+'That is a circuit image!',
+'⚡ Circuits connect electrical parts.')">
+
+</div>
+
+`;
+
+}
+
+else if(q.type==="switch"){
+
+gameArea.innerHTML=`
+
+<div class="buttonArea">
+
+<img src="assets/switches.png"
+class="imageCard"
+onclick="correctAnswer(this,
+'Great job! Electricity is flowing!',
+'🔌 Switches control electricity flow.')">
+
+<img src="assets/open circuit.png"
+class="imageCard"
+onclick="wrongAnswer(this,
+'Oh no! Bulb is OFF.',
+'❌ Open circuits stop electricity.')">
+
+</div>
+
+`;
+
+}
+
+}
+
+function correctAnswer(
+element,
+message,
+tip
+){
+
+element.classList.add("correct");
+
+correctSound.play();
+
+showGuide(message);
+
+document.getElementById("tipBox")
+.innerHTML = tip;
+
+score++;
+
+updateScore();
+
+confettiBlast();
+
+showNextButton();
+
+}
+
+function wrongAnswer(
+element,
+message,
+tip
+){
+
+element.classList.add("wrong");
+
+wrongSound.play();
+
+showGuide(message);
+
+document.getElementById("tipBox")
+.innerHTML = tip;
+
+showNextButton();
+
+}
+
+let platformStep=0;
+
+function movePlatformPlayer(){
+
+const player =
+document.getElementById("platformPlayer");
+
+platformStep++;
+
+if(platformStep===1){
+
+player.style.left="120px";
+player.style.bottom="120px";
+
+showGuide(
+"Nice jump Robo " + playerName + "!"
+);
+
+}
+
+if(platformStep===2){
+
+player.style.left="300px";
+player.style.bottom="180px";
+
+showGuide(
+"Electricity is moving!"
+);
+
+}
+
+if(platformStep===3){
+
+player.style.left="500px";
+player.style.bottom="140px";
+
+showGuide(
+"Almost there!"
+);
+
+}
+
+if(platformStep===4){
+
+player.style.left="720px";
+player.style.bottom="210px";
+
+correctSound.play();
+
+showGuide(
+"Fantastic! Bulb is glowing!"
+);
+
+document.getElementById("tipBox")
+.innerHTML =
+"💡 Electricity needs a complete path.";
+
+score++;
+
+updateScore();
+
+confettiBlast();
+
+showNextButton();
+
+}
+
+}
+
+function chargeRocket(){
+
+const rocket =
+document.getElementById("rocket");
+
+rocket.style.transform =
+"translateY(-180px)";
+
+correctSound.play();
+
+showGuide(
+"Rocket powered successfully!"
+);
+
+document.getElementById("tipBox")
+.innerHTML =
+"🚀 Electricity powers machines and rockets.";
+
+score++;
+
+updateScore();
+
+confettiBlast();
+
+showNextButton();
+
+}
+
+function updateScore(){
+
+document.getElementById("score")
+.innerHTML=score;
+
+}
+
+function showNextButton(){
+
+document.getElementById("nextBtn")
+.style.display="block";
+
+}
+
+function nextQuestion(){
+
+currentQuestion++;
+
+loadQuestion();
+
+}
+
+function goBack(){
+
+if(currentQuestion>0){
+
+currentQuestion--;
+
+loadQuestion();
+
+}
+
+}
+
+function confettiBlast(){
+
+for(let i=0;i<150;i++){
+
+const confetti =
+document.createElement("div");
+
+confetti.classList.add("confetti");
+
+confetti.style.left =
+Math.random()*window.innerWidth+"px";
+
+confetti.style.background =
+`hsl(${Math.random()*360},
+100%,50%)`;
+
+confetti.style.animationDuration =
+(Math.random()*3+2)+"s";
+
+document.body.appendChild(confetti);
+
+setTimeout(()=>{
+confetti.remove();
+},5000);
+
+}
+
+}
+
+function showFinal(){
+
+document.getElementById("gameScreen")
+.classList.remove("active");
+
+document.getElementById("finalScreen")
+.classList.add("active");
+
+document.getElementById("finalName")
+.innerHTML = playerName;
+
+document.getElementById("finalScore")
+.innerHTML =
+`⭐ Total Score: ${score} / ${questions.length}`;
+
+let badgeText = "";
+
+if(score===5){
+
+badgeText =
+`<div class="badge">
+🏆 Ultimate Circuit Master
+</div>`;
+
+}
+
+else if(score>=3){
+
+badgeText =
+`<div class="badge">
+⚡ Electricity Hero
+</div>`;
+
+}
+
+else{
+
+badgeText =
+`<div class="badge">
+🌈 STEM Explorer
+</div>`;
+
+}
+
+document.getElementById("badgeArea")
+.innerHTML = badgeText;
+
+confettiBlast();
+
+}
+
+</script>
+
+</body>
+</html>

@@ -2,8 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Electricity STEM Game</title>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>Electricity STEM Mega Adventure</title>
 
 <style>
 
@@ -16,9 +18,16 @@ font-family:'Comic Sans MS', cursive;
 
 body{
 overflow:hidden;
-background:linear-gradient(45deg,#6a11cb,#2575fc,#ff758c,#ffd200);
+background:linear-gradient(
+45deg,
+#6a11cb,
+#2575fc,
+#ff758c,
+#ffd200
+);
+
 background-size:400% 400%;
-animation:bgMove 10s infinite alternate;
+animation:bgMove 12s infinite alternate;
 height:100vh;
 }
 
@@ -27,12 +36,42 @@ height:100vh;
 100%{background-position:right;}
 }
 
+.sparkles{
+position:fixed;
+width:100%;
+height:100%;
+overflow:hidden;
+pointer-events:none;
+z-index:0;
+}
+
+.sparkle{
+position:absolute;
+width:10px;
+height:10px;
+background:white;
+border-radius:50%;
+animation:sparkleMove 6s linear infinite;
+opacity:0.8;
+}
+
+@keyframes sparkleMove{
+0%{
+transform:translateY(100vh);
+}
+100%{
+transform:translateY(-100px);
+}
+}
+
 .screen{
 display:none;
 width:100%;
 height:100vh;
 padding:20px;
 overflow:auto;
+position:relative;
+z-index:2;
 }
 
 .active{
@@ -57,6 +96,7 @@ border-radius:20px;
 font-size:24px;
 font-weight:bold;
 z-index:999;
+box-shadow:0 0 10px rgba(0,0,0,0.3);
 }
 
 .header{
@@ -76,7 +116,7 @@ margin:20px auto;
 background:rgba(255,255,255,0.95);
 padding:25px;
 border-radius:30px;
-min-height:550px;
+min-height:580px;
 box-shadow:0 0 20px rgba(0,0,0,0.3);
 }
 
@@ -100,7 +140,12 @@ font-size:24px;
 border:none;
 border-radius:20px;
 cursor:pointer;
-background:linear-gradient(to right,#ff758c,#ff7eb3);
+background:linear-gradient(
+to right,
+#ff758c,
+#ff7eb3
+);
+
 color:white;
 transition:0.3s;
 }
@@ -138,6 +183,25 @@ display:none;
 margin:30px auto;
 }
 
+.guideBox{
+background:#fff3cd;
+padding:20px;
+border-radius:20px;
+margin-top:20px;
+font-size:26px;
+text-align:center;
+animation:guideBounce 2s infinite;
+}
+
+@keyframes guideBounce{
+0%,100%{
+transform:translateY(0);
+}
+50%{
+transform:translateY(-8px);
+}
+}
+
 .confetti{
 position:fixed;
 width:10px;
@@ -148,70 +212,55 @@ z-index:9999;
 
 @keyframes fall{
 0%{
-transform:translateY(-100px) rotate(0deg);
+transform:translateY(-100px)
+rotate(0deg);
 opacity:1;
 }
 100%{
-transform:translateY(100vh) rotate(720deg);
+transform:translateY(100vh)
+rotate(720deg);
 opacity:0;
 }
 }
 
-.sparkles{
-position:fixed;
+.platformArea{
+position:relative;
 width:100%;
-height:100%;
+height:320px;
+background:linear-gradient(
+to bottom,
+#87ceeb,
+#ffffff
+);
+
+border-radius:20px;
 overflow:hidden;
-pointer-events:none;
 }
 
-.sparkle{
+.platform{
 position:absolute;
-width:10px;
-height:10px;
-background:white;
-border-radius:50%;
-animation:sparkleMove 5s linear infinite;
-}
-
-@keyframes sparkleMove{
-0%{
-transform:translateY(100vh);
-}
-100%{
-transform:translateY(-100px);
-}
-}
-
-.maze{
-display:grid;
-grid-template-columns:repeat(5,80px);
-gap:5px;
-justify-content:center;
-margin-top:20px;
-}
-
-.cell{
-width:80px;
-height:80px;
-background:white;
-border-radius:10px;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:35px;
-}
-
-.wall{
-background:black;
+width:180px;
+height:25px;
+background:#8bc34a;
+border-radius:20px;
 }
 
 .player{
-background:#ffeb3b;
+position:absolute;
+font-size:50px;
+transition:0.3s;
 }
 
-.goalCell{
-background:#00e676;
+.goal{
+position:absolute;
+font-size:60px;
+}
+
+.dropdown{
+padding:15px;
+font-size:24px;
+border-radius:15px;
+border:3px solid purple;
 }
 
 .finalScreen{
@@ -269,16 +318,6 @@ width:120px;
 height:120px;
 }
 
-.maze{
-grid-template-columns:repeat(5,55px);
-}
-
-.cell{
-width:55px;
-height:55px;
-font-size:24px;
-}
-
 }
 
 </style>
@@ -286,21 +325,32 @@ font-size:24px;
 
 <body>
 
-<div class="sparkles" id="sparkles"></div>
+<div class="sparkles"
+id="sparkles"></div>
 
-<img src="assets/innovine-logo.png" class="logo">
+<img src="assets/innovine-logo.png"
+class="logo">
 
 <div class="scoreBox">
-⭐ Score: <span id="score">0</span>/5
+⭐ Score:
+<span id="score">0</span>/8
 </div>
 
 <!-- START SCREEN -->
 
-<div class="screen active" id="startScreen">
+<div class="screen active"
+id="startScreen">
 
 <div class="header">
-<h1>⚡ Electricity Adventure ⚡</h1>
-<h2>Grade 2 STEM Fun Game</h2>
+
+<h1>
+⚡ Electricity STEM Adventure ⚡
+</h1>
+
+<h2>
+Grade 2 Interactive Game
+</h2>
+
 </div>
 
 <div class="levelBox">
@@ -322,6 +372,18 @@ Learn about:
 
 </div>
 
+<div class="guideBox">
+
+🤖 Cartoon Guide Says:
+<br><br>
+
+“Great job! Electricity is flowing!”
+<br><br>
+
+“Awesome! You completed the circuit!”
+
+</div>
+
 <div class="buttonArea">
 
 <button class="gameBtn"
@@ -339,15 +401,24 @@ START GAME
 
 <!-- GAME SCREEN -->
 
-<div class="screen" id="gameScreen">
+<div class="screen"
+id="gameScreen">
 
 <div class="levelBox">
 
 <h2 id="levelTitle"></h2>
 
-<div class="question" id="questionText"></div>
+<div class="question"
+id="questionText"></div>
 
 <div id="gameArea"></div>
+
+<div class="guideBox"
+id="guideText">
+
+⚡ Let’s learn electricity!
+
+</div>
 
 <div class="buttonArea">
 
@@ -367,17 +438,26 @@ onclick="nextQuestion()">
 
 <!-- FINAL SCREEN -->
 
-<div class="screen" id="finalScreen">
+<div class="screen"
+id="finalScreen">
 
 <div class="finalScreen">
 
-<h1>🎉 AWESOME 🎉</h1>
+<h1>🎉 AMAZING 🎉</h1>
 
 <h2 id="finalScore"></h2>
 
-<div class="badge">⚡ Electricity Hero</div>
-<div class="badge">🔋 STEM Explorer</div>
-<div class="badge">🌈 Science Champion</div>
+<div class="badge">
+⚡ Electricity Hero
+</div>
+
+<div class="badge">
+🔋 Circuit Master
+</div>
+
+<div class="badge">
+🌈 STEM Champion
+</div>
 
 <br>
 
@@ -400,56 +480,103 @@ new Audio("assets/correct-1.mp3");
 const wrongSound =
 new Audio("assets/wrong.mp3");
 
-let currentQuestion = 0;
-let score = 0;
+let currentQuestion=0;
+let score=0;
 
-const questions = [
+const questions=[
 
 {
-title:"Level 1 - Electrical Appliances",
-question:"Click appliances that use electricity",
+title:"Level 1 - Appliance Hunt",
+question:
+"Click all appliances that use electricity",
 type:"appliances"
 },
 
 {
-title:"Level 2 - Circuit Maze",
-question:"Help electricity reach the bulb",
-type:"maze"
+title:"Level 2 - Circuit Builder",
+question:
+"Choose the CLOSED CIRCUIT",
+type:"dropdown",
+options:[
+"Select",
+"Closed Circuit",
+"Broken Circuit",
+"Open Circuit"
+],
+correct:"Closed Circuit"
 },
 
 {
-title:"Level 3 - Closed Circuit",
-question:"Click the CLOSED CIRCUIT picture",
-type:"circuit"
-},
-
-{
-title:"Level 4 - Safety Hero",
-question:"Choose SAFE electricity actions",
+title:"Level 3 - Safety Hero",
+question:
+"Choose SAFE electricity actions",
 type:"safety"
 },
 
 {
-title:"Level 5 - Space Power Mission",
-question:"Charge the spaceship battery",
+title:"Level 4 - Platform Maze",
+question:
+"Help electricity jump to bulb!",
+type:"platform"
+},
+
+{
+title:"Level 5 - Space Mission",
+question:
+"Charge the rocket battery",
 type:"space"
+},
+
+{
+title:"Level 6 - Circuit Detective",
+question:
+"Find the object that conducts electricity",
+type:"detective"
+},
+
+{
+title:"Level 7 - Appliance Sorting",
+question:
+"Which appliance keeps food cold?",
+type:"dropdown",
+options:[
+"Fan",
+"Fridge",
+"Laptop",
+"Bulb"
+],
+correct:"Fridge"
+},
+
+{
+title:"Level 8 - STEM Quiz",
+question:
+"Electricity makes appliances ____",
+type:"dropdown",
+options:[
+"Sleep",
+"Work",
+"Cry",
+"Jump"
+],
+correct:"Work"
 }
 
 ];
 
 function createSparkles(){
 
-for(let i=0;i<50;i++){
+for(let i=0;i<60;i++){
 
-const sparkle =
+const sparkle=
 document.createElement("div");
 
 sparkle.classList.add("sparkle");
 
-sparkle.style.left =
+sparkle.style.left=
 Math.random()*100+"%";
 
-sparkle.style.animationDuration =
+sparkle.style.animationDuration=
 (Math.random()*5+3)+"s";
 
 document.getElementById("sparkles")
@@ -475,7 +602,7 @@ loadQuestion();
 
 function loadQuestion(){
 
-if(currentQuestion >= questions.length){
+if(currentQuestion>=questions.length){
 
 showFinal();
 return;
@@ -485,7 +612,7 @@ return;
 document.getElementById("nextBtn")
 .style.display="none";
 
-const q = questions[currentQuestion];
+const q=questions[currentQuestion];
 
 document.getElementById("levelTitle")
 .innerHTML=q.title;
@@ -493,7 +620,7 @@ document.getElementById("levelTitle")
 document.getElementById("questionText")
 .innerHTML=q.question;
 
-const gameArea =
+const gameArea=
 document.getElementById("gameArea");
 
 gameArea.innerHTML="";
@@ -506,45 +633,53 @@ gameArea.innerHTML=`
 
 <img src="assets/fan.png"
 class="imageCard"
-onclick="checkAppliance(true,this)">
+onclick="checkAppliance(this)">
 
 <img src="assets/fridge.jpeg"
 class="imageCard"
-onclick="checkAppliance(true,this)">
+onclick="checkAppliance(this)">
 
 <img src="assets/laptop.png"
 class="imageCard"
-onclick="checkAppliance(true,this)">
+onclick="checkAppliance(this)">
 
 <img src="assets/microwave.jpg"
 class="imageCard"
-onclick="checkAppliance(true,this)">
+onclick="checkAppliance(this)">
 
 </div>
 
 `;
 
-}
-
-else if(q.type==="maze"){
-
-createMaze();
+applianceCount=0;
 
 }
 
-else if(q.type==="circuit"){
+else if(q.type==="dropdown"){
 
 gameArea.innerHTML=`
 
-<div class="buttonArea">
+<div style="text-align:center;">
 
-<img src="assets/closed circuits.png"
-class="imageCard"
-onclick="correctCircuit(this)">
+<select class="dropdown"
+id="answerSelect">
 
-<img src="assets/fan.png"
-class="imageCard"
-onclick="wrongCircuit(this)">
+${q.options.map(option=>
+`<option>${option}</option>`
+).join("")}
+
+</select>
+
+<br><br>
+
+<button class="gameBtn"
+onclick="checkDropdown(
+'${q.correct}'
+)">
+
+SUBMIT
+
+</button>
 
 </div>
 
@@ -559,22 +694,30 @@ gameArea.innerHTML=`
 <div class="buttonArea">
 
 <button class="gameBtn"
-onclick="checkSafety(true,this)">
+onclick="checkSafety(
+true,this
+)">
 🙌 Dry Hands
 </button>
 
 <button class="gameBtn"
-onclick="checkSafety(false,this)">
+onclick="checkSafety(
+false,this
+)">
 💧 Wet Hands
 </button>
 
 <button class="gameBtn"
-onclick="checkSafety(true,this)">
+onclick="checkSafety(
+true,this
+)">
 🔌 Safe Plug
 </button>
 
 <button class="gameBtn"
-onclick="checkSafety(false,this)">
+onclick="checkSafety(
+false,this
+)">
 ⚡ Touch Wire
 </button>
 
@@ -586,14 +729,25 @@ safeCount=0;
 
 }
 
+else if(q.type==="platform"){
+
+createPlatformGame();
+
+}
+
 else if(q.type==="space"){
 
 gameArea.innerHTML=`
 
-<div style="text-align:center;
-margin-top:40px;">
+<div style="
+text-align:center;
+margin-top:40px;
+">
 
-<div style="font-size:100px;"
+<div style="
+font-size:100px;
+transition:1s;
+"
 id="rocket">
 
 🚀
@@ -621,19 +775,61 @@ CHARGE ⚡
 
 }
 
+else if(q.type==="detective"){
+
+gameArea.innerHTML=`
+
+<div class="buttonArea">
+
+<button class="gameBtn"
+onclick="detective(
+true,this
+)">
+🪙 Coin
+</button>
+
+<button class="gameBtn"
+onclick="detective(
+false,this
+)">
+🪵 Wood
+</button>
+
+<button class="gameBtn"
+onclick="detective(
+false,this
+)">
+🧴 Plastic
+</button>
+
+<button class="gameBtn"
+onclick="detective(
+false,this
+)">
+📄 Paper
+</button>
+
+</div>
+
+`;
+
+}
+
 }
 
 let applianceCount=0;
 
-function checkAppliance(correct,element){
-
-if(correct){
+function checkAppliance(element){
 
 element.classList.add("correct");
 
 correctSound.play();
 
 applianceCount++;
+
+document.getElementById("guideText")
+.innerHTML=
+"⚡ Great job! Electricity is flowing!";
 
 if(applianceCount===4){
 
@@ -648,19 +844,15 @@ showNextButton();
 
 }
 
-}else{
-
-element.classList.add("wrong");
-
-wrongSound.play();
-
 }
 
-}
+function checkDropdown(correct){
 
-function correctCircuit(element){
+const answer=
+document.getElementById("answerSelect")
+.value;
 
-element.classList.add("correct");
+if(answer===correct){
 
 correctSound.play();
 
@@ -669,17 +861,17 @@ score++;
 document.getElementById("score")
 .innerHTML=score;
 
+document.getElementById("guideText")
+.innerHTML=
+"💡 Awesome! You completed the circuit!";
+
 confettiBlast();
 
-showNextButton();
-
-}
-
-function wrongCircuit(element){
-
-element.classList.add("wrong");
+}else{
 
 wrongSound.play();
+
+}
 
 showNextButton();
 
@@ -696,6 +888,10 @@ element.classList.add("correct");
 correctSound.play();
 
 safeCount++;
+
+document.getElementById("guideText")
+.innerHTML=
+"⚡ Safety first! Great choice!";
 
 if(safeCount===2){
 
@@ -720,132 +916,100 @@ wrongSound.play();
 
 }
 
-let mazeMap=[];
-let player={x:0,y:0};
-
-function createMaze(){
+function createPlatformGame(){
 
 const gameArea=
 document.getElementById("gameArea");
 
 gameArea.innerHTML=`
 
-<div class="maze"
-id="maze"></div>
+<div class="platformArea">
+
+<div class="platform"
+style="
+left:50px;
+bottom:60px;
+"></div>
+
+<div class="platform"
+style="
+left:280px;
+bottom:140px;
+"></div>
+
+<div class="platform"
+style="
+left:520px;
+bottom:220px;
+"></div>
+
+<div class="player"
+id="player"
+style="
+left:80px;
+bottom:90px;
+">
+
+⚡
+
+</div>
+
+<div class="goal"
+style="
+right:60px;
+top:40px;
+">
+
+💡
+
+</div>
+
+</div>
 
 <div class="buttonArea">
 
 <button class="gameBtn"
-onclick="movePlayer('up')">
-⬆️
-</button>
+onclick="movePlatform()">
 
-<button class="gameBtn"
-onclick="movePlayer('left')">
-⬅️
-</button>
+JUMP ➡
 
-<button class="gameBtn"
-onclick="movePlayer('right')">
-➡️
-</button>
-
-<button class="gameBtn"
-onclick="movePlayer('down')">
-⬇️
 </button>
 
 </div>
 
 `;
 
-mazeMap=[
-
-[0,0,0,1,0],
-[1,1,0,1,0],
-[0,0,0,0,0],
-[0,1,1,1,0],
-[0,0,0,1,2]
-
-];
-
-player={x:0,y:0};
-
-drawMaze();
+platformStep=0;
 
 }
 
-function drawMaze(){
+let platformStep=0;
 
-const maze=
-document.getElementById("maze");
+function movePlatform(){
 
-maze.innerHTML="";
+const player=
+document.getElementById("player");
 
-for(let y=0;y<5;y++){
+platformStep++;
 
-for(let x=0;x<5;x++){
+if(platformStep===1){
 
-const cell=
-document.createElement("div");
-
-cell.classList.add("cell");
-
-if(mazeMap[y][x]===1){
-
-cell.classList.add("wall");
+player.style.left="320px";
+player.style.bottom="170px";
 
 }
 
-if(player.x===x &&
-player.y===y){
+else if(platformStep===2){
 
-cell.classList.add("player");
-
-cell.innerHTML="⚡";
+player.style.left="560px";
+player.style.bottom="250px";
 
 }
 
-if(mazeMap[y][x]===2){
+else if(platformStep===3){
 
-cell.classList.add("goalCell");
-
-cell.innerHTML="💡";
-
-}
-
-maze.appendChild(cell);
-
-}
-
-}
-
-}
-
-function movePlayer(direction){
-
-let newX=player.x;
-let newY=player.y;
-
-if(direction==="up") newY--;
-if(direction==="down") newY++;
-if(direction==="left") newX--;
-if(direction==="right") newX++;
-
-if(
-newX>=0 &&
-newX<5 &&
-newY>=0 &&
-newY<5 &&
-mazeMap[newY][newX]!==1
-){
-
-player.x=newX;
-player.y=newY;
-
-drawMaze();
-
-if(mazeMap[newY][newX]===2){
+player.style.left="850px";
+player.style.bottom="260px";
 
 correctSound.play();
 
@@ -854,15 +1018,13 @@ score++;
 document.getElementById("score")
 .innerHTML=score;
 
+document.getElementById("guideText")
+.innerHTML=
+"💡 Awesome! You completed the circuit!";
+
 confettiBlast();
 
 showNextButton();
-
-}
-
-}else{
-
-wrongSound.play();
 
 }
 
@@ -883,7 +1045,42 @@ score++;
 document.getElementById("score")
 .innerHTML=score;
 
+document.getElementById("guideText")
+.innerHTML=
+"🚀 Rocket power activated!";
+
 confettiBlast();
+
+showNextButton();
+
+}
+
+function detective(correct,element){
+
+if(correct){
+
+element.classList.add("correct");
+
+correctSound.play();
+
+score++;
+
+document.getElementById("score")
+.innerHTML=score;
+
+document.getElementById("guideText")
+.innerHTML=
+"⚡ Conductors allow electricity to flow!";
+
+confettiBlast();
+
+}else{
+
+element.classList.add("wrong");
+
+wrongSound.play();
+
+}
 
 showNextButton();
 
@@ -900,16 +1097,13 @@ function nextQuestion(){
 
 currentQuestion++;
 
-applianceCount=0;
-safeCount=0;
-
 loadQuestion();
 
 }
 
 function confettiBlast(){
 
-for(let i=0;i<100;i++){
+for(let i=0;i<120;i++){
 
 const confetti=
 document.createElement("div");
@@ -917,7 +1111,8 @@ document.createElement("div");
 confetti.classList.add("confetti");
 
 confetti.style.left=
-Math.random()*window.innerWidth+"px";
+Math.random()*window.innerWidth
++"px";
 
 confetti.style.background=
 `hsl(${Math.random()*360},
@@ -946,7 +1141,8 @@ document.getElementById("finalScreen")
 
 document.getElementById("finalScore")
 .innerHTML=
-`⭐ You scored ${score} out of ${questions.length}`;
+`⭐ You scored ${score}
+out of ${questions.length}`;
 
 confettiBlast();
 

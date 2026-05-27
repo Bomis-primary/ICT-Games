@@ -264,6 +264,26 @@ border-radius:25px;
 
 }
 
+.tool-image{
+
+width:150px;
+height:150px;
+object-fit:contain;
+background:white;
+padding:10px;
+border-radius:20px;
+cursor:pointer;
+border:4px solid #64b5f6;
+transition:0.3s;
+
+}
+
+.tool-image:hover{
+
+transform:scale(1.08);
+
+}
+
 @media(max-width:768px){
 
 .drop-zone{
@@ -277,6 +297,11 @@ text-align:center;
 
 .final-score{
 font-size:45px;
+}
+
+.tool-image{
+width:110px;
+height:110px;
 }
 
 }
@@ -347,7 +372,7 @@ onclick="showScreen('saveMission')">
 </button>
 
 <button class="btn"
-onclick="showScreen('toolQuiz')">
+onclick="startToolQuiz()">
 ✏ Tool Quiz
 </button>
 
@@ -364,7 +389,7 @@ onclick="showFinal()">
 
 </div>
 
-<!-- BUILD WRITER SCREEN -->
+<!-- LABEL GAME -->
 
 <div class="screen"
 id="labelGame">
@@ -379,18 +404,11 @@ class="logo">
 <span id="score">0</span>
 </div>
 
-<div class="progress">
-
-<div class="progress-bar"
-id="progressBar"></div>
-
-</div>
-
 <img src="word screen.png"
 class="writer-image">
 
 <h3>
-Drag the correct labels into the boxes
+Drag the labels to correct boxes
 </h3>
 
 <div class="drag-container">
@@ -483,8 +501,7 @@ class="logo">
 <div class="story-box">
 
 <h2>
-👧 Mia forgot how to save homework!
-Help her step-by-step.
+👧 Mia forgot how to save homework! Help her.
 </h2>
 
 <div class="option-container">
@@ -537,27 +554,18 @@ class="logo">
 
 <h1>✏ Tool Identification Quiz</h1>
 
-<div class="question"
-id="question">
-Which tool makes text dark?
+<div class="score">
+⭐ Score :
+<span id="toolScore">0</span>
 </div>
 
-<div class="option-container">
+<div class="question"
+id="toolQuestion">
+Question
+</div>
 
-<img src="assets/bold.png"
-class="writer-image"
-style="max-width:150px;cursor:pointer;"
-onclick="checkTool('bold')">
-
-<img src="assets/Italic.png"
-class="writer-image"
-style="max-width:150px;cursor:pointer;"
-onclick="checkTool('italic')">
-
-<img src="assets/underline.png"
-class="writer-image"
-style="max-width:150px;cursor:pointer;"
-onclick="checkTool('underline')">
+<div class="option-container"
+id="toolOptions">
 
 </div>
 
@@ -565,6 +573,11 @@ onclick="checkTool('underline')">
 id="toolFeedback"></div>
 
 <center>
+
+<button class="btn"
+onclick="nextToolQuestion()">
+Next ➜
+</button>
 
 <button class="btn"
 onclick="showScreen('menu')">
@@ -651,6 +664,15 @@ document.getElementById(id)
 
 }
 
+/* SCORE */
+
+function updateScore(){
+
+document.getElementById("score").innerHTML=score;
+document.getElementById("toolScore").innerHTML=score;
+
+}
+
 /* SOUND */
 
 function correctSound(){
@@ -662,14 +684,6 @@ document.getElementById("correctSound").play();
 function wrongSound(){
 
 document.getElementById("wrongSound").play();
-
-}
-
-/* SCORE */
-
-function updateScore(){
-
-document.getElementById("score").innerHTML=score;
 
 }
 
@@ -765,11 +779,22 @@ const steps=[
 "name"
 ];
 
+let rightSteps=0;
+let wrongSteps=0;
+
 function checkMission(step){
+
+if(missionStep>=steps.length){
+return;
+}
 
 if(step===steps[missionStep]){
 
 score+=2;
+
+rightSteps++;
+
+updateScore();
 
 correctSound();
 
@@ -786,19 +811,34 @@ missionStep++;
 
 if(missionStep===steps.length){
 
+setTimeout(()=>{
+
 document.getElementById("missionFeedback")
 .innerHTML=
-"🏆 Homework Saved Successfully!";
+`
+🏆 Homework Saved Successfully! <br><br>
+✅ Correct Steps : ${rightSteps} <br>
+❌ Wrong Steps : ${wrongSteps}
+`;
+
+document.getElementById("missionFeedback")
+.style.color="#6a1b9a";
+
+celebrate();
+
+},500);
 
 }
 
 }else{
 
+wrongSteps++;
+
 wrongSound();
 
 document.getElementById("missionFeedback")
 .innerHTML=
-"❌ Wrong Step";
+"❌ Wrong Step! Try Again";
 
 document.getElementById("missionFeedback")
 .style.color="red";
@@ -809,11 +849,195 @@ document.getElementById("missionFeedback")
 
 /* TOOL QUIZ */
 
-function checkTool(tool){
+const toolQuestions=[
 
-if(tool==="bold"){
+{
+question:"Click the Bold Tool",
+options:[
+{
+img:"assets/bold.png",
+correct:true
+},
+{
+img:"assets/underline.png",
+correct:false
+},
+{
+img:"assets/redo.png",
+correct:false
+}
+]
+},
+
+{
+question:"Click the Underline Tool",
+options:[
+{
+img:"assets/underline.png",
+correct:true
+},
+{
+img:"assets/bold.png",
+correct:false
+},
+{
+img:"assets/undo.png",
+correct:false
+}
+]
+},
+
+{
+question:"Click the Redo Tool",
+options:[
+{
+img:"assets/redo.png",
+correct:true
+},
+{
+img:"assets/bold.png",
+correct:false
+},
+{
+img:"assets/underline.png",
+correct:false
+}
+]
+},
+
+{
+question:"Click the Undo Tool",
+options:[
+{
+img:"assets/undo.png",
+correct:true
+},
+{
+img:"assets/redo.png",
+correct:false
+},
+{
+img:"assets/bold.png",
+correct:false
+}
+]
+},
+
+{
+question:"Which tool slants text?",
+options:[
+{
+text:"Italic",
+correct:true
+},
+{
+text:"Bold",
+correct:false
+},
+{
+text:"Underline",
+correct:false
+}
+]
+},
+
+{
+question:"Which bar shows document name?",
+options:[
+{
+text:"Title Bar",
+correct:true
+},
+{
+text:"Menu Bar",
+correct:false
+},
+{
+text:"Toolbar",
+correct:false
+}
+]
+},
+
+{
+question:"Which bar has File and Edit?",
+options:[
+{
+text:"Menu Bar",
+correct:true
+},
+{
+text:"Status Bar",
+correct:false
+},
+{
+text:"Ruler",
+correct:false
+}
+]
+}
+
+];
+
+let toolIndex=0;
+
+function startToolQuiz(){
+
+toolIndex=0;
+
+showScreen("toolQuiz");
+
+loadToolQuestion();
+
+}
+
+function loadToolQuestion(){
+
+let q=toolQuestions[toolIndex];
+
+document.getElementById("toolQuestion")
+.innerHTML=q.question;
+
+let html="";
+
+q.options.forEach(option=>{
+
+if(option.img){
+
+html+=`
+<img src="${option.img}"
+class="tool-image"
+onclick="checkToolAnswer(${option.correct})">
+`;
+
+}else{
+
+html+=`
+<div class="option"
+onclick="checkToolAnswer(${option.correct})">
+${option.text}
+</div>
+`;
+
+}
+
+});
+
+document.getElementById("toolOptions")
+.innerHTML=html;
+
+document.getElementById("toolFeedback")
+.innerHTML="";
+
+}
+
+function checkToolAnswer(correct){
+
+if(correct){
 
 score+=2;
+
+updateScore();
 
 correctSound();
 
@@ -821,7 +1045,7 @@ celebrate();
 
 document.getElementById("toolFeedback")
 .innerHTML=
-"⭐ Correct! Bold Tool";
+"⭐ Correct Answer!";
 
 document.getElementById("toolFeedback")
 .style.color="green";
@@ -832,10 +1056,32 @@ wrongSound();
 
 document.getElementById("toolFeedback")
 .innerHTML=
-"❌ Wrong Tool";
+"❌ Wrong Answer";
 
 document.getElementById("toolFeedback")
 .style.color="red";
+
+}
+
+}
+
+function nextToolQuestion(){
+
+toolIndex++;
+
+if(toolIndex>=toolQuestions.length){
+
+toolIndex=0;
+
+document.getElementById("toolFeedback")
+.innerHTML=
+"🏆 Tool Quiz Completed!";
+
+celebrate();
+
+}else{
+
+loadToolQuestion();
 
 }
 
@@ -857,7 +1103,7 @@ score+" Points";
 
 let rank="";
 
-if(score>=18){
+if(score>=20){
 
 rank="🏆 Writer Champion";
 

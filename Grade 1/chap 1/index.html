@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>ICT Game - Smart Machine Journey</title>
+<title>ICT Game - Smart Machine Ladder Journey</title>
 
-<!-- Canvas Confetti Library for rewards -->
+<!-- Canvas Confetti Library for completion rewards -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
@@ -27,7 +27,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 10px;
+    padding: 12px;
 }
 
 @keyframes bgMovement {
@@ -36,29 +36,29 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* Splash Screen with 5s Loading Timeline */
+/* 5-Second Splash Screen Overlay */
 #splashScreen {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: #eef2f7;
+    background: #f1f2f6;
     z-index: 1000;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    transition: opacity 0.5s ease;
 }
 
 .logo-container {
-    width: 220px;
-    height: 120px;
+    width: 250px;
+    height: 140px;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .logo-img {
@@ -70,23 +70,23 @@ body {
 
 @keyframes bounceLogo {
     0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-12px) scale(1.03); }
+    50% { transform: translateY(-10px) scale(1.04); }
 }
 
 .loader-container {
-    width: 240px;
-    height: 14px;
+    width: 220px;
+    height: 12px;
     background: #dcdde1;
-    border-radius: 20px;
+    border-radius: 10px;
     overflow: hidden;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .loader-progress {
     width: 0%;
     height: 100%;
     background: linear-gradient(90deg, #ff7675, #ffea79);
-    border-radius: 20px;
+    border-radius: 10px;
     animation: loadProgress 5s linear forwards;
 }
 
@@ -94,29 +94,29 @@ body {
     to { width: 100%; }
 }
 
-/* Master Layout */
+/* Master Responsive Layout */
 .game-wrapper {
     display: flex;
     width: 100%;
-    max-width: 1024px;
-    height: 90vh;
+    max-width: 1000px;
+    height: 85vh;
     gap: 15px;
     align-items: stretch;
     opacity: 0;
     transition: opacity 0.5s ease;
 }
 
-/* Ladder System Style */
+/* Vertical Ladder Stack Board Component */
 .ladder-bar {
-    width: 130px;
-    background: rgba(241, 242, 246, 0.9);
-    border-radius: 24px;
+    width: 140px;
+    background: rgba(245, 246, 250, 0.9);
+    border-radius: 20px;
     border: 4px solid #74b9ff;
     display: flex;
-    flex-direction: column-reverse;
+    flex-direction: column-reverse; /* Climbs bottom to top */
     justify-content: space-between;
-    padding: 12px 8px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    padding: 10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
 }
 
 .ladder-rung {
@@ -124,22 +124,22 @@ body {
     margin: 3px 0;
     background: #ffeaa7;
     border: 2px solid #fdcb6e;
-    border-radius: 12px;
+    border-radius: 10px;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 16px;
     font-weight: bold;
     color: #2d3436;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .ladder-rung.current {
     background: #ff7675;
     border-color: #d63031;
     color: white;
-    transform: scale(1.06);
-    box-shadow: 0 0 12px rgba(214, 48, 49, 0.6);
+    transform: scale(1.05);
+    box-shadow: 0 0 10px rgba(214, 48, 49, 0.5);
 }
 
 .ladder-rung.passed {
@@ -148,36 +148,36 @@ body {
     color: white;
 }
 
-/* Primary Interactive Board Card */
+/* Main Gameplay Area Card */
 .main-board {
     flex: 1;
-    background: #f7f9fc;
-    border-radius: 24px;
+    background: #f5f6fa; 
+    border-radius: 20px;
     border: 4px solid #74b9ff;
     padding: 20px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     position: relative;
 }
 
-/* Scores Row Layout */
+/* Persistent Score Header Grid */
 .score-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #dfe6e9;
-    padding: 10px 18px;
-    border-radius: 16px;
+    background: #dcdde1;
+    padding: 10px 15px;
+    border-radius: 12px;
     font-size: 18px;
     font-weight: bold;
     color: #2d3436;
 }
 
-.timer-tag { color: #d63031; }
-.score-tag { color: #0984e3; }
-.badge-tag { color: #e17055; }
+.timer-tag { color: #e84118; }
+.score-tag { color: #0097e6; }
+.badge-tag { color: #e67e22; }
 
 .content-display {
     display: flex;
@@ -185,30 +185,30 @@ body {
     align-items: center;
     justify-content: center;
     flex-grow: 1;
-    margin: 15px 0;
+    margin: 10px 0;
 }
 
 .question-text {
     font-size: 26px;
     color: #2d3436;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     text-align: center;
-    font-weight: 700;
+    font-weight: bold;
 }
 
 .visual-emoji {
-    font-size: 95px;
-    margin-bottom: 15px;
+    font-size: 90px;
+    margin-bottom: 10px;
     display: inline-block;
-    animation: softFloat 2.5s infinite ease-in-out;
+    animation: floating 2.5s infinite ease-in-out;
 }
 
-@keyframes softFloat {
-    0%, 100% { transform: translateY(0px) rotate(0deg); }
-    50% { transform: translateY(-10px) rotate(3deg); }
+@keyframes floating {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
 }
 
-/* Fixed 2x2 Grid Layout for Mobile & Web Layout Compatibility */
+/* Balanced Interactive 2x2 Selection Grid */
 .options-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -220,13 +220,13 @@ body {
     background: #ffeaa7;
     border: 3px solid #fdcb6e;
     padding: 16px;
-    border-radius: 18px;
+    border-radius: 16px;
     font-size: 22px;
     font-weight: bold;
     color: #2d3436;
     cursor: pointer;
     text-align: center;
-    transition: transform 0.15s, background-color 0.2s;
+    transition: transform 0.1s, background-color 0.2s;
     box-shadow: 0 4px 0 #e1b12c;
     -webkit-tap-highlight-color: transparent;
 }
@@ -240,36 +240,31 @@ body {
     font-size: 24px;
     font-weight: bold;
     height: 35px;
-    margin-top: 10px;
+    margin-top: 5px;
     text-align: center;
 }
 
 .action-row {
-    height: 50px;
+    height: 45px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .control-btn {
-    padding: 10px 35px;
+    padding: 8px 30px;
     font-size: 20px;
     font-weight: bold;
-    background: #1dd1a1;
+    background: #4caf50;
     color: white;
     border: none;
-    border-radius: 14px;
+    border-radius: 12px;
     cursor: pointer;
-    box-shadow: 0 4px 0 #10ac84;
+    box-shadow: 0 4px 0 #388e3c;
     display: none;
 }
 
-.control-btn:active {
-    transform: translateY(2px);
-    box-shadow: 0 2px 0 #10ac84;
-}
-
-/* Completion Frame Layout */
+/* End-of-game Presentation Card */
 .completion-card {
     display: none;
     text-align: center;
@@ -286,25 +281,25 @@ body {
     font-size: 24px;
     color: #2d3436;
     margin-bottom: 25px;
-    line-height: 1.6;
+    line-height: 1.5;
 }
 
 .replay-btn {
-    padding: 12px 35px;
+    padding: 12px 30px;
     font-size: 22px;
     font-weight: bold;
-    background: #54a0ff;
+    background: #2196f3;
     color: white;
     border: none;
-    border-radius: 16px;
+    border-radius: 14px;
     cursor: pointer;
-    box-shadow: 0 4px 0 #2e86de;
+    box-shadow: 0 4px 0 #1976d2;
 }
 
-/* Background Atmosphere Elements */
+/* Decorative Background Clouds */
 .cloud-particle {
     position: absolute;
-    background: rgba(255, 255, 255, 0.65);
+    background: rgba(255, 255, 255, 0.6);
     width: 140px;
     height: 45px;
     border-radius: 40px;
@@ -314,7 +309,7 @@ body {
 .cloud-particle::before, .cloud-particle::after {
     content: '';
     position: absolute;
-    background: rgba(255, 255, 255, 0.65);
+    background: rgba(255, 255, 255, 0.6);
     border-radius: 50%;
 }
 .cloud-particle::before { width: 65px; height: 65px; top: -30px; left: 20px; }
@@ -325,70 +320,66 @@ body {
     to { left: 100vw; }
 }
 
-/* Mobile Layout Responsive Adaptations */
+/* Adaptive Mobile Breakdown Engine */
 @media (max-width: 600px) {
-    body { padding: 5px; }
-    .game-wrapper { flex-direction: column-reverse; height: 98vh; gap: 8px; }
-    .ladder-bar { width: 100%; height: 50px; flex-direction: row; padding: 4px; border-radius: 12px; }
+    .game-wrapper { flex-direction: column-reverse; height: 95vh; gap: 8px; }
+    .ladder-bar { width: 100%; height: 45px; flex-direction: row; padding: 4px; border-radius: 10px; }
     .ladder-rung { margin: 0 2px; font-size: 11px; border-radius: 6px; }
-    .main-board { padding: 12px; border-radius: 16px; }
-    .question-text { font-size: 20px; margin-bottom: 8px; }
-    .visual-emoji { font-size: 65px; margin-bottom: 5px; }
-    .option-node { font-size: 16px; padding: 12px; border-radius: 12px; }
-    .score-header { font-size: 14px; padding: 6px 12px; }
+    .main-board { padding: 12px; border-radius: 14px; }
+    .question-text { font-size: 19px; }
+    .visual-emoji { font-size: 60px; }
+    .option-node { font-size: 16px; padding: 12px; }
+    .score-header { font-size: 14px; padding: 6px 10px; }
 }
 </style>
 </head>
 <body>
 
-<!-- Cloud System Background Layer -->
-<div class="cloud-particle" style="top: 10%; animation-duration: 28s;"></div>
-<div class="cloud-particle" style="top: 25%; animation-delay: 6s; animation-duration: 34s;"></div>
-<div class="cloud-particle" style="top: 50%; animation-delay: 14s; animation-duration: 22s;"></div>
+<!-- Cloud Layers -->
+<div class="cloud-particle" style="top: 8%; animation-duration: 26s;"></div>
+<div class="cloud-particle" style="top: 30%; animation-delay: 5s; animation-duration: 32s;"></div>
 
-<!-- Unified App Entry Splash Screen (5 seconds duration) -->
+<!-- 5-Second Brand Splash Overlay -->
 <div id="splashScreen">
     <div class="logo-container">
-        <!-- Local path tracking safely structured fallback -->
-        <img class="logo-img" src="./assets/innovine_logo.png" alt="Innovine Logo" onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block';">
-        <h1 id="logoFallback" style="display:none; font-size:45px; color:#ff7675;">💻</h1>
+        <img class="logo-img" src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block';">
+        <h1 id="logoFallback" style="display:none; font-size:45px;">💻</h1>
     </div>
-    <h2 style="color: #2d3436; margin-bottom: 20px; font-size: 24px;">Innovine Pedagogy</h2>
+    <h2 style="color: #2d3436; margin-bottom: 20px; font-size: 22px;">Innovine Pedagogy</h2>
     <div class="loader-container">
         <div class="loader-progress"></div>
     </div>
 </div>
 
-<!-- Main System Dashboard Frame Container -->
+<!-- Main Game View -->
 <div class="game-wrapper" id="gameFrame">
     
-    <!-- Unified Side/Bottom Progression Matrix Map -->
+    <!-- Progression Ladder Deck Strip -->
     <div class="ladder-bar" id="ladderSystemTrack"></div>
 
-    <!-- Active Playground Workspace Box -->
+    <!-- Playground Workspace Box Container -->
     <div class="main-board">
         
-        <!-- Continuous Real-Time Score Tracker Monitor Header Panel -->
+        <!-- Scoreboard Header Component Panel -->
         <div class="score-header">
             <span class="timer-tag">⏰ <span id="timeSpan">40</span>s</span>
             <span class="score-tag">⭐ Score: <span id="scoreSpan">0</span></span>
             <span class="badge-tag">🏅 Badges: <span id="badgeSpan">0</span></span>
         </div>
 
-        <!-- Central Sandbox Question Layout Context -->
+        <!-- Dynamic Content Panel Wrapper -->
         <div id="playground">
             <div class="content-display">
                 <div class="question-text" id="targetQuestionText">...</div>
                 <div class="visual-emoji" id="targetGraphicNode">💻</div>
             </div>
 
-            <!-- Balanced 2x2 Fixed Matrix Structure Grid for Options -->
+            <!-- Balanced 2x2 Fixed Matrix Structure Grid Options -->
             <div class="options-grid" id="selectionOptionsGrid"></div>
-
             <div class="status-feedback" id="feedbackPromptZone"></div>
         </div>
 
-        <!-- Terminal Execution/Completion Interface Component Card View -->
+        <!-- Terminal Completion View Card -->
         <div class="completion-card" id="completionReportingScreen">
             <h2>🎉 Journey Completed! 🎉</h2>
             <div class="summary-stats">
@@ -398,7 +389,7 @@ body {
             <button class="replay-btn" id="replayActionBtn">Play Journey Again</button>
         </div>
 
-        <!-- Next Item Routing Interaction Controls Layer Bar Row -->
+        <!-- Advance Action Routing Layer -->
         <div class="action-row">
             <button class="control-btn" id="advanceStepBtn">Next Step ➜</button>
         </div>
@@ -406,12 +397,11 @@ body {
     </div>
 </div>
 
-<!-- Native Pipeline Audio Delivery Storage Channels -->
-<audio id="soundChannelCorrect" src="./assets/correct.mp3" preload="auto"></audio>
-<audio id="soundChannelWrong" src="./assets/wrong.mp3" preload="auto"></audio>
+<!-- Audio Assets -->
+<audio id="soundChannelCorrect" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="soundChannelWrong" src="assets/wrong.mp3" preload="auto"></audio>
 
 <script>
-// Immutable Source Matrix Core Item Array Bank
 const catalogDbSource = [
     { type: "identify", question: "Who am I?", image: "💻", options: ["Computer", "Tree", "Bus", "Fish"], answer: "Computer" },
     { type: "unscramble", question: "Unscramble the word", image: "🖥", options: ["TOPDESK", "DESKTOP", "DOPSKET", "DSETKOP"], answer: "DESKTOP" },
@@ -425,7 +415,6 @@ const catalogDbSource = [
     { type: "identify", question: "A computer is a...", image: "🤖", options: ["Smart Machine", "Fruit", "Animal", "Flower"], answer: "Smart Machine" }
 ];
 
-// Runtime System Tracking Memory State Variables 
 let sessionPlaylist = [];
 let operationalIndex = 0;
 let numericalScore = 0;
@@ -433,7 +422,6 @@ let badgeAccumulation = 0;
 let internalClockTicker;
 let currentRemainingSeconds = 40;
 
-// Component DOM Elements Node Bindings References 
 const appSplashLayer = document.getElementById('splashScreen');
 const mainApplicationContainerFrame = document.getElementById('gameFrame');
 const ladderGridStripTrack = document.getElementById('ladderSystemTrack');
@@ -441,12 +429,11 @@ const questionLabelContainerField = document.getElementById('targetQuestionText'
 const assetGraphicEmojiFrame = document.getElementById('targetGraphicNode');
 const selectionsOptionFlexBoxGrid = document.getElementById('selectionOptionsGrid');
 const centerInteractivePanelPlayground = document.getElementById('playground');
-const systemStatusFeedbackField = document.getElementById('feedbackPromptZone');
+const feedbackPromptZone = document.getElementById('feedbackPromptZone');
 const multiStepAdvanceTriggerBtn = document.getElementById('advanceStepBtn');
 const finalReportingSummaryCard = document.getElementById('completionReportingScreen');
 const operationalReplayActionTrigger = document.getElementById('replayActionBtn');
 
-// Audio Context Play Safe Engine Wrap Execution Channels
 const soundAssetCorrect = document.getElementById('soundChannelCorrect');
 const soundAssetWrong = document.getElementById('soundChannelWrong');
 
@@ -460,7 +447,7 @@ function executeAudioNotification(targetChannelSignal) {
     }
 }
 
-// 5 Seconds Pre-Load Splash Overlay Timer Trigger Sequence Engine 
+// 5-Second Splash Loader
 window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         appSplashLayer.style.opacity = '0';
@@ -468,11 +455,10 @@ window.addEventListener('DOMContentLoaded', () => {
             appSplashLayer.style.display = 'none';
             mainApplicationContainerFrame.style.opacity = '1';
             buildFreshSessionLifecycle();
-        }, 600);
+        }, 500);
     }, 5000);
 });
 
-// Non-Biased Standard Array Shuffler Routine
 function scrambleDataCollection(inputTargetArray) {
     const duplicatedSet = [...inputTargetArray];
     for (let currentTailIndex = duplicatedSet.length - 1; currentTailIndex > 0; currentTailIndex--) {
@@ -482,7 +468,6 @@ function scrambleDataCollection(inputTargetArray) {
     return duplicatedSet;
 }
 
-// Construct Ladder Rung Structural Matrix Interface Component Nodes
 function structureProgressionMapElements() {
     ladderGridStripTrack.innerHTML = '';
     for (let indexPosition = 0; indexPosition < sessionPlaylist.length; indexPosition++) {
@@ -494,7 +479,6 @@ function structureProgressionMapElements() {
     }
 }
 
-// Visual State Rendering Synchronization for the Ladder Array Layout Track
 function synchronizeProgressionInterfaceTracking() {
     for (let matrixWalkerIndex = 0; matrixWalkerIndex < sessionPlaylist.length; matrixWalkerIndex++) {
         const currentSelectedRungNode = document.getElementById(`ladder-step-node-${matrixWalkerIndex}`);
@@ -535,21 +519,19 @@ function processQuestionLifecycleStep() {
     document.getElementById('timeSpan').innerText = currentRemainingSeconds;
     
     synchronizeProgressionInterfaceTracking();
-    systemStatusFeedbackField.innerText = '';
+    feedbackPromptZone.innerText = '';
     multiStepAdvanceTriggerBtn.style.display = 'none';
 
-    // Set countdown timer countdown logic thread sequence loop
     internalClockTicker = setInterval(() => {
         currentRemainingSeconds--;
         document.getElementById('timeSpan').innerText = currentRemainingSeconds;
         
         if (currentRemainingSeconds <= 0) {
             clearInterval(internalClockTicker);
-            systemStatusFeedbackField.innerText = "⏰ Time is Up!";
-            systemStatusFeedbackField.style.color = "#d63031";
+            feedbackPromptZone.innerText = "⏰ Time is Up!";
+            feedbackPromptZone.style.color = "#d63031";
             executeAudioNotification('wrong');
             
-            // Block remaining user inputs
             document.querySelectorAll('.option-node').forEach(itemNode => {
                 itemNode.style.pointerEvents = 'none';
             });
@@ -585,8 +567,8 @@ function verifyUserResponseInput(selectedOptionTextString, correctMatchingAnswer
         elementNodeReference.style.borderColor = '#00b894';
         elementNodeReference.style.color = '#fff';
         
-        systemStatusFeedbackField.innerText = "👏 Super Job! Correct!";
-        systemStatusFeedbackField.style.color = "#00b894";
+        feedbackPromptZone.innerText = "👏 Super Job! Correct!";
+        feedbackPromptZone.style.color = "#00b894";
         executeAudioNotification('right');
         
         numericalScore++;
@@ -595,8 +577,8 @@ function verifyUserResponseInput(selectedOptionTextString, correctMatchingAnswer
         document.getElementById('badgeSpan').innerText = badgeAccumulation;
 
         confetti({
-            particleCount: 110,
-            spread: 75,
+            particleCount: 100,
+            spread: 70,
             origin: { y: 0.65 }
         });
     } else {
@@ -604,11 +586,10 @@ function verifyUserResponseInput(selectedOptionTextString, correctMatchingAnswer
         elementNodeReference.style.borderColor = '#d63031';
         elementNodeReference.style.color = '#fff';
         
-        systemStatusFeedbackField.innerText = " Let's try again next time!";
-        systemStatusFeedbackField.style.color = "#d63031";
+        feedbackPromptZone.innerText = " Let's try again next time!";
+        feedbackPromptZone.style.color = "#d63031";
         executeAudioNotification('wrong');
         
-        // Highlight correct target selection element node path visually for early childhood tracking aid
         document.querySelectorAll('.option-node').forEach(itemNode => {
             if (itemNode.innerText === correctMatchingAnswerString) {
                 itemNode.style.border = "3px solid #00b894";
@@ -642,8 +623,8 @@ function showFinalCompletionTerminalScreen() {
     document.getElementById('endBadgeDisplay').innerText = badgeAccumulation;
 
     confetti({
-        particleCount: 220,
-        spread: 110,
+        particleCount: 200,
+        spread: 100,
         origin: { y: 0.55 }
     });
 }

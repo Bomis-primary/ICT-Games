@@ -1,719 +1,706 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grade 1 - Parts of Computer Game</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chapter 2: Parts of a Computer Game</title>
+    <style>
+        :root {
+            --bg-sky: #e0f2fe;
+            --clay-orange: #f97316;
+            --grass-green: #22c55e;
+            --brick-red: #ef4444;
+            --slate-dark: #1e293b;
+            --board-green: #14532d;
+        }
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-<style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-sky);
+            color: var(--slate-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Comic Sans MS',sans-serif;
-}
+        /* Screen Layout Wrapper */
+        .screen-layout {
+            display: none;
+            width: 100%;
+            max-width: 650px;
+            min-height: 100vh;
+            padding: 15px;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            gap: 15px;
+            overflow-y: auto; 
+            -webkit-overflow-scrolling: touch;
+        }
 
-body{
-background:url('assets/bg.jpg');
-background-size:cover;
-background-position:center;
-background-repeat:no-repeat;
-background-attachment:fixed;
-min-height:100vh;
-overflow-x:hidden;
-color:white;
-transition:1s;
-}
+        .active-view {
+            display: flex !important;
+        }
 
-.overlay{
-background:rgba(0,0,0,0.35);
-min-height:100vh;
-padding:15px;
-}
+        /* 5-Second Splash Loader Screen */
+        #screen-splash {
+            background: #ffffff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            z-index: 9999;
+        }
+        .splash-logo {
+            width: 75%;
+            max-width: 300px;
+            animation: pulseSoft 1.5s infinite ease-in-out;
+        }
+        .loading-track {
+            width: 65%;
+            max-width: 260px;
+            height: 14px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+        }
+        .loading-bar-fill {
+            width: 100%;
+            height: 100%;
+            background: var(--clay-orange);
+            transform: translateX(-100%);
+            animation: startLoad 4.5s forwards linear;
+        }
 
-.container{
-max-width:1200px;
-margin:auto;
-padding-bottom:120px;
-}
+        /* Welcome Main Menu */
+        #screen-welcome {
+            justify-content: center;
+            text-align: center;
+            gap: 25px;
+        }
+        .welcome-house {
+            font-size: clamp(80px, 20vh, 130px);
+            animation: floatMove 3s infinite ease-in-out;
+        }
+        .welcome-heading {
+            font-size: clamp(26px, 6.5vw, 36px);
+            color: #0369a1;
+            font-weight: 800;
+        }
 
-.logo{
-width:130px;
-display:block;
-margin:auto;
-margin-bottom:10px;
-}
+        .btn-push {
+            background: var(--clay-orange);
+            color: white;
+            border: none;
+            padding: 16px 45px;
+            font-size: clamp(18px, 4.5vw, 22px);
+            font-weight: bold;
+            border-radius: 35px;
+            cursor: pointer;
+            box-shadow: 0 7px 0 #c2410c;
+        }
+        .btn-push:active {
+            transform: translateY(4px);
+            box-shadow: 0 3px 0 #c2410c;
+        }
 
-h1{
-text-align:center;
-font-size:45px;
-color:#FFD700;
-text-shadow:2px 2px 8px black;
-margin-bottom:10px;
-}
+        .hud-row {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+            font-weight: 800;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
 
-.topbar{
-display:flex;
-justify-content:center;
-gap:25px;
-flex-wrap:wrap;
-font-size:24px;
-background:rgba(255,255,255,0.15);
-padding:12px;
-border-radius:20px;
-margin-bottom:20px;
-backdrop-filter:blur(5px);
-}
+        /* Main Game Arena Adaptive Display Card */
+        .main-card {
+            width: 100%;
+            background: white;
+            border-radius: 24px;
+            padding: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+            border: 4px dashed #94a3b8;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .display-frame {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            background-color: #fafafa;
+            position: relative;
+            min-height: 160px;
+            padding: 10px;
+        }
+        .display-frame img {
+            width: auto;
+            max-width: 100%;
+            height: auto;
+            max-height: 180px;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+        .display-frame .emoji-fallback {
+            font-size: 80px;
+            animation: floatMove 2.5s infinite ease-in-out;
+        }
 
-.card{
-background:rgba(255,255,255,0.18);
-padding:25px;
-border-radius:25px;
-backdrop-filter:blur(8px);
-text-align:center;
-}
+        .question-bubble {
+            font-size: clamp(16px, 4.2vw, 19px);
+            font-weight: 700;
+            text-align: center;
+            color: #0369a1;
+            line-height: 1.4;
+            white-space: pre-line;
+            padding: 0 5px;
+        }
 
-#question{
-font-size:30px;
-margin-bottom:20px;
-}
+        /* Touch Swipeable Conveyor Belt Track Framework */
+        .conveyor-belt-system {
+            width: 100%;
+            background: #475569;
+            border-top: 6px solid #334155;
+            border-bottom: 8px solid #1e293b;
+            padding: 16px 0;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 20px;
+            box-shadow: inset 0 8px 16px rgba(0,0,0,0.4);
+            flex-shrink: 0;
+        }
+        .conveyor-belt-system::-webkit-scrollbar {
+            display: none;
+        }
 
-#options{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:20px;
-flex-wrap:wrap;
-margin-top:20px;
-}
+        .conveyor-track-infinite {
+            display: flex;
+            width: max-content;
+            gap: 25px;
+            padding: 0 20px;
+            animation: moveConveyorLoop 25s linear infinite;
+        }
 
-.questionImage{
-width:220px;
-height:180px;
-object-fit:contain;
-background:white;
-padding:10px;
-border-radius:20px;
-cursor:pointer;
-transition:0.3s;
-box-shadow:0 5px 15px rgba(0,0,0,0.3);
-}
+        .conveyor-belt-system:active .conveyor-track-infinite {
+            animation-play-state: paused;
+        }
 
-.questionImage:hover{
-transform:scale(1.08);
-background:#fff59d;
-}
+        .choice-item-btn {
+            background: white;
+            border: 4px solid #cbd5e1;
+            border-radius: 20px;
+            padding: 14px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 16px;
+            color: #1e293b;
+            box-shadow: 0 6px 0 #94a3b8;
+            flex-shrink: 0;
+            min-width: 170px;
+            max-width: 280px;
+        }
 
-.optionBtn{
-padding:15px 25px;
-font-size:22px;
-border:none;
-border-radius:15px;
-cursor:pointer;
-font-weight:bold;
-background:linear-gradient(135deg,#ffeb3b,#ff9800);
-color:black;
-transition:0.3s;
-}
+        /* Level 3 Custom Safety Habit Buttons */
+        .stamp-row {
+            display: none;
+            width: 100%;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+        .btn-stamp {
+            border: none;
+            padding: 20px 10px;
+            font-size: 18px;
+            font-weight: 900;
+            color: white;
+            border-radius: 24px;
+            cursor: pointer;
+            box-shadow: 0 7px 0 rgba(0,0,0,0.25);
+        }
+        .btn-danger { background: var(--brick-red); box-shadow: 0 7px 0 #b91c1c; }
+        .btn-safe { background: var(--grass-green); box-shadow: 0 7px 0 #15803d; }
+        .btn-stamp:active { transform: translateY(4px); box-shadow: 0 3px 0 rgba(0,0,0,0.25); }
 
-.optionBtn:hover{
-transform:scale(1.05);
-}
+        .stamp-feedback-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-10deg);
+            font-size: 32px;
+            font-weight: 950;
+            padding: 10px 20px;
+            border-radius: 16px;
+            background: white;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            display: none;
+            z-index: 10;
+        }
 
-.dragArea{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:40px;
-flex-wrap:wrap;
-margin-top:25px;
-}
+        .animate-shake { animation: shakeLeftRight 0.4s ease-in-out; border-color: var(--brick-red)!important; background: #fef2f2!important; }
+        .animate-pulse { animation: pulsePop 0.4s ease-in-out; border-color: var(--grass-green)!important; background: #f0fdf4!important; }
 
-.dragItem{
-padding:18px 25px;
-background:linear-gradient(135deg,#00e5ff,#00ff95);
-border-radius:15px;
-font-size:24px;
-cursor:grab;
-color:black;
-font-weight:bold;
-}
+        .overlay-screen {
+            background: rgba(15, 23, 42, 0.97);
+            color: white;
+            justify-content: center;
+            text-align: center;
+            gap: 25px;
+            padding: 25px;
+        }
+        .blackboard {
+            background: var(--board-green);
+            border: 12px solid #b45309;
+            border-radius: 16px;
+            padding: 30px 20px;
+            width: 100%;
+            box-shadow: inset 0 0 25px rgba(0,0,0,0.6);
+        }
+        .blackboard-text {
+            font-size: 20px;
+            color: #f0fdf4;
+            line-height: 1.5;
+            font-weight: bold;
+        }
 
-.dropBox{
-width:250px;
-height:130px;
-border:4px dashed #fff;
-border-radius:20px;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:24px;
-background:rgba(255,255,255,0.2);
-}
-
-.feedback{
-font-size:30px;
-font-weight:bold;
-margin-top:20px;
-text-align:center;
-}
-
-.nextArea{
-position:fixed;
-bottom:0;
-left:0;
-width:100%;
-background:rgba(0,0,0,0.7);
-padding:10px;
-text-align:center;
-z-index:999;
-}
-
-#nextBtn{
-padding:15px 45px;
-font-size:24px;
-border:none;
-border-radius:15px;
-background:linear-gradient(135deg,#00ff95,#00c853);
-color:white;
-display:none;
-cursor:pointer;
-font-weight:bold;
-}
-
-.finalScreen{
-display:none;
-background:rgba(255,255,255,0.95);
-color:black;
-padding:30px;
-border-radius:25px;
-text-align:center;
-margin-top:30px;
-}
-
-.playBtn{
-padding:15px 30px;
-font-size:22px;
-background:#2196F3;
-color:white;
-border:none;
-border-radius:15px;
-cursor:pointer;
-margin-top:20px;
-}
-
-input{
-padding:15px;
-font-size:24px;
-border-radius:15px;
-border:none;
-width:300px;
-text-align:center;
-margin-top:20px;
-}
-
-@media(max-width:768px){
-
-.questionImage{
-width:140px;
-height:120px;
-}
-
-.optionBtn{
-font-size:18px;
-padding:12px 18px;
-}
-
-h1{
-font-size:32px;
-}
-
-#question{
-font-size:22px;
-}
-
-}
-
-</style>
+        @keyframes moveConveyorLoop {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-50% - 12px)); }
+        }
+        @keyframes startLoad { from { transform: translateX(-100%); } to { transform: translateX(0%); } }
+        @keyframes pulseSoft { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+        @keyframes floatMove { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes pulsePop { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes shakeLeftRight {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            50% { transform: translateX(6px); }
+            75% { transform: translateX(-4px); }
+        }
+    </style>
 </head>
-
 <body>
 
-<audio id="correctSound" src="assets/correct-1.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-
-<div class="overlay">
-
-<div class="container">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<div id="startScreen">
-
-<h1>🖥️ Parts of Computer Game</h1>
-
-<div class="card">
-
-<h2>Enter Your Name</h2>
-
-<input type="text" id="studentName" placeholder="Enter Name">
-
-<br>
-
-<button class="optionBtn" onclick="startGame()">
-Start Game
-</button>
-
-</div>
-
-</div>
-
-<div id="gameScreen" style="display:none;">
-
-<div class="topbar">
-
-<div>⭐ Score: <span id="score">0</span></div>
-
-<div>🏆 Badges: <span id="badges">0</span></div>
-
-<div>⏰ <span id="timer">40</span>s</div>
-
-</div>
-
-<div class="card">
-
-<h2 id="question"></h2>
-
-<div id="imageArea"></div>
-
-<div id="options"></div>
-
-<div class="feedback" id="feedback"></div>
-
-</div>
-
-</div>
-
-<div class="finalScreen" id="finalScreen">
-
-<h1>🎉 Congratulations 🎉</h1>
-
-<h2 id="finalMessage"></h2>
-
-<h2 id="rank"></h2>
-
-<button onclick="location.reload()" class="playBtn">
-Play Again
-</button>
-
-</div>
-
-</div>
-
-<div class="nextArea">
-<button id="nextBtn">Next ➜</button>
-</div>
-
-<script>
-
-const backgrounds=[
-"assets/bg.jpg",
-"assets/bg-2.jpg"
-];
-
-const questions=[
-
-{
-type:"image",
-question:"Click the Monitor",
-options:[
-"assets/monitor.PNG",
-"assets/mouse.PNG",
-"assets/printer.PNG"
-],
-answer:"assets/monitor.PNG"
-},
-
-{
-type:"image",
-question:"Click the Keyboard",
-options:[
-"assets/keyboard.PNG",
-"assets/speaker.PNG",
-"assets/scanner.PNG"
-],
-answer:"assets/keyboard.PNG"
-},
-
-{
-type:"drag",
-question:"Drag Mouse to POINT and CLICK",
-drag:"Mouse",
-answer:"POINT and CLICK"
-},
-
-{
-type:"list",
-question:"Which device prints on paper?",
-options:[
-"Printer",
-"Monitor",
-"Keyboard"
-],
-answer:"Printer",
-image:"assets/printer.PNG"
-},
-
-{
-type:"truefalse",
-question:"We should sit properly while using computer.",
-options:["True","False"],
-answer:"True",
-image:"assets/proper-posture.PNG"
-},
-
-{
-type:"image",
-question:"Click the Speaker",
-options:[
-"assets/scanner.PNG",
-"assets/speaker.PNG",
-"assets/monitor.PNG"
-],
-answer:"assets/speaker.PNG"
-},
-
-{
-type:"truefalse",
-question:"We should keep computer area clean.",
-options:["True","False"],
-answer:"True",
-image:"assets/surround-clean.PNG"
-},
-
-{
-type:"list",
-question:"Which device helps in playing games?",
-options:[
-"Joystick",
-"Keyboard",
-"Printer"
-],
-answer:"Joystick",
-image:"assets/joystick.PNG"
-},
-
-{
-type:"image",
-question:"Choose GOOD computer habit",
-options:[
-"assets/play-pc.PNG",
-"assets/share-pc.PNG",
-"assets/surround-clean.PNG"
-],
-answer:"assets/share-pc.PNG"
-},
-
-{
-type:"truefalse",
-question:"We should share computer properly with friends.",
-options:["True","False"],
-answer:"True",
-image:"assets/share-pc.PNG"
-}
-
-];
-
-let studentName="";
-let current=0;
-let score=0;
-let badges=0;
-let timer;
-let time=40;
-
-const question=document.getElementById('question');
-const options=document.getElementById('options');
-const imageArea=document.getElementById('imageArea');
-const feedback=document.getElementById('feedback');
-
-function startGame(){
-
-studentName=document.getElementById('studentName').value;
-
-if(studentName===""){
-alert("Please Enter Your Name");
-return;
-}
-
-document.getElementById('startScreen').style.display='none';
-document.getElementById('gameScreen').style.display='block';
-
-showQuestion();
-
-}
-
-function startTimer(){
-
-clearInterval(timer);
-
-time=40;
-
-document.getElementById('timer').innerHTML=time;
-
-timer=setInterval(()=>{
-
-time--;
-
-document.getElementById('timer').innerHTML=time;
-
-if(time<=0){
-
-clearInterval(timer);
-
-feedback.innerHTML="⏰ Time Up!";
-document.getElementById('nextBtn').style.display='inline-block';
-
-}
-
-},1000);
-
-}
-
-function showQuestion(){
-
-startTimer();
-
-document.body.style.background=
-`url('${backgrounds[current % 2]}')`;
-
-document.body.style.backgroundSize='cover';
-
-const q=questions[current];
-
-question.innerHTML=q.question;
-
-options.innerHTML='';
-imageArea.innerHTML='';
-feedback.innerHTML='';
-
-document.getElementById('nextBtn').style.display='none';
-
-if(q.image){
-
-imageArea.innerHTML=
-`<img src="${q.image}" class="questionImage">`;
-
-}
-
-if(q.type==="image"){
-
-q.options.forEach(opt=>{
-
-const img=document.createElement('img');
-
-img.src=opt;
-img.className='questionImage';
-
-img.onclick=()=>check(opt===q.answer);
-
-options.appendChild(img);
-
-});
-
-}
-
-if(q.type==="truefalse"){
-
-q.options.forEach(opt=>{
-
-const btn=document.createElement('button');
-
-btn.className='optionBtn';
-btn.innerHTML=opt;
-
-btn.onclick=()=>check(opt===q.answer);
-
-options.appendChild(btn);
-
-});
-
-}
-
-if(q.type==="list"){
-
-const select=document.createElement('select');
-
-select.className='optionBtn';
-
-q.options.forEach(opt=>{
-
-select.innerHTML+=`<option>${opt}</option>`;
-
-});
-
-const btn=document.createElement('button');
-
-btn.className='optionBtn';
-btn.innerHTML='Submit';
-
-btn.onclick=()=>{
-
-if(select.value===q.answer){
-correct();
-}else{
-wrong();
-}
-
-};
-
-options.appendChild(select);
-options.appendChild(btn);
-
-}
-
-if(q.type==="drag"){
-
-const area=document.createElement('div');
-area.className='dragArea';
-
-const drag=document.createElement('div');
-drag.className='dragItem';
-drag.innerHTML=q.drag;
-drag.draggable=true;
-
-drag.addEventListener('dragstart',e=>{
-e.dataTransfer.setData('text',q.drag);
-});
-
-const drop=document.createElement('div');
-drop.className='dropBox';
-drop.innerHTML=q.answer;
-
-drop.addEventListener('dragover',e=>e.preventDefault());
-
-drop.addEventListener('drop',()=>{
-
-correct();
-
-drop.innerHTML="✅ Correct";
-
-});
-
-area.appendChild(drag);
-area.appendChild(drop);
-
-options.appendChild(area);
-
-}
-
-}
-
-function check(ans){
-
-if(ans){
-correct();
-}else{
-wrong();
-}
-
-}
-
-function correct(){
-
-clearInterval(timer);
-
-feedback.innerHTML="👏 Correct!";
-feedback.style.color='#00ff95';
-
-document.getElementById('correctSound').play();
-
-confetti({
-particleCount:250,
-spread:120
-});
-
-score++;
-badges++;
-
-document.getElementById('score').innerHTML=score;
-document.getElementById('badges').innerHTML=badges;
-
-document.getElementById('nextBtn').style.display='inline-block';
-
-}
-
-function wrong(){
-
-clearInterval(timer);
-
-feedback.innerHTML="❌ Wrong!";
-feedback.style.color='red';
-
-document.getElementById('wrongSound').play();
-
-document.getElementById('nextBtn').style.display='inline-block';
-
-}
-
-document.getElementById('nextBtn').onclick=()=>{
-
-current++;
-
-if(current<questions.length){
-
-showQuestion();
-
-}else{
-
-showFinal();
-
-}
-
-};
-
-function showFinal(){
-
-document.getElementById('gameScreen').style.display='none';
-
-document.getElementById('finalScreen').style.display='block';
-
-document.getElementById('finalMessage').innerHTML=
-`Congratulations ${studentName}! <br>
-You scored ${score}/10`;
-
-let rank='';
-
-if(score===10){
-
-rank='🏆 CHAMPION';
-
-}else if(score>=7){
-
-rank='👍 EXCELLENT';
-
-}else if(score>=4){
-
-rank='🙂 NEED TO IMPROVE';
-
-}else{
-
-rank='📘 BEGINNER';
-
-}
-
-document.getElementById('rank').innerHTML=rank;
-
-confetti({
-particleCount:500,
-spread:180
-});
-
-}
-
-</script>
-
+    <audio id="audio-right" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="audio-cheer" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+
+    <div id="screen-splash">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/300x100?text=Innovine+Pedagogy'">
+        <div class="loading-track">
+            <div class="loading-bar-fill"></div>
+        </div>
+    </div>
+
+    <div id="screen-welcome" class="screen-layout">
+        <div class="welcome-house">🖥️</div>
+        <h1 class="welcome-heading">Computer Parts Master!</h1>
+        <p style="font-weight: 600; color: #475569;">Explore core hardware functions and smart lab rules!</p>
+        <button class="btn-push" onclick="changeScreen('screen-game'); startNewLevel(1);">▶ Start Lab Quest</button>
+    </div>
+
+    <div id="screen-game" class="screen-layout">
+        <div class="hud-row">
+            <span id="hud-level-lbl">Level: 1/3</span>
+            <span id="hud-score-lbl">Points: 0</span>
+        </div>
+
+        <div class="main-card">
+            <div id="canvas-img-frame" class="display-frame">
+                <img id="canvas-target-img" src="" style="display:none;">
+                <span id="canvas-target-emoji" class="emoji-fallback" style="display:none;">💻</span>
+                <div id="stamp-alert-overlay" class="stamp-feedback-overlay"></div>
+            </div>                        
+            <div id="canvas-prompt-msg" class="question-bubble">Loading...</div>
+        </div>
+
+        <div id="wrapper-conveyor-housing" class="conveyor-belt-system">
+            <div id="wrapper-choices" class="conveyor-track-infinite"></div>
+        </div>
+
+        <div id="wrapper-stamps" class="stamp-row">
+            <button class="btn-stamp btn-danger" onclick="evaluateStampInput(false)">❌ BAD HABIT</button>
+            <button class="btn-stamp btn-safe" onclick="evaluateStampInput(true)">💚 GOOD HABIT</button>
+        </div>
+    </div>
+
+    <div id="screen-explain" class="screen-layout overlay-screen">
+        <div style="font-size: 65px;">💡</div>
+        <h2 style="color: #f59e0b; font-size: 26px;">Let's Think!</h2>
+        <p id="explain-message-text" style="font-size: 18px; max-width: 420px; line-height: 1.5; font-weight: 600;"></p>
+        <button class="btn-push" style="background:#3b82f6; box-shadow: 0 6px 0 #1d4ed8;" onclick="returnToGameLayout()">Try Again 🔄</button>
+    </div>
+
+    <div id="screen-chalkboard" class="screen-layout overlay-screen">
+        <div class="blackboard">
+            <p id="chalkboard-story-txt" class="blackboard-text"></p>
+        </div>
+        <button id="chalkboard-next-btn" class="btn-push" onclick="progressFromChalkboard()">Next Level ➔</button>
+    </div>
+
+    <div id="screen-victory" class="screen-layout overlay-screen" style="background: #1e1b4b;">
+        <div style="font-size: 90px; animation: floatMove 2.5s infinite ease-in-out;">🏆</div>
+        <h1 style="color: #f59e0b; font-size: 32px; font-weight: 900;">Computer Genius!</h1>
+        <p style="font-size: 18px; max-width: 450px; color: #cbd5e1; font-weight: 600;">You identified parts of a computer and know how to safely maintain a smart computer lab!</p>
+        <button class="btn-push" onclick="restartWholeApp()">Play Again 🔄</button>
+    </div>
+
+    <script>
+        // Pre-fetch asset images to ensure instant display rendering
+        const gameAssetPaths = ["assets/image_d495be.png", "assets/image_d48d62.png"];
+        gameAssetPaths.forEach(path => { const dummy = new Image(); dummy.src = path; });
+
+        // Explicit 5-Second Brand Loader Lifecycle Control
+        window.addEventListener('load', () => {
+            setTimeout(() => { 
+                document.getElementById('screen-splash').style.display = 'none';
+                changeScreen('screen-welcome'); 
+            }, 5000);
+        });
+
+        let activeLevel = 1;
+        let scoreCounter = 0;
+        let roundIndex = 0;
+        let roundItem = null;
+        let setList = [];
+        let controlLock = false;
+
+        // Unified pedagogical dataset matching user pages 19-28 and asset content maps
+        const contentDataMap = {
+            level1: {
+                // Core Hardware Identification Rounds
+                rounds: [
+                    {
+                        prompt: "Look at this box component! I process statements, instructions, and manage calculations as the 'Brain' of the machine. Who am I?",
+                        imgSrc: "assets/image_d495be.png",
+                        emojiFallback: "📦",
+                        correctChoice: "CPU",
+                        decoys: ["Mouse", "Monitor", "Printer"],
+                        hint: "The Central Processing Unit (CPU) holds the brain microchips that run your system files!"
+                    },
+                    {
+                        prompt: "I feature an extensive deck layout packed with alphabet lines, punctuation marks, and number keys. What am I?",
+                        imgSrc: "assets/image_d48d62.png",
+                        emojiFallback: "⌨️",
+                        correctChoice: "Keyboard",
+                        decoys: ["UPS", "Speakers", "Joystick"],
+                        hint: "A keyboard lets you input data strings by tapping your fingers on individual keys!"
+                    },
+                    {
+                        prompt: "I act just like a TV television panel display screen! I present your text, images, paint drawings, and video frames. What am I?",
+                        imgSrc: "",
+                        emojiFallback: "🖥️",
+                        correctChoice: "Monitor",
+                        decoys: ["Mouse", "CPU", "Keyboard"],
+                        hint: "The Monitor visually outputs whatever activities you run inside the system!"
+                    },
+                    {
+                        prompt: "I am a small handheld clicking tool with a scroll wheel in the center. I guide the pointer arrow across windows. Who am I?",
+                        imgSrc: "",
+                        emojiFallback: "🖱️",
+                        correctChoice: "Mouse",
+                        decoys: ["Speakers", "Printer", "UPS"],
+                        hint: "The computer mouse lets you point, select, and left-click elements across screens!"
+                    }
+                ],
+                summary: "Core components make up a computer setup: the Monitor outputs graphics, the CPU thinks out programs, the Keyboard inputs text, and the Mouse controls pointers!"
+            },
+            level2: {
+                // Secondary Peripherals & Accessory Systems
+                rounds: [
+                    {
+                        prompt: "We are used to broadcast music, sound effects, and volume tracks out loud from your computer. What are we?",
+                        imgSrc: "",
+                        emojiFallback: "🔊",
+                        correctChoice: "Speakers",
+                        decoys: ["Joystick", "CPU", "Monitor"],
+                        hint: "Speakers handle outputting media audio, speech tracks, and sound alerts to your lab room!"
+                    },
+                    {
+                        prompt: "I capture digital workspace text patterns or brush drawings and output them physically onto real paper sheets. What am I?",
+                        imgSrc: "",
+                        emojiFallback: "🖨️",
+                        correctChoice: "Printer",
+                        decoys: ["Keyboard", "UPS", "Mouse"],
+                        hint: "Printers deliver hard ink paper documentation copies of matching digital files!"
+                    },
+                    {
+                        prompt: "I provide battery backup power so your screen stays active and doesn't shut down when regular electricity drops out. What am I?",
+                        imgSrc: "",
+                        emojiFallback: "⚡",
+                        correctChoice: "UPS",
+                        decoys: ["Joystick", "Speakers", "Printer"],
+                        hint: "An Uninterruptible Power Supply (UPS) stores battery power to guard against instant desktop blackouts!"
+                    }
+                ],
+                summary: "Auxiliary parts add features: Printers give physical printouts, Speakers play multimedia music tracks, and a UPS keeps operations active through sudden power cuts!"
+            },
+            level3: {
+                // Critical Lab Safety Check Rules
+                rounds: [
+                    {
+                        prompt: "An excited student brings an open cup of sweet fruit juice right next to the keyboard desk. Is this a good habit?",
+                        imgSrc: "",
+                        emojiFallback: "🧃",
+                        isSafe: false,
+                        hint: "Bad habit! Spilling sweet sticky liquids on hardware creates short-circuits and ruins key switches instantly. Always leave snacks outside!"
+                    },
+                    {
+                        prompt: "A class group walks gently into the computer lab in a quiet line and sits down carefully on their chairs. Is this a good habit?",
+                        imgSrc: "",
+                        emojiFallback: "🚶",
+                        isSafe: true,
+                        hint: "Wonderful habit! Walking in a quiet line prevents tripping over electrical wires and protects sensitive electronic configurations!"
+                    },
+                    {
+                        prompt: "To clear heavy dust build-up inside keys, a kid sprays liquid cleaner directly into the CPU vent holes. Is this a good habit?",
+                        imgSrc: "",
+                        emojiFallback: "💥",
+                        isSafe: false,
+                        hint: "Dangerous choice! Wet moisture sprays cause inner component sparks. Dust elements should only be brushed away with soft dry cloths!"
+                    }
+                ],
+                summary: "Protect your hardware workspace asset keys! Keep refreshments out, step mindfully around cables, and use dry wiping clothes to maximize device life!"
+            }
+        };
+
+        function changeScreen(id) {
+            document.querySelectorAll('.screen-layout').forEach(s => s.classList.remove('active-view'));
+            const target = document.getElementById(id);
+            if (target) target.classList.add('active-view');
+        }
+
+        function scramble(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function playAudioClip(id) {
+            const clip = document.getElementById(id);
+            if (clip) {
+                clip.currentTime = 0;
+                clip.play().catch(() => {});
+            }
+        }
+
+        function startNewLevel(lvlNum) {
+            activeLevel = lvlNum;
+            roundIndex = 0;
+            document.getElementById('hud-level-lbl').innerText = "Level: " + activeLevel + "/3";
+            
+            const key = "level" + activeLevel;
+            setList = [...contentDataMap[key].rounds];
+            scramble(setList);
+
+            if (activeLevel === 3) {
+                document.getElementById('wrapper-conveyor-housing').style.display = "none";
+                document.getElementById('wrapper-stamps').style.display = "grid";
+            } else {
+                document.getElementById('wrapper-conveyor-housing').style.display = "block";
+                document.getElementById('wrapper-stamps').style.display = "none";
+            }
+
+            loadRoundData();
+        }
+
+        function loadRoundData() {
+            controlLock = false;
+            roundItem = setList[roundIndex];
+
+            document.getElementById('stamp-alert-overlay').style.display = "none";
+            const track = document.getElementById('wrapper-choices');
+            track.style.animationPlayState = "running";
+            document.getElementById('wrapper-conveyor-housing').scrollLeft = 0;
+
+            const imgElement = document.getElementById('canvas-target-img');
+            const emojiElement = document.getElementById('canvas-target-emoji');
+            document.getElementById('canvas-prompt-msg').innerText = roundItem.prompt;
+
+            // Smart visual switching checking for local image paths vs fallback emojis
+            if (roundItem.imgSrc !== "") {
+                imgElement.src = roundItem.imgSrc;
+                imgElement.style.display = "block";
+                emojiElement.style.display = "none";
+            } else {
+                imgElement.style.display = "none";
+                emojiElement.innerText = roundItem.emojiFallback;
+                emojiElement.style.display = "block";
+            }
+
+            if (activeLevel === 1 || activeLevel === 2) {
+                buildItemConveyorBelt();
+            }
+        }
+
+        function buildItemConveyorBelt() {
+            const track = document.getElementById('wrapper-choices');
+            track.innerHTML = "";
+
+            let items = [];
+            // Correct choice target asset node
+            items.push({ text: roundItem.correctChoice, isCorrect: true, hint: "" });
+            
+            // Decoy system nodes
+            roundItem.decoys.forEach(decoy => {
+                items.push({ text: decoy, isCorrect: false, hint: roundItem.hint });
+            });
+
+            scramble(items);
+            
+            // Wrap items twice into infinite loop representation belt track
+            const continuousPool = [...items, ...items];
+
+            continuousPool.forEach(c => {
+                const btn = document.createElement('button');
+                btn.className = "choice-item-btn";
+                btn.dataset.correct = c.isCorrect;
+                btn.dataset.hint = c.hint;
+
+                const txt = document.createElement('span');
+                txt.innerText = c.text;
+                btn.appendChild(txt);
+
+                btn.addEventListener('click', processPlayerClick);
+                track.appendChild(btn);
+            });
+        }
+
+        function processPlayerClick(e) {
+            if (controlLock) return;
+            controlLock = true;
+
+            const btn = e.currentTarget;
+            const isCorrect = btn.dataset.correct === "true";
+            document.getElementById('wrapper-choices').style.animationPlayState = "paused";
+
+            if (isCorrect) {
+                scoreCounter += 10;
+                document.getElementById('hud-score-lbl').innerText = "Points: " + scoreCounter;
+                btn.classList.add('animate-pulse');
+                playAudioClip('audio-right');
+
+                setTimeout(() => { advanceRoundIndex(); }, 800);
+            } else {
+                btn.classList.add('animate-shake');
+                playAudioClip('audio-wrong');
+
+                setTimeout(() => {
+                    document.getElementById('explain-message-text').innerText = btn.dataset.hint;
+                    changeScreen('screen-explain');
+                }, 500);
+            }
+        }
+
+        function evaluateStampInput(pressedSafeButton) {
+            if (controlLock) return;
+            controlLock = true;
+
+            const targetIsSafe = roundItem.isSafe;
+            const overlay = document.getElementById('stamp-alert-overlay');
+            const mainCardBox = document.querySelector('.main-card');
+
+            if (pressedSafeButton === targetIsSafe) {
+                scoreCounter += 10;
+                document.getElementById('hud-score-lbl').innerText = "Points: " + scoreCounter;
+                playAudioClip('audio-right');
+
+                if (targetIsSafe) {
+                    overlay.innerText = "GOOD HABIT 💚";
+                    overlay.style.color = "var(--grass-green)";
+                    overlay.style.border = "6px solid var(--grass-green)";
+                } else {
+                    overlay.innerText = "BAD HABIT ❌";
+                    overlay.style.color = "var(--brick-red)";
+                    overlay.style.border = "6px solid var(--brick-red)";
+                }
+                overlay.style.display = "block";
+
+                setTimeout(() => { advanceRoundIndex(); }, 1200);
+            } else {
+                mainCardBox.classList.add('animate-shake');
+                playAudioClip('audio-wrong');
+
+                setTimeout(() => {
+                    mainCardBox.classList.remove('animate-shake');
+                    document.getElementById('explain-message-text').innerText = roundItem.hint;
+                    changeScreen('screen-explain');
+                }, 500);
+            }
+        }
+
+        function advanceRoundIndex() {
+            roundIndex++;
+            if (roundIndex < setList.length) {
+                loadRoundData();
+            } else {
+                const key = "level" + activeLevel;
+                document.getElementById('chalkboard-story-txt').innerText = contentDataMap[key].summary;
+                
+                if (activeLevel === 3) {
+                    document.getElementById('chalkboard-next-btn').innerText = "Finish Quest 🏆";
+                } else {
+                    document.getElementById('chalkboard-next-btn').innerText = "Next Level ➔";
+                }
+                changeScreen('screen-chalkboard');
+            }
+        }
+
+        function returnToGameLayout() {
+            changeScreen('screen-game');
+            loadRoundData();
+        }
+
+        function progressFromChalkboard() {
+            if (activeLevel < 3) {
+                startNewLevel(activeLevel + 1);
+                changeScreen('screen-game');
+            } else {
+                playAudioClip('audio-cheer');
+                changeScreen('screen-victory');
+            }
+        }
+
+        function restartWholeApp() {
+            scoreCounter = 0;
+            document.getElementById('hud-score-lbl').innerText = "Points: 0";
+            changeScreen('screen-welcome');
+        }
+    </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Chapter 2: Parts of a Computer Game</title>
+    <title>Parts of a Computer Game</title>
     <style>
         :root {
             --bg-sky: #e0f2fe;
@@ -319,7 +319,7 @@
     <audio id="audio-cheer" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
 
     <div id="screen-splash">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/300x100?text=Innovine+Pedagogy'">
+        <img src="assets/innovine-logo.png" id="splash-logo-img" alt="Innovine Logo" class="splash-logo">
         <div class="loading-track">
             <div class="loading-bar-fill"></div>
         </div>
@@ -379,9 +379,13 @@
     </div>
 
     <script>
-        // Pre-fetch asset images to ensure instant display rendering
-        const gameAssetPaths = ["assets/image_d495be.png", "assets/image_d48d62.png"];
-        gameAssetPaths.forEach(path => { const dummy = new Image(); dummy.src = path; });
+        // Automatic image path failure protection script setup
+        let localImagePathsValid = true;
+
+        const splashLogo = document.getElementById('splash-logo-img');
+        splashLogo.onerror = function() {
+            this.src = 'https://via.placeholder.com/300x100?text=Innovine+Pedagogy';
+        };
 
         // Explicit 5-Second Brand Loader Lifecycle Control
         window.addEventListener('load', () => {
@@ -398,10 +402,9 @@
         let setList = [];
         let controlLock = false;
 
-        // Unified pedagogical dataset matching user pages 19-28 and asset content maps
+        // Dataset matching user assets and pedagogical textbook parameters
         const contentDataMap = {
             level1: {
-                // Core Hardware Identification Rounds
                 rounds: [
                     {
                         prompt: "Look at this box component! I process statements, instructions, and manage calculations as the 'Brain' of the machine. Who am I?",
@@ -439,7 +442,6 @@
                 summary: "Core components make up a computer setup: the Monitor outputs graphics, the CPU thinks out programs, the Keyboard inputs text, and the Mouse controls pointers!"
             },
             level2: {
-                // Secondary Peripherals & Accessory Systems
                 rounds: [
                     {
                         prompt: "We are used to broadcast music, sound effects, and volume tracks out loud from your computer. What are we?",
@@ -469,7 +471,6 @@
                 summary: "Auxiliary parts add features: Printers give physical printouts, Speakers play multimedia music tracks, and a UPS keeps operations active through sudden power cuts!"
             },
             level3: {
-                // Critical Lab Safety Check Rules
                 rounds: [
                     {
                         prompt: "An excited student brings an open cup of sweet fruit juice right next to the keyboard desk. Is this a good habit?",
@@ -552,11 +553,18 @@
             const emojiElement = document.getElementById('canvas-target-emoji');
             document.getElementById('canvas-prompt-msg').innerText = roundItem.prompt;
 
-            // Smart visual switching checking for local image paths vs fallback emojis
-            if (roundItem.imgSrc !== "") {
+            // Set up image link error verification rules
+            if (roundItem.imgSrc !== "" && localImagePathsValid) {
                 imgElement.src = roundItem.imgSrc;
                 imgElement.style.display = "block";
                 emojiElement.style.display = "none";
+                
+                imgElement.onerror = function() {
+                    localImagePathsValid = false; // Flag error globally
+                    imgElement.style.display = "none";
+                    emojiElement.innerText = roundItem.emojiFallback;
+                    emojiElement.style.display = "block";
+                };
             } else {
                 imgElement.style.display = "none";
                 emojiElement.innerText = roundItem.emojiFallback;
@@ -573,17 +581,13 @@
             track.innerHTML = "";
 
             let items = [];
-            // Correct choice target asset node
             items.push({ text: roundItem.correctChoice, isCorrect: true, hint: "" });
             
-            // Decoy system nodes
             roundItem.decoys.forEach(decoy => {
                 items.push({ text: decoy, isCorrect: false, hint: roundItem.hint });
             });
 
             scramble(items);
-            
-            // Wrap items twice into infinite loop representation belt track
             const continuousPool = [...items, ...items];
 
             continuousPool.forEach(c => {

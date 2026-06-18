@@ -2,541 +2,655 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title> ICT Game - Smart Machine</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ICT Game - Smart Machine Journey</title>
 
+<!-- Canvas Confetti Library for rewards -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial, sans-serif;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', Arial, sans-serif;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
-body{
-overflow:hidden;
-background:linear-gradient(-45deg,#89f7fe,#66a6ff,#f6d365,#fda085);
-background-size:400% 400%;
-animation:bg 12s ease infinite;
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
+body {
+    overflow: hidden;
+    background: linear-gradient(-45deg, #a1c4fd, #c2e9fb, #fff1eb, #fedd6e);
+    background-size: 400% 400%;
+    animation: bgMovement 16s ease infinite;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
 }
 
-@keyframes bg{
-0%{background-position:0% 50%;}
-50%{background-position:100% 50%;}
-100%{background-position:0% 50%;}
+@keyframes bgMovement {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
-.cloud{
-position:absolute;
-background:white;
-width:160px;
-height:60px;
-border-radius:50px;
-opacity:0.7;
-animation:moveCloud 30s linear infinite;
+/* Splash Screen with 5s Loading Timeline */
+#splashScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: #eef2f7;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
-.cloud:before{
-content:'';
-position:absolute;
-background:white;
-width:80px;
-height:80px;
-top:-40px;
-left:20px;
-border-radius:50%;
+.logo-container {
+    width: 220px;
+    height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
 }
 
-.cloud:after{
-content:'';
-position:absolute;
-background:white;
-width:100px;
-height:100px;
-top:-50px;
-right:15px;
-border-radius:50%;
+.logo-img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    animation: bounceLogo 2s infinite ease-in-out;
 }
 
-@keyframes moveCloud{
-from{left:-250px;}
-to{left:120%;}
+@keyframes bounceLogo {
+    0%, 100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-12px) scale(1.03); }
 }
 
-.container{
-width:90%;
-max-width:900px;
-background:white;
-padding:30px;
-border-radius:25px;
-box-shadow:0 10px 30px rgba(0,0,0,0.3);
-text-align:center;
-position:relative;
-z-index:10;
+.loader-container {
+    width: 240px;
+    height: 14px;
+    background: #dcdde1;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
 }
 
-h1{
-font-size:42px;
-color:#ff5722;
-margin-bottom:10px;
+.loader-progress {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #ff7675, #ffea79);
+    border-radius: 20px;
+    animation: loadProgress 5s linear forwards;
 }
 
-.subtitle{
-font-size:20px;
-margin-bottom:20px;
-color:#555;
+@keyframes loadProgress {
+    to { width: 100%; }
 }
 
-.question{
-font-size:30px;
-margin-bottom:25px;
-color:#333;
+/* Master Layout */
+.game-wrapper {
+    display: flex;
+    width: 100%;
+    max-width: 1024px;
+    height: 90vh;
+    gap: 15px;
+    align-items: stretch;
+    opacity: 0;
+    transition: opacity 0.5s ease;
 }
 
-.image{
-font-size:90px;
-margin-bottom:20px;
+/* Ladder System Style */
+.ladder-bar {
+    width: 130px;
+    background: rgba(241, 242, 246, 0.9);
+    border-radius: 24px;
+    border: 4px solid #74b9ff;
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-between;
+    padding: 12px 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
 }
 
-.options{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-gap:15px;
-margin-top:20px;
+.ladder-rung {
+    flex: 1;
+    margin: 3px 0;
+    background: #ffeaa7;
+    border: 2px solid #fdcb6e;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: #2d3436;
+    transition: all 0.3s ease;
 }
 
-.option{
-background:#f7f7f7;
-padding:15px;
-border-radius:20px;
-font-size:24px;
-cursor:pointer;
-transition:0.3s;
-border:4px solid transparent;
+.ladder-rung.current {
+    background: #ff7675;
+    border-color: #d63031;
+    color: white;
+    transform: scale(1.06);
+    box-shadow: 0 0 12px rgba(214, 48, 49, 0.6);
 }
 
-.option:hover{
-background:#fff3cd;
-transform:scale(1.05);
+.ladder-rung.passed {
+    background: #55efc4;
+    border-color: #00b894;
+    color: white;
 }
 
-.feedback{
-font-size:28px;
-margin-top:20px;
-font-weight:bold;
+/* Primary Interactive Board Card */
+.main-board {
+    flex: 1;
+    background: #f7f9fc;
+    border-radius: 24px;
+    border: 4px solid #74b9ff;
+    padding: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
 }
 
-.correct{
-color:green;
+/* Scores Row Layout */
+.score-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #dfe6e9;
+    padding: 10px 18px;
+    border-radius: 16px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #2d3436;
 }
 
-.wrong{
-color:red;
+.timer-tag { color: #d63031; }
+.score-tag { color: #0984e3; }
+.badge-tag { color: #e17055; }
+
+.content-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-grow: 1;
+    margin: 15px 0;
 }
 
-.timer{
-font-size:24px;
-color:#ff5722;
-margin-bottom:15px;
-font-weight:bold;
+.question-text {
+    font-size: 26px;
+    color: #2d3436;
+    margin-bottom: 12px;
+    text-align: center;
+    font-weight: 700;
 }
 
-.nextBtn{
-margin-top:25px;
-padding:12px 25px;
-font-size:22px;
-background:#4CAF50;
-color:white;
-border:none;
-border-radius:15px;
-cursor:pointer;
-display:none;
+.visual-emoji {
+    font-size: 95px;
+    margin-bottom: 15px;
+    display: inline-block;
+    animation: softFloat 2.5s infinite ease-in-out;
 }
 
-.badges{
-margin-top:15px;
-font-size:28px;
-color:#ff9800;
+@keyframes softFloat {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(3deg); }
 }
 
-.finalScreen{
-display:none;
+/* Fixed 2x2 Grid Layout for Mobile & Web Layout Compatibility */
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 100%;
 }
 
-.finalScreen h2{
-font-size:45px;
-color:#ff5722;
-margin-bottom:20px;
+.option-node {
+    background: #ffeaa7;
+    border: 3px solid #fdcb6e;
+    padding: 16px;
+    border-radius: 18px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #2d3436;
+    cursor: pointer;
+    text-align: center;
+    transition: transform 0.15s, background-color 0.2s;
+    box-shadow: 0 4px 0 #e1b12c;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.playAgain{
-padding:15px 30px;
-font-size:22px;
-background:#2196F3;
-color:white;
-border:none;
-border-radius:15px;
-cursor:pointer;
-margin-top:20px;
+.option-node:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #e1b12c;
 }
 
-.star{
-position:absolute;
-font-size:25px;
-animation:twinkle 2s infinite;
+.status-feedback {
+    font-size: 24px;
+    font-weight: bold;
+    height: 35px;
+    margin-top: 10px;
+    text-align: center;
 }
 
-@keyframes twinkle{
-0%{opacity:0.2;}
-50%{opacity:1;}
-100%{opacity:0.2;}
+.action-row {
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
+.control-btn {
+    padding: 10px 35px;
+    font-size: 20px;
+    font-weight: bold;
+    background: #1dd1a1;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #10ac84;
+    display: none;
+}
+
+.control-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 #10ac84;
+}
+
+/* Completion Frame Layout */
+.completion-card {
+    display: none;
+    text-align: center;
+    margin: auto;
+}
+
+.completion-card h2 {
+    font-size: 38px;
+    color: #ff7675;
+    margin-bottom: 15px;
+}
+
+.summary-stats {
+    font-size: 24px;
+    color: #2d3436;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
+
+.replay-btn {
+    padding: 12px 35px;
+    font-size: 22px;
+    font-weight: bold;
+    background: #54a0ff;
+    color: white;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #2e86de;
+}
+
+/* Background Atmosphere Elements */
+.cloud-particle {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.65);
+    width: 140px;
+    height: 45px;
+    border-radius: 40px;
+    animation: travelCloud 25s linear infinite;
+    z-index: 1;
+}
+.cloud-particle::before, .cloud-particle::after {
+    content: '';
+    position: absolute;
+    background: rgba(255, 255, 255, 0.65);
+    border-radius: 50%;
+}
+.cloud-particle::before { width: 65px; height: 65px; top: -30px; left: 20px; }
+.cloud-particle::after { width: 80px; height: 80px; top: -40px; right: 15px; }
+
+@keyframes travelCloud {
+    from { left: -180px; }
+    to { left: 100vw; }
+}
+
+/* Mobile Layout Responsive Adaptations */
+@media (max-width: 600px) {
+    body { padding: 5px; }
+    .game-wrapper { flex-direction: column-reverse; height: 98vh; gap: 8px; }
+    .ladder-bar { width: 100%; height: 50px; flex-direction: row; padding: 4px; border-radius: 12px; }
+    .ladder-rung { margin: 0 2px; font-size: 11px; border-radius: 6px; }
+    .main-board { padding: 12px; border-radius: 16px; }
+    .question-text { font-size: 20px; margin-bottom: 8px; }
+    .visual-emoji { font-size: 65px; margin-bottom: 5px; }
+    .option-node { font-size: 16px; padding: 12px; border-radius: 12px; }
+    .score-header { font-size: 14px; padding: 6px 12px; }
+}
 </style>
 </head>
-
 <body>
 
-<div class="cloud" style="top:40px;"></div>
-<div class="cloud" style="top:160px; animation-delay:8s;"></div>
-<div class="cloud" style="top:300px; animation-delay:15s;"></div>
+<!-- Cloud System Background Layer -->
+<div class="cloud-particle" style="top: 10%; animation-duration: 28s;"></div>
+<div class="cloud-particle" style="top: 25%; animation-delay: 6s; animation-duration: 34s;"></div>
+<div class="cloud-particle" style="top: 50%; animation-delay: 14s; animation-duration: 22s;"></div>
 
-<div class="container">
-
-<h1>💻 Smart Machine Game</h1>
-<p class="subtitle">ICT Interactive Game</p>
-
-<div id="gameArea">
-
-<div class="timer">
-⏰ Time Left: <span id="time">40</span>s
+<!-- Unified App Entry Splash Screen (5 seconds duration) -->
+<div id="splashScreen">
+    <div class="logo-container">
+        <!-- Local path tracking safely structured fallback -->
+        <img class="logo-img" src="./assets/innovine_logo.png" alt="Innovine Logo" onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block';">
+        <h1 id="logoFallback" style="display:none; font-size:45px; color:#ff7675;">💻</h1>
+    </div>
+    <h2 style="color: #2d3436; margin-bottom: 20px; font-size: 24px;">Innovine Pedagogy</h2>
+    <div class="loader-container">
+        <div class="loader-progress"></div>
+    </div>
 </div>
 
-<div class="question" id="question"></div>
+<!-- Main System Dashboard Frame Container -->
+<div class="game-wrapper" id="gameFrame">
+    
+    <!-- Unified Side/Bottom Progression Matrix Map -->
+    <div class="ladder-bar" id="ladderSystemTrack"></div>
 
-<div class="image" id="image"></div>
+    <!-- Active Playground Workspace Box -->
+    <div class="main-board">
+        
+        <!-- Continuous Real-Time Score Tracker Monitor Header Panel -->
+        <div class="score-header">
+            <span class="timer-tag">⏰ <span id="timeSpan">40</span>s</span>
+            <span class="score-tag">⭐ Score: <span id="scoreSpan">0</span></span>
+            <span class="badge-tag">🏅 Badges: <span id="badgeSpan">0</span></span>
+        </div>
 
-<div class="options" id="options"></div>
+        <!-- Central Sandbox Question Layout Context -->
+        <div id="playground">
+            <div class="content-display">
+                <div class="question-text" id="targetQuestionText">...</div>
+                <div class="visual-emoji" id="targetGraphicNode">💻</div>
+            </div>
 
-<div class="feedback" id="feedback"></div>
+            <!-- Balanced 2x2 Fixed Matrix Structure Grid for Options -->
+            <div class="options-grid" id="selectionOptionsGrid"></div>
 
-<button class="nextBtn" id="nextBtn">Next ➜</button>
+            <div class="status-feedback" id="feedbackPromptZone"></div>
+        </div>
 
-<div class="badges">
-🏅 Badges: <span id="badgeCount">0</span>
+        <!-- Terminal Execution/Completion Interface Component Card View -->
+        <div class="completion-card" id="completionReportingScreen">
+            <h2>🎉 Journey Completed! 🎉</h2>
+            <div class="summary-stats">
+                🏆 Final Score Points: <strong><span id="endScoreDisplay">0</span> / 10</strong><br>
+                🏅 Total Earned Badges: <strong><span id="endBadgeDisplay">0</span></strong>
+            </div>
+            <button class="replay-btn" id="replayActionBtn">Play Journey Again</button>
+        </div>
+
+        <!-- Next Item Routing Interaction Controls Layer Bar Row -->
+        <div class="action-row">
+            <button class="control-btn" id="advanceStepBtn">Next Step ➜</button>
+        </div>
+
+    </div>
 </div>
 
-</div>
-
-<div class="finalScreen" id="finalScreen">
-<h2>🎉 Great Job! 🎉</h2>
-
-<p style="font-size:30px;">
-⭐ Your Score: <span id="score"></span>
-</p>
-
-<p style="font-size:30px;">
-🏅 Total Badges: <span id="finalBadges"></span>
-</p>
-
-<button class="playAgain" onclick="restartGame()">Play Again</button>
-</div>
-
-</div>
-
-<audio id="correctSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=success-fanfare-trumpets-6185.mp3"></audio>
-
-<audio id="wrongSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4d6e09f6d8.mp3?filename=wrong-answer-126515.mp3"></audio>
+<!-- Native Pipeline Audio Delivery Storage Channels -->
+<audio id="soundChannelCorrect" src="./assets/correct.mp3" preload="auto"></audio>
+<audio id="soundChannelWrong" src="./assets/wrong.mp3" preload="auto"></audio>
 
 <script>
-
-const questions = [
-
-{
-type:"identify",
-question:"Who am I?",
-image:"💻",
-options:["Computer","Tree","Bus","Fish"],
-answer:"Computer"
-},
-
-{
-type:"unscramble",
-question:"Unscramble the word",
-image:"🖥",
-options:["TOPDESK","DESKTOP","DOPSKET","DSETKOP"],
-answer:"DESKTOP"
-},
-
-{
-type:"identify",
-question:"Which one is a Natural Thing?",
-image:"🌳",
-options:["Tree","Laptop","Bus","Table"],
-answer:"Tree"
-},
-
-{
-type:"identify",
-question:"Which one is a Man-Made Thing?",
-image:"🚌",
-options:["Bus","Sun","Fish","Flower"],
-answer:"Bus"
-},
-
-{
-type:"unscramble",
-question:"Unscramble the word",
-image:"💻",
-options:["LTOPAP","LAPTOP","POTLAP","TOPLPA"],
-answer:"LAPTOP"
-},
-
-{
-type:"identify",
-question:"What does a computer use?",
-image:"⚡",
-options:["Electricity","Water","Milk","Chocolate"],
-answer:"Electricity"
-},
-
-{
-type:"identify",
-question:"Which posture is correct?",
-image:"🙂",
-options:["Sit Straight","Sleep","Jump","Stand on chair"],
-answer:"Sit Straight"
-},
-
-{
-type:"unscramble",
-question:"Unscramble the word",
-image:"📱",
-options:["TABLET","TBLAET","TLABET","BATLET"],
-answer:"TABLET"
-},
-
-{
-type:"identify",
-question:"What can we do on computer?",
-image:"🎨",
-options:["Draw Pictures","Cook Food","Fly","Swim"],
-answer:"Draw Pictures"
-},
-
-{
-type:"identify",
-question:"Computer is a...",
-image:"🤖",
-options:["Smart Machine","Fruit","Animal","Flower"],
-answer:"Smart Machine"
-}
-
+// Immutable Source Matrix Core Item Array Bank
+const catalogDbSource = [
+    { type: "identify", question: "Who am I?", image: "💻", options: ["Computer", "Tree", "Bus", "Fish"], answer: "Computer" },
+    { type: "unscramble", question: "Unscramble the word", image: "🖥", options: ["TOPDESK", "DESKTOP", "DOPSKET", "DSETKOP"], answer: "DESKTOP" },
+    { type: "identify", question: "Which one is a Natural Thing?", image: "🌳", options: ["Tree", "Laptop", "Bus", "Table"], answer: "Tree" },
+    { type: "identify", question: "Which one is a Man-Made Thing?", image: "🚌", options: ["Bus", "Sun", "Fish", "Flower"], answer: "Bus" },
+    { type: "unscramble", question: "Unscramble the word", image: "💻", options: ["LTOPAP", "LAPTOP", "POTLAP", "TOPLPA"], answer: "LAPTOP" },
+    { type: "identify", question: "What does a computer use?", image: "⚡", options: ["Electricity", "Water", "Milk", "Chocolate"], answer: "Electricity" },
+    { type: "identify", question: "Which posture is correct?", image: "🙂", options: ["Sit Straight", "Sleep", "Jump", "Stand on chair"], answer: "Sit Straight" },
+    { type: "unscramble", question: "Unscramble the word", image: "📱", options: ["TABLET", "TBLAET", "TLABET", "BATLET"], answer: "TABLET" },
+    { type: "identify", question: "What can we do on a computer?", image: "🎨", options: ["Draw Pictures", "Cook Food", "Fly", "Swim"], answer: "Draw Pictures" },
+    { type: "identify", question: "A computer is a...", image: "🤖", options: ["Smart Machine", "Fruit", "Animal", "Flower"], answer: "Smart Machine" }
 ];
 
-let currentQuestion = 0;
-let score = 0;
-let badges = 0;
-let timer;
-let timeLeft = 40;
+// Runtime System Tracking Memory State Variables 
+let sessionPlaylist = [];
+let operationalIndex = 0;
+let numericalScore = 0;
+let badgeAccumulation = 0;
+let internalClockTicker;
+let currentRemainingSeconds = 40;
 
-const questionEl = document.getElementById('question');
-const imageEl = document.getElementById('image');
-const optionsEl = document.getElementById('options');
-const feedbackEl = document.getElementById('feedback');
-const nextBtn = document.getElementById('nextBtn');
-const badgeCount = document.getElementById('badgeCount');
+// Component DOM Elements Node Bindings References 
+const appSplashLayer = document.getElementById('splashScreen');
+const mainApplicationContainerFrame = document.getElementById('gameFrame');
+const ladderGridStripTrack = document.getElementById('ladderSystemTrack');
+const questionLabelContainerField = document.getElementById('targetQuestionText');
+const assetGraphicEmojiFrame = document.getElementById('targetGraphicNode');
+const selectionsOptionFlexBoxGrid = document.getElementById('selectionOptionsGrid');
+const centerInteractivePanelPlayground = document.getElementById('playground');
+const systemStatusFeedbackField = document.getElementById('feedbackPromptZone');
+const multiStepAdvanceTriggerBtn = document.getElementById('advanceStepBtn');
+const finalReportingSummaryCard = document.getElementById('completionReportingScreen');
+const operationalReplayActionTrigger = document.getElementById('replayActionBtn');
 
-function shuffle(array){
-return array.sort(()=>Math.random()-0.5);
+// Audio Context Play Safe Engine Wrap Execution Channels
+const soundAssetCorrect = document.getElementById('soundChannelCorrect');
+const soundAssetWrong = document.getElementById('soundChannelWrong');
+
+function executeAudioNotification(targetChannelSignal) {
+    if (targetChannelSignal === 'right') {
+        soundAssetCorrect.currentTime = 0;
+        soundAssetCorrect.play().catch(() => {});
+    } else {
+        soundAssetWrong.currentTime = 0;
+        soundAssetWrong.play().catch(() => {});
+    }
 }
 
-let shuffledQuestions = shuffle([...questions]);
-
-function startGame(){
-
-showQuestion();
-
-}
-
-function showQuestion(){
-
-clearInterval(timer);
-
-timeLeft = 40;
-document.getElementById('time').innerText = timeLeft;
-
-timer = setInterval(()=>{
-
-timeLeft--;
-document.getElementById('time').innerText = timeLeft;
-
-if(timeLeft<=0){
-
-clearInterval(timer);
-
-feedbackEl.innerHTML = "⏰ Time Up!";
-feedbackEl.className = "feedback wrong";
-
-document.querySelectorAll('.option').forEach(btn=>{
-btn.style.pointerEvents='none';
+// 5 Seconds Pre-Load Splash Overlay Timer Trigger Sequence Engine 
+window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        appSplashLayer.style.opacity = '0';
+        setTimeout(() => {
+            appSplashLayer.style.display = 'none';
+            mainApplicationContainerFrame.style.opacity = '1';
+            buildFreshSessionLifecycle();
+        }, 600);
+    }, 5000);
 });
 
-nextBtn.style.display='inline-block';
-
+// Non-Biased Standard Array Shuffler Routine
+function scrambleDataCollection(inputTargetArray) {
+    const duplicatedSet = [...inputTargetArray];
+    for (let currentTailIndex = duplicatedSet.length - 1; currentTailIndex > 0; currentTailIndex--) {
+        const randomTargetIndex = Math.floor(Math.random() * (currentTailIndex + 1));
+        [duplicatedSet[currentTailIndex], duplicatedSet[randomTargetIndex]] = [duplicatedSet[randomTargetIndex], duplicatedSet[currentTailIndex]];
+    }
+    return duplicatedSet;
 }
 
-},1000);
+// Construct Ladder Rung Structural Matrix Interface Component Nodes
+function structureProgressionMapElements() {
+    ladderGridStripTrack.innerHTML = '';
+    for (let indexPosition = 0; indexPosition < sessionPlaylist.length; indexPosition++) {
+        const individualRungNode = document.createElement('div');
+        individualRungNode.classList.add('ladder-rung');
+        individualRungNode.id = `ladder-step-node-${indexPosition}`;
+        individualRungNode.innerText = indexPosition + 1;
+        ladderGridStripTrack.appendChild(individualRungNode);
+    }
+}
 
-feedbackEl.innerHTML='';
-nextBtn.style.display='none';
+// Visual State Rendering Synchronization for the Ladder Array Layout Track
+function synchronizeProgressionInterfaceTracking() {
+    for (let matrixWalkerIndex = 0; matrixWalkerIndex < sessionPlaylist.length; matrixWalkerIndex++) {
+        const currentSelectedRungNode = document.getElementById(`ladder-step-node-${matrixWalkerIndex}`);
+        if (!currentSelectedRungNode) continue;
 
-const q = shuffledQuestions[currentQuestion];
+        if (matrixWalkerIndex < operationalIndex) {
+            currentSelectedRungNode.className = 'ladder-rung passed';
+            currentSelectedRungNode.innerText = '⭐';
+        } else if (matrixWalkerIndex === operationalIndex) {
+            currentSelectedRungNode.className = 'ladder-rung current';
+            currentSelectedRungNode.innerText = '🏃';
+        } else {
+            currentSelectedRungNode.className = 'ladder-rung';
+            currentSelectedRungNode.innerText = matrixWalkerIndex + 1;
+        }
+    }
+}
 
-questionEl.innerHTML = q.question;
-imageEl.innerHTML = q.image;
+function buildFreshSessionLifecycle() {
+    numericalScore = 0;
+    badgeAccumulation = 0;
+    operationalIndex = 0;
+    
+    document.getElementById('scoreSpan').innerText = numericalScore;
+    document.getElementById('badgeSpan').innerText = badgeAccumulation;
+    
+    centerInteractivePanelPlayground.style.display = 'block';
+    finalReportingSummaryCard.style.display = 'none';
+    
+    sessionPlaylist = scrambleDataCollection(catalogDbSource);
+    structureProgressionMapElements();
+    processQuestionLifecycleStep();
+}
 
-optionsEl.innerHTML='';
+function processQuestionLifecycleStep() {
+    clearInterval(internalClockTicker);
+    currentRemainingSeconds = 40;
+    document.getElementById('timeSpan').innerText = currentRemainingSeconds;
+    
+    synchronizeProgressionInterfaceTracking();
+    systemStatusFeedbackField.innerText = '';
+    multiStepAdvanceTriggerBtn.style.display = 'none';
 
-const shuffledOptions = shuffle([...q.options]);
+    // Set countdown timer countdown logic thread sequence loop
+    internalClockTicker = setInterval(() => {
+        currentRemainingSeconds--;
+        document.getElementById('timeSpan').innerText = currentRemainingSeconds;
+        
+        if (currentRemainingSeconds <= 0) {
+            clearInterval(internalClockTicker);
+            systemStatusFeedbackField.innerText = "⏰ Time is Up!";
+            systemStatusFeedbackField.style.color = "#d63031";
+            executeAudioNotification('wrong');
+            
+            // Block remaining user inputs
+            document.querySelectorAll('.option-node').forEach(itemNode => {
+                itemNode.style.pointerEvents = 'none';
+            });
+            multiStepAdvanceTriggerBtn.style.display = 'inline-block';
+        }
+    }, 1000);
 
-shuffledOptions.forEach(option=>{
+    const ActiveQuestionItemObject = sessionPlaylist[operationalIndex];
+    questionLabelContainerField.innerText = ActiveQuestionItemObject.question;
+    assetGraphicEmojiFrame.innerText = ActiveQuestionItemObject.image;
+    selectionsOptionFlexBoxGrid.innerHTML = '';
 
-const btn = document.createElement('div');
-btn.classList.add('option');
-btn.innerHTML = option;
+    const scrambledOptionSelections = scrambleDataCollection(ActiveQuestionItemObject.options);
+    scrambledOptionSelections.forEach(optionTextString => {
+        const structuralOptionNode = document.createElement('div');
+        structuralOptionNode.classList.add('option-node');
+        structuralOptionNode.innerText = optionTextString;
+        
+        structuralOptionNode.onclick = () => verifyUserResponseInput(optionTextString, ActiveQuestionItemObject.answer, structuralOptionNode);
+        selectionsOptionFlexBoxGrid.appendChild(structuralOptionNode);
+    });
+}
 
-btn.onclick = ()=>checkAnswer(option,q.answer,btn);
+function verifyUserResponseInput(selectedOptionTextString, correctMatchingAnswerString, elementNodeReference) {
+    clearInterval(internalClockTicker);
+    
+    document.querySelectorAll('.option-node').forEach(itemNode => {
+        itemNode.style.pointerEvents = 'none';
+    });
 
-optionsEl.appendChild(btn);
+    if (selectedOptionTextString === correctMatchingAnswerString) {
+        elementNodeReference.style.backgroundColor = '#55efc4';
+        elementNodeReference.style.borderColor = '#00b894';
+        elementNodeReference.style.color = '#fff';
+        
+        systemStatusFeedbackField.innerText = "👏 Super Job! Correct!";
+        systemStatusFeedbackField.style.color = "#00b894";
+        executeAudioNotification('right');
+        
+        numericalScore++;
+        badgeAccumulation++;
+        document.getElementById('scoreSpan').innerText = numericalScore;
+        document.getElementById('badgeSpan').innerText = badgeAccumulation;
 
+        confetti({
+            particleCount: 110,
+            spread: 75,
+            origin: { y: 0.65 }
+        });
+    } else {
+        elementNodeReference.style.backgroundColor = '#ff7675';
+        elementNodeReference.style.borderColor = '#d63031';
+        elementNodeReference.style.color = '#fff';
+        
+        systemStatusFeedbackField.innerText = " Let's try again next time!";
+        systemStatusFeedbackField.style.color = "#d63031";
+        executeAudioNotification('wrong');
+        
+        // Highlight correct target selection element node path visually for early childhood tracking aid
+        document.querySelectorAll('.option-node').forEach(itemNode => {
+            if (itemNode.innerText === correctMatchingAnswerString) {
+                itemNode.style.border = "3px solid #00b894";
+                itemNode.style.backgroundColor = "#ffeaa7";
+                itemNode.style.color = "#00b894";
+            }
+        });
+    }
+    
+    multiStepAdvanceTriggerBtn.style.display = 'inline-block';
+}
+
+multiStepAdvanceTriggerBtn.addEventListener('click', () => {
+    operationalIndex++;
+    if (operationalIndex < sessionPlaylist.length) {
+        processQuestionLifecycleStep();
+    } else {
+        showFinalCompletionTerminalScreen();
+    }
 });
 
+function showFinalCompletionTerminalScreen() {
+    clearInterval(internalClockTicker);
+    synchronizeProgressionInterfaceTracking();
+    
+    centerInteractivePanelPlayground.style.display = 'none';
+    multiStepAdvanceTriggerBtn.style.display = 'none';
+    finalReportingSummaryCard.style.display = 'block';
+
+    document.getElementById('endScoreDisplay').innerText = numericalScore;
+    document.getElementById('endBadgeDisplay').innerText = badgeAccumulation;
+
+    confetti({
+        particleCount: 220,
+        spread: 110,
+        origin: { y: 0.55 }
+    });
 }
 
-function checkAnswer(selected,answer,btn){
-
-clearInterval(timer);
-
-document.querySelectorAll('.option').forEach(btn=>{
-btn.style.pointerEvents='none';
+operationalReplayActionTrigger.addEventListener('click', () => {
+    buildFreshSessionLifecycle();
 });
-
-if(selected===answer){
-
-btn.style.border='4px solid green';
-
-feedbackEl.innerHTML='👏 Correct!';
-feedbackEl.className='feedback correct';
-
-document.getElementById('correctSound').play();
-
-score++;
-badges++;
-
-badgeCount.innerHTML = badges;
-
-confetti({
-particleCount:150,
-spread:90,
-origin:{y:0.6}
-});
-
-}else{
-
-btn.style.border='4px solid red';
-
-feedbackEl.innerHTML='❌ Wrong!';
-feedbackEl.className='feedback wrong';
-
-document.getElementById('wrongSound').play();
-
-}
-
-nextBtn.style.display='inline-block';
-
-}
-
-nextBtn.addEventListener('click',()=>{
-
-currentQuestion++;
-
-if(currentQuestion < shuffledQuestions.length){
-
-showQuestion();
-
-}else{
-
-showFinal();
-
-}
-
-});
-
-function showFinal(){
-
-document.getElementById('gameArea').style.display='none';
-document.getElementById('finalScreen').style.display='block';
-
-document.getElementById('score').innerHTML = score + " / " + shuffledQuestions.length;
-
-document.getElementById('finalBadges').innerHTML = badges;
-
-confetti({
-particleCount:300,
-spread:120
-});
-
-}
-
-function restartGame(){
-
-currentQuestion=0;
-score=0;
-badges=0;
-
-badgeCount.innerHTML=0;
-
-shuffledQuestions = shuffle([...questions]);
-
-document.getElementById('gameArea').style.display='block';
-document.getElementById('finalScreen').style.display='none';
-
-showQuestion();
-
-}
-
-function createStars(){
-
-for(let i=0;i<40;i++){
-
-const star = document.createElement('div');
-
-star.classList.add('star');
-
-star.innerHTML='⭐';
-
-star.style.left=Math.random()*100+'%';
-star.style.top=Math.random()*100+'%';
-
-document.body.appendChild(star);
-
-}
-
-}
-
-createStars();
-
-startGame();
-
 </script>
-
 </body>
 </html>

@@ -23,7 +23,7 @@
         }
 
         body {
-            background: linear-gradient(180deg, #bae6fd 0%, #38bdf8 100%);
+            background: #bae6fd url('assets/bg.jpg') no-repeat center center/cover;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -56,14 +56,15 @@
         .game-card {
             display: none;
             width: 100%;
-            max-width: 760px;
-            background: #ffffff;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.96);
             border: 6px solid var(--primary-teal);
             border-radius: 32px;
-            box-shadow: 0 20px 40px rgba(12, 74, 110, 0.25);
-            padding: 25px;
+            box-shadow: 0 20px 40px rgba(12, 74, 110, 0.3);
+            padding: 30px;
             text-align: center;
             position: relative;
+            backdrop-filter: blur(8px);
             animation: cardPopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
@@ -72,7 +73,7 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        h1 { color: var(--primary-dark); font-size: 32px; margin-bottom: 12px; text-shadow: 2px 2px 0px #ccfbf1; }
+        h1 { color: var(--primary-dark); font-size: 34px; margin-bottom: 12px; text-shadow: 2px 2px 0px #ccfbf1; }
         p { color: #475569; font-size: 19px; line-height: 1.4; margin-bottom: 15px; }
 
         .btn-action {
@@ -104,10 +105,10 @@
             background: #ccfbf1;
             border: 3px solid var(--primary-teal);
             border-radius: 20px;
-            padding: 8px 18px;
-            margin-bottom: 15px;
+            padding: 10px 22px;
+            margin-bottom: 18px;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 20px;
             color: var(--primary-dark);
         }
 
@@ -115,7 +116,7 @@
         .balloon-theater {
             position: relative;
             width: 100%;
-            height: 340px;
+            height: 380px;
             background: linear-gradient(180deg, #f0fdfa 0%, #ccfbf1 100%);
             border: 4px dashed var(--primary-teal);
             border-radius: 24px;
@@ -123,51 +124,66 @@
             margin-bottom: 15px;
         }
 
-        .tool-preview-embed {
+        /* Container for the tool question image */
+        .image-display-frame {
             position: absolute;
             top: 15px;
             left: 50%;
             transform: translateX(-50%);
-            max-height: 85px;
-            object-fit: contain;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
             z-index: 10;
-            border-radius: 8px;
+            background: white;
+            padding: 8px;
+            border: 3px solid var(--primary-teal);
+            border-radius: 14px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            max-width: 85%;
+        }
+
+        .tool-preview-embed {
+            max-height: 95px;
+            max-width: 100%;
+            display: block;
+            object-fit: contain;
         }
 
         /* Floating Balloon Styles */
         .balloon {
             position: absolute;
-            bottom: -90px;
-            width: 115px;
-            height: 135px;
+            bottom: -100px;
+            width: 130px;
+            height: 155px;
             border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 10px;
+            padding: 12px;
             color: white;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 15px;
             text-align: center;
-            box-shadow: inset -8px -12px 0px rgba(0,0,0,0.12), 0 8px 15px rgba(0,0,0,0.1);
-            animation: floatUp 6s linear infinite;
+            box-shadow: inset -10px -15px 0px rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,0,0.15);
+            animation: floatUp 6.5s linear infinite;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
+            line-height: 1.2;
         }
+        
         /* Balloon String Tail */
         .balloon::after {
-            content: "🎈";
+            content: "";
             position: absolute;
-            bottom: -18px;
-            left: 42%;
-            font-size: 16px;
-            opacity: 0.7;
+            bottom: -12px;
+            left: 50%;
+            width: 2px;
+            height: 14px;
+            background: rgba(0, 0, 0, 0.25);
+            transform: translateX(-50%);
         }
 
         @keyframes floatUp {
             0% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateX(15px) rotate(3deg); }
-            100% { transform: translateY(-460px) rotate(-3deg); }
+            50% { transform: translateX(15px) rotate(4deg); }
+            100% { transform: translateY(-520px) rotate(-4deg); }
         }
 
         /* --- SCORECARD CERTIFICATE LAYER --- */
@@ -190,17 +206,20 @@
 </head>
 <body>
 
+    <!-- 1. BRANDING SPLASH LAYER -->
     <div id="brand-splash">
         <img src="assets/innovine-logo.png" alt="Innovine Logo">
     </div>
 
+    <!-- 2. WELCOME INITIAL WINDOW -->
     <div id="welcome-screen" class="game-card">
         <div style="font-size: 80px; margin-bottom: 10px;">🎈</div>
-                <h1>Balloon Pop Paint Quiz!</h1>
+        <h1>Balloon Pop Paint Quiz!</h1>
         <p>Pop the floating balloons containing the correct answers to complete the advanced tools quest!</p>
         <button class="btn-action" onclick="showRulesWindow()">Start Quiz 🚀</button>
     </div>
 
+    <!-- 3. RULES DIRECTIONS SHEET -->
     <div id="rules-screen" class="game-card">
         <h1>🧭 Balloon Tracker Guide</h1>
         <div style="text-align: left; max-width: 480px; margin: 20px auto; font-size: 19px; line-height: 1.6; color: var(--text-dark);">
@@ -213,19 +232,26 @@
         <button class="btn-action" onclick="launchArcadeEngine()">Let's Pop! 🏹</button>
     </div>
 
+    <!-- 4. CORE INTERACTIVE BALLOON POP ARCADE ARENA -->
     <div id="play-screen" class="game-card">
         <div class="hud-panel">
             <span id="hud-round-idx">Challenge: 1/6</span>
             <span id="hud-stars-total">Stars: 0 ⭐</span>
         </div>
 
+        <!-- Float Stage Arena Canvas -->
         <div class="balloon-theater" id="arena-surface">
-            <img id="embedded-tool-graphic" class="tool-preview-embed" src="" alt="Paint Feature">
+            <div class="image-display-frame">
+                <img id="embedded-tool-graphic" class="tool-preview-embed" src="" alt="Paint Feature">
             </div>
+            <!-- Balloons inject here dynamically -->
+        </div>
 
+        <!-- Task Prompts Clue Row -->
         <p id="clue-caption-text" style="font-weight: bold; font-size: 20px; color: var(--primary-dark); min-height: 54px; margin: 10px 0;"></p>
     </div>
 
+    <!-- 5. REWARD CERTIFICATE FINALE VIEWPORT -->
     <div id="victory-screen" class="game-card">
         <h1>Quiz Complete! 🏁</h1>
         <div class="certificate-sheet">
@@ -237,11 +263,12 @@
         <button class="btn-action" onclick="restartQuizLoop()">Play Again 🔄</button>
     </div>
 
+    <!-- SOUND RIG EMBEDS -->
     <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <script>
-        /* --- HIGH CONTEXT ADVANCED TOOLS DATA ARRAY --- */
+        /* --- ALL FILENAMES MATCHING image_ea3b82.png EXACTLY (.PNG) --- */
         const quizDatabase = [
             {
                 prompt: "Look at this panel block! Which component option provides ready-to-use shapes like Stars and Rectangles?",
@@ -294,9 +321,9 @@
                 splash.style.opacity = '0';
                 setTimeout(() => {
                     splash.style.display = 'none';
-                    welcome.style.display = 'block'; // Instructions display strictly after splash disappears
+                    welcome.style.display = 'block';
                 }, 500);
-            }, 5000); // 5000 milliseconds = 5 Seconds exactly
+            }, 5000);
         });
 
         function showRulesWindow() {
@@ -326,46 +353,51 @@
             document.getElementById('clue-caption-text').innerText = activeRound.prompt;
             document.getElementById('embedded-tool-graphic').src = activeRound.image;
 
-            // Purge any lingering old balloons from previous round
             const surface = document.getElementById('arena-surface');
             const oldBalloons = surface.querySelectorAll('.balloon');
             oldBalloons.forEach(b => b.remove());
 
-            // Build rising arcade balloons with randomized left layouts and staggered delay floats
+            // Build rising arcade balloons with clean spatial spreads
             activeRound.options.forEach((optionText, idx) => {
                 const balloon = document.createElement('div');
                 balloon.className = 'balloon';
                 balloon.innerText = optionText;
                 
-                // Styling visual variance
                 balloon.style.backgroundColor = balloonColors[idx % balloonColors.length];
-                balloon.style.left = `${15 + (idx * 30) + (Math.random() * 8)}%`;
-                
-                // Add minor random floating delays to split clumped columns
-                balloon.style.animationDelay = `${idx * 0.6}s`;
+                // Distribute evenly horizontally across the arena box width
+                balloon.style.left = `${12 + (idx * 32) + (Math.random() * 5)}%`;
+                balloon.style.animationDelay = `${idx * 0.7}s`;
 
-                // Handle click pop event checks
                 balloon.onclick = () => processPopAction(idx, activeRound.correct, balloon);
                 surface.appendChild(balloon);
             });
         }
 
-        /* --- POP ACTION INTERACTIVE EVALUATION CORNER --- */
+        /* --- POP ACTION INTERACTIVE EVALUATION --- */
         function processPopAction(selectedIdx, correctIdx, balloonElement) {
-            // Visual feedback of popping
-            balloonElement.style.transform = "scale(0)";
-            balloonElement.style.opacity = "0";
-            balloonElement.style.pointerEvents = "none";
-
             if (selectedIdx === correctIdx) {
                 triggerAudioFeedback(true);
+                
+                // Fancy Pop Fade Out
+                balloonElement.style.transform = "scale(1.4)";
+                balloonElement.style.opacity = "0";
+                balloonElement.style.transition = "transform 0.2s ease-out, opacity 0.2s ease-out";
+                balloonElement.style.pointerEvents = "none";
+                
                 starPoints += 10;
                 activeIndex++;
                 setTimeout(loadQuizRound, 400);
             } else {
                 triggerAudioFeedback(false);
-                // Keep round going but remove wrong option so kid can try other popping options
-                alert("Oops! Try looking for a different tool element in the rising cloud sky!");
+                balloonElement.style.animationPlayState = 'paused';
+                
+                // Shake effect for feedback
+                balloonElement.style.transform = "translateX(-10px)";
+                setTimeout(() => { balloonElement.style.transform = "translateX(10px)"; }, 100);
+                setTimeout(() => { 
+                    balloonElement.style.transform = "none"; 
+                    balloonElement.style.animationPlayState = 'running';
+                }, 200);
             }
         }
 
@@ -377,7 +409,6 @@
             }
         }
 
-        /* --- END OF GAME SUMMARY MAKER --- */
         function renderFinalCertificate() {
             document.getElementById('play-screen').style.display = 'none';
             document.getElementById('victory-screen').style.display = 'block';
@@ -391,9 +422,6 @@
             } else if (starPoints >= 40) {
                 tierTag = "Paint Artist";
                 medalArt = "🎨";
-            } else if (starPoints >= 20) {
-                tierTag = "Paint Explorer";
-                medalArt = "🤠";
             }
 
             document.getElementById('final-medal-icon').innerText = medalArt;

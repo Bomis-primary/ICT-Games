@@ -3,94 +3,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Exploring the Desktop</title>
+    <title>Mystery Box: Exploring the Desktop</title>
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background: #f0f7f4; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        #game-container { width: 800px; height: 600px; background: white; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); position: relative; overflow: hidden; border: 4px solid #00a896; }
+        * { box-sizing: border-box; font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif; user-select: none; }
+        body { background: #b5e2fa; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        
+        #game-container { width: 850px; height: 650px; background: #edafb8; border-radius: 24px; box-shadow: 0 12px 36px rgba(0,0,0,0.25); position: relative; overflow: hidden; border: 6px solid #f72585; }
         .screen { width: 100%; height: 100%; display: none; position: absolute; top: 0; left: 0; padding: 30px; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         
-        /* Screen Specific Styles */
+        /* 1. Intro Splash Screen */
         #logo-screen { display: flex; background: #ffffff; }
-        #logo-screen img { max-width: 350px; animation: pulse 1.5s infinite; }
+        #logo-screen img { width: 350px; height: auto; animation: pulse 1.5s infinite alternate; }
         
-        #instruction-screen { background: #e8f1f5; }
-        h1 { color: #023e8a; font-size: 32px; margin-bottom: 10px; }
-        h2 { color: #0077b6; font-size: 24px; }
-        p { color: #333; font-size: 18px; line-height: 1.5; max-width: 600px; }
+        /* 2. Instruction Screen */
+        #instruction-screen { background: #72efdd; }
+        h1 { color: #7209b7; font-size: 38px; text-shadow: 2px 2px #fff; margin: 10px 0; }
+        p { color: #301934; font-size: 22px; max-width: 650px; line-height: 1.6; }
         
-        .btn { background: #ffb703; color: #023047; border: none; padding: 15px 40px; font-size: 22px; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: transform 0.2s; margin-top: 20px; }
-        .btn:hover { transform: scale(1.05); background: #fb8500; }
+        /* Funky Play Buttons */
+        .btn { background: #ff007f; color: white; border: 4px solid #fff; padding: 15px 45px; font-size: 26px; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 6px 0 #9d0208; transition: all 0.1s ease; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 0 #9d0208; }
+        .btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #9d0208; }
         
-        /* HUD / Scoreboard */
-        #hud { width: 100%; display: flex; justify-content: space-between; align-items: center; font-size: 20px; font-weight: bold; color: #023047; margin-bottom: 20px; background: #e8f1f5; padding: 10px 20px; border-radius: 8px; }
+        /* 3. Core Gameplay Workspace Layout */
+        #game-screen { background: #4cc9f0; justify-content: space-between; padding: 20px; }
         
-        /* Game Screen layout */
-        #game-screen { justify-content: flex-start; }
-        .question-box { font-size: 24px; color: #023e8a; font-weight: bold; margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 5px solid #ffb703; width: 100%; }
-        .options-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 650px; margin-top: 20px; }
-        .option-btn { background: #ffffff; border: 3px solid #0077b6; border-radius: 12px; padding: 20px; font-size: 20px; font-weight: bold; cursor: pointer; transition: all 0.2s; color: #0077b6; }
-        .option-btn:hover { background: #0077b6; color: white; }
+        /* Status Bar (Hearts & Scores) */
+        #status-bar { width: 100%; display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.8); padding: 10px 25px; border-radius: 50px; border: 3px solid #7209b7; }
+        .stat-box { font-size: 24px; font-weight: bold; color: #7209b7; display: flex; align-items: center; gap: 8px; }
+        .heart { color: #ff0055; font-size: 28px; transition: transform 0.3s; }
         
-        /* Animations */
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+        /* The Suspense Centerpiece: Mystery Box Area */
+        #mystery-zone { display: flex; align-items: center; gap: 40px; margin: 20px 0; background: rgba(255,255,255,0.2); padding: 20px; border-radius: 20px; width: 100%; justify-content: center; }
+        #mystery-box-graphic { font-size: 90px; animation: wobble 2s infinite ease-in-out; filter: drop-shadow(0 8px 10px rgba(0,0,0,0.2)); position: relative; }
+        
+        /* Animated Wobble for Mystery Box Box */
+        @keyframes wobble {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            45% { transform: rotate(-5deg) scale(1.05); }
+            55% { transform: rotate(5deg) scale(1.05); }
+        }
+        
+        .clue-bubble { background: #fff; border-radius: 20px; padding: 20px; border: 4px solid #f72585; max-width: 450px; font-size: 22px; font-weight: bold; color: #3a0ca3; position: relative; box-shadow: 0 6px 0 rgba(0,0,0,0.1); }
+        .clue-bubble::before { content: ''; position: absolute; left: -15px; top: 50%; transform: translateY(-50%) rotate(45deg); width: 20px; height: 20px; background: white; border-left: 4px solid #f72585; border-bottom: 4px solid #f72585; }
+        
+        /* Action Grid Choices */
+        .grid-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 100%; max-width: 700px; margin-bottom: 10px; }
+        .choice-card { background: #fff; border: 4px solid #3a0ca3; border-radius: 18px; padding: 18px; font-size: 22px; font-weight: bold; color: #3a0ca3; cursor: pointer; box-shadow: 0 5px 0 #3a0ca3; transition: all 0.1s ease; }
+        .choice-card:hover { background: #f72585; color: #fff; border-color: #fff; }
+        .choice-card:active { transform: translateY(4px); box-shadow: 0 1px 0 #3a0ca3; }
+        
+        /* 4. Reward / Final Reveal Stage */
+        #completion-screen { background: #7209b7; color: white; }
+        .badge-display { width: 160px; height: 160px; background: gold; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 80px; margin: 20px 0; border: 6px solid #fff; box-shadow: 0 0 25px gold; animation: scaleUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        
+        @keyframes scaleUp { from { transform: scale(0); } to { transform: scale(1); } }
+        @keyframes pulse { from { transform: scale(1); } to { transform: scale(1.04); } }
     </style>
 </head>
 <body>
 
 <div id="game-container">
-    <!-- 1. Logo Screen (First 5 Seconds) -->
+    <!-- 1. Branded Entry Stage (5-Second Rules Guard) -->
     <div id="logo-screen" class="screen">
         <img src="assets/innovine-logo.png" alt="Innovine Logo">
     </div>
 
-    <!-- 2. Instruction Screen (Triggered After Logo) -->
+    <!-- 2. Gameplay Roadmap & Instructions -->
     <div id="instruction-screen" class="screen">
-        <h1>Exploring the Desktop! 🖥️</h1>
-        <hr style="width:80%; border: 1px solid #00a896; margin: 20px 0;">
-        <p>Welcome, Little Explorer! Let's learn about the computer screen. Look at the questions carefully and click on the correct answer. Try to score a perfect 5 out of 5!</p>
-        <button class="btn" onclick="startGame()">Let's Play!</button>
+        <h1>🎁 The Desktop Mystery Box! 🎁</h1>
+        <p>A magical box has locked itself onto our computer computer screen! Solve the desktop clues to see what secret surprises are hidden inside!</p>
+        <p style="font-size: 18px; color: #7209b7; font-weight: bold;">⚠️ Watch out: You have exactly 4 hearts to crack the code!</p>
+        <button class="btn" onclick="launchGame()">Crack the Box!</button>
     </div>
 
-    <!-- 3. Interactive Quiz Game Screen -->
+    <!-- 3. Dynamic Interactive Sandbox -->
     <div id="game-screen" class="screen">
-        <div id="hud">
-            <span id="question-number">Question: 1/5</span>
-            <span id="score-display">Score: 0</span>
+        <div id="status-bar">
+            <div class="stat-box" id="heart-container">
+                <!-- 4 Interactive Heart Anchors injected dynamically -->
+            </div>
+            <div class="stat-box" style="background: #f72585; color: white; padding: 5px 20px; border-radius: 20px;" id="progress-tag">
+                Box Layer: 1/5
+            </div>
+            <div class="stat-box" id="points-tag">⭐ Stars: 0</div>
         </div>
-        <div class="question-box" id="question-text">Loading question...</div>
-        <div class="options-container" id="options-box">
-            <!-- Options dynamically injected -->
+
+        <div id="mystery-zone">
+            <div id="mystery-box-graphic">🎁</div>
+            <div class="clue-bubble" id="clue-text">Loading clue...</div>
+        </div>
+
+        <div class="grid-choices" id="choices-grid">
+            <!-- Dynamic choice injections go here -->
         </div>
     </div>
 
-    <!-- 4. Final Score / Completion Screen -->
+    <!-- 4. Winner's Circle / Dynamic Merit Badge Reveal -->
     <div id="completion-screen" class="screen">
-        <h1> 🎉 Game Complete! 🎉</h1>
-        <p style="font-size: 24px; font-weight: bold;">You are a Desktop Expert!</p>
-        <h2 id="final-score" style="font-size: 40px; margin: 15px 0; color: #00a896;">Score: 0 / 5</h2>
-        <button class="btn" onclick="restartGame()">Play Again</button>
+        <h1 id="victory-header" style="color: #fff; text-shadow: none;">✨ Unboxing Complete! ✨</h1>
+        <p id="victory-message" style="color: #fff;">Incredible job! Look at the special badge you won:</p>
+        
+        <div class="badge-display" id="badge-icon">👑</div>
+        <h2 id="badge-title" style="color: #fff; font-size: 28px; margin: 5px 0;">Desktop King</h2>
+        
+        <p id="final-metrics" style="font-weight: bold; background: rgba(0,0,0,0.2); padding: 10px 30px; border-radius: 30px;"></p>
+        <button class="btn" style="background: #4cc9f0; box-shadow: 0 6px 0 #0077b6;" onclick="restartAdventure()">Play Again</button>
     </div>
 </div>
 
-<!-- Audio Asset Handling Elements -->
+<!-- Local Native Audio Routing Nodes -->
 <audio id="sound-correct" src="assets/correct.mp3" preload="auto"></audio>
 <audio id="sound-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
 <script>
-    // Game Questions pool (Page 56-63 specific)
-    const questionsData = [
-        { q: "What is the very first screen called when you switch on a computer?", options: ["Desktop", "MS Paint", "Mousepad", "Calculator"], correct: 0 },
-        { q: "What are the small pictures sitting on the computer desktop called?", options: ["Stickers", "Icons", "Toys", "Buttons"], correct: 1 },
-        { q: "Where can you find the long horizontal bar located at the bottom of the screen?", options: ["Title bar", "Taskbar", "Ribbon", "Scroll Wheel"], correct: 1 },
-        { q: "Which special button launches the main menu and helps open programs?", options: ["Close Button", "Start Button", "Minimize Button", "Save Button"], correct: 1 },
-        { q: "Where on the taskbar can you see the current date and time widget?", options: ["On the far left", "On the far right", "Right in the middle", "Inside the icons"], correct: 1 }
+    // Innovative Suspense Array Pool
+    const desktopClues = [
+        { clue: "I am the very first big screen you see when the computer wakes up! What am I?", choices: ["Desktop Screen", "Calculator Box", "Keyboard Key", "MS Paint Box"], correct: 0 },
+        { clue: "We are the cute little pictures sitting directly on top of your desktop screen! What are we?", choices: ["Sticky Notes", "System Buttons", "Desktop Icons", "Toy Stickers"], correct: 2 },
+        { clue: "I am the long horizontal bar sleeping at the very bottom of your screen! What am I?", choices: ["Title Banner", "The Taskbar", "The Ribbon", "Scrolling Wheel"], correct: 1 },
+        { clue: "Click me to pop open your main menu and find all your favorite games! What am I?", choices: ["The Close Button", "The Minimize Dash", "The Start Button", "The Save Icon"], correct: 2 },
+        { clue: "Look down at the far right corner of your taskbar! What special widget do I show you?", choices: ["Battery life only", "Date & Time widget", "A secret coloring game", "A volume mouse"], correct: 1 }
     ];
 
-    let currentQuestionIndex = 0;
-    let score = 0;
+    let layerIndex = 0;
+    let totalStars = 0;
+    let livesRemaining = 4; // Crucial User Constraint Override: Gives exactly 4 chances
 
-    // Phase 1: Show branding screen exclusively for 5 seconds
+    // Secure Gate: 5-Second Brand Interface hold open
     window.onload = function() {
         setTimeout(() => {
             document.getElementById('logo-screen').style.display = 'none';
@@ -98,69 +138,123 @@
         }, 5000);
     };
 
-    // Phase 2: Core gameplay instantiation
-    function startGame() {
+    function launchGame() {
         document.getElementById('instruction-screen').style.display = 'none';
         document.getElementById('game-screen').style.display = 'flex';
-        currentQuestionIndex = 0;
-        score = 0;
-        loadQuestion();
+        layerIndex = 0;
+        totalStars = 0;
+        livesRemaining = 4;
+        renderHearts();
+        loadMysteryLayer();
     }
 
-    function loadQuestion() {
-        if (currentQuestionIndex >= questionsData.length) {
-            endGame();
+    function renderHearts() {
+        const container = document.getElementById('heart-container');
+        container.innerHTML = '';
+        for(let i = 0; i < 4; i++) {
+            let heartSpan = document.createElement('span');
+            heartSpan.className = 'heart';
+            heartSpan.innerText = i < livesRemaining ? '❤️' : '🖤';
+            container.appendChild(heartSpan);
+        }
+    }
+
+    function loadMysteryLayer() {
+        // Evaluate Win/Loss Conditions instantly
+        if (livesRemaining <= 0) {
+            triggerEndgame(false);
+            return;
+        }
+        if (layerIndex >= desktopClues.length) {
+            triggerEndgame(true);
             return;
         }
 
-        // Reset HUD element displays
-        document.getElementById('question-number').innerText = `Question: ${currentQuestionIndex + 1}/${questionsData.length}`;
-        document.getElementById('score-display').innerText = `Score: ${score}`;
+        document.getElementById('progress-tag').innerText = `Box Layer: ${layerIndex + 1}/${desktopClues.length}`;
+        document.getElementById('points-tag').innerText = `⭐ Stars: ${totalStars}`;
         
-        let currentData = questionsData[currentQuestionIndex];
-        document.getElementById('question-text').innerText = currentData.q;
+        let activeData = desktopClues[layerIndex];
+        document.getElementById('clue-text').innerText = activeData.clue;
         
-        let optionsBox = document.getElementById('options-box');
-        optionsBox.innerHTML = "";
+        // Random visual element transformations to keep kids hooked
+        const surpriseEmojis = ['🎁', '📦', '🔮', '💎', '🧰'];
+        document.getElementById('mystery-box-graphic').innerText = surpriseEmojis[layerIndex % surpriseEmojis.length];
 
-        currentData.options.forEach((option, index) => {
-            let button = document.createElement('button');
-            button.className = "option-btn";
-            button.innerText = option;
-            button.onclick = () => checkAnswer(index);
-            optionsBox.appendChild(button);
+        const grid = document.getElementById('choices-grid');
+        grid.innerHTML = '';
+
+        activeData.choices.forEach((choice, index) => {
+            let card = document.createElement('button');
+            card.className = 'choice-card';
+            card.innerText = choice;
+            card.onclick = () => verifyKeyChoice(index);
+            grid.appendChild(card);
         });
     }
 
-    function checkAnswer(selectedIndex) {
-        let currentData = questionsData[currentQuestionIndex];
+    function verifyKeyChoice(chosenIdx) {
+        let activeData = desktopClues[layerIndex];
         let correctAudio = document.getElementById('sound-correct');
         let wrongAudio = document.getElementById('sound-wrong');
 
-        if (selectedIndex === currentData.correct) {
-            score++;
+        if (chosenIdx === activeData.correct) {
+            totalStars += 10;
+            layerIndex++;
             try { correctAudio.currentTime = 0; correctAudio.play(); } catch(e){}
+            
+            // Visual bounce impact effect on correct choice
+            document.getElementById('mystery-box-graphic').style.transform = 'scale(1.3)';
+            setTimeout(() => document.getElementById('mystery-box-graphic').style.transform = 'scale(1)', 300);
         } else {
+            livesRemaining--;
+            renderHearts();
             try { wrongAudio.currentTime = 0; wrongAudio.play(); } catch(e){}
+            
+            // Shake effect on wrong choice
+            document.getElementById('game-container').style.animation = 'none';
+            setTimeout(() => document.getElementById('game-container').style.animation = 'wobble 0.3s ease', 10);
         }
 
-        // Prevent endless loops: step forward to the next index immediately 
-        currentQuestionIndex++;
-        setTimeout(loadQuestion, 600); 
+        setTimeout(loadMysteryLayer, 400);
     }
 
-    // Phase 3: Final Score Completion State
-    function endGame() {
+    function triggerEndgame(isVictory) {
         document.getElementById('game-screen').style.display = 'none';
         document.getElementById('completion-screen').style.display = 'flex';
-        document.getElementById('final-score').innerText = `Score: ${score} / ${questionsData.length}`;
+        
+        const badgeIcon = document.getElementById('badge-icon');
+        const badgeTitle = document.getElementById('badge-title');
+        const header = document.getElementById('victory-header');
+        const msg = document.getElementById('victory-message');
+        const metrics = document.getElementById('final-metrics');
+
+        metrics.innerText = `Final Score: ${totalStars} Stars!`;
+
+        if (isVictory) {
+            header.innerText = "🎉 Box Unlocked! 🎉";
+            if (totalStars === 50) {
+                badgeIcon.innerText = "👑";
+                badgeTitle.innerText = "Desktop Emperor Badge";
+                msg.innerText = "Perfect score! You unboxed a legendary diamond computer toy!";
+            } else {
+                badgeIcon.innerText = "🚀";
+                badgeTitle.innerText = "Desktop Explorer Badge";
+                msg.innerText = "Great job! You unboxed a shiny spaceship explorer toy!";
+            }
+        } else {
+            header.innerText = "💔 Game Over! 💔";
+            badgeIcon.innerText = "🧸";
+            badgeTitle.innerText = "Desktop Learner Badge";
+            msg.innerText = "The box locked up tight! Try again to discover what's inside!";
+            badgeIcon.style.boxShadow = '0 0 25px #ff0055';
+            badgeIcon.style.background = '#ff0055';
+        }
     }
 
-    function restartGame() {
+    function restartAdventure() {
         document.getElementById('completion-screen').style.display = 'none';
-        startGame();
+        launchGame();
     }
 </script>
-
 </body>
 </html>

@@ -1,660 +1,559 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> ICT: Fun MS Paint Adventure</title>
+    <style>
+        /* --- GLOBAL CARTOON STYLE THEME --- */
+        * {
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            user-select: none;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f0fdfa url('assets/bg.jpg') no-repeat center center/cover;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
 
-<title>Grade 1 MS Paint Interactive Game</title>
+        /* --- BRANDING SPLASH LAYER (Strictly 5 Seconds) --- */
+        #brand-splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease;
+        }
+        #brand-splash img {
+            max-width: 70%;
+            max-height: 70vh;
+            object-fit: contain;
+        }
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+        /* --- APPLICATION PLAYGROUND FRAMES --- */
+        .game-container {
+            display: none;
+            width: 92%;
+            max-width: 760px;
+            background: rgba(255, 255, 255, 0.96);
+            border: 5px solid #0d9488;
+            border-radius: 32px;
+            box-shadow: 0 16px 32px rgba(0,0,0,0.15);
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-<style>
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Comic Sans MS', sans-serif;
-}
+        /* --- GRAPHIC ELEMENT CLASSES --- */
+        h1 { color: #0f766e; font-size: 32px; margin: 10px 0; text-shadow: 2px 2px 0px #ccfbf1; }
+        h2 { color: #0d9488; font-size: 24px; margin: 5px 0; }
+        p { color: #374151; font-size: 18px; line-height: 1.4; }
 
-body{
-background:url('https://img.freepik.com/free-vector/cartoon-school-background_23-2149464863.jpg') no-repeat center center/cover;
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-padding:20px;
-}
+        .btn-action {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #78350f;
+            border: 4px solid #b45309;
+            border-radius: 20px;
+            padding: 14px 40px;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #b45309;
+            transition: transform 0.1s;
+            margin-top: 15px;
+        }
+        .btn-action:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #b45309;
+        }
 
-.game-container{
-width:100%;
-max-width:950px;
-background:rgba(255,255,255,0.96);
-border-radius:25px;
-padding:25px;
-box-shadow:0 0 20px rgba(0,0,0,0.3);
-text-align:center;
-}
+        /* --- TOP PANEL HUD --- */
+        .hud-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ccfbf1;
+            border: 3px solid #0d9488;
+            border-radius: 16px;
+            padding: 8px 15px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 18px;
+            color: #115e59;
+        }
+        .progress-outer {
+            width: 40%;
+            background: #e2e8f0;
+            border-radius: 10px;
+            height: 16px;
+            overflow: hidden;
+            border: 2px solid #0d9488;
+        }
+        .progress-inner {
+            height: 100%;
+            width: 0%;
+            background: #10b981;
+            transition: width 0.3s ease;
+        }
 
-h1{
-color:#ff6600;
-margin-bottom:20px;
-font-size:2rem;
-}
+        /* --- INTERACTIVE CARD DESIGNS --- */
+        .task-box {
+            background: #f0fdfa;
+            border: 3px dashed #14b8a6;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
 
-#question{
-font-size:1.5rem;
-margin:20px 0;
-color:#333;
-min-height:80px;
-}
+        /* MCQ Options Dynamic Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        @media (min-width: 550px) {
+            .options-grid { grid-template-columns: 1fr 1fr; }
+        }
 
-.option-btn{
-display:block;
-width:90%;
-margin:10px auto;
-padding:14px;
-border:none;
-border-radius:15px;
-background:#4da6ff;
-color:white;
-font-size:1.1rem;
-cursor:pointer;
-transition:0.3s;
-}
+        .btn-option {
+            background: #ffffff;
+            border: 3px solid #cbd5e1;
+            border-radius: 16px;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #1e293b;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #cbd5e1;
+            transition: all 0.15s;
+        }
+        .btn-option:hover {
+            background: #f0fdf4;
+            border-color: #22c55e;
+            box-shadow: 0 4px 0 #22c55e;
+        }
 
-.option-btn:hover{
-background:#0077ff;
-transform:scale(1.03);
-}
+        /* --- DRAG & DROP ENGINE LAYOUT --- */
+        .sequence-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        .drag-item {
+            background: #ffffff;
+            border: 3px solid #0d9488;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: grab;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 0 #0f766e;
+        }
+        .drag-item:active { cursor: grabbing; }
 
-.correct{
-background:green !important;
-}
+        /* --- DECORATIVE STICKERS --- */
+        .emoji-art { font-size: 64px; animation: bounce 2s infinite alternate; }
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-12px); }
+        }
 
-.wrong{
-background:red !important;
-}
+        /* --- CONFETTI ANIMATION ELEMENTS --- */
+        .confetti {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #f59e0b;
+            border-radius: 50%;
+            animation: fall 2.5s linear infinite;
+            top: -10px;
+            z-index: 99;
+        }
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(450px) rotate(360deg); opacity: 0; }
+        }
 
-#score{
-font-size:1.3rem;
-margin-top:20px;
-}
-
-#progress{
-margin-top:10px;
-font-size:1rem;
-}
-
-.truefalse-container button{
-padding:14px 30px;
-margin:15px;
-font-size:1.2rem;
-border:none;
-border-radius:15px;
-cursor:pointer;
-background:#ff9900;
-color:white;
-}
-
-.truefalse-container button:hover{
-background:#ff7700;
-}
-
-.radio-container{
-margin-top:20px;
-text-align:left;
-padding-left:30%;
-}
-
-.radio-container label{
-display:block;
-margin:15px 0;
-font-size:1.2rem;
-cursor:pointer;
-}
-
-.drag-container{
-display:flex;
-justify-content:center;
-gap:20px;
-flex-wrap:wrap;
-margin-top:20px;
-}
-
-.drag-item{
-padding:15px 20px;
-background:#4da6ff;
-color:white;
-border-radius:15px;
-cursor:grab;
-font-size:1.1rem;
-}
-
-.drop-box{
-width:250px;
-height:80px;
-border:3px dashed #666;
-border-radius:15px;
-display:flex;
-justify-content:center;
-align-items:center;
-background:#fff8dc;
-font-size:1rem;
-padding:10px;
-}
-
-.result{
-font-size:2rem;
-color:#ff3300;
-margin-top:25px;
-}
-
-#restartBtn{
-margin-top:25px;
-padding:15px 35px;
-border:none;
-border-radius:15px;
-background:#ff9900;
-color:white;
-font-size:1.2rem;
-cursor:pointer;
-display:none;
-}
-
-#restartBtn:hover{
-background:#ff7700;
-}
-
-.word-box{
-display:inline-block;
-padding:10px 20px;
-background:#4da6ff;
-color:white;
-border-radius:12px;
-margin:10px;
-cursor:pointer;
-font-size:1.1rem;
-}
-
-.blank-space{
-display:inline-block;
-min-width:120px;
-padding:8px;
-border-bottom:3px solid #333;
-margin-left:10px;
-font-weight:bold;
-color:#ff3300;
-}
-
-@media(max-width:768px){
-
-.radio-container{
-padding-left:10%;
-}
-
-.drag-container{
-flex-direction:column;
-align-items:center;
-}
-
-h1{
-font-size:1.5rem;
-}
-
-#question{
-font-size:1.2rem;
-}
-
-}
-
-</style>
+        /* --- CERTIFICATE DISPLAY MATRIX --- */
+        .certificate-sheet {
+            background: radial-gradient(circle, #fffbeb 0%, #fef3c7 100%);
+            border: 10px double #d97706;
+            border-radius: 24px;
+            padding: 30px;
+            margin: 20px 0;
+            color: #78350f;
+            box-shadow: inset 0 0 20px rgba(180, 83, 9, 0.15);
+        }
+        .trophy-badge { font-size: 80px; margin: 10px 0; }
+        .score-stamp { font-size: 28px; font-weight: 900; color: #b45309; margin: 10px 0; }
+    </style>
 </head>
-
 <body>
 
-<div class="game-container">
-
-<h1>🎨 MS Paint Fun Learning 🎨</h1>
-
-<div id="question"></div>
-
-<div id="options"></div>
-
-<div id="progress"></div>
-
-<div id="score">⭐ Score: 0</div>
-
-<button id="restartBtn">🔄 Restart Game</button>
-
-<div class="result" id="result"></div>
-
-</div>
-
-<audio id="correctSound" src="assets/correct-1.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-
-<script>
-
-const questions = [
-
-{
-type:"truefalse",
-question:"CTRL + C is used for Copy.",
-answer:"True"
-},
-
-{
-type:"truefalse",
-question:"CTRL + V is used for Save.",
-answer:"False"
-},
-
-{
-type:"radio",
-question:"Choose the correct shortcut key for SAVE.",
-options:["CTRL + X","CTRL + S","CTRL + V"],
-answer:"CTRL + S"
-},
-
-{
-type:"radio",
-question:"Choose the correct shortcut key for OPEN.",
-options:["CTRL + O","CTRL + C","CTRL + P"],
-answer:"CTRL + O"
-},
-
-{
-type:"fillblank",
-question:"Shortcut key for CUT is",
-correctWord:"CTRL + X",
-words:["CTRL + V","CTRL + X","CTRL + S"]
-},
-
-{
-type:"fillblank",
-question:"Shortcut key for PASTE is",
-correctWord:"CTRL + V",
-words:["CTRL + C","CTRL + O","CTRL + V"]
-},
-
-{
-type:"dragdrop",
-question:"Drag the correct tool to its work.",
-pairs:[
-{drag:"Brush Tool",drop:"Used for Drawing"},
-{drag:"Eraser Tool",drop:"Used for Removing Mistakes"}
-]
-},
-
-{
-type:"dragdrop",
-question:"Match the shortcut key correctly.",
-pairs:[
-{drag:"CTRL + C",drop:"Copy"},
-{drag:"CTRL + V",drop:"Paste"}
-]
-},
-
-{
-type:"truefalse",
-question:"Brush Tool is used for drawing pictures.",
-answer:"True"
-},
-
-{
-type:"radio",
-question:"Choose the correct tool used for erasing.",
-options:["Brush Tool","Text Tool","Eraser Tool"],
-answer:"Eraser Tool"
-}
-
-];
-
-questions.sort(()=>Math.random()-0.5);
-
-let currentQuestion=0;
-let score=0;
-
-const questionEl=document.getElementById("question");
-const optionsEl=document.getElementById("options");
-const progressEl=document.getElementById("progress");
-const scoreEl=document.getElementById("score");
-const resultEl=document.getElementById("result");
-const restartBtn=document.getElementById("restartBtn");
-
-const correctSound=document.getElementById("correctSound");
-const wrongSound=document.getElementById("wrongSound");
-
-correctSound.volume=1.0;
-wrongSound.volume=1.0;
-
-function loadQuestion(){
-
-optionsEl.innerHTML="";
-
-let q=questions[currentQuestion];
-
-questionEl.innerHTML=`Q${currentQuestion+1}. ${q.question}`;
-
-progressEl.innerHTML=`Question ${currentQuestion+1} / ${questions.length}`;
-
-if(q.type==="truefalse"){
-
-let container=document.createElement("div");
-
-container.classList.add("truefalse-container");
-
-["True","False"].forEach(option=>{
-
-let btn=document.createElement("button");
-
-btn.innerText=option;
-
-btn.onclick=()=>checkAnswer(btn,option,q.answer);
-
-container.appendChild(btn);
-
-});
-
-optionsEl.appendChild(container);
-
-}
-
-else if(q.type==="radio"){
-
-let container=document.createElement("div");
-
-container.classList.add("radio-container");
-
-q.options.forEach(option=>{
-
-let label=document.createElement("label");
-
-let radio=document.createElement("input");
-
-radio.type="radio";
-
-radio.name="radioQuestion";
-
-radio.value=option;
-
-radio.onclick=()=>{
-
-checkRadio(option,q.answer);
-
-};
-
-label.appendChild(radio);
-
-label.append(" "+option);
-
-container.appendChild(label);
-
-});
-
-optionsEl.appendChild(container);
-
-}
-
-else if(q.type==="fillblank"){
-
-let sentence=document.createElement("div");
-
-sentence.style.fontSize="1.3rem";
-sentence.style.marginTop="20px";
-
-sentence.innerHTML=`
-${q.question}
-<span class="blank-space" id="blankSpace">_____</span>
-`;
-
-optionsEl.appendChild(sentence);
-
-let wordContainer=document.createElement("div");
-
-q.words.forEach(word=>{
-
-let wordBox=document.createElement("div");
-
-wordBox.classList.add("word-box");
-
-wordBox.innerText=word;
-
-wordBox.onclick=()=>{
-
-document.getElementById("blankSpace").innerText=word;
-
-if(word===q.correctWord){
-
-correctAnswer();
-
-}
-else{
-
-wrongAnswer();
-
-}
-
-};
-
-wordContainer.appendChild(wordBox);
-
-});
-
-optionsEl.appendChild(wordContainer);
-
-}
-
-else if(q.type==="dragdrop"){
-
-let dragContainer=document.createElement("div");
-
-dragContainer.classList.add("drag-container");
-
-q.pairs.forEach((pair,index)=>{
-
-let drag=document.createElement("div");
-
-drag.classList.add("drag-item");
-
-drag.draggable=true;
-
-drag.id="drag"+index;
-
-drag.innerText=pair.drag;
-
-drag.addEventListener("dragstart",(e)=>{
-
-e.dataTransfer.setData("text",drag.id);
-
-});
-
-dragContainer.appendChild(drag);
-
-});
-
-optionsEl.appendChild(dragContainer);
-
-q.pairs.forEach((pair,index)=>{
-
-let drop=document.createElement("div");
-
-drop.classList.add("drop-box");
-
-drop.innerText=pair.drop;
-
-drop.dataset.answer=pair.drag;
-
-drop.addEventListener("dragover",(e)=>{
-
-e.preventDefault();
-
-});
-
-drop.addEventListener("drop",(e)=>{
-
-e.preventDefault();
-
-let draggedId=e.dataTransfer.getData("text");
-
-let draggedElement=document.getElementById(draggedId);
-
-if(draggedElement.innerText===drop.dataset.answer){
-
-drop.style.background="lightgreen";
-
-drop.innerHTML=`✅ ${pair.drop}`;
-
-draggedElement.style.display="none";
-
-correctSound.play();
-
-score++;
-
-scoreEl.innerHTML=`⭐ Score: ${score}`;
-
-confetti({
-particleCount:120,
-spread:80
-});
-
-}
-
-else{
-
-drop.style.background="pink";
-
-wrongSound.play();
-
-}
-
-checkDragCompletion();
-
-});
-
-optionsEl.appendChild(drop);
-
-});
-
-}
-
-}
-
-function checkAnswer(button,selected,answer){
-
-if(selected===answer){
-
-button.classList.add("correct");
-
-correctAnswer();
-
-}
-else{
-
-button.classList.add("wrong");
-
-wrongAnswer();
-
-}
-
-}
-
-function checkRadio(selected,answer){
-
-if(selected===answer){
-
-correctAnswer();
-
-}
-else{
-
-wrongAnswer();
-
-}
-
-}
-
-function correctAnswer(){
-
-correctSound.play();
-
-score++;
-
-scoreEl.innerHTML=`⭐ Score: ${score}`;
-
-confetti({
-particleCount:150,
-spread:90
-});
-
-setTimeout(nextQuestion,1500);
-
-}
-
-function wrongAnswer(){
-
-wrongSound.play();
-
-setTimeout(nextQuestion,1500);
-
-}
-
-function checkDragCompletion(){
-
-let hidden=document.querySelectorAll('.drag-item[style*="display: none"]');
-
-let q=questions[currentQuestion];
-
-if(hidden.length===q.pairs.length){
-
-setTimeout(nextQuestion,1500);
-
-}
-
-}
-
-function nextQuestion(){
-
-currentQuestion++;
-
-if(currentQuestion<questions.length){
-
-loadQuestion();
-
-}
-else{
-
-showResult();
-
-}
-
-}
-
-function showResult(){
-
-questionEl.style.display="none";
-optionsEl.style.display="none";
-progressEl.style.display="none";
-
-resultEl.innerHTML=`
-🎉 Game Finished! <br><br>
-Your Score: ${score} / ${questions.length}
-`;
-
-restartBtn.style.display="inline-block";
-
-}
-
-restartBtn.onclick=()=>{
-
-location.reload();
-
-};
-
-loadQuestion();
-
-</script>
-
+    <!-- 1. INTRO BRANDING LAYER -->
+    <div id="brand-splash">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo">[cite: 1]
+    </div>
+
+    <!-- 2. WELCOME INITIAL WINDOW -->
+    <div id="welcome-screen" class="game-container">
+        <div class="emoji-art">🎨</div>
+        <h2>Grade 1 ICT — Chapter: MS Paint</h2>
+        <h1>Fun MS Paint Adventure!</h1>
+        <p>Join our fun digital expedition to explore shapes, custom palettes, and color buckets!</p>
+        <button class="btn-action" onclick="showRules()">Start Adventure 🚀</button>
+    </div>
+
+    <!-- 3. RULES & GUIDEBOARD SCREEN -->
+    <div id="rules-screen" class="game-container">
+        <h1>🧭 Adventure Rules</h1>
+        <div style="text-align: left; max-width: 450px; margin: 20px auto; font-size: 19px; line-height: 1.6;">
+            ⭐ Read every case prompt carefully.<br>
+            ⭐ Choose or drop correct tool tiles.<br>
+            ⭐ Collect star points for every success.<br>
+            ⭐ Complete all levels to secure your Paint Badge!
+        </div>
+        <p style="font-weight: bold; color: #0f766e;">Are you ready to become a Paint Champion?</p>
+        <button class="btn-action" onclick="initiateGameplay()">Let's Go! 🗺️</button>
+    </div>
+
+    <!-- 4. CORE GAMEPLAY INTERACTION MAT -->
+    <div id="play-screen" class="game-container">
+        <!-- HUD Control Bar -->
+        <div class="hud-panel">
+            <span id="hud-level-tag">Level 1: Detective</span>
+            <div class="progress-outer"><div id="hud-progress" class="progress-inner"></div></div>
+            <span id="hud-score">Stars: 0 ⭐</span>
+        </div>
+
+        <!-- Task Dynamic Space -->
+        <div class="task-box" id="task-viewport">
+            <!-- Questions or puzzle lists populate dynamically -->
+        </div>
+
+        <p id="scenario-prompt" style="font-weight: 600; font-size: 19px; min-height: 54px; margin: 15px 0; padding: 0 10px;"></p>
+
+        <!-- Response Action Deck -->
+        <div id="response-deck">
+            <!-- Populated via script Engine logic -->
+        </div>
+    </div>
+
+    <!-- 5. FINAL CERTIFICATE & END SUMMARY SCREEN -->
+    <div id="victory-screen" class="game-container">
+        <h1>Expedition Accomplished! 🏁</h1>
+        <div class="certificate-sheet">
+            <div class="trophy-badge" id="reward-trophy">🏆</div>
+            <h2 style="font-size: 28px; text-transform: uppercase; letter-spacing: 1px;" id="reward-rank">Paint Champion</h2>
+            <p style="font-size: 18px; font-style: italic;">This digital credential honors a Grade 1 Master Tracker for successfully identifying and sequencing MS Paint elements!</p>
+            <div class="score-stamp" id="final-tally-score">Total Stars: 100/100</div>
+        </div>
+        <button class="btn-action" onclick="resetAdventureLoop()">Play Again 🔄</button>
+    </div>
+
+    <!-- AUDIO MANAGEMENT HARDWARE PLUGS -->
+    <audio id="audio-right" src="assets/correct.mp3" preload="auto"></audio>[cite: 1]
+    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>[cite: 1]
+
+    <script>
+        /* --- DYNAMIC COMPETENCY-BASED QUESTION ARRAY (Balanced & Non-Recall) --- */
+        const coreMissionSuite = [
+            // Level 1: Tool Detective (Picture & Observation Based)
+            {
+                type: "mcq",
+                levelTag: "Level 1: Tool Detective 🔍",
+                prompt: "Look closely! This utility icon shows a bright wooden pencil tip. What task is this tool designed for?",
+                emoji: "✏️",
+                options: ["Typing custom label text", "Drawing freehand colorful lines", "Wiping clean line errors"],
+                correct: 1
+            },
+            // Level 3: Paint Adventure Quiz (Scenario-Based 40%)
+            {
+                type: "mcq",
+                levelTag: "Level 2: Quick Color Challenge 🌸",
+                prompt: "Riya drew a large field flower. She needs to fill the entire petal area with red completely and quickly. What tool works best?",
+                emoji: "🪣",
+                options: ["Fill with Color Tool", "The Text Tool", "Small Line Pencil"],
+                correct: 0
+            },
+            {
+                type: "mcq",
+                levelTag: "Level 3: Typist Track 💬",
+                prompt: "Kabir wants to write his first name 'AARAV' directly underneath his scenery canvas. Which active tool should he click?",
+                emoji: "🔤",
+                options: ["Shape Tool Group", "Eraser Box Option", "Text Tool (A)"],
+                correct: 2
+            },
+            // Level 4: Spot the Correct Tool (Observation-Based 20%)
+            {
+                type: "mcq",
+                levelTag: "Level 4: Corner Correction 🧼",
+                prompt: "Oh no! A small line slipped outside the borders of your house picture. Which tool lets you cleanly clean up mistakes?",
+                emoji: "🧽",
+                options: ["Pencil Tool Layer", "Eraser Tool Utility", "Color Swatch Panel"],
+                correct: 1
+            },
+            // Level 6: Find the Mistake (Observation-Based)
+            {
+                type: "mcq",
+                levelTag: "Level 5: Symmetrical Drawing 📐",
+                prompt: "Tina wants to create a neat, perfectly balanced house roof without bumpy freehand curves. What panel section helps her?",
+                emoji: "🟦⭐️🔺",
+                options: ["Shapes Tool Group", "Pencil Tip Point", "File Save Option"],
+                correct: 0
+            },
+            // Level 5: Paint Puzzle (Sequencing Challenge 15%)
+            {
+                type: "sequence",
+                levelTag: "Level 6: Project Sequence Puzzle 🧩",
+                prompt: "Reorder the step tiles below by clicking or dragging to help Aarav complete his painting process from start to finish!",
+                correctOrder: ["Open MS Paint App", "Draw House Lines", "Pour Color Buckets", "Save Your Picture"]
+            }
+        ];
+
+        let playIndex = 0;
+        let cumulativeStars = 0;
+        let activeDragSequence = [];
+
+        /* --- 5 SECONDS SPLASH CONTROLLER LOOP --- */
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('brand-splash');
+                const welcome = document.getElementById('welcome-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    welcome.style.display = 'block';
+                }, 500);
+            }, 5000); // 5000 milliseconds = 5 Seconds exactly
+        });
+
+        function showRules() {
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('rules-screen').style.display = 'block';
+        }
+
+        function initiateGameplay() {
+            document.getElementById('rules-screen').style.display = 'none';
+            document.getElementById('play-screen').style.display = 'block';
+            playIndex = 0;
+            cumulativeStars = 0;
+            loadChallengeRound();
+        }
+
+        /* --- MAIN CHALLENGE MATRIX ENGINE --- */
+        function loadChallengeRound() {
+            // Update Core Progress Bar HUD
+            const percent = (playIndex / coreMissionSuite.length) * 100;
+            document.getElementById('hud-progress').style.width = `${percent}%`;
+            document.getElementById('hud-score').innerText = `Stars: ${cumulativeStars} ⭐`;
+
+            if (playIndex >= coreMissionSuite.length) {
+                renderEndGameCertificate();
+                return;
+            }
+
+            const activeMission = coreMissionSuite[playIndex];
+            document.getElementById('hud-level-tag').innerText = activeMission.levelTag;
+            document.getElementById('scenario-prompt').innerText = activeMission.prompt;
+
+            const viewport = document.getElementById('task-viewport');
+            const deck = document.getElementById('response-deck');
+            viewport.innerHTML = '';
+            deck.innerHTML = '';
+
+            if (activeMission.type === "mcq") {
+                // Populate Cartoon Visual Token
+                const graphicToken = document.createElement('div');
+                graphicToken.className = 'emoji-art';
+                graphicToken.innerText = activeMission.emoji;
+                viewport.appendChild(graphicToken);
+
+                // Build Options Grid Array
+                const optionsBox = document.createElement('div');
+                optionsBox.className = 'options-grid';
+                
+                activeMission.options.forEach((choiceText, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn-option';
+                    btn.innerText = choiceText;
+                    btn.onclick = () => verifyMCQChoice(idx, activeMission.correct);
+                    optionsBox.appendChild(btn);
+                });
+                deck.appendChild(optionsBox);
+
+            } else if (activeMission.type === "sequence") {
+                // Initialize Sequence Array Shuffled Layout
+                activeDragSequence = [...activeMission.correctOrder].sort(() => 0.5 - Math.random());
+                renderSequenceInterface(viewport);
+
+                // Setup Validation Confirm Trigger
+                const submitBtn = document.createElement('button');
+                submitBtn.className = 'btn-action';
+                submitBtn.innerText = 'Verify My Order! 🔍';
+                submitBtn.onclick = () => verifySequenceOrder(activeMission.correctOrder);
+                deck.appendChild(submitBtn);
+            }
+        }
+
+        /* --- MCQ LOGIC VALIDATION ROUTINES --- */
+        function verifyMCQChoice(selected, rightIdx) {
+            if (selected === rightIdx) {
+                triggerAudioFeedback(true);
+                cumulativeStars += 15; // Balanced point distribution scaling to ~100
+                triggerConfettiPopper();
+            } else {
+                triggerAudioFeedback(false);
+            }
+            advanceSequence();
+        }
+
+        /* --- DRAG & SEQUENCE GAME BOARD PAINTER --- */
+        function renderSequenceInterface(targetBox) {
+            targetBox.innerHTML = '';
+            const outerWrapper = document.createElement('div');
+            outerWrapper.className = 'sequence-container';
+
+            activeDragSequence.forEach((stepName, position) => {
+                const item = document.createElement('div');
+                item.className = 'drag-item';
+                item.draggable = true;
+                item.innerHTML = `<span>☰</span> <span>${stepName}</span>`;
+                
+                // Track item indexes using touch-friendly tap repositioning support
+                item.onclick = () => shiftSequenceElement(position);
+                
+                // Classic Drag Event Rigging
+                item.ondragstart = (e) => e.dataTransfer.setData('text/plain', position);
+                item.ondragover = (e) => e.preventDefault();
+                item.ondrop = (e) => {
+                    e.preventDefault();
+                    const initialPos = e.dataTransfer.getData('text/plain');
+                    reorderInternalArray(parseInt(initialPos), position);
+                };
+
+                outerWrapper.appendChild(item);
+            });
+            targetBox.appendChild(outerWrapper);
+        }
+
+        function shiftSequenceElement(currIdx) {
+            if(currIdx > 0) {
+                reorderInternalArray(currIdx, currIdx - 1);
+            }
+        }
+
+        function reorderInternalArray(fromIdx, toIdx) {
+            const extracted = activeDragSequence.splice(fromIdx, 1)[0];
+            activeDragSequence.splice(toIdx, 0, extracted);
+            renderSequenceInterface(document.getElementById('task-viewport'));
+        }
+
+        function verifySequenceOrder(correctArray) {
+            let isFlawless = true;
+            for(let i = 0; i < correctArray.length; i++) {
+                if(activeDragSequence[i] !== correctArray[i]) {
+                    isFlawless = false;
+                    break;
+                }
+            }
+
+            if(isFlawless) {
+                triggerAudioFeedback(true);
+                cumulativeStars += 25;
+                triggerConfettiPopper();
+            } else {
+                triggerAudioFeedback(false);
+            }
+            advanceSequence();
+        }
+
+        function advanceSequence() {
+            playIndex++;
+            setTimeout(loadChallengeRound, 700);
+        }
+
+        /* --- AUDIO & CELEBRATION ENGINES --- */
+        function triggerAudioFeedback(isCorrect) {
+            const soundElement = document.getElementById(isCorrect ? 'audio-right' : 'audio-wrong');
+            if (soundElement) {
+                soundElement.currentTime = 0;
+                soundElement.play().catch(() => {});
+            }
+        }
+
+        function triggerConfettiPopper() {
+            const container = document.getElementById('play-screen');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'confetti';
+                particle.style.left = `${Math.random() * 90}%`;
+                particle.style.backgroundColor = ['#f59e0b', '#10b981', '#3b82f6', '#ec4899'][Math.floor(Math.random() * 4)];
+                particle.style.animationDelay = `${Math.random() * 0.4}s`;
+                container.appendChild(particle);
+                setTimeout(() => particle.remove(), 2500);
+            }
+        }
+
+        /* --- SCORE CALCULATOR & CRADLE RANK SYSTEM --- */
+        function renderEndGameCertificate() {
+            document.getElementById('play-screen').style.display = 'none';
+            document.getElementById('victory-screen').style.display = 'block';
+
+            let tierName = "Paint Learner";
+            let trophySymbol = "🎒";
+
+            if (cumulativeStars >= 91) {
+                tierName = "Paint Champion";
+                trophySymbol = "👑";
+            } else if (cumulativeStars >= 71) {
+                tierName = "Paint Artist";
+                trophySymbol = "🎨";
+            } else if (cumulativeStars >= 41) {
+                tierName = "Paint Explorer";
+                trophySymbol = "🤠";
+            }
+
+            document.getElementById('reward-trophy').innerText = trophySymbol;
+            document.getElementById('reward-rank').innerText = tierName;
+            document.getElementById('final-tally-score').innerText = `Total Stars: ${cumulativeStars} ⭐`;
+        }
+
+        function resetAdventureLoop() {
+            document.getElementById('victory-screen').style.display = 'none';
+            document.getElementById('welcome-screen').style.display = 'block';
+        }
+    </script>
 </body>
 </html>

@@ -1,864 +1,647 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tux Paint Super Adventure</title>
+    
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-<title>Tux Paint Super Adventure</title>
+    <style>
+        :root {
+            --sky-blue: #bae6fd;
+            --primary-blue: #1565c0;
+            --primary-dark: #0d47a1;
+            --primary-light: #e3f2fd;
+            --accent-orange: #ff7043;
+            --accent-dark: #e64a19;
+            --text-main: #2c3e50;
+        }
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+        * {
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', cursive, sans-serif;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+        }
 
-<style>
+        body {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #a1c4fd 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            overflow-x: hidden;
+        }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Comic Sans MS',cursive;
-}
+        /* --- 1. BRANDING SPLASH SCREEN (Strict 5 Seconds) --- */
+        #brand-splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 0.5s ease;
+        }
+        #brand-splash img {
+            max-width: 65%;
+            max-height: 70vh;
+            object-fit: contain;
+        }
 
-body{
-background:linear-gradient(135deg,#ffecd2,#fcb69f,#a1c4fd);
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-padding:20px;
-}
+        /* --- STAGE SCREEN COMPONENT CARD --- */
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 850px;
+            background: rgba(255, 255, 255, 0.96);
+            border: 5px solid var(--primary-blue);
+            border-radius: 32px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            backdrop-filter: blur(5px);
+            animation: cardPopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
 
-.screen{
-display:none;
-background:white;
-width:95%;
-max-width:1100px;
-padding:25px;
-border-radius:30px;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
-text-align:center;
-}
+        .screen.active {
+            display: block;
+        }
 
-.active{
-display:block;
-}
+        @keyframes cardPopIn {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
 
-.logo{
-width:160px;
-margin-bottom:15px;
-}
+        h1 { color: var(--primary-blue); font-size: 32px; margin-bottom: 12px; }
+        h2 { color: var(--primary-dark); font-size: 24px; margin-bottom: 15px; }
+        p { color: var(--text-main); font-size: 18px; margin-bottom: 20px; }
 
-h1{
-color:#1565c0;
-margin-bottom:15px;
-}
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto 20px auto;
+        }
 
-.subtitle{
-font-size:20px;
-margin-bottom:20px;
-color:#444;
-}
+        input {
+            width: 100%;
+            padding: 12px 18px;
+            border-radius: 15px;
+            border: 3px solid #cbd5e1;
+            font-size: 16px;
+            margin-bottom: 12px;
+            outline: none;
+            font-family: inherit;
+        }
+        input:focus {
+            border-color: var(--primary-blue);
+        }
 
-.btn{
-background:#ff7043;
-color:white;
-border:none;
-padding:15px 25px;
-border-radius:50px;
-font-size:18px;
-cursor:pointer;
-font-weight:bold;
-margin:10px;
-transition:0.3s;
-}
+        .btn {
+            background: linear-gradient(180deg, #ff8a65 0%, var(--accent-orange) 100%);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 6px 0 var(--accent-dark);
+            transition: all 0.1s ease;
+            margin: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 var(--accent-dark);
+        }
 
-.btn:hover{
-transform:scale(1.05);
-background:#e64a19;
-}
+        /* --- HUD TRACKER BAR --- */
+        .status-hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--primary-light);
+            border: 2px solid var(--primary-blue);
+            border-radius: 20px;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-blue);
+        }
 
-input{
-width:100%;
-padding:14px;
-border-radius:12px;
-border:2px solid #ccc;
-font-size:18px;
-margin:12px 0;
-}
+        .feedback {
+            font-size: 24px;
+            font-weight: bold;
+            min-height: 35px;
+            margin: 15px 0;
+        }
 
-.status{
-display:flex;
-justify-content:space-between;
-margin:15px 0;
-font-size:20px;
-font-weight:bold;
-flex-wrap:wrap;
-gap:10px;
-}
+        /* --- MINI GAME STYLES --- */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            max-width: 500px;
+            margin: 0 auto 25px auto;
+        }
+        .card {
+            height: 100px;
+            background: var(--primary-blue);
+            border-radius: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 32px;
+            cursor: pointer;
+            color: white;
+            transition: transform 0.3s;
+            box-shadow: 0 4px 0 var(--primary-dark);
+        }
+        .card.flipped {
+            background: #fff3e0;
+            color: #e65100;
+            transform: rotateY(180deg);
+            box-shadow: none;
+        }
 
-.feedback{
-font-size:28px;
-font-weight:bold;
-height:40px;
-margin-top:15px;
-}
+        /* Puzzle Drag Drop Area */
+        .puzzle-area {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .drag-column, .drop-column {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .drag-item {
+            padding: 15px;
+            background: #bbdefb;
+            border-radius: 15px;
+            cursor: grab;
+            font-size: 18px;
+            font-weight: bold;
+            border: 2px solid #90caf9;
+            box-shadow: 0 4px 0 #90caf9;
+        }
+        .drop-box {
+            width: 220px;
+            height: 60px;
+            border: 3px dashed var(--primary-blue);
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            font-weight: bold;
+            background: #f8fafc;
+        }
 
-.card-grid{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:15px;
-margin-top:20px;
-}
+        /* Canvas Workspace */
+        .canvas-container {
+            margin: 15px 0;
+            display: flex;
+            justify-content: center;
+        }
+        canvas {
+            border: 4px solid #334155;
+            border-radius: 20px;
+            background: white;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);
+            touch-action: none;
+            max-width: 100%;
+        }
+        .color-box, .stamp-box {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .color {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .stamp {
+            width: 55px;
+            height: 55px;
+            background: #ffe082;
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #cbd5e1;
+        }
+        .stamp:active {
+            transform: translateY(3px);
+            box-shadow: none;
+        }
 
-.card{
-height:130px;
-background:#90caf9;
-border-radius:20px;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:22px;
-font-weight:bold;
-cursor:pointer;
-color:white;
-transition:0.4s;
-}
+        .final-score {
+            font-size: 65px;
+            font-weight: 900;
+            color: var(--accent-orange);
+            margin: 20px 0;
+        }
 
-.card.flipped{
-background:#fff3e0;
-color:black;
-transform:rotateY(180deg);
-}
-
-.scramble-box{
-margin-top:20px;
-}
-
-.scramble-word{
-font-size:40px;
-letter-spacing:10px;
-font-weight:bold;
-color:#1565c0;
-margin-bottom:20px;
-}
-
-.option-row{
-display:flex;
-justify-content:center;
-gap:15px;
-flex-wrap:wrap;
-}
-
-.option-btn{
-background:#e3f2fd;
-padding:15px 20px;
-border:none;
-border-radius:18px;
-font-size:20px;
-font-weight:bold;
-cursor:pointer;
-}
-
-.option-btn:hover{
-background:#90caf9;
-}
-
-.puzzle-area{
-display:flex;
-justify-content:center;
-gap:40px;
-flex-wrap:wrap;
-margin-top:20px;
-}
-
-.drag-item{
-padding:20px;
-background:#bbdefb;
-border-radius:20px;
-cursor:grab;
-font-size:20px;
-font-weight:bold;
-width:180px;
-}
-
-.drop-box{
-width:220px;
-height:90px;
-border:3px dashed #1565c0;
-border-radius:20px;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:20px;
-font-weight:bold;
-background:#f5f5f5;
-}
-
-.canvas-box{
-margin-top:20px;
-}
-
-canvas{
-border:5px solid #333;
-border-radius:20px;
-background:white;
-touch-action:none;
-}
-
-.color-box{
-display:flex;
-justify-content:center;
-gap:10px;
-margin-top:15px;
-flex-wrap:wrap;
-}
-
-.color{
-width:40px;
-height:40px;
-border-radius:50%;
-cursor:pointer;
-border:3px solid white;
-}
-
-.stamp-box{
-display:flex;
-justify-content:center;
-gap:15px;
-flex-wrap:wrap;
-margin-top:20px;
-}
-
-.stamp{
-width:70px;
-height:70px;
-background:#ffe082;
-border-radius:15px;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:35px;
-cursor:pointer;
-}
-
-.final-score{
-font-size:70px;
-font-weight:bold;
-color:#ff6f00;
-margin:20px 0;
-}
-
-@media(max-width:768px){
-
-.card-grid{
-grid-template-columns:repeat(2,1fr);
-}
-
-canvas{
-width:100%;
-height:auto;
-}
-
-}
-
-</style>
+        @media(max-width:600px){
+            .card-grid { grid-template-columns: repeat(3, 1fr); }
+            .puzzle-area { flex-direction: column; }
+        }
+    </style>
 </head>
-
 <body>
 
-<audio id="correctSound" src="assets/correct-1.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-
-<!-- INTRO -->
-
-<div id="intro" class="screen active">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<h1>🎨 Tux Paint Super Adventure</h1>
-
-<p class="subtitle">
-Chapter 10 - Introduction to Tux Paint 2
-</p>
-
-<input type="text" id="studentName" placeholder="Enter Student Name">
-
-<input type="text" id="studentClass" placeholder="Enter Class">
-
-<input type="text" id="schoolName" placeholder="Enter School Name">
-
-<button class="btn" onclick="showMenu()">
-🚀 Start Game
-</button>
-
-</div>
-
-<!-- MENU -->
-
-<div id="menu" class="screen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<h1>🎮 Choose Your Activity</h1>
-
-<button class="btn" onclick="startMemoryGame()">
-🧠 Memory + Unscramble
-</button>
-
-<button class="btn" onclick="startPuzzleGame()">
-🧩 Drag & Drop Puzzle
-</button>
-
-<button class="btn" onclick="startColoringGame()">
-🎨 Coloring Activity
-</button>
-
-</div>
-
-<!-- MEMORY GAME -->
-
-<div id="memoryGame" class="screen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<h1>🧠 Memory Match Game</h1>
-
-<div class="status">
-
-<div>⭐ Score: <span id="memoryScore">0</span></div>
-
-<div>🏅 Matches: <span id="matches">0</span>/3</div>
-
-</div>
-
-<div class="card-grid" id="memoryGrid"></div>
-
-<div class="scramble-box">
-
-<h2>🔤 Unscramble the Word</h2>
-
-<div class="scramble-word">
-PMAST
-</div>
-
-<div class="option-row">
-
-<button class="option-btn" onclick="checkScramble('STAMP')">
-STAMP
-</button>
-
-<button class="option-btn" onclick="checkScramble('SHAPE')">
-SHAPE
-</button>
-
-<button class="option-btn" onclick="checkScramble('MAGIC')">
-MAGIC
-</button>
-
-</div>
-
-</div>
-
-<div class="feedback" id="memoryFeedback"></div>
-
-<button class="btn" onclick="showMenu()">
-⬅ Back
-</button>
-
-</div>
-
-<!-- PUZZLE GAME -->
-
-<div id="puzzleGame" class="screen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<h1>🧩 Drag & Drop Puzzle</h1>
-
-<p>Match the Tool with Correct Work</p>
-
-<div class="puzzle-area">
-
-<div>
-
-<div class="drag-item" draggable="true" id="brush">
-🖌 Brush Tool
-</div>
-
-<br>
-
-<div class="drag-item" draggable="true" id="shape">
-⬜ Shapes Tool
-</div>
-
-<br>
-
-<div class="drag-item" draggable="true" id="stamp">
-⭐ Stamp Tool
-</div>
-
-</div>
-
-<div>
-
-<div class="drop-box" data-answer="brush">
-Draw Freehand
-</div>
-
-<br>
-
-<div class="drop-box" data-answer="shape">
-Draw Shapes
-</div>
-
-<br>
-
-<div class="drop-box" data-answer="stamp">
-Insert Pictures
-</div>
-
-</div>
-
-</div>
-
-<div class="feedback" id="puzzleFeedback"></div>
-
-<button class="btn" onclick="showMenu()">
-⬅ Back
-</button>
-
-</div>
-
-<!-- COLORING GAME -->
-
-<div id="colorGame" class="screen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<h1>🎨 Tux Paint Coloring Activity</h1>
-
-<div class="canvas-box">
-
-<canvas id="paintCanvas" width="800" height="400"></canvas>
-
-</div>
-
-<div class="color-box">
-
-<div class="color" style="background:red" onclick="changeColor('red')"></div>
-<div class="color" style="background:blue" onclick="changeColor('blue')"></div>
-<div class="color" style="background:green" onclick="changeColor('green')"></div>
-<div class="color" style="background:yellow" onclick="changeColor('yellow')"></div>
-<div class="color" style="background:black" onclick="changeColor('black')"></div>
-<div class="color" style="background:pink" onclick="changeColor('pink')"></div>
-
-</div>
-
-<h2 style="margin-top:20px;">
-⭐ Stamps & Shapes
-</h2>
-
-<div class="stamp-box">
-
-<div class="stamp" onclick="addStamp('⭐')">⭐</div>
-<div class="stamp" onclick="addStamp('❤️')">❤️</div>
-<div class="stamp" onclick="addStamp('🌈')">🌈</div>
-<div class="stamp" onclick="addStamp('⬜')">⬜</div>
-<div class="stamp" onclick="addStamp('⭕')">⭕</div>
-
-</div>
-
-<button class="btn" onclick="clearCanvas()">
-🧹 Clear Canvas
-</button>
-
-<button class="btn" onclick="finishColoring()">
-✅ Finish Activity
-</button>
-
-<button class="btn" onclick="showMenu()">
-⬅ Back
-</button>
-
-</div>
-
-<!-- FINAL SCREEN -->
-
-<div id="final" class="screen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<h1>🏆 Congratulations!</h1>
-
-<p id="finalText"></p>
-
-<div class="final-score" id="finalScore"></div>
-
-<h2 id="rankText"></h2>
-
-<button class="btn" onclick="location.reload()">
-🔄 Play Again
-</button>
-
-</div>
-
-<script>
-
-let student="";
-let totalScore=0;
-
-function showScreen(id){
-
-document.querySelectorAll('.screen').forEach(screen=>{
-screen.classList.remove('active');
-});
-
-document.getElementById(id).classList.add('active');
-
-}
-
-function showMenu(){
-
-student=document.getElementById('studentName').value || student;
-
-if(student===""){
-alert("Please enter your name");
-return;
-}
-
-showScreen('menu');
-
-}
-
-/* MEMORY GAME */
-
-const memoryItems=[
-'Brush','Brush',
-'Magic','Magic',
-'Shapes','Shapes'
-];
-
-let flippedCards=[];
-let matched=0;
-
-function startMemoryGame(){
-
-showScreen('memoryGame');
-
-const grid=document.getElementById('memoryGrid');
-
-grid.innerHTML='';
-
-memoryItems.sort(()=>0.5-Math.random());
-
-memoryItems.forEach(item=>{
-
-const card=document.createElement('div');
-
-card.className='card';
-
-card.dataset.name=item;
-
-card.innerHTML='?';
-
-card.onclick=()=>flipCard(card,item);
-
-grid.appendChild(card);
-
-});
-
-}
-
-function flipCard(card,item){
-
-if(card.classList.contains('flipped')) return;
-
-card.classList.add('flipped');
-
-card.innerHTML=item;
-
-flippedCards.push({card,item});
-
-if(flippedCards.length===2){
-
-if(flippedCards[0].item===flippedCards[1].item){
-
-matched++;
-
-document.getElementById('matches').innerText=matched;
-document.getElementById('memoryScore').innerText=matched;
-
-document.getElementById('correctSound').play();
-
-document.getElementById('memoryFeedback').innerText='✅ Match Found!';
-document.getElementById('memoryFeedback').style.color='green';
-
-totalScore++;
-
-flippedCards=[];
-
-}else{
-
-document.getElementById('wrongSound').play();
-
-document.getElementById('memoryFeedback').innerText='❌ Wrong Match!';
-document.getElementById('memoryFeedback').style.color='red';
-
-setTimeout(()=>{
-
-flippedCards.forEach(f=>{
-
-f.card.classList.remove('flipped');
-f.card.innerHTML='?';
-
-});
-
-flippedCards=[];
-
-},1000);
-
-}
-
-}
-
-}
-
-function checkScramble(answer){
-
-if(answer==="STAMP"){
-
-document.getElementById('correctSound').play();
-
-document.getElementById('memoryFeedback').innerText='🎉 Correct Unscramble!';
-document.getElementById('memoryFeedback').style.color='green';
-
-totalScore+=2;
-
-}else{
-
-document.getElementById('wrongSound').play();
-
-document.getElementById('memoryFeedback').innerText='❌ Wrong Answer!';
-document.getElementById('memoryFeedback').style.color='red';
-
-}
-
-}
-
-/* PUZZLE GAME */
-
-function startPuzzleGame(){
-
-showScreen('puzzleGame');
-
-}
-
-let correctDrops=0;
-
-document.querySelectorAll('.drag-item').forEach(item=>{
-
-item.addEventListener('dragstart',e=>{
-
-e.dataTransfer.setData('text',e.target.id);
-
-});
-
-});
-
-document.querySelectorAll('.drop-box').forEach(box=>{
-
-box.addEventListener('dragover',e=>{
-e.preventDefault();
-});
-
-box.addEventListener('drop',e=>{
-
-e.preventDefault();
-
-const data=e.dataTransfer.getData('text');
-
-if(data===box.dataset.answer){
-
-box.style.background='lightgreen';
-
-box.innerHTML='✅ Correct';
-
-document.getElementById('correctSound').play();
-
-correctDrops++;
-
-totalScore++;
-
-if(correctDrops===3){
-
-document.getElementById('puzzleFeedback').innerText='🎉 Puzzle Completed!';
-document.getElementById('puzzleFeedback').style.color='green';
-
-}
-
-}else{
-
-document.getElementById('wrongSound').play();
-
-document.getElementById('puzzleFeedback').innerText='❌ Wrong Match!';
-document.getElementById('puzzleFeedback').style.color='red';
-
-}
-
-});
-
-});
-
-/* COLORING GAME */
-
-function startColoringGame(){
-
-showScreen('colorGame');
-
-}
-
-const canvas=document.getElementById('paintCanvas');
-const ctx=canvas.getContext('2d');
-
-let painting=false;
-let currentColor='black';
-
-ctx.lineWidth=5;
-ctx.lineCap='round';
-
-canvas.addEventListener('mousedown',startPosition);
-canvas.addEventListener('mouseup',endPosition);
-canvas.addEventListener('mousemove',draw);
-
-canvas.addEventListener('touchstart',startTouch);
-canvas.addEventListener('touchend',endPosition);
-canvas.addEventListener('touchmove',drawTouch);
-
-function startPosition(e){
-
-painting=true;
-draw(e);
-
-}
-
-function endPosition(){
-
-painting=false;
-ctx.beginPath();
-
-}
-
-function draw(e){
-
-if(!painting) return;
-
-ctx.strokeStyle=currentColor;
-
-ctx.lineTo(e.offsetX,e.offsetY);
-
-ctx.stroke();
-
-ctx.beginPath();
-
-ctx.moveTo(e.offsetX,e.offsetY);
-
-}
-
-function startTouch(){
-
-painting=true;
-
-}
-
-function drawTouch(e){
-
-e.preventDefault();
-
-if(!painting) return;
-
-const rect=canvas.getBoundingClientRect();
-
-const x=e.touches[0].clientX-rect.left;
-const y=e.touches[0].clientY-rect.top;
-
-ctx.strokeStyle=currentColor;
-
-ctx.lineTo(x,y);
-
-ctx.stroke();
-
-ctx.beginPath();
-
-ctx.moveTo(x,y);
-
-}
-
-function changeColor(color){
-
-currentColor=color;
-
-}
-
-function clearCanvas(){
-
-ctx.clearRect(0,0,canvas.width,canvas.height);
-
-}
-
-function addStamp(symbol){
-
-ctx.font='50px Arial';
-
-ctx.fillText(symbol,Math.random()*700,Math.random()*300);
-
-}
-
-function finishColoring(){
-
-document.getElementById('correctSound').play();
-
-totalScore+=3;
-
-showFinal();
-
-}
-
-/* FINAL SCREEN */
-
-function showFinal(){
-
-showScreen('final');
-
-document.getElementById('finalText').innerHTML=
-`🎉 Great Job <b>${student}</b>!`;
-
-document.getElementById('finalScore').innerText=
-`${totalScore} Points`;
-
-let rank='';
-
-if(totalScore>=10){
-
-rank='🏆 Tux Paint Champion';
-
-}else if(totalScore>=6){
-
-rank='🌟 Creative Artist';
-
-}else{
-
-rank='🎨 Good Explorer';
-
-}
-
-document.getElementById('rankText').innerText=rank;
-
-confetti({
-particleCount:180,
-spread:100
-});
-
-}
-
-</script>
-
+    <!-- 1. INNOVINE BRANDING SPLASH COVER (Strictly 5 Seconds) -->
+    <div id="brand-splash">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+    </div>
+
+    <!-- 2. LOGIN & SETUP SCREEN -->
+    <div id="screen-intro" class="screen">
+        <h2 style="color:var(--accent-orange);">Chapter 10 - Introduction to Tux Paint</h2>
+        <h1>🎨 Tux Paint Super Adventure</h1>
+        <p>Welcome! Enter your details to start the creative drawing mission:</p>
+        
+        <div class="form-container">
+            <input type="text" id="studentName" placeholder="Enter Student Name" required>
+            <input type="text" id="studentClass" placeholder="Enter Class">
+            <input type="text" id="schoolName" placeholder="Enter School Name">
+        </div>
+
+        <button class="btn" onclick="validateAndProceed()">Start Learning Adventure 🚀</button>
+    </div>
+
+    <!-- 3. INSTRUCTIONS / MENU SCREEN -->
+    <div id="screen-instructions" class="screen">
+        <h1>🧭 Your Adventure Rules</h1>
+        <p style="font-size: 20px; font-weight: bold; color: var(--primary-blue);">Complete all 3 missions sequentially to become a Tux Paint Master!</p>
+        <div style="text-align: left; max-width: 500px; margin: 20px auto; font-size: 18px; line-height: 1.6; color: var(--text-main);">
+            ⭐ <b>Mission 1:</b> Match the Tux Paint terms and unscramble words.<br>
+            ⭐ <b>Mission 2:</b> Drag and drop tool names to their purposes.<br>
+            ⭐ <b>Mission 3:</b> Express yourself with dynamic stamps and paints!
+        </div>
+        <button class="btn" onclick="startMemoryGame()">Let's Go! 🗺️</button>
+    </div>
+
+    <!-- 4. MISSION 1: MEMORY & UNSCRAMBLE -->
+    <div id="screen-memory" class="screen">
+        <div class="status-hud">
+            <div>🎯 Mission 1: Matching Panel</div>
+            <div>⭐ Current Score: <span id="hud-score-1">0</span></div>
+        </div>
+        <h2>🧠 Tux Paint Tool Match</h2>
+        <p>Find the identical tool boxes below:</p>
+
+        <div class="card-grid" id="memoryGrid"></div>
+
+        <div id="scramble-section" style="display:none; border-top: 3px dashed var(--primary-blue); padding-top: 20px;">
+            <h2>🔤 Unscramble the Secret Tool</h2>
+            <div style="font-size: 38px; letter-spacing: 8px; font-weight: bold; color: var(--primary-blue); margin-bottom: 15px;">P M A S T</div>
+            <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                <button class="btn" style="font-size:16px; padding:10px 20px;" onclick="checkScramble('SHAPE')">SHAPE</button>
+                <button class="btn" style="font-size:16px; padding:10px 20px;" onclick="checkScramble('STAMP')">STAMP</button>
+                <button class="btn" style="font-size:16px; padding:10px 20px;" onclick="checkScramble('MAGIC')">MAGIC</button>
+            </div>
+        </div>
+
+        <div class="feedback" id="memoryFeedback"></div>
+    </div>
+
+    <!-- 5. MISSION 2: DRAG & DROP PUZZLE -->
+    <div id="screen-puzzle" class="screen">
+        <div class="status-hud">
+            <div>🎯 Mission 2: Tool Connection</div>
+            <div>⭐ Current Score: <span id="hud-score-2">0</span></div>
+        </div>
+        <h1>🧩 Drag & Drop Tool Puzzle</h1>
+        <p>Grab the tools on the left and drop them into their correct work box!</p>
+
+        <div class="puzzle-area">
+            <div class="drag-column">
+                <div class="drag-item" draggable="true" id="brush" ondragstart="drag(event)">🖌 Brush Tool</div>
+                <div class="drag-item" draggable="true" id="shape" ondragstart="drag(event)">⬜ Shapes Tool</div>
+                <div class="drag-item" draggable="true" id="stamp" ondragstart="drag(event)">⭐ Stamp Tool</div>
+            </div>
+            <div class="drop-column">
+                <div class="drop-box" data-answer="brush" ondragover="allowDrop(event)" ondrop="drop(event)">Draw Freehand</div>
+                <div class="drop-box" data-answer="shape" ondragover="allowDrop(event)" ondrop="drop(event)">Draw Shapes</div>
+                <div class="drop-box" data-answer="stamp" ondragover="allowDrop(event)" ondrop="drop(event)">Insert Pictures</div>
+            </div>
+        </div>
+
+        <div class="feedback" id="puzzleFeedback"></div>
+    </div>
+
+    <!-- 6. MISSION 3: COLORING CANVAS & STAMPS -->
+    <div id="screen-coloring" class="screen">
+        <div class="status-hud">
+            <div>🎯 Mission 3: Creative Canvas</div>
+            <div>⭐ Current Score: <span id="hud-score-3">0</span></div>
+        </div>
+        <h1>🎨 Tux Paint Coloring Activity</h1>
+        <p>Use your mouse/finger to paint, or tap tools to add canvas stamps!</p>
+
+        <div class="canvas-container">
+            <canvas id="paintCanvas" width="700" height="320"></canvas>
+        </div>
+
+        <div class="color-box">
+            <div class="color" style="background:red" onclick="changeColor('red')"></div>
+            <div class="color" style="background:blue" onclick="changeColor('blue')"></div>
+            <div class="color" style="background:green" onclick="changeColor('green')"></div>
+            <div class="color" style="background:yellow" onclick="changeColor('yellow')"></div>
+            <div class="color" style="background:black" onclick="changeColor('black')"></div>
+            <div class="color" style="background:pink" onclick="changeColor('pink')"></div>
+        </div>
+
+        <div class="stamp-box">
+            <div class="stamp" onclick="addStamp('⭐')">⭐</div>
+            <div class="stamp" onclick="addStamp('❤️')">❤️</div>
+            <div class="stamp" onclick="addStamp('🌈')">🌈</div>
+            <div class="stamp" onclick="addStamp('⬜')">⬜</div>
+            <div class="stamp" onclick="addStamp('⭕')">⭕</div>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <button class="btn" style="background:#b0bec5; box-shadow:0 6px 0 #78909c;" onclick="clearCanvas()">🧹 Clear</button>
+            <button class="btn" onclick="finishColoring()">Finish Activity ✅</button>
+        </div>
+    </div>
+
+    <!-- 7. FINAL COMPLETION SCOREBOARD SCREEN -->
+    <div id="screen-final" class="screen">
+        <h1>🏆 Congratulations Explorer!</h1>
+        <p id="finalText" style="font-size:22px; font-weight:bold;"></p>
+        <div class="final-score" id="finalScore">0 Points</div>
+        <h2 id="rankText" style="color: var(--primary-blue);"></h2>
+        <button class="btn" onclick="location.reload()">🔄 Play Again</button>
+    </div>
+
+    <!-- AUDIO FILES STRUCTURE AS PER ASSET INVENTORY -->
+    <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+
+    <script>
+        let studentName = "";
+        let totalScore = 0;
+
+        // Sequence Manager
+        function navigateTo(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        /* --- Strict 5-Second Timed Branding Splash --- */
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('brand-splash');
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    navigateTo('screen-intro');
+                }, 500);
+            }, 5000);
+        });
+
+        function validateAndProceed() {
+            studentName = document.getElementById('studentName').value.trim();
+            if (!studentName) {
+                alert("Please enter your name to begin the adventure!");
+                return;
+            }
+            navigateTo('screen-instructions');
+        }
+
+        function playSound(isCorrect) {
+            const audio = document.getElementById(isCorrect ? 'snd-correct' : 'snd-wrong');
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(() => {});
+            }
+        }
+
+        /* --- MISSION 1: MEMORY MATCH SYSTEM --- */
+        const items = ['🎨 Paint', '🎨 Paint', '✨ Magic', '✨ Magic', '📂 Open', '📂 Open'];
+        let flipped = [];
+        let matchedPairs = 0;
+
+        function startMemoryGame() {
+            navigateTo('screen-memory');
+            const grid = document.getElementById('memoryGrid');
+            grid.innerHTML = '';
+            
+            // Random shuffle pairs
+            items.sort(() => 0.5 - Math.random());
+            items.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.value = item;
+                card.dataset.index = index;
+                card.innerText = '❓';
+                card.onclick = () => handleFlip(card);
+                grid.appendChild(card);
+            });
+        }
+
+        function handleFlip(card) {
+            if (card.classList.contains('flipped') || flipped.length >= 2) return;
+
+            card.classList.add('flipped');
+            card.innerText = card.dataset.value;
+            flipped.push(card);
+
+            if (flipped.length === 2) {
+                if (flipped[0].dataset.value === flipped[1].dataset.value) {
+                    matchedPairs++;
+                    totalScore += 2;
+                    document.getElementById('hud-score-1').innerText = totalScore;
+                    document.getElementById('memoryFeedback').innerText = "✅ Excellent Match!";
+                    document.getElementById('memoryFeedback').style.color = "green";
+                    playSound(true);
+                    flipped = [];
+
+                    if (matchedPairs === 3) {
+                        document.getElementById('scramble-section').style.display = 'block';
+                    }
+                } else {
+                    document.getElementById('memoryFeedback').innerText = "❌ Try to remember!";
+                    document.getElementById('memoryFeedback').style.color = "red";
+                    playSound(false);
+                    setTimeout(() => {
+                        flipped.forEach(c => {
+                            c.classList.remove('flipped');
+                            c.innerText = '❓';
+                        });
+                        flipped = [];
+                    }, 1000);
+                }
+            }
+        }
+
+        function checkScramble(ans) {
+            if (ans === 'STAMP') {
+                totalScore += 4;
+                document.getElementById('hud-score-1').innerText = totalScore;
+                document.getElementById('memoryFeedback').innerText = "🎉 Fantastic! Stamp Tool unlocked.";
+                document.getElementById('memoryFeedback').style.color = "green";
+                playSound(true);
+                setTimeout(() => startPuzzleGame(), 1500);
+            } else {
+                document.getElementById('memoryFeedback').innerText = "❌ Not quite! Try again.";
+                document.getElementById('memoryFeedback').style.color = "red";
+                playSound(false);
+            }
+        }
+
+        /* --- MISSION 2: DRAG AND DROP PUZZLE --- */
+        let placementCount = 0;
+
+        function startPuzzleGame() {
+            document.getElementById('hud-score-2').innerText = totalScore;
+            navigateTo('screen-puzzle');
+        }
+
+        function allowDrop(ev) { ev.preventDefault(); }
+        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const draggedId = ev.dataTransfer.getData("text");
+            const dropBox = ev.currentTarget;
+
+            if (dropBox.getAttribute('data-answer') === draggedId) {
+                const itemEl = document.getElementById(draggedId);
+                dropBox.innerHTML = "✅ " + itemEl.innerText;
+                dropBox.style.background = "#e8f5e9";
+                dropBox.style.borderColor = "green";
+                itemEl.style.visibility = "hidden";
+                
+                totalScore += 3;
+                placementCount++;
+                document.getElementById('hud-score-2').innerText = totalScore;
+                document.getElementById('puzzleFeedback').innerText = "⭐ Matched successfully!";
+                document.getElementById('puzzleFeedback').style.color = "green";
+                playSound(true);
+
+                if (placementCount === 3) {
+                    setTimeout(() => startColoringGame(), 1500);
+                }
+            } else {
+                document.getElementById('puzzleFeedback').innerText = "❌ Look closer at the description!";
+                document.getElementById('puzzleFeedback').style.color = "red";
+                playSound(false);
+            }
+        }
+
+        /* --- MISSION 3: COLORING CANVAS CANVAS ACTIONS --- */
+        const canvas = document.getElementById('paintCanvas');
+        const ctx = canvas.getContext('2d');
+        let drawing = false;
+        let penColor = 'black';
+
+        function startColoringGame() {
+            document.getElementById('hud-score-3').innerText = totalScore;
+            navigateTo('screen-coloring');
+            setupCanvasEngine();
+        }
+
+        function setupCanvasEngine() {
+            ctx.lineWidth = 6;
+            ctx.lineCap = 'round';
+
+            // Desktop events
+            canvas.addEventListener('mousedown', (e) => { drawing = true; paint(e); });
+            canvas.addEventListener('mouseup', () => { drawing = false; ctx.beginPath(); });
+            canvas.addEventListener('mousemove', paint);
+
+            // Mobile compatibility
+            canvas.addEventListener('touchstart', (e) => { drawing = true; paintTouch(e); });
+            canvas.addEventListener('touchend', () => { drawing = false; ctx.beginPath(); });
+            canvas.addEventListener('touchmove', paintTouch);
+        }
+
+        function paint(e) {
+            if (!drawing) return;
+            const rect = canvas.getBoundingClientRect();
+            ctx.strokeStyle = penColor;
+            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+        }
+
+        function paintTouch(e) {
+            if (!drawing) return;
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touch = e.touches[0];
+            ctx.strokeStyle = penColor;
+            ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+        }
+
+        function changeColor(c) { penColor = c; }
+        function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
+
+        function addStamp(stampEmoji) {
+            ctx.font = '48px serif';
+            const randomX = 50 + Math.random() * (canvas.width - 100);
+            const randomY = 50 + Math.random() * (canvas.height - 100);
+            ctx.fillText(stampEmoji, randomX, randomY);
+            playSound(true);
+        }
+
+        function finishColoring() {
+            totalScore += 5; // Finish award
+            playSound(true);
+            showFinalScoreboard();
+        }
+
+        /* --- FINAL REPORT AND PERFORMANCE STAMP --- */
+        function showFinalScoreboard() {
+            navigateTo('screen-final');
+            document.getElementById('finalText').innerHTML = `🎉 Amazing Effort, <b>${studentName}</b>!`;
+            document.getElementById('finalScore').innerText = `${totalScore} / 20 Points`;
+
+            let ranking = "";
+            if (totalScore >= 18) {
+                ranking = "🏆 Elite Tux Paint Architect";
+            } else if (totalScore >= 12) {
+                ranking = "🌟 Creative Digital Artist";
+            } else {
+                ranking = "🎨 Bright Explorer";
+            }
+            document.getElementById('rankText').innerText = ranking;
+
+            // Trigger burst effect
+            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+        }
+    </script>
 </body>
 </html>

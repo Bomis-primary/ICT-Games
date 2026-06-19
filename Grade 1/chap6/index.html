@@ -2,519 +2,166 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The Missing Part Monster -ICT</title>
-    
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Exploring the Desktop</title>
     <style>
-        :root {
-            --primary-blue: #0d47a1;
-            --accent-orange: #ff9800;
-            --mint-green: #00c853;
-            --coral-red: #ef4444;
-            --card-bg: #ffffff;
-            --bg-gradient: linear-gradient(135deg, #89f7fe, #66a6ff);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Trebuchet MS', 'Comic Sans MS', sans-serif;
-            user-select: none;
-            -webkit-user-select: none;
-        }
-
-        body {
-            background: var(--bg-gradient);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
-            overflow-x: hidden;
-        }
-
-        /* 1. Mandatory 5-Second Standalone Splash Screen */
-        #splash-screen {
-            background: #ffffff;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-            z-index: 9999;
-        }
-        .splash-logo {
-            width: 80%;
-            max-width: 300px;
-            height: auto;
-            animation: pulseSoft 1.5s infinite ease-in-out;
-        }
-        .loader-container {
-            width: 60%;
-            max-width: 240px;
-            height: 10px;
-            background: #e0e0e0;
-            border-radius: 10px;
-            overflow: hidden;
-        }
-        .loader-bar {
-            width: 100%;
-            height: 100%;
-            background: var(--accent-orange);
-            transform: translateX(-100%);
-            animation: loadFill 4.7s linear forwards;
-        }
-
-        /* Container Layouts */
-        .screen {
-            display: none;
-            background: var(--card-bg);
-            width: 100%;
-            max-width: 700px;
-            padding: 30px 25px;
-            border-radius: 30px;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-            text-align: center;
-            border: 4px solid #ffffff;
-        }
-        .active-view {
-            display: block;
-        }
-
-        .game-logo {
-            width: 130px;
-            margin-bottom: 10px;
-        }
-
-        .heading {
-            font-size: clamp(24px, 5vw, 34px);
-            color: var(--primary-blue);
-            margin-bottom: 15px;
-            font-weight: 800;
-        }
-
-        .meta-info {
-            background: #e3f2fd;
-            padding: 15px;
-            border-radius: 18px;
-            margin-bottom: 15px;
-            text-align: left;
-            line-height: 1.6;
-            font-size: 16px;
-            border-left: 5px solid var(--primary-blue);
-        }
-
-        .rules-box {
-            background: #fff8e1;
-            padding: 15px;
-            border-radius: 18px;
-            border-left: 5px solid var(--accent-orange);
-            text-align: left;
-            margin-bottom: 25px;
-            font-size: 15px;
-        }
-
-        .input-field {
-            width: 100%;
-            padding: 15px;
-            border-radius: 15px;
-            border: 2px solid #cbd5e1;
-            font-size: 18px;
-            margin-bottom: 20px;
-            text-align: center;
-            outline: none;
-            font-weight: bold;
-            color: #1e293b;
-        }
-        .input-field:focus {
-            border-color: var(--primary-blue);
-        }
-
-        .action-btn {
-            background: var(--primary-blue);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            box-shadow: 0 5px 0 #0a3678;
-            transition: transform 0.1s;
-            width: 100%;
-        }
-        .action-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 1px 0 #0a3678;
-        }
-
-        /* Scoreboard Row */
-        .scoreboard {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-weight: bold;
-            font-size: 18px;
-            background: #f8fafc;
-            padding: 12px 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            border: 1px solid #e2e8f0;
-        }
-
-        /* Central Monster Lab Arena */
-        .monster-arena {
-            background: #f1f5f9;
-            border-radius: 20px;
-            padding: 15px;
-            margin-bottom: 20px;
-            min-height: 180px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .monster-graphic-box {
-            font-size: 75px;
-            line-height: 1;
-        }
-
-        /* Choice Row Options Layout */
-        .choice-container {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-        .choice-card {
-            background: #f8fafc;
-            border: 3px solid #e2e8f0;
-            padding: 15px;
-            border-radius: 20px;
-            font-size: 18px;
-            cursor: pointer;
-            font-weight: bold;
-            flex: 1;
-            min-width: 150px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            color: #334155;
-            transition: all 0.2s ease;
-        }
-        .choice-card:hover {
-            background: #e3f2fd;
-            border-color: var(--primary-blue);
-            transform: scale(1.05);
-        }
-        .choice-icon {
-            font-size: 40px;
-        }
-
-        .feedback-banner {
-            height: 35px;
-            margin-top: 15px;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        .next-footer {
-            margin-top: 15px;
-        }
-        .next-btn {
-            background: var(--mint-green);
-            box-shadow: 0 5px 0 #009624;
-        }
-        .next-btn:active {
-            box-shadow: 0 1px 0 #009624;
-        }
-
-        /* End Screen Components */
-        .final-score-display {
-            font-size: 65px;
-            color: var(--accent-orange);
-            font-weight: 900;
-            margin: 15px 0;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-        }
-        .badge-rank {
-            font-size: 26px;
-            background: #fff8e1;
-            color: #b45309;
-            padding: 10px 25px;
-            border-radius: 15px;
-            display: inline-block;
-            font-weight: bold;
-            margin-bottom: 25px;
-            border: 2px dashed var(--accent-orange);
-        }
-
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f0f7f4; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        #game-container { width: 800px; height: 600px; background: white; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.15); position: relative; overflow: hidden; border: 4px solid #00a896; }
+        .screen { width: 100%; height: 100%; display: none; position: absolute; top: 0; left: 0; padding: 30px; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        
+        /* Screen Specific Styles */
+        #logo-screen { display: flex; background: #ffffff; }
+        #logo-screen img { max-width: 350px; animation: pulse 1.5s infinite; }
+        
+        #instruction-screen { background: #e8f1f5; }
+        h1 { color: #023e8a; font-size: 32px; margin-bottom: 10px; }
+        h2 { color: #0077b6; font-size: 24px; }
+        p { color: #333; font-size: 18px; line-height: 1.5; max-width: 600px; }
+        
+        .btn { background: #ffb703; color: #023047; border: none; padding: 15px 40px; font-size: 22px; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.1); transition: transform 0.2s; margin-top: 20px; }
+        .btn:hover { transform: scale(1.05); background: #fb8500; }
+        
+        /* HUD / Scoreboard */
+        #hud { width: 100%; display: flex; justify-content: space-between; align-items: center; font-size: 20px; font-weight: bold; color: #023047; margin-bottom: 20px; background: #e8f1f5; padding: 10px 20px; border-radius: 8px; }
+        
+        /* Game Screen layout */
+        #game-screen { justify-content: flex-start; }
+        .question-box { font-size: 24px; color: #023e8a; font-weight: bold; margin: 20px 0; background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 5px solid #ffb703; width: 100%; }
+        .options-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 650px; margin-top: 20px; }
+        .option-btn { background: #ffffff; border: 3px solid #0077b6; border-radius: 12px; padding: 20px; font-size: 20px; font-weight: bold; cursor: pointer; transition: all 0.2s; color: #0077b6; }
+        .option-btn:hover { background: #0077b6; color: white; }
+        
         /* Animations */
-        .shake-err { animation: cardShake 0.4s ease-in-out; }
-        @keyframes cardShake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            50% { transform: translateX(8px); }
-            75% { transform: translateX(-4px); }
-        }
-        @keyframes loadFill { from { transform: translateX(-100%); } to { transform: translateX(0%); } }
-        @keyframes pulseSoft { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
-
-        @media(max-width: 500px) {
-            .choice-container { flex-direction: column; }
-            .choice-card { width: 100%; }
-        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
-    <audio id="correctSound" src="assets/correct-1.mp3" preload="auto"></audio>
-    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<div id="game-container">
+    <!-- 1. Logo Screen (First 5 Seconds) -->
+    <div id="logo-screen" class="screen">
+        <img src="assets/image_3cd11e.png" alt="Innovine Logo">
+    </div>
 
-    <div id="splash-screen">
-        <img src="assets/innovine-logo.png" class="splash-logo" onerror="this.src='https://via.placeholder.com/300x90?text=Innovine+Universal'">
-        <div class="loader-container">
-            <div class="loader-bar"></div>
+    <!-- 2. Instruction Screen (Triggered After Logo) -->
+    <div id="instruction-screen" class="screen">
+        <h1>Exploring the Desktop! 🖥️</h1>
+        <h2>Grade 1 Computer Science</h2>
+        <hr style="width:80%; border: 1px solid #00a896; margin: 20px 0;">
+        <p>Welcome, Little Explorer! Let's learn about the computer screen. Look at the questions carefully and click on the correct answer. Try to score a perfect 5 out of 5!</p>
+        <button class="btn" onclick="startGame()">Let's Play!</button>
+    </div>
+
+    <!-- 3. Interactive Quiz Game Screen -->
+    <div id="game-screen" class="screen">
+        <div id="hud">
+            <span id="question-number">Question: 1/5</span>
+            <span id="score-display">Score: 0</span>
+        </div>
+        <div class="question-box" id="question-text">Loading question...</div>
+        <div class="options-container" id="options-box">
+            <!-- Options dynamically injected -->
         </div>
     </div>
 
-    <div id="intro-screen" class="screen">
-        <img src="assets/innovine-logo.png" class="game-logo" onerror="this.style.display='none'">
-        <h1 class="heading">👾 The Missing Part Monster</h1>
-        
-        <div class="meta-info">
-            <b>Grade:</b> 1 <br>
-            <b>Subject:</b> ICT (Computer Parts) <br>
-            <b>Mission:</b> Fix the monster's smart lab computer!
-        </div>
-
-        <div class="rules-box">
-            <h3 style="color: var(--accent-orange); margin-bottom: 5px;">🎮 How to Play</h3>
-            <p>Look at what part is missing from the computer setup, click the correct card option to repair it, and complete all 5 rounds!</p>
-        </div>
-
-        <input type="text" id="studentName" class="input-field" placeholder="Enter Student Name">
-        <button class="action-btn" onclick="initiateQuest()">Enter Lab Arena ➔</button>
-    </div>
-
-    <div id="arena-screen" class="screen">
-        <div class="scoreboard">
-            <div>⭐ Points: <span id="points-lbl">0</span>/5</div>
-            <div>📋 Round: <span id="round-lbl">1</span>/5</div>
-        </div>
-
-        <h2 id="monster-prompt" class="heading" style="font-size: 22px; margin-bottom: 10px;">Loading data...</h2>
-        
-        <div class="monster-arena" id="arena-box">
-            <div class="monster-graphic-box" id="monster-avatar">🤖</div>
-        </div>
-
-        <div class="choice-container" id="choice-box"></div>
-        <div class="feedback-banner" id="status-banner"></div>
-
-        <div class="next-footer">
-            <button id="forward-btn" class="action-btn next-btn" onclick="advanceRound()" style="display: none;">Next Machine ➜</button>
-        </div>
-    </div>
-
+    <!-- 4. Final Score / Completion Screen -->
     <div id="completion-screen" class="screen">
-        <img src="assets/innovine-logo.png" class="game-logo" onerror="this.style.display='none'">
-        <h1 class="heading" style="margin-top: 10px;">⚡ Mission Completed! ⚡</h1>
-        <p id="student-ack" style="font-size: 18px; color: #475569;"></p>
-        
-        <div class="final-score-display" id="final-score-lbl">0/5</div>
-        <div class="badge-rank" id="rank-lbl">Apprentice</div>
-        
-        <button class="action-btn" onclick="location.reload()">Run Lab Diagnostics Again 🔄</button>
+        <h1> 🎉 Game Complete! 🎉</h1>
+        <p style="font-size: 24px; font-weight: bold;">You are a Desktop Expert!</p>
+        <h2 id="final-score" style="font-size: 40px; margin: 15px 0; color: #00a896;">Score: 0 / 5</h2>
+        <button class="btn" onclick="restartGame()">Play Again</button>
     </div>
+</div>
 
-    <script>
-        // Exactly 5 distinct, non-repeated, ceiling rounds teaching hardware identification
-        const dataset = [
-            {
-                prompt: "The Monster can't see anything! What missing screen displays pictures and text?",
-                options: [
-                    { name: "Monitor", icon: "🖥️" },
-                    { name: "Mouse", icon: "🖱️" },
-                    { name: "Keyboard", icon: "⌨️" }
-                ],
-                correct: "Monitor",
-                avatar: "👾❔🔌"
-            },
-            {
-                prompt: "The Monster wants to type his name! What part is missing to input letters?",
-                options: [
-                    { name: "CPU", icon: "📦" },
-                    { name: "Keyboard", icon: "⌨️" },
-                    { name: "Monitor", icon: "🖥️" }
-                ],
-                correct: "Keyboard",
-                avatar: "🤖🖥️⚡❔"
-            },
-            {
-                prompt: "The Monster can't move his pointer clicker arrow! What tool is missing?",
-                options: [
-                    { name: "Printer", icon: "🖨️" },
-                    { name: "Mouse", icon: "🖱️" },
-                    { name: "Monitor", icon: "🖥️" }
-                ],
-                correct: "Mouse",
-                avatar: "👾🖥️⌨️❔"
-            },
-            {
-                prompt: "The Monster's setup won't turn on! Where is the missing brain box of the computer?",
-                options: [
-                    { name: "CPU", icon: "📦" },
-                    { name: "Mouse", icon: "🖱️" },
-                    { name: "Speakers", icon: "🔊" }
-                ],
-                correct: "CPU",
-                avatar: "⚙️🖥️⌨️🖱️❔"
-            },
-            {
-                prompt: "The Monster wants to print his drawings onto paper! What output unit does he need?",
-                options: [
-                    { name: "Keyboard", icon: "⌨️" },
-                    { name: "Printer", icon: "🖨️" },
-                    { name: "Mouse", icon: "🖱️" }
-                ],
-                correct: "Printer",
-                avatar: "🤖📄⚙️❔"
-            }
-        ];
+<!-- Audio Asset Handling Elements -->
+<audio id="sound-correct" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="sound-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
-        let index = 0;
-        let points = 0;
-        let userTag = "";
-        let locked = false;
+<script>
+    // Game Questions pool (Page 56-63 specific)
+    const questionsData = [
+        { q: "What is the very first screen called when you switch on a computer?", options: ["Desktop", "MS Paint", "Mousepad", "Calculator"], correct: 0 },
+        { q: "What are the small pictures sitting on the computer desktop called?", options: ["Stickers", "Icons", "Toys", "Buttons"], correct: 1 },
+        { q: "Where can you find the long horizontal bar located at the bottom of the screen?", options: ["Title bar", "Taskbar", "Ribbon", "Scroll Wheel"], correct: 1 },
+        { q: "Which special button launches the main menu and helps open programs?", options: ["Close Button", "Start Button", "Minimize Button", "Save Button"], correct: 1 },
+        { q: "Where on the taskbar can you see the current date and time widget?", options: ["On the far left", "On the far right", "Right in the middle", "Inside the icons"], correct: 1 }
+    ];
 
-        // Force launch-loader to run standalone for exactly 5 seconds before activation
-        window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                document.getElementById('splash-screen').style.display = 'none';
-                document.getElementById('intro-screen').classList.add('active-view');
-            }, 5000);
+    let currentQuestionIndex = 0;
+    let score = 0;
+
+    // Phase 1: Show branding screen exclusively for 5 seconds
+    window.onload = function() {
+        setTimeout(() => {
+            document.getElementById('logo-screen').style.display = 'none';
+            document.getElementById('instruction-screen').style.display = 'flex';
+        }, 5000);
+    };
+
+    // Phase 2: Core gameplay instantiation
+    function startGame() {
+        document.getElementById('instruction-screen').style.display = 'none';
+        document.getElementById('game-screen').style.display = 'flex';
+        currentQuestionIndex = 0;
+        score = 0;
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        if (currentQuestionIndex >= questionsData.length) {
+            endGame();
+            return;
+        }
+
+        // Reset HUD element displays
+        document.getElementById('question-number').innerText = `Question: ${currentQuestionIndex + 1}/${questionsData.length}`;
+        document.getElementById('score-display').innerText = `Score: ${score}`;
+        
+        let currentData = questionsData[currentQuestionIndex];
+        document.getElementById('question-text').innerText = currentData.q;
+        
+        let optionsBox = document.getElementById('options-box');
+        optionsBox.innerHTML = "";
+
+        currentData.options.forEach((option, index) => {
+            let button = document.createElement('button');
+            button.className = "option-btn";
+            button.innerText = option;
+            button.onclick = () => checkAnswer(index);
+            optionsBox.appendChild(button);
         });
+    }
 
-        function switchLayout(targetId) {
-            document.querySelectorAll('.screen').forEach(view => view.classList.remove('active-view'));
-            document.getElementById(targetId).classList.add('active-view');
+    function checkAnswer(selectedIndex) {
+        let currentData = questionsData[currentQuestionIndex];
+        let correctAudio = document.getElementById('sound-correct');
+        let wrongAudio = document.getElementById('sound-wrong');
+
+        if (selectedIndex === currentData.correct) {
+            score++;
+            try { correctAudio.currentTime = 0; correctAudio.play(); } catch(e){}
+        } else {
+            try { wrongAudio.currentTime = 0; wrongAudio.play(); } catch(e){}
         }
 
-        function initiateQuest() {
-            userTag = document.getElementById('studentName').value.trim();
-            if(userTag === "") {
-                alert("Please type your name to start!");
-                return;
-            }
-            switchLayout('arena-screen');
-            renderRound();
-        }
+        // Prevent endless loops: step forward to the next index immediately 
+        currentQuestionIndex++;
+        setTimeout(loadQuestion, 600); 
+    }
 
-        function renderRound() {
-            locked = false;
-            document.getElementById('forward-btn').style.display = 'none';
-            document.getElementById('status-banner').innerText = '';
-            
-            const currentItem = dataset[index];
-            document.getElementById('round-lbl').innerText = index + 1;
-            document.getElementById('monster-prompt').innerText = currentItem.prompt;
-            document.getElementById('monster-avatar').innerText = currentItem.avatar;
+    // Phase 3: Final Score Completion State
+    function endGame() {
+        document.getElementById('game-screen').style.display = 'none';
+        document.getElementById('completion-screen').style.display = 'flex';
+        document.getElementById('final-score').innerText = `Score: ${score} / ${questionsData.length}`;
+    }
 
-            const box = document.getElementById('choice-box');
-            box.innerHTML = '';
+    function restartGame() {
+        document.getElementById('completion-screen').style.display = 'none';
+        startGame();
+    }
+</script>
 
-            currentItem.options.forEach(opt => {
-                const card = document.createElement('div');
-                card.className = 'choice-card';
-                card.innerHTML = `
-                    <div class="choice-icon">${opt.icon}</div>
-                    <div>${opt.name}</div>
-                `;
-                card.onclick = () => verifySelection(opt.name, currentItem.correct, card);
-                box.appendChild(card);
-            });
-        }
-
-        function verifySelection(chosen, rightAns, element) {
-            if(locked) return;
-            locked = true;
-
-            const banner = document.getElementById('status-banner');
-
-            if(chosen === rightAns) {
-                points++;
-                document.getElementById('points-lbl').innerText = points;
-                banner.innerText = "🎉 Fantastic! Part Fixed!";
-                banner.style.color = "var(--mint-green)";
-                
-                // Play native success asset audio node safely
-                document.getElementById('correctSound').play().catch(() => {});
-
-                // Intermediate victory burst celebration
-                confetti({
-                    particleCount: 80,
-                    spread: 60,
-                    origin: { y: 0.7 }
-                });
-            } else {
-                document.getElementById('arena-box').classList.add('shake-err');
-                banner.innerText = "❌ Let's repair it next time!";
-                banner.style.color = "var(--coral-red)";
-                
-                // Play native error asset audio node safely
-                document.getElementById('wrongSound').play().catch(() => {});
-
-                setTimeout(() => {
-                    document.getElementById('arena-box').classList.remove('shake-err');
-                }, 400);
-            }
-
-            document.getElementById('forward-btn').style.display = 'inline-block';
-        }
-
-        function advanceRound() {
-            index++;
-            if(index < dataset.length) {
-                renderRound();
-            } else {
-                terminateQuest();
-            }
-        }
-
-        function terminateQuest() {
-            switchLayout('completion-screen');
-            document.getElementById('student-ack').innerHTML = `Wonderful work Engineer <b>${userTag}</b>!<br>You repaired the systems successfully.`;
-            document.getElementById('final-score-lbl').innerText = `${points}/5`;
-
-            let badge = "";
-            if(points === 5) {
-                badge = "🏆 Hardware Grandmaster";
-            } else if(points >= 4) {
-                badge = "🌟 Super Tinkerer";
-            } else if(points >= 2) {
-                badge = "🙂 Smart Repairer";
-            } else {
-                badge = "📘 Junior Apprentice";
-            }
-            document.getElementById('rank-lbl').innerText = badge;
-
-            // Large final closure burst sequence
-            confetti({
-                particleCount: 200,
-                spread: 100,
-                origin: { y: 0.6 }
-            });
-        }
-    </script>
 </body>
 </html>

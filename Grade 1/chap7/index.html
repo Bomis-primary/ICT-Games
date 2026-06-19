@@ -1,410 +1,400 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MS Paint 1 Adventure</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paint Detective - MS Paint Game</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f0f4f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+        /* 5-Second Splash Screen */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease-in-out;
+        }
+        #splash-screen img {
+            max-width: 60%;
+            max-height: 70vh;
+            object-fit: contain;
+        }
 
-<style>
+        /* Main Game Container */
+        #game-container {
+            display: none;
+            width: 100%;
+            max-width: 700px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            padding: 30px;
+            text-align: center;
+            margin: 20px;
+        }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Trebuchet MS',sans-serif;
-}
+        .header {
+            border-bottom: 3px dashed #cbd5e1;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+        .header h1 {
+            color: #1e293b;
+            margin: 5px 0;
+            font-size: 28px;
+        }
+        .game-status {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            color: #475569;
+            font-size: 16px;
+        }
 
-body{
-background:linear-gradient(135deg,#ff9a9e,#fad0c4,#fbc2eb,#a18cd1);
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-padding:15px;
-}
+        /* Clue Box */
+        .clue-box {
+            background-color: #f8fafc;
+            border-left: 5px solid #3b82f6;
+            padding: 15px;
+            border-radius: 4px;
+            text-align: left;
+            margin-bottom: 25px;
+            font-size: 18px;
+            color: #334155;
+            line-height: 1.5;
+        }
 
-.screen{
-display:none;
-background:rgba(255,255,255,0.96);
-width:95%;
-max-width:850px;
-padding:25px;
-border-radius:30px;
-text-align:center;
-box-shadow:0 10px 30px rgba(0,0,0,0.2);
-}
+        /* Image Display Canvas */
+        .evidence-display {
+            background-color: #f1f5f9;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            min-height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .evidence-display img {
+            max-height: 140px;
+            border-radius: 8px;
+            object-fit: contain;
+        }
 
-.active{
-display:block;
-}
+        /* Option Buttons */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .btn-option {
+            background-color: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+        }
+        .btn-option:hover {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+        }
+        .btn-option:active {
+            transform: translateY(0);
+        }
 
-.logo{
-width:150px;
-margin-bottom:15px;
-}
+        /* Results / Scorecard Screens */
+        .scorecard-screen {
+            display: none;
+            padding: 20px 0;
+        }
+        .badge-container {
+            margin: 25px 0;
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .badge {
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, #ffd700, #ffa500);
+            border-radius: 50%;
+            display: inline-flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #7c2d12;
+            font-weight: bold;
+            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.4);
+            border: 5px solid #fff;
+        }
+        .badge-icon {
+            font-size: 45px;
+            margin-bottom: 5px;
+        }
+        .badge-title {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .score-display {
+            font-size: 24px;
+            color: #1e293b;
+            margin-bottom: 30px;
+        }
+        .score-number {
+            font-size: 48px;
+            font-weight: 800;
+            color: #10b981;
+        }
 
-h1{
-color:#6a1b9a;
-margin-bottom:10px;
-}
+        .btn-restart {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        .btn-restart:hover {
+            background-color: #2563eb;
+        }
 
-input{
-width:100%;
-padding:14px;
-border-radius:12px;
-border:2px solid #ccc;
-font-size:18px;
-margin:10px 0;
-}
-
-.btn{
-background:#8e24aa;
-color:white;
-border:none;
-padding:14px;
-width:100%;
-font-size:18px;
-border-radius:50px;
-cursor:pointer;
-font-weight:bold;
-margin-top:10px;
-}
-
-.btn:hover{
-background:#6a1b9a;
-}
-
-.status{
-display:flex;
-justify-content:space-between;
-flex-wrap:wrap;
-margin-bottom:20px;
-font-weight:bold;
-font-size:18px;
-}
-
-.level{
-background:#ff9800;
-color:white;
-padding:8px 20px;
-border-radius:20px;
-display:inline-block;
-margin-bottom:15px;
-font-weight:bold;
-}
-
-.question{
-font-size:28px;
-font-weight:bold;
-color:#4a148c;
-margin-bottom:20px;
-}
-
-.options{
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
-gap:15px;
-}
-
-.option-btn{
-background:#f3e5f5;
-border:none;
-padding:15px 20px;
-border-radius:20px;
-font-size:18px;
-font-weight:bold;
-cursor:pointer;
-min-width:200px;
-transition:0.3s;
-}
-
-.option-btn:hover{
-background:#ce93d8;
-transform:scale(1.05);
-}
-
-.question-image{
-width:250px;
-height:220px;
-object-fit:contain;
-background:#f5f5f5;
-padding:10px;
-border-radius:20px;
-margin:15px auto;
-display:block;
-}
-
-.feedback{
-font-size:28px;
-font-weight:bold;
-margin:20px;
-height:40px;
-}
-
-.final-score{
-font-size:70px;
-font-weight:bold;
-color:#ff6f00;
-margin:20px 0;
-}
-
-</style>
+        @keyframes popIn {
+            0% { transform: scale(0); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
 </head>
-
 <body>
 
-<audio id="correctSound" src="assets/correct-1.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-
-<div id="intro" class="screen active">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<h1>🎨 MS Paint 1 Adventure</h1>
-
-<input type="text" id="studentName" placeholder="Enter Student Name">
-<input type="text" id="studentClass" placeholder="Enter Class">
-<input type="text" id="schoolName" placeholder="Enter School Name">
-
-<button class="btn" onclick="startGame()">Start Game</button>
-
-</div>
-
-<div id="game" class="screen">
-
-<div class="status">
-
-<div>⭐ Score: <span id="score">0</span></div>
-<div>🏅 Badges: <span id="badges">0</span></div>
-<div>📚 Question: <span id="qno">1</span>/5</div>
-
-</div>
-
-<div class="level" id="levelText"></div>
-
-<div class="question" id="questionText"></div>
-
-<div id="imageBox"></div>
-
-<div class="options" id="optionsBox"></div>
-
-<div class="feedback" id="feedback"></div>
-
-<button class="btn" id="nextBtn" onclick="nextQuestion()" style="display:none;">
-Next ➜
-</button>
-
-</div>
-
-<div id="final" class="screen">
-
-<img src="assets/ribbon.PNG" class="logo">
-
-<h1>🏆 Congratulations!</h1>
-
-<p id="finalMessage"></p>
-
-<div class="final-score" id="finalScore"></div>
-
-<h2 id="categoryText"></h2>
-
-<button class="btn" onclick="location.reload()">Play Again</button>
-
-</div>
-
-<script>
-
-const questions=[
-
-{
-level:"Level 1",
-question:"Which program is used for drawing pictures?",
-options:["MS Paint","Calculator","Music"],
-answer:"MS Paint"
-},
-
-{
-level:"Level 2",
-question:"Which tool is used to draw freely?",
-options:["Brush Tool","Delete Tool","Zoom Tool"],
-answer:"Brush Tool",
-image:"assets/brush.PNG"
-},
-
-{
-level:"Level 3",
-question:"Which box helps to choose colours?",
-options:["Colour Box","Shape Tool","Ribbon"],
-answer:"Colour Box",
-image:"assets/colour.PNG"
-},
-
-{
-level:"Level 4",
-question:"Which tool helps to draw shapes?",
-options:["Shapes Tool","Brush Tool","Fill Tool"],
-answer:"Shapes Tool",
-image:"assets/shapes.PNG"
-},
-
-{
-level:"Level 5",
-question:"Which section contains many tools?",
-options:["Ribbon","Desktop","Taskbar"],
-answer:"Ribbon",
-image:"assets/ribbon.PNG"
-}
-
-];
-
-let currentQuestion=0;
-let score=0;
-let badges=0;
-let studentName="";
-
-function showScreen(id){
-
-document.querySelectorAll('.screen').forEach(screen=>{
-screen.classList.remove('active');
-});
-
-document.getElementById(id).classList.add('active');
-
-}
-
-function startGame(){
-
-studentName=document.getElementById('studentName').value;
-
-if(studentName===""){
-alert("Please Enter Name");
-return;
-}
-
-showScreen('game');
-loadQuestion();
-
-}
-
-function loadQuestion(){
-
-const q=questions[currentQuestion];
-
-document.getElementById('qno').innerText=currentQuestion+1;
-document.getElementById('score').innerText=score;
-document.getElementById('badges').innerText=badges;
-document.getElementById('levelText').innerText=q.level;
-document.getElementById('questionText').innerText=q.question;
-
-document.getElementById('feedback').innerText="";
-document.getElementById('nextBtn').style.display='none';
-
-const imageBox=document.getElementById('imageBox');
-
-imageBox.innerHTML=q.image ?
-`<img src="${q.image}" class="question-image">` : "";
-
-const optionsBox=document.getElementById('optionsBox');
-
-optionsBox.innerHTML="";
-
-q.options.forEach(option=>{
-
-const btn=document.createElement('button');
-
-btn.className='option-btn';
-
-btn.innerText=option;
-
-btn.onclick=()=>checkAnswer(option,q.answer);
-
-optionsBox.appendChild(btn);
-
-});
-
-}
-
-function checkAnswer(selected,correct){
-
-const feedback=document.getElementById('feedback');
-
-if(selected===correct){
-
-score++;
-badges++;
-
-document.getElementById('score').innerText=score;
-document.getElementById('badges').innerText=badges;
-
-feedback.innerHTML="✅ Correct!";
-feedback.style.color="green";
-
-document.getElementById('correctSound').play();
-
-}else{
-
-feedback.innerHTML="❌ Wrong!";
-feedback.style.color="red";
-
-document.getElementById('wrongSound').play();
-
-}
-
-document.getElementById('nextBtn').style.display='block';
-
-}
-
-function nextQuestion(){
-
-currentQuestion++;
-
-if(currentQuestion<questions.length){
-
-loadQuestion();
-
-}else{
-
-showFinal();
-
-}
-
-}
-
-function showFinal(){
-
-showScreen('final');
-
-document.getElementById('finalMessage').innerHTML=
-`🎉 Great Job <b>${studentName}</b>`;
-
-document.getElementById('finalScore').innerText=
-`${score}/5`;
-
-let category="";
-
-if(score===5){
-category="🏆 Paint Champion";
-}else if(score>=4){
-category="🌟 Excellent";
-}else if(score>=2){
-category="👍 Good Try";
-}else{
-category="📘 Keep Practicing";
-}
-
-document.getElementById('categoryText').innerText=category;
-
-confetti({
-particleCount:150,
-spread:100
-});
-
-}
-
-</script>
-
+    <!-- 1. SPLASH SCREEN (Runs for exactly 5 seconds) -->
+    <div id="splash-screen">
+        <img src="innovine-logo.png" alt="Innovine Logo">
+    </div>
+
+    <!-- 2. MAIN GAME INTERFACE -->
+    <div id="game-container">
+        <!-- Game Play Interface -->
+        <div id="game-play">
+            <div class="header">
+                <div class="game-status">
+                    <span id="round-indicator">Case File: 1 / 3</span>
+                    <span id="score-indicator">Points: 0</span>
+                </div>
+                <h1>🔍 Paint Detective</h1>
+            </div>
+
+            <div class="clue-box">
+                <strong>Clue:</strong> <span id="clue-text">Loading case details...</span>
+            </div>
+
+            <div class="evidence-display">
+                <img id="evidence-image" src="" alt="Evidence Fragment">
+            </div>
+
+            <div class="options-grid" id="options-container">
+                <!-- JavaScript handles generating option buttons here -->
+            </div>
+        </div>
+
+        <!-- 3. SCORECARD & BADGE SCREEN -->
+        <div id="game-scorecard" class="scorecard-screen">
+            <div class="header">
+                <h1>Case Solved! 🎉</h1>
+            </div>
+            
+            <p class="score-display">You scored <br><span class="score-number" id="final-score">0</span> out of 30</p>
+            
+            <div class="badge-container" id="badge-zone">
+                <!-- Badge renders dynamically based on performance -->
+            </div>
+
+            <p id="feedback-text" style="color: #64748b; font-size: 16px; margin-bottom: 30px;"></p>
+            
+            <button class="btn-restart" onclick="resetGame()">Investigate Again</button>
+        </div>
+    </div>
+
+    <!-- AUDIO ASSETS -->
+    <audio id="audio-correct" src="correct-1.mp3" preload="auto"></audio>
+    <audio id="audio-wrong" src="wrong.mp3" preload="auto"></audio>
+
+    <script>
+        // Game Level Data Database (Mapped directly to MS Paint Chapters 64-73)
+        const itemDatabase = [
+            {
+                clue: "Oh no! Tarun drew an extra line completely out of bounds. Which tool does he need to wipe it clean off his canvas?",
+                image: "tools.PNG", 
+                options: ["Pencil Tool", "Fill with Color Bucket", "Eraser Tool"],
+                correct: 2
+            },
+            {
+                clue: "Riya wants to fill an entire square with a bright splash of yellow paint in a single click! What tool should she choose?",
+                image: "tools.PNG",
+                options: ["Fill with Color Bucket", "Brushes Tool", "Shapes Tool Group"],
+                correct: 0
+            },
+            {
+                clue: "Look at these crisp geometric pathways. Which structural layout window did Aman open to select a Circle and a Rectangle?",
+                image: "shapes.PNG",
+                options: ["Ribbon Home tab", "Shapes Tool Group", "Color Palette Strip"],
+                correct: 1
+            },
+            {
+                clue: "What option should you click if you want a flexible, freehand tool that lets you paint strokes with distinct textures like oil or watercolor?",
+                image: "brush.PNG",
+                options: ["Brushes Tool", "Text Tool (A)", "Pencil Tool"],
+                correct: 0
+            }
+        ];
+
+        let currentRound = 0;
+        let score = 0;
+        let activeQuestions = [];
+        const maxRounds = 3; // Game strictly tracks 3 active rounds per playthrough
+
+        // 5-Second Splash Screen Logic
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                const game = document.getElementById('game-container');
+                
+                splash.style.opacity = '0';
+                game.style.display = 'block';
+                
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                }, 800);
+                
+                initGame();
+            }, 5000); // 5000 milliseconds = 5 Seconds
+        });
+
+        // Setup clean random sequence
+        function initGame() {
+            currentRound = 0;
+            score = 0;
+            // Shuffle database items randomly
+            activeQuestions = [...itemDatabase].sort(() => 0.5 - Math.random()).slice(0, maxRounds);
+            loadRound();
+        }
+
+        // Render current operational round
+        function loadRound() {
+            if (currentRound >= maxRounds) {
+                showScorecard();
+                return;
+            }
+
+            // Update UI status bars
+            document.getElementById('round-indicator').innerText = `Case File: ${currentRound + 1} / ${maxRounds}`;
+            document.getElementById('score-indicator').innerText = `Points: ${score}`;
+
+            const activeQuestion = activeQuestions[currentRound];
+            document.getElementById('clue-text').innerText = activeQuestion.clue;
+            document.getElementById('evidence-image').src = activeQuestion.image;
+
+            // Generate interface select option buttons
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            activeQuestion.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'btn-option';
+                button.innerText = `${String.fromCharCode(65 + index)}) ${option}`;
+                button.onclick = () => evaluationAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        // Track decision outcome and play audio cues
+        function evaluationAnswer(selectedIndex) {
+            const correctAnswerIndex = activeQuestions[currentRound].correct;
+            
+            if (selectedIndex === correctAnswerIndex) {
+                score += 10;
+                document.getElementById('audio-correct').play().catch(e => console.log("Audio play blocked"));
+            } else {
+                document.getElementById('audio-wrong').play().catch(e => console.log("Audio play blocked"));
+            }
+
+            // Move step forward
+            currentRound++;
+            setTimeout(loadRound, 600);
+        }
+
+        // Output scorecard performance window and assign badge criteria
+        function showScorecard() {
+            document.getElementById('game-play').style.display = 'none';
+            const scorecard = document.getElementById('game-scorecard');
+            scorecard.style.display = 'block';
+
+            document.getElementById('final-score').innerText = score;
+            
+            const badgeZone = document.getElementById('badge-zone');
+            const feedbackText = document.getElementById('feedback-text');
+
+            // Badge Evaluation System
+            if (score === 30) {
+                badgeZone.innerHTML = `
+                    <div class="badge">
+                        <div class="badge-icon">👑</div>
+                        <div class="badge-title">Master Detective</div>
+                    </div>
+                `;
+                feedbackText.innerText = "Incredible Job! You know every single square inch of the MS Paint application!";
+            } else if (score >= 10) {
+                badgeZone.innerHTML = `
+                    <div class="badge" style="background: linear-gradient(135deg, #a1a1aa, #71717a); color: #f4f4f5; box-shadow: 0 10px 20px rgba(113, 113, 122, 0.4);">
+                        <div class="badge-icon">🔍</div>
+                        <div class="badge-title">Junior Scout</div>
+                    </div>
+                `;
+                feedbackText.innerText = "Great attempt! You traced down several tools. Keep practicing your paint layouts!";
+            } else {
+                badgeZone.innerHTML = `<div style="font-size: 50px;">⏳</div>`;
+                feedbackText.innerText = "Review pages 64-73 of your ICT book and give it another try to earn your badge!";
+            }
+        }
+
+        // Restart clean game loops
+        function resetGame() {
+            document.getElementById('game-scorecard').style.display = 'none';
+            document.getElementById('game-play').style.display = 'block';
+            initGame();
+        }
+    </script>
 </body>
 </html>

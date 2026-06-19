@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paint Detective - MS Paint Game</title>
+    <title>Paint Tool Race</title>
     <style>
         * {
             box-sizing: border-box;
@@ -12,15 +12,14 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #f0f4f8;
+            background-color: #fce7f3; /* Energetic playful background */
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* 5-Second Splash Screen */
+        /* 1. Branding Splash Screen */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -32,368 +31,294 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.8s ease-in-out;
+            transition: opacity 0.5s ease-out;
         }
         #splash-screen img {
-            max-width: 60%;
+            max-width: 70%;
             max-height: 70vh;
             object-fit: contain;
         }
 
-        /* Main Game Container */
-        #game-container {
+        /* Main App Card Container */
+        .game-card {
             display: none;
             width: 100%;
-            max-width: 700px;
+            max-width: 650px;
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             padding: 30px;
             text-align: center;
             margin: 20px;
         }
 
-        .header {
-            border-bottom: 3px dashed #cbd5e1;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
+        /* Common Elements */
+        h1 { color: #db2777; margin-top: 0; }
+        p { color: #475569; font-size: 18px; line-height: 1.6; }
+        
+        .btn-primary {
+            background-color: #ec4899;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(236, 72, 153, 0.4);
+            transition: all 0.2s;
         }
-        .header h1 {
-            color: #1e293b;
-            margin: 5px 0;
-            font-size: 28px;
+        .btn-primary:hover {
+            background-color: #db2777;
+            transform: translateY(-2px);
         }
-        .game-status {
+
+        /* 2. Instructions Screen */
+        #instructions-screen { display: none; }
+        
+        /* 3. Game Play Screen */
+        #game-play-screen { display: none; }
+        .hud {
             display: flex;
             justify-content: space-between;
+            margin-bottom: 20px;
             font-weight: bold;
-            color: #475569;
-            font-size: 16px;
-        }
-
-        /* Clue Box */
-        .clue-box {
-            background-color: #f8fafc;
-            border-left: 5px solid #3b82f6;
-            padding: 15px;
-            border-radius: 4px;
-            text-align: left;
-            margin-bottom: 25px;
             font-size: 18px;
-            color: #334155;
-            line-height: 1.5;
+            color: #4f46e5;
+            background: #f0fdf4;
+            padding: 10px 20px;
+            border-radius: 10px;
         }
-
-        /* Image Display Canvas */
-        .evidence-display {
-            background-color: #f1f5f9;
-            border: 2px solid #e2e8f0;
+        .image-box {
+            background: #f8fafc;
+            border: 3px dashed #cbd5e1;
             border-radius: 12px;
-            padding: 20px;
+            padding: 15px;
             margin-bottom: 25px;
-            min-height: 150px;
+            min-height: 160px;
             display: flex;
             justify-content: center;
             align-items: center;
         }
-        .evidence-display img {
+        .image-box img {
             max-height: 140px;
-            border-radius: 8px;
             object-fit: contain;
         }
-
-        /* Option Buttons */
-        .options-grid {
+        .options-container {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 12px;
         }
         .btn-option {
-            background-color: #ffffff;
-            border: 2px solid #cbd5e1;
-            border-radius: 10px;
-            padding: 15px;
+            background: #f1f5f9;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
             font-size: 18px;
-            font-weight: 600;
+            font-weight: bold;
             color: #334155;
             cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: left;
-            display: flex;
-            align-items: center;
+            transition: all 0.15s;
+            text-align: center;
         }
         .btn-option:hover {
-            background-color: #eff6ff;
-            border-color: #3b82f6;
-            transform: translateY(-2px);
-        }
-        .btn-option:active {
-            transform: translateY(0);
+            background: #fdf2f8;
+            border-color: #f472b6;
         }
 
-        /* Results / Scorecard Screens */
-        .scorecard-screen {
-            display: none;
-            padding: 20px 0;
+        /* 4. Scorecard Screen */
+        #scorecard-screen { display: none; }
+        .score-num {
+            font-size: 56px;
+            font-weight: 800;
+            color: #10b981;
+            margin: 10px 0;
         }
-        .badge-container {
-            margin: 25px 0;
-            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .badge {
-            width: 140px;
-            height: 140px;
-            background: linear-gradient(135deg, #ffd700, #ffa500);
+        .badge-box {
+            margin: 20px auto;
+            width: 130px;
+            height: 130px;
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
             border-radius: 50%;
-            display: inline-flex;
+            display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: #7c2d12;
-            font-weight: bold;
-            box-shadow: 0 10px 20px rgba(245, 158, 11, 0.4);
-            border: 5px solid #fff;
-        }
-        .badge-icon {
-            font-size: 45px;
-            margin-bottom: 5px;
-        }
-        .badge-title {
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .score-display {
-            font-size: 24px;
-            color: #1e293b;
-            margin-bottom: 30px;
-        }
-        .score-number {
-            font-size: 48px;
-            font-weight: 800;
-            color: #10b981;
-        }
-
-        .btn-restart {
-            background-color: #3b82f6;
             color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 15px 40px;
-            font-size: 18px;
             font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-        .btn-restart:hover {
-            background-color: #2563eb;
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+            box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+            border: 4px solid #fff;
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. SPLASH SCREEN (Runs for exactly 5 seconds) -->
+    <!-- BRANDING OVERLAY (5 Seconds Only) -->
     <div id="splash-screen">
-        <img src="innovine-logo.png" alt="Innovine Logo">
+        <img src="innovine-logo.png" alt="Innovine Branding">
     </div>
 
-    <!-- 2. MAIN GAME INTERFACE -->
-    <div id="game-container">
-        <!-- Game Play Interface -->
-        <div id="game-play">
-            <div class="header">
-                <div class="game-status">
-                    <span id="round-indicator">Case File: 1 / 3</span>
-                    <span id="score-indicator">Points: 0</span>
-                </div>
-                <h1>🔍 Paint Detective</h1>
-            </div>
-
-            <div class="clue-box">
-                <strong>Clue:</strong> <span id="clue-text">Loading case details...</span>
-            </div>
-
-            <div class="evidence-display">
-                <img id="evidence-image" src="" alt="Evidence Fragment">
-            </div>
-
-            <div class="options-grid" id="options-container">
-                <!-- JavaScript handles generating option buttons here -->
-            </div>
+    <!-- INSTRUCTIONS CONTAINER (Appears after 5 seconds) -->
+    <div id="instructions-screen" class="game-card">
+        <h1>🏎️ Paint Tool Race!</h1>
+        <p>Welcome, Little Artist! Can you match the MS Paint tools before the clock runs out? Let's test your speed and paint proficiency!</p>
+        <div style="background-color: #f3e8ff; padding: 15px; border-radius: 10px; margin-bottom: 25px; text-align: left;">
+            🏁 <strong>Rules:</strong><br>
+            • Look at the image clue quickly.<br>
+            • Pick the right tool choice below it.<br>
+            • Finish all 3 rounds to secure your master badge!
         </div>
-
-        <!-- 3. SCORECARD & BADGE SCREEN -->
-        <div id="game-scorecard" class="scorecard-screen">
-            <div class="header">
-                <h1>Case Solved! 🎉</h1>
-            </div>
-            
-            <p class="score-display">You scored <br><span class="score-number" id="final-score">0</span> out of 30</p>
-            
-            <div class="badge-container" id="badge-zone">
-                <!-- Badge renders dynamically based on performance -->
-            </div>
-
-            <p id="feedback-text" style="color: #64748b; font-size: 16px; margin-bottom: 30px;"></p>
-            
-            <button class="btn-restart" onclick="resetGame()">Investigate Again</button>
-        </div>
+        <button class="btn-primary" onclick="startRace()">Start Race! 🚀</button>
     </div>
 
-    <!-- AUDIO ASSETS -->
-    <audio id="audio-correct" src="correct-1.mp3" preload="auto"></audio>
-    <audio id="audio-wrong" src="wrong.mp3" preload="auto"></audio>
+    <!-- MAIN GAME LOOP CONTAINER -->
+    <div id="game-play-screen" class="game-card">
+        <div class="hud">
+            <span id="hud-round">Round: 1 / 3</span>
+            <span id="hud-score">Score: 0🏆</span>
+        </div>
+        <p id="question-prompt" style="font-weight: 600; margin-bottom: 15px;"></p>
+        <div class="image-box">
+            <img id="game-image" src="" alt="Paint Asset Tool">
+        </div>
+        <div class="options-container" id="options-box"></div>
+    </div>
+
+    <!-- SCORECARD & REWARD SCREEN -->
+    <div id="scorecard-screen" class="game-card">
+        <h1>Race Finished! 🎉</h1>
+        <p>Your Final Score:</p>
+        <div class="score-num" id="final-score">0</div>
+        <div id="badge-container"></div>
+        <p id="performance-feedback" style="margin-bottom: 25px; font-weight: 500;"></p>
+        <button class="btn-primary" onclick="resetRace()">Play Again 🔄</button>
+    </div>
+
+    <!-- GAME AUDIO HOOKS (From assets folder listed in image_3b7ec8.png) -->
+    <audio id="snd-correct" src="correct.mp3" preload="auto"></audio>
+    <audio id="snd-wrong" src="wrong.mp3" preload="auto"></audio>
 
     <script>
-        // Game Level Data Database (Mapped directly to MS Paint Chapters 64-73)
-        const itemDatabase = [
+        // Game Dataset matching the filenames in image_3b7ec8.png
+        const roundsData = [
             {
-                clue: "Oh no! Tarun drew an extra line completely out of bounds. Which tool does he need to wipe it clean off his canvas?",
-                image: "tools.PNG", 
-                options: ["Pencil Tool", "Fill with Color Bucket", "Eraser Tool"],
-                correct: 2
-            },
-            {
-                clue: "Riya wants to fill an entire square with a bright splash of yellow paint in a single click! What tool should she choose?",
-                image: "tools.PNG",
-                options: ["Fill with Color Bucket", "Brushes Tool", "Shapes Tool Group"],
+                prompt: "Which asset lets you pick custom shapes like Rectangles, Circles, and Stars?",
+                image: "shapes.PNG",
+                choices: ["Shapes Group", "Color Palette", "Brush Set"],
                 correct: 0
             },
             {
-                clue: "Look at these crisp geometric pathways. Which structural layout window did Aman open to select a Circle and a Rectangle?",
-                image: "shapes.PNG",
-                options: ["Ribbon Home tab", "Shapes Tool Group", "Color Palette Strip"],
+                prompt: "Which tool displays your primary system utility tools like Eraser, Pencil, and Fill Bucket?",
+                image: "tools.PNG",
+                choices: ["Brushes Selector", "Tools Panel", "Color Palette"],
                 correct: 1
             },
             {
-                clue: "What option should you click if you want a flexible, freehand tool that lets you paint strokes with distinct textures like oil or watercolor?",
+                prompt: "Where do you head when you need to pick a brand new color for your canvas brush?",
+                image: "colour.PNG",
+                choices: ["Shapes Panel", "Ribbon Tab", "Color Palette Strip"],
+                correct: 2
+            },
+            {
+                prompt: "Which icon container drops down your active media tips for Oil, Crayon, and Watercolor strokes?",
                 image: "brush.PNG",
-                options: ["Brushes Tool", "Text Tool (A)", "Pencil Tool"],
+                choices: ["Brushes Options", "Pencil Tool", "Shapes Ribbon"],
                 correct: 0
             }
         ];
 
-        let currentRound = 0;
-        let score = 0;
-        let activeQuestions = [];
-        const maxRounds = 3; // Game strictly tracks 3 active rounds per playthrough
+        let activeRoundIndex = 0;
+        let runningScore = 0;
+        let selectedRounds = [];
 
-        // 5-Second Splash Screen Logic
+        // 5-Second Branding Display Script Routine
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
-                const game = document.getElementById('game-container');
+                const instructions = document.getElementById('instructions-screen');
                 
                 splash.style.opacity = '0';
-                game.style.display = 'block';
-                
                 setTimeout(() => {
                     splash.style.display = 'none';
-                }, 800);
-                
-                initGame();
-            }, 5000); // 5000 milliseconds = 5 Seconds
+                    instructions.style.display = 'block'; // Instructions revealed after logo screen
+                }, 500);
+            }, 5000); // Strict 5-second timer
         });
 
-        // Setup clean random sequence
-        function initGame() {
-            currentRound = 0;
-            score = 0;
-            // Shuffle database items randomly
-            activeQuestions = [...itemDatabase].sort(() => 0.5 - Math.random()).slice(0, maxRounds);
-            loadRound();
+        function startRace() {
+            document.getElementById('instructions-screen').style.display = 'none';
+            document.getElementById('game-play-screen').style.display = 'block';
+            
+            // Draw 3 random rounds out of our database pool
+            selectedRounds = [...roundsData].sort(() => 0.5 - Math.random()).slice(0, 3);
+            activeRoundIndex = 0;
+            runningScore = 0;
+            
+            renderRound();
         }
 
-        // Render current operational round
-        function loadRound() {
-            if (currentRound >= maxRounds) {
-                showScorecard();
-                return;
-            }
+        function renderRound() {
+            document.getElementById('hud-round').innerText = `Round: ${activeRoundIndex + 1} / 3`;
+            document.getElementById('hud-score').innerText = `Score: ${runningScore}🏆`;
 
-            // Update UI status bars
-            document.getElementById('round-indicator').innerText = `Case File: ${currentRound + 1} / ${maxRounds}`;
-            document.getElementById('score-indicator').innerText = `Points: ${score}`;
+            const data = selectedRounds[activeRoundIndex];
+            document.getElementById('question-prompt').innerText = data.prompt;
+            document.getElementById('game-image').src = data.image;
 
-            const activeQuestion = activeQuestions[currentRound];
-            document.getElementById('clue-text').innerText = activeQuestion.clue;
-            document.getElementById('evidence-image').src = activeQuestion.image;
+            const optionsBox = document.getElementById('options-box');
+            optionsBox.innerHTML = '';
 
-            // Generate interface select option buttons
-            const optionsContainer = document.getElementById('options-container');
-            optionsContainer.innerHTML = '';
-
-            activeQuestion.options.forEach((option, index) => {
-                const button = document.createElement('button');
-                button.className = 'btn-option';
-                button.innerText = `${String.fromCharCode(65 + index)}) ${option}`;
-                button.onclick = () => evaluationAnswer(index);
-                optionsContainer.appendChild(button);
+            data.choices.forEach((choice, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'btn-option';
+                btn.innerText = choice;
+                btn.onclick = () => submitAnswer(index);
+                optionsBox.appendChild(btn);
             });
         }
 
-        // Track decision outcome and play audio cues
-        function evaluationAnswer(selectedIndex) {
-            const correctAnswerIndex = activeQuestions[currentRound].correct;
+        function submitAnswer(chosenIndex) {
+            const correctIndex = selectedRounds[activeRoundIndex].correct;
             
-            if (selectedIndex === correctAnswerIndex) {
-                score += 10;
-                document.getElementById('audio-correct').play().catch(e => console.log("Audio play blocked"));
+            if(chosenIndex === correctIndex) {
+                runningScore += 10;
+                document.getElementById('snd-correct').play().catch(() => {});
             } else {
-                document.getElementById('audio-wrong').play().catch(e => console.log("Audio play blocked"));
+                document.getElementById('snd-wrong').play().catch(() => {});
             }
 
-            // Move step forward
-            currentRound++;
-            setTimeout(loadRound, 600);
+            activeRoundIndex++;
+            if(activeRoundIndex < 3) {
+                setTimeout(renderRound, 400);
+            } else {
+                setTimeout(showScorecard, 400);
+            }
         }
 
-        // Output scorecard performance window and assign badge criteria
         function showScorecard() {
-            document.getElementById('game-play').style.display = 'none';
-            const scorecard = document.getElementById('game-scorecard');
-            scorecard.style.display = 'block';
-
-            document.getElementById('final-score').innerText = score;
+            document.getElementById('game-play-screen').style.display = 'none';
+            document.getElementById('scorecard-screen').style.display = 'block';
             
-            const badgeZone = document.getElementById('badge-zone');
-            const feedbackText = document.getElementById('feedback-text');
-
-            // Badge Evaluation System
-            if (score === 30) {
-                badgeZone.innerHTML = `
-                    <div class="badge">
-                        <div class="badge-icon">👑</div>
-                        <div class="badge-title">Master Detective</div>
-                    </div>
-                `;
-                feedbackText.innerText = "Incredible Job! You know every single square inch of the MS Paint application!";
-            } else if (score >= 10) {
-                badgeZone.innerHTML = `
-                    <div class="badge" style="background: linear-gradient(135deg, #a1a1aa, #71717a); color: #f4f4f5; box-shadow: 0 10px 20px rgba(113, 113, 122, 0.4);">
-                        <div class="badge-icon">🔍</div>
-                        <div class="badge-title">Junior Scout</div>
-                    </div>
-                `;
-                feedbackText.innerText = "Great attempt! You traced down several tools. Keep practicing your paint layouts!";
+            document.getElementById('final-score').innerText = `${runningScore} / 30`;
+            
+            const badgeContainer = document.getElementById('badge-container');
+            const feedback = document.getElementById('performance-feedback');
+            
+            if(runningScore === 30) {
+                badgeContainer.innerHTML = `<div class="badge-box"><span style="font-size:32px;">⚡</span><span>SPEED RACER</span></div>`;
+                feedback.innerText = "Wow! Flawless race performance! Your MS Paint recognition speed is unmatched!";
+            } else if (runningScore >= 10) {
+                badgeContainer.innerHTML = `<div class="badge-box" style="background: linear-gradient(135deg, #64748b, #475569);"><span style="font-size:32px;">🥈</span><span>TRACK RACER</span></div>`;
+                feedback.innerText = "Nice racing skills! You picked out some great options quickly.";
             } else {
-                badgeZone.innerHTML = `<div style="font-size: 50px;">⏳</div>`;
-                feedbackText.innerText = "Review pages 64-73 of your ICT book and give it another try to earn your badge!";
+                badgeContainer.innerHTML = `<div style="font-size: 50px; margin: 15px 0;">🏁</div>`;
+                feedback.innerText = "Let's review the tools panel layout and beat your speed score next time!";
             }
         }
 
-        // Restart clean game loops
-        function resetGame() {
-            document.getElementById('game-scorecard').style.display = 'none';
-            document.getElementById('game-play').style.display = 'block';
-            initGame();
+        function resetRace() {
+            document.getElementById('scorecard-screen').style.display = 'none';
+            startRace();
         }
     </script>
 </body>

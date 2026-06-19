@@ -1,468 +1,520 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Missing Part Monster -ICT</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-<title>Exploring the Desktop</title>
+    <style>
+        :root {
+            --primary-blue: #0d47a1;
+            --accent-orange: #ff9800;
+            --mint-green: #00c853;
+            --coral-red: #ef4444;
+            --card-bg: #ffffff;
+            --bg-gradient: linear-gradient(135deg, #89f7fe, #66a6ff);
+        }
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Trebuchet MS', 'Comic Sans MS', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
 
-<style>
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            overflow-x: hidden;
+        }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Trebuchet MS',sans-serif;
-}
+        /* 1. Mandatory 5-Second Standalone Splash Screen */
+        #splash-screen {
+            background: #ffffff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            z-index: 9999;
+        }
+        .splash-logo {
+            width: 80%;
+            max-width: 300px;
+            height: auto;
+            animation: pulseSoft 1.5s infinite ease-in-out;
+        }
+        .loader-container {
+            width: 60%;
+            max-width: 240px;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .loader-bar {
+            width: 100%;
+            height: 100%;
+            background: var(--accent-orange);
+            transform: translateX(-100%);
+            animation: loadFill 4.7s linear forwards;
+        }
 
-body{
-background:linear-gradient(135deg,#89f7fe,#66a6ff,#c3cfe2);
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-padding:15px;
-}
+        /* Container Layouts */
+        .screen {
+            display: none;
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 700px;
+            padding: 30px 25px;
+            border-radius: 30px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+            text-align: center;
+            border: 4px solid #ffffff;
+        }
+        .active-view {
+            display: block;
+        }
 
-.screen{
-display:none;
-background:white;
-width:95%;
-max-width:760px;
-padding:25px;
-border-radius:30px;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
-text-align:center;
-}
+        .game-logo {
+            width: 130px;
+            margin-bottom: 10px;
+        }
 
-.active{
-display:block;
-}
+        .heading {
+            font-size: clamp(24px, 5vw, 34px);
+            color: var(--primary-blue);
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
 
-.logo{
-width:140px;
-margin-bottom:10px;
-}
+        .meta-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 18px;
+            margin-bottom: 15px;
+            text-align: left;
+            line-height: 1.6;
+            font-size: 16px;
+            border-left: 5px solid var(--primary-blue);
+        }
 
-.heading{
-font-size:2rem;
-color:#0d47a1;
-margin-bottom:15px;
-}
+        .rules-box {
+            background: #fff8e1;
+            padding: 15px;
+            border-radius: 18px;
+            border-left: 5px solid var(--accent-orange);
+            text-align: left;
+            margin-bottom: 25px;
+            font-size: 15px;
+        }
 
-.info{
-background:#e3f2fd;
-padding:15px;
-border-radius:15px;
-margin-bottom:15px;
-text-align:left;
-line-height:1.7;
-font-size:18px;
-}
+        .input-field {
+            width: 100%;
+            padding: 15px;
+            border-radius: 15px;
+            border: 2px solid #cbd5e1;
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-align: center;
+            outline: none;
+            font-weight: bold;
+            color: #1e293b;
+        }
+        .input-field:focus {
+            border-color: var(--primary-blue);
+        }
 
-.rules{
-background:#fff8e1;
-padding:15px;
-border-radius:15px;
-border-left:6px solid orange;
-text-align:left;
-margin-bottom:20px;
-line-height:1.8;
-}
+        .action-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 5px 0 #0a3678;
+            transition: transform 0.1s;
+            width: 100%;
+        }
+        .action-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #0a3678;
+        }
 
-input{
-width:100%;
-padding:14px;
-border-radius:12px;
-border:2px solid #ccc;
-font-size:18px;
-margin-bottom:15px;
-}
+        /* Scoreboard Row */
+        .scoreboard {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 18px;
+            background: #f8fafc;
+            padding: 12px 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
 
-.btn{
-background:#1565c0;
-color:white;
-border:none;
-padding:14px;
-width:100%;
-font-size:18px;
-border-radius:50px;
-cursor:pointer;
-font-weight:bold;
-transition:0.3s;
-}
+        /* Central Monster Lab Arena */
+        .monster-arena {
+            background: #f1f5f9;
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 20px;
+            min-height: 180px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .monster-graphic-box {
+            font-size: 75px;
+            line-height: 1;
+        }
 
-.btn:hover{
-background:#0d47a1;
-}
+        /* Choice Row Options Layout */
+        .choice-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .choice-card {
+            background: #f8fafc;
+            border: 3px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 20px;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: bold;
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: #334155;
+            transition: all 0.2s ease;
+        }
+        .choice-card:hover {
+            background: #e3f2fd;
+            border-color: var(--primary-blue);
+            transform: scale(1.05);
+        }
+        .choice-icon {
+            font-size: 40px;
+        }
 
-.status{
-display:flex;
-justify-content:space-between;
-flex-wrap:wrap;
-gap:10px;
-margin-bottom:20px;
-font-weight:bold;
-font-size:18px;
-}
+        .feedback-banner {
+            height: 35px;
+            margin-top: 15px;
+            font-size: 24px;
+            font-weight: bold;
+        }
 
-.question{
-font-size:30px;
-font-weight:bold;
-color:#0d47a1;
-margin-bottom:20px;
-}
+        .next-footer {
+            margin-top: 15px;
+        }
+        .next-btn {
+            background: var(--mint-green);
+            box-shadow: 0 5px 0 #009624;
+        }
+        .next-btn:active {
+            box-shadow: 0 1px 0 #009624;
+        }
 
-.options{
-display:flex;
-justify-content:center;
-gap:15px;
-flex-wrap:wrap;
-margin-top:20px;
-}
+        /* End Screen Components */
+        .final-score-display {
+            font-size: 65px;
+            color: var(--accent-orange);
+            font-weight: 900;
+            margin: 15px 0;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        .badge-rank {
+            font-size: 26px;
+            background: #fff8e1;
+            color: #b45309;
+            padding: 10px 25px;
+            border-radius: 15px;
+            display: inline-block;
+            font-weight: bold;
+            margin-bottom: 25px;
+            border: 2px dashed var(--accent-orange);
+        }
 
-.option-btn{
-background:#e3f2fd;
-border:3px solid transparent;
-padding:15px 20px;
-border-radius:18px;
-font-size:20px;
-cursor:pointer;
-font-weight:bold;
-min-width:180px;
-transition:0.3s;
-}
+        /* Animations */
+        .shake-err { animation: cardShake 0.4s ease-in-out; }
+        @keyframes cardShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            50% { transform: translateX(8px); }
+            75% { transform: translateX(-4px); }
+        }
+        @keyframes loadFill { from { transform: translateX(-100%); } to { transform: translateX(0%); } }
+        @keyframes pulseSoft { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
 
-.option-btn:hover{
-background:#bbdefb;
-transform:scale(1.05);
-border-color:#1976d2;
-}
-
-.feedback{
-height:40px;
-margin-top:20px;
-font-size:28px;
-font-weight:bold;
-}
-
-.big-image{
-width:240px;
-height:200px;
-object-fit:contain;
-margin:10px auto;
-display:block;
-background:#f5f5f5;
-padding:10px;
-border-radius:20px;
-box-shadow:0 5px 15px rgba(0,0,0,0.15);
-}
-
-.final-score{
-font-size:70px;
-color:#ff6f00;
-font-weight:bold;
-margin:20px 0;
-}
-
-@media(max-width:700px){
-
-.question{
-font-size:22px;
-}
-
-.option-btn{
-width:100%;
-font-size:18px;
-}
-
-.big-image{
-width:180px;
-height:160px;
-}
-
-}
-
-</style>
+        @media(max-width: 500px) {
+            .choice-container { flex-direction: column; }
+            .choice-card { width: 100%; }
+        }
+    </style>
 </head>
-
 <body>
 
-<audio id="correctSound" src="assets/correct-1.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-
-<!-- INTRO -->
-
-<div id="intro" class="screen active">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<h1 class="heading">🖥️ Exploring The Desktop</h1>
-
-<div class="info">
-
-<b>Grade:</b> 1 <br>
-<b>Subject:</b> ICT <br>
-<b>Chapter:</b> Exploring the Desktop
-
-</div>
-
-<div class="rules">
-
-<h3>📘 Rules</h3>
-
-<ul style="padding-left:20px;">
-<li>Answer all 5 questions.</li>
-<li>Click the correct option.</li>
-<li>Earn points and badges.</li>
-<li>Confetti celebration at the end.</li>
-</ul>
-
-</div>
-
-<input type="text" id="playerName" placeholder="Enter Your Name">
-
-<button class="btn" onclick="startGame()">Start Game</button>
-
-</div>
-
-<!-- GAME -->
-
-<div id="game" class="screen">
-
-<div class="status">
-
-<div>⭐ Score: <span id="score">0</span></div>
-
-<div>🏅 Badges: <span id="badges">0</span></div>
-
-<div>📚 Question: <span id="qno">1</span>/5</div>
-
-</div>
-
-<div class="question" id="questionText"></div>
-
-<div id="imageBox"></div>
-
-<div class="options" id="optionsBox"></div>
-
-<div class="feedback" id="feedback"></div>
-
-<button id="nextBtn" class="btn" onclick="nextQuestion()" style="display:none;">
-Next ➜
-</button>
-
-</div>
-
-<!-- FINAL -->
-
-<div id="final" class="screen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<h1 class="heading">🎉 Excellent Work!</h1>
-
-<p id="finalMsg"></p>
-
-<div class="final-score" id="finalScore"></div>
-
-<h2 id="rankText"></h2>
-
-<button class="btn" onclick="location.reload()">
-Play Again
-</button>
-
-</div>
-
-<script>
-
-const questions = [
-
-{
-question:"What is the first screen that appears after Windows starts?",
-options:["Desktop","Keyboard","Printer"],
-answer:"Desktop"
-},
-
-{
-question:"What are the small labelled pictures on the desktop called?",
-options:["Icons","Folders","Buttons"],
-answer:"Icons"
-},
-
-{
-question:"Which bar is present at the bottom of the desktop?",
-options:["Taskbar","Title Bar","Menu Bar"],
-answer:"Taskbar"
-},
-
-{
-question:"Which button opens the Start Menu?",
-options:["Start Button","Close Button","Shift Key"],
-answer:"Start Button"
-},
-
-{
-question:"What does the Date and Time section show?",
-options:["Current Date and Time","Games","Paint Tools"],
-answer:"Current Date and Time"
-}
-
-];
-
-let currentQuestion = 0;
-let score = 0;
-let badges = 0;
-let playerName = "";
-
-function showScreen(id){
-
-document.querySelectorAll('.screen').forEach(screen=>{
-screen.classList.remove('active');
-});
-
-document.getElementById(id).classList.add('active');
-
-}
-
-function startGame(){
-
-playerName = document.getElementById('playerName').value;
-
-if(playerName===""){
-
-alert("Please enter your name");
-return;
-
-}
-
-showScreen('game');
-
-loadQuestion();
-
-}
-
-function loadQuestion(){
-
-const q = questions[currentQuestion];
-
-document.getElementById('qno').innerText=currentQuestion+1;
-
-document.getElementById('questionText').innerText=q.question;
-
-document.getElementById('feedback').innerText='';
-
-document.getElementById('nextBtn').style.display='none';
-
-const optionsBox=document.getElementById('optionsBox');
-
-optionsBox.innerHTML='';
-
-q.options.forEach(option=>{
-
-const btn=document.createElement('button');
-
-btn.className='option-btn';
-
-btn.innerText=option;
-
-btn.onclick=()=>checkAnswer(option,q.answer);
-
-optionsBox.appendChild(btn);
-
-});
-
-}
-
-function checkAnswer(selected,correct){
-
-const feedback=document.getElementById('feedback');
-
-if(selected===correct){
-
-score++;
-badges++;
-
-document.getElementById('score').innerText=score;
-document.getElementById('badges').innerText=badges;
-
-feedback.innerText="✅ Correct!";
-feedback.style.color="green";
-
-document.getElementById('correctSound').play();
-
-}else{
-
-feedback.innerText="❌ Wrong!";
-feedback.style.color="red";
-
-document.getElementById('wrongSound').play();
-
-}
-
-document.getElementById('nextBtn').style.display='block';
-
-}
-
-function nextQuestion(){
-
-currentQuestion++;
-
-if(currentQuestion<questions.length){
-
-loadQuestion();
-
-}else{
-
-showFinal();
-
-}
-
-}
-
-function showFinal(){
-
-showScreen('final');
-
-document.getElementById('finalMsg').innerHTML=
-`Great job <b>${playerName}</b>! Your score is`;
-
-document.getElementById('finalScore').innerText=
-`${score}/5`;
-
-let rank="";
-
-if(score===5){
-
-rank="🏆 Desktop Champion";
-
-}else if(score>=4){
-
-rank="🌟 Excellent";
-
-}else if(score>=2){
-
-rank="🙂 Good Try";
-
-}else{
-
-rank="📘 Keep Practicing";
-
-}
-
-document.getElementById('rankText').innerText=rank;
-
-confetti({
-particleCount:120,
-spread:90,
-origin:{y:0.6}
-});
-
-}
-
-</script>
-
+    <audio id="correctSound" src="assets/correct-1.mp3" preload="auto"></audio>
+    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" class="splash-logo" onerror="this.src='https://via.placeholder.com/300x90?text=Innovine+Universal'">
+        <div class="loader-container">
+            <div class="loader-bar"></div>
+        </div>
+    </div>
+
+    <div id="intro-screen" class="screen">
+        <img src="assets/innovine-logo.png" class="game-logo" onerror="this.style.display='none'">
+        <h1 class="heading">👾 The Missing Part Monster</h1>
+        
+        <div class="meta-info">
+            <b>Grade:</b> 1 <br>
+            <b>Subject:</b> ICT (Computer Parts) <br>
+            <b>Mission:</b> Fix the monster's smart lab computer!
+        </div>
+
+        <div class="rules-box">
+            <h3 style="color: var(--accent-orange); margin-bottom: 5px;">🎮 How to Play</h3>
+            <p>Look at what part is missing from the computer setup, click the correct card option to repair it, and complete all 5 rounds!</p>
+        </div>
+
+        <input type="text" id="studentName" class="input-field" placeholder="Enter Student Name">
+        <button class="action-btn" onclick="initiateQuest()">Enter Lab Arena ➔</button>
+    </div>
+
+    <div id="arena-screen" class="screen">
+        <div class="scoreboard">
+            <div>⭐ Points: <span id="points-lbl">0</span>/5</div>
+            <div>📋 Round: <span id="round-lbl">1</span>/5</div>
+        </div>
+
+        <h2 id="monster-prompt" class="heading" style="font-size: 22px; margin-bottom: 10px;">Loading data...</h2>
+        
+        <div class="monster-arena" id="arena-box">
+            <div class="monster-graphic-box" id="monster-avatar">🤖</div>
+        </div>
+
+        <div class="choice-container" id="choice-box"></div>
+        <div class="feedback-banner" id="status-banner"></div>
+
+        <div class="next-footer">
+            <button id="forward-btn" class="action-btn next-btn" onclick="advanceRound()" style="display: none;">Next Machine ➜</button>
+        </div>
+    </div>
+
+    <div id="completion-screen" class="screen">
+        <img src="assets/innovine-logo.png" class="game-logo" onerror="this.style.display='none'">
+        <h1 class="heading" style="margin-top: 10px;">⚡ Mission Completed! ⚡</h1>
+        <p id="student-ack" style="font-size: 18px; color: #475569;"></p>
+        
+        <div class="final-score-display" id="final-score-lbl">0/5</div>
+        <div class="badge-rank" id="rank-lbl">Apprentice</div>
+        
+        <button class="action-btn" onclick="location.reload()">Run Lab Diagnostics Again 🔄</button>
+    </div>
+
+    <script>
+        // Exactly 5 distinct, non-repeated, ceiling rounds teaching hardware identification
+        const dataset = [
+            {
+                prompt: "The Monster can't see anything! What missing screen displays pictures and text?",
+                options: [
+                    { name: "Monitor", icon: "🖥️" },
+                    { name: "Mouse", icon: "🖱️" },
+                    { name: "Keyboard", icon: "⌨️" }
+                ],
+                correct: "Monitor",
+                avatar: "👾❔🔌"
+            },
+            {
+                prompt: "The Monster wants to type his name! What part is missing to input letters?",
+                options: [
+                    { name: "CPU", icon: "📦" },
+                    { name: "Keyboard", icon: "⌨️" },
+                    { name: "Monitor", icon: "🖥️" }
+                ],
+                correct: "Keyboard",
+                avatar: "🤖🖥️⚡❔"
+            },
+            {
+                prompt: "The Monster can't move his pointer clicker arrow! What tool is missing?",
+                options: [
+                    { name: "Printer", icon: "🖨️" },
+                    { name: "Mouse", icon: "🖱️" },
+                    { name: "Monitor", icon: "🖥️" }
+                ],
+                correct: "Mouse",
+                avatar: "👾🖥️⌨️❔"
+            },
+            {
+                prompt: "The Monster's setup won't turn on! Where is the missing brain box of the computer?",
+                options: [
+                    { name: "CPU", icon: "📦" },
+                    { name: "Mouse", icon: "🖱️" },
+                    { name: "Speakers", icon: "🔊" }
+                ],
+                correct: "CPU",
+                avatar: "⚙️🖥️⌨️🖱️❔"
+            },
+            {
+                prompt: "The Monster wants to print his drawings onto paper! What output unit does he need?",
+                options: [
+                    { name: "Keyboard", icon: "⌨️" },
+                    { name: "Printer", icon: "🖨️" },
+                    { name: "Mouse", icon: "🖱️" }
+                ],
+                correct: "Printer",
+                avatar: "🤖📄⚙️❔"
+            }
+        ];
+
+        let index = 0;
+        let points = 0;
+        let userTag = "";
+        let locked = false;
+
+        // Force launch-loader to run standalone for exactly 5 seconds before activation
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.display = 'none';
+                document.getElementById('intro-screen').classList.add('active-view');
+            }, 5000);
+        });
+
+        function switchLayout(targetId) {
+            document.querySelectorAll('.screen').forEach(view => view.classList.remove('active-view'));
+            document.getElementById(targetId).classList.add('active-view');
+        }
+
+        function initiateQuest() {
+            userTag = document.getElementById('studentName').value.trim();
+            if(userTag === "") {
+                alert("Please type your name to start!");
+                return;
+            }
+            switchLayout('arena-screen');
+            renderRound();
+        }
+
+        function renderRound() {
+            locked = false;
+            document.getElementById('forward-btn').style.display = 'none';
+            document.getElementById('status-banner').innerText = '';
+            
+            const currentItem = dataset[index];
+            document.getElementById('round-lbl').innerText = index + 1;
+            document.getElementById('monster-prompt').innerText = currentItem.prompt;
+            document.getElementById('monster-avatar').innerText = currentItem.avatar;
+
+            const box = document.getElementById('choice-box');
+            box.innerHTML = '';
+
+            currentItem.options.forEach(opt => {
+                const card = document.createElement('div');
+                card.className = 'choice-card';
+                card.innerHTML = `
+                    <div class="choice-icon">${opt.icon}</div>
+                    <div>${opt.name}</div>
+                `;
+                card.onclick = () => verifySelection(opt.name, currentItem.correct, card);
+                box.appendChild(card);
+            });
+        }
+
+        function verifySelection(chosen, rightAns, element) {
+            if(locked) return;
+            locked = true;
+
+            const banner = document.getElementById('status-banner');
+
+            if(chosen === rightAns) {
+                points++;
+                document.getElementById('points-lbl').innerText = points;
+                banner.innerText = "🎉 Fantastic! Part Fixed!";
+                banner.style.color = "var(--mint-green)";
+                
+                // Play native success asset audio node safely
+                document.getElementById('correctSound').play().catch(() => {});
+
+                // Intermediate victory burst celebration
+                confetti({
+                    particleCount: 80,
+                    spread: 60,
+                    origin: { y: 0.7 }
+                });
+            } else {
+                document.getElementById('arena-box').classList.add('shake-err');
+                banner.innerText = "❌ Let's repair it next time!";
+                banner.style.color = "var(--coral-red)";
+                
+                // Play native error asset audio node safely
+                document.getElementById('wrongSound').play().catch(() => {});
+
+                setTimeout(() => {
+                    document.getElementById('arena-box').classList.remove('shake-err');
+                }, 400);
+            }
+
+            document.getElementById('forward-btn').style.display = 'inline-block';
+        }
+
+        function advanceRound() {
+            index++;
+            if(index < dataset.length) {
+                renderRound();
+            } else {
+                terminateQuest();
+            }
+        }
+
+        function terminateQuest() {
+            switchLayout('completion-screen');
+            document.getElementById('student-ack').innerHTML = `Wonderful work Engineer <b>${userTag}</b>!<br>You repaired the systems successfully.`;
+            document.getElementById('final-score-lbl').innerText = `${points}/5`;
+
+            let badge = "";
+            if(points === 5) {
+                badge = "🏆 Hardware Grandmaster";
+            } else if(points >= 4) {
+                badge = "🌟 Super Tinkerer";
+            } else if(points >= 2) {
+                badge = "🙂 Smart Repairer";
+            } else {
+                badge = "📘 Junior Apprentice";
+            }
+            document.getElementById('rank-lbl').innerText = badge;
+
+            // Large final closure burst sequence
+            confetti({
+                particleCount: 200,
+                spread: 100,
+                origin: { y: 0.6 }
+            });
+        }
+    </script>
 </body>
 </html>

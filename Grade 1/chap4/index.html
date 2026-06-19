@@ -1,766 +1,886 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Working With Mouse Game</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Working With Mouse Game</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --sky-blue: #e0f2fe;
+            --amber-orange: #f59e0b;
+            --emerald-green: #10b981;
+            --coral-red: #ef4444;
+            --slate-charcoal: #1e293b;
+            --card-glass: rgba(255, 255, 255, 0.18);
+        }
 
-<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Segoe UI', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Comic Sans MS',sans-serif;
-}
+        body {
+            background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+            min-height: 100vh;
+            color: white;
+            overflow-x: hidden;
+        }
 
-body{
-background:url('assets/Mouse-bg.jpg');
-background-size:cover;
-background-position:center;
-background-repeat:no-repeat;
-background-attachment:fixed;
-min-height:100vh;
-overflow-x:hidden;
-color:white;
-}
+        /* 5-Second Splash Loader Screen CSS Rules */
+        #screen-splash {
+            background: #ffffff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 25px;
+            z-index: 9999;
+        }
+        .splash-logo {
+            width: 75%;
+            max-width: 320px;
+            height: auto;
+            animation: pulseSoft 1.5s infinite ease-in-out;
+        }
+        .loading-track {
+            width: 60%;
+            max-width: 260px;
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+        }
+        .loading-bar-fill {
+            width: 100%;
+            height: 100%;
+            background: #f97316;
+            transform: translateX(-100%);
+            animation: startLoad 4.5s forwards linear;
+        }
 
-.overlay{
-background:rgba(0,0,0,0.35);
-min-height:100vh;
-padding:15px;
-}
+        .overlay {
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
 
-.container{
-max-width:1200px;
-margin:auto;
-padding-bottom:120px;
-}
+        .container {
+            width: 100%;
+            max-width: 700px;
+            margin: auto;
+            padding-bottom: 100px;
+        }
 
-.logo{
-width:130px;
-display:block;
-margin:auto;
-margin-bottom:10px;
-}
+        h1 {
+            text-align: center;
+            font-size: clamp(28px, 5vw, 42px);
+            color: #ffd700;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.6);
+            margin-bottom: 15px;
+        }
 
-h1{
-text-align:center;
-font-size:45px;
-color:#FFD700;
-text-shadow:2px 2px 8px black;
-margin-bottom:10px;
-}
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: clamp(16px, 4vw, 22px);
+            background: rgba(255,255,255,0.15);
+            padding: 12px 20px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.2);
+            font-weight: bold;
+        }
 
-.topbar{
-display:flex;
-justify-content:center;
-gap:25px;
-flex-wrap:wrap;
-font-size:24px;
-background:rgba(255,255,255,0.15);
-padding:12px;
-border-radius:20px;
-margin-bottom:20px;
-backdrop-filter:blur(5px);
-}
+        .card {
+            background: var(--card-glass);
+            padding: 25px 20px;
+            border-radius: 25px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+            border: 1px solid rgba(255,255,255,0.15);
+            position: relative;
+        }
 
-.card{
-background:rgba(255,255,255,0.18);
-padding:25px;
-border-radius:25px;
-backdrop-filter:blur(8px);
-text-align:center;
-}
+        #question {
+            font-size: clamp(20px, 4.5vw, 26px);
+            margin-bottom: 20px;
+            line-height: 1.4;
+            color: #ffffff;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+        }
 
-#question{
-font-size:30px;
-margin-bottom:20px;
-}
+        #options {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap:wrap;
+            margin-top: 20px;
+        }
 
-#options{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:20px;
-flex-wrap:wrap;
-margin-top:20px;
-}
+        .image-frame-wrapper {
+            background: white;
+            padding: 12px;
+            border-radius: 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 140px;
+            min-height: 140px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+            margin-bottom: 15px;
+        }
 
-.questionImage{
-width:220px;
-height:180px;
-object-fit:contain;
-background:white;
-padding:10px;
-border-radius:20px;
-cursor:pointer;
-transition:0.3s;
-box-shadow:0 5px 15px rgba(0,0,0,0.3);
-}
+        .questionImage {
+            width: 180px;
+            height: 140px;
+            object-fit: contain;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            border-radius: 12px;
+        }
 
-.questionImage:hover{
-transform:scale(1.08);
-background:#fff59d;
-}
+        .choice-img-btn {
+            background: white;
+            padding: 10px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+            border: 4px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 170px;
+            height: 140px;
+        }
 
-.optionBtn{
-padding:15px 25px;
-font-size:22px;
-border:none;
-border-radius:15px;
-cursor:pointer;
-font-weight:bold;
-background:linear-gradient(135deg,#ffeb3b,#ff9800);
-color:black;
-transition:0.3s;
-}
+        .choice-img-btn:hover {
+            transform: scale(1.05);
+            border-color: var(--amber-orange);
+        }
 
-.optionBtn:hover{
-transform:scale(1.05);
-}
+        .choice-img-btn img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
 
-.radioBox{
-background:white;
-padding:15px;
-border-radius:15px;
-color:black;
-font-size:22px;
-width:260px;
-text-align:left;
-}
+        .fallback-emoji-art {
+            font-size: 60px;
+        }
 
-.dragArea{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:40px;
-flex-wrap:wrap;
-margin-top:25px;
-}
+        .optionBtn {
+            padding: 14px 28px;
+            font-size: clamp(18px, 4vw, 22px);
+            border: none;
+            border-radius: 18px;
+            cursor: pointer;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ffeb3b, #ff9800);
+            color: black;
+            transition: transform 0.2s;
+            box-shadow: 0 5px 0 #b45309;
+        }
 
-.dragItem{
-padding:18px 25px;
-background:linear-gradient(135deg,#00e5ff,#00ff95);
-border-radius:15px;
-font-size:24px;
-cursor:grab;
-color:black;
-font-weight:bold;
-}
+        .optionBtn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #b45309;
+        }
 
-.dropBox{
-width:250px;
-height:130px;
-border:4px dashed #fff;
-border-radius:20px;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:24px;
-background:rgba(255,255,255,0.2);
-}
+        .radioBox {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            color: #1e293b;
+            font-size: 20px;
+            width: 100%;
+            max-width: 320px;
+            text-align: left;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
 
-.feedback{
-font-size:30px;
-font-weight:bold;
-margin-top:20px;
-text-align:center;
-}
+        .radio-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
 
-.nextArea{
-position:fixed;
-bottom:0;
-left:0;
-width:100%;
-background:rgba(0,0,0,0.7);
-padding:10px;
-text-align:center;
-z-index:999;
-}
+        .radio-row input {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+        }
 
-#nextBtn{
-padding:15px 45px;
-font-size:24px;
-border:none;
-border-radius:15px;
-background:linear-gradient(135deg,#00ff95,#00c853);
-color:white;
-display:none;
-cursor:pointer;
-font-weight:bold;
-}
+        .custom-select-element {
+            padding: 12px 20px;
+            font-size: 20px;
+            border-radius: 15px;
+            border: 3px solid #cbd5e1;
+            font-weight: bold;
+            outline: none;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 300px;
+            color: #1e293b;
+        }
 
-.finalScreen{
-display:none;
-background:rgba(255,255,255,0.95);
-color:black;
-padding:30px;
-border-radius:25px;
-text-align:center;
-margin-top:30px;
-}
+        .dragArea {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 25px;
+            width: 100%;
+            margin-top: 15px;
+        }
 
-.playBtn{
-padding:15px 30px;
-font-size:22px;
-background:#2196F3;
-color:white;
-border:none;
-border-radius:15px;
-cursor:pointer;
-margin-top:20px;
-}
+        .dragItem {
+            padding: 15px 35px;
+            background: linear-gradient(135deg, #00e5ff, #00ff95);
+            border-radius: 20px;
+            font-size: 24px;
+            cursor: grab;
+            color: black;
+            font-weight: bold;
+            box-shadow: 0 6px 0 #047857;
+            touch-action: none;
+        }
+        .dragItem:active {
+            cursor: grabbing;
+        }
 
-input{
-padding:15px;
-font-size:24px;
-border-radius:15px;
-border:none;
-width:300px;
-text-align:center;
-margin-top:20px;
-}
+        .dropBox {
+            width: 100%;
+            max-width: 320px;
+            height: 120px;
+            border: 4px dashed #ffffff;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            background: rgba(255,255,255,0.1);
+            font-weight: bold;
+            transition: background 0.2s;
+        }
 
-@media(max-width:768px){
+        .feedback {
+            font-size: clamp(24px, 5vw, 32px);
+            font-weight: 900;
+            margin-top: 20px;
+            min-height: 40px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
 
-.questionImage{
-width:140px;
-height:120px;
-}
+        .nextArea {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.85);
+            padding: 15px;
+            text-align: center;
+            z-index: 999;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
 
-.optionBtn{
-font-size:18px;
-padding:12px 18px;
-}
+        #nextBtn {
+            padding: 12px 50px;
+            font-size: 22px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(135deg, #00ff95, #00c853);
+            color: white;
+            display: none;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
 
-h1{
-font-size:32px;
-}
+        .finalScreen {
+            display: none;
+            background: #ffffff;
+            color: #1e293b;
+            padding: 40px 20px;
+            border-radius: 30px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+        }
 
-#question{
-font-size:22px;
-}
+        .finalScreen h1 {
+            color: #1e3a8a;
+            margin-bottom: 20px;
+        }
 
-}
+        .final-stats-txt {
+            font-size: 22px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
 
-</style>
+        .rank-badge {
+            font-size: 28px;
+            color: #b45309;
+            margin: 20px 0;
+            font-weight: 900;
+            background: #fef3c7;
+            padding: 10px 20px;
+            border-radius: 15px;
+            display: inline-block;
+        }
+
+        .playBtn {
+            padding: 15px 40px;
+            font-size: 22px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 5px 0 #1d4ed8;
+            margin-top: 10px;
+        }
+        .playBtn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #1d4ed8;
+        }
+
+        .student-input {
+            padding: 15px;
+            font-size: 22px;
+            border-radius: 15px;
+            border: 3px solid #cbd5e1;
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+            margin: 20px 0;
+            outline: none;
+            color: #1e293b;
+            font-weight: bold;
+        }
+
+        .animate-shake { animation: shakeEffect 0.4s ease-in-out; }
+        @keyframes shakeEffect {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-8px); }
+            50% { transform: translateX(8px); }
+            75% { transform: translateX(-4px); }
+        }
+
+        @keyframes startLoad { from { transform: translateX(-100%); } to { transform: translateX(0%); } }
+        @keyframes pulseSoft { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+    </style>
 </head>
 
 <body>
 
-<audio id="correctSound" src="assets/correct-1.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
-
-<div class="overlay">
-
-<div class="container">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<div id="startScreen">
-
-<h1>🖱️ Working With Mouse Game</h1>
-
-<div class="card">
-
-<h2>Enter Your Name</h2>
-
-<input type="text" id="studentName" placeholder="Enter Name">
-
-<br>
-
-<button class="optionBtn" onclick="startGame()">
-Start Game
-</button>
-
-</div>
-
-</div>
-
-<div id="gameScreen" style="display:none;">
-
-<div class="topbar">
-
-<div>⭐ Score: <span id="score">0</span></div>
-
-<div>🏆 Badges: <span id="badges">0</span></div>
-
-<div>⏰ <span id="timer">40</span>s</div>
-
-</div>
-
-<div class="card">
-
-<h2 id="question"></h2>
-
-<div id="imageArea"></div>
-
-<div id="options"></div>
-
-<div class="feedback" id="feedback"></div>
-
-</div>
-
-</div>
-
-<div class="finalScreen" id="finalScreen">
-
-<h1>🎉 Congratulations 🎉</h1>
-
-<h2 id="finalMessage"></h2>
-
-<h2 id="rank"></h2>
-
-<button onclick="location.reload()" class="playBtn">
-Play Again
-</button>
-
-</div>
-
-</div>
-
-<div class="nextArea">
-<button id="nextBtn">Next ➜</button>
-</div>
-
-<script>
-
-const questions=[
-
-{
-type:"image",
-question:"Click the LEFT CLICK picture",
-options:[
-"assets/left-click.PNG",
-"assets/right-click.PNG",
-"assets/mouse finger.PNG"
-],
-answer:"assets/left-click.PNG"
-},
-
-{
-type:"image",
-question:"Click the RIGHT CLICK picture",
-options:[
-"assets/right-click.PNG",
-"assets/left-click.PNG",
-"assets/drag-n-drop.PNG"
-],
-answer:"assets/right-click.PNG"
-},
-
-{
-type:"drag",
-question:"Drag Mouse to DRAG AND DROP",
-drag:"Mouse",
-answer:"DRAG AND DROP"
-},
-
-{
-type:"truefalse",
-question:"Mouse helps us point and click.",
-options:["True","False"],
-answer:"True",
-image:"assets/mouse finger.PNG"
-},
-
-{
-type:"image",
-question:"Choose the Drag and Drop action",
-options:[
-"assets/drag-n-drop.PNG",
-"assets/right-click.PNG",
-"assets/left-click.PNG"
-],
-answer:"assets/drag-n-drop.PNG"
-},
-
-{
-type:"radio",
-question:"Which mouse button selects an item?",
-options:[
-"Left Click",
-"Right Click",
-"Scroll Wheel"
-],
-answer:"Left Click",
-image:"assets/left-click.PNG"
-},
-
-{
-type:"truefalse",
-question:"We should hold mouse properly.",
-options:["True","False"],
-answer:"True",
-image:"assets/mouse finger.PNG"
-},
-
-{
-type:"list",
-question:"Which action is used to move object?",
-options:[
-"Drag and Drop",
-"Typing",
-"Printing"
-],
-answer:"Drag and Drop",
-image:"assets/drag-n-drop.PNG"
-},
-
-{
-type:"image",
-question:"Click the picture showing proper mouse use",
-options:[
-"assets/mouse finger.PNG",
-"assets/right-click.PNG",
-"assets/left-click.PNG"
-],
-answer:"assets/mouse finger.PNG"
-},
-
-{
-type:"truefalse",
-question:"Right click opens menu options.",
-options:["True","False"],
-answer:"True",
-image:"assets/right-click.PNG"
-}
-
-];
-
-let studentName="";
-let current=0;
-let score=0;
-let badges=0;
-let timer;
-let time=40;
-
-const question=document.getElementById('question');
-const options=document.getElementById('options');
-const imageArea=document.getElementById('imageArea');
-const feedback=document.getElementById('feedback');
-
-function startGame(){
-
-studentName=document.getElementById('studentName').value;
-
-if(studentName===""){
-alert("Please Enter Your Name");
-return;
-}
-
-document.getElementById('startScreen').style.display='none';
-document.getElementById('gameScreen').style.display='block';
-
-showQuestion();
-
-}
-
-function startTimer(){
-
-clearInterval(timer);
-
-time=40;
-
-document.getElementById('timer').innerHTML=time;
-
-timer=setInterval(()=>{
-
-time--;
-
-document.getElementById('timer').innerHTML=time;
-
-if(time<=0){
-
-clearInterval(timer);
-
-feedback.innerHTML="⏰ Time Up!";
-document.getElementById('nextBtn').style.display='inline-block';
-
-}
-
-},1000);
-
-}
-
-function showQuestion(){
-
-startTimer();
-
-const q=questions[current];
-
-question.innerHTML=q.question;
-
-options.innerHTML='';
-imageArea.innerHTML='';
-feedback.innerHTML='';
-
-document.getElementById('nextBtn').style.display='none';
-
-if(q.image){
-
-imageArea.innerHTML=
-`<img src="${q.image}" class="questionImage">`;
-
-}
-
-if(q.type==="image"){
-
-q.options.forEach(opt=>{
-
-const img=document.createElement('img');
-
-img.src=opt;
-img.className='questionImage';
-
-img.onclick=()=>check(opt===q.answer);
-
-options.appendChild(img);
-
-});
-
-}
-
-if(q.type==="truefalse"){
-
-q.options.forEach(opt=>{
-
-const btn=document.createElement('button');
-
-btn.className='optionBtn';
-
-btn.innerHTML=opt;
-
-btn.onclick=()=>check(opt===q.answer);
-
-options.appendChild(btn);
-
-});
-
-}
-
-if(q.type==="radio"){
-
-const box=document.createElement('div');
-
-box.className='radioBox';
-
-q.options.forEach(opt=>{
-
-box.innerHTML+=`
-<label>
-<input type="radio" name="mouseRadio" value="${opt}">
- ${opt}
-</label><br><br>
-`;
-
-});
-
-const btn=document.createElement('button');
-
-btn.className='optionBtn';
-
-btn.innerHTML='Submit';
-
-btn.onclick=()=>{
-
-const selected=document.querySelector('input[name="mouseRadio"]:checked');
-
-if(selected && selected.value===q.answer){
-correct();
-}else{
-wrong();
-}
-
-};
-
-options.appendChild(box);
-options.appendChild(btn);
-
-}
-
-if(q.type==="list"){
-
-const select=document.createElement('select');
-
-select.className='optionBtn';
-
-q.options.forEach(opt=>{
-
-select.innerHTML+=`<option>${opt}</option>`;
-
-});
-
-const btn=document.createElement('button');
-
-btn.className='optionBtn';
-
-btn.innerHTML='Submit';
-
-btn.onclick=()=>{
-
-if(select.value===q.answer){
-correct();
-}else{
-wrong();
-}
-
-};
-
-options.appendChild(select);
-options.appendChild(btn);
-
-}
-
-if(q.type==="drag"){
-
-const area=document.createElement('div');
-
-area.className='dragArea';
-
-const drag=document.createElement('div');
-
-drag.className='dragItem';
-
-drag.innerHTML=q.drag;
-
-drag.draggable=true;
-
-drag.addEventListener('dragstart',e=>{
-e.dataTransfer.setData('text',q.drag);
-});
-
-const drop=document.createElement('div');
-
-drop.className='dropBox';
-
-drop.innerHTML=q.answer;
-
-drop.addEventListener('dragover',e=>e.preventDefault());
-
-drop.addEventListener('drop',()=>{
-
-correct();
-
-drop.innerHTML="✅ Correct";
-
-});
-
-area.appendChild(drag);
-area.appendChild(drop);
-
-options.appendChild(area);
-
-}
-
-}
-
-function check(ans){
-
-if(ans){
-correct();
-}else{
-wrong();
-}
-
-}
-
-function correct(){
-
-clearInterval(timer);
-
-feedback.innerHTML="👏 Correct!";
-feedback.style.color='#00ff95';
-
-document.getElementById('correctSound').play();
-
-confetti({
-particleCount:250,
-spread:120
-});
-
-score++;
-badges++;
-
-document.getElementById('score').innerHTML=score;
-document.getElementById('badges').innerHTML=badges;
-
-document.getElementById('nextBtn').style.display='inline-block';
-
-}
-
-function wrong(){
-
-clearInterval(timer);
-
-feedback.innerHTML="❌ Wrong!";
-feedback.style.color='red';
-
-document.getElementById('wrongSound').play();
-
-document.getElementById('nextBtn').style.display='inline-block';
-
-}
-
-document.getElementById('nextBtn').onclick=()=>{
-
-current++;
-
-if(current<questions.length){
-
-showQuestion();
-
-}else{
-
-showFinal();
-
-}
-
-};
-
-function showFinal(){
-
-document.getElementById('gameScreen').style.display='none';
-
-document.getElementById('finalScreen').style.display='block';
-
-document.getElementById('finalMessage').innerHTML=
-`Congratulations ${studentName}! <br>
-You scored ${score}/10`;
-
-let rank='';
-
-if(score===10){
-
-rank='🏆 CHAMPION';
-
-}else if(score>=7){
-
-rank='👍 EXCELLENT';
-
-}else if(score>=4){
-
-rank='🙂 NEED TO IMPROVE';
-
-}else{
-
-rank='📘 BEGINNER';
-
-}
-
-document.getElementById('rank').innerHTML=rank;
-
-confetti({
-particleCount:500,
-spread:180
-});
-
-}
-
-</script>
+    <audio id="correctSound" src="assets/correct-1.mp3" preload="auto"></audio>
+    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+
+    <div id="screen-splash">
+        <img src="assets/innovine-logo.png" class="splash-logo" onerror="this.src='https://via.placeholder.com/320x100?text=Innovine+Pedagogy'">
+        <div class="loading-track">
+            <div class="loading-bar-fill"></div>
+        </div>
+    </div>
+
+    <div class="overlay">
+        <div class="container">
+
+            <div id="startScreen" style="display:none;">
+                <h1>🖱️ Working With Mouse Game</h1>
+                <div class="card">
+                    <h2>Welcome Scientist!</h2>
+                    <p style="margin-top:5px; font-weight:bold; color:rgba(255,255,255,0.8);">Let's master our smart lab input tool controls.</p>
+                    <input type="text" id="studentName" class="student-input" placeholder="Enter Student Name">
+                    <br>
+                    <button class="optionBtn" onclick="startGame()">Start Lab Quest ➔</button>
+                </div>
+            </div>
+
+            <div id="gameScreen" style="display:none;">
+                <div class="topbar">
+                    <div>⭐ Score: <span id="score">0</span></div>
+                    <div>🏆 Badges: <span id="badges">0</span></div>
+                    <div>⏰ <span id="timer">40</span>s</div>
+                </div>
+
+                <div class="card" id="main-content-card">
+                    <h2 id="question">Loading Round Info...</h2>
+                    <div id="imageArea"></div>
+                    <div id="options"></div>
+                    <div class="feedback" id="feedback"></div>
+                </div>
+            </div>
+
+            <div class="finalScreen" id="finalScreen">
+                <h1>🎉 Quest Completed! 🎉</h1>
+                <div id="finalMessage" class="final-stats-txt"></div>
+                <div id="rank" class="rank-badge"></div>
+                <br>
+                <button onclick="location.reload()" class="playBtn">Play Again 🔄</button>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="nextArea">
+        <button id="nextBtn">Next Question ➔</button>
+    </div>
+
+    <script>
+        // Track image asset path operational status
+        let localAssetsOperational = true;
+
+        // Explicit 5-Second Splash Loader Screen Rule Setup
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.getElementById('screen-splash').style.display = 'none';
+                document.getElementById('startScreen').style.display = 'block';
+            }, 5000);
+        });
+
+        // Aligned dataset using your specified assets 
+        const questions = [
+            {
+                type: "image",
+                question: "Click the picture showing LEFT CLICK action",
+                options: ["assets/image_563a08.png", "assets/image_5639c5.png", "assets/mouse finger.PNG"],
+                answer: "assets/image_563a08.png",
+                fallbackEmojis: ["👈🖱️", "👉🖱️", "☝️🖱️"]
+            },
+            {
+                type: "image",
+                question: "Click the picture showing RIGHT CLICK action",
+                options: ["assets/image_5639c5.png", "assets/image_563a08.png", "assets/drag-n-drop.PNG"],
+                answer: "assets/image_5639c5.png",
+                fallbackEmojis: ["👉🖱️", "👈🖱️", "📦🖱️"]
+            },
+            {
+                type: "drag",
+                question: "Drag the Mouse into the target window area to activate Drag and Drop!",
+                drag: "🖱️ Mouse",
+                answer: "DRAG AND DROP ZONE"
+            },
+            {
+                type: "truefalse",
+                question: "The computer mouse helps us point, select, and click screen elements.",
+                options: ["True", "False"],
+                answer: "True",
+                image: "assets/image_563a08.png",
+                fallbackEmoji: "🖱️"
+            },
+            {
+                type: "image",
+                question: "Choose the picture layout that shows Drag and Drop movement",
+                options: ["assets/drag-n-drop.PNG", "assets/image_5639c5.png", "assets/image_563a08.png"],
+                answer: "assets/drag-n-drop.PNG",
+                fallbackEmojis: ["📦🖱️", "👉🖱️", "👈🖱️"]
+            },
+            {
+                type: "radio",
+                question: "Which button on the mouse is primary and used to select an item?",
+                options: ["Left Click", "Right Click", "Scroll Wheel"],
+                answer: "Left Click",
+                image: "assets/image_563a08.png",
+                fallbackEmoji: "👈"
+            },
+            {
+                type: "truefalse",
+                question: "We should rest our hand comfortably and hold the mouse properly.",
+                options: ["True", "False"],
+                answer: "True",
+                image: "assets/mouse finger.PNG",
+                fallbackEmoji: "🤝"
+            },
+            {
+                type: "list",
+                question: "Which action is used to move an object from one place to another?",
+                options: ["Drag and Drop", "Typing on Keys", "Printing Paper Sheets"],
+                answer: "Drag and Drop",
+                image: "assets/drag-n-drop.PNG",
+                fallbackEmoji: "🚚"
+            },
+            {
+                type: "image",
+                question: "Click the picture showing the proper way to place your fingers on a mouse",
+                options: ["assets/mouse finger.PNG", "assets/image_5639c5.png", "assets/image_563a08.png"],
+                answer: "assets/mouse finger.PNG",
+                fallbackEmojis: ["☝️🖱️", "👉🖱️", "👈🖱️"]
+            },
+            {
+                type: "truefalse",
+                question: "Right clicking an item usually opens up a special list of options/menu.",
+                options: ["True", "False"],
+                answer: "True",
+                image: "assets/image_5639c5.png",
+                fallbackEmoji: "📋"
+            }
+        ];
+
+        let studentName = "";
+        let current = 0;
+        let score = 0;
+        let badges = 0;
+        let timer;
+        let time = 40;
+        let choiceControlLocked = false;
+
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const imageAreaEl = document.getElementById('imageArea');
+        const feedbackEl = document.getElementById('feedback');
+        const nextBtnEl = document.getElementById('nextBtn');
+
+        function startGame() {
+            studentName = document.getElementById('studentName').value.trim();
+
+            if (studentName === "") {
+                alert("Please enter your name to begin!");
+                return;
+            }
+
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+
+            showQuestion();
+        }
+
+        function startTimer() {
+            clearInterval(timer);
+            time = 40;
+            document.getElementById('timer').innerHTML = time;
+
+            timer = setInterval(() => {
+                time--;
+                document.getElementById('timer').innerHTML = time;
+
+                if (time <= 0) {
+                    clearInterval(timer);
+                    choiceControlLocked = true;
+                    feedbackEl.innerHTML = "⏰ Time Up! Let's try the next one.";
+                    feedbackEl.style.color = '#f59e0b';
+                    document.getElementById('wrongSound').play().catch(()=>{});
+                    nextBtnEl.style.display = 'inline-block';
+                }
+            }, 1000);
+        }
+
+        function showQuestion() {
+            choiceControlLocked = false;
+            startTimer();
+
+            const q = questions[current];
+            questionEl.innerHTML = q.question;
+
+            optionsEl.innerHTML = '';
+            imageAreaEl.innerHTML = '';
+            feedbackEl.innerHTML = '';
+            nextBtnEl.style.display = 'none';
+
+            // Top visual display element initialization
+            if (q.image) {
+                const frame = document.createElement('div');
+                frame.className = "image-frame-wrapper";
+
+                if (localAssetsOperational) {
+                    const img = document.createElement('img');
+                    img.src = q.image;
+                    img.className = "questionImage";
+                    img.onerror = () => {
+                        localAssetsOperational = false;
+                        frame.innerHTML = `<span class="fallback-emoji-art">${q.fallbackEmoji || '🖱️'}</span>`;
+                    };
+                    frame.appendChild(img);
+                } else {
+                    frame.innerHTML = `<span class="fallback-emoji-art">${q.fallbackEmoji || '🖱️'}</span>`;
+                }
+                imageAreaEl.appendChild(frame);
+            }
+
+            // Type 1: Image Button Grid Engine
+            if (q.type === "image") {
+                q.options.forEach((opt, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'choice-img-btn';
+
+                    if (localAssetsOperational) {
+                        const img = document.createElement('img');
+                        img.src = opt;
+                        img.onerror = () => {
+                            localAssetsOperational = false;
+                            renderImageGridWithFallback(q);
+                        };
+                        btn.appendChild(img);
+                    } else {
+                        btn.innerHTML = `<span class="fallback-emoji-art">${q.fallbackEmojis[idx]}</span>`;
+                    }
+
+                    btn.onclick = () => evaluateAnswer(opt === q.answer);
+                    optionsEl.appendChild(btn);
+                });
+            }
+
+            // Type 2: True / False Choice Buttons
+            if (q.type === "truefalse") {
+                q.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'optionBtn';
+                    btn.innerHTML = opt;
+                    btn.onclick = () => evaluateAnswer(opt === q.answer);
+                    optionsEl.appendChild(btn);
+                });
+            }
+
+            // Type 3: Standard Form Radio Element Node Box
+            if (q.type === "radio") {
+                const box = document.createElement('div');
+                box.className = 'radioBox';
+
+                q.options.forEach((opt, idx) => {
+                    box.innerHTML += `
+                        <label class="radio-row">
+                            <input type="radio" name="mouseRadio" id="rad-${idx}" value="${opt}">
+                            <span>${opt}</span>
+                        </label>
+                    `;
+                });
+
+                const submitBtn = document.createElement('button');
+                submitBtn.className = 'optionBtn';
+                submitBtn.innerHTML = 'Submit answer';
+                submitBtn.onclick = () => {
+                    if (choiceControlLocked) return;
+                    const selected = document.querySelector('input[name="mouseRadio"]:checked');
+                    if (!selected) {
+                        alert("Please select an option first!");
+                        return;
+                    }
+                    evaluateAnswer(selected.value === q.answer);
+                };
+
+                optionsEl.appendChild(box);
+                optionsEl.appendChild(submitBtn);
+            }
+
+            // Type 4: Dropdown List Selection Engine
+            if (q.type === "list") {
+                const select = document.createElement('select');
+                select.className = 'custom-select-element';
+                
+                // Add friendly default option
+                select.innerHTML = `<option value="" disabled selected>-- Select Action --</option>`;
+                q.options.forEach(opt => {
+                    select.innerHTML += `<option value="${opt}">${opt}</option>`;
+                });
+
+                const submitBtn = document.createElement('button');
+                submitBtn.className = 'optionBtn';
+                submitBtn.innerHTML = 'Check Answer';
+                submitBtn.onclick = () => {
+                    if (choiceControlLocked) return;
+                    if (select.value === "") {
+                        alert("Please choose an answer from the menu list!");
+                        return;
+                    }
+                    evaluateAnswer(select.value === q.answer);
+                };
+
+                optionsEl.appendChild(select);
+                optionsEl.appendChild(submitBtn);
+            }
+
+            // Type 5: Drag and Drop Implementation Framework
+            if (q.type === "drag") {
+                const area = document.createElement('div');
+                area.className = 'dragArea';
+
+                const dragNode = document.createElement('div');
+                dragNode.className = 'dragItem';
+                dragNode.innerHTML = q.drag;
+                dragNode.draggable = true;
+
+                // Drag Events API
+                dragNode.addEventListener('dragstart', e => {
+                    if (choiceControlLocked) { e.preventDefault(); return; }
+                    e.dataTransfer.setData('text/plain', q.drag);
+                });
+
+                // HTML5 Mobile Touch Drag Emulation Layer Integration
+                dragNode.addEventListener('touchmove', e => {
+                    if (choiceControlLocked) return;
+                    const touchLocation = e.targetTouches[0];
+                    dragNode.style.position = 'absolute';
+                    dragNode.style.left = (touchLocation.clientX - 60) + 'px';
+                    dragNode.style.top = (touchLocation.clientY - 30) + 'px';
+                    dragNode.style.zIndex = '1000';
+                });
+
+                dragNode.addEventListener('touchend', e => {
+                    if (choiceControlLocked) return;
+                    const dropTarget = document.getElementById('target-drop-box');
+                    const dropRect = dropTarget.getBoundingClientRect();
+                    const touchX = e.changedTouches[0].clientX;
+                    const touchY = e.changedTouches[0].clientY;
+
+                    // Hit testing coordinates framework
+                    if (touchX >= dropRect.left && touchX <= dropRect.right &&
+                        touchY >= dropRect.top && touchY <= dropRect.bottom) {
+                        
+                        dragNode.style.display = 'none';
+                        triggerCorrectAnswerActions();
+                        dropTarget.innerHTML = "✅ Correct Drop!";
+                        dropTarget.style.background = "rgba(16, 185, 129, 0.3)";
+                        dropTarget.style.borderColor = "var(--emerald-green)";
+                    } else {
+                        // Snapping element position reset
+                        dragNode.style.position = 'static';
+                    }
+                });
+
+                const dropTarget = document.createElement('div');
+                dropTarget.className = 'dropBox';
+                dropTarget.id = 'target-drop-box';
+                dropTarget.innerHTML = q.answer;
+
+                dropTarget.addEventListener('dragover', e => e.preventDefault());
+                dropTarget.addEventListener('drop', e => {
+                    e.preventDefault();
+                    if (choiceControlLocked) return;
+                    dragNode.style.display = 'none';
+                    triggerCorrectAnswerActions();
+                    dropTarget.innerHTML = "✅ Correct Drop!";
+                    dropTarget.style.background = "rgba(16, 185, 129, 0.3)";
+                    dropTarget.style.borderColor = "var(--emerald-green)";
+                });
+
+                area.appendChild(dragNode);
+                area.appendChild(dropTarget);
+                optionsEl.appendChild(area);
+            }
+        }
+
+        // Emergency helper layout generator to instantly handle offline image assets mid-game
+        function renderImageGridWithFallback(q) {
+            optionsEl.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = 'choice-img-btn';
+                btn.innerHTML = `<span class="fallback-emoji-art">${q.fallbackEmojis[idx]}</span>`;
+                btn.onclick = () => evaluateAnswer(opt === q.answer);
+                optionsEl.appendChild(btn);
+            });
+        }
+
+        function evaluateAnswer(isCorrect) {
+            if (choiceControlLocked) return;
+            choiceControlLocked = true;
+            clearInterval(timer);
+
+            if (isCorrect) {
+                triggerCorrectAnswerActions();
+            } else {
+                document.getElementById('main-content-card').classList.add('animate-shake');
+                feedbackEl.innerHTML = "❌ Try Again! You can do it.";
+                feedbackEl.style.color = '#ef4444';
+                document.getElementById('wrongSound').play().catch(()=>{});
+
+                setTimeout(() => {
+                    document.getElementById('main-content-card').classList.remove('animate-shake');
+                }, 400);
+            }
+
+            nextBtnEl.style.display = 'inline-block';
+        }
+
+        function triggerCorrectAnswerActions() {
+            clearInterval(timer);
+            choiceControlLocked = true;
+            feedbackEl.innerHTML = "👏 Super Job! Correct.";
+            feedbackEl.style.color = '#00ff95';
+            
+            document.getElementById('correctSound').play().catch(()=>{});
+
+            confetti({
+                particleCount: 150,
+                spread: 80,
+                origin: { y: 0.6 }
+            });
+
+            score++;
+            badges++;
+
+            document.getElementById('score').innerHTML = score;
+            document.getElementById('badges').innerHTML = badges;
+            nextBtnEl.style.display = 'inline-block';
+        }
+
+        nextBtnEl.onclick = () => {
+            current++;
+            if (current < questions.length) {
+                showQuestion();
+            } else {
+                showFinalResultsBoard();
+            }
+        };
+
+        function showFinalResultsBoard() {
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('finalScreen').style.display = 'block';
+            nextBtnEl.style.display = 'none';
+
+            document.getElementById('finalMessage').innerHTML = `
+                Outstanding effort, ${studentName}!<br>
+                You discovered and marked ${score} out of 10 challenges correctly!
+            `;
+
+            let titleRank = '';
+            if (score === 10) {
+                titleRank = '🏆 MOUSE CHAMPION';
+            } else if (score >= 7) {
+                titleRank = '👍 EXCELLENT pedant';
+            } else if (score >= 4) {
+                titleRank = '🙂 RISING STAR';
+            } else {
+                titleRank = '📘 APPRENTICE';
+            }
+
+            document.getElementById('rank').innerHTML = titleRank;
+
+            confetti({
+                particleCount: 300,
+                spread: 140,
+                origin: { y: 0.5 }
+            });
+        }
+    </script>
 
 </body>
 </html>

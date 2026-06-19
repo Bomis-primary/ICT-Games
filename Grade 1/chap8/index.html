@@ -2,27 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> ICT: Fun MS Paint Adventure</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ICT: Fun MS Paint Adventure</title>
     <style>
-        /* --- GLOBAL CARTOON STYLE THEME --- */
+        /* --- BRANDING & CARTOON VARIABLES --- */
+        :root {
+            --primary: #0d9488;
+            --primary-dark: #0f766e;
+            --primary-light: #ccfbf1;
+            --accent: #f59e0b;
+            --accent-dark: #b45309;
+            --bg-play: #f0fdfa;
+            --text-dark: #1e293b;
+        }
+
         * {
             box-sizing: border-box;
-            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
-            user-select: none;
-        }
-        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
             margin: 0;
             padding: 0;
-            background: #f0fdfa url('assets/bg.jpg') no-repeat center center/cover;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body {
+            background: linear-gradient(135deg, #ccfbf1 0%, #99f6e4 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            padding: 10px;
             overflow-x: hidden;
         }
 
-        /* --- BRANDING SPLASH LAYER (Strictly 5 Seconds) --- */
+        /* --- 1. BRANDING SPLASH LAYER (Strict 5 Seconds) --- */
         #brand-splash {
             position: fixed;
             top: 0;
@@ -34,522 +47,539 @@
             justify-content: center;
             align-items: center;
             z-index: 10000;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.6s ease;
         }
         #brand-splash img {
-            max-width: 70%;
+            max-width: 65%;
             max-height: 70vh;
             object-fit: contain;
         }
 
-        /* --- APPLICATION PLAYGROUND FRAMES --- */
-        .game-container {
+        /* --- STAGE MAIN CARD WINDOW --- */
+        .game-card {
             display: none;
-            width: 92%;
-            max-width: 760px;
-            background: rgba(255, 255, 255, 0.96);
-            border: 5px solid #0d9488;
+            width: 100%;
+            max-width: 740px;
+            background: #ffffff;
+            border: 6px solid var(--primary);
             border-radius: 32px;
-            box-shadow: 0 16px 32px rgba(0,0,0,0.15);
-            padding: 25px;
+            box-shadow: 0 16px 40px rgba(15, 118, 110, 0.25);
+            padding: 30px;
             text-align: center;
             position: relative;
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: cardPopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        @keyframes popIn {
-            0% { transform: scale(0.9); opacity: 0; }
+        @keyframes cardPopIn {
+            0% { transform: scale(0.92); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* --- GRAPHIC ELEMENT CLASSES --- */
-        h1 { color: #0f766e; font-size: 32px; margin: 10px 0; text-shadow: 2px 2px 0px #ccfbf1; }
-        h2 { color: #0d9488; font-size: 24px; margin: 5px 0; }
-        p { color: #374151; font-size: 18px; line-height: 1.4; }
+        /* --- GRAPHIC ELEMENTS & LABELS --- */
+        h1 { color: var(--primary-dark); font-size: 34px; margin-bottom: 10px; text-shadow: 2px 2px 0px var(--primary-light); }
+        h2 { color: var(--primary); font-size: 24px; margin-bottom: 8px; }
+        p { color: #475569; font-size: 19px; line-height: 1.5; margin-bottom: 15px; }
 
+        /* Child Friendly CTA Action Knobs */
         .btn-action {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
             color: #78350f;
-            border: 4px solid #b45309;
-            border-radius: 20px;
-            padding: 14px 40px;
-            font-size: 22px;
+            border: 4px solid var(--accent-dark);
+            border-radius: 24px;
+            padding: 16px 42px;
+            font-size: 24px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 6px 0 #b45309;
-            transition: transform 0.1s;
-            margin-top: 15px;
+            box-shadow: 0 8px 0 var(--accent-dark);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
         }
         .btn-action:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #b45309;
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 var(--accent-dark);
         }
 
-        /* --- TOP PANEL HUD --- */
+        /* --- HEADERS HUD LAYOUT --- */
         .hud-panel {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #ccfbf1;
-            border: 3px solid #0d9488;
-            border-radius: 16px;
-            padding: 8px 15px;
-            margin-bottom: 20px;
+            background: var(--primary-light);
+            border: 3px solid var(--primary);
+            border-radius: 20px;
+            padding: 10px 20px;
+            margin-bottom: 25px;
             font-weight: bold;
-            font-size: 18px;
-            color: #115e59;
+            font-size: 19px;
+            color: var(--primary-dark);
         }
-        .progress-outer {
-            width: 40%;
+        .progress-bar-outer {
+            width: 35%;
             background: #e2e8f0;
-            border-radius: 10px;
-            height: 16px;
+            border: 3px solid var(--primary);
+            border-radius: 12px;
+            height: 22px;
             overflow: hidden;
-            border: 2px solid #0d9488;
         }
-        .progress-inner {
+        .progress-bar-inner {
             height: 100%;
             width: 0%;
-            background: #10b981;
+            background: linear-gradient(90deg, #34d399, #10b981);
             transition: width 0.3s ease;
         }
 
-        /* --- INTERACTIVE CARD DESIGNS --- */
-        .task-box {
-            background: #f0fdfa;
-            border: 3px dashed #14b8a6;
-            border-radius: 20px;
+        /* --- VISUAL INTERACTIVE BOXES --- */
+        .scenery-viewbox {
+            background: var(--bg-play);
+            border: 4px dashed var(--primary);
+            border-radius: 24px;
             padding: 20px;
             margin-bottom: 20px;
-            min-height: 160px;
+            min-height: 180px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
         }
+        .scenery-viewbox img {
+            max-height: 140px;
+            object-fit: contain;
+            border-radius: 12px;
+            filter: drop-shadow(0 6px 10px rgba(0,0,0,0.1));
+        }
 
-        /* MCQ Options Dynamic Grid */
-        .options-grid {
+        /* MCQ Form Options Grid */
+        .options-layout-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 12px;
-            margin-top: 10px;
+            gap: 14px;
+            margin-top: 15px;
         }
         @media (min-width: 550px) {
-            .options-grid { grid-template-columns: 1fr 1fr; }
+            .options-layout-grid { grid-template-columns: 1fr 1fr; }
         }
-
-        .btn-option {
+        .btn-choice {
             background: #ffffff;
             border: 3px solid #cbd5e1;
-            border-radius: 16px;
-            padding: 15px;
-            font-size: 18px;
+            border-radius: 20px;
+            padding: 18px;
+            font-size: 19px;
             font-weight: bold;
-            color: #1e293b;
+            color: var(--text-dark);
             cursor: pointer;
-            box-shadow: 0 4px 0 #cbd5e1;
-            transition: all 0.15s;
+            box-shadow: 0 5px 0 #cbd5e1;
+            transition: all 0.15s ease;
+            text-align: center;
         }
-        .btn-option:hover {
-            background: #f0fdf4;
-            border-color: #22c55e;
-            box-shadow: 0 4px 0 #22c55e;
+        .btn-choice:hover {
+            background: var(--bg-play);
+            border-color: var(--primary);
+            box-shadow: 0 5px 0 var(--primary);
+        }
+        .btn-choice:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #cbd5e1;
         }
 
-        /* --- DRAG & DROP ENGINE LAYOUT --- */
-        .sequence-container {
+        /* --- DRAG & MATCH / SEQUENCE SPECIFIC LAYOUTS --- */
+        .interactive-drag-deck {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             width: 100%;
-            max-width: 400px;
+            max-width: 460px;
             margin: 0 auto;
         }
-        .drag-item {
+        .drag-node-row {
             background: #ffffff;
-            border: 3px solid #0d9488;
-            border-radius: 12px;
-            padding: 12px;
-            font-size: 18px;
+            border: 3px solid var(--primary);
+            border-radius: 16px;
+            padding: 14px;
+            font-size: 19px;
             font-weight: bold;
+            color: var(--text-dark);
             cursor: grab;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            box-shadow: 0 4px 0 #0f766e;
+            gap: 12px;
+            box-shadow: 0 4px 0 var(--primary-dark);
         }
-        .drag-item:active { cursor: grabbing; }
+        .drag-node-row:active { cursor: grabbing; }
 
-        /* --- DECORATIVE STICKERS --- */
-        .emoji-art { font-size: 64px; animation: bounce 2s infinite alternate; }
+        /* Animated Mascot Emoji Space */
+        .mascot-emoji { font-size: 72px; animation: bounce 2s infinite alternate; margin: 15px 0; }
         @keyframes bounce {
             0% { transform: translateY(0); }
-            100% { transform: translateY(-12px); }
+            100% { transform: translateY(-15px); }
         }
 
-        /* --- CONFETTI ANIMATION ELEMENTS --- */
-        .confetti {
+        /* --- CELEBRATION SHOWER SHARDS --- */
+        .confetti-shard {
             position: absolute;
-            width: 12px;
-            height: 12px;
-            background: #f59e0b;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            animation: fall 2.5s linear infinite;
-            top: -10px;
-            z-index: 99;
+            top: -20px;
+            z-index: 999;
+            animation: fallingConfetti 2.5s linear infinite;
         }
-        @keyframes fall {
+        @keyframes fallingConfetti {
             0% { transform: translateY(0) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(450px) rotate(360deg); opacity: 0; }
+            100% { transform: translateY(500px) rotate(360deg); opacity: 0; }
         }
 
-        /* --- CERTIFICATE DISPLAY MATRIX --- */
-        .certificate-sheet {
+        /* --- CERTIFICATE VIEWBOARD SHEET --- */
+        .certificate-frame {
             background: radial-gradient(circle, #fffbeb 0%, #fef3c7 100%);
-            border: 10px double #d97706;
-            border-radius: 24px;
-            padding: 30px;
+            border: 8px double var(--accent-dark);
+            border-radius: 28px;
+            padding: 30px 20px;
             margin: 20px 0;
             color: #78350f;
-            box-shadow: inset 0 0 20px rgba(180, 83, 9, 0.15);
+            box-shadow: inset 0 0 30px rgba(180, 83, 9, 0.15);
         }
-        .trophy-badge { font-size: 80px; margin: 10px 0; }
-        .score-stamp { font-size: 28px; font-weight: 900; color: #b45309; margin: 10px 0; }
+        .badge-trophy { font-size: 90px; margin-bottom: 10px; }
+        .score-stamp-tag { font-size: 32px; font-weight: 900; color: var(--accent-dark); margin: 15px 0; }
     </style>
 </head>
 <body>
 
-    <!-- 1. INTRO BRANDING LAYER -->
     <div id="brand-splash">
         <img src="assets/innovine-logo.png" alt="Innovine Logo">
     </div>
 
-    <!-- 2. WELCOME INITIAL WINDOW -->
-    <div id="welcome-screen" class="game-container">
-        <div class="emoji-art">🎨</div>
-        <h1>Fun MS Paint Adventure!</h1>
-        <p>Join our fun digital expedition to explore shapes, custom palettes, and color buckets!</p>
-        <button class="btn-action" onclick="showRules()">Start Adventure 🚀</button>
+    <div id="welcome-screen" class="game-card">
+        <div class="mascot-emoji">🎨</div>
+                <h1>Fun MS Paint Adventure!</h1>
+        <p>Step inside our colorful canvas map to master shapes, lines, and bucket fills with funny interactive missions!</p>
+        <button class="btn-action" onclick="transitionToRules()">Start Adventure 🚀</button>
     </div>
 
-    <!-- 3. RULES & GUIDEBOARD SCREEN -->
-    <div id="rules-screen" class="game-container">
-        <h1>🧭 Adventure Rules</h1>
-        <div style="text-align: left; max-width: 450px; margin: 20px auto; font-size: 19px; line-height: 1.6;">
-            ⭐ Read every case prompt carefully.<br>
-            ⭐ Choose or drop correct tool tiles.<br>
-            ⭐ Collect star points for every success.<br>
-            ⭐ Complete all levels to secure your Paint Badge!
+    <div id="rules-screen" class="game-container game-card">
+        <h1>🧭 How To Play</h1>
+        <div style="text-align: left; max-width: 480px; margin: 20px auto; font-size: 20px; line-height: 1.6; color: var(--text-dark);">
+            ⭐ Read Pixel the Robot's challenges carefully.<br>
+            ⭐ Tap or sequence tools correctly.<br>
+            ⭐ Earn massive point stars on each clear.<br>
+            ⭐ Complete all levels to receive your Master Certificate!
         </div>
-        <p style="font-weight: bold; color: #0f766e;">Are you ready to become a Paint Champion?</p>
-        <button class="btn-action" onclick="initiateGameplay()">Let's Go! 🗺️</button>
+        <p style="font-weight: bold; color: var(--primary-dark);">Can you match all the paint tools?</p>
+        <button class="btn-action" onclick="launchMissionEngine()">Let's Play! 🗺️</button>
     </div>
 
-    <!-- 4. CORE GAMEPLAY INTERACTION MAT -->
-    <div id="play-screen" class="game-container">
-        <!-- HUD Control Bar -->
+    <div id="play-screen" class="game-container game-card">
         <div class="hud-panel">
-            <span id="hud-level-tag">Level 1: Detective</span>
-            <div class="progress-outer"><div id="hud-progress" class="progress-inner"></div></div>
-            <span id="hud-score">Stars: 0 ⭐</span>
+            <span id="hud-level-indicator">Level 1</span>
+            <div class="progress-bar-outer"><div id="hud-bar-progress" class="progress-bar-inner"></div></div>
+            <span id="hud-score-tracker">Score: 0🏆</span>
         </div>
 
-        <!-- Task Dynamic Space -->
-        <div class="task-box" id="task-viewport">
-            <!-- Questions or puzzle lists populate dynamically -->
-        </div>
+        <div class="scenery-viewbox" id="scenery-viewport">
+            </div>
 
-        <p id="scenario-prompt" style="font-weight: 600; font-size: 19px; min-height: 54px; margin: 15px 0; padding: 0 10px;"></p>
+        <p id="mission-prompt" style="font-weight: bold; font-size: 21px; color: var(--primary-dark); min-height: 56px; padding: 0 10px;"></p>
 
-        <!-- Response Action Deck -->
-        <div id="response-deck">
-            <!-- Populated via script Engine logic -->
-        </div>
+        <div id="action-response-tray">
+            </div>
     </div>
 
-    <!-- 5. FINAL CERTIFICATE & END SUMMARY SCREEN -->
-    <div id="victory-screen" class="game-container">
-        <h1>Expedition Accomplished! 🏁</h1>
-        <div class="certificate-sheet">
-            <div class="trophy-badge" id="reward-trophy">🏆</div>
-            <h2 style="font-size: 28px; text-transform: uppercase; letter-spacing: 1px;" id="reward-rank">Paint Champion</h2>
-            <p style="font-size: 18px; font-style: italic;">This digital credential honors a Grade 1 Master Tracker for successfully identifying and sequencing MS Paint elements!</p>
-            <div class="score-stamp" id="final-tally-score">Total Stars: 100/100</div>
+    <div id="victory-screen" class="game-container game-card">
+        <h1>Mission Complete! 🏁</h1>
+        <div class="certificate-frame">
+            <div class="badge-trophy" id="display-medal-icon">🏆</div>
+            <h2 style="font-size: 30px; text-transform: uppercase; letter-spacing: 1px;" id="display-rank-title">Paint Champion</h2>
+            <p style="font-size: 18px; font-style: italic; max-width: 500px; margin: 10px auto;">This special ICT qualification certifies that our brilliant Grade 1 explorer has successfully completed all competency modules for MS Paint!</p>
+            <div class="score-stamp-tag" id="display-final-points">Stars: 100 / 100</div>
         </div>
-        <button class="btn-action" onclick="resetAdventureLoop()">Play Again 🔄</button>
+        <button class="btn-action" onclick="restartEntireLoop()">Play Again 🔄</button>
     </div>
 
-    <!-- AUDIO MANAGEMENT HARDWARE PLUGS -->
-    <audio id="audio-right" src="assets/correct.mp3" preload="auto"></audio>[cite: 1]
-    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>[cite: 1]
+    <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <script>
-        /* --- DYNAMIC COMPETENCY-BASED QUESTION ARRAY (Balanced & Non-Recall) --- */
-        const coreMissionSuite = [
-            // Level 1: Tool Detective (Picture & Observation Based)
+        /* --- BALANCED, NON-RECALL MISSION DATA MATRIX (Ratio Aligned) --- */
+        const gameMissionDatabase = [
+            // Level 1: Tool Detective (25% Picture-Based)
             {
                 type: "mcq",
-                levelTag: "Level 1: Tool Detective 🔍",
-                prompt: "Look closely! This utility icon shows a bright wooden pencil tip. What task is this tool designed for?",
-                emoji: "✏️",
-                options: ["Typing custom label text", "Drawing freehand colorful lines", "Wiping clean line errors"],
-                correct: 1
-            },
-            // Level 3: Paint Adventure Quiz (Scenario-Based 40%)
-            {
-                type: "mcq",
-                levelTag: "Level 2: Quick Color Challenge 🌸",
-                prompt: "Riya drew a large field flower. She needs to fill the entire petal area with red completely and quickly. What tool works best?",
-                emoji: "🪣",
-                options: ["Fill with Color Tool", "The Text Tool", "Small Line Pencil"],
+                title: "Level 1: Tool Detective 🔍",
+                prompt: "Look closely at this core tool snippet! What capability does it add to your canvas ribbon workspace?",
+                image: "assets/tools.PNG",
+                options: ["Wipes away accidental lines or errors", "Houses specialized shapes like Circles", "Swaps the primary background grid color"],
                 correct: 0
             },
+            // Level 3: Paint Adventure Quiz (40% Scenario-Based)
             {
                 type: "mcq",
-                levelTag: "Level 3: Typist Track 💬",
-                prompt: "Kabir wants to write his first name 'AARAV' directly underneath his scenery canvas. Which active tool should he click?",
-                emoji: "🔤",
-                options: ["Shape Tool Group", "Eraser Box Option", "Text Tool (A)"],
+                title: "Level 2: Flower Power Scenario 🌸",
+                prompt: "Aarav drew a giant sunflower shape. He wants to color the entire circle yellow inside in just one quick click. Which tool works best?",
+                image: "assets/tools.PNG",
+                options: ["The fine line Pencil Tool", "The Fill with Color Paint Bucket", "The Text Tool string"],
+                correct: 1
+            },
+            {
+                type: "mcq",
+                title: "Level 3: Canvas Personalization 💬",
+                prompt: "Riya wants to insert her full name 'RIYA' at the bottom corner of her drawing board. Which selector icon fits her scenario?",
+                image: "assets/tools.PNG",
+                options: ["The Eraser block element", "The Shape drawing palette", "The Text Tool element (A)"],
                 correct: 2
             },
-            // Level 4: Spot the Correct Tool (Observation-Based 20%)
+            // Level 4: Spot the Correct Tool (20% Observation-Based)
             {
                 type: "mcq",
-                levelTag: "Level 4: Corner Correction 🧼",
-                prompt: "Oh no! A small line slipped outside the borders of your house picture. Which tool lets you cleanly clean up mistakes?",
-                emoji: "🧽",
-                options: ["Pencil Tool Layer", "Eraser Tool Utility", "Color Swatch Panel"],
-                correct: 1
+                title: "Level 4: Rainbow Grid Exploration 🌈",
+                prompt: "Look at this long, colorful palette strip. What operational skill does this section provide when clicked?",
+                image: "assets/colour.PNG",
+                options: ["Chooses or modifies active paint colors", "Erases full drawing elements instantly", "Saves files directly into your folder"],
+                correct: 0
             },
             // Level 6: Find the Mistake (Observation-Based)
             {
                 type: "mcq",
-                levelTag: "Level 5: Symmetrical Drawing 📐",
-                prompt: "Tina wants to create a neat, perfectly balanced house roof without bumpy freehand curves. What panel section helps her?",
-                emoji: "🟦⭐️🔺",
-                options: ["Shapes Tool Group", "Pencil Tip Point", "File Save Option"],
-                correct: 0
+                title: "Level 5: Sharp Lines Discovery 📐",
+                prompt: "Tina wants to place a perfectly clean square box and a neat triangle roof onto her canvas map. Where should her cursor tap?",
+                image: "assets/shapes.PNG",
+                options: ["The freehand brush stroke shelf", "The Shapes layout window box", "The main system Save button menu"],
+                correct: 1
             },
-            // Level 5: Paint Puzzle (Sequencing Challenge 15%)
+            // Level 5: Paint Puzzle (15% Sequencing Questions)
             {
                 type: "sequence",
-                levelTag: "Level 6: Project Sequence Puzzle 🧩",
-                prompt: "Reorder the step tiles below by clicking or dragging to help Aarav complete his painting process from start to finish!",
-                correctOrder: ["Open MS Paint App", "Draw House Lines", "Pour Color Buckets", "Save Your Picture"]
+                title: "Level 6: Production Pipeline Sort 🧩",
+                prompt: "Help Kabir reorder his workflow! Arrange the step tiles by tapping them so his workspace flows correctly from startup to finish:",
+                correctSequence: ["Open MS Paint App", "Draw Shape Outlines", "Fill Inner Colors", "Save Project File"]
             }
         ];
 
-        let playIndex = 0;
-        let cumulativeStars = 0;
-        let activeDragSequence = [];
+        let activeIndex = 0;
+        let cumulativeScore = 0;
+        let runningSequenceList = [];
 
-        /* --- 5 SECONDS SPLASH CONTROLLER LOOP --- */
+        /* --- BRANDING SPLASH CONTROL CLOCK --- */
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                const splash = document.getElementById('brand-splash');
-                const welcome = document.getElementById('welcome-screen');
-                splash.style.opacity = '0';
+                const splashScreen = document.getElementById('brand-splash');
+                const welcomeScreen = document.getElementById('welcome-screen');
+                
+                splashScreen.style.opacity = '0';
                 setTimeout(() => {
-                    splash.style.display = 'none';
-                    welcome.style.display = 'block';
-                }, 500);
-            }, 5000); // 5000 milliseconds = 5 Seconds exactly
+                    splashScreen.style.display = 'none';
+                    welcomeScreen.style.display = 'block'; // Instructions/Welcome reveal exactly after logo vanishes
+                }, 550);
+            }, 5000); // Strict 5-Second Branding Display
         });
 
-        function showRules() {
+        function transitionToRules() {
             document.getElementById('welcome-screen').style.display = 'none';
             document.getElementById('rules-screen').style.display = 'block';
         }
 
-        function initiateGameplay() {
+        function launchMissionEngine() {
             document.getElementById('rules-screen').style.display = 'none';
             document.getElementById('play-screen').style.display = 'block';
-            playIndex = 0;
-            cumulativeStars = 0;
-            loadChallengeRound();
+            activeIndex = 0;
+            cumulativeScore = 0;
+            renderAdventureRound();
         }
 
-        /* --- MAIN CHALLENGE MATRIX ENGINE --- */
-        function loadChallengeRound() {
-            // Update Core Progress Bar HUD
-            const percent = (playIndex / coreMissionSuite.length) * 100;
-            document.getElementById('hud-progress').style.width = `${percent}%`;
-            document.getElementById('hud-score').innerText = `Stars: ${cumulativeStars} ⭐`;
+        /* --- CORE GRAPHICAL RUNTIME FRAMEWORK --- */
+        function renderAdventureRound() {
+            // Recompute HUD Progress
+            const progressPercentage = (activeIndex / gameMissionDatabase.length) * 100;
+            document.getElementById('hud-bar-progress').style.width = `${progressPercentage}%`;
+            document.getElementById('hud-score-tracker').innerText = `Stars: ${cumulativeScore}🏆`;
 
-            if (playIndex >= coreMissionSuite.length) {
+            if (activeIndex >= gameMissionDatabase.length) {
                 renderEndGameCertificate();
                 return;
             }
 
-            const activeMission = coreMissionSuite[playIndex];
-            document.getElementById('hud-level-tag').innerText = activeMission.levelTag;
-            document.getElementById('scenario-prompt').innerText = activeMission.prompt;
+            const activeMission = gameMissionDatabase[activeIndex];
+            document.getElementById('hud-level-indicator').innerText = activeMission.title;
+            document.getElementById('mission-prompt').innerText = activeMission.prompt;
 
-            const viewport = document.getElementById('task-viewport');
-            const deck = document.getElementById('response-deck');
+            const viewport = document.getElementById('scenery-viewport');
+            const actionTray = document.getElementById('action-response-tray');
             viewport.innerHTML = '';
-            deck.innerHTML = '';
+            actionTray.innerHTML = '';
 
             if (activeMission.type === "mcq") {
-                // Populate Cartoon Visual Token
-                const graphicToken = document.createElement('div');
-                graphicToken.className = 'emoji-art';
-                graphicToken.innerText = activeMission.emoji;
-                viewport.appendChild(graphicToken);
+                // Paint Challenge Picture Context
+                const imgNode = document.createElement('img');
+                imgNode.src = activeMission.image;
+                imgNode.alt = "MS Paint Utility Asset";
+                viewport.appendChild(imgNode);
 
-                // Build Options Grid Array
-                const optionsBox = document.createElement('div');
-                optionsBox.className = 'options-grid';
+                // Build Clean Options Grid
+                const grid = document.createElement('div');
+                grid.className = 'options-layout-grid';
                 
-                activeMission.options.forEach((choiceText, idx) => {
-                    const btn = document.createElement('button');
-                    btn.className = 'btn-option';
-                    btn.innerText = choiceText;
-                    btn.onclick = () => verifyMCQChoice(idx, activeMission.correct);
-                    optionsBox.appendChild(btn);
+                activeMission.options.forEach((text, index) => {
+                    const choiceBtn = document.createElement('button');
+                    choiceBtn.className = 'btn-choice';
+                    choiceBtn.innerText = `${String.fromCharCode(65 + index)}) ${text}`;
+                    choiceBtn.onclick = () => evaluateMCQAnswer(index, activeMission.correct);
+                    grid.appendChild(choiceBtn);
                 });
-                deck.appendChild(optionsBox);
+                actionTray.appendChild(grid);
 
             } else if (activeMission.type === "sequence") {
-                // Initialize Sequence Array Shuffled Layout
-                activeDragSequence = [...activeMission.correctOrder].sort(() => 0.5 - Math.random());
-                renderSequenceInterface(viewport);
+                // Populate Interactive Puzzle Layout Context
+                const puzzleIcon = document.createElement('div');
+                puzzleIcon.className = 'mascot-emoji';
+                puzzleIcon.innerText = "🤖";
+                viewport.appendChild(puzzleIcon);
 
-                // Setup Validation Confirm Trigger
-                const submitBtn = document.createElement('button');
-                submitBtn.className = 'btn-action';
-                submitBtn.innerText = 'Verify My Order! 🔍';
-                submitBtn.onclick = () => verifySequenceOrder(activeMission.correctOrder);
-                deck.appendChild(submitBtn);
+                // Scaffold shuffled element tracking lists
+                runningSequenceList = [...activeMission.correctSequence].sort(() => 0.5 - Math.random());
+                paintPuzzleTiles(actionTray);
+
+                // Establish Bottom Submission Verification Trigger Button
+                const verifyBtn = document.createElement('button');
+                verifyBtn.className = 'btn-action';
+                verifyBtn.innerText = 'Verify Order! 🔎';
+                verifyBtn.onclick = () => evaluateSequenceOrder(activeMission.correctSequence);
+                actionTray.appendChild(document.createElement('br'));
+                actionTray.appendChild(verifyBtn);
             }
         }
 
-        /* --- MCQ LOGIC VALIDATION ROUTINES --- */
-        function verifyMCQChoice(selected, rightIdx) {
-            if (selected === rightIdx) {
-                triggerAudioFeedback(true);
-                cumulativeStars += 15; // Balanced point distribution scaling to ~100
-                triggerConfettiPopper();
-            } else {
-                triggerAudioFeedback(false);
+        /* --- DRAG, TAP, & SORT MATRIX INTERACTIVE LOGIC --- */
+        function paintPuzzleTiles(trayElement) {
+            // Locate or construct container node element
+            let container = trayElement.querySelector('.interactive-drag-deck');
+            if(!container) {
+                container = document.createElement('div');
+                container.className = 'interactive-drag-deck';
+                trayElement.appendChild(container);
             }
-            advanceSequence();
-        }
+            container.innerHTML = '';
 
-        /* --- DRAG & SEQUENCE GAME BOARD PAINTER --- */
-        function renderSequenceInterface(targetBox) {
-            targetBox.innerHTML = '';
-            const outerWrapper = document.createElement('div');
-            outerWrapper.className = 'sequence-container';
-
-            activeDragSequence.forEach((stepName, position) => {
-                const item = document.createElement('div');
-                item.className = 'drag-item';
-                item.draggable = true;
-                item.innerHTML = `<span>☰</span> <span>${stepName}</span>`;
+            runningSequenceList.forEach((stepText, positionIndex) => {
+                const node = document.createElement('div');
+                node.className = 'drag-node-row';
+                node.draggable = true;
+                node.innerHTML = `<span>↕️</span> <strong>${stepText}</strong>`;
                 
-                // Track item indexes using touch-friendly tap repositioning support
-                item.onclick = () => shiftSequenceElement(position);
-                
-                // Classic Drag Event Rigging
-                item.ondragstart = (e) => e.dataTransfer.setData('text/plain', position);
-                item.ondragover = (e) => e.preventDefault();
-                item.ondrop = (e) => {
-                    e.preventDefault();
-                    const initialPos = e.dataTransfer.getData('text/plain');
-                    reorderInternalArray(parseInt(initialPos), position);
+                // Touch/Click accessibility tapping layout shift feature
+                node.onclick = () => {
+                    if (positionIndex > 0) {
+                        swapSequencePositions(positionIndex, positionIndex - 1);
+                    }
                 };
 
-                outerWrapper.appendChild(item);
+                // Native Desktop HTML5 Drag Events setup
+                node.ondragstart = (e) => e.dataTransfer.setData('text/plain', positionIndex);
+                node.ondragover = (e) => e.preventDefault();
+                node.ondrop = (e) => {
+                    e.preventDefault();
+                    const origin = e.dataTransfer.getData('text/plain');
+                    swapSequencePositions(parseInt(origin), positionIndex);
+                };
+
+                container.appendChild(node);
             });
-            targetBox.appendChild(outerWrapper);
         }
 
-        function shiftSequenceElement(currIdx) {
-            if(currIdx > 0) {
-                reorderInternalArray(currIdx, currIdx - 1);
+        function swapSequencePositions(fromIndex, toIndex) {
+            const tempItem = runningSequenceList.splice(fromIndex, 1)[0];
+            runningSequenceList.splice(toIndex, 0, tempItem);
+            paintPuzzleTiles(document.getElementById('action-response-tray'));
+        }
+
+        /* --- SELECTION EVALUATION RIGS --- */
+        function evaluateMCQAnswer(selectedIdx, correctIdx) {
+            if (selectedIdx === correctIdx) {
+                triggerAudioCues(true);
+                cumulativeScore += 15; // Structured proportional step weighting
+                deployCelebrationShower();
+            } else {
+                triggerAudioCues(false);
             }
+            proceedToNextRound();
         }
 
-        function reorderInternalArray(fromIdx, toIdx) {
-            const extracted = activeDragSequence.splice(fromIdx, 1)[0];
-            activeDragSequence.splice(toIdx, 0, extracted);
-            renderSequenceInterface(document.getElementById('task-viewport'));
-        }
-
-        function verifySequenceOrder(correctArray) {
-            let isFlawless = true;
-            for(let i = 0; i < correctArray.length; i++) {
-                if(activeDragSequence[i] !== correctArray[i]) {
-                    isFlawless = false;
+        function evaluateSequenceOrder(correctTargetArray) {
+            let matchesPerfectly = true;
+            for (let i = 0; i < correctTargetArray.length; i++) {
+                if (runningSequenceList[i] !== correctTargetArray[i]) {
+                    matchesPerfectly = false;
                     break;
                 }
             }
 
-            if(isFlawless) {
-                triggerAudioFeedback(true);
-                cumulativeStars += 25;
-                triggerConfettiPopper();
+            if (matchesPerfectly) {
+                triggerAudioCues(true);
+                cumulativeScore += 25; // Completes final matrix curve up to 100 points
+                deployCelebrationShower();
             } else {
-                triggerAudioFeedback(false);
+                triggerAudioCues(false);
             }
-            advanceSequence();
+            proceedToNextRound();
         }
 
-        function advanceSequence() {
-            playIndex++;
-            setTimeout(loadChallengeRound, 700);
+        function proceedToNextRound() {
+            activeIndex++;
+            setTimeout(renderAdventureRound, 600);
         }
 
-        /* --- AUDIO & CELEBRATION ENGINES --- */
-        function triggerAudioFeedback(isCorrect) {
-            const soundElement = document.getElementById(isCorrect ? 'audio-right' : 'audio-wrong');
-            if (soundElement) {
-                soundElement.currentTime = 0;
-                soundElement.play().catch(() => {});
-            }
-        }
-
-        function triggerConfettiPopper() {
-            const container = document.getElementById('play-screen');
-            for (let i = 0; i < 20; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'confetti';
-                particle.style.left = `${Math.random() * 90}%`;
-                particle.style.backgroundColor = ['#f59e0b', '#10b981', '#3b82f6', '#ec4899'][Math.floor(Math.random() * 4)];
-                particle.style.animationDelay = `${Math.random() * 0.4}s`;
-                container.appendChild(particle);
-                setTimeout(() => particle.remove(), 2500);
+        /* --- SYSTEM AUDIO DRIVERS & POPPERS --- */
+        function triggerAudioCues(isRight) {
+            const hook = document.getElementById(isRight ? 'snd-correct' : 'snd-wrong');
+            if(hook) {
+                hook.currentTime = 0;
+                hook.play().catch(() => {});
             }
         }
 
-        /* --- SCORE CALCULATOR & CRADLE RANK SYSTEM --- */
+        function deployCelebrationShower() {
+            const hostCard = document.getElementById('play-screen');
+            const colorSwatches = ['#fbbf24', '#34d399', '#60a5fa', '#f472b6', '#a78bfa'];
+            
+            for (let i = 0; i < 22; i++) {
+                const shard = document.createElement('div');
+                shard.className = 'confetti-shard';
+                shard.style.left = `${Math.random() * 92}%`;
+                shard.style.backgroundColor = colorSwatches[Math.floor(Math.random() * colorSwatches.length)];
+                shard.style.animationDelay = `${Math.random() * 0.3}s`;
+                hostCard.appendChild(shard);
+                
+                setTimeout(() => shard.remove(), 2500);
+            }
+        }
+
+        /* --- END OF GAME REWARD SYSTEM SCALING --- */
         function renderEndGameCertificate() {
             document.getElementById('play-screen').style.display = 'none';
             document.getElementById('victory-screen').style.display = 'block';
 
-            let tierName = "Paint Learner";
-            let trophySymbol = "🎒";
+            let rankString = "Paint Learner";
+            let medalEmoji = "🎒";
 
-            if (cumulativeStars >= 91) {
-                tierName = "Paint Champion";
-                trophySymbol = "👑";
-            } else if (cumulativeStars >= 71) {
-                tierName = "Paint Artist";
-                trophySymbol = "🎨";
-            } else if (cumulativeStars >= 41) {
-                tierName = "Paint Explorer";
-                trophySymbol = "🤠";
+            // Reward Criteria Range Map Verification
+            if (cumulativeScore >= 91) {
+                rankString = "Paint Champion";
+                medalEmoji = "👑";
+            } else if (cumulativeScore >= 71) {
+                rankString = "Paint Artist";
+                medalEmoji = "🎨";
+            } else if (cumulativeScore >= 41) {
+                rankString = "Paint Explorer";
+                medalEmoji = "🤠";
             }
 
-            document.getElementById('reward-trophy').innerText = trophySymbol;
-            document.getElementById('reward-rank').innerText = tierName;
-            document.getElementById('final-tally-score').innerText = `Total Stars: ${cumulativeStars} ⭐`;
+            document.getElementById('display-medal-icon').innerText = medalEmoji;
+            document.getElementById('display-rank-title').innerText = rankString;
+            document.getElementById('display-final-points').innerText = `Stars Earned: ${cumulativeScore} / 100 ⭐`;
         }
 
-        function resetAdventureLoop() {
+        function restartEntireLoop() {
             document.getElementById('victory-screen').style.display = 'none';
             document.getElementById('welcome-screen').style.display = 'block';
         }

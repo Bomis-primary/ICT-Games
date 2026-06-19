@@ -177,14 +177,12 @@
 </head>
 <body>
 
-    <!-- 1. BRANDING SCREEN (Displays for 5 seconds, then completely vanishes) -->
-    <div id="screen-splash">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/300x100?text=Innovine+Pedagogy'">
-       
-        </div>
+    <!-- 1. BRANDING SCREEN (Points to assets subfolder now) -->
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo">
     </div>
 
-    <!-- 2. INTERACTIVE JUNGLE INSTRUCTIONS (Only shown AFTER logo finishes) -->
+    <!-- 2. INTERACTIVE JUNGLE INSTRUCTIONS -->
     <div id="instructions-screen" class="safari-card">
         <h1>🌴 Paint Tool Jungle Safari 🌴</h1>
         <div class="robot-speaker">
@@ -206,7 +204,7 @@
         </div>
         <div class="jungle-viewbox">
             <div style="font-size: 32px; margin-bottom: 8px;" id="jungle-scenery-icon">🌿</div>
-            <img id="jungle safari.png" src="" alt="Jungle Discovery">
+            <img id="safari-target-img" src="" alt="Jungle Discovery">
         </div>
         <p id="safari-clue" style="font-weight: bold; margin-bottom: 20px; font-size: 20px; color: #065f46;"></p>
         <div class="labels-grid" id="labels-box"></div>
@@ -222,51 +220,51 @@
         <button class="btn-safari" onclick="restartSafari()">Explore Again 🔄</button>
     </div>
 
-    <!-- AUDIO RIG (Directly references asset names from image_3b7018.png) -->
-    <audio id="sound-right" src="correct.mp3" preload="auto"></audio>
-    <audio id="sound-wrong" src="wrong.mp3" preload="auto"></audio>
+    <!-- AUDIO RIG (Updated to look inside assets/ directory) -->
+    <audio id="sound-right" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="sound-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <script>
-        // Immersive 6-round adventure data array mapping your exact image assets[cite: 3]
+        // Updated database to pull image assets seamlessly out of your assets/ directory
         const jungleDatabase = [
             {
                 clue: "Look inside the tall trees! A monkey drops a box containing Geometric shapes like Circles and Stars! Label it:",
-                image: "shapes.PNG",
+                image: "assets/shapes.PNG",
                 scenery: "🐒🌲",
                 options: ["Shapes Group Panel", "Brushes Kit", "Canvas Colors"],
                 correct: 0
             },
             {
                 clue: "Hidden near the river! A magical box packed with an Eraser, a Pencil, and a Fill Bucket tool. Label this tool shelf:",
-                image: "tools.PNG",
+                image: "assets/tools.PNG",
                 scenery: "🐊🌊",
                 options: ["Ribbon Title bar", "Tools Panel Layout", "Color Palette Strip"],
                 correct: 1
             },
             {
                 clue: "Look under the bright jungle rainbow! It's a grid showing multiple paint spots to swap our paint colors. Label it:",
-                image: "colour.PNG",
+                image: "assets/colour.PNG",
                 scenery: "🦜🌈",
                 options: ["Drawing Area Window", "Shapes Picker", "Color Palette Strip"],
                 correct: 2
             },
             {
                 clue: "A sleepy panda is holding a dynamic tray containing Crayon, Oil Paint, and Watercolor brush strokes! Label it:",
-                image: "brush.PNG",
+                image: "assets/brush.PNG",
                 scenery: "🐼🎋",
                 options: ["Brushes Tool Options", "Text Tool (A)", "Pencil Tool"],
                 correct: 0
             },
             {
                 clue: "Look at this huge toolbar panel holding ALL controls, tabs, and shapes stretched across the sky. Label it:",
-                image: "ribbon.PNG",
+                image: "assets/ribbon.PNG",
                 scenery: "🦁☀",
                 options: ["Color Swatches", "MS Paint Ribbon", "Eraser Tool"],
                 correct: 1
             },
             {
                 clue: "The parrot dropped a tool used specifically to cleanly wipe away lines or clear errors on your page! Label it:",
-                image: "tools.PNG",
+                image: "assets/tools.PNG",
                 scenery: "🦜🍍",
                 options: ["Fill with Color Bucket", "Pencil Tool", "Eraser Tool Component"],
                 correct: 2
@@ -276,7 +274,7 @@
         let activeIndex = 0;
         let scoreStars = 0;
         let playRoundsList = [];
-        const absoluteRoundsCount = 6; // Set to 6 immersive interactive discovery rounds
+        const absoluteRoundsCount = 6;
 
         // 5-Second Splash Screen Engine Loop
         window.addEventListener('DOMContentLoaded', () => {
@@ -287,19 +285,16 @@
                 splash.style.opacity = '0';
                 setTimeout(() => {
                     splash.style.display = 'none';
-                    instructions.style.display = 'block'; // Instructions display ONLY after the logo vanishes
+                    instructions.style.display = 'block'; 
                 }, 600);
-            }, 5000); // 5000 milliseconds = 5 Seconds exactly
+            }, 5000); 
         });
 
         function enterJungle() {
             document.getElementById('instructions-screen').style.display = 'none';
             document.getElementById('game-play-screen').style.display = 'block';
             
-            // Generate full 6 round sequence dynamically
-            playRoundsList = [...jungleDatabase];
-            // Ensure array has exactly 6 items (shuffled variations)
-            playRoundsList = playRoundsList.sort(() => 0.5 - Math.random());
+            playRoundsList = [...jungleDatabase].sort(() => 0.5 - Math.random());
             
             activeIndex = 0;
             scoreStars = 0;

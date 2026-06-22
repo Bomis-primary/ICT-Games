@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Robo-Code Adventure</title>
-    <!-- Canvas Confetti Library for completion screen celebrations -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
@@ -14,6 +13,7 @@
             --warning-color: #F1C40F;
             --dark-color: #2C3E50;
             --light-color: #ECF0F1;
+            --grid-path-color: #F8F9FA;
         }
 
         * {
@@ -24,27 +24,28 @@
         }
 
         body {
-            background-color: #A2D2FF;
+            background: linear-gradient(135deg, #A2D2FF, #BDE0FE);
             color: var(--dark-color);
             overflow-x: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            padding: 15px;
         }
 
-        /* Screen Framework Containers */
+        /* Screen Wrapper Base Containers */
         .screen {
             display: none;
             width: 100%;
-            max-width: 800px;
+            max-width: 900px;
             background: white;
-            border: 6px solid var(--primary-color);
-            border-radius: 24px;
+            border: 8px solid var(--primary-color);
+            border-radius: 32px;
             padding: 30px;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+            box-shadow: 0 16px 32px rgba(0,0,0,0.2);
             text-align: center;
-            animation: popIn 0.4s ease-out;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .screen.active {
@@ -52,11 +53,11 @@
         }
 
         @keyframes popIn {
-            0% { transform: scale(0.9); opacity: 0; }
+            0% { transform: scale(0.85); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* 1. Splash Screen Style */
+        /* 1. Brand Splash Screen */
         #splash-screen {
             background: white;
             border: none;
@@ -69,7 +70,7 @@
         }
         
         #splash-screen img {
-            max-width: 320px;
+            max-width: 340px;
             height: auto;
             animation: pulse 1.5s infinite ease-in-out;
         }
@@ -80,14 +81,14 @@
             100% { transform: scale(0.95); }
         }
 
-        /* 2. Intro Welcome Form Registration */
+        /* 2. Welcome Registration Form Layout */
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 22px;
             text-align: left;
         }
 
         label {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: bold;
             color: var(--primary-color);
             display: block;
@@ -96,336 +97,347 @@
 
         input {
             width: 100%;
-            padding: 12px 20px;
-            border: 3px solid #BDE0FE;
-            border-radius: 12px;
-            font-size: 1.1rem;
+            padding: 14px 20px;
+            border: 3px solid #C4E0E5;
+            border-radius: 16px;
+            font-size: 1.15rem;
             outline: none;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
 
         input:focus {
             border-color: var(--primary-color);
+            box-shadow: 0 0 8px rgba(74, 144, 226, 0.4);
         }
 
         .btn {
             background-color: var(--secondary-color);
             color: white;
             border: none;
-            padding: 15px 35px;
-            font-size: 1.4rem;
+            padding: 16px 40px;
+            font-size: 1.5rem;
             font-weight: bold;
-            border-radius: 16px;
+            border-radius: 20px;
             cursor: pointer;
-            box-shadow: 0 6px 0 #27AE60;
+            box-shadow: 0 8px 0 #27AE60;
             transition: all 0.1s;
             display: inline-block;
             margin-top: 10px;
         }
 
         .btn:active {
-            transform: translateY(4px);
+            transform: translateY(6px);
             box-shadow: 0 2px 0 #27AE60;
         }
 
-        /* 3. Gameplay Board Controls */
+        /* 3. Main Modern Gameplay Split Panels Layout */
         .game-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #F0F8FF;
-            padding: 12px 20px;
-            border-radius: 12px;
+            background: #EDF2F7;
+            padding: 15px 25px;
+            border-radius: 18px;
             margin-bottom: 20px;
-            border: 2px dashed var(--primary-color);
+            border: 3px dashed var(--primary-color);
         }
 
         .hud-item {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: bold;
+            color: var(--dark-color);
         }
 
         .game-container {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 25px;
+            align-items: start;
         }
 
-        @media (max-width: 650px) {
+        @media (max-width: 750px) {
             .game-container {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Grid Map Playground Render */
+        /* Dynamic Grid Arena Board */
         .grid-map {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             grid-template-rows: repeat(4, 1fr);
-            gap: 4px;
-            background: #E0E0E0;
-            padding: 6px;
-            border-radius: 16px;
+            gap: 8px;
+            background: #CBD5E0;
+            padding: 12px;
+            border-radius: 24px;
             aspect-ratio: 1 / 1;
+            position: relative;
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.1);
         }
 
         .cell {
-            background: #FFFFFF;
-            border-radius: 8px;
+            background: var(--grid-path-color);
+            border-radius: 14px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 2rem;
+            font-size: 2.2rem;
             position: relative;
-            transition: background-color 0.3s;
+            border-bottom: 4px solid #E2E8F0;
+            transition: all 0.2s;
         }
 
-        .cell.path { background: #E8F4F8; }
-        .cell.obstacle { background: #FFCCD5; font-size: 1.5rem; }
+        .cell.obstacle { 
+            background: #FED7D7; 
+            font-size: 1.8rem;
+            border-bottom: 4px solid #FEB2B2;
+        }
 
-        /* Grade 1 Friendly Enhanced Robot Avatar */
-        .robot-wrapper {
+        /* Animated Live Moving Character Layer */
+        .robot-avatar {
+            position: absolute;
+            font-size: 2.6rem;
+            width: 22%;
+            height: 22%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 10;
-            transition: transform 0.3s ease-in-out;
+            z-index: 50;
+            /* Precise top/left shifting curves handled smoothly by CSS engine */
+            transition: top 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+                        left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                        transform 0.3s ease-in-out;
         }
 
-        .robot-body {
-            font-size: 2.2rem;
-            line-height: 1;
-        }
-
-        /* Giant clear dynamic orientation arrow pointer */
-        .robot-arrow {
+        .robot-compass {
             font-size: 1.1rem;
             background: var(--dark-color);
-            color: #FFF;
+            color: white;
             width: 24px;
             height: 24px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-weight: bold;
-            margin-top: -4px;
+            margin-top: -6px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            font-weight: bold;
+            transition: transform 0.3s ease-in-out;
         }
 
-        /* Control Panel Buttons */
+        /* Command Controller Dashboard Panel */
         .control-panel {
+            background: #F7FAFC;
+            border: 4px solid #E2E8F0;
+            border-radius: 24px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
+            height: 100%;
             justify-content: space-between;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
         .command-buttons {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 15px;
         }
 
         .cmd-btn {
             color: white;
             border: none;
-            padding: 12px;
-            font-size: 1.1rem;
+            padding: 14px 18px;
+            font-size: 1.15rem;
             font-weight: bold;
-            border-radius: 12px;
+            border-radius: 16px;
             cursor: pointer;
-            transition: transform 0.1s;
+            transition: transform 0.1s, opacity 0.2s;
             text-align: left;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .cmd-btn:active { transform: scale(0.97); }
-        .cmd-forward { background-color: #3498DB; box-shadow: 0 4px 0 #2980B9; }
-        .cmd-left { background-color: #9B59B6; box-shadow: 0 4px 0 #8E44AD; }
-        .cmd-right { background-color: #F39C12; box-shadow: 0 4px 0 #D35400; }
+        .cmd-btn:active { transform: scale(0.96); }
+        .cmd-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .cmd-forward { background-color: #3498DB; box-shadow: 0 5px 0 #2980B9; }
+        .cmd-left { background-color: #9B59B6; box-shadow: 0 5px 0 #8E44AD; }
+        .cmd-right { background-color: #F39C12; box-shadow: 0 5px 0 #D35400; }
 
         .instruction-wrapper {
-            background: #F8F9FA;
-            border: 3px solid #DEE2E6;
-            border-radius: 12px;
-            padding: 12px;
-            min-height: 80px;
+            background: white;
+            border: 3px solid #CBD5E0;
+            border-radius: 16px;
+            padding: 14px;
+            min-height: 100px;
             margin-bottom: 15px;
             text-align: left;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
 
         .instruction-title {
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: bold;
-            margin-bottom: 6px;
-            color: #7F8C8D;
+            margin-bottom: 8px;
+            color: #718096;
         }
 
         .queue-box {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 8px;
+            max-height: 120px;
+            overflow-y: auto;
         }
 
         .queue-badge {
-            background: #E0E0E0;
-            padding: 6px 10px;
-            border-radius: 8px;
-            font-size: 0.9rem;
+            background: #EDF2F7;
+            border: 2px solid #E2E8F0;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 0.95rem;
             font-weight: bold;
             display: flex;
             align-items: center;
-            animation: popIn 0.2s ease-out;
+            animation: elementPop 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes elementPop {
+            0% { transform: scale(0.6); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         .action-buttons {
             display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 10px;
+            grid-template-columns: 1.8fr 1fr;
+            gap: 12px;
         }
 
-        .btn-run {
-            background-color: var(--secondary-color);
-            box-shadow: 0 5px 0 #27AE60;
-            padding: 12px;
-            font-size: 1.2rem;
-        }
-        .btn-clear {
-            background-color: var(--danger-color);
-            box-shadow: 0 5px 0 #C0392B;
-            padding: 12px;
-            font-size: 1.2rem;
-        }
+        .btn-run { background-color: var(--secondary-color); box-shadow: 0 6px 0 #27AE60; padding: 14px; font-size: 1.3rem; }
+        .btn-clear { background-color: var(--danger-color); box-shadow: 0 6px 0 #C0392B; padding: 14px; font-size: 1.3rem; }
 
-        /* End Reward Graphics */
+        /* 5. End Finish Screens Layout */
         .rank-badge {
             display: inline-block;
             background: linear-gradient(135deg, #FFD700, #FFA500);
             color: white;
-            padding: 15px 30px;
-            font-size: 1.8rem;
+            padding: 16px 36px;
+            font-size: 1.9rem;
             font-weight: bold;
             border-radius: 50px;
-            margin: 20px 0;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            margin: 22px 0;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .score-summary {
-            font-size: 1.3rem;
+            font-size: 1.35rem;
             line-height: 1.8;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
     </style>
 </head>
 <body>
 
-    <!-- Target Project Folder Audio Source Links -->
     <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="snd-clap" src="assets/clap.mp3" preload="auto"></audio>
     <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
-    <!-- 1. 5-Second Brand Splash Overlay Screen -->
     <div id="splash-screen" class="screen active">
         <img src="assets/innovine-logo.png" alt="Innovine Logo">
     </div>
 
-    <!-- 2. Profile Intro Setup Selection Screen -->
     <div id="intro-screen" class="screen">
-        <h1 style="color: var(--primary-color); margin-bottom: 10px; font-size: 2.2rem;">🤖 Robo-Code Adventure 🚀</h1>
-        <p style="margin-bottom: 25px; font-size: 1.1rem; color: #666;">Welcome little programmer! Type your details to begin coding!</p>
+        <h1 style="color: var(--primary-color); margin-bottom: 8px; font-size: 2.3rem;">🤖 Robo-Code Adventure 🚀</h1>
+        <p style="margin-bottom: 25px; font-size: 1.15rem; color: #4A5568;">Welcome little programmer! Type your details to unlock coding missions!</p>
         
         <form id="start-form" onsubmit="startGame(event)">
             <div class="form-group">
                 <label for="student-name">⭐ Student Name:</label>
-                <input type="text" id="student-name" required placeholder="Enter your name">
+                <input type="text" id="student-name" required placeholder="Enter your full name">
             </div>
             <div class="form-group">
-                <label for="class-name">🏫 Class / Grade:</label>
-                <input type="text" id="class-name" required placeholder="e.g. Grade 1-B">
+                <label for="class-name">🏫 Class / Section:</label>
+                <input type="text" id="class-name" required placeholder="e.g. Grade 1-A">
             </div>
             <div class="form-group">
-                <label for="school-name">🏢 School Name:</label>
+                <label for="school-name">🏢 School Campus Name:</label>
                 <input type="text" id="school-name" required placeholder="Enter your school name">
             </div>
-            <button type="submit" class="btn">Let's Play! 🎮</button>
+            <button type="submit" class="btn">Let's Code! 🎮</button>
         </form>
     </div>
 
-    <!-- 3. Primary Workspace Board Playground Screen -->
     <div id="game-screen" class="screen">
         <div class="game-header">
             <div class="hud-item" id="hud-level">🌟 Level: 1 / 3</div>
             <div class="hud-item" id="hud-score">🏆 Score: 0</div>
         </div>
 
-        <h2 id="level-mission" style="margin-bottom: 15px; color: var(--primary-color);">Mission: Help Robot reach the Battery! 🔋</h2>
+        <h2 id="level-mission" style="margin-bottom: 20px; color: var(--primary-color);">Mission: Help Robot reach the Battery! 🔋</h2>
 
         <div class="game-container">
-            <!-- Left Grid Board Arena -->
             <div class="grid-map" id="map-grid">
-                <!-- Inner grid cells auto-generated programmatically -->
-            </div>
+                <div id="live-robot" class="robot-avatar">
+                    <div>🤖</div>
+                    <div id="live-arrow" class="robot-compass">▲</div>
+                </div>
+                </div>
 
-            <!-- Right Controls Panel Controller Structure -->
             <div class="control-panel">
                 <div>
-                    <h3 style="margin-bottom: 10px; font-size: 1.1rem;">Build Your Program Code:</h3>
+                    <h3 style="margin-bottom: 12px; font-size: 1.15rem; color: var(--dark-color);">Tap Directions Buttons:</h3>
                     <div class="command-buttons">
-                        <button class="cmd-btn cmd-forward" onclick="addCommand('forward')"><span>⬆️</span> Move Forward</button>
-                        <button class="cmd-btn cmd-left" onclick="addCommand('left')"><span>↩️</span> Turn Left (Spin)</button>
-                        <button class="cmd-btn cmd-right" onclick="addCommand('right')"><span>↪️</span> Turn Right (Spin)</button>
+                        <button id="btn-cmd-f" class="cmd-btn cmd-forward" onclick="addCommand('forward')"><span>⬆️</span> Move Forward</button>
+                        <button id="btn-cmd-l" class="cmd-btn cmd-left" onclick="addCommand('left')"><span>↩️</span> Turn Left (Spin)</button>
+                        <button id="btn-cmd-r" class="cmd-btn cmd-right" onclick="addCommand('right')"><span>↪️</span> Turn Right (Spin)</button>
                     </div>
 
                     <div class="instruction-wrapper">
-                        <div class="instruction-title">My Instructions Queue Box:</div>
+                        <div class="instruction-title">My Code Instructions List:</div>
                         <div class="queue-box" id="queue-box-container">
-                            <!-- Selected command blocks added here -->
-                        </div>
+                            </div>
                     </div>
                 </div>
 
                 <div class="action-buttons">
-                    <button class="btn btn-run" onclick="executeProgram()">🚀 RUN CODE!</button>
-                    <button class="btn btn-clear" onclick="clearQueue()">❌ Clear</button>
+                    <button id="run-btn" class="btn btn-run" onclick="executeProgram()">🚀 RUN CODE!</button>
+                    <button id="clear-btn" class="btn btn-clear" onclick="clearQueue()">❌ Clear</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 5. Mission Completion Game Over Screen -->
     <div id="end-screen" class="screen">
-        <h1 style="color: var(--secondary-color); font-size: 2.5rem;">🎉 Spectacular Coding! 🎉</h1>
+        <h1 style="color: var(--secondary-color); font-size: 2.6rem;">🎉 Outstanding Job! 🎉</h1>
         <div class="rank-badge" id="end-rank">Grand Programmer</div>
         
         <div class="score-summary" id="end-summary">
-            <!-- Dynamic profile analytics injected here -->
-        </div>
+            </div>
 
-        <button class="btn" onclick="resetGame()" style="background-color: var(--primary-color); box-shadow: 0 6px 0 #2980B9;">Play Again 🔄</button>
+        <button class="btn" onclick="resetGame()" style="background-color: var(--primary-color); box-shadow: 0 8px 0 #2980B9;">Play Again 🔄</button>
     </div>
 
     <script>
-        // Core Logic Engine Variable Trackers
+        // Core Logic State Tracking Context Configs
         let currentLevel = 1;
         let score = 0;
         let commandsQueue = [];
         let isExecuting = false;
 
-        // User Data Container
+        // Student Metadata Object Container
         let studentProfile = { name: '', class: '', school: '' };
 
-        // Relative Directions Matrix Configuration Index Setup
+        // Matrix Directions Indexes and Configuration constants
         const DIR_UP = 0, DIR_RIGHT = 1, DIR_DOWN = 2, DIR_LEFT = 3;
-        // Rotation angles corresponding to direction states
         const DIR_ROTATIONS = { 0: 0, 1: 90, 2: 180, 3: 270 };
-        const DIR_EMOJIS = ['▲', '▶', '▼', '◀'];
 
-        // Static Level Maps (4x4 Grid Maps)
+        // 4x4 Grid Maps definition models
         const levelConfigs = {
             1: {
                 mission: "Help Robot reach the Battery! 🔋",
@@ -462,14 +474,14 @@
             }
         };
 
-        // Live Active Mutable Tracking Engine Variable
+        // Live Active Tracking Position Coordinates Variable
         let robotState = { r: 0, c: 0, dir: DIR_UP };
 
-        // Splash Timer Configuration
+        // Hook up 5-Second Brand splash display controls 
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 switchScreen('intro-screen');
-            }, 5000); // 5 seconds splash duration
+            }, 5000); // 5000ms allocation for splash branding loop
         });
 
         function switchScreen(screenId) {
@@ -477,7 +489,7 @@
             document.getElementById(screenId).classList.add('active');
         }
 
-        // Form Submission Processor Setup
+        // Setup Player Context Engine Profile
         function startGame(e) {
             e.preventDefault();
             studentProfile.name = document.getElementById('student-name').value;
@@ -490,7 +502,7 @@
             switchScreen('game-screen');
         }
 
-        // Environment Map Generator Setup
+        // Level Matrix Grid Rendering engine
         function loadLevel(lvlId) {
             const config = levelConfigs[lvlId];
             document.getElementById('hud-level').innerText = `🌟 Level: ${lvlId} / 3`;
@@ -499,14 +511,21 @@
             
             commandsQueue = [];
             renderQueue();
+            setControlsDisabled(false);
             
+            // Set dynamic coordinate configurations back to level base default layout limits
             robotState = { ...config.startPos };
-            drawGrid(config);
+            buildGridStructure(config);
+            updateRobotVisualPosition();
         }
 
-        function drawGrid(config) {
+        function buildGridStructure(config) {
             const mapContainer = document.getElementById('map-grid');
+            
+            // Wipe out old static blocks but preserve the moving floating avatar layer node safely
+            const robotNode = document.getElementById('live-robot');
             mapContainer.innerHTML = '';
+            mapContainer.appendChild(robotNode);
 
             for (let r = 0; r < 4; r++) {
                 for (let c = 0; c < 4; c++) {
@@ -517,53 +536,67 @@
                     if (type === 'X') {
                         cell.classList.add('obstacle');
                         cell.innerText = '🧱';
-                    } else {
-                        cell.classList.add('path');
-                    }
-
-                    if (type === 'T') {
+                    } else if (type === 'T') {
                         cell.innerText = config.targetEmoji;
                     }
-
-                    // Render dynamic robot avatar with spinning layout arrow directions
-                    if (r === robotState.r && c === robotState.c) {
-                        const wrapper = document.createElement('div');
-                        wrapper.className = 'robot-wrapper';
-                        
-                        const roboBody = document.createElement('div');
-                        roboBody.className = 'robot-body';
-                        roboBody.innerText = '🤖';
-                        
-                        const roboArrow = document.createElement('div');
-                        roboArrow.className = 'robot-arrow';
-                        roboArrow.innerText = '▲';
-                        
-                        // Apply rotation transformation directly to arrow matching actual direction vector
-                        let degrees = DIR_ROTATIONS[robotState.dir];
-                        roboArrow.style.transform = `rotate(${degrees}deg)`;
-                        
-                        wrapper.appendChild(roboBody);
-                        wrapper.appendChild(roboArrow);
-                        cell.appendChild(wrapper);
-                    }
-
                     mapContainer.appendChild(cell);
                 }
             }
         }
 
-        // Command Queue Manager UI Mechanics
+        // Calculates coordinate shifts to apply responsive live sliding movements
+        function updateRobotVisualPosition() {
+            const robot = document.getElementById('live-robot');
+            const arrow = document.getElementById('live-arrow');
+            
+            // Grid cell layout distribution configuration calculations (Padding space offset calculation)
+            const gap = 8;
+            const padding = 12;
+            
+            // Calculate percentage based location multipliers inside responsive CSS blocks
+            let topPos = `calc(${padding}px + (${robotState.r} * (25% - ${gap / 2}px)))`;
+            let leftPos = `calc(${padding}px + (${robotState.c} * (25% - ${gap / 2}px)))`;
+            
+            robot.style.top = topPos;
+            robot.style.left = leftPos;
+            
+            // Apply spin tracking parameters to direction arrow directly
+            let targetDegrees = DIR_ROTATIONS[robotState.dir];
+            arrow.style.transform = `rotate(${targetDegrees}deg)`;
+        }
+
+        // Queue list builder module functions
         function addCommand(type) {
             if (isExecuting) return;
             commandsQueue.push(type);
             renderQueue();
+
+            // INSTANT MOVEMENT LOOP SIMULATION: Instantly animates character position state on tap to preview path instructions!
+            const config = levelConfigs[currentLevel];
+            if (type === 'left') {
+                robotState.dir = (robotState.dir + 3) % 4;
+            } else if (type === 'right') {
+                robotState.dir = (robotState.dir + 1) % 4;
+            } else if (type === 'forward') {
+                let nextR = robotState.r;
+                let nextC = robotState.c;
+
+                if (robotState.dir === DIR_UP) nextR--;
+                else if (robotState.dir === DIR_RIGHT) nextC++;
+                else if (robotState.dir === DIR_DOWN) nextR++;
+                else if (robotState.dir === DIR_LEFT) nextC--;
+
+                if (nextR >= 0 && nextR < 4 && nextC >= 0 && nextC < 4 && config.grid[nextR][nextC] !== 'X') {
+                    robotState.r = nextR;
+                    robotState.c = nextC;
+                }
+            }
+            updateRobotVisualPosition();
         }
 
         function clearQueue() {
             if (isExecuting) return;
-            commandsQueue = [];
-            renderQueue();
-            loadLevel(currentLevel);
+            loadLevel(currentLevel); // Safely reset map arrays to level defaults 
         }
 
         function renderQueue() {
@@ -578,26 +611,33 @@
             });
         }
 
-        // Main Evaluation Walk Engine loop
+        function setControlsDisabled(status) {
+            isExecuting = status;
+            document.getElementById('btn-cmd-f').disabled = status;
+            document.getElementById('btn-cmd-l').disabled = status;
+            document.getElementById('btn-cmd-r').disabled = status;
+            document.getElementById('run-btn').disabled = status;
+            document.getElementById('clear-btn').disabled = status;
+        }
+
+        // Code execution evaluator verification processor loop
         async function executeProgram() {
-            if (isExecuting || commandsQueue.length === 0) return;
-            isExecuting = true;
+            if (commandsQueue.length === 0 || isExecuting) return;
+            setControlsDisabled(true);
 
             const config = levelConfigs[currentLevel];
-            // Initialize position states on workspace simulation run request
+            // Snap character layer back to initial starting vector coordinates prior to run check
             robotState = { ...config.startPos };
-            drawGrid(config);
+            updateRobotVisualPosition();
+            await new Promise(resolve => setTimeout(resolve, 500));
 
-            // Sequentially loop commands arrays with fixed delay timeouts
+            // Execute each block step-by-step with synchronized time loops
             for (let i = 0; i < commandsQueue.length; i++) {
                 const cmd = commandsQueue[i];
-                await new Promise(resolve => setTimeout(resolve, 700));
-
+                
                 if (cmd === 'left') {
-                    // Turn left (-90 degrees) counter-clockwise tracking
                     robotState.dir = (robotState.dir + 3) % 4;
                 } else if (cmd === 'right') {
-                    // Turn right (+90 degrees) clockwise tracking
                     robotState.dir = (robotState.dir + 1) % 4;
                 } else if (cmd === 'forward') {
                     let nextR = robotState.r;
@@ -608,98 +648,101 @@
                     else if (robotState.dir === DIR_DOWN) nextR++;
                     else if (robotState.dir === DIR_LEFT) nextC--;
 
-                    // Boundary collision rules verification parameters
+                    // Boundary collision criteria metrics checks
                     if (nextR >= 0 && nextR < 4 && nextC >= 0 && nextC < 4) {
                         if (config.grid[nextR][nextC] === 'X') {
-                            triggerFailure("Crash! Robot bumped into a brick wall! 🧱");
+                            updateRobotVisualPosition();
+                            await new Promise(resolve => setTimeout(resolve, 400));
+                            triggerFailure("Boom! Robot crashed into a brick obstacle! 🧱");
                             return;
                         }
                         robotState.r = nextR;
                         robotState.c = nextC;
                     } else {
-                        triggerFailure("Oops! Robot fell off the grid map borders! 🗺️");
+                        triggerFailure("Uh oh! Robot fell off the grid map world boundaries! 🗺️");
                         return;
                     }
                 }
-                drawGrid(config);
+                
+                updateRobotVisualPosition();
+                await new Promise(resolve => setTimeout(resolve, 600)); // Smooth step animation frame allocation delay
             }
 
-            // Post code execution verification tracking checks
+            // Post code execution terminal criteria check values evaluation rules 
             const finalCellType = config.grid[robotState.r][robotState.c];
             if (finalCellType === 'T') {
                 triggerSuccess();
             } else {
-                triggerFailure("Oh no! The program finished but the robot did not reach the prize target. Try again!");
+                triggerFailure("The program completed but the robot did not reach the prize asset destination target! Reset and try again.");
             }
         }
 
         function triggerSuccess() {
-            isExecuting = false;
             score += 100;
             
             const correctSound = document.getElementById('snd-correct');
             const clapSound = document.getElementById('snd-clap');
             
-            // 1. Play Correct Choose Sound First
+            // 1. Play correct audio selection feedback sequence
             if (correctSound) {
                 correctSound.currentTime = 0;
-                correctSound.play().catch(e => console.log("Audio file loading anomaly:", e));
+                correctSound.play().catch(e => console.log("Audio pipeline stream blocked:", e));
             }
             
-            // 2. Play Clapping Sound right after + confetti explosions bursts
+            // 2. Continuous fire clapping noise + confetti particle streams
             setTimeout(() => {
                 if (clapSound) {
                     clapSound.currentTime = 0;
-                    clapSound.play().catch(e => console.log("Audio file loading anomaly:", e));
+                    clapSound.play().catch(e => console.log("Audio pipeline stream blocked:", e));
                 }
-                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-            }, 500);
+                confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+            }, 450);
 
-            alert("Hooray! Your instructions were completely correct! 🌟");
-
-            if (currentLevel < 3) {
-                currentLevel++;
-                loadLevel(currentLevel);
-            } else {
-                showGameFinish();
-            }
+            setTimeout(() => {
+                alert("Wonderful Job! Your programming instructions worked perfectly! 🎉");
+                if (currentLevel < 3) {
+                    currentLevel++;
+                    loadLevel(currentLevel);
+                } else {
+                    showGameFinish();
+                }
+            }, 600);
         }
 
         function triggerFailure(message) {
-            isExecuting = false;
             const wrongSound = document.getElementById('snd-wrong');
-            
-            // Play Wrong Selection Sound Endpoint logic
             if (wrongSound) {
                 wrongSound.currentTime = 0;
-                wrongSound.play().catch(e => console.log("Audio file loading anomaly:", e));
+                wrongSound.play().catch(e => console.log("Audio pipeline stream blocked:", e));
             }
             
-            alert(message);
-            loadLevel(currentLevel); // Reset grid map position states safely
+            setTimeout(() => {
+                alert(message);
+                loadLevel(currentLevel); // Reset view grid positions back safely
+            }, 200);
         }
 
         function showGameFinish() {
             switchScreen('end-screen');
             
-            // Continuous canvas confetti fountain streams
+            // Confetti cascade loop configuration parameters
             let duration = 4 * 1000;
             let end = Date.now() + duration;
 
             (function frame() {
-                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 } });
-                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 } });
+                confetti({ particleCount: 6, angle: 60, spread: 60, origin: { x: 0 } });
+                confetti({ particleCount: 6, angle: 120, spread: 60, origin: { x: 1 } });
                 if (Date.now() < end) { requestAnimationFrame(frame); }
             }());
 
             document.getElementById('end-summary').innerHTML = `
-                <strong>Programmer Certificate:</strong><br>
+                <strong>Programmer Certificate Profile:</strong><br>
                 👤 Name: ${studentProfile.name}<br>
                 🏫 Class: ${studentProfile.class}<br>
                 🏢 School: ${studentProfile.school}<br>
-                <hr style="margin:12px 0; border:1px dashed #DDD;">
+                <hr style="margin:14px 0; border:1px dashed #CBD5E0;">
                 🌟 Total Highscore: <strong>${score} Points</strong><br>
-                🏆 Status: <strong>Static 3/3 Coding Missions Cleared!</strong>
+                🏆 Status: <strong>All 3 Static STEM Coding puzzles solved!</strong>
             `;
         }
 

@@ -4,12 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>ICT Adventure</title>
+<title>Math & Music Fun</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
-
 *{
 margin:0;
 padding:0;
@@ -23,7 +22,7 @@ min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-padding:20px;
+padding:15px;
 overflow-x:hidden;
 }
 
@@ -51,8 +50,8 @@ object-fit: contain;
 display:none;
 background:white;
 width:95%;
-max-width:1100px;
-padding:25px;
+max-width:900px;
+padding:30px 20px;
 border-radius:30px;
 box-shadow:0 10px 25px rgba(0,0,0,0.2);
 text-align:center;
@@ -68,33 +67,30 @@ animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 display:block;
 }
 
-.topbar{
-width:100%;
-display:flex;
-justify-content:center;
-margin-bottom:15px;
-}
-
-.logo{
-width:140px;
-}
-
 h1{
 color:#1565c0;
+font-size: 32px;
 margin-bottom:15px;
+}
+
+p.subtitle {
+font-size: 20px;
+color: #555;
+margin-bottom: 20px;
 }
 
 .btn{
 background:#ff7043;
 color:white;
 border:none;
-padding:14px 24px;
+padding:18px 32px;
 border-radius:40px;
-font-size:18px;
+font-size:22px;
 font-weight:bold;
 cursor:pointer;
-margin:10px;
+margin:12px;
 transition: 0.2s ease;
+box-shadow: 0 4px 10px rgba(255,112,67,0.4);
 }
 
 .btn:hover{
@@ -104,27 +100,28 @@ background: #e64a19;
 
 input{
 width:100%;
-padding:14px;
-border-radius:12px;
-border:2px solid #ccc;
-font-size:18px;
-margin:10px 0;
+max-width: 350px;
+padding:16px;
+border-radius:15px;
+border:3px solid #cbd5e1;
+font-size:22px;
+margin:15px 0;
 text-align: center;
 }
 
 .image-options{
 display:flex;
 justify-content:center;
-gap:20px;
+gap:25px;
 flex-wrap:wrap;
-margin-top:20px;
+margin-top:25px;
 }
 
 .image-card{
-width:220px;
-height:220px;
+width:200px;
+height:200px;
 background:#e3f2fd;
-border-radius:20px;
+border-radius:25px;
 padding:15px;
 cursor:pointer;
 display:flex;
@@ -133,26 +130,28 @@ justify-content:center;
 align-items:center;
 transition:0.3s;
 font-weight: bold;
-font-size: 18px;
+font-size: 26px;
+color: #0d47a1;
+box-shadow: 0 6px 12px rgba(0,0,0,0.05);
 }
 
 .image-card:hover{
-transform:scale(1.05);
+transform:scale(1.08);
 background:#90caf9;
 }
 
 .image-card img{
-width:110px;
-height:110px;
+width:100px;
+height:100px;
 object-fit:contain;
 margin-bottom:10px;
 }
 
 .feedback{
-font-size:28px;
+font-size:32px;
 font-weight:bold;
-margin-top:20px;
-height:40px;
+margin-top:25px;
+height:45px;
 }
 
 .drag-container{
@@ -160,22 +159,24 @@ display:flex;
 justify-content:center;
 gap:40px;
 flex-wrap:wrap;
-margin-top:20px;
+margin-top:25px;
 }
 
 .drag-item{
 background:#c8e6c9;
+border: 2px solid #a5d6a7;
 padding:15px;
 border-radius:20px;
 margin-bottom:15px;
-font-size:20px;
+font-size:36px;
 font-weight:bold;
-width:220px;
+width:140px;
 cursor:grab;
+box-shadow: 0 4px 8px rgba(0,0,0,0.05);
 }
 
 .drop-box{
-width:260px;
+width:240px;
 height:90px;
 border:3px dashed #1565c0;
 border-radius:20px;
@@ -183,100 +184,61 @@ display:flex;
 justify-content:center;
 align-items:center;
 margin-bottom:15px;
-font-size:18px;
+font-size:22px;
 font-weight:bold;
 padding:10px;
 background:#f5f5f5;
+color: #333;
 }
 
 .memory-grid{
 display:grid;
 grid-template-columns:repeat(4,1fr);
 gap:15px;
-margin-top:20px;
+margin-top:25px;
 }
 
 .card{
-height:120px;
-background:#90caf9;
+height:130px;
+background:#38bdf8;
 border-radius:20px;
 display:flex;
 justify-content:center;
 align-items:center;
-font-size:18px;
+font-size:36px;
 font-weight:bold;
 cursor:pointer;
 color:white;
-transition: background-color 0.2s ease;
+transition: background-color 0.2s ease, transform 0.2s;
+box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
 .card.flipped{
 background:#fff3e0;
-color:black;
-}
-
-.maze{
-display:grid;
-grid-template-columns:repeat(5,70px);
-gap:5px;
-justify-content:center;
-margin-top:20px;
-}
-
-.cell{
-width:70px;
-height:70px;
-background:#bbdefb;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:28px;
-border-radius:10px;
-cursor:pointer;
-}
-
-.wall{
-background:#455a64;
-}
-
-.goal{
-background:#81c784;
-}
-
-.player{
-background:#ff7043;
-color:white;
+color:#e65100;
+border: 2px solid #ffe0b2;
 }
 
 .final-score{
-font-size:70px;
+font-size:80px;
 font-weight:bold;
 color:#ff6f00;
 margin:20px 0;
 }
 
 @media(max-width:768px){
-
 .memory-grid{
 grid-template-columns:repeat(2,1fr);
 }
-
 .image-card{
 width:150px;
 height:150px;
+font-size: 20px;
 }
-
-.maze{
-grid-template-columns:repeat(5,55px);
+.drag-container {
+gap: 15px;
 }
-
-.cell{
-width:55px;
-height:55px;
 }
-
-}
-
 </style>
 </head>
 
@@ -284,110 +246,93 @@ height:55px;
 
 <audio id="correctSound" src="assets/correct-1.mp3" preload="auto"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
 
 <div id="brand-splash">
 <img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
 
 <div id="intro" class="screen">
-<h1>🎮 Calculator and Music Player</h1>
-<p style="font-size: 18px; color: #555; margin-bottom: 15px;">Welcome Art Explorer! Sign in below to enter the match arena.</p>
+<h1>🧮 Calculator & Music Player 🎵</h1>
+<p class="subtitle">Fun Games for Grade 1!</p>
 
-<div style="max-width: 420px; margin: 0 auto 15px auto;">
-<input type="text" id="studentName" placeholder="👤 Enter Student Name">
+<div style="margin: 20px 0;">
+<input type="text" id="studentName" placeholder="😀 Type Your Name Here">
 </div>
 
 <button class="btn" onclick="showMenu()">
-🚀 Start Game
+🚀 Let's Play!
 </button>
 </div>
 
 <div id="menu" class="screen">
-<h1>Choose Activity</h1>
+<h1>Pick a Game!</h1>
+<p class="subtitle">Earn stars and points!</p>
 
-<button class="btn" onclick="startImageGame()">🖼️ Click Image</button>
-<button class="btn" onclick="startDragGame()">🧩 Drag & Drop</button>
-<button class="btn" onclick="startMemoryGame()">🧠 Memory Match</button>
-<button class="btn" onclick="startMazeGame()">🛣️ Maze Puzzle</button>
+<button class="btn" onclick="startImageGame()">🖼️ Game 1: Find the Sign</button>
+<button class="btn" onclick="startDragGame()">🧩 Game 2: Match the Sign</button>
+<button class="btn" onclick="startMemoryGame()">🧠 Game 3: Memory Match</button>
 </div>
 
 <div id="imageScreen" class="screen">
-<h1>🖼️ Click the Addition Symbol</h1>
+<h1>Find the Plus Sign!</h1>
+<p class="subtitle">Click the symbol used for ADDITION (+)</p>
 
 <div class="image-options">
-<div class="image-card" onclick="checkImage('addition')">
-<img src="assets/addition.png">Addition
+<div class="image-card" onclick="checkImage('minus')">
+<img src="assets/subtraction.png" alt="Minus">
+➖ Minus
 </div>
 
-<div class="image-card" onclick="checkImage('subtraction')">
-<img src="assets/subtraction.png">Subtraction
+<div class="image-card" onclick="checkImage('plus')">
+<img src="assets/addition.png" alt="Plus">
+➕ Plus
 </div>
 
 <div class="image-card" onclick="checkImage('equal')">
-<img src="assets/equal.png">Equal
+<img src="assets/equal.png" alt="Equal">
+〓 Equal
 </div>
 </div>
 
 <div class="feedback" id="imageFeedback"></div>
-
-<button class="btn" onclick="showMenu()">
-⬅ Back
-</button>
+<button class="btn" onclick="showMenu()">⬅ Back</button>
 </div>
 
 <div id="dragScreen" class="screen">
-<h1>🧩 Match Correct Function</h1>
+<h1>Match the Buttons</h1>
+<p class="subtitle">Drag the symbol to the correct action box!</p>
 
 <div class="drag-container">
 <div>
-<div class="drag-item" draggable="true" id="play">▶ Play</div>
-<div class="drag-item" draggable="true" id="c">C</div>
-<div class="drag-item" draggable="true" id="ce">CE</div>
-<div class="drag-item" draggable="true" id="plus">+</div>
+<div class="drag-item" draggable="true" id="plusBtn">➕</div>
+<div class="drag-item" draggable="true" id="playBtn">▶</div>
 </div>
 
 <div>
-<div class="drop-box" data-answer="play">Play Music</div>
-<div class="drop-box" data-answer="c">Clear Screen</div>
-<div class="drop-box" data-answer="ce">Clear Entry</div>
-<div class="drop-box" data-answer="plus">Addition</div>
+<div class="drop-box" data-answer="plusBtn">Add Numbers</div>
+<div class="drop-box" data-answer="playBtn">Play Music</div>
 </div>
 </div>
 
 <div class="feedback" id="dragFeedback"></div>
-
-<button class="btn" onclick="showMenu()">
-⬅ Back
-</button>
+<button class="btn" onclick="showMenu()">⬅ Back</button>
 </div>
 
 <div id="memoryScreen" class="screen">
-<h1>🧠 Memory Match</h1>
+<h1>Memory Match</h1>
+<p class="subtitle">Find the matching pair symbols!</p>
 
 <div class="memory-grid" id="memoryGrid"></div>
 <div class="feedback" id="memoryFeedback"></div>
-
-<button class="btn" onclick="showMenu()">
-⬅ Back
-</button>
-</div>
-
-<div id="mazeScreen" class="screen">
-<h1>🛣️ Reach the Calculator</h1>
-
-<div class="maze" id="maze"></div>
-<div class="feedback" id="mazeFeedback"></div>
-
-<button class="btn" onclick="showMenu()">
-⬅ Back
-</button>
+<button class="btn" onclick="showMenu()">⬅ Back</button>
 </div>
 
 <div id="finalScreen" class="screen">
-<h1>🏆 Congratulations</h1>
+<h1>🏆 Super Job!</h1>
 <h2 id="finalName"></h2>
 <div class="final-score" id="finalScore"></div>
-<h2 id="rank"></h2>
+<h2 id="rank" style="color:#1565c0; margin-bottom:15px;"></h2>
 
 <button class="btn" onclick="location.reload()">
 🔄 Play Again
@@ -395,275 +340,187 @@ height:55px;
 </div>
 
 <script>
+let totalScore = 0;
+let student = '';
 
-let totalScore=0;
-let student='';
-
-/* FRAME MANAGEMENT NAVIGATION ENGINE */
+/* SCREEN CONTROLLERS */
 function showScreen(id){
-document.querySelectorAll('.screen').forEach(screen=>{
-screen.classList.remove('active');
-});
+document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
 document.getElementById(id).classList.add('active');
 }
 
-// Global hook triggers brand image screen timeout loop for exactly 5 seconds
+// Strictly locks the splash viewport screen for exactly 5 seconds
 window.addEventListener('DOMContentLoaded', () => {
 setTimeout(() => {
 const splash = document.getElementById('brand-splash');
 splash.style.opacity = '0';
 setTimeout(() => {
 splash.style.display = 'none';
-showScreen('intro'); // Instructions and dashboard unlock only after splash timeout
+showScreen('intro');
 }, 500);
 }, 5000);
 });
 
 function showMenu(){
-student=document.getElementById('studentName').value.trim();
-
-if(student===''){
-alert('Enter Student Name');
+student = document.getElementById('studentName').value.trim() || student;
+if(student === ''){
+alert('Please type your name first!');
 return;
 }
-
 showScreen('menu');
 }
 
-/* AUDIO HELPER RUNTIME FUNCTION */
+/* PLAY AUDIO WORKER ENGINE */
 function playAudioTrack(id) {
 const track = document.getElementById(id);
 if(track) {
 track.currentTime = 0;
-track.play().catch(e => console.log('Audio launch postponed until interaction event.'));
+track.play().catch(e => console.log('Audio stream deferred until click asset binding.'));
 }
 }
 
-/* IMAGE GAME */
+/* GAME 1: IMAGE LOGIC */
 function startImageGame(){
-document.getElementById('imageFeedback').innerText='';
+document.getElementById('imageFeedback').innerText = '';
 showScreen('imageScreen');
 }
 
 function checkImage(ans){
-if(ans==='addition'){
+const feedback = document.getElementById('imageFeedback');
+if(ans === 'plus'){
 playAudioTrack('correctSound');
-document.getElementById('imageFeedback').innerText='🎉 Correct';
-document.getElementById('imageFeedback').style.color='green';
-totalScore+=2;
-}else{
+feedback.innerText = '🎉 Super! That is the Plus Sign!';
+feedback.style.color = 'green';
+totalScore += 2;
+setTimeout(showMenu, 1500);
+} else {
 playAudioTrack('wrongSound');
-document.getElementById('imageFeedback').innerText='❌ Wrong';
-document.getElementById('imageFeedback').style.color='red';
+feedback.innerText = '❌ Try Again! Look for the cross +';
+feedback.style.color = 'red';
 }
 }
 
-/* DRAG DROP */
+/* GAME 2: DRAG LOGIC */
 function startDragGame(){
-document.getElementById('dragFeedback').innerText='';
+document.getElementById('dragFeedback').innerText = '';
 showScreen('dragScreen');
 }
 
-let correctDrops=0;
-
-document.querySelectorAll('.drag-item').forEach(item=>{
-item.addEventListener('dragstart',e=>{
-e.dataTransfer.setData('text',e.target.id);
+let correctDrops = 0;
+document.querySelectorAll('.drag-item').forEach(item => {
+item.addEventListener('dragstart', e => {
+e.dataTransfer.setData('text', e.target.id);
 });
 });
 
-document.querySelectorAll('.drop-box').forEach(box=>{
-box.addEventListener('dragover',e=>{
+document.querySelectorAll('.drop-box').forEach(box => {
+box.addEventListener('dragover', e => e.preventDefault());
+box.addEventListener('drop', e => {
 e.preventDefault();
-});
+const data = e.dataTransfer.getData('text');
+const feedback = document.getElementById('dragFeedback');
 
-box.addEventListener('drop',e=>{
-e.preventDefault();
-const data=e.dataTransfer.getData('text');
-
-if(data===box.dataset.answer){
-box.style.background='lightgreen';
-box.innerHTML='✅ Correct';
+if(data === box.dataset.answer){
+box.style.background = 'lightgreen';
+box.innerHTML = '✅ Got It!';
 correctDrops++;
-totalScore++;
-
+totalScore += 2;
 playAudioTrack('correctSound');
+feedback.innerText = '⭐ Great Match!';
+feedback.style.color = 'green';
 
-document.getElementById('dragFeedback').innerText='Good Job!';
-document.getElementById('dragFeedback').style.color='green';
-
-if(correctDrops===4){
-setTimeout(showFinal,1000);
+if(correctDrops === 2){
+setTimeout(showFinal, 1500);
 }
-}else{
+} else {
 playAudioTrack('wrongSound');
-document.getElementById('dragFeedback').innerText='Try Again';
-document.getElementById('dragFeedback').style.color='red';
+feedback.innerText = '❌ Not quite right! Try another box.';
+feedback.style.color = 'red';
 }
 });
 });
 
-/* MEMORY Match engine */
-const memoryData=[
-'Addition','Addition',
-'Play','Play',
-'Equal','Equal',
-'Music','Music'
-];
-
-let flipped=[];
-let matched=0;
+/* GAME 3: MEMORY MATCH LOGIC */
+const memoryData = ['➕', '➕', '▶', '▶', '〓', '〓', '🎵', '🎵'];
+let flipped = [];
+let matched = 0;
 
 function startMemoryGame(){
-document.getElementById('memoryFeedback').innerText='';
+document.getElementById('memoryFeedback').innerText = '';
 showScreen('memoryScreen');
-const grid=document.getElementById('memoryGrid');
-grid.innerHTML='';
-matched=0;
+const grid = document.getElementById('memoryGrid');
+grid.innerHTML = '';
+matched = 0;
+flipped = [];
 
-// Duplicate and randomize layout positioning cleanly
-const matchPool = [...memoryData];
-matchPool.sort(()=>0.5-Math.random());
-
-matchPool.forEach(item=>{
-const card=document.createElement('div');
-card.className='card';
-card.innerHTML='?';
-card.onclick=()=>flipCard(card,item);
+const pool = [...memoryData].sort(() => 0.5 - Math.random());
+pool.forEach(item => {
+const card = document.createElement('div');
+card.className = 'card';
+card.innerHTML = '❓';
+card.onclick = () => flipCard(card, item);
 grid.appendChild(card);
 });
 }
 
-function flipCard(card,item){
+function flipCard(card, item){
 if(card.classList.contains('flipped') || flipped.length >= 2) return;
 
 card.classList.add('flipped');
-card.innerHTML=item;
-flipped.push({card,item});
+card.innerHTML = item;
+flipped.push({card, item});
 
-if(flipped.length===2){
-if(flipped[0].item===flipped[1].item){
+if(flipped.length === 2){
+if(flipped[0].item === flipped[1].item){
 matched++;
-totalScore++;
-
+totalScore += 2;
 playAudioTrack('correctSound');
+document.getElementById('memoryFeedback').innerText = '🎉 You found a match!';
+document.getElementById('memoryFeedback').style.color = 'green';
+flipped = [];
 
-document.getElementById('memoryFeedback').innerText='✅ Match Found';
-document.getElementById('memoryFeedback').style.color='green';
-flipped=[];
-
-if(matched===4){
-setTimeout(showFinal,1000);
+if(matched === 4){
+setTimeout(showFinal, 1500);
 }
-}else{
+} else {
 playAudioTrack('wrongSound');
-document.getElementById('memoryFeedback').innerText='❌ Keep Searching!';
-document.getElementById('memoryFeedback').style.color='red';
-setTimeout(()=>{
-flipped.forEach(f=>{
+document.getElementById('memoryFeedback').innerText = '❌ Try again!';
+document.getElementById('memoryFeedback').style.color = 'red';
+setTimeout(() => {
+flipped.forEach(f => {
 f.card.classList.remove('flipped');
-f.card.innerHTML='?';
+f.card.innerHTML = '❓';
 });
-flipped=[];
-},1000);
+flipped = [];
+}, 1000);
 }
 }
 }
 
-/* MAZE NAVIGATION ENGINE MATRIX */
-const mazeLayout=[
-['P','','','',''],
-['','W','W','',''],
-['','','W','',''],
-['W','','','','W'],
-['','','','', 'G']
-];
-
-let playerPos={x:0,y:0};
-
-function startMazeGame(){
-document.getElementById('mazeFeedback').innerText='';
-playerPos={x:0,y:0};
-showScreen('mazeScreen');
-renderMaze();
-}
-
-function renderMaze(){
-const maze=document.getElementById('maze');
-maze.innerHTML='';
-
-mazeLayout.forEach((row,y)=>{
-row.forEach((cell,x)=>{
-const div=document.createElement('div');
-div.className='cell';
-
-if(cell==='W') div.classList.add('wall');
-
-if(cell==='G'){
-div.classList.add('goal');
-div.innerHTML='🧮';
-}
-
-if(playerPos.x===x && playerPos.y===y){
-div.classList.add('player');
-div.innerHTML='😀';
-}
-
-div.onclick=()=>movePlayer(x,y);
-maze.appendChild(div);
-});
-});
-}
-
-function movePlayer(x,y){
-if(mazeLayout[y][x]==='W'){
-playAudioTrack('wrongSound');
-return;
-}
-
-const dx=Math.abs(playerPos.x-x);
-const dy=Math.abs(playerPos.y-y);
-
-if(dx+dy===1){
-playerPos={x,y};
-renderMaze();
-
-if(mazeLayout[y][x]==='G'){
-playAudioTrack('correctSound');
-document.getElementById('mazeFeedback').innerText='🎉 You Reached Calculator!';
-document.getElementById('mazeFeedback').style.color='green';
-totalScore+=3;
-
-setTimeout(showFinal,1000);
-}
-}
-}
-
-/* FINAL CELEBRATIONAL SCREEN METRICS */
+/* CELEBRATORY FRAME CLOSURE ENGINE */
 function showFinal(){
 showScreen('finalScreen');
+document.getElementById('finalName').innerHTML = `Wonderful Job, <b>${student}</b>!`;
+document.getElementById('finalScore').innerText = `${totalScore} Stars`;
 
-document.getElementById('finalName').innerHTML=`Amazing Work <b>${student}</b>`;
-document.getElementById('finalScore').innerText=`${totalScore} Points`;
-
-let rank='';
-if(totalScore>=10){
-rank='🏆 ICT Champion';
-}else if(totalScore>=6){
-rank='🌟 Smart Learner';
-}else{
-rank='👍 Keep Practicing';
+let ranking = '';
+if(totalScore >= 8){
+ranking = '🏆 Tech Champion Star!';
+} else if(totalScore >= 4){
+ranking = '🌟 Brilliant Learner!';
+} else {
+ranking = '👍 Keep Practicing!';
 }
-document.getElementById('rank').innerText=rank;
+document.getElementById('rank').innerText = ranking;
 
-// Confetti reward detonation event
+// Play the clapping tracking and deploy particles
+playAudioTrack('clapSound');
 confetti({
-particleCount:200,
-spread:100,
+particleCount: 150,
+spread: 80,
 origin: { y: 0.6 }
 });
 }
-
 </script>
 
 </body>

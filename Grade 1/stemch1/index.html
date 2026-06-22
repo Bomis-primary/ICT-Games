@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Robo-Code Adventure</title>
-    <!-- Canvas Confetti Library for completion screen -->
+    <!-- Canvas Confetti Library for completion screen celebrations -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
@@ -33,7 +33,7 @@
             min-height: 100vh;
         }
 
-        /* Screen Framework */
+        /* Screen Framework Containers */
         .screen {
             display: none;
             width: 100%;
@@ -80,7 +80,7 @@
             100% { transform: scale(0.95); }
         }
 
-        /* 2. Intro Welcome Screen Form */
+        /* 2. Intro Welcome Form Registration */
         .form-group {
             margin-bottom: 20px;
             text-align: left;
@@ -108,7 +108,6 @@
             border-color: var(--primary-color);
         }
 
-        /* Primary Kid-Friendly Buttons */
         .btn {
             background-color: var(--secondary-color);
             color: white;
@@ -129,7 +128,7 @@
             box-shadow: 0 2px 0 #27AE60;
         }
 
-        /* 3. Gameplay Layout */
+        /* 3. Gameplay Board Controls */
         .game-header {
             display: flex;
             justify-content: space-between;
@@ -158,7 +157,7 @@
             }
         }
 
-        /* Grid Map Rendering */
+        /* Grid Map Playground Render */
         .grid-map {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -184,13 +183,38 @@
         .cell.path { background: #E8F4F8; }
         .cell.obstacle { background: #FFCCD5; font-size: 1.5rem; }
 
-        .robot-element {
-            font-size: 2.2rem;
+        /* Grade 1 Friendly Enhanced Robot Avatar */
+        .robot-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
             transition: transform 0.3s ease-in-out;
-            z-index: 5;
         }
 
-        /* Command Board & Code Queues */
+        .robot-body {
+            font-size: 2.2rem;
+            line-height: 1;
+        }
+
+        /* Giant clear dynamic orientation arrow pointer */
+        .robot-arrow {
+            font-size: 1.1rem;
+            background: var(--dark-color);
+            color: #FFF;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            margin-top: -4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* Control Panel Buttons */
         .control-panel {
             display: flex;
             flex-direction: column;
@@ -277,7 +301,7 @@
             font-size: 1.2rem;
         }
 
-        /* 5. End Screen Graphics */
+        /* End Reward Graphics */
         .rank-badge {
             display: inline-block;
             background: linear-gradient(135deg, #FFD700, #FFA500);
@@ -300,20 +324,20 @@
 </head>
 <body>
 
-    <!-- Audio Elements Mapping to Asset Folder Paths -->
+    <!-- Target Project Folder Audio Source Links -->
     <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="snd-clap" src="assets/clap.mp3" preload="auto"></audio>
     <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
-    <!-- 1. Branding Brand Splash Screen -->
+    <!-- 1. 5-Second Brand Splash Overlay Screen -->
     <div id="splash-screen" class="screen active">
         <img src="assets/innovine-logo.png" alt="Innovine Logo">
     </div>
 
-    <!-- 2. Intro Screen -->
+    <!-- 2. Profile Intro Setup Selection Screen -->
     <div id="intro-screen" class="screen">
         <h1 style="color: var(--primary-color); margin-bottom: 10px; font-size: 2.2rem;">🤖 Robo-Code Adventure 🚀</h1>
-        <p style="margin-bottom: 25px; font-size: 1.1rem; color: #666;">Welcome little programmer! Let's get ready to code!</p>
+        <p style="margin-bottom: 25px; font-size: 1.1rem; color: #666;">Welcome little programmer! Type your details to begin coding!</p>
         
         <form id="start-form" onsubmit="startGame(event)">
             <div class="form-group">
@@ -321,8 +345,8 @@
                 <input type="text" id="student-name" required placeholder="Enter your name">
             </div>
             <div class="form-group">
-                <label for="class-name">🏫 Class/Grade:</label>
-                <input type="text" id="class-name" required placeholder="e.g. Grade 1-A">
+                <label for="class-name">🏫 Class / Grade:</label>
+                <input type="text" id="class-name" required placeholder="e.g. Grade 1-B">
             </div>
             <div class="form-group">
                 <label for="school-name">🏢 School Name:</label>
@@ -332,7 +356,7 @@
         </form>
     </div>
 
-    <!-- 3. Gameplay Interface Screen -->
+    <!-- 3. Primary Workspace Board Playground Screen -->
     <div id="game-screen" class="screen">
         <div class="game-header">
             <div class="hud-item" id="hud-level">🌟 Level: 1 / 3</div>
@@ -342,25 +366,25 @@
         <h2 id="level-mission" style="margin-bottom: 15px; color: var(--primary-color);">Mission: Help Robot reach the Battery! 🔋</h2>
 
         <div class="game-container">
-            <!-- Left Side Grid Map -->
+            <!-- Left Grid Board Arena -->
             <div class="grid-map" id="map-grid">
-                <!-- Programmatically filled cells go here -->
+                <!-- Inner grid cells auto-generated programmatically -->
             </div>
 
-            <!-- Right Side Command Controller Interface -->
+            <!-- Right Controls Panel Controller Structure -->
             <div class="control-panel">
                 <div>
-                    <h3 style="margin-bottom: 10px; font-size: 1.1rem;">Choose Directions:</h3>
+                    <h3 style="margin-bottom: 10px; font-size: 1.1rem;">Build Your Program Code:</h3>
                     <div class="command-buttons">
                         <button class="cmd-btn cmd-forward" onclick="addCommand('forward')"><span>⬆️</span> Move Forward</button>
-                        <button class="cmd-btn cmd-left" onclick="addCommand('left')"><span>↩️</span> Turn Left</button>
-                        <button class="cmd-btn cmd-right" onclick="addCommand('right')"><span>↪️</span> Turn Right</button>
+                        <button class="cmd-btn cmd-left" onclick="addCommand('left')"><span>↩️</span> Turn Left (Spin)</button>
+                        <button class="cmd-btn cmd-right" onclick="addCommand('right')"><span>↪️</span> Turn Right (Spin)</button>
                     </div>
 
                     <div class="instruction-wrapper">
                         <div class="instruction-title">My Instructions Queue Box:</div>
                         <div class="queue-box" id="queue-box-container">
-                            <!-- Selected blocks added dynamically here -->
+                            <!-- Selected command blocks added here -->
                         </div>
                     </div>
                 </div>
@@ -373,36 +397,35 @@
         </div>
     </div>
 
-    <!-- 5. Final Game Loop Completion Finish Screen -->
+    <!-- 5. Mission Completion Game Over Screen -->
     <div id="end-screen" class="screen">
-        <h1 style="color: var(--secondary-color); font-size: 2.5rem;">🎉 Spectacular Job! 🎉</h1>
+        <h1 style="color: var(--secondary-color); font-size: 2.5rem;">🎉 Spectacular Coding! 🎉</h1>
         <div class="rank-badge" id="end-rank">Grand Programmer</div>
         
         <div class="score-summary" id="end-summary">
-            <!-- Personalized stats injected here -->
+            <!-- Dynamic profile analytics injected here -->
         </div>
 
         <button class="btn" onclick="resetGame()" style="background-color: var(--primary-color); box-shadow: 0 6px 0 #2980B9;">Play Again 🔄</button>
     </div>
 
     <script>
-        // Game Logic State Variables
+        // Core Logic Engine Variable Trackers
         let currentLevel = 1;
         let score = 0;
         let commandsQueue = [];
         let isExecuting = false;
 
-        // Student Data
+        // User Data Container
         let studentProfile = { name: '', class: '', school: '' };
 
-        // Directions definition mappings
+        // Relative Directions Matrix Configuration Index Setup
         const DIR_UP = 0, DIR_RIGHT = 1, DIR_DOWN = 2, DIR_LEFT = 3;
+        // Rotation angles corresponding to direction states
+        const DIR_ROTATIONS = { 0: 0, 1: 90, 2: 180, 3: 270 };
         const DIR_EMOJIS = ['▲', '▶', '▼', '◀'];
 
-        /* 
-           Level Grid Data Structures Configurations (4x4 Matrix coordinates 0-3 index map)
-           P = Valid Path Tile, X = Danger Obstacle Grid, R = Robot Start, T = Target Destination Goal
-        */
+        // Static Level Maps (4x4 Grid Maps)
         const levelConfigs = {
             1: {
                 mission: "Help Robot reach the Battery! 🔋",
@@ -413,9 +436,7 @@
                     ['X', 'P', 'P', 'T'],
                     ['X', 'X', 'X', 'X']
                 ],
-                startPos: {r: 0, c: 0, dir: DIR_RIGHT},
-                // Quickest logical paths solution sequences
-                solution: ['forward', 'right', 'forward', 'forward', 'left', 'forward']
+                startPos: {r: 0, c: 0, dir: DIR_RIGHT}
             },
             2: {
                 mission: "Help Robot reach the Repair Tool! 🔧",
@@ -426,8 +447,7 @@
                     ['X', 'X', 'P', 'X'],
                     ['X', 'X', 'R', 'X']
                 ],
-                startPos: {r: 3, c: 2, dir: DIR_UP},
-                solution: ['forward', 'forward', 'left', 'forward', 'forward']
+                startPos: {r: 3, c: 2, dir: DIR_UP}
             },
             3: {
                 mission: "Help Robot reach the Rocket Ship! 🚀",
@@ -438,19 +458,18 @@
                     ['X', 'P', 'P', 'X'],
                     ['X', 'X', 'T', 'X']
                 ],
-                startPos: {r: 0, c: 0, dir: DIR_DOWN},
-                solution: ['forward', 'left', 'forward', 'right', 'forward', 'left', 'forward']
+                startPos: {r: 0, c: 0, dir: DIR_DOWN}
             }
         };
 
-        // Live Dynamic State variables for current puzzle map track
+        // Live Active Mutable Tracking Engine Variable
         let robotState = { r: 0, c: 0, dir: DIR_UP };
 
-        // 1. Interactive Timer Hook for Initial Splash Display View
+        // Splash Timer Configuration
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 switchScreen('intro-screen');
-            }, 5000); // Strict 5-second branding lockout delay
+            }, 5000); // 5 seconds splash duration
         });
 
         function switchScreen(screenId) {
@@ -458,21 +477,20 @@
             document.getElementById(screenId).classList.add('active');
         }
 
-        // 2. Setup Student Account Profile Context Data
+        // Form Submission Processor Setup
         function startGame(e) {
             e.preventDefault();
             studentProfile.name = document.getElementById('student-name').value;
             studentProfile.class = document.getElementById('class-name').value;
             studentProfile.school = document.getElementById('school-name').value;
 
-            // Initialize configuration properties
             currentLevel = 1;
             score = 0;
             loadLevel(currentLevel);
             switchScreen('game-screen');
         }
 
-        // 3. Grid Environment Matrix Drawing Framework Engine
+        // Environment Map Generator Setup
         function loadLevel(lvlId) {
             const config = levelConfigs[lvlId];
             document.getElementById('hud-level').innerText = `🌟 Level: ${lvlId} / 3`;
@@ -482,7 +500,6 @@
             commandsQueue = [];
             renderQueue();
             
-            // Set dynamic position vectors to default configuration limits
             robotState = { ...config.startPos };
             drawGrid(config);
         }
@@ -496,9 +513,7 @@
                     const type = config.grid[r][c];
                     const cell = document.createElement('div');
                     cell.className = 'cell';
-                    cell.dataset.row = r;
-                    cell.dataset.col = c;
-
+                    
                     if (type === 'X') {
                         cell.classList.add('obstacle');
                         cell.innerText = '🧱';
@@ -510,24 +525,26 @@
                         cell.innerText = config.targetEmoji;
                     }
 
+                    // Render dynamic robot avatar with spinning layout arrow directions
                     if (r === robotState.r && c === robotState.c) {
-                        const roboEl = document.createElement('div');
-                        roboEl.className = 'robot-element';
-                        roboEl.id = 'active-robot';
-                        roboEl.innerText = '🤖';
-                        // Keep visually pointing dynamic canvas arrow indicator
-                        cell.appendChild(roboEl);
+                        const wrapper = document.createElement('div');
+                        wrapper.className = 'robot-wrapper';
                         
-                        const dirIndicator = document.createElement('span');
-                        dirIndicator.style.position = 'absolute';
-                        dirIndicator.style.fontSize = '0.8rem';
-                        dirIndicator.style.bottom = '2px';
-                        dirIndicator.style.background = 'rgba(0,0,0,0.6)';
-                        dirIndicator.style.color = 'white';
-                        dirIndicator.style.padding = '2px 4px';
-                        dirIndicator.style.borderRadius = '4px';
-                        dirIndicator.innerText = DIR_EMOJIS[robotState.dir];
-                        cell.appendChild(dirIndicator);
+                        const roboBody = document.createElement('div');
+                        roboBody.className = 'robot-body';
+                        roboBody.innerText = '🤖';
+                        
+                        const roboArrow = document.createElement('div');
+                        roboArrow.className = 'robot-arrow';
+                        roboArrow.innerText = '▲';
+                        
+                        // Apply rotation transformation directly to arrow matching actual direction vector
+                        let degrees = DIR_ROTATIONS[robotState.dir];
+                        roboArrow.style.transform = `rotate(${degrees}deg)`;
+                        
+                        wrapper.appendChild(roboBody);
+                        wrapper.appendChild(roboArrow);
+                        cell.appendChild(wrapper);
                     }
 
                     mapContainer.appendChild(cell);
@@ -535,7 +552,7 @@
             }
         }
 
-        // 4. Input Commands Event Interface
+        // Command Queue Manager UI Mechanics
         function addCommand(type) {
             if (isExecuting) return;
             commandsQueue.push(type);
@@ -546,7 +563,6 @@
             if (isExecuting) return;
             commandsQueue = [];
             renderQueue();
-            // Reset grid visualization state safely 
             loadLevel(currentLevel);
         }
 
@@ -562,24 +578,26 @@
             });
         }
 
-        // 5. Game Core Sequential Logic Walkers
+        // Main Evaluation Walk Engine loop
         async function executeProgram() {
             if (isExecuting || commandsQueue.length === 0) return;
             isExecuting = true;
 
             const config = levelConfigs[currentLevel];
-            // Reset position prior to live grid walk simulation
+            // Initialize position states on workspace simulation run request
             robotState = { ...config.startPos };
             drawGrid(config);
 
-            // Execute each command blocks iteratively with explicit delay loops
+            // Sequentially loop commands arrays with fixed delay timeouts
             for (let i = 0; i < commandsQueue.length; i++) {
                 const cmd = commandsQueue[i];
-                await new Promise(resolve => setTimeout(resolve, 600));
+                await new Promise(resolve => setTimeout(resolve, 700));
 
                 if (cmd === 'left') {
+                    // Turn left (-90 degrees) counter-clockwise tracking
                     robotState.dir = (robotState.dir + 3) % 4;
                 } else if (cmd === 'right') {
+                    // Turn right (+90 degrees) clockwise tracking
                     robotState.dir = (robotState.dir + 1) % 4;
                 } else if (cmd === 'forward') {
                     let nextR = robotState.r;
@@ -590,29 +608,28 @@
                     else if (robotState.dir === DIR_DOWN) nextR++;
                     else if (robotState.dir === DIR_LEFT) nextC--;
 
-                    // Boundaries check controls
+                    // Boundary collision rules verification parameters
                     if (nextR >= 0 && nextR < 4 && nextC >= 0 && nextC < 4) {
-                        const cellType = config.grid[nextR][nextC];
-                        if (cellType === 'X') {
-                            triggerFailure("Crash! Robot hit a wall obstacle! 🧱");
+                        if (config.grid[nextR][nextC] === 'X') {
+                            triggerFailure("Crash! Robot bumped into a brick wall! 🧱");
                             return;
                         }
                         robotState.r = nextR;
                         robotState.c = nextC;
                     } else {
-                        triggerFailure("Oops! Robot walked off the grid map bounds! 🗺️");
+                        triggerFailure("Oops! Robot fell off the grid map borders! 🗺️");
                         return;
                     }
                 }
                 drawGrid(config);
             }
 
-            // After final sequence, analyze coordinates conditions endpoints
+            // Post code execution verification tracking checks
             const finalCellType = config.grid[robotState.r][robotState.c];
             if (finalCellType === 'T') {
                 triggerSuccess();
             } else {
-                triggerFailure("Oh no! The robot didn't reach the target destination goal. Try again!");
+                triggerFailure("Oh no! The program finished but the robot did not reach the prize target. Try again!");
             }
         }
 
@@ -620,19 +637,25 @@
             isExecuting = false;
             score += 100;
             
-            // Play success feedback sounds sequentially
             const correctSound = document.getElementById('snd-correct');
             const clapSound = document.getElementById('snd-clap');
             
-            if (correctSound) correctSound.play().catch(e => console.log("Audio play error:", e));
+            // 1. Play Correct Choose Sound First
+            if (correctSound) {
+                correctSound.currentTime = 0;
+                correctSound.play().catch(e => console.log("Audio file loading anomaly:", e));
+            }
             
+            // 2. Play Clapping Sound right after + confetti explosions bursts
             setTimeout(() => {
-                if (clapSound) clapSound.play().catch(e => console.log("Audio play error:", e));
-                // Fire mini localized confetti for incremental level completions
-                confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
-            }, 600);
+                if (clapSound) {
+                    clapSound.currentTime = 0;
+                    clapSound.play().catch(e => console.log("Audio file loading anomaly:", e));
+                }
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            }, 500);
 
-            alert("Excellent Work! Your program code executed perfectly! 🎉");
+            alert("Hooray! Your instructions were completely correct! 🌟");
 
             if (currentLevel < 3) {
                 currentLevel++;
@@ -645,35 +668,38 @@
         function triggerFailure(message) {
             isExecuting = false;
             const wrongSound = document.getElementById('snd-wrong');
-            if (wrongSound) wrongSound.play().catch(e => console.log("Audio play error:", e));
+            
+            // Play Wrong Selection Sound Endpoint logic
+            if (wrongSound) {
+                wrongSound.currentTime = 0;
+                wrongSound.play().catch(e => console.log("Audio file loading anomaly:", e));
+            }
             
             alert(message);
-            // Re-render baseline view layer
-            loadLevel(currentLevel);
+            loadLevel(currentLevel); // Reset grid map position states safely
         }
 
-        // Finish Game Screen Render Setup
         function showGameFinish() {
             switchScreen('end-screen');
             
-            // Full Screen continuous celebration showers
-            let duration = 3 * 1000;
+            // Continuous canvas confetti fountain streams
+            let duration = 4 * 1000;
             let end = Date.now() + duration;
 
             (function frame() {
-                confetti({ particleCount: 4, angle: 60, spread: 55, origin: { x: 0 } });
-                confetti({ particleCount: 4, angle: 120, spread: 55, origin: { x: 1 } });
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0 } });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1 } });
                 if (Date.now() < end) { requestAnimationFrame(frame); }
             }());
 
             document.getElementById('end-summary').innerHTML = `
-                <strong>Programmer Profile:</strong><br>
+                <strong>Programmer Certificate:</strong><br>
                 👤 Name: ${studentProfile.name}<br>
                 🏫 Class: ${studentProfile.class}<br>
                 🏢 School: ${studentProfile.school}<br>
-                <hr style="margin:10px 0; border:1px dashed #DDD;">
-                🌟 Final Calculated Score: <strong>${score} Points</strong><br>
-                🧩 Levels Completed: <strong>3 out of 3 Static Tasks</strong>
+                <hr style="margin:12px 0; border:1px dashed #DDD;">
+                🌟 Total Highscore: <strong>${score} Points</strong><br>
+                🏆 Status: <strong>Static 3/3 Coding Missions Cleared!</strong>
             `;
         }
 

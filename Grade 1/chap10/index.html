@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tux Paint Super Adventure</title>
+    <title>Tux Paint Creative Match</title>
     
-    <!-- Canvas Confetti Library -->
+    <!-- Canvas Confetti Library for Celebrations -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
@@ -17,6 +17,8 @@
             --accent-orange: #ff7043;
             --accent-dark: #e64a19;
             --text-main: #2c3e50;
+            --correct-green: #4caf50;
+            --correct-dark: #388e3c;
         }
 
         * {
@@ -62,12 +64,12 @@
         .screen {
             display: none;
             width: 100%;
-            max-width: 850px;
+            max-width: 750px;
             background: rgba(255, 255, 255, 0.96);
-            border: 5px solid var(--primary-blue);
+            border: 6px solid var(--primary-blue);
             border-radius: 32px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            padding: 30px;
+            padding: 35px;
             text-align: center;
             position: relative;
             backdrop-filter: blur(5px);
@@ -83,36 +85,41 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        h1 { color: var(--primary-blue); font-size: 32px; margin-bottom: 12px; }
-        h2 { color: var(--primary-dark); font-size: 24px; margin-bottom: 15px; }
-        p { color: var(--text-main); font-size: 18px; margin-bottom: 20px; }
+        h1 { color: var(--primary-blue); font-size: 36px; margin-bottom: 15px; }
+        h2 { color: var(--primary-dark); font-size: 26px; margin-bottom: 20px; }
+        p { color: var(--text-main); font-size: 22px; margin-bottom: 25px; font-weight: bold; }
 
+        /* Setup Form Container */
         .form-container {
-            max-width: 400px;
-            margin: 0 auto 20px auto;
+            max-width: 450px;
+            margin: 0 auto 25px auto;
         }
 
         input {
             width: 100%;
-            padding: 12px 18px;
-            border-radius: 15px;
-            border: 3px solid #cbd5e1;
-            font-size: 16px;
-            margin-bottom: 12px;
+            padding: 16px 20px;
+            border-radius: 20px;
+            border: 4px solid #cbd5e1;
+            font-size: 18px;
+            margin-bottom: 15px;
             outline: none;
             font-family: inherit;
+            text-align: center;
+            background: #f8fafc;
         }
         input:focus {
             border-color: var(--primary-blue);
+            background: #ffffff;
         }
 
+        /* Giant Gameplay / Action Buttons */
         .btn {
             background: linear-gradient(180deg, #ff8a65 0%, var(--accent-orange) 100%);
             color: white;
             border: none;
-            padding: 14px 35px;
+            padding: 16px 40px;
             border-radius: 50px;
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 6px 0 var(--accent-dark);
@@ -120,7 +127,7 @@
             margin: 10px;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
         .btn:active {
             transform: translateY(4px);
@@ -133,283 +140,186 @@
             justify-content: space-between;
             align-items: center;
             background: var(--primary-light);
-            border: 2px solid var(--primary-blue);
+            border: 3px solid var(--primary-blue);
             border-radius: 20px;
-            padding: 10px 20px;
-            margin-bottom: 20px;
-            font-size: 18px;
+            padding: 12px 25px;
+            margin-bottom: 25px;
+            font-size: 20px;
             font-weight: bold;
             color: var(--primary-blue);
         }
 
-        .feedback {
-            font-size: 24px;
-            font-weight: bold;
-            min-height: 35px;
-            margin: 15px 0;
-        }
-
-        /* --- MINI GAME STYLES --- */
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            max-width: 500px;
-            margin: 0 auto 25px auto;
-        }
-        .card {
-            height: 100px;
-            background: var(--primary-blue);
-            border-radius: 16px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 32px;
-            cursor: pointer;
-            color: white;
-            transition: transform 0.3s;
-            box-shadow: 0 4px 0 var(--primary-dark);
-        }
-        .card.flipped {
-            background: #fff3e0;
-            color: #e65100;
-            transform: rotateY(180deg);
-            box-shadow: none;
-        }
-
-        /* Puzzle Drag Drop Area */
-        .puzzle-area {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin: 20px 0;
-        }
-        .drag-column, .drop-column {
+        /* --- GAMEPLAY BUTTON OPTIONS --- */
+        .options-container {
             display: flex;
             flex-direction: column;
-            gap: 15px;
-        }
-        .drag-item {
-            padding: 15px;
-            background: #bbdefb;
-            border-radius: 15px;
-            cursor: grab;
-            font-size: 18px;
-            font-weight: bold;
-            border: 2px solid #90caf9;
-            box-shadow: 0 4px 0 #90caf9;
-        }
-        .drop-box {
-            width: 220px;
-            height: 60px;
-            border: 3px dashed var(--primary-blue);
-            border-radius: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 16px;
-            font-weight: bold;
-            background: #f8fafc;
+            gap: 16px;
+            max-width: 550px;
+            margin: 20px auto;
         }
 
-        /* Canvas Workspace */
-        .canvas-container {
-            margin: 15px 0;
-            display: flex;
-            justify-content: center;
-        }
-        canvas {
-            border: 4px solid #334155;
-            border-radius: 20px;
-            background: white;
-            box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);
-            touch-action: none;
-            max-width: 100%;
-        }
-        .color-box, .stamp-box {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 12px;
-            flex-wrap: wrap;
-        }
-        .color {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
+        .option-btn {
+            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+            color: var(--text-main);
+            border: 4px solid var(--primary-blue);
+            padding: 20px 30px;
+            border-radius: 24px;
+            font-size: 24px;
+            font-weight: bold;
             cursor: pointer;
-            border: 3px solid white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        .stamp {
-            width: 55px;
-            height: 55px;
-            background: #ffe082;
-            border-radius: 12px;
+            box-shadow: 0 6px 0 var(--primary-dark);
+            transition: all 0.1s ease;
             display: flex;
-            justify-content: center;
             align-items: center;
-            font-size: 28px;
-            cursor: pointer;
-            box-shadow: 0 3px 0 #cbd5e1;
+            justify-content: center;
+            gap: 15px;
+            text-align: center;
         }
-        .stamp:active {
-            transform: translateY(3px);
-            box-shadow: none;
+
+        .option-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 var(--primary-dark);
+        }
+
+        /* Feedback Display */
+        .feedback {
+            font-size: 26px;
+            font-weight: bold;
+            min-height: 40px;
+            margin-top: 20px;
+        }
+
+        /* --- END GAME CERTIFICATE DECORATION --- */
+        .certificate-box {
+            border: 5px dashed var(--accent-orange);
+            background: #fffdf9;
+            padding: 25px;
+            border-radius: 24px;
+            margin: 20px 0;
         }
 
         .final-score {
-            font-size: 65px;
+            font-size: 70px;
             font-weight: 900;
             color: var(--accent-orange);
-            margin: 20px 0;
+            margin: 15px 0;
+            text-shadow: 2px 2px 0px #fbe9e7;
         }
 
-        @media(max-width:600px){
-            .card-grid { grid-template-columns: repeat(3, 1fr); }
-            .puzzle-area { flex-direction: column; }
+        @media(max-width: 600px) {
+            h1 { font-size: 28px; }
+            p { font-size: 18px; }
+            .option-btn { font-size: 18px; padding: 15px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. INNOVINE BRANDING SPLASH COVER (Strictly 5 Seconds) -->
+    <!-- 1. BRANDING SPLASH COVER (Strictly 5 Seconds) -->
     <div id="brand-splash">
         <img src="assets/innovine-logo.png" alt="Innovine Logo">
     </div>
 
-    <!-- 2. LOGIN & SETUP SCREEN -->
+    <!-- 2. SETUP PANEL -->
     <div id="screen-intro" class="screen">
-        <h2 style="color:var(--accent-orange);">Chapter 10 - Introduction to Tux Paint</h2>
-        <h1>🎨 Tux Paint Super Adventure</h1>
-        <p>Welcome! Enter your details to start the creative drawing mission:</p>
+        <h2 style="color:var(--accent-orange);">Chapter 10 - Intro to Tux Paint</h2>
+        <h1>🎨 Tux Paint Creative Match</h1>
+        <p>Enter your details to start the learning challenge:</p>
         
         <div class="form-container">
-            <input type="text" id="studentName" placeholder="Enter Student Name" required>
-            <input type="text" id="studentClass" placeholder="Enter Class">
-            <input type="text" id="schoolName" placeholder="Enter School Name">
+            <input type="text" id="studentName" placeholder="✨ Enter Student Name" required>
+            <input type="text" id="studentClass" placeholder="🏫 Enter Class / Grade">
+            <input type="text" id="schoolName" placeholder="🎒 Enter School Name">
         </div>
 
         <button class="btn" onclick="validateAndProceed()">Start Learning Adventure 🚀</button>
     </div>
 
-    <!-- 3. INSTRUCTIONS / MENU SCREEN -->
-    <div id="screen-instructions" class="screen">
-        <h1>🧭 Your Adventure Rules</h1>
-        <p style="font-size: 20px; font-weight: bold; color: var(--primary-blue);">Complete all 3 missions sequentially to become a Tux Paint Master!</p>
-        <div style="text-align: left; max-width: 500px; margin: 20px auto; font-size: 18px; line-height: 1.6; color: var(--text-main);">
-            ⭐ <b>Mission 1:</b> Match the Tux Paint terms and unscramble words.<br>
-            ⭐ <b>Mission 2:</b> Drag and drop tool names to their purposes.<br>
-            ⭐ <b>Mission 3:</b> Express yourself with dynamic stamps and paints!
-        </div>
-        <button class="btn" onclick="startMemoryGame()">Let's Go! 🗺️</button>
-    </div>
-
-    <!-- 4. MISSION 1: MEMORY & UNSCRAMBLE -->
-    <div id="screen-memory" class="screen">
+    <!-- 3. MAIN GAMEPLAY SCREEN -->
+    <div id="screen-gameplay" class="screen">
         <div class="status-hud">
-            <div>🎯 Mission 1: Matching Panel</div>
-            <div>⭐ Current Score: <span id="hud-score-1">0</span></div>
-        </div>
-        <h2>🧠 Tux Paint Tool Match</h2>
-        <p>Find the identical tool boxes below:</p>
-
-        <div class="card-grid" id="memoryGrid"></div>
-
-        <div id="scramble-section" style="display:none; border-top: 3px dashed var(--primary-blue); padding-top: 20px;">
-            <h2>🔤 Unscramble the Secret Tool</h2>
-            <div style="font-size: 38px; letter-spacing: 8px; font-weight: bold; color: var(--primary-blue); margin-bottom: 15px;">P M A S T</div>
-            <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
-                <button class="btn" style="font-size:16px; padding:10px 20px;" onclick="checkScramble('SHAPE')">SHAPE</button>
-                <button class="btn" style="font-size:16px; padding:10px 20px;" onclick="checkScramble('STAMP')">STAMP</button>
-                <button class="btn" style="font-size:16px; padding:10px 20px;" onclick="checkScramble('MAGIC')">MAGIC</button>
-            </div>
+            <div id="hud-round">Round: 1 / 5</div>
+            <div>⭐ Score: <span id="hud-score">0</span></div>
         </div>
 
-        <div class="feedback" id="memoryFeedback"></div>
+        <h2 style="color: var(--primary-dark); margin-bottom: 10px;">Question:</h2>
+        <p id="question-text">Loading question...</p>
+
+        <div class="options-container" id="options-box">
+            <!-- Dynamic Buttons will render here -->
+        </div>
+
+        <div class="feedback" id="gameplay-feedback"></div>
     </div>
 
-    <!-- 5. MISSION 2: DRAG & DROP PUZZLE -->
-    <div id="screen-puzzle" class="screen">
-        <div class="status-hud">
-            <div>🎯 Mission 2: Tool Connection</div>
-            <div>⭐ Current Score: <span id="hud-score-2">0</span></div>
-        </div>
-        <h1>🧩 Drag & Drop Tool Puzzle</h1>
-        <p>Grab the tools on the left and drop them into their correct work box!</p>
-
-        <div class="puzzle-area">
-            <div class="drag-column">
-                <div class="drag-item" draggable="true" id="brush" ondragstart="drag(event)">🖌 Brush Tool</div>
-                <div class="drag-item" draggable="true" id="shape" ondragstart="drag(event)">⬜ Shapes Tool</div>
-                <div class="drag-item" draggable="true" id="stamp" ondragstart="drag(event)">⭐ Stamp Tool</div>
-            </div>
-            <div class="drop-column">
-                <div class="drop-box" data-answer="brush" ondragover="allowDrop(event)" ondrop="drop(event)">Draw Freehand</div>
-                <div class="drop-box" data-answer="shape" ondragover="allowDrop(event)" ondrop="drop(event)">Draw Shapes</div>
-                <div class="drop-box" data-answer="stamp" ondragover="allowDrop(event)" ondrop="drop(event)">Insert Pictures</div>
-            </div>
-        </div>
-
-        <div class="feedback" id="puzzleFeedback"></div>
-    </div>
-
-    <!-- 6. MISSION 3: COLORING CANVAS & STAMPS -->
-    <div id="screen-coloring" class="screen">
-        <div class="status-hud">
-            <div>🎯 Mission 3: Creative Canvas</div>
-            <div>⭐ Current Score: <span id="hud-score-3">0</span></div>
-        </div>
-        <h1>🎨 Tux Paint Coloring Activity</h1>
-        <p>Use your mouse/finger to paint, or tap tools to add canvas stamps!</p>
-
-        <div class="canvas-container">
-            <canvas id="paintCanvas" width="700" height="320"></canvas>
-        </div>
-
-        <div class="color-box">
-            <div class="color" style="background:red" onclick="changeColor('red')"></div>
-            <div class="color" style="background:blue" onclick="changeColor('blue')"></div>
-            <div class="color" style="background:green" onclick="changeColor('green')"></div>
-            <div class="color" style="background:yellow" onclick="changeColor('yellow')"></div>
-            <div class="color" style="background:black" onclick="changeColor('black')"></div>
-            <div class="color" style="background:pink" onclick="changeColor('pink')"></div>
-        </div>
-
-        <div class="stamp-box">
-            <div class="stamp" onclick="addStamp('⭐')">⭐</div>
-            <div class="stamp" onclick="addStamp('❤️')">❤️</div>
-            <div class="stamp" onclick="addStamp('🌈')">🌈</div>
-            <div class="stamp" onclick="addStamp('⬜')">⬜</div>
-            <div class="stamp" onclick="addStamp('⭕')">⭕</div>
-        </div>
-
-        <div style="margin-top: 20px;">
-            <button class="btn" style="background:#b0bec5; box-shadow:0 6px 0 #78909c;" onclick="clearCanvas()">🧹 Clear</button>
-            <button class="btn" onclick="finishColoring()">Finish Activity ✅</button>
-        </div>
-    </div>
-
-    <!-- 7. FINAL COMPLETION SCOREBOARD SCREEN -->
+    <!-- 4. END-GAME EVALUATION SCREEN -->
     <div id="screen-final" class="screen">
-        <h1>🏆 Congratulations Explorer!</h1>
-        <p id="finalText" style="font-size:22px; font-weight:bold;"></p>
-        <div class="final-score" id="finalScore">0 Points</div>
-        <h2 id="rankText" style="color: var(--primary-blue);"></h2>
+        <h1>🏆 Challenge Completed!</h1>
+        
+        <div class="certificate-box">
+            <p id="finalText" style="font-size: 26px; color: var(--primary-dark); margin-bottom: 10px;"></p>
+            <div class="final-score" id="finalScore">0 / 5 Points</div>
+            <h2 id="rankText" style="color: var(--correct-green); font-size: 32px; font-weight: 900;"></h2>
+        </div>
+
         <button class="btn" onclick="location.reload()">🔄 Play Again</button>
     </div>
 
-    <!-- AUDIO FILES STRUCTURE AS PER ASSET INVENTORY -->
+    <!-- CORE AUDIO FEEDBACK LINKS -->
     <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <script>
         let studentName = "";
+        let currentRoundIndex = 0;
         let totalScore = 0;
+        let canTap = true;
 
-        // Sequence Manager
+        // Finite Round Challenges Configuration
+        const quizRounds = [
+            {
+                question: "Tux Penguin wants to clear a mistake on his canvas. Which tool should he use?",
+                options: [
+                    { text: "🧽 Eraser Tool", isCorrect: true },
+                    { text: "🎨 Paint Tool", isCorrect: false },
+                    { text: "🖼️ New Canvas", isCorrect: false }
+                ]
+            },
+            {
+                question: "We want to add a pre-made funny picture of a frog or a tree to our drawing. Choose the tool:",
+                options: [
+                    { text: "✏️ Lines Tool", isCorrect: false },
+                    { text: "🧸 Stamp Tool", isCorrect: true },
+                    { text: "🅰️ Text Tool", isCorrect: false }
+                ]
+            },
+            {
+                question: "Let's add magical special effects like rainbows, grass, or chalk lines! Which tool is it?",
+                options: [
+                    { text: "🪄 Magic Tool", isCorrect: true },
+                    { text: "🛑 Quit Tool", isCorrect: false },
+                    { text: "📐 Shapes Tool", isCorrect: false }
+                ]
+            },
+            {
+                question: "We want to type our name or write a story on our drawing. Which tool helps us write?",
+                options: [
+                    { text: "🎨 Paint Tool", isCorrect: false },
+                    { text: "🅰️ Text Tool", isCorrect: true },
+                    { text: "🧽 Eraser Tool", isCorrect: false }
+                ]
+            },
+            {
+                question: "We love our masterpiece and want to keep it safe so we can look at it tomorrow! Tap the tool:",
+                options: [
+                    { text: "❌ Undo Tool", isCorrect: false },
+                    { text: "📂 Open Tool", isCorrect: false },
+                    { text: "💾 Save Tool", isCorrect: true }
+                ]
+            }
+        ];
+
+        // Frame Routing Manager
         function navigateTo(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
@@ -427,16 +337,18 @@
             }, 5000);
         });
 
+        // Form Verification
         function validateAndProceed() {
             studentName = document.getElementById('studentName').value.trim();
             if (!studentName) {
-                alert("Please enter your name to begin the adventure!");
+                alert("Please enter your name to begin the match!");
                 return;
             }
-            navigateTo('screen-instructions');
+            startQuizChallenge();
         }
 
-        function playSound(isCorrect) {
+        // Sound Engine
+        function playFeedbackSound(isCorrect) {
             const audio = document.getElementById(isCorrect ? 'snd-correct' : 'snd-wrong');
             if (audio) {
                 audio.currentTime = 0;
@@ -444,203 +356,102 @@
             }
         }
 
-        /* --- MISSION 1: MEMORY MATCH SYSTEM --- */
-        const items = ['🎨 Paint', '🎨 Paint', '✨ Magic', '✨ Magic', '📂 Open', '📂 Open'];
-        let flipped = [];
-        let matchedPairs = 0;
+        // Initialize Gameplay Loop
+        function startQuizChallenge() {
+            currentRoundIndex = 0;
+            totalScore = 0;
+            navigateTo('screen-gameplay');
+            loadRound();
+        }
 
-        function startMemoryGame() {
-            navigateTo('screen-memory');
-            const grid = document.getElementById('memoryGrid');
-            grid.innerHTML = '';
+        // Core Game Round Processor
+        function loadRound() {
+            canTap = true;
+            const feedbackEl = document.getElementById('gameplay-feedback');
+            feedbackEl.innerText = "";
             
-            // Random shuffle pairs
-            items.sort(() => 0.5 - Math.random());
-            items.forEach((item, index) => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.dataset.value = item;
-                card.dataset.index = index;
-                card.innerText = '❓';
-                card.onclick = () => handleFlip(card);
-                grid.appendChild(card);
+            const roundData = quizRounds[currentRoundIndex];
+            
+            // Render Progress Info
+            document.getElementById('hud-round').innerText = `Round: ${currentRoundIndex + 1} / 5`;
+            document.getElementById('hud-score').innerText = totalScore;
+            document.getElementById('question-text').innerText = roundData.question;
+
+            // Generate Button Layout
+            const optionsBox = document.getElementById('options-box');
+            optionsBox.innerHTML = "";
+
+            roundData.options.forEach(opt => {
+                const button = document.createElement('button');
+                button.className = "option-btn";
+                button.innerText = opt.text;
+                button.onclick = () => handleAnswerSelection(opt, button);
+                optionsBox.appendChild(button);
             });
         }
 
-        function handleFlip(card) {
-            if (card.classList.contains('flipped') || flipped.length >= 2) return;
+        // Evaluator Block
+        function handleAnswerSelection(option, selectedButton) {
+            if (!canTap) return;
 
-            card.classList.add('flipped');
-            card.innerText = card.dataset.value;
-            flipped.push(card);
+            const feedbackEl = document.getElementById('gameplay-feedback');
 
-            if (flipped.length === 2) {
-                if (flipped[0].dataset.value === flipped[1].dataset.value) {
-                    matchedPairs++;
-                    totalScore += 2;
-                    document.getElementById('hud-score-1').innerText = totalScore;
-                    document.getElementById('memoryFeedback').innerText = "✅ Excellent Match!";
-                    document.getElementById('memoryFeedback').style.color = "green";
-                    playSound(true);
-                    flipped = [];
-
-                    if (matchedPairs === 3) {
-                        document.getElementById('scramble-section').style.display = 'block';
-                    }
-                } else {
-                    document.getElementById('memoryFeedback').innerText = "❌ Try to remember!";
-                    document.getElementById('memoryFeedback').style.color = "red";
-                    playSound(false);
-                    setTimeout(() => {
-                        flipped.forEach(c => {
-                            c.classList.remove('flipped');
-                            c.innerText = '❓';
-                        });
-                        flipped = [];
-                    }, 1000);
-                }
-            }
-        }
-
-        function checkScramble(ans) {
-            if (ans === 'STAMP') {
-                totalScore += 4;
-                document.getElementById('hud-score-1').innerText = totalScore;
-                document.getElementById('memoryFeedback').innerText = "🎉 Fantastic! Stamp Tool unlocked.";
-                document.getElementById('memoryFeedback').style.color = "green";
-                playSound(true);
-                setTimeout(() => startPuzzleGame(), 1500);
-            } else {
-                document.getElementById('memoryFeedback').innerText = "❌ Not quite! Try again.";
-                document.getElementById('memoryFeedback').style.color = "red";
-                playSound(false);
-            }
-        }
-
-        /* --- MISSION 2: DRAG AND DROP PUZZLE --- */
-        let placementCount = 0;
-
-        function startPuzzleGame() {
-            document.getElementById('hud-score-2').innerText = totalScore;
-            navigateTo('screen-puzzle');
-        }
-
-        function allowDrop(ev) { ev.preventDefault(); }
-        function drag(ev) { ev.dataTransfer.setData("text", ev.target.id); }
-
-        function drop(ev) {
-            ev.preventDefault();
-            const draggedId = ev.dataTransfer.getData("text");
-            const dropBox = ev.currentTarget;
-
-            if (dropBox.getAttribute('data-answer') === draggedId) {
-                const itemEl = document.getElementById(draggedId);
-                dropBox.innerHTML = "✅ " + itemEl.innerText;
-                dropBox.style.background = "#e8f5e9";
-                dropBox.style.borderColor = "green";
-                itemEl.style.visibility = "hidden";
+            if (option.isCorrect) {
+                canTap = false;
+                totalScore++;
+                document.getElementById('hud-score').innerText = totalScore;
                 
-                totalScore += 3;
-                placementCount++;
-                document.getElementById('hud-score-2').innerText = totalScore;
-                document.getElementById('puzzleFeedback').innerText = "⭐ Matched successfully!";
-                document.getElementById('puzzleFeedback').style.color = "green";
-                playSound(true);
+                selectedButton.style.background = "linear-gradient(180deg, #81c784 0%, var(--correct-green) 100%)";
+                selectedButton.style.borderColor = "var(--correct-dark)";
+                selectedButton.style.color = "white";
+                
+                feedbackEl.innerText = "🎉 Excellent Job! That is Correct!";
+                feedbackEl.style.color = "var(--correct-dark)";
+                playFeedbackSound(true);
 
-                if (placementCount === 3) {
-                    setTimeout(() => startColoringGame(), 1500);
-                }
+                // Advance automatically after 1.5 seconds
+                setTimeout(() => {
+                    currentRoundIndex++;
+                    if (currentRoundIndex < quizRounds.length) {
+                        loadRound();
+                    } else {
+                        showFinalEvaluation();
+                    }
+                }, 1500);
             } else {
-                document.getElementById('puzzleFeedback').innerText = "❌ Look closer at the description!";
-                document.getElementById('puzzleFeedback').style.color = "red";
-                playSound(false);
+                selectedButton.style.background = "linear-gradient(180deg, #e57373 0%, #f44336 100%)";
+                selectedButton.style.borderColor = "#b71c1c";
+                selectedButton.style.color = "white";
+                
+                feedbackEl.innerText = "❌ Try again! You can do it!";
+                feedbackEl.style.color = "#d32f2f";
+                playFeedbackSound(false);
             }
         }
 
-        /* --- MISSION 3: COLORING CANVAS CANVAS ACTIONS --- */
-        const canvas = document.getElementById('paintCanvas');
-        const ctx = canvas.getContext('2d');
-        let drawing = false;
-        let penColor = 'black';
-
-        function startColoringGame() {
-            document.getElementById('hud-score-3').innerText = totalScore;
-            navigateTo('screen-coloring');
-            setupCanvasEngine();
-        }
-
-        function setupCanvasEngine() {
-            ctx.lineWidth = 6;
-            ctx.lineCap = 'round';
-
-            // Desktop events
-            canvas.addEventListener('mousedown', (e) => { drawing = true; paint(e); });
-            canvas.addEventListener('mouseup', () => { drawing = false; ctx.beginPath(); });
-            canvas.addEventListener('mousemove', paint);
-
-            // Mobile compatibility
-            canvas.addEventListener('touchstart', (e) => { drawing = true; paintTouch(e); });
-            canvas.addEventListener('touchend', () => { drawing = false; ctx.beginPath(); });
-            canvas.addEventListener('touchmove', paintTouch);
-        }
-
-        function paint(e) {
-            if (!drawing) return;
-            const rect = canvas.getBoundingClientRect();
-            ctx.strokeStyle = penColor;
-            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
-        }
-
-        function paintTouch(e) {
-            if (!drawing) return;
-            e.preventDefault();
-            const rect = canvas.getBoundingClientRect();
-            const touch = e.touches[0];
-            ctx.strokeStyle = penColor;
-            ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
-        }
-
-        function changeColor(c) { penColor = c; }
-        function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
-
-        function addStamp(stampEmoji) {
-            ctx.font = '48px serif';
-            const randomX = 50 + Math.random() * (canvas.width - 100);
-            const randomY = 50 + Math.random() * (canvas.height - 100);
-            ctx.fillText(stampEmoji, randomX, randomY);
-            playSound(true);
-        }
-
-        function finishColoring() {
-            totalScore += 5; // Finish award
-            playSound(true);
-            showFinalScoreboard();
-        }
-
-        /* --- FINAL REPORT AND PERFORMANCE STAMP --- */
-        function showFinalScoreboard() {
+        // End Game Final Screen Layout
+        function showFinalEvaluation() {
             navigateTo('screen-final');
-            document.getElementById('finalText').innerHTML = `🎉 Amazing Effort, <b>${studentName}</b>!`;
-            document.getElementById('finalScore').innerText = `${totalScore} / 20 Points`;
+            document.getElementById('finalText').innerHTML = `Congratulations, <b>${studentName}</b>!`;
+            document.getElementById('finalScore').innerText = `${totalScore} / 5 Points`;
 
-            let ranking = "";
-            if (totalScore >= 18) {
-                ranking = "🏆 Elite Tux Paint Architect";
-            } else if (totalScore >= 12) {
-                ranking = "🌟 Creative Digital Artist";
+            // Interactive Title Grading
+            let rankingText = "";
+            if (totalScore === 5) {
+                rankingText = "👑 Master Tux Artist";
+            } else if (totalScore >= 3) {
+                rankingText = "🌟 Creative Digital Artist";
             } else {
-                ranking = "🎨 Bright Explorer";
+                rankingText = "🎨 Bright Explorer";
             }
-            document.getElementById('rankText').innerText = ranking;
+            document.getElementById('rankText').innerText = rankingText;
 
-            // Trigger burst effect
-            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+            // Trigger Confetti Blast
+            confetti({
+                particleCount: 180,
+                spread: 85,
+                origin: { y: 0.6 }
+            });
         }
     </script>
 </body>

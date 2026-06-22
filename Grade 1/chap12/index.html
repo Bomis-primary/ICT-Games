@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Chapter 12 ICT Adventure</title>
+<title>ICT Adventure</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -24,6 +24,27 @@ display:flex;
 justify-content:center;
 align-items:center;
 padding:20px;
+overflow-x:hidden;
+}
+
+/* --- BRANDING SPLASH SCREEN (Strict 5 Seconds) --- */
+#brand-splash {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100vh;
+background-color: #ffffff;
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 10000;
+transition: opacity 0.5s ease;
+}
+#brand-splash img {
+max-width: 65%;
+max-height: 70vh;
+object-fit: contain;
 }
 
 .screen{
@@ -35,9 +56,15 @@ padding:25px;
 border-radius:30px;
 box-shadow:0 10px 25px rgba(0,0,0,0.2);
 text-align:center;
+animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.active{
+@keyframes popUp {
+0% { transform: scale(0.95); opacity: 0; }
+100% { transform: scale(1); opacity: 1; }
+}
+
+.screen.active{
 display:block;
 }
 
@@ -67,10 +94,12 @@ font-size:18px;
 font-weight:bold;
 cursor:pointer;
 margin:10px;
+transition: 0.2s ease;
 }
 
 .btn:hover{
 transform:scale(1.05);
+background: #e64a19;
 }
 
 input{
@@ -80,6 +109,7 @@ border-radius:12px;
 border:2px solid #ccc;
 font-size:18px;
 margin:10px 0;
+text-align: center;
 }
 
 .image-options{
@@ -102,6 +132,8 @@ flex-direction:column;
 justify-content:center;
 align-items:center;
 transition:0.3s;
+font-weight: bold;
+font-size: 18px;
 }
 
 .image-card:hover{
@@ -175,6 +207,7 @@ font-size:18px;
 font-weight:bold;
 cursor:pointer;
 color:white;
+transition: background-color 0.2s ease;
 }
 
 .card.flipped{
@@ -249,74 +282,50 @@ height:55px;
 
 <body>
 
-<audio id="correctSound" src="assets/correct-1.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="correctSound" src="assets/correct-1.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 
-<!-- INTRO -->
-
-<div id="intro" class="screen active">
-
-<div class="topbar">
-<img src="assets/innovine-logo.png" class="logo">
+<div id="brand-splash">
+<img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
 
-<h1>🎮Calculator and Music Player</h1>
+<div id="intro" class="screen">
+<h1>🎮 Calculator and Music Player</h1>
+<p style="font-size: 18px; color: #555; margin-bottom: 15px;">Welcome Art Explorer! Sign in below to enter the match arena.</p>
 
-<input type="text" id="studentName" placeholder="Enter Student Name">
+<div style="max-width: 420px; margin: 0 auto 15px auto;">
+<input type="text" id="studentName" placeholder="👤 Enter Student Name">
+</div>
 
 <button class="btn" onclick="showMenu()">
 🚀 Start Game
 </button>
-
 </div>
-
-<!-- MENU -->
 
 <div id="menu" class="screen">
-
-<div class="topbar">
-<img src="assets/innovine-logo.png" class="logo">
-</div>
-
 <h1>Choose Activity</h1>
 
 <button class="btn" onclick="startImageGame()">🖼️ Click Image</button>
-
 <button class="btn" onclick="startDragGame()">🧩 Drag & Drop</button>
-
 <button class="btn" onclick="startMemoryGame()">🧠 Memory Match</button>
-
 <button class="btn" onclick="startMazeGame()">🛣️ Maze Puzzle</button>
-
 </div>
-
-<!-- IMAGE GAME -->
 
 <div id="imageScreen" class="screen">
-
-<div class="topbar">
-<img src="assets/innovine-logo.png" class="logo">
-</div>
-
 <h1>🖼️ Click the Addition Symbol</h1>
 
 <div class="image-options">
-
 <div class="image-card" onclick="checkImage('addition')">
-<img src="assets/addition.png">
-Addition
+<img src="assets/addition.png">Addition
 </div>
 
 <div class="image-card" onclick="checkImage('subtraction')">
-<img src="assets/subtraction.png">
-Subtraction
+<img src="assets/subtraction.png">Subtraction
 </div>
 
 <div class="image-card" onclick="checkImage('equal')">
-<img src="assets/equal.png">
-Equal
+<img src="assets/equal.png">Equal
 </div>
-
 </div>
 
 <div class="feedback" id="imageFeedback"></div>
@@ -324,61 +333,25 @@ Equal
 <button class="btn" onclick="showMenu()">
 ⬅ Back
 </button>
-
 </div>
-
-<!-- DRAG DROP -->
 
 <div id="dragScreen" class="screen">
-
-<div class="topbar">
-<img src="assets/innovine-logo.png" class="logo">
-</div>
-
 <h1>🧩 Match Correct Function</h1>
 
 <div class="drag-container">
-
 <div>
-
-<div class="drag-item" draggable="true" id="play">
-▶ Play
-</div>
-
-<div class="drag-item" draggable="true" id="c">
-C
-</div>
-
-<div class="drag-item" draggable="true" id="ce">
-CE
-</div>
-
-<div class="drag-item" draggable="true" id="plus">
-+
-</div>
-
+<div class="drag-item" draggable="true" id="play">▶ Play</div>
+<div class="drag-item" draggable="true" id="c">C</div>
+<div class="drag-item" draggable="true" id="ce">CE</div>
+<div class="drag-item" draggable="true" id="plus">+</div>
 </div>
 
 <div>
-
-<div class="drop-box" data-answer="play">
-Play Music
+<div class="drop-box" data-answer="play">Play Music</div>
+<div class="drop-box" data-answer="c">Clear Screen</div>
+<div class="drop-box" data-answer="ce">Clear Entry</div>
+<div class="drop-box" data-answer="plus">Addition</div>
 </div>
-
-<div class="drop-box" data-answer="c">
-Clear Screen
-</div>
-
-<div class="drop-box" data-answer="ce">
-Clear Entry
-</div>
-
-<div class="drop-box" data-answer="plus">
-Addition
-</div>
-
-</div>
-
 </div>
 
 <div class="feedback" id="dragFeedback"></div>
@@ -386,69 +359,39 @@ Addition
 <button class="btn" onclick="showMenu()">
 ⬅ Back
 </button>
-
 </div>
-
-<!-- MEMORY -->
 
 <div id="memoryScreen" class="screen">
-
-<div class="topbar">
-<img src="assets/innovine-logo.png" class="logo">
-</div>
-
 <h1>🧠 Memory Match</h1>
 
 <div class="memory-grid" id="memoryGrid"></div>
-
 <div class="feedback" id="memoryFeedback"></div>
 
 <button class="btn" onclick="showMenu()">
 ⬅ Back
 </button>
-
 </div>
-
-<!-- MAZE -->
 
 <div id="mazeScreen" class="screen">
-
-<div class="topbar">
-<img src="assets/innovine-logo.png" class="logo">
-</div>
-
 <h1>🛣️ Reach the Calculator</h1>
 
 <div class="maze" id="maze"></div>
-
 <div class="feedback" id="mazeFeedback"></div>
 
 <button class="btn" onclick="showMenu()">
 ⬅ Back
 </button>
-
 </div>
-
-<!-- FINAL -->
 
 <div id="finalScreen" class="screen">
-
-<div class="topbar">
-<img src="assets/innovine-logo.png" class="logo">
-</div>
-
 <h1>🏆 Congratulations</h1>
-
 <h2 id="finalName"></h2>
-
 <div class="final-score" id="finalScore"></div>
-
 <h2 id="rank"></h2>
 
 <button class="btn" onclick="location.reload()">
 🔄 Play Again
 </button>
-
 </div>
 
 <script>
@@ -456,21 +399,28 @@ Addition
 let totalScore=0;
 let student='';
 
-/* SCREEN */
-
+/* FRAME MANAGEMENT NAVIGATION ENGINE */
 function showScreen(id){
-
 document.querySelectorAll('.screen').forEach(screen=>{
 screen.classList.remove('active');
 });
-
 document.getElementById(id).classList.add('active');
-
 }
 
-function showMenu(){
+// Global hook triggers brand image screen timeout loop for exactly 5 seconds
+window.addEventListener('DOMContentLoaded', () => {
+setTimeout(() => {
+const splash = document.getElementById('brand-splash');
+splash.style.opacity = '0';
+setTimeout(() => {
+splash.style.display = 'none';
+showScreen('intro'); // Instructions and dashboard unlock only after splash timeout
+}, 500);
+}, 5000);
+});
 
-student=document.getElementById('studentName').value;
+function showMenu(){
+student=document.getElementById('studentName').value.trim();
 
 if(student===''){
 alert('Enter Student Name');
@@ -478,102 +428,82 @@ return;
 }
 
 showScreen('menu');
+}
 
+/* AUDIO HELPER RUNTIME FUNCTION */
+function playAudioTrack(id) {
+const track = document.getElementById(id);
+if(track) {
+track.currentTime = 0;
+track.play().catch(e => console.log('Audio launch postponed until interaction event.'));
+}
 }
 
 /* IMAGE GAME */
-
 function startImageGame(){
+document.getElementById('imageFeedback').innerText='';
 showScreen('imageScreen');
 }
 
 function checkImage(ans){
-
 if(ans==='addition'){
-
-document.getElementById('correctSound').play();
-
+playAudioTrack('correctSound');
 document.getElementById('imageFeedback').innerText='🎉 Correct';
-
 document.getElementById('imageFeedback').style.color='green';
-
 totalScore+=2;
-
 }else{
-
-document.getElementById('wrongSound').play();
-
+playAudioTrack('wrongSound');
 document.getElementById('imageFeedback').innerText='❌ Wrong';
-
 document.getElementById('imageFeedback').style.color='red';
-
 }
-
 }
 
 /* DRAG DROP */
-
 function startDragGame(){
+document.getElementById('dragFeedback').innerText='';
 showScreen('dragScreen');
 }
 
 let correctDrops=0;
 
 document.querySelectorAll('.drag-item').forEach(item=>{
-
 item.addEventListener('dragstart',e=>{
 e.dataTransfer.setData('text',e.target.id);
 });
-
 });
 
 document.querySelectorAll('.drop-box').forEach(box=>{
-
 box.addEventListener('dragover',e=>{
 e.preventDefault();
 });
 
 box.addEventListener('drop',e=>{
-
 e.preventDefault();
-
 const data=e.dataTransfer.getData('text');
 
 if(data===box.dataset.answer){
-
 box.style.background='lightgreen';
 box.innerHTML='✅ Correct';
-
 correctDrops++;
-
 totalScore++;
 
-document.getElementById('correctSound').play();
+playAudioTrack('correctSound');
 
 document.getElementById('dragFeedback').innerText='Good Job!';
 document.getElementById('dragFeedback').style.color='green';
 
 if(correctDrops===4){
-
 setTimeout(showFinal,1000);
-
 }
-
 }else{
-
-document.getElementById('wrongSound').play();
-
+playAudioTrack('wrongSound');
 document.getElementById('dragFeedback').innerText='Try Again';
 document.getElementById('dragFeedback').style.color='red';
-
 }
-
+});
 });
 
-});
-
-/* MEMORY */
-
+/* MEMORY Match engine */
 const memoryData=[
 'Addition','Addition',
 'Play','Play',
@@ -585,80 +515,62 @@ let flipped=[];
 let matched=0;
 
 function startMemoryGame(){
-
+document.getElementById('memoryFeedback').innerText='';
 showScreen('memoryScreen');
-
 const grid=document.getElementById('memoryGrid');
-
 grid.innerHTML='';
+matched=0;
 
-memoryData.sort(()=>0.5-Math.random());
+// Duplicate and randomize layout positioning cleanly
+const matchPool = [...memoryData];
+matchPool.sort(()=>0.5-Math.random());
 
-memoryData.forEach(item=>{
-
+matchPool.forEach(item=>{
 const card=document.createElement('div');
-
 card.className='card';
 card.innerHTML='?';
-
 card.onclick=()=>flipCard(card,item);
-
 grid.appendChild(card);
-
 });
-
 }
 
 function flipCard(card,item){
-
-if(card.classList.contains('flipped')) return;
+if(card.classList.contains('flipped') || flipped.length >= 2) return;
 
 card.classList.add('flipped');
-
 card.innerHTML=item;
-
 flipped.push({card,item});
 
 if(flipped.length===2){
-
 if(flipped[0].item===flipped[1].item){
-
 matched++;
-
 totalScore++;
 
-document.getElementById('correctSound').play();
+playAudioTrack('correctSound');
 
 document.getElementById('memoryFeedback').innerText='✅ Match Found';
 document.getElementById('memoryFeedback').style.color='green';
-
 flipped=[];
 
 if(matched===4){
 setTimeout(showFinal,1000);
 }
-
 }else{
-
+playAudioTrack('wrongSound');
+document.getElementById('memoryFeedback').innerText='❌ Keep Searching!';
+document.getElementById('memoryFeedback').style.color='red';
 setTimeout(()=>{
-
 flipped.forEach(f=>{
 f.card.classList.remove('flipped');
 f.card.innerHTML='?';
 });
-
 flipped=[];
-
 },1000);
-
+}
+}
 }
 
-}
-
-}
-
-/* MAZE */
-
+/* MAZE NAVIGATION ENGINE MATRIX */
 const mazeLayout=[
 ['P','','','',''],
 ['','W','W','',''],
@@ -670,25 +582,19 @@ const mazeLayout=[
 let playerPos={x:0,y:0};
 
 function startMazeGame(){
-
+document.getElementById('mazeFeedback').innerText='';
+playerPos={x:0,y:0};
 showScreen('mazeScreen');
-
 renderMaze();
-
 }
 
 function renderMaze(){
-
 const maze=document.getElementById('maze');
-
 maze.innerHTML='';
 
 mazeLayout.forEach((row,y)=>{
-
 row.forEach((cell,x)=>{
-
 const div=document.createElement('div');
-
 div.className='cell';
 
 if(cell==='W') div.classList.add('wall');
@@ -704,86 +610,58 @@ div.innerHTML='😀';
 }
 
 div.onclick=()=>movePlayer(x,y);
-
 maze.appendChild(div);
-
 });
-
 });
-
 }
 
 function movePlayer(x,y){
-
 if(mazeLayout[y][x]==='W'){
-
-document.getElementById('wrongSound').play();
-
+playAudioTrack('wrongSound');
 return;
-
 }
 
 const dx=Math.abs(playerPos.x-x);
 const dy=Math.abs(playerPos.y-y);
 
 if(dx+dy===1){
-
 playerPos={x,y};
-
 renderMaze();
 
 if(mazeLayout[y][x]==='G'){
-
-document.getElementById('correctSound').play();
-
+playAudioTrack('correctSound');
 document.getElementById('mazeFeedback').innerText='🎉 You Reached Calculator!';
 document.getElementById('mazeFeedback').style.color='green';
-
 totalScore+=3;
 
 setTimeout(showFinal,1000);
-
+}
+}
 }
 
-}
-
-}
-
-/* FINAL */
-
+/* FINAL CELEBRATIONAL SCREEN METRICS */
 function showFinal(){
-
 showScreen('finalScreen');
 
-document.getElementById('finalName').innerHTML=
-`Amazing Work <b>${student}</b>`;
-
-document.getElementById('finalScore').innerText=
-`${totalScore} Points`;
+document.getElementById('finalName').innerHTML=`Amazing Work <b>${student}</b>`;
+document.getElementById('finalScore').innerText=`${totalScore} Points`;
 
 let rank='';
-
 if(totalScore>=10){
-
 rank='🏆 ICT Champion';
-
 }else if(totalScore>=6){
-
 rank='🌟 Smart Learner';
-
 }else{
-
 rank='👍 Keep Practicing';
-
 }
-
 document.getElementById('rank').innerText=rank;
 
+// Confetti reward detonation event
 confetti({
 particleCount:200,
-spread:100
+spread:100,
+origin: { y: 0.6 }
 });
-
 }
 
 </script>

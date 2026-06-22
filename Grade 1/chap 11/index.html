@@ -24,6 +24,27 @@ display:flex;
 justify-content:center;
 align-items:center;
 padding:20px;
+overflow-x:hidden;
+}
+
+/* --- BRANDING SPLASH SCREEN (Strict 5 Seconds) --- */
+#brand-splash {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100vh;
+background-color: #ffffff;
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 10000;
+transition: opacity 0.5s ease;
+}
+#brand-splash img {
+max-width: 65%;
+max-height: 70vh;
+object-fit: contain;
 }
 
 .screen{
@@ -35,15 +56,16 @@ padding:25px;
 border-radius:30px;
 box-shadow:0 10px 25px rgba(0,0,0,0.2);
 text-align:center;
+animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.active{
+@keyframes popUp {
+0% { transform: scale(0.95); opacity: 0; }
+100% { transform: scale(1); opacity: 1; }
+}
+
+.screen.active{
 display:block;
-}
-
-.logo{
-width:160px;
-margin-bottom:15px;
 }
 
 h1{
@@ -82,6 +104,7 @@ border-radius:12px;
 border:2px solid #ccc;
 font-size:18px;
 margin:12px 0;
+text-align: center;
 }
 
 .status{
@@ -269,39 +292,30 @@ height:150px;
 
 <body>
 
-<audio id="correctSound" src="assets/correct-1.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="correctSound" src="assets/correct-1.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
 
-<!-- INTRO -->
+<div id="brand-splash">
+<img src="assets/innovine-logo.png" alt="Innovine Logo">
+</div>
 
-<div id="intro" class="screen active">
-
-<img src="assets/innovine-logo.png" class="logo">
-
+<div id="intro" class="screen">
 <h1>🧭 Direction Adventure Game</h1>
+<p class="subtitle">Chapter 11 - Directions & Positions</p>
 
-<p class="subtitle">
-Chapter 11 - Directions & Positions
-</p>
-
-<input type="text" id="studentName" placeholder="Enter Student Name">
-
-<input type="text" id="studentClass" placeholder="Enter Class">
-
-<input type="text" id="schoolName" placeholder="Enter School Name">
+<div style="max-width: 450px; margin: 0 auto 15px auto;">
+<input type="text" id="studentName" placeholder="👤 Enter Student Name">
+<input type="text" id="studentClass" placeholder="🏫 Enter Class">
+<input type="text" id="schoolName" placeholder="🏢 Enter School Name">
+</div>
 
 <button class="btn" onclick="showMenu()">
 🚀 Start Adventure
 </button>
-
 </div>
 
-<!-- MENU -->
-
 <div id="menu" class="screen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
 <h1>🎮 Choose Activity</h1>
 
 <button class="btn" onclick="startMemoryGame()">
@@ -319,53 +333,31 @@ Chapter 11 - Directions & Positions
 <button class="btn" onclick="startImageGame()">
 🖼️ Image Click Game
 </button>
-
 </div>
 
-<!-- MEMORY -->
-
 <div id="memoryGame" class="screen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
 <h1>🧠 Memory Match</h1>
 
 <div class="status">
-
 <div>⭐ Score: <span id="memoryScore">0</span></div>
-
 <div>🏅 Matches: <span id="matches">0</span>/4</div>
-
 </div>
 
 <div class="card-grid" id="memoryGrid"></div>
-
 <div class="feedback" id="memoryFeedback"></div>
 
 <button class="btn" onclick="showMenu()">
 ⬅ Back
 </button>
-
 </div>
 
-<!-- UNSCRAMBLE -->
-
 <div id="unscrambleGame" class="screen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
 <h1>🔤 Unscramble Words</h1>
 
 <div class="scramble-box">
-
-<h2 id="scrambleTitle">
-Arrange the Correct Word
-</h2>
-
+<h2 id="scrambleTitle">Arrange the Correct Word</h2>
 <div class="scramble-word" id="scrambleWord"></div>
-
 <div class="option-row" id="scrambleOptions"></div>
-
 </div>
 
 <div class="feedback" id="unscrambleFeedback"></div>
@@ -377,61 +369,26 @@ Next Word ➜
 <button class="btn" onclick="showMenu()">
 ⬅ Back
 </button>
-
 </div>
 
-<!-- DRAG GAME -->
-
 <div id="dragGame" class="screen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
 <h1>🧩 Drag & Drop Game</h1>
-
 <p>Match the Direction with Correct Meaning</p>
 
 <div class="drag-container">
-
 <div>
-
-<div class="drag-item" draggable="true" id="forward">
-Forward
-</div>
-
-<div class="drag-item" draggable="true" id="backward">
-Backward
-</div>
-
-<div class="drag-item" draggable="true" id="corner">
-Corner
-</div>
-
-<div class="drag-item" draggable="true" id="next">
-Next To
-</div>
-
+<div class="drag-item" draggable="true" id="forward">Forward</div>
+<div class="drag-item" draggable="true" id="backward">Backward</div>
+<div class="drag-item" draggable="true" id="corner">Corner</div>
+<div class="drag-item" draggable="true" id="next">Next To</div>
 </div>
 
 <div>
-
-<div class="drop-box" data-answer="forward">
-Move Ahead
+<div class="drop-box" data-answer="forward">Move Ahead</div>
+<div class="drop-box" data-answer="backward">Move Back</div>
+<div class="drop-box" data-answer="corner">Edge of Room</div>
+<div class="drop-box" data-answer="next">Beside Something</div>
 </div>
-
-<div class="drop-box" data-answer="backward">
-Move Back
-</div>
-
-<div class="drop-box" data-answer="corner">
-Edge of Room
-</div>
-
-<div class="drop-box" data-answer="next">
-Beside Something
-</div>
-
-</div>
-
 </div>
 
 <div class="feedback" id="dragFeedback"></div>
@@ -439,44 +396,24 @@ Beside Something
 <button class="btn" onclick="showMenu()">
 ⬅ Back
 </button>
-
 </div>
 
-<!-- IMAGE CLICK GAME -->
-
 <div id="imageGame" class="screen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
 <h1>🖼️ Click Correct Image</h1>
-
-<h2 id="imageQuestion">
-Click the picture showing FORWARD
-</h2>
+<h2 id="imageQuestion">Click the picture showing FORWARD</h2>
 
 <div class="image-options">
-
 <div class="image-card" onclick="checkImageAnswer('forward')">
-
-<img src="assets/forward.png">
-FORWARD
-
+<img src="assets/forward.png">FORWARD
 </div>
 
 <div class="image-card" onclick="checkImageAnswer('backward')">
-
-<img src="assets/backward.png">
-BACKWARD
-
+<img src="assets/backward.png">BACKWARD
 </div>
 
 <div class="image-card" onclick="checkImageAnswer('corner')">
-
-<img src="assets/corner.png">
-CORNER
-
+<img src="assets/corner.png">CORNER
 </div>
-
 </div>
 
 <div class="feedback" id="imageFeedback"></div>
@@ -484,27 +421,17 @@ CORNER
 <button class="btn" onclick="showMenu()">
 ⬅ Back
 </button>
-
 </div>
 
-<!-- FINAL -->
-
 <div id="final" class="screen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
 <h1>🏆 Congratulations!</h1>
-
 <p id="finalText"></p>
-
 <div class="final-score" id="finalScore"></div>
-
 <h2 id="rankText"></h2>
 
 <button class="btn" onclick="location.reload()">
 🔄 Play Again
 </button>
-
 </div>
 
 <script>
@@ -512,20 +439,27 @@ CORNER
 let student="";
 let totalScore=0;
 
-/* SCREEN */
-
+/* SCREEN MANAGEMENT */
 function showScreen(id){
-
 document.querySelectorAll('.screen').forEach(screen=>{
 screen.classList.remove('active');
 });
-
 document.getElementById(id).classList.add('active');
-
 }
 
-function showMenu(){
+// Global window event triggers branding splash screen lock out for exactly 5 seconds
+window.addEventListener('DOMContentLoaded', () => {
+setTimeout(() => {
+const splash = document.getElementById('brand-splash');
+splash.style.opacity = '0';
+setTimeout(() => {
+splash.style.display = 'none';
+showScreen('intro');
+}, 500);
+}, 5000);
+});
 
+function showMenu(){
 student=document.getElementById('studentName').value || student;
 
 if(student===""){
@@ -534,358 +468,244 @@ return;
 }
 
 showScreen('menu');
+}
 
+/* PLAY AUDIO RUNTIME HELPER */
+function playAudio(elementId) {
+const snd = document.getElementById(elementId);
+if(snd) {
+snd.currentTime = 0;
+snd.play().catch(e => console.log("Audio play blocked until user interaction"));
+}
 }
 
 /* MEMORY */
-
 const memoryItems=[
-
 {img:'assets/forward.png',name:'Forward'},
 {img:'assets/forward.png',name:'Forward'},
-
 {img:'assets/backward.png',name:'Backward'},
 {img:'assets/backward.png',name:'Backward'},
-
 {img:'assets/corner.png',name:'Corner'},
 {img:'assets/corner.png',name:'Corner'},
-
 {img:'assets/next to.png',name:'Next To'},
 {img:'assets/next to.png',name:'Next To'}
-
 ];
 
 let flippedCards=[];
 let matched=0;
 
 function startMemoryGame(){
-
 showScreen('memoryGame');
-
 const grid=document.getElementById('memoryGrid');
-
 grid.innerHTML='';
-
 memoryItems.sort(()=>0.5-Math.random());
 
 memoryItems.forEach(item=>{
-
 const card=document.createElement('div');
-
 card.className='card';
-
 card.innerHTML='?';
-
 card.onclick=()=>flipCard(card,item);
-
 grid.appendChild(card);
-
 });
-
 }
 
 function flipCard(card,item){
-
 if(card.classList.contains('flipped')) return;
 
 card.classList.add('flipped');
-
-card.innerHTML=
-`<img src="${item.img}" class="memory-img"><br>${item.name}`;
-
+card.innerHTML=`<img src="${item.img}" class="memory-img"><br>${item.name}`;
 flippedCards.push({card,item});
 
 if(flippedCards.length===2){
-
 if(flippedCards[0].item.name===flippedCards[1].item.name){
-
 matched++;
-
 document.getElementById('matches').innerText=matched;
 document.getElementById('memoryScore').innerText=matched;
 
-document.getElementById('correctSound').play();
+playAudio('correctSound');
 
 document.getElementById('memoryFeedback').innerText='✅ Match Found!';
 document.getElementById('memoryFeedback').style.color='green';
 
 totalScore++;
-
 flippedCards=[];
 
 if(matched===4){
-
 setTimeout(showFinal,1000);
-
 }
-
 }else{
-
-document.getElementById('wrongSound').play();
+playAudio('wrongSound');
 
 document.getElementById('memoryFeedback').innerText='❌ Wrong Match!';
 document.getElementById('memoryFeedback').style.color='red';
 
 setTimeout(()=>{
-
 flippedCards.forEach(f=>{
-
 f.card.classList.remove('flipped');
 f.card.innerHTML='?';
-
 });
-
 flippedCards=[];
-
 },1000);
-
 }
-
 }
-
 }
 
 /* UNSCRAMBLE */
-
 const scrambleData=[
-
 {
 word:'RFOWDAR',
 answer:'FORWARD',
 options:['FORWARD','CORNER','BACKWARD']
 },
-
 {
 word:'KCBARDWA',
 answer:'BACKWARD',
 options:['FORWARD','BACKWARD','BETWEEN']
 },
-
 {
 word:'RONCER',
 answer:'CORNER',
 options:['NEXT TO','CORNER','CROSS']
 },
-
 {
 word:'TXEN TO',
 answer:'NEXT TO',
 options:['BETWEEN','NEXT TO','OPPOSITE']
 }
-
 ];
 
 let scrambleIndex=0;
 
 function startUnscrambleGame(){
-
 showScreen('unscrambleGame');
-
 scrambleIndex=0;
-
 loadScramble();
-
 }
 
 function loadScramble(){
-
 const q=scrambleData[scrambleIndex];
-
 document.getElementById('scrambleWord').innerText=q.word;
-
 const options=document.getElementById('scrambleOptions');
-
 options.innerHTML='';
 
 q.options.forEach(opt=>{
-
 const btn=document.createElement('button');
-
 btn.className='option-btn';
-
 btn.innerText=opt;
-
 btn.onclick=()=>checkScramble(opt,q.answer);
-
 options.appendChild(btn);
-
 });
-
 }
 
 function checkScramble(ans,correct){
-
 if(ans===correct){
-
-document.getElementById('correctSound').play();
-
+playAudio('correctSound');
 document.getElementById('unscrambleFeedback').innerText='🎉 Correct!';
 document.getElementById('unscrambleFeedback').style.color='green';
-
 totalScore++;
-
 }else{
-
-document.getElementById('wrongSound').play();
-
+playAudio('wrongSound');
 document.getElementById('unscrambleFeedback').innerText='❌ Wrong!';
 document.getElementById('unscrambleFeedback').style.color='red';
-
 }
-
 }
 
 function nextScramble(){
-
 scrambleIndex++;
-
 if(scrambleIndex<scrambleData.length){
-
 document.getElementById('unscrambleFeedback').innerText='';
-
 loadScramble();
-
 }else{
-
 showFinal();
-
 }
-
 }
 
 /* DRAG DROP */
-
 function startDragGame(){
-
 showScreen('dragGame');
-
 }
 
 let correctDrops=0;
 
 document.querySelectorAll('.drag-item').forEach(item=>{
-
 item.addEventListener('dragstart',e=>{
-
 e.dataTransfer.setData('text',e.target.id);
-
 });
-
 });
 
 document.querySelectorAll('.drop-box').forEach(box=>{
-
 box.addEventListener('dragover',e=>{
 e.preventDefault();
 });
 
 box.addEventListener('drop',e=>{
-
 e.preventDefault();
-
 const data=e.dataTransfer.getData('text');
 
 if(data===box.dataset.answer){
-
 box.style.background='lightgreen';
-
 box.innerHTML='✅ Correct';
-
-document.getElementById('correctSound').play();
-
+playAudio('correctSound');
 correctDrops++;
-
 totalScore++;
 
 if(correctDrops===4){
-
 document.getElementById('dragFeedback').innerText='🎉 Completed!';
 document.getElementById('dragFeedback').style.color='green';
-
 setTimeout(showFinal,1000);
-
 }
-
 }else{
-
-document.getElementById('wrongSound').play();
-
+playAudio('wrongSound');
 document.getElementById('dragFeedback').innerText='❌ Wrong Match!';
 document.getElementById('dragFeedback').style.color='red';
-
 }
-
 });
-
 });
 
 /* IMAGE GAME */
-
 function startImageGame(){
-
 showScreen('imageGame');
-
 }
 
 function checkImageAnswer(answer){
-
 if(answer==='forward'){
-
-document.getElementById('correctSound').play();
-
+playAudio('correctSound');
 document.getElementById('imageFeedback').innerText='🎉 Correct Image!';
 document.getElementById('imageFeedback').style.color='green';
-
 totalScore+=2;
-
 setTimeout(showFinal,1000);
-
 }else{
-
-document.getElementById('wrongSound').play();
-
+playAudio('wrongSound');
 document.getElementById('imageFeedback').innerText='❌ Wrong Image!';
 document.getElementById('imageFeedback').style.color='red';
-
+}
 }
 
-}
-
-/* FINAL */
-
+/* FINAL REPORT SCREEN WITH CONFETTI & CLAP SOUND */
 function showFinal(){
-
 showScreen('final');
-
-document.getElementById('finalText').innerHTML=
-`🎉 Great Job <b>${student}</b>!`;
-
-document.getElementById('finalScore').innerText=
-`${totalScore} Points`;
+document.getElementById('finalText').innerHTML=`🎉 Great Job <b>${student}</b>!`;
+document.getElementById('finalScore').innerText=`${totalScore} Points`;
 
 let rank='';
-
-if(totalScore>=10){
-
+if(totalScore >= 10){
 rank='🏆 Direction Champion';
-
-}else if(totalScore>=6){
-
+}else if(totalScore >= 6){
 rank='🌟 Excellent Explorer';
-
 }else{
-
 rank='📘 Keep Practicing';
-
 }
-
 document.getElementById('rankText').innerText=rank;
 
-confetti({
-particleCount:180,
-spread:100
-});
+// Play the reward sound tracks
+playAudio('clapSound');
 
+// Beautiful completion confetti explosion
+confetti({
+particleCount: 180,
+spread: 100,
+origin: { y: 0.6 }
+});
 }
 
 </script>

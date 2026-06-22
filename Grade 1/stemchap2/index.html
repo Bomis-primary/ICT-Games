@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STEM Sorting Factory</title>
+    <title>STEM Sorting Factory: Memory Maze Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
@@ -12,7 +12,8 @@
             --eng-color: #1E90FF;
             --math-color: #FFA502;
             --dark-color: #2F3542;
-            --light-bg: rgba(255, 255, 255, 0.94);
+            --light-bg: rgba(255, 255, 255, 0.95);
+            --primary-blue: #4A90E2;
         }
 
         * {
@@ -30,9 +31,10 @@
             background-color: #F1F2F6;
             overflow-x: hidden;
             position: relative;
+            padding: 15px;
         }
 
-        /* Aesthetic Dynamic Background with Overlay Layer */
+        /* Aesthetic Dynamic Background and Blending Layers */
         .bg-layer {
             position: fixed;
             top: 0;
@@ -51,35 +53,35 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(162, 210, 255, 0.75), rgba(189, 224, 254, 0.75));
+            background: linear-gradient(135deg, rgba(162, 210, 255, 0.8), rgba(224, 251, 252, 0.8));
             z-index: -1;
         }
 
-        /* Base Screen Framework Layouts */
+        /* Base Framework Screens Containers */
         .screen {
             display: none;
             width: 100%;
-            max-width: 750px;
+            max-width: 800px;
             background: var(--light-bg);
-            border: 6px solid #4A90E2;
-            border-radius: 32px;
-            padding: 35px;
-            box-shadow: 0 16px 32px rgba(0,0,0,0.2);
+            border: 8px solid var(--primary-blue);
+            border-radius: 36px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
             text-align: center;
-            margin: 15px;
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            animation: screenPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .screen.active {
             display: block;
         }
 
-        @keyframes popIn {
+        @keyframes screenPopIn {
             0% { transform: scale(0.85); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* Absolute Branding Splash Overlay Screen Layer (5-second block) */
+        /* 1. Strict Branding Splash Overlay Screen */
         #splash-screen {
             background: white;
             border: none;
@@ -99,7 +101,7 @@
         
         #splash-screen img {
             max-width: 320px;
-            width: 80%;
+            width: 75%;
             height: auto;
             animation: pulse 1.6s infinite ease-in-out;
         }
@@ -110,18 +112,18 @@
             100% { transform: scale(0.96); }
         }
 
-        /* Setup Panel Inputs styling */
+        /* Setup Form Inputs */
         .form-group {
-            margin-bottom: 22px;
+            margin-bottom: 20px;
             text-align: left;
         }
 
         label {
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             font-weight: bold;
-            color: #2F3542;
+            color: var(--dark-color);
             display: block;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         input {
@@ -129,24 +131,21 @@
             padding: 14px 20px;
             border: 4px solid #BDE0FE;
             border-radius: 16px;
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             outline: none;
             transition: border-color 0.3s;
-            background-color: white;
         }
 
-        input:focus {
-            border-color: #4A90E2;
-        }
+        input:focus { border-color: var(--primary-blue); }
 
         .btn {
             background-color: #2ED573;
             color: white;
             border: none;
-            padding: 16px 40px;
+            padding: 16px 45px;
             font-size: 1.5rem;
             font-weight: bold;
-            border-radius: 20px;
+            border-radius: 22px;
             cursor: pointer;
             box-shadow: 0 8px 0 #218c42;
             transition: all 0.1s;
@@ -159,7 +158,77 @@
             box-shadow: 0 2px 0 #218c42;
         }
 
-        /* Gameplay Arena Layout HUD */
+        /* 2. Innovative Memory Maze Roadmap View */
+        .maze-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: relative;
+            margin: 40px 0;
+            padding: 20px 0;
+            background: rgba(255,255,255,0.7);
+            border-radius: 20px;
+            border: 3px dashed var(--primary-blue);
+        }
+
+        .maze-line {
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            width: 80%;
+            height: 8px;
+            background: #CBD5E0;
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+
+        .maze-node {
+            position: relative;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #A0AEC0;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.6rem;
+            font-weight: bold;
+            z-index: 5;
+            box-shadow: 0 6px 0 #718096;
+            transition: all 0.3s ease;
+        }
+
+        .maze-node.active {
+            background: var(--primary-blue);
+            box-shadow: 0 6px 0 #2B6CB0;
+            transform: scale(1.15);
+            animation: bounce 1s infinite alternate;
+        }
+
+        .maze-node.completed {
+            background: #2ED573;
+            box-shadow: 0 6px 0 #228643;
+        }
+
+        .maze-label {
+            position: absolute;
+            bottom: -35px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--dark-color);
+            width: 100px;
+            text-align: center;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        @keyframes bounce {
+            0% { transform: translateY(0) scale(1.15); }
+            100% { transform: translateY(-8px) scale(1.15); }
+        }
+
+        /* 3. Main Gameplay Arena Panel */
         .hud-bar {
             display: flex;
             justify-content: space-between;
@@ -167,28 +236,59 @@
             background: white;
             padding: 12px 25px;
             border-radius: 18px;
-            margin-bottom: 25px;
-            border: 3px dashed #4A90E2;
+            margin-bottom: 20px;
+            border: 3px dashed var(--primary-blue);
         }
 
         .hud-item {
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             font-weight: bold;
             color: var(--dark-color);
         }
 
-        /* Central Conveyor Belt Box */
+        /* Difficulty Header Tag indicator */
+        .difficulty-badge {
+            padding: 6px 16px;
+            border-radius: 12px;
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            text-transform: uppercase;
+        }
+        .diff-easy { background-color: #2ED573; }
+        .diff-medium { background-color: #FFA502; }
+        .diff-hard { background-color: #FF4757; }
+
+        /* Timer Loading Fuse bar line */
+        .timer-track {
+            width: 100%;
+            height: 12px;
+            background: #E2E8F0;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            display: none;
+        }
+        .timer-fill {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #FFA502, #FF4757);
+            transition: width 0.1s linear;
+        }
+
+        /* Conveyor Belt Wrapper */
         .conveyor-belt {
-            background: #E4E7EB;
+            background: #E2E8F0;
             padding: 20px;
             border-radius: 24px;
-            border: 4px dashed #718096;
-            margin-bottom: 30px;
+            border: 5px dashed #718096;
+            margin-bottom: 25px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 260px;
+            min-height: 250px;
+            position: relative;
             box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);
         }
 
@@ -196,15 +296,10 @@
             background: white;
             padding: 15px;
             border-radius: 18px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-            max-width: 280px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+            max-width: 260px;
             width: 100%;
-            animation: cardSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15);
-        }
-
-        @keyframes cardSlideIn {
-            0% { transform: translateY(-30px); opacity: 0; }
-            100% { transform: translateY(0); opacity: 1; }
+            transition: transform 0.4s ease;
         }
 
         .conveyor-card img {
@@ -212,34 +307,94 @@
             height: auto;
             border-radius: 12px;
             display: block;
-            margin: 0 auto;
+        }
+
+        /* Memory Obscured Screen layer state */
+        .conveyor-card.obscured img {
+            filter: blur(25px) brightness(0.4);
+        }
+
+        .memory-hint-overlay {
+            display: none;
+            position: absolute;
+            font-size: 4rem;
+            color: white;
+            z-index: 10;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.5);
+            pointer-events: none;
         }
 
         .fallback-text {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: bold;
-            color: #4A90E2;
-            margin-top: 10px;
+            color: var(--primary-blue);
+            margin-top: 12px;
         }
 
-        /* High-Contrast Tap Action Sorting Target Buttons Grid */
+        /* 4. Interactive Roadblock Mechanical Overlay Container */
+        .roadblock-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(231, 76, 60, 0.95);
+            border-radius: 28px;
+            z-index: 100;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            padding: 20px;
+            animation: flashWarning 0.8s infinite alternate;
+        }
+
+        @keyframes flashWarning {
+            0% { border: 6px solid #FF4757; }
+            100% { border: 6px solid #FFF; }
+        }
+
+        .wrench-tap-zone {
+            font-size: 5rem;
+            cursor: pointer;
+            margin: 20px 0;
+            animation: wobble 0.5s infinite alternate;
+            user-select: none;
+        }
+
+        @keyframes wobble {
+            0% { transform: rotate(-15deg); }
+            100% { transform: rotate(15deg); }
+        }
+
+        .roadblock-progress-track {
+            width: 60%;
+            height: 16px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid white;
+        }
+        .roadblock-progress-fill {
+            width: 0%;
+            height: 100%;
+            background: #2ED573;
+            transition: width 0.1s ease;
+        }
+
+        /* Action Targets Input buckets Grid */
         .sorting-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 16px;
         }
 
-        @media(max-width: 500px) {
-            .sorting-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
         .bucket-btn {
             color: white;
             border: none;
-            padding: 20px;
-            font-size: 1.4rem;
+            padding: 18px;
+            font-size: 1.35rem;
             font-weight: bold;
             border-radius: 20px;
             cursor: pointer;
@@ -249,39 +404,34 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 4px;
         }
 
-        .bucket-btn:active {
-            transform: scale(0.96);
-        }
-
+        .bucket-btn:active { transform: scale(0.96); }
         .bucket-science { background-color: var(--science-color); box-shadow: 0 6px 0 #C0392B; }
         .bucket-tech { background-color: var(--tech-color); box-shadow: 0 6px 0 #27AE60; }
         .bucket-eng { background-color: var(--eng-color); box-shadow: 0 6px 0 #2980B9; }
         .bucket-math { background-color: var(--math-color); box-shadow: 0 6px 0 #D35400; }
+        .bucket-btn span { font-size: 2rem; }
 
-        .bucket-btn span {
-            font-size: 2.2rem;
-        }
-
+        /* Reward Badge Styles */
         .rank-badge {
             display: inline-block;
             background: linear-gradient(135deg, #FFD700, #FFA500);
             color: white;
             padding: 16px 40px;
-            font-size: 2rem;
+            font-size: 1.9rem;
             font-weight: bold;
             border-radius: 50px;
-            margin: 25px 0;
+            margin: 20px 0;
             box-shadow: 0 10px 20px rgba(0,0,0,0.15);
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .score-summary {
-            font-size: 1.4rem;
+            font-size: 1.35rem;
             line-height: 1.8;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
             color: var(--dark-color);
         }
     </style>
@@ -300,35 +450,64 @@
     </div>
 
     <div id="setup-screen" class="screen">
-        <h1 style="color: #4A90E2; margin-bottom: 12px; font-size: 2.3rem;">🏭 STEM Sorting Factory 🤖</h1>
-        <p style="margin-bottom: 25px; font-size: 1.2rem; color: #57606F;">Welcome little factory worker! Let's get registered to sort items!</p>
+        <h1 style="color: var(--primary-blue); margin-bottom: 10px; font-size: 2.3rem;">🏭 STEM Sorting Factory 🤖</h1>
+        <p style="margin-bottom: 25px; font-size: 1.2rem; color: #57606F;">Welcome little Engineer! Register your profile details to unlock the Memory Maze!</p>
         
         <form id="profile-form" onsubmit="handleRegistration(event)">
             <div class="form-group">
                 <label for="student-name">⭐ Student Name:</label>
-                <input type="text" id="student-name" required placeholder="Enter your name here">
+                <input type="text" id="student-name" required placeholder="Enter your full name">
             </div>
             <div class="form-group">
-                <label for="class-name">🏫 Class / Grade:</label>
-                <input type="text" id="class-name" required placeholder="e.g. Grade 1-A">
+                <label for="class-name">🏫 Class / Section:</label>
+                <input type="text" id="class-name" required placeholder="e.g. Grade 1-B">
             </div>
             <div class="form-group">
-                <label for="school-name">🏢 School Name:</label>
-                <input type="text" id="school-name" required placeholder="Enter your school name">
+                <label for="school-name">🏢 School Campus:</label>
+                <input type="text" id="school-name" required placeholder="Enter school name">
             </div>
-            <button type="submit" class="btn">Start Sorting! 🚀</button>
+            <button type="submit" class="btn">Enter Factory Roadmap 🚀</button>
         </form>
     </div>
 
+    <div id="roadmap-screen" class="screen">
+        <h1 style="color: var(--primary-blue); font-size: 2rem;">🗺️ The STEM Memory Maze Roadmap</h1>
+        <p style="color: #57606F; margin-top: 5px;">Track your level progression as you clear sorting zones!</p>
+        
+        <div class="maze-container">
+            <div class="maze-line"></div>
+            <div id="node-1" class="maze-node active">1<div class="maze-label">Level 1<br>(Easy)</div></div>
+            <div id="node-2" class="maze-node">2<div class="maze-label">Level 2<br>(Medium)</div></div>
+            <div id="node-3" class="maze-node">3<div class="maze-label">Level 3<br>(Hard)</div></div>
+        </div>
+
+        <button class="btn" onclick="startActiveLevelGame()" style="margin-top: 25px; padding: 14px 50px;">Launch Sorting Zone 🎮</button>
+    </div>
+
     <div id="game-screen" class="screen">
+        <div id="roadblock-modal" class="roadblock-overlay">
+            <h2 style="font-size: 2rem;">⚠️ CONVEYOR BELT JAMMED! ⚠️</h2>
+            <p style="font-size: 1.2rem; margin-top: 5px;">Tap the giant wrench rapidly to clear out the blocked gears!</p>
+            <div class="wrench-tap-zone" onclick="registerWrenchTap()">🔧</div>
+            <div class="roadblock-progress-track">
+                <div id="roadblock-progress-fill" class="roadblock-progress-fill"></div>
+            </div>
+        </div>
+
         <div class="hud-bar">
             <div class="hud-item" id="hud-round">📦 Item: 1 / 5</div>
+            <div id="hud-diff-badge" class="difficulty-badge diff-easy">Easy</div>
             <div class="hud-item" id="hud-score">🏆 Score: 0</div>
         </div>
 
-        <h2 style="margin-bottom: 20px; font-size: 1.5rem; color: #2F3542;">Tap the matching bucket to sort the item! 👇</h2>
+        <div id="timer-track" class="timer-track">
+            <div id="timer-fill" class="timer-fill"></div>
+        </div>
+
+        <h2 id="sorting-tip" style="margin-bottom: 15px; font-size: 1.35rem; color: var(--dark-color);">Tap the correct bucket to sort! 👇</h2>
 
         <div class="conveyor-belt">
+            <div id="memory-hint" class="memory-hint-overlay">❓</div>
             <div class="conveyor-card" id="card-display">
                 <img id="card-img" src="" alt="STEM Item">
             </div>
@@ -352,136 +531,285 @@
     </div>
 
     <div id="end-screen" class="screen">
-        <h1 style="color: #2ED573; font-size: 2.6rem;">🎉 Factory Mission Complete! 🎉</h1>
-        <div class="rank-badge">Master STEM Sorter</div>
+        <h1 style="color: #2ED573; font-size: 2.5rem;">🎉 Factory Operation Complete! 🎉</h1>
+        <div id="end-rank" class="rank-badge">Master STEM Sorter</div>
         
         <div class="score-summary" id="end-summary"></div>
 
-        <button class="btn" onclick="restartGame()" style="background-color: #4A90E2; box-shadow: 0 8px 0 #2980B9;">Play Again 🔄</button>
+        <button class="btn" onclick="restartWholeGame()" style="background-color: var(--primary-blue); box-shadow: 0 8px 0 #2980B9;">Play Again 🔄</button>
     </div>
 
     <script>
-        // Game Mission Dataset Puzzles
-        const roundDataConfigs = [
-            { round: 1, imageSrc: "assets/science.PNG", title: "Science Activity 🔬", correctCategory: "Science" },
-            { round: 2, imageSrc: "assets/technology.PNG", title: "Technology Gadget 💻", correctCategory: "Technology" },
-            { round: 3, imageSrc: "assets/engineering.PNG", title: "Engineering Blueprint ⚙️", correctCategory: "Engineering" },
-            { round: 4, imageSrc: "assets/mathematics.PNG", title: "Mathematics Puzzle ➕", correctCategory: "Mathematics" },
-            { round: 5, imageSrc: "assets/factory-robot.PNG", title: "Factory Robot 🤖", correctCategory: "Engineering" }
-        ];
+        // Total Puzzles Mapping Dataset 
+        const levelMissionConfigs = {
+            1: {
+                difficulty: "Easy",
+                rounds: [
+                    { imageSrc: "assets/science.PNG", title: "Science Material 🔬", category: "Science" },
+                    { imageSrc: "assets/technology.PNG", title: "Digital Technology 💻", category: "Technology" },
+                    { imageSrc: "assets/engineering.PNG", title: "Engineering Blueprint ⚙️", category: "Engineering" },
+                    { imageSrc: "assets/mathematics.PNG", title: "Math Equation ➕", category: "Mathematics" },
+                    { imageSrc: "assets/factory-robot.PNG", title: "Factory Robot 🤖", category: "Engineering" }
+                ]
+            },
+            2: {
+                difficulty: "Medium", // Introduces Countdown Timer Fuse countdowns
+                rounds: [
+                    { imageSrc: "assets/technology.PNG", title: "Computing Network 💻", category: "Technology" },
+                    { imageSrc: "assets/science.PNG", title: "Chemical Solution 🔬", category: "Science" },
+                    { imageSrc: "assets/factory-robot.PNG", title: "Automation Engine ⚙️", category: "Engineering" },
+                    { imageSrc: "assets/mathematics.PNG", title: "Geometry Puzzle ➕", category: "Mathematics" },
+                    { imageSrc: "assets/engineering.PNG", title: "Mechanical Gears ⚙️", category: "Engineering" }
+                ]
+            },
+            3: {
+                difficulty: "Hard", // MEMORY MODE: Cards are blurred after 2 seconds!
+                rounds: [
+                    { imageSrc: "assets/mathematics.PNG", title: "Calculus Formula ➕", category: "Mathematics" },
+                    { imageSrc: "assets/engineering.PNG", title: "Structural Bridge ⚙️", category: "Engineering" },
+                    { imageSrc: "assets/science.PNG", title: "Space Telescope 🔬", category: "Science" },
+                    { imageSrc: "assets/factory-robot.PNG", title: "Cybernetic Drone ⚙️", category: "Engineering" },
+                    { imageSrc: "assets/technology.PNG", title: "Smart Microchip 💻", category: "Technology" }
+                ]
+            }
+        };
 
-        let currentRoundIndex = 0;
-        let totalScore = 0;
-        let studentDataProfile = { name: '', class: '', school: '' };
+        // Engine State Parameters Trackers
+        let activeLevelIndex = 1;
+        let activeRoundIndex = 0;
+        let totalScoreAccumulator = 0;
+        let currentWrenchTaps = 0;
+        let roadblockTriggeredThisLevel = false;
+        
+        let countdownTimerLoop = null;
+        let memoryObscureTimeout = null;
+        let timeRemainingTicks = 100;
 
-        // 5-Second Splash View Window Control Hook
+        let studentProfileContainer = { name: '', class: '', school: '' };
+
+        // 5-Second Brand Splash Overlay Timeout Setup
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                splash.style.display = 'none';
+                document.getElementById('splash-screen').style.display = 'none';
                 switchScreen('setup-screen');
             }, 5000);
         });
 
-        function switchScreen(screenId) {
+        function switchScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
+            document.getElementById(id).classList.add('active');
         }
 
-        function handleRegistration(event) {
-            event.preventDefault();
-            studentDataProfile.name = document.getElementById('student-name').value;
-            studentDataProfile.class = document.getElementById('class-name').value;
-            studentDataProfile.school = document.getElementById('school-name').value;
+        function handleRegistration(e) {
+            e.preventDefault();
+            studentProfileContainer.name = document.getElementById('student-name').value;
+            studentProfileContainer.class = document.getElementById('class-name').value;
+            studentProfileContainer.school = document.getElementById('school-name').value;
+            
+            activeLevelIndex = 1;
+            totalScoreAccumulator = 0;
+            renderRoadmapHub();
+            switchScreen('roadmap-screen');
+        }
 
-            currentRoundIndex = 0;
-            totalScore = 0;
-            renderRoundChallenge();
+        function renderRoadmapHub() {
+            // Update Roadmap node circles highlights match state indexes
+            for (let i = 1; i <= 3; i++) {
+                const node = document.getElementById(`node-${i}`);
+                node.className = "maze-node";
+                if (i < activeLevelIndex) node.classList.add("completed");
+                if (i === activeLevelIndex) node.classList.add("active");
+            }
+        }
+
+        function startActiveLevelGame() {
+            activeRoundIndex = 0;
+            roadblockTriggeredThisLevel = false;
             switchScreen('game-screen');
+            loadRoundStructure();
         }
 
-        function renderRoundChallenge() {
-            document.getElementById('hud-round').innerText = `📦 Item: ${currentRoundIndex + 1} / 5`;
-            document.getElementById('hud-score').innerText = `🏆 Score: ${totalScore}`;
+        function loadRoundStructure() {
+            clearInterval(countdownTimerLoop);
+            clearTimeout(memoryObscureTimeout);
 
-            const currentData = roundDataConfigs[currentRoundIndex];
+            const levelConfig = levelMissionConfigs[activeLevelIndex];
+            const roundData = levelConfig.rounds[activeRoundIndex];
             
-            // Render backup labels text alongside image components
-            document.getElementById('fallback-title').innerText = currentData.title;
+            // Render basic metrics HUD
+            document.getElementById('hud-round').innerText = `📦 Item: ${activeRoundIndex + 1} / 5`;
+            document.getElementById('hud-score').innerText = `🏆 Score: ${totalScoreAccumulator}`;
             
-            const cardImgNode = document.getElementById('card-img');
-            const cardDisplayNode = document.getElementById('card-display');
-            
-            cardDisplayNode.style.animation = 'none';
-            cardDisplayNode.offsetHeight; /* Trigger layout engine reflow reset */
-            cardDisplayNode.style.animation = 'cardSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15)';
+            const badge = document.getElementById('hud-diff-badge');
+            badge.innerText = levelConfig.difficulty;
+            badge.className = `difficulty-badge diff-${levelConfig.difficulty.toLowerCase()}`;
 
-            cardImgNode.src = currentData.imageSrc;
+            // Reset Card UI states
+            const cardImg = document.getElementById('card-img');
+            const cardDisplay = document.getElementById('card-display');
+            const hintOverlay = document.getElementById('memory-hint');
+            
+            cardDisplay.classList.remove('obscured');
+            hintOverlay.style.display = 'none';
+            document.getElementById('fallback-title').innerText = roundData.title;
+            cardImg.src = roundData.imageSrc;
+
+            // Trigger roadblock failure randomly in the middle of a sorting queue (round 3)
+            if (activeRoundIndex === 2 && !roadblockTriggeredThisLevel) {
+                triggerRoadblockEvent();
+                return;
+            }
+
+            // Handle Medium/Hard Mode Features
+            const timerTrack = document.getElementById('timer-track');
+            if (activeLevelIndex >= 2) {
+                timerTrack.style.display = 'block';
+                startTimeFuseLoop();
+            } else {
+                timerTrack.style.display = 'none';
+            }
+
+            if (activeLevelIndex === 3) {
+                document.getElementById('sorting-tip').innerText = "Look closely! The card will hide soon! 🧠";
+                memoryObscureTimeout = setTimeout(() => {
+                    cardDisplay.classList.add('obscured');
+                    hintOverlay.style.display = 'block';
+                    document.getElementById('fallback-title').innerText = "Obscured Memory Item ❓";
+                    document.getElementById('sorting-tip').innerText = "Where does the hidden item belong? 🤔";
+                }, 2000); // Cards obscure after 2 seconds
+            } else {
+                document.getElementById('sorting-tip').innerText = "Tap the correct bucket to sort! 👇";
+            }
         }
 
+        // Timer fuse calculation loop mechanics
+        function startTimeFuseLoop() {
+            timeRemainingTicks = 100;
+            const fill = document.getElementById('timer-fill');
+            fill.style.width = '100%';
+
+            // Hard mode yields shorter processing timers
+            let tickRate = activeLevelIndex === 3 ? 60 : 100; 
+
+            countdownTimerLoop = setInterval(() => {
+                timeRemainingTicks -= 1;
+                fill.style.width = `${timeRemainingTicks}%`;
+
+                if (timeRemainingTicks <= 0) {
+                    clearInterval(countdownTimerLoop);
+                    playAudioFeedback('snd-wrong');
+                    alert("Time ran out on the conveyor belt! Let's load the next item.");
+                    advanceRoundLoop();
+                }
+            }, tickRate);
+        }
+
+        // Roadblock Mechanical failure event logic
+        function triggerRoadblockEvent() {
+            roadblockTriggeredThisLevel = true;
+            currentWrenchTaps = 0;
+            document.getElementById('roadblock-progress-fill').style.width = '0%';
+            document.getElementById('roadblock-modal').style.display = 'flex';
+        }
+
+        function registerWrenchTap() {
+            currentWrenchTaps += 15; // Requires roughly 7 quick taps to fulfill constraints
+            document.getElementById('roadblock-progress-fill').style.width = `${Math.min(currentWrenchTaps, 100)}%`;
+
+            if (currentWrenchTaps >= 100) {
+                document.getElementById('roadblock-modal').style.display = 'none';
+                playAudioFeedback('snd-correct');
+                // Resume sorting challenge pipeline immediately
+                loadRoundStructure();
+            }
+        }
+
+        // Choice Processing and Scoring matrix
         function processSortChoice(chosenCategory) {
-            const activeRoundData = roundDataConfigs[currentRoundIndex];
-            
-            const sndCorrect = document.getElementById('snd-correct');
-            const sndWrong = document.getElementById('snd-wrong');
+            // Prevent choices while roadblock is active
+            if (document.getElementById('roadblock-modal').style.display === 'flex') return;
 
-            if (chosenCategory === activeRoundData.correctCategory) {
-                totalScore += 100;
-                // Safe play execution wrappers to bypass browser lockouts
-                if (sndCorrect) {
-                    sndCorrect.currentTime = 0;
-                    sndCorrect.play().catch(e => console.log("Audio skipped due to autoplay policy rules"));
-                }
+            clearInterval(countdownTimerLoop);
+            clearTimeout(memoryObscureTimeout);
+
+            const currentLevelData = levelMissionConfigs[activeLevelIndex];
+            const roundData = currentLevelData.rounds[activeRoundIndex];
+
+            if (chosenCategory === roundData.category) {
+                totalScoreAccumulator += 100;
+                playAudioFeedback('snd-correct');
             } else {
-                if (sndWrong) {
-                    sndWrong.currentTime = 0;
-                    sndWrong.play().catch(e => console.log("Audio skipped due to autoplay policy rules"));
-                }
+                playAudioFeedback('snd-wrong');
             }
 
-            // Move safely to next screen cards array index items
-            if (currentRoundIndex < roundDataConfigs.length - 1) {
-                currentRoundIndex++;
-                renderRoundChallenge();
+            advanceRoundLoop();
+        }
+
+        function advanceRoundLoop() {
+            if (activeRoundIndex < 4) {
+                activeRoundIndex++;
+                loadRoundStructure();
             } else {
-                triggerFactoryWinFinish();
+                // Current tier cleared!
+                if (activeLevelIndex < 3) {
+                    activeLevelIndex++;
+                    renderRoadmapHub();
+                    switchScreen('roadmap-screen');
+                } else {
+                    triggerFinalVictoryEndscreen();
+                }
             }
         }
 
-        function triggerFactoryWinFinish() {
-            switchScreen('end-screen');
+        function playAudioFeedback(elementId) {
+            const el = document.getElementById(elementId);
+            if (el) {
+                el.currentTime = 0;
+                el.play().catch(err => console.log('Autoplay audio pipeline skipped safely'));
+            }
+        }
 
-            const sndClap = document.getElementById('snd-clap');
-            if (sndClap) {
-                sndClap.currentTime = 0;
-                sndClap.play().catch(e => console.log("Audio celebration skipped safely"));
+        function triggerFinalVictoryEndscreen() {
+            switchScreen('end-screen');
+            playAudioFeedback('snd-clap');
+
+            // Set multi-tier adaptive title badge matching highscore parameters
+            const badgeNode = document.getElementById('end-rank');
+            if (totalScoreAccumulator >= 1300) {
+                badgeNode.innerText = "Grand Master STEM Sorter 🏆";
+                badgeNode.style.background = "linear-gradient(135deg, #FFD700, #FFA500)";
+            } else if (totalScoreAccumulator >= 900) {
+                badgeNode.innerText = "Factory Supervisor 🏅";
+                badgeNode.style.background = "linear-gradient(135deg, #A2D2FF, #1E90FF)";
+            } else {
+                badgeNode.innerText = "STEM Apprentice Sorter 🛠️";
+                badgeNode.style.background = "linear-gradient(135deg, #E2E8F0, #718096)";
             }
 
-            // Rainbow Canvas Particles Blast
-            let duration = 3.5 * 1000;
-            let animationEnd = Date.now() + duration;
+            // Continuous Confetti Streams
+            let endDuration = 4 * 1000;
+            let animationEnd = Date.now() + endDuration;
 
-            (function confettiFrame() {
-                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0, y: 0.65 } });
-                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1, y: 0.65 } });
-                
-                if (Date.now() < animationEnd) {
-                    requestAnimationFrame(confettiFrame);
-                }
+            (function frame() {
+                confetti({ particleCount: 6, angle: 60, spread: 55, origin: { x: 0, y: 0.65 } });
+                confetti({ particleCount: 6, angle: 120, spread: 55, origin: { x: 1, y: 0.65 } });
+                if (Date.now() < animationEnd) requestAnimationFrame(frame);
             }());
 
             document.getElementById('end-summary').innerHTML = `
-                <strong>Sorter Profile:</strong><br>
-                👤 Name: ${studentDataProfile.name}<br>
-                🏫 Class: ${studentDataProfile.class}<br>
-                🏢 School: ${studentDataProfile.school}<br>
+                <strong>Certified Factory Analytics:</strong><br>
+                👤 Operator: ${studentProfileContainer.name}<br>
+                🏫 Track Class: ${studentProfileContainer.class}<br>
+                🏢 Institution: ${studentProfileContainer.school}<br>
                 <hr style="margin: 15px 0; border: 1px dashed #CBD5E0;">
-                ⭐ Factory Efficiency Score: <strong>${totalScore} / 500 Points</strong><br>
-                📦 Items Sorted Correctly: <strong>${totalScore / 100} out of 5 Items</strong>
+                ⭐ Highscore Accumulated: <strong>${totalScoreAccumulator} / 1500 Max Points</strong><br>
+                📦 Sorter Efficiency Rating: <strong>${Math.round((totalScoreAccumulator / 1500) * 100)}% Correct</strong>
             `;
         }
 
-        function restartGame() {
+        function restartWholeGame() {
+            clearInterval(countdownTimerLoop);
+            clearTimeout(memoryObscureTimeout);
             document.getElementById('profile-form').reset();
             switchScreen('setup-screen');
         }

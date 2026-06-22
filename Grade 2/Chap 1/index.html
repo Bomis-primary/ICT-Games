@@ -1,865 +1,592 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Magic IPO Factory</title>
 
-<title>Grade 2 - Input Process Output Adventure</title>
-
+<!-- Canvas Confetti Library -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
-
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
-font-family:'Comic Sans MS',cursive;
+font-family:'Comic Sans MS', cursive, sans-serif;
 }
 
 body{
-background:linear-gradient(135deg,#74ebd5,#ACB6E5);
+background: linear-gradient(135deg, #ffe5ec, #eae6ff, #e8f0fe);
 min-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-padding:20px;
+padding:15px;
+overflow-x:hidden;
 }
 
+/* --- BRANDING SPLASH SCREEN --- */
+#brand-splash {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100vh;
+background-color: #ffffff;
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 10000;
+transition: opacity 0.5s ease;
+}
+#brand-splash img {
+max-width: 65%;
+max-height: 70vh;
+object-fit: contain;
+}
+
+/* --- MAIN CONTAINER CARDS --- */
 .screen{
 display:none;
-background:white;
-width:95%;
-max-width:1100px;
-padding:25px;
-border-radius:25px;
-box-shadow:0 10px 30px rgba(0,0,0,0.2);
-text-align:center;
-animation:fade 0.5s;
+background: white;
+width: 95%;
+max-width: 900px;
+padding: 35px 25px;
+border-radius: 35px;
+box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+text-align: center;
+position: relative;
+border: 4px solid #b3e5fc;
+animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.active{
+@keyframes popUp {
+0% { transform: scale(0.95); opacity: 0; }
+100% { transform: scale(1); opacity: 1; }
+}
+
+.screen.active{
 display:block;
 }
 
-@keyframes fade{
-from{opacity:0;transform:scale(0.9);}
-to{opacity:1;transform:scale(1);}
-}
-
-.logo{
-width:140px;
-margin-bottom:10px;
-}
-
 h1{
-color:#1565c0;
-margin-bottom:15px;
+color: #0284c7;
+font-size: 36px;
+margin-bottom: 10px;
+text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
 }
 
-.question{
-font-size:30px;
-font-weight:bold;
-margin:20px 0;
-color:#333;
+.subtitle{
+font-size: 18px;
+color: #64748b;
+margin-bottom: 25px;
 }
 
-.option-container{
-display:flex;
-justify-content:center;
-gap:20px;
-flex-wrap:wrap;
-margin-top:20px;
+/* --- SCOREBAR BAR --- */
+.scoreboard {
+background: #f0fdf4;
+border: 2px solid #bbf7d0;
+padding: 12px 25px;
+border-radius: 50px;
+display: inline-flex;
+justify-content: space-between;
+align-items: center;
+gap: 30px;
+margin-bottom: 25px;
+font-size: 20px;
+font-weight: bold;
+color: #166534;
+box-shadow: 0 4px 6px rgba(0,0,0,0.02);
 }
 
-.option{
-background:#e3f2fd;
-padding:15px;
-border-radius:20px;
-cursor:pointer;
-transition:0.3s;
-width:220px;
-font-size:22px;
-font-weight:bold;
+/* --- REGISTRATION STYLING --- */
+.input-group {
+max-width: 450px;
+margin: 0 auto 20px auto;
+display: flex;
+flex-direction: column;
+gap: 12px;
 }
 
-.option:hover{
-transform:scale(1.05);
-background:#90caf9;
+input {
+width: 100%;
+padding: 16px;
+border-radius: 15px;
+border: 3px solid #cbd5e1;
+font-size: 18px;
+text-align: center;
+outline: none;
+transition: border-color 0.2s;
+background: #f8fafc;
 }
 
-.option img{
-width:120px;
-height:120px;
-object-fit:contain;
-margin-bottom:10px;
+input:focus {
+border-color: #38bdf8;
+background: #fff;
 }
 
-.btn{
-background:#ff7043;
-color:white;
-border:none;
-padding:14px 28px;
-border-radius:40px;
-font-size:22px;
-font-weight:bold;
-cursor:pointer;
-margin-top:20px;
+.btn {
+background: #ff7043;
+color: white;
+border: none;
+padding: 16px 36px;
+border-radius: 50px;
+font-size: 22px;
+font-weight: bold;
+cursor: pointer;
+margin-top: 10px;
+box-shadow: 0 6px 14px rgba(255,112,67,0.3);
+transition: transform 0.2s, background-color 0.2s;
 }
 
-.btn:hover{
-transform:scale(1.05);
+.btn:hover {
+transform: scale(1.05);
+background: #e64a19;
 }
 
-.feedback{
-font-size:32px;
-font-weight:bold;
-height:40px;
-margin-top:20px;
+/* --- CONVEYOR BELT IPO FLOW STYLING --- */
+.factory-floor {
+background: #f8fafc;
+border: 3px dashed #cbd5e1;
+border-radius: 24px;
+padding: 20px;
+margin: 20px 0;
+position: relative;
 }
 
-.score{
-font-size:26px;
-font-weight:bold;
-color:#ff6f00;
-margin-top:15px;
+.conveyor-belt {
+display: flex;
+justify-content: space-between;
+align-items: stretch;
+gap: 15px;
+margin-bottom: 25px;
+position: relative;
+flex-wrap: wrap;
 }
 
-input{
-padding:14px;
-width:90%;
-border-radius:12px;
-border:2px solid #ccc;
-font-size:20px;
-margin-top:20px;
+.ipo-card {
+flex: 1;
+min-width: 200px;
+background: white;
+padding: 20px 15px;
+border-radius: 20px;
+box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+border: 3px solid #e2e8f0;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
 }
 
-.drag-container{
-display:flex;
-justify-content:center;
-gap:40px;
-flex-wrap:wrap;
-margin-top:25px;
+.ipo-card.input-card { border-color: #fca5a5; background: #fff5f5; }
+.ipo-card.process-card { border-color: #fde047; background: #fefce8; }
+.ipo-card.output-card { border-color: #86efac; background: #f0fdf4; border-style: dashed; }
+
+.ipo-label {
+font-size: 14px;
+font-weight: bold;
+text-transform: uppercase;
+letter-spacing: 1px;
+margin-bottom: 8px;
+padding: 4px 12px;
+border-radius: 12px;
+color: white;
+}
+.input-card .ipo-label { background: #ef4444; }
+.process-card .ipo-label { background: #eab308; color: #451a03; }
+.output-card .ipo-label { background: #22c55e; }
+
+.ipo-content {
+font-size: 18px;
+font-weight: bold;
+color: #334155;
+line-height: 1.4;
 }
 
-.drag-item{
-background:#c8e6c9;
-padding:15px;
-border-radius:15px;
-font-size:22px;
-font-weight:bold;
-cursor:grab;
-margin-bottom:15px;
+.arrow-divider {
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 28px;
+color: #94a3b8;
 }
 
-.drop-box{
-width:240px;
-height:90px;
-border:3px dashed #1565c0;
-border-radius:20px;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:22px;
-font-weight:bold;
-background:#f5f5f5;
-margin-bottom:15px;
+/* --- CHOOSE OPTIONS STYLING --- */
+.prompt-text {
+font-size: 22px;
+color: #1e293b;
+font-weight: bold;
+margin-bottom: 20px;
 }
 
-.memory-grid{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:15px;
-margin-top:20px;
+.options-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+gap: 15px;
+margin-top: 15px;
 }
 
-.card{
-height:120px;
-background:#90caf9;
-border-radius:20px;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:20px;
-font-weight:bold;
-cursor:pointer;
-color:white;
+.option-card {
+background: white;
+border: 3px solid #e2e8f0;
+padding: 20px;
+border-radius: 20px;
+font-size: 20px;
+font-weight: bold;
+color: #334155;
+cursor: pointer;
+transition: all 0.2s ease;
+box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 10px;
 }
 
-.card.flipped{
-background:#fff3e0;
-color:black;
+.option-card:hover {
+transform: translateY(-3px);
+border-color: #38bdf8;
+background: #f0f9ff;
 }
 
-.final-score{
-font-size:70px;
-font-weight:bold;
-color:#ff6f00;
-margin:20px 0;
+.feedback-box {
+height: 40px;
+font-size: 24px;
+font-weight: bold;
+margin-top: 20px;
+display: flex;
+align-items: center;
+justify-content: center;
 }
 
-@media(max-width:768px){
-
-.memory-grid{
-grid-template-columns:repeat(2,1fr);
+/* --- CERTIFICATE VIEW STYLING --- */
+.certificate {
+border: 8px double #eab308;
+background: #fffdf5;
+padding: 40px 30px;
+border-radius: 24px;
+box-shadow: inset 0 0 40px rgba(234,179,8,0.05);
 }
 
-.option{
-width:150px;
-font-size:18px;
+.cert-title {
+font-size: 24px;
+color: #ca8a04;
+letter-spacing: 2px;
+font-weight: bold;
+text-transform: uppercase;
+margin-bottom: 15px;
 }
 
-.question{
-font-size:24px;
+.cert-name {
+font-size: 38px;
+color: #1e3a8a;
+margin: 15px 0;
+border-bottom: 2px dashed #ca8a04;
+display: inline-block;
+padding: 0 30px 5px 30px;
 }
 
+.cert-meta {
+font-size: 18px;
+color: #475569;
+margin-bottom: 10px;
 }
 
+.final-score {
+font-size: 64px;
+font-weight: bold;
+color: #dc2626;
+margin: 15px 0;
+}
+
+.rank-badge {
+background: #ca8a04;
+color: white;
+font-size: 24px;
+padding: 12px 30px;
+border-radius: 50px;
+display: inline-block;
+font-weight: bold;
+margin-top: 10px;
+box-shadow: 0 4px 10px rgba(202,138,4,0.3);
+}
+
+@media(max-width: 600px) {
+.conveyor-belt { flex-direction: column; }
+.arrow-divider { transform: rotate(90deg); margin: 5px 0; }
+h1 { font-size: 26px; }
+.cert-name { font-size: 26px; }
+}
 </style>
-
 </head>
-
 <body>
 
-<audio id="correctSound" src="assets/correct-1.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<!-- CORE GAME AUDIO FEEDBACK -->
+<audio id="correctSound" src="assets/correct-1.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
 
-<!-- INTRO -->
-
-<div class="screen active" id="intro">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<h1>💻 Input Process Output Adventure</h1>
-
-<input type="text" id="studentName" placeholder="Enter Student Name">
-
-<br>
-
-<button class="btn" onclick="startGame()">
-🚀 Start Game
-</button>
-
+<!-- 1. BRANDING SPLASH SCREEN -->
+<div id="brand-splash">
+<img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
 
-<!-- MENU -->
-
-<div class="screen" id="menu">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<h1>🎮 Choose Activity</h1>
-
-<button class="btn" onclick="startQuiz()">📝 Picture Quiz</button>
-
-<button class="btn" onclick="startDragGame()">🧩 Drag & Drop</button>
-
-<button class="btn" onclick="startMemoryGame()">🧠 Memory Match</button>
-
-<button class="btn" onclick="startSortingGame()">📦 Sorting Game</button>
-
+<!-- 2. REGISTRATION PANEL -->
+<div id="registrationScreen" class="screen">
+<h1>The Magic IPO Factory</h1>
+<p class="subtitle">Discover the Input-Process-Output Cycle!</p>
+<div class="input-group">
+<input type="text" id="studentName" placeholder="😀 Enter Student Name" autocomplete="off">
+<input type="text" id="studentClass" placeholder="🏫 Enter Class / Grade" autocomplete="off">
+<input type="text" id="schoolName" placeholder="🏢 Enter School Name" autocomplete="off">
+</div>
+<button class="btn" onclick="registerPlayer()">Enter Factory 🏭</button>
 </div>
 
-<!-- QUIZ -->
-
-<div class="screen" id="quizScreen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<div class="question" id="question"></div>
-
-<div class="option-container" id="options"></div>
-
-<div class="feedback" id="feedback"></div>
-
-<div class="score" id="score">
-Score : 0
+<!-- 3. MAIN LINEAR GAMEPLAY PANEL -->
+<div id="gameplayScreen" class="screen">
+<div class="scoreboard">
+<div>👤 Player: <span id="displayPlayerName"></span></div>
+<div>🎯 Round: <span id="currentRoundNum">1</span>/4</div>
+<div>⭐ Score: <span id="currentScore">0</span></div>
 </div>
 
-<button class="btn" onclick="nextQuestion()">
-Next ➜
-</button>
-
+<div class="factory-floor">
+<div class="conveyor-belt">
+<div class="ipo-card input-card">
+<span class="ipo-label">Input</span>
+<div class="ipo-content" id="inputContent">...</div>
+</div>
+<div class="arrow-divider">➜</div>
+<div class="ipo-card process-card">
+<span class="ipo-label">Process</span>
+<div class="ipo-content" id="processContent">...</div>
+</div>
+<div class="arrow-divider">➜</div>
+<div class="ipo-card output-card">
+<span class="ipo-label">Output</span>
+<div class="ipo-content" id="outputContent" style="color:#94a3b8; font-style:italic;">? Hidden ?</div>
+</div>
+</div>
 </div>
 
-<!-- DRAG DROP -->
+<div class="prompt-text" id="roundPrompt">...</div>
+<div class="options-grid" id="optionsContainer"></div>
+<div class="feedback-box" id="feedbackDisplay"></div>
+</div>
 
-<div class="screen" id="dragScreen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<h1>🧩 Match Correct Category</h1>
-
-<div class="drag-container">
-
+<!-- 4. END-GAME EVALUATION SCREEN -->
+<div id="certificateScreen" class="screen">
+<div class="certificate">
+<div class="cert-title">📜 Certificate of Completion</div>
+<p class="cert-meta">This recognizes that computer builder</p>
+<div class="cert-name" id="certPlayerName">Student Name</div>
+<p class="cert-meta" id="certSchoolMeta">School Info</p>
+<p class="cert-meta" style="margin-top:15px; font-weight:bold;">Has mastered the IPO Cycle with a score of:</p>
+<div class="final-score" id="certFinalScore">0/4 Points</div>
+<div class="rank-badge" id="certRank">Certified Chief Systems Engineer</div>
 <div>
-
-<div class="drag-item" draggable="true" id="keyboard">
-Keyboard
+<button class="btn" onclick="location.reload()" style="margin-top: 30px; font-size:18px; padding:12px 25px;">Play Again 🔄</button>
 </div>
-
-<div class="drag-item" draggable="true" id="cpu">
-CPU
 </div>
-
-<div class="drag-item" draggable="true" id="monitor">
-Monitor
-</div>
-
-</div>
-
-<div>
-
-<div class="drop-box" data-answer="keyboard">
-INPUT
-</div>
-
-<div class="drop-box" data-answer="cpu">
-PROCESS
-</div>
-
-<div class="drop-box" data-answer="monitor">
-OUTPUT
-</div>
-
-</div>
-
-</div>
-
-<div class="feedback" id="dragFeedback"></div>
-
-<button class="btn" onclick="showMenu()">
-⬅ Back
-</button>
-
-</div>
-
-<!-- MEMORY -->
-
-<div class="screen" id="memoryScreen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<h1>🧠 Memory Match</h1>
-
-<div class="memory-grid" id="memoryGrid"></div>
-
-<div class="feedback" id="memoryFeedback"></div>
-
-<button class="btn" onclick="showMenu()">
-⬅ Back
-</button>
-
-</div>
-
-<!-- SORTING -->
-
-<div class="screen" id="sortingScreen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<h1>📦 Sorting Game</h1>
-
-<div class="question">
-Click ONLY INPUT Devices
-</div>
-
-<div class="option-container">
-
-<div class="option" onclick="checkSort('keyboard')">
-
-<img src="assets/keyboard.png">
-
-Keyboard
-
-</div>
-
-<div class="option" onclick="checkSort('mouse')">
-
-<img src="assets/mouse.png">
-
-Mouse
-
-</div>
-
-<div class="option" onclick="checkSort('printer')">
-
-<img src="assets/printer.png">
-
-Printer
-
-</div>
-
-<div class="option" onclick="checkSort('speaker')">
-
-<img src="assets/speaker.png">
-
-Speaker
-
-</div>
-
-</div>
-
-<div class="feedback" id="sortFeedback"></div>
-
-<button class="btn" onclick="showMenu()">
-⬅ Back
-</button>
-
-</div>
-
-<!-- FINAL -->
-
-<div class="screen" id="finalScreen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<h1>🏆 Congratulations</h1>
-
-<h2 id="studentDisplay"></h2>
-
-<div class="final-score" id="finalScore"></div>
-
-<h2 id="rank"></h2>
-
-<button class="btn" onclick="location.reload()">
-🔄 Play Again
-</button>
-
 </div>
 
 <script>
+// Game State variables
+let currentRound = 0;
+let score = 0;
+let playerName = "";
+let playerClass = "";
+let playerSchool = "";
+let isAnswered = false;
 
-let student="";
-let score=0;
-let currentQuestion=0;
-
-/* QUESTIONS */
-
-const questions=[
-
+// Unified Sequential Round Questions Database
+const ipoRoundsData = [
 {
-question:"Which is an INPUT Device?",
-options:[
-{img:"assets/keyboard.png",text:"Keyboard"},
-{img:"assets/monitor.png",text:"Monitor"},
-{img:"assets/printer.png",text:"Printer"}
-],
-answer:"Keyboard"
+input: "🥭 Raw Mangoes & Sugar",
+process: "Blends in a Mixer",
+prompt: "What is the final OUTPUT?",
+options: [
+{ text: "🧃 Sweet Mango Juice", isCorrect: true },
+{ text: "🍕 Cheese Pizza", isCorrect: false },
+{ text: "🪵 Wooden Chair", isCorrect: false }
+]
 },
-
 {
-question:"Which is a PROCESS Device?",
-options:[
-{img:"assets/CPU.png",text:"CPU"},
-{img:"assets/speaker.png",text:"Speaker"},
-{img:"assets/monitor.png",text:"Monitor"}
-],
-answer:"CPU"
+input: "⌨️ Tapping keys 'A-P-P-L-E' on Keyboard",
+process: "CPU processes the letters",
+prompt: "What is the correct OUTPUT on the screen?",
+options: [
+{ text: "🔊 A loud beep sound", isCorrect: false },
+{ text: "🍎 The word 'APPLE' shows on Monitor", isCorrect: true },
+{ text: "🖨️ A printed picture", isCorrect: false }
+]
 },
-
 {
-question:"Which is an OUTPUT Device?",
-options:[
-{img:"assets/monitor.png",text:"Monitor"},
-{img:"assets/mouse.png",text:"Mouse"},
-{img:"assets/keyboard.png",text:"Keyboard"}
-],
-answer:"Monitor"
+input: "🧼 Dirty Clothes & Washing Powder",
+process: "Spinning inside the Washing Machine",
+prompt: "What is the wonderful OUTPUT?",
+options: [
+{ text: "👕 Clean, fresh clothes", isCorrect: true },
+{ text: "🍽️ Hot dinner", isCorrect: false },
+{ text: "🎒 New school bag", isCorrect: false }
+]
 },
-
 {
-question:"What makes juice from oranges?",
-options:[
-{img:"assets/juicer.png",text:"Juicer"},
-{img:"assets/clay.png",text:"Clay"},
-{img:"assets/CD.png",text:"CD"}
-],
-answer:"Juicer"
-},
-
-{
-question:"What is made from clay?",
-options:[
-{img:"assets/clay-toy.png",text:"Clay Toy"},
-{img:"assets/mouse.png",text:"Mouse"},
-{img:"assets/printer.png",text:"Printer"}
-],
-answer:"Clay Toy"
+input: "Numbers: 5 and 2 (with a '+' sign)",
+process: "CPU adds the numbers together",
+prompt: "What is the mathematical OUTPUT?",
+options: [
+{ text: "🔢 3", isCorrect: false },
+{ text: "🔢 10", isCorrect: false },
+{ text: "🔢 7", isCorrect: true }
+]
 }
-
 ];
 
-/* START */
+// Splash Screen Timer Controller (Exactly 5 Seconds lock out)
+window.addEventListener('DOMContentLoaded', () => {
+setTimeout(() => {
+const splash = document.getElementById('brand-splash');
+splash.style.opacity = '0';
+setTimeout(() => {
+splash.style.display = 'none';
+document.getElementById('registrationScreen').classList.add('active');
+}, 500);
+}, 5000);
+});
 
-function startGame(){
+// Runtime Audio Activation Engine
+function playAudio(elementId) {
+const audioNode = document.getElementById(elementId);
+if(audioNode) {
+audioNode.currentTime = 0;
+audioNode.play().catch(e => console.log("Audio feedback interaction ready."));
+}
+}
 
-student=document.getElementById("studentName").value;
+// Handler to validate inputs and kickstart the linear framework
+function registerPlayer() {
+playerName = document.getElementById('studentName').value.trim();
+playerClass = document.getElementById('studentClass').value.trim();
+playerSchool = document.getElementById('schoolName').value.trim();
 
-if(student===""){
-alert("Enter Student Name");
+if(!playerName || !playerClass || !playerSchool) {
+alert("Please fill in your Name, Class, and School to enter the factory floor!");
 return;
 }
 
-showMenu();
+// Transfer dynamic naming profiles
+document.getElementById('displayPlayerName').innerText = playerName;
 
+// Swap screens directly without dynamic menus
+document.getElementById('registrationScreen').classList.remove('active');
+document.getElementById('gameplayScreen').classList.add('active');
+
+loadRound();
 }
 
-/* SCREEN */
+// Function to populate gameplay metrics per index row
+function loadRound() {
+isAnswered = false;
+document.getElementById('feedbackDisplay').innerText = "";
+document.getElementById('outputContent').innerText = "? Hidden ?";
+document.getElementById('outputContent').style.color = "#94a3b8";
+document.getElementById('outputContent').style.fontStyle = "italic";
 
-function showScreen(id){
+const currentData = ipoRoundsData[currentRound];
 
-document.querySelectorAll(".screen").forEach(screen=>{
-screen.classList.remove("active");
+// Update step counters
+document.getElementById('currentRoundNum').innerText = currentRound + 1;
+document.getElementById('inputContent').innerText = currentData.input;
+document.getElementById('processContent').innerText = currentData.process;
+document.getElementById('roundPrompt').innerText = currentData.prompt;
+
+// Render options grid
+const optionsContainer = document.getElementById('optionsContainer');
+optionsContainer.innerHTML = "";
+
+currentData.options.forEach(option => {
+const card = document.createElement('div');
+card.className = "option-card";
+card.innerText = option.text;
+card.onclick = () => evaluateChoice(card, option.isCorrect, option.text);
+optionsContainer.appendChild(card);
 });
-
-document.getElementById(id).classList.add("active");
-
 }
 
-function showMenu(){
-showScreen("menu");
-}
+// Processing gameplay response selection rules
+function evaluateChoice(selectedCard, isCorrect, solutionText) {
+if(isAnswered) return; // Prevent multiple selection taps
+isAnswered = true;
 
-/* QUIZ */
+const feedbackDisplay = document.getElementById('feedbackDisplay');
 
-function startQuiz(){
-
-currentQuestion=0;
-
-showScreen("quizScreen");
-
-loadQuestion();
-
-}
-
-function loadQuestion(){
-
-let q=questions[currentQuestion];
-
-document.getElementById("question").innerHTML=q.question;
-
-let html="";
-
-q.options.forEach(option=>{
-
-html+=`
-
-<div class="option" onclick="checkAnswer('${option.text}')">
-
-<img src="${option.img}">
-
-${option.text}
-
-</div>
-
-`;
-
-});
-
-document.getElementById("options").innerHTML=html;
-
-document.getElementById("feedback").innerHTML="";
-
-document.getElementById("score").innerHTML=
-"Score : "+score;
-
-}
-
-function checkAnswer(selected){
-
-let q=questions[currentQuestion];
-
-if(selected===q.answer){
-
-document.getElementById("feedback").innerHTML=
-"✅ Correct";
-
-document.getElementById("feedback").style.color="green";
-
-document.getElementById("correctSound").play();
-
+if(isCorrect) {
 score++;
+document.getElementById('currentScore').innerText = score;
+selectedCard.style.background = "#dcfce7";
+selectedCard.style.borderColor = "#22c55e";
+feedbackDisplay.innerText = "🎉 Brilliant! Correct Answer!";
+feedbackDisplay.style.color = "#166534";
+playAudio('correctSound');
+} else {
+selectedCard.style.background = "#fee2e2";
+selectedCard.style.borderColor = "#ef4444";
+feedbackDisplay.innerText = "❌ Let's try to fix that next time!";
+feedbackDisplay.style.color = "#991b1b";
+playAudio('wrongSound');
+}
 
+// Instantly clarify hidden element visibility upon response evaluation
+const outputField = document.getElementById('outputContent');
+// Find correct option to show as output display target
+const targetedAnswer = ipoRoundsData[currentRound].options.find(o => o.isCorrect).text;
+outputField.innerText = targetedAnswer;
+outputField.style.color = "#166534";
+outputField.style.fontStyle = "normal";
+
+// Proceed to sequential timeline engine
+setTimeout(() => {
+currentRound++;
+if(currentRound < ipoRoundsData.length) {
+loadRound();
+} else {
+triggerEvaluationView();
+}
+}, 2500);
+}
+
+// Complete removal of factory layout space to build graduation views
+function triggerEvaluationView() {
+document.getElementById('gameplayScreen').classList.remove('active');
+document.getElementById('certificateScreen').classList.add('active');
+
+document.getElementById('certPlayerName').innerText = playerName;
+document.getElementById('certSchoolMeta').innerText = `Class: ${playerClass} | ${playerSchool}`;
+document.getElementById('certFinalScore').innerText = `${score} / 4 Points`;
+
+// Interactive performance evaluations
+let designRank = "";
+if(score === 4) {
+designRank = "🏆 Certified Chief Systems Engineer";
+} else if (score >= 2) {
+designRank = "🌟 Expert Factory Junior Planner";
+} else {
+designRank = "📘 Systems Apprentice Explorer";
+}
+
+document.getElementById('certRank').innerText = designRank;
+
+// Dual triggers: audio synchronization + celebratory particle explosion
+playAudio('clapSound');
 confetti({
-particleCount:150,
-spread:90
+particleCount: 220,
+spread: 100,
+origin: { y: 0.6 }
 });
-
-}else{
-
-document.getElementById("feedback").innerHTML=
-"❌ Wrong";
-
-document.getElementById("feedback").style.color="red";
-
-document.getElementById("wrongSound").play();
-
 }
-
-}
-
-function nextQuestion(){
-
-currentQuestion++;
-
-if(currentQuestion>=questions.length){
-
-showFinal();
-
-}else{
-
-loadQuestion();
-
-}
-
-}
-
-/* DRAG DROP */
-
-function startDragGame(){
-
-showScreen("dragScreen");
-
-}
-
-let correctDrops=0;
-
-document.querySelectorAll('.drag-item').forEach(item=>{
-
-item.addEventListener('dragstart',e=>{
-e.dataTransfer.setData('text',e.target.id);
-});
-
-});
-
-document.querySelectorAll('.drop-box').forEach(box=>{
-
-box.addEventListener('dragover',e=>{
-e.preventDefault();
-});
-
-box.addEventListener('drop',e=>{
-
-e.preventDefault();
-
-const data=e.dataTransfer.getData('text');
-
-if(data===box.dataset.answer){
-
-box.style.background='lightgreen';
-
-box.innerHTML='✅ Correct';
-
-document.getElementById("correctSound").play();
-
-score++;
-
-correctDrops++;
-
-document.getElementById("dragFeedback").innerHTML=
-"🎉 Good Job";
-
-document.getElementById("dragFeedback").style.color="green";
-
-if(correctDrops===3){
-
-confetti({
-particleCount:220,
-spread:120
-});
-
-}
-
-}else{
-
-document.getElementById("wrongSound").play();
-
-document.getElementById("dragFeedback").innerHTML=
-"❌ Wrong Match";
-
-document.getElementById("dragFeedback").style.color="red";
-
-}
-
-});
-
-});
-
-/* MEMORY */
-
-const memoryItems=[
-"Keyboard","Keyboard",
-"CPU","CPU",
-"Monitor","Monitor",
-"Mouse","Mouse"
-];
-
-let flipped=[];
-let matched=0;
-
-function startMemoryGame(){
-
-showScreen("memoryScreen");
-
-const grid=document.getElementById("memoryGrid");
-
-grid.innerHTML="";
-
-memoryItems.sort(()=>0.5-Math.random());
-
-memoryItems.forEach(item=>{
-
-const card=document.createElement("div");
-
-card.className="card";
-
-card.innerHTML="?";
-
-card.onclick=()=>flipCard(card,item);
-
-grid.appendChild(card);
-
-});
-
-}
-
-function flipCard(card,item){
-
-if(card.classList.contains("flipped")) return;
-
-card.classList.add("flipped");
-
-card.innerHTML=item;
-
-flipped.push({card,item});
-
-if(flipped.length===2){
-
-if(flipped[0].item===flipped[1].item){
-
-matched++;
-
-score++;
-
-document.getElementById("correctSound").play();
-
-document.getElementById("memoryFeedback").innerHTML=
-"✅ Match Found";
-
-document.getElementById("memoryFeedback").style.color="green";
-
-flipped=[];
-
-if(matched===4){
-
-confetti({
-particleCount:250,
-spread:130
-});
-
-}
-
-}else{
-
-document.getElementById("wrongSound").play();
-
-setTimeout(()=>{
-
-flipped.forEach(f=>{
-f.card.classList.remove("flipped");
-f.card.innerHTML="?";
-});
-
-flipped=[];
-
-},1000);
-
-}
-
-}
-
-}
-
-/* SORTING */
-
-function startSortingGame(){
-
-showScreen("sortingScreen");
-
-}
-
-function checkSort(device){
-
-if(device==="keyboard" || device==="mouse"){
-
-document.getElementById("correctSound").play();
-
-document.getElementById("sortFeedback").innerHTML=
-"✅ Correct Input Device";
-
-document.getElementById("sortFeedback").style.color="green";
-
-score++;
-
-confetti({
-particleCount:120,
-spread:80
-});
-
-}else{
-
-document.getElementById("wrongSound").play();
-
-document.getElementById("sortFeedback").innerHTML=
-"❌ Not an Input Device";
-
-document.getElementById("sortFeedback").style.color="red";
-
-}
-
-}
-
-/* FINAL */
-
-function showFinal(){
-
-showScreen("finalScreen");
-
-document.getElementById("studentDisplay").innerHTML=
-student;
-
-document.getElementById("finalScore").innerHTML=
-score+" Points";
-
-let rank="";
-
-if(score>=10){
-
-rank="🏆 ICT Champion";
-
-}else if(score>=6){
-
-rank="🌟 Smart Learner";
-
-}else{
-
-rank="👍 Keep Practicing";
-
-}
-
-document.getElementById("rank").innerHTML=rank;
-
-confetti({
-particleCount:350,
-spread:150
-});
-
-}
-
 </script>
-
 </body>
 </html>

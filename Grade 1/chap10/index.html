@@ -3,22 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Tux Paint Creative Match</title>
+    <title>Tux Paint Canvas Inspector</title>
     
-    <!-- Canvas Confetti Library for Celebrations -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
         :root {
-            --sky-blue: #bae6fd;
-            --primary-blue: #1565c0;
-            --primary-dark: #0d47a1;
-            --primary-light: #e3f2fd;
-            --accent-orange: #ff7043;
-            --accent-dark: #e64a19;
-            --text-main: #2c3e50;
-            --correct-green: #4caf50;
-            --correct-dark: #388e3c;
+            --sky-blue: #e0f2fe;
+            --pastel-orange: #ffedd5;
+            --primary-blue: #0284c7;
+            --primary-dark: #0369a1;
+            --accent-wood: #854d0e;
+            --wood-light: #ca8a04;
+            --text-dark: #1e293b;
+            --correct-green: #22c55e;
+            --wrong-red: #ef4444;
         }
 
         * {
@@ -31,13 +30,14 @@
         }
 
         body {
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #a1c4fd 100%);
+            background: linear-gradient(135deg, var(--sky-blue) 0%, var(--pastel-orange) 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 15px;
             overflow-x: hidden;
+            color: var(--text-dark);
         }
 
         /* --- 1. BRANDING SPLASH SCREEN (Strict 5 Seconds) --- */
@@ -60,395 +60,515 @@
             object-fit: contain;
         }
 
-        /* --- STAGE SCREEN COMPONENT CARD --- */
+        /* --- CONTAINER FRAME --- */
         .screen {
             display: none;
             width: 100%;
-            max-width: 750px;
-            background: rgba(255, 255, 255, 0.96);
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.95);
             border: 6px solid var(--primary-blue);
             border-radius: 32px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            padding: 35px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            padding: 30px;
             text-align: center;
             position: relative;
-            backdrop-filter: blur(5px);
-            animation: cardPopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(4px);
+            animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .screen.active {
             display: block;
         }
 
-        @keyframes cardPopIn {
+        @keyframes popUp {
             0% { transform: scale(0.95); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
 
-        h1 { color: var(--primary-blue); font-size: 36px; margin-bottom: 15px; }
-        h2 { color: var(--primary-dark); font-size: 26px; margin-bottom: 20px; }
-        p { color: var(--text-main); font-size: 22px; margin-bottom: 25px; font-weight: bold; }
+        h1 { color: var(--primary-blue); font-size: 34px; margin-bottom: 10px; }
+        p { font-size: 20px; color: #475569; margin-bottom: 20px; }
 
-        /* Setup Form Container */
-        .form-container {
+        /* Setup Panel */
+        .form-box {
             max-width: 450px;
-            margin: 0 auto 25px auto;
+            margin: 0 auto 20px auto;
         }
-
         input {
             width: 100%;
-            padding: 16px 20px;
-            border-radius: 20px;
+            padding: 16px;
+            border-radius: 18px;
             border: 4px solid #cbd5e1;
             font-size: 18px;
             margin-bottom: 15px;
             outline: none;
-            font-family: inherit;
             text-align: center;
             background: #f8fafc;
+            font-family: inherit;
         }
         input:focus {
             border-color: var(--primary-blue);
-            background: #ffffff;
+            background: white;
         }
 
-        /* Giant Gameplay / Action Buttons */
+        /* Large Action Button */
         .btn {
-            background: linear-gradient(180deg, #ff8a65 0%, var(--accent-orange) 100%);
+            background: linear-gradient(180deg, #f97316 0%, #ea580c 100%);
             color: white;
             border: none;
-            padding: 16px 40px;
+            padding: 16px 45px;
             border-radius: 50px;
             font-size: 22px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 6px 0 var(--accent-dark);
+            box-shadow: 0 6px 0 #9a3412;
             transition: all 0.1s ease;
-            margin: 10px;
             display: inline-flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
         .btn:active {
             transform: translateY(4px);
-            box-shadow: 0 2px 0 var(--accent-dark);
+            box-shadow: 0 2px 0 #9a3412;
         }
 
-        /* --- HUD TRACKER BAR --- */
-        .status-hud {
+        /* --- HUD SCORE TRACKER --- */
+        .hud-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--primary-light);
-            border: 3px solid var(--primary-blue);
+            background: #f0f9ff;
+            border: 3px dashed var(--primary-blue);
             border-radius: 20px;
-            padding: 12px 25px;
-            margin-bottom: 25px;
+            padding: 10px 25px;
+            margin-bottom: 20px;
             font-size: 20px;
             font-weight: bold;
-            color: var(--primary-blue);
+            color: var(--primary-dark);
         }
 
-        /* --- GAMEPLAY BUTTON OPTIONS --- */
-        .options-container {
+        /* --- 3. WOODEN EASEL & CANVAS LAYOUT --- */
+        .easel-frame {
+            background: #b45309; /* Outer wood finish */
+            border: 12px solid var(--accent-wood);
+            border-radius: 16px;
+            padding: 15px;
+            max-width: 620px;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2), inset 0 2px 5px rgba(255,255,255,0.2);
+            position: relative;
+        }
+        
+        /* Shelf tray ledge at base of easel */
+        .easel-frame::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: -5%;
+            width: 110%;
+            height: 15px;
+            background: #78350f;
+            border-radius: 6px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        canvas {
+            background: #ffffff;
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.15);
+            max-width: 100%;
+            height: auto;
+        }
+
+        .prompt-banner {
+            font-size: 22px;
+            font-weight: bold;
+            color: var(--text-dark);
+            background: #fef3c7;
+            border: 2px solid #f59e0b;
+            padding: 12px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+        }
+
+        /* --- OPTION BUTTONS LAYOUT --- */
+        .options-row {
             display: flex;
-            flex-direction: column;
-            gap: 16px;
-            max-width: 550px;
-            margin: 20px auto;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 15px;
         }
 
-        .option-btn {
-            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
-            color: var(--text-main);
+        .tool-btn {
+            background: white;
+            color: var(--text-dark);
             border: 4px solid var(--primary-blue);
-            padding: 20px 30px;
+            padding: 18px 25px;
             border-radius: 24px;
-            font-size: 24px;
+            font-size: 22px;
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 6px 0 var(--primary-dark);
             transition: all 0.1s ease;
+            min-width: 200px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
-            text-align: center;
         }
 
-        .option-btn:active {
+        .tool-btn:active {
             transform: translateY(4px);
             box-shadow: 0 2px 0 var(--primary-dark);
         }
 
-        /* Feedback Display */
-        .feedback {
-            font-size: 26px;
+        .feedback-box {
+            font-size: 24px;
             font-weight: bold;
-            min-height: 40px;
-            margin-top: 20px;
+            min-height: 35px;
+            margin-top: 15px;
         }
 
-        /* --- END GAME CERTIFICATE DECORATION --- */
-        .certificate-box {
-            border: 5px dashed var(--accent-orange);
-            background: #fffdf9;
-            padding: 25px;
+        /* --- CERTIFICATE VIEW --- */
+        .cert-card {
+            border: 6px double var(--wood-light);
+            background: #fffbeb;
+            padding: 30px;
             border-radius: 24px;
-            margin: 20px 0;
+            margin: 25px 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
-
-        .final-score {
-            font-size: 70px;
+        .cert-name {
+            font-size: 32px;
+            color: var(--primary-blue);
+            text-decoration: underline;
+            margin: 10px 0;
             font-weight: 900;
-            color: var(--accent-orange);
-            margin: 15px 0;
-            text-shadow: 2px 2px 0px #fbe9e7;
         }
-
-        @media(max-width: 600px) {
-            h1 { font-size: 28px; }
-            p { font-size: 18px; }
-            .option-btn { font-size: 18px; padding: 15px; }
+        .score-badge {
+            font-size: 55px;
+            font-weight: 900;
+            color: #ea580c;
+            margin: 15px 0;
+        }
+        .rank-title {
+            display: inline-block;
+            background: linear-gradient(135deg, #eab308, #ca8a04);
+            color: white;
+            padding: 12px 35px;
+            font-size: 26px;
+            border-radius: 50px;
+            box-shadow: 0 6px 12px rgba(202, 138, 4, 0.3);
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. BRANDING SPLASH COVER (Strictly 5 Seconds) -->
     <div id="brand-splash">
         <img src="assets/innovine-logo.png" alt="Innovine Logo">
     </div>
 
-    <!-- 2. SETUP PANEL -->
-    <div id="screen-intro" class="screen">
-                <h1>🎨 Tux Paint Creative Match</h1>
-        <p>Enter your details to start the learning challenge:</p>
+    <div id="screen-setup" class="screen">
+        <h1 style="font-size: 36px; margin-bottom: 5px;">🎨 Tux Paint</h1>
+        <h1>Canvas Inspector 🔍</h1>
+        <p>Become an art detective! Inspect canvases to find the tools used.</p>
         
-        <div class="form-container">
-            <input type="text" id="studentName" placeholder="✨ Enter Student Name" required>
-            <input type="text" id="studentClass" placeholder="🏫 Enter Class / Grade">
-            <input type="text" id="schoolName" placeholder="🎒 Enter School Name">
+        <div class="form-box">
+            <input type="text" id="inputName" placeholder="👤 Enter Student Name" required>
+            <input type="text" id="inputClass" placeholder="🏫 Enter Class / Grade">
+            <input type="text" id="inputSchool" placeholder="🏢 Enter School Name">
         </div>
 
-        <button class="btn" onclick="validateAndProceed()">Start Learning Adventure 🚀</button>
+        <button class="btn" onclick="startInspectorQuest()">Grab Magnifying Glass 🔍</button>
     </div>
 
-    <!-- 3. MAIN GAMEPLAY SCREEN -->
-    <div id="screen-gameplay" class="screen">
-        <div class="status-hud">
-            <div id="hud-round">Round: 1 / 5</div>
-            <div>⭐ Score: <span id="hud-score">0</span></div>
+    <div id="screen-game" class="screen">
+        <div class="hud-bar">
+            <div id="hud-round">Canvas: 1 / 4</div>
+            <div>⭐ Correct: <span id="hud-score">0</span></div>
         </div>
 
-        <h2 style="color: var(--primary-dark); margin-bottom: 10px;">Question:</h2>
-        <p id="question-text">Loading question...</p>
-
-        <div class="options-container" id="options-box">
-            <!-- Dynamic Buttons will render here -->
+        <div class="prompt-banner" id="prompt-text">
+            Prompt question text loading...
         </div>
 
-        <div class="feedback" id="gameplay-feedback"></div>
+        <div class="easel-frame">
+            <canvas id="clueCanvas" width="560" height="300"></canvas>
+        </div>
+
+        <div class="options-row" id="options-container">
+            </div>
+
+        <div class="feedback-box" id="feedback-msg"></div>
     </div>
 
-    <!-- 4. END-GAME EVALUATION SCREEN -->
-    <div id="screen-final" class="screen">
-        <h1>🏆 Challenge Completed!</h1>
+    <div id="screen-completion" class="screen">
+        <h1>🎉 Case Closed, Detective! 🎉</h1>
         
-        <div class="certificate-box">
-            <p id="finalText" style="font-size: 26px; color: var(--primary-dark); margin-bottom: 10px;"></p>
-            <div class="final-score" id="finalScore">0 / 5 Points</div>
-            <h2 id="rankText" style="color: var(--correct-green); font-size: 32px; font-weight: 900;"></h2>
+        <div class="cert-card">
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 14px; font-weight: bold;">Art Detective Academy Certificate</p>
+            <div class="cert-name" id="player-name">Student Name</div>
+            <p id="player-meta" style="font-size:16px; margin-bottom:10px; color:#64748b;"></p>
+            
+            <div class="score-badge" id="player-score">4/4 Canvases Solved</div>
+            
+            <div class="rank-title">Master Art Detective</div>
         </div>
 
-        <button class="btn" onclick="location.reload()">🔄 Play Again</button>
+        <button class="btn" onclick="location.reload()" style="background: linear-gradient(180deg, var(--primary-blue) 0%, var(--primary-dark) 100%); box-shadow: 0 6px 0 #025a87;">🔄 Inspect Again</button>
     </div>
 
-    <!-- CORE AUDIO FEEDBACK LINKS -->
-    <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <script>
-        let studentName = "";
-        let currentRoundIndex = 0;
-        let totalScore = 0;
-        let canTap = true;
+        let currentRound = 0;
+        let correctCount = 0;
+        let canInteract = true;
+        let profile = { name: '', grade: '', school: '' };
 
-        // Finite Round Challenges Configuration
-        const quizRounds = [
+        const canvas = document.getElementById('clueCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Round Configurations & Programmatic Vector Art Engine Parameters
+        const stages = [
             {
-                question: "Tux Penguin wants to clear a mistake on his canvas. Which tool should he use?",
-                options: [
-                    { text: "🧽 Eraser Tool", isCorrect: true },
-                    { text: "🎨 Paint Tool", isCorrect: false },
-                    { text: "🖼️ New Canvas", isCorrect: false }
-                ]
+                prompt: "Look at this canvas! What magical tool made these rainbows?",
+                choices: [
+                    { text: "🪄 Magic Tool", correct: true },
+                    { text: "🧽 Eraser Tool", correct: false },
+                    { text: "🅰️ Text Tool", correct: false }
+                ],
+                draw: () => {
+                    // Draw continuous grass lines bottom
+                    ctx.fillStyle = "#22c55e";
+                    ctx.fillRect(0, 240, 560, 60);
+                    for (let i = 0; i < 560; i += 15) {
+                        ctx.beginPath();
+                        ctx.moveTo(i, 240);
+                        ctx.lineTo(i + 5, 220);
+                        ctx.lineTo(i + 10, 240);
+                        ctx.fill();
+                    }
+                    // Draw explicit Rainbow Arcs
+                    const colors = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#3b82f6", "#6366f1", "#a855f7"];
+                    colors.forEach((color, i) => {
+                        ctx.beginPath();
+                        ctx.arc(280, 240, 160 - (i * 10), Math.PI, 0, false);
+                        ctx.strokeStyle = color;
+                        ctx.lineWidth = 10;
+                        ctx.stroke();
+                    });
+                }
             },
             {
-                question: "We want to add a pre-made funny picture of a frog or a tree to our drawing. Choose the tool:",
-                options: [
-                    { text: "✏️ Lines Tool", isCorrect: false },
-                    { text: "🧸 Stamp Tool", isCorrect: true },
-                    { text: "🅰️ Text Tool", isCorrect: false }
-                ]
+                prompt: "Wow, look at all these picture stickers! Which tool put them there?",
+                choices: [
+                    { text: "✏️ Lines Tool", correct: false },
+                    { text: "🧸 Stamp Tool", correct: true },
+                    { text: "🎨 Paint Tool", correct: false }
+                ],
+                draw: () => {
+                    // Populate bear stickers grid-wise
+                    const drawBearStamp = (x, y) => {
+                        ctx.fillStyle = "#b45309";
+                        ctx.beginPath(); ctx.arc(x, y, 20, 0, Math.PI * 2); ctx.fill(); // Head
+                        ctx.beginPath(); ctx.arc(x - 18, y - 15, 8, 0, Math.PI * 2); ctx.fill(); // Left Ear
+                        ctx.beginPath(); ctx.arc(x + 18, y - 15, 8, 0, Math.PI * 2); ctx.fill(); // Right Ear
+                        ctx.fillStyle = "#fef08a";
+                        ctx.beginPath(); ctx.arc(x, y + 4, 8, 0, Math.PI * 2); ctx.fill(); // Snout
+                        ctx.fillStyle = "#000000";
+                        ctx.beginPath(); ctx.arc(x - 6, y - 4, 3, 0, Math.PI * 2); ctx.fill(); // Eye L
+                        ctx.beginPath(); ctx.arc(x + 6, y - 4, 3, 0, Math.PI * 2); ctx.fill(); // Eye R
+                        ctx.beginPath(); ctx.arc(x, y + 2, 2, 0, Math.PI * 2); ctx.fill(); // Nose
+                    };
+                    const drawTreeStamp = (x, y) => {
+                        ctx.fillStyle = "#78350f"; ctx.fillRect(x - 5, y, 10, 25); // Trunk
+                        ctx.fillStyle = "#15803d";
+                        ctx.beginPath(); ctx.moveTo(x, y - 30); ctx.lineTo(x - 20, y); ctx.lineTo(x + 20, y); ctx.fill(); // Leaves
+                    };
+                    // Positions
+                    drawBearStamp(100, 90); drawTreeStamp(220, 75);
+                    drawBearStamp(460, 100); drawTreeStamp(350, 160);
+                    drawBearStamp(140, 210); drawTreeStamp(480, 200);
+                }
             },
             {
-                question: "Let's add magical special effects like rainbows, grass, or chalk lines! Which tool is it?",
-                options: [
-                    { text: "🪄 Magic Tool", isCorrect: true },
-                    { text: "🛑 Quit Tool", isCorrect: false },
-                    { text: "📐 Shapes Tool", isCorrect: false }
-                ]
+                prompt: "This house is built using clean shapes. Which tool drew them?",
+                choices: [
+                    { text: "💾 Save Tool", correct: false },
+                    { text: "🎨 Paint Tool", correct: false },
+                    { text: "📐 Shapes Tool", correct: true }
+                ],
+                draw: () => {
+                    // Red Square Base Frame Block
+                    ctx.fillStyle = "#ef4444";
+                    ctx.lineWidth = 5;
+                    ctx.strokeStyle = "#991b1b";
+                    ctx.fillRect(190, 130, 180, 130);
+                    ctx.strokeRect(190, 130, 180, 130);
+
+                    // Blue Triangle Roof Block
+                    ctx.fillStyle = "#3b82f6";
+                    ctx.strokeStyle = "#1e40af";
+                    ctx.beginPath();
+                    ctx.moveTo(160, 130);
+                    ctx.lineTo(280, 40);
+                    ctx.lineTo(400, 130);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Yellow Square Window
+                    ctx.fillStyle = "#eab308";
+                    ctx.fillRect(215, 155, 45, 45);
+                    ctx.strokeRect(215, 155, 45, 45);
+
+                    // Brown Rectangle Door
+                    ctx.fillStyle = "#78350f";
+                    ctx.fillRect(295, 170, 45, 90);
+                    ctx.strokeRect(295, 170, 45, 90);
+                }
             },
             {
-                question: "We want to type our name or write a story on our drawing. Which tool helps us write?",
-                options: [
-                    { text: "🎨 Paint Tool", isCorrect: false },
-                    { text: "🅰️ Text Tool", isCorrect: true },
-                    { text: "🧽 Eraser Tool", isCorrect: false }
-                ]
-            },
-            {
-                question: "We love our masterpiece and want to keep it safe so we can look at it tomorrow! Tap the tool:",
-                options: [
-                    { text: "❌ Undo Tool", isCorrect: false },
-                    { text: "📂 Open Tool", isCorrect: false },
-                    { text: "💾 Save Tool", isCorrect: true }
-                ]
+                prompt: "Someone wrote words on the canvas! Which tool did they type with?",
+                choices: [
+                    { text: "🅰️ Text Tool", correct: true },
+                    { text: "🧽 Eraser Tool", correct: false },
+                    { text: "🪄 Magic Tool", correct: false }
+                ],
+                draw: () => {
+                    ctx.fillStyle = "#1e3a8a";
+                    ctx.font = "bold 44px 'Arial Rounded MT Bold', sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.textBaseline = "middle";
+                    ctx.fillText("HELLO AMIGOS!", 280, 150);
+
+                    // Decorative text cursor lines
+                    ctx.strokeStyle = "#3b82f6";
+                    ctx.lineWidth = 4;
+                    ctx.beginPath();
+                    ctx.moveTo(435, 125);
+                    ctx.lineTo(435, 175);
+                    ctx.stroke();
+                }
             }
         ];
 
-        // Frame Routing Manager
-        function navigateTo(screenId) {
+        // Frame router logic setup
+        function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
+            document.getElementById(id).classList.add('active');
         }
 
-        /* --- Strict 5-Second Timed Branding Splash --- */
+        // Trigger loading screen lockout
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const splash = document.getElementById('brand-splash');
                 splash.style.opacity = '0';
                 setTimeout(() => {
                     splash.style.display = 'none';
-                    navigateTo('screen-intro');
+                    showScreen('screen-setup');
                 }, 500);
             }, 5000);
         });
 
-        // Form Verification
-        function validateAndProceed() {
-            studentName = document.getElementById('studentName').value.trim();
-            if (!studentName) {
-                alert("Please enter your name to begin the match!");
+        function startInspectorQuest() {
+            profile.name = document.getElementById('inputName').value.trim();
+            profile.grade = document.getElementById('inputClass').value.trim() || "Grade 1";
+            profile.school = document.getElementById('inputSchool').value.trim() || "ICT Primary Academy";
+
+            if (!profile.name) {
+                alert("Please enter an Art Detective name to begin!");
                 return;
             }
-            startQuizChallenge();
+
+            currentRound = 0;
+            correctCount = 0;
+            showScreen('screen-game');
+            loadInspectionRound();
         }
 
-        // Sound Engine
-        function playFeedbackSound(isCorrect) {
-            const audio = document.getElementById(isCorrect ? 'snd-correct' : 'snd-wrong');
-            if (audio) {
-                audio.currentTime = 0;
-                audio.play().catch(() => {});
-            }
-        }
-
-        // Initialize Gameplay Loop
-        function startQuizChallenge() {
-            currentRoundIndex = 0;
-            totalScore = 0;
-            navigateTo('screen-gameplay');
-            loadRound();
-        }
-
-        // Core Game Round Processor
-        function loadRound() {
-            canTap = true;
-            const feedbackEl = document.getElementById('gameplay-feedback');
-            feedbackEl.innerText = "";
+        function loadInspectionRound() {
+            canInteract = true;
+            document.getElementById('feedback-msg').innerText = "";
             
-            const roundData = quizRounds[currentRoundIndex];
-            
-            // Render Progress Info
-            document.getElementById('hud-round').innerText = `Round: ${currentRoundIndex + 1} / 5`;
-            document.getElementById('hud-score').innerText = totalScore;
-            document.getElementById('question-text').innerText = roundData.question;
+            const stage = stages[currentRound];
+            document.getElementById('hud-round').innerText = `Canvas: ${currentRound + 1} / 4`;
+            document.getElementById('hud-score').innerText = correctCount;
+            document.getElementById('prompt-text').innerText = stage.prompt;
 
-            // Generate Button Layout
-            const optionsBox = document.getElementById('options-box');
-            optionsBox.innerHTML = "";
+            // Reset and draw on explicit canvas context
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            stage.draw();
 
-            roundData.options.forEach(opt => {
+            // Populate option selection tray buttons layout
+            const container = document.getElementById('options-container');
+            container.innerHTML = "";
+
+            stage.choices.forEach(choice => {
                 const button = document.createElement('button');
-                button.className = "option-btn";
-                button.innerText = opt.text;
-                button.onclick = () => handleAnswerSelection(opt, button);
-                optionsBox.appendChild(button);
+                button.className = "tool-btn";
+                button.innerText = choice.text;
+                button.onclick = () => verifyDeduction(choice.correct, button);
+                container.appendChild(button);
             });
         }
 
-        // Evaluator Block
-        function handleAnswerSelection(option, selectedButton) {
-            if (!canTap) return;
+        function verifyDeduction(isCorrect, element) {
+            if (!canInteract) return;
 
-            const feedbackEl = document.getElementById('gameplay-feedback');
+            const feedback = document.getElementById('feedback-msg');
+            const sndCorrect = document.getElementById('audio-correct');
+            const sndWrong = document.getElementById('audio-wrong');
 
-            if (option.isCorrect) {
-                canTap = false;
-                totalScore++;
-                document.getElementById('hud-score').innerText = totalScore;
+            if (isCorrect) {
+                canInteract = false;
+                correctCount++;
+                document.getElementById('hud-score').innerText = correctCount;
+
+                element.style.background = "linear-gradient(180deg, #4ade80 0%, #22c55e 100%)";
+                element.style.borderColor = "#166534";
+                element.style.color = "#ffffff";
+
+                feedback.innerText = "🌟 Spot on, Detective! That's correct!";
+                feedback.style.color = "#166534";
                 
-                selectedButton.style.background = "linear-gradient(180deg, #81c784 0%, var(--correct-green) 100%)";
-                selectedButton.style.borderColor = "var(--correct-dark)";
-                selectedButton.style.color = "white";
-                
-                feedbackEl.innerText = "🎉 Excellent Job! That is Correct!";
-                feedbackEl.style.color = "var(--correct-dark)";
-                playFeedbackSound(true);
+                if (sndCorrect) { sndCorrect.currentTime = 0; sndCorrect.play().catch(()=>{}); }
 
-                // Advance automatically after 1.5 seconds
                 setTimeout(() => {
-                    currentRoundIndex++;
-                    if (currentRoundIndex < quizRounds.length) {
-                        loadRound();
+                    currentRound++;
+                    if (currentRound < stages.length) {
+                        loadInspectionRound();
                     } else {
-                        showFinalEvaluation();
+                        triggerGameCompletion();
                     }
-                }, 1500);
+                }, 1800);
             } else {
-                selectedButton.style.background = "linear-gradient(180deg, #e57373 0%, #f44336 100%)";
-                selectedButton.style.borderColor = "#b71c1c";
-                selectedButton.style.color = "white";
-                
-                feedbackEl.innerText = "❌ Try again! You can do it!";
-                feedbackEl.style.color = "#d32f2f";
-                playFeedbackSound(false);
+                element.style.background = "linear-gradient(180deg, #f87171 0%, #ef4444 100%)";
+                element.style.borderColor = "#991b1b";
+                element.style.color = "#ffffff";
+
+                feedback.innerText = "❌ Hmm, that tool doesn't match the clues. Look closer!";
+                feedback.style.color = "#991b1b";
+
+                if (sndWrong) { sndWrong.currentTime = 0; sndWrong.play().catch(()=>{}); }
             }
         }
 
-        // End Game Final Screen Layout
-        function showFinalEvaluation() {
-            navigateTo('screen-final');
-            document.getElementById('finalText').innerHTML = `Congratulations, <b>${studentName}</b>!`;
-            document.getElementById('finalScore').innerText = `${totalScore} / 5 Points`;
+        function triggerGameCompletion() {
+            showScreen('screen-completion');
+            
+            document.getElementById('player-name').innerText = profile.name;
+            document.getElementById('player-meta').innerText = `${profile.grade} | ${profile.school}`;
+            document.getElementById('player-score').innerText = `${correctCount} / 4 Canvases Solved`;
 
-            // Interactive Title Grading
-            let rankingText = "";
-            if (totalScore === 5) {
-                rankingText = "👑 Master Tux Artist";
-            } else if (totalScore >= 3) {
-                rankingText = "🌟 Creative Digital Artist";
-            } else {
-                rankingText = "🎨 Bright Explorer";
-            }
-            document.getElementById('rankText').innerText = rankingText;
-
-            // Trigger Confetti Blast
+            // Active visual canvas explosion trigger
             confetti({
-                particleCount: 180,
-                spread: 85,
+                particleCount: 150,
+                spread: 80,
                 origin: { y: 0.6 }
             });
         }

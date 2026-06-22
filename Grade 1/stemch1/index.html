@@ -1,1 +1,686 @@
-stemchap1
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robo-Code Adventure</title>
+    <!-- Canvas Confetti Library for completion screen -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4A90E2;
+            --secondary-color: #2ECC71;
+            --danger-color: #E74C3C;
+            --warning-color: #F1C40F;
+            --dark-color: #2C3E50;
+            --light-color: #ECF0F1;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
+        }
+
+        body {
+            background-color: #A2D2FF;
+            color: var(--dark-color);
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Screen Framework */
+        .screen {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            background: white;
+            border: 6px solid var(--primary-color);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+            text-align: center;
+            animation: popIn 0.4s ease-out;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* 1. Splash Screen Style */
+        #splash-screen {
+            background: white;
+            border: none;
+            box-shadow: none;
+            max-width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #splash-screen img {
+            max-width: 320px;
+            height: auto;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(0.95); }
+        }
+
+        /* 2. Intro Welcome Screen Form */
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 3px solid #BDE0FE;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            border-color: var(--primary-color);
+        }
+
+        /* Primary Kid-Friendly Buttons */
+        .btn {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 15px 35px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #27AE60;
+            transition: all 0.1s;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #27AE60;
+        }
+
+        /* 3. Gameplay Layout */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #F0F8FF;
+            padding: 12px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 2px dashed var(--primary-color);
+        }
+
+        .hud-item {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .game-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 650px) {
+            .game-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Grid Map Rendering */
+        .grid-map {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: 4px;
+            background: #E0E0E0;
+            padding: 6px;
+            border-radius: 16px;
+            aspect-ratio: 1 / 1;
+        }
+
+        .cell {
+            background: #FFFFFF;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+
+        .cell.path { background: #E8F4F8; }
+        .cell.obstacle { background: #FFCCD5; font-size: 1.5rem; }
+
+        .robot-element {
+            font-size: 2.2rem;
+            transition: transform 0.3s ease-in-out;
+            z-index: 5;
+        }
+
+        /* Command Board & Code Queues */
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .command-buttons {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .cmd-btn {
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.1s;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cmd-btn:active { transform: scale(0.97); }
+        .cmd-forward { background-color: #3498DB; box-shadow: 0 4px 0 #2980B9; }
+        .cmd-left { background-color: #9B59B6; box-shadow: 0 4px 0 #8E44AD; }
+        .cmd-right { background-color: #F39C12; box-shadow: 0 4px 0 #D35400; }
+
+        .instruction-wrapper {
+            background: #F8F9FA;
+            border: 3px solid #DEE2E6;
+            border-radius: 12px;
+            padding: 12px;
+            min-height: 80px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .instruction-title {
+            font-size: 0.95rem;
+            font-weight: bold;
+            margin-bottom: 6px;
+            color: #7F8C8D;
+        }
+
+        .queue-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .queue-badge {
+            background: #E0E0E0;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            animation: popIn 0.2s ease-out;
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 10px;
+        }
+
+        .btn-run {
+            background-color: var(--secondary-color);
+            box-shadow: 0 5px 0 #27AE60;
+            padding: 12px;
+            font-size: 1.2rem;
+        }
+        .btn-clear {
+            background-color: var(--danger-color);
+            box-shadow: 0 5px 0 #C0392B;
+            padding: 12px;
+            font-size: 1.2rem;
+        }
+
+        /* 5. End Screen Graphics */
+        .rank-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.8rem;
+            font-weight: bold;
+            border-radius: 50px;
+            margin: 20px 0;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .score-summary {
+            font-size: 1.3rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Audio Elements Mapping to Asset Folder Paths -->
+    <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="snd-clap" src="assets/clap.mp3" preload="auto"></audio>
+    <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+
+    <!-- 1. Branding Brand Splash Screen -->
+    <div id="splash-screen" class="screen active">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+    </div>
+
+    <!-- 2. Intro Screen -->
+    <div id="intro-screen" class="screen">
+        <h1 style="color: var(--primary-color); margin-bottom: 10px; font-size: 2.2rem;">🤖 Robo-Code Adventure 🚀</h1>
+        <p style="margin-bottom: 25px; font-size: 1.1rem; color: #666;">Welcome little programmer! Let's get ready to code!</p>
+        
+        <form id="start-form" onsubmit="startGame(event)">
+            <div class="form-group">
+                <label for="student-name">⭐ Student Name:</label>
+                <input type="text" id="student-name" required placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+                <label for="class-name">🏫 Class/Grade:</label>
+                <input type="text" id="class-name" required placeholder="e.g. Grade 1-A">
+            </div>
+            <div class="form-group">
+                <label for="school-name">🏢 School Name:</label>
+                <input type="text" id="school-name" required placeholder="Enter your school name">
+            </div>
+            <button type="submit" class="btn">Let's Play! 🎮</button>
+        </form>
+    </div>
+
+    <!-- 3. Gameplay Interface Screen -->
+    <div id="game-screen" class="screen">
+        <div class="game-header">
+            <div class="hud-item" id="hud-level">🌟 Level: 1 / 3</div>
+            <div class="hud-item" id="hud-score">🏆 Score: 0</div>
+        </div>
+
+        <h2 id="level-mission" style="margin-bottom: 15px; color: var(--primary-color);">Mission: Help Robot reach the Battery! 🔋</h2>
+
+        <div class="game-container">
+            <!-- Left Side Grid Map -->
+            <div class="grid-map" id="map-grid">
+                <!-- Programmatically filled cells go here -->
+            </div>
+
+            <!-- Right Side Command Controller Interface -->
+            <div class="control-panel">
+                <div>
+                    <h3 style="margin-bottom: 10px; font-size: 1.1rem;">Choose Directions:</h3>
+                    <div class="command-buttons">
+                        <button class="cmd-btn cmd-forward" onclick="addCommand('forward')"><span>⬆️</span> Move Forward</button>
+                        <button class="cmd-btn cmd-left" onclick="addCommand('left')"><span>↩️</span> Turn Left</button>
+                        <button class="cmd-btn cmd-right" onclick="addCommand('right')"><span>↪️</span> Turn Right</button>
+                    </div>
+
+                    <div class="instruction-wrapper">
+                        <div class="instruction-title">My Instructions Queue Box:</div>
+                        <div class="queue-box" id="queue-box-container">
+                            <!-- Selected blocks added dynamically here -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-run" onclick="executeProgram()">🚀 RUN CODE!</button>
+                    <button class="btn btn-clear" onclick="clearQueue()">❌ Clear</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5. Final Game Loop Completion Finish Screen -->
+    <div id="end-screen" class="screen">
+        <h1 style="color: var(--secondary-color); font-size: 2.5rem;">🎉 Spectacular Job! 🎉</h1>
+        <div class="rank-badge" id="end-rank">Grand Programmer</div>
+        
+        <div class="score-summary" id="end-summary">
+            <!-- Personalized stats injected here -->
+        </div>
+
+        <button class="btn" onclick="resetGame()" style="background-color: var(--primary-color); box-shadow: 0 6px 0 #2980B9;">Play Again 🔄</button>
+    </div>
+
+    <script>
+        // Game Logic State Variables
+        let currentLevel = 1;
+        let score = 0;
+        let commandsQueue = [];
+        let isExecuting = false;
+
+        // Student Data
+        let studentProfile = { name: '', class: '', school: '' };
+
+        // Directions definition mappings
+        const DIR_UP = 0, DIR_RIGHT = 1, DIR_DOWN = 2, DIR_LEFT = 3;
+        const DIR_EMOJIS = ['▲', '▶', '▼', '◀'];
+
+        /* 
+           Level Grid Data Structures Configurations (4x4 Matrix coordinates 0-3 index map)
+           P = Valid Path Tile, X = Danger Obstacle Grid, R = Robot Start, T = Target Destination Goal
+        */
+        const levelConfigs = {
+            1: {
+                mission: "Help Robot reach the Battery! 🔋",
+                targetEmoji: "🔋",
+                grid: [
+                    ['R', 'P', 'X', 'X'],
+                    ['X', 'P', 'X', 'X'],
+                    ['X', 'P', 'P', 'T'],
+                    ['X', 'X', 'X', 'X']
+                ],
+                startPos: {r: 0, c: 0, dir: DIR_RIGHT},
+                // Quickest logical paths solution sequences
+                solution: ['forward', 'right', 'forward', 'forward', 'left', 'forward']
+            },
+            2: {
+                mission: "Help Robot reach the Repair Tool! 🔧",
+                targetEmoji: "🔧",
+                grid: [
+                    ['X', 'X', 'X', 'X'],
+                    ['T', 'P', 'P', 'X'],
+                    ['X', 'X', 'P', 'X'],
+                    ['X', 'X', 'R', 'X']
+                ],
+                startPos: {r: 3, c: 2, dir: DIR_UP},
+                solution: ['forward', 'forward', 'left', 'forward', 'forward']
+            },
+            3: {
+                mission: "Help Robot reach the Rocket Ship! 🚀",
+                targetEmoji: "🚀",
+                grid: [
+                    ['R', 'X', 'X', 'X'],
+                    ['P', 'P', 'X', 'X'],
+                    ['X', 'P', 'P', 'X'],
+                    ['X', 'X', 'T', 'X']
+                ],
+                startPos: {r: 0, c: 0, dir: DIR_DOWN},
+                solution: ['forward', 'left', 'forward', 'right', 'forward', 'left', 'forward']
+            }
+        };
+
+        // Live Dynamic State variables for current puzzle map track
+        let robotState = { r: 0, c: 0, dir: DIR_UP };
+
+        // 1. Interactive Timer Hook for Initial Splash Display View
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                switchScreen('intro-screen');
+            }, 5000); // Strict 5-second branding lockout delay
+        });
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // 2. Setup Student Account Profile Context Data
+        function startGame(e) {
+            e.preventDefault();
+            studentProfile.name = document.getElementById('student-name').value;
+            studentProfile.class = document.getElementById('class-name').value;
+            studentProfile.school = document.getElementById('school-name').value;
+
+            // Initialize configuration properties
+            currentLevel = 1;
+            score = 0;
+            loadLevel(currentLevel);
+            switchScreen('game-screen');
+        }
+
+        // 3. Grid Environment Matrix Drawing Framework Engine
+        function loadLevel(lvlId) {
+            const config = levelConfigs[lvlId];
+            document.getElementById('hud-level').innerText = `🌟 Level: ${lvlId} / 3`;
+            document.getElementById('hud-score').innerText = `🏆 Score: ${score}`;
+            document.getElementById('level-mission').innerText = `Mission: ${config.mission}`;
+            
+            commandsQueue = [];
+            renderQueue();
+            
+            // Set dynamic position vectors to default configuration limits
+            robotState = { ...config.startPos };
+            drawGrid(config);
+        }
+
+        function drawGrid(config) {
+            const mapContainer = document.getElementById('map-grid');
+            mapContainer.innerHTML = '';
+
+            for (let r = 0; r < 4; r++) {
+                for (let c = 0; c < 4; c++) {
+                    const type = config.grid[r][c];
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+
+                    if (type === 'X') {
+                        cell.classList.add('obstacle');
+                        cell.innerText = '🧱';
+                    } else {
+                        cell.classList.add('path');
+                    }
+
+                    if (type === 'T') {
+                        cell.innerText = config.targetEmoji;
+                    }
+
+                    if (r === robotState.r && c === robotState.c) {
+                        const roboEl = document.createElement('div');
+                        roboEl.className = 'robot-element';
+                        roboEl.id = 'active-robot';
+                        roboEl.innerText = '🤖';
+                        // Keep visually pointing dynamic canvas arrow indicator
+                        cell.appendChild(roboEl);
+                        
+                        const dirIndicator = document.createElement('span');
+                        dirIndicator.style.position = 'absolute';
+                        dirIndicator.style.fontSize = '0.8rem';
+                        dirIndicator.style.bottom = '2px';
+                        dirIndicator.style.background = 'rgba(0,0,0,0.6)';
+                        dirIndicator.style.color = 'white';
+                        dirIndicator.style.padding = '2px 4px';
+                        dirIndicator.style.borderRadius = '4px';
+                        dirIndicator.innerText = DIR_EMOJIS[robotState.dir];
+                        cell.appendChild(dirIndicator);
+                    }
+
+                    mapContainer.appendChild(cell);
+                }
+            }
+        }
+
+        // 4. Input Commands Event Interface
+        function addCommand(type) {
+            if (isExecuting) return;
+            commandsQueue.push(type);
+            renderQueue();
+        }
+
+        function clearQueue() {
+            if (isExecuting) return;
+            commandsQueue = [];
+            renderQueue();
+            // Reset grid visualization state safely 
+            loadLevel(currentLevel);
+        }
+
+        function renderQueue() {
+            const container = document.getElementById('queue-box-container');
+            container.innerHTML = '';
+            commandsQueue.forEach((cmd, idx) => {
+                const badge = document.createElement('div');
+                badge.className = 'queue-badge';
+                let icon = cmd === 'forward' ? '⬆️' : cmd === 'left' ? '↩️' : '↪️';
+                badge.innerText = `${idx + 1}. ${icon}`;
+                container.appendChild(badge);
+            });
+        }
+
+        // 5. Game Core Sequential Logic Walkers
+        async function executeProgram() {
+            if (isExecuting || commandsQueue.length === 0) return;
+            isExecuting = true;
+
+            const config = levelConfigs[currentLevel];
+            // Reset position prior to live grid walk simulation
+            robotState = { ...config.startPos };
+            drawGrid(config);
+
+            // Execute each command blocks iteratively with explicit delay loops
+            for (let i = 0; i < commandsQueue.length; i++) {
+                const cmd = commandsQueue[i];
+                await new Promise(resolve => setTimeout(resolve, 600));
+
+                if (cmd === 'left') {
+                    robotState.dir = (robotState.dir + 3) % 4;
+                } else if (cmd === 'right') {
+                    robotState.dir = (robotState.dir + 1) % 4;
+                } else if (cmd === 'forward') {
+                    let nextR = robotState.r;
+                    let nextC = robotState.c;
+
+                    if (robotState.dir === DIR_UP) nextR--;
+                    else if (robotState.dir === DIR_RIGHT) nextC++;
+                    else if (robotState.dir === DIR_DOWN) nextR++;
+                    else if (robotState.dir === DIR_LEFT) nextC--;
+
+                    // Boundaries check controls
+                    if (nextR >= 0 && nextR < 4 && nextC >= 0 && nextC < 4) {
+                        const cellType = config.grid[nextR][nextC];
+                        if (cellType === 'X') {
+                            triggerFailure("Crash! Robot hit a wall obstacle! 🧱");
+                            return;
+                        }
+                        robotState.r = nextR;
+                        robotState.c = nextC;
+                    } else {
+                        triggerFailure("Oops! Robot walked off the grid map bounds! 🗺️");
+                        return;
+                    }
+                }
+                drawGrid(config);
+            }
+
+            // After final sequence, analyze coordinates conditions endpoints
+            const finalCellType = config.grid[robotState.r][robotState.c];
+            if (finalCellType === 'T') {
+                triggerSuccess();
+            } else {
+                triggerFailure("Oh no! The robot didn't reach the target destination goal. Try again!");
+            }
+        }
+
+        function triggerSuccess() {
+            isExecuting = false;
+            score += 100;
+            
+            // Play success feedback sounds sequentially
+            const correctSound = document.getElementById('snd-correct');
+            const clapSound = document.getElementById('snd-clap');
+            
+            if (correctSound) correctSound.play().catch(e => console.log("Audio play error:", e));
+            
+            setTimeout(() => {
+                if (clapSound) clapSound.play().catch(e => console.log("Audio play error:", e));
+                // Fire mini localized confetti for incremental level completions
+                confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 } });
+            }, 600);
+
+            alert("Excellent Work! Your program code executed perfectly! 🎉");
+
+            if (currentLevel < 3) {
+                currentLevel++;
+                loadLevel(currentLevel);
+            } else {
+                showGameFinish();
+            }
+        }
+
+        function triggerFailure(message) {
+            isExecuting = false;
+            const wrongSound = document.getElementById('snd-wrong');
+            if (wrongSound) wrongSound.play().catch(e => console.log("Audio play error:", e));
+            
+            alert(message);
+            // Re-render baseline view layer
+            loadLevel(currentLevel);
+        }
+
+        // Finish Game Screen Render Setup
+        function showGameFinish() {
+            switchScreen('end-screen');
+            
+            // Full Screen continuous celebration showers
+            let duration = 3 * 1000;
+            let end = Date.now() + duration;
+
+            (function frame() {
+                confetti({ particleCount: 4, angle: 60, spread: 55, origin: { x: 0 } });
+                confetti({ particleCount: 4, angle: 120, spread: 55, origin: { x: 1 } });
+                if (Date.now() < end) { requestAnimationFrame(frame); }
+            }());
+
+            document.getElementById('end-summary').innerHTML = `
+                <strong>Programmer Profile:</strong><br>
+                👤 Name: ${studentProfile.name}<br>
+                🏫 Class: ${studentProfile.class}<br>
+                🏢 School: ${studentProfile.school}<br>
+                <hr style="margin:10px 0; border:1px dashed #DDD;">
+                🌟 Final Calculated Score: <strong>${score} Points</strong><br>
+                🧩 Levels Completed: <strong>3 out of 3 Static Tasks</strong>
+            `;
+        }
+
+        function resetGame() {
+            document.getElementById('start-form').reset();
+            switchScreen('intro-screen');
+        }
+    </script>
+</body>
+</html>

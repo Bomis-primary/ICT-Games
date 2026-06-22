@@ -12,7 +12,7 @@
             --eng-color: #1E90FF;
             --math-color: #FFA502;
             --dark-color: #2F3542;
-            --light-bg: rgba(255, 255, 255, 0.92);
+            --light-bg: rgba(255, 255, 255, 0.94);
         }
 
         * {
@@ -32,7 +32,7 @@
             position: relative;
         }
 
-        /* 3. Aesthetic Dynamic Background with Overlay Layer */
+        /* Aesthetic Dynamic Background with Overlay Layer */
         .bg-layer {
             position: fixed;
             top: 0;
@@ -79,7 +79,7 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* 1. Absolute Branding Splash Overlay Layer */
+        /* Absolute Branding Splash Overlay Screen Layer (5-second block) */
         #splash-screen {
             background: white;
             border: none;
@@ -110,7 +110,7 @@
             100% { transform: scale(0.96); }
         }
 
-        /* 2. Setup Panel Inputs styling */
+        /* Setup Panel Inputs styling */
         .form-group {
             margin-bottom: 22px;
             text-align: left;
@@ -139,7 +139,6 @@
             border-color: #4A90E2;
         }
 
-        /* Core UI Kid Buttons */
         .btn {
             background-color: #2ED573;
             color: white;
@@ -160,7 +159,7 @@
             box-shadow: 0 2px 0 #218c42;
         }
 
-        /* 4. Gameplay Arena Layout HUD */
+        /* Gameplay Arena Layout HUD */
         .hud-bar {
             display: flex;
             justify-content: space-between;
@@ -178,7 +177,7 @@
             color: var(--dark-color);
         }
 
-        /* Central Conveyor Card Container Box */
+        /* Central Conveyor Belt Box */
         .conveyor-belt {
             background: #E4E7EB;
             padding: 20px;
@@ -186,9 +185,10 @@
             border: 4px dashed #718096;
             margin-bottom: 30px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 240px;
+            min-height: 260px;
             box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);
         }
 
@@ -215,6 +215,13 @@
             margin: 0 auto;
         }
 
+        .fallback-text {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #4A90E2;
+            margin-top: 10px;
+        }
+
         /* High-Contrast Tap Action Sorting Target Buttons Grid */
         .sorting-grid {
             display: grid;
@@ -236,7 +243,7 @@
             font-weight: bold;
             border-radius: 20px;
             cursor: pointer;
-            transition: transform 0.1s, filter 0.2s;
+            transition: transform 0.1s;
             text-shadow: 0 2px 4px rgba(0,0,0,0.2);
             display: flex;
             flex-direction: column;
@@ -258,7 +265,6 @@
             font-size: 2.2rem;
         }
 
-        /* 7. Final Reward Badge Screens */
         .rank-badge {
             display: inline-block;
             background: linear-gradient(135deg, #FFD700, #FFA500);
@@ -313,3 +319,172 @@
             <button type="submit" class="btn">Start Sorting! 🚀</button>
         </form>
     </div>
+
+    <div id="game-screen" class="screen">
+        <div class="hud-bar">
+            <div class="hud-item" id="hud-round">📦 Item: 1 / 5</div>
+            <div class="hud-item" id="hud-score">🏆 Score: 0</div>
+        </div>
+
+        <h2 style="margin-bottom: 20px; font-size: 1.5rem; color: #2F3542;">Tap the matching bucket to sort the item! 👇</h2>
+
+        <div class="conveyor-belt">
+            <div class="conveyor-card" id="card-display">
+                <img id="card-img" src="" alt="STEM Item">
+            </div>
+            <div id="fallback-title" class="fallback-text"></div>
+        </div>
+
+        <div class="sorting-grid">
+            <button class="bucket-btn bucket-science" onclick="processSortChoice('Science')">
+                <span>🔬</span> Science
+            </button>
+            <button class="bucket-btn bucket-tech" onclick="processSortChoice('Technology')">
+                <span>💻</span> Technology
+            </button>
+            <button class="bucket-btn bucket-eng" onclick="processSortChoice('Engineering')">
+                <span>⚙️</span> Engineering
+            </button>
+            <button class="bucket-btn bucket-math" onclick="processSortChoice('Mathematics')">
+                <span>➕</span> Mathematics
+            </button>
+        </div>
+    </div>
+
+    <div id="end-screen" class="screen">
+        <h1 style="color: #2ED573; font-size: 2.6rem;">🎉 Factory Mission Complete! 🎉</h1>
+        <div class="rank-badge">Master STEM Sorter</div>
+        
+        <div class="score-summary" id="end-summary"></div>
+
+        <button class="btn" onclick="restartGame()" style="background-color: #4A90E2; box-shadow: 0 8px 0 #2980B9;">Play Again 🔄</button>
+    </div>
+
+    <script>
+        // Game Mission Dataset Puzzles
+        const roundDataConfigs = [
+            { round: 1, imageSrc: "assets/science.PNG", title: "Science Activity 🔬", correctCategory: "Science" },
+            { round: 2, imageSrc: "assets/technology.PNG", title: "Technology Gadget 💻", correctCategory: "Technology" },
+            { round: 3, imageSrc: "assets/engineering.PNG", title: "Engineering Blueprint ⚙️", correctCategory: "Engineering" },
+            { round: 4, imageSrc: "assets/mathematics.PNG", title: "Mathematics Puzzle ➕", correctCategory: "Mathematics" },
+            { round: 5, imageSrc: "assets/factory-robot.PNG", title: "Factory Robot 🤖", correctCategory: "Engineering" }
+        ];
+
+        let currentRoundIndex = 0;
+        let totalScore = 0;
+        let studentDataProfile = { name: '', class: '', school: '' };
+
+        // 5-Second Splash View Window Control Hook
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.display = 'none';
+                switchScreen('setup-screen');
+            }, 5000);
+        });
+
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        function handleRegistration(event) {
+            event.preventDefault();
+            studentDataProfile.name = document.getElementById('student-name').value;
+            studentDataProfile.class = document.getElementById('class-name').value;
+            studentDataProfile.school = document.getElementById('school-name').value;
+
+            currentRoundIndex = 0;
+            totalScore = 0;
+            renderRoundChallenge();
+            switchScreen('game-screen');
+        }
+
+        function renderRoundChallenge() {
+            document.getElementById('hud-round').innerText = `📦 Item: ${currentRoundIndex + 1} / 5`;
+            document.getElementById('hud-score').innerText = `🏆 Score: ${totalScore}`;
+
+            const currentData = roundDataConfigs[currentRoundIndex];
+            
+            // Render backup labels text alongside image components
+            document.getElementById('fallback-title').innerText = currentData.title;
+            
+            const cardImgNode = document.getElementById('card-img');
+            const cardDisplayNode = document.getElementById('card-display');
+            
+            cardDisplayNode.style.animation = 'none';
+            cardDisplayNode.offsetHeight; /* Trigger layout engine reflow reset */
+            cardDisplayNode.style.animation = 'cardSlideIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15)';
+
+            cardImgNode.src = currentData.imageSrc;
+        }
+
+        function processSortChoice(chosenCategory) {
+            const activeRoundData = roundDataConfigs[currentRoundIndex];
+            
+            const sndCorrect = document.getElementById('snd-correct');
+            const sndWrong = document.getElementById('snd-wrong');
+
+            if (chosenCategory === activeRoundData.correctCategory) {
+                totalScore += 100;
+                // Safe play execution wrappers to bypass browser lockouts
+                if (sndCorrect) {
+                    sndCorrect.currentTime = 0;
+                    sndCorrect.play().catch(e => console.log("Audio skipped due to autoplay policy rules"));
+                }
+            } else {
+                if (sndWrong) {
+                    sndWrong.currentTime = 0;
+                    sndWrong.play().catch(e => console.log("Audio skipped due to autoplay policy rules"));
+                }
+            }
+
+            // Move safely to next screen cards array index items
+            if (currentRoundIndex < roundDataConfigs.length - 1) {
+                currentRoundIndex++;
+                renderRoundChallenge();
+            } else {
+                triggerFactoryWinFinish();
+            }
+        }
+
+        function triggerFactoryWinFinish() {
+            switchScreen('end-screen');
+
+            const sndClap = document.getElementById('snd-clap');
+            if (sndClap) {
+                sndClap.currentTime = 0;
+                sndClap.play().catch(e => console.log("Audio celebration skipped safely"));
+            }
+
+            // Rainbow Canvas Particles Blast
+            let duration = 3.5 * 1000;
+            let animationEnd = Date.now() + duration;
+
+            (function confettiFrame() {
+                confetti({ particleCount: 5, angle: 60, spread: 55, origin: { x: 0, y: 0.65 } });
+                confetti({ particleCount: 5, angle: 120, spread: 55, origin: { x: 1, y: 0.65 } });
+                
+                if (Date.now() < animationEnd) {
+                    requestAnimationFrame(confettiFrame);
+                }
+            }());
+
+            document.getElementById('end-summary').innerHTML = `
+                <strong>Sorter Profile:</strong><br>
+                👤 Name: ${studentDataProfile.name}<br>
+                🏫 Class: ${studentDataProfile.class}<br>
+                🏢 School: ${studentDataProfile.school}<br>
+                <hr style="margin: 15px 0; border: 1px dashed #CBD5E0;">
+                ⭐ Factory Efficiency Score: <strong>${totalScore} / 500 Points</strong><br>
+                📦 Items Sorted Correctly: <strong>${totalScore / 100} out of 5 Items</strong>
+            `;
+        }
+
+        function restartGame() {
+            document.getElementById('profile-form').reset();
+            switchScreen('setup-screen');
+        }
+    </script>
+</body>
+</html>

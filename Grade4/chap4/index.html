@@ -65,9 +65,9 @@ body.active-game {
 
 .main-container {
     width: 90vw;
-    max-width: 900px;
+    max-width: 950px;
     height: 85vh;
-    min-height: 550px;
+    min-height: 580px;
     z-index: 10;
 }
 
@@ -152,18 +152,38 @@ body.active-game {
     margin-bottom: 15px;
 }
 
-/* Interactive Multimedia Feature Simulation Overlays */
-.multimedia-asset {
-    width: 90px;
-    height: 90px;
-    border-radius: 50%;
+/* Simulated Graphic Image Element Frame */
+.slide-visual-preview {
+    width: 100%;
+    max-width: 320px;
+    height: 180px;
     background: #e2e8f0;
+    border-radius: 12px;
+    margin-bottom: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 2.5rem;
-    margin-bottom: 15px;
-    transition: all 0.5s ease;
+    overflow: hidden;
+    border: 2px dashed #94a3b8;
+    position: relative;
+}
+
+.slide-visual-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.asset-overlay-badge {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(15, 23, 42, 0.75);
+    color: white;
+    padding: 4px 10px;
+    font-size: 0.8rem;
+    border-radius: 6px;
+    font-weight: 600;
 }
 
 /* Interactive Choices Deck Options */
@@ -238,17 +258,19 @@ body.active-game {
 
 .hidden { display: none !important; }
 
-/* Chapter 4 Interactive Animations Simulation classes */
-.anim-entrance { animation: bounceIn 1s forwards; }
-.anim-exit { animation: fadeOutOribt 1s forwards; }
-@keyframes bounceIn {
-    0% { transform: scale(0.3); opacity: 0; }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); opacity: 1; }
+/* Interactive Animation classes */
+.anim-success-pulse { animation: successPulse 0.6s ease-in-out; }
+.anim-shake { animation: mistakeShake 0.4s ease-in-out; }
+
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.04); border-color: var(--success); }
+    100% { transform: scale(1); }
 }
-@keyframes fadeOutOribt {
-    0% { transform: scale(1); opacity: 1; }
-    100% { transform: scale(0); opacity: 0; }
+@keyframes mistakeShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-8px); border-color: var(--danger); }
+    40%, 80% { transform: translateX(8px); }
 }
 </style>
 </head>
@@ -261,26 +283,29 @@ body.active-game {
 <div class="main-container hidden" id="appFrame">
 
     <div id="menuView" class="panel-card">
-        <img src="assets/innovine-logo.png" alt="Innovine" style="max-width: 120px; margin-bottom: 10px;" onerror="this.style.display='none'">
-        <h1>Presentation Wizard!</h1>
-        <h3 style="color:#64748b; margin-bottom: 20px;">MS PowerPoint Chapter 4 Interactive Lab</h3>
+        <img src="assets/innovine-logo.png" alt="Innovine" style="max-width: 140px; margin-bottom: 15px;" onerror="this.style.display='none'">
+        <h1>Presentation Studio Lab</h1>
+        <h3 style="color:#64748b; margin-bottom: 20px;">MS PowerPoint Chapter 4 Workspace Simulator</h3>
         <p>
-            Welcome to the multimedia studio! This challenge checks your skills on <b>Pages 34–44 of your ICT textbook</b>. Learn to insert background sound tracks, videos, page transitions, and item animations to make boring slides look amazing!
+            Become a master slide creator! Analyze each layout requirement, locate the right PowerPoint Ribbon tool, and transform static layouts into interactive multimedia presentations.
         </p>
         <button class="btn-action" onclick="initiateChallenge()">Launch Studio Workshop</button>
     </div>
 
     <div id="gameView" class="game-grid hidden">
         <div class="status-bar">
-            <div>📋 Subject Module: <span id="nodeCounter">1</span> / 5</div>
-            <div class="score-badge">Points: <span id="scoreDisplay">0</span></div>
+            <div>📋 Task Module: <span id="nodeCounter">1</span> / 5</div>
+            <div class="score-badge">Score: <span id="scoreDisplay">0</span></div>
         </div>
 
         <div class="workspace">
             <div class="ppt-screen" id="canvasView">
-                <div class="multimedia-asset" id="assetIcon">🎬</div>
+                <div class="slide-visual-preview" id="visualFrame">
+                    <span style="color:#64748b; font-weight:600;" id="visualFallbackText">Loading Slide Preview...</span>
+                    <div class="asset-overlay-badge" id="slideBadge">Slide #1</div>
+                </div>
                 <h3 id="targetHeadline">Slide Element Target Title</h3>
-                <p id="targetCaption" style="color: #64748b; font-size: 0.95rem;">Context prompt description text info.</p>
+                <p id="targetCaption" style="color: #64748b; font-size: 0.95rem; line-height:1.4;"></p>
             </div>
 
             <div class="choices-deck">
@@ -304,8 +329,8 @@ body.active-game {
 
     <div id="endView" class="panel-card hidden">
         <h1 id="endHeaderTitle">Workshop Evaluation Complete!</h1>
-        <p id="endEvaluationDesc" style="margin-top: 15px; font-size: 1.1rem;">Performance calculation string tracker loader...</p>
-        <h2 style="font-size: 3rem; color: var(--accent); margin-bottom: 25px;" id="finalScoreLabel">0 / 500</h2>
+        <p id="endEvaluationDesc" style="margin-top: 15px; font-size: 1.1rem; color: #475569;"></p>
+        <h2 style="font-size: 3.2rem; color: var(--accent); margin: 20px 0;" id="finalScoreLabel">0 / 500</h2>
         <button class="btn-action" onclick="resetChallengeLoop()">Restart Studio Workshop</button>
     </div>
 
@@ -333,52 +358,57 @@ function playAudioTrack(elementId) {
         const targetAudio = document.getElementById(elementId);
         if(targetAudio) {
             targetAudio.currentTime = 0;
-            targetAudio.play().catch(err => console.log("Audio contextual playback frame muted by browser sandbox."));
+            targetAudio.play().catch(err => console.log("Audio muted by browser policy."));
         }
     } catch(ex) {}
 }
 
-/* Chapter 4 Textbook (Pages 34-44) Curriculum Dataset Matrix */
+/* Chapter 4 Textbook (Pages 34-44) Question-to-Tool Matrix Maps */
 const puzzleMatrix = [
     {
-        title: "Insert Background Music",
-        caption: "We want a soft space audio clip to auto-play behind our slides throughout the presentation show.",
-        icon: "🎵",
-        correct: 1, // Insert Tab -> Audio
-        hint: "Splendid! Audio files are embedded using the Audio tool inside the Media group under the Insert Tab.",
-        choices: ["Home Tab -> Paragraph group", "Insert Tab -> Audio tool", "Animations Tab -> Custom Action"]
+        title: "Adding Background Soundtracks",
+        caption: "You are instructed to embed an audio track that loops in the background during your entire presentation.",
+        badge: "Insert -> Audio",
+        fallbackText: "🎵 Audio Placeholder Link",
+        correct: 1, 
+        hint: "Audio configurations are handled directly via the Media group under the Insert Tab.",
+        choices: ["Home Tab -> Paragraph Styles", "Insert Tab -> Audio option", "Animations Tab -> Custom Actions"]
     },
     {
-        title: "Slide Page Transitions",
-        caption: "Choose the correct effect that handles how the whole screen flips gracefully when moving from Slide 1 to Slide 2.",
-        icon: "🎴",
-        correct: 0, // Transitions Tab
-        hint: "Perfect score! Transitions manage the motion effects applied to the full page frame during movement sequence changes.",
+        title: "Flipping Slide Pages Smoothly",
+        caption: "Choose the proper menu path to apply a motion effect that plays automatically when moving between your slides.",
+        badge: "Transitions Effect",
+        fallbackText: "🎴 Transition Workspace Frame",
+        correct: 0,
+        hint: "Slide Transitions manage full-page movement styles during slide switches.",
         choices: ["Transitions Tab -> Transition to This Slide", "Insert Tab -> SmartArt Layout", "Review Tab -> Comments Wizard"]
     },
     {
-        title: "Element Entrance Animations",
-        caption: "Make an illustration group asset bounce into view smoothly on the screen layout during an active slide presentation look.",
-        icon: "⭐",
-        correct: 2, // Animations Tab
-        hint: "Excellent work! Individual slide objects get motion pathways by navigating to the Animations Tab options matrix.",
-        choices: ["Design Tab -> Page Setup configurations", "Slide Show Tab -> Record Narration", "Animations Tab -> Choose Entrance Effect"]
+        title: "Animate a Heading Object",
+        caption: "You need a text placeholder title to drop or float smoothly into place on your slide layout window.",
+        badge: "Animations -> Entrance",
+        fallbackText: "⭐ Flying Title Animation Area",
+        correct: 2,
+        hint: "Individual slide elements are styled with movement effects using the Animations Tab options matrix.",
+        choices: ["Design Tab -> Page Setup configurations", "Slide Show Tab -> Set Timing", "Animations Tab -> Choose Entrance Effect"]
     },
     {
         title: "Embedding Video Files",
-        caption: "Add a high-definition rocket launch movie file straight into a placeholder box grid space on Slide 4.",
-        icon: "🎬",
-        correct: 0, // Insert Tab -> Video
-        hint: "Brilliant! Digital videos add multimedia features into presentation decks directly from the Insert Tab ribbon layout blocks.",
-        choices: ["Insert Tab -> Video tool", "View Tab -> Handout Master view mode", "Home Tab -> Clipboard paste menu"]
+        caption: "Add an external MP4 movie snippet directly into a placeholder grid window on your presentation template canvas.",
+        badge: "Insert -> Video",
+        fallbackText: "🎬 Video Media Stream Box",
+        correct: 0,
+        hint: "Digital videos are embedded via the Media group under the Insert Tab layout ribbon blocks.",
+        choices: ["Insert Tab -> Video tool", "View Tab -> Handout Master layout", "Home Tab -> Clipboard paste menu"]
     },
     {
-        title: "Triggering Full Slide Show",
-        caption: "The presentation project is ready! Run the final deck layout on the classroom projector screen in full-screen mode.",
-        icon: "🖥️",
-        correct: 1, // F5 key / Slide Show Tab
-        hint: "Fantastic! Pressing the F5 shortcut key or choosing 'From Beginning' on the Slide Show Tab initiates full-screen view mode seamlessly.",
-        choices: ["Press Ctrl + S key sequences", "Press the F5 Keyboard Key tool", "Double click the Quick Access Toolbar ribbon"]
+        title: "Running Full Screen Presentation",
+        caption: "The project structure is finished. Deliver the entire deck in full-screen theater presentation format.",
+        badge: "Slide Show Run",
+        fallbackText: "🖥️ Live Projector Monitor Out",
+        correct: 1,
+        hint: "Pressing the F5 keyboard shortcut or clicking From Beginning under the Slide Show Tab runs your presentation in full view.",
+        choices: ["Press Ctrl + S key sequences", "Press the F5 Keyboard Shortcut Key", "Double-click the Quick Access Toolbar ribbon"]
     }
 ];
 
@@ -402,23 +432,24 @@ function renderPuzzleNode() {
 
     const currentPuzzle = puzzleMatrix[roundCounter];
     
-    // Mount text fields into simulated presentation canvas layout
-    document.getElementById("assetIcon").innerText = currentPuzzle.icon;
+    // Dynamic text integration
     document.getElementById("targetHeadline").innerText = currentPuzzle.title;
     document.getElementById("targetCaption").innerText = currentPuzzle.caption;
+    document.getElementById("slideBadge").innerText = currentPuzzle.badge;
+    document.getElementById("visualFallbackText").innerText = currentPuzzle.fallbackText;
 
-    // Reset rendering container styles to standard layout format state rules
+    // Reset visual workspace animation states
     const monitor = document.getElementById("canvasView");
     monitor.className = "ppt-screen";
     
-    // Map answer text blocks strings indexes looping mechanics
+    // Mount row values
     for (let i = 0; i < 3; i++) {
         document.getElementById(`labelOpt${i}`).innerText = currentPuzzle.choices[i];
     }
 
     const consoleMessage = document.getElementById("consoleMessage");
     consoleMessage.className = "toast-tray";
-    consoleMessage.innerText = "Select the best design option path to build your multimedia slide deck framework safely.";
+    consoleMessage.innerText = "Select the correct tab path configuration tool to proceed with the slide build.";
 }
 
 function evaluateAnswer(selectedIdx) {
@@ -434,18 +465,17 @@ function evaluateAnswer(selectedIdx) {
         document.getElementById("scoreDisplay").innerText = userScore;
         playAudioTrack("soundCorrect");
 
-        // Inject dynamic chapter animations behaviors live onto simulation frames!
-        monitor.classList.add("anim-entrance");
+        monitor.classList.add("anim-success-pulse");
         consoleMessage.className = "toast-tray correct";
         consoleMessage.innerHTML = `🌟 Success: ${currentPuzzle.hint}`;
     } else {
         playAudioTrack("soundWrong");
-        monitor.classList.add("anim-exit");
+        monitor.classList.add("anim-shake");
         consoleMessage.className = "toast-tray wrong";
-        consoleMessage.innerHTML = `❌ Mismatch: That step does not align with PowerPoint Chapter 4 tool layouts. Try again on the next task deck!`;
+        consoleMessage.innerHTML = `❌ Alignment Error! That ribbon item does not manage this presentation property. Moving to next module tool layout...`;
     }
 
-    // Retain display block for 3.5 seconds allowing adequate reading pace intervals
+    // Delay step for reading ease
     setTimeout(() => {
         roundCounter++;
         if (roundCounter < puzzleMatrix.length) {
@@ -453,7 +483,7 @@ function evaluateAnswer(selectedIdx) {
         } else {
             renderSummaryDashboard();
         }
-    }, 3500);
+    }, 3200);
 }
 
 function renderSummaryDashboard() {
@@ -466,11 +496,11 @@ function renderSummaryDashboard() {
     const descText = document.getElementById("endEvaluationDesc");
 
     if (userScore >= 400) {
-        titleText.innerText = "🏆 Master Multimedia Producer!";
-        descText.innerText = "Incredible performance! You understand exactly how to insert video files, coordinate audio configurations, run full slide shows, and configure item layout transformations effortlessly.";
+        titleText.innerText = "🏆 Master Presentation Engineer!";
+        descText.innerText = "Exceptional layout mastery! You know exactly how to coordinate slide background tracks, apply transition motion states, embed digital movies, and initiate full presenter views correctly.";
     } else {
-        titleText.innerText = "👍 Presentation Designer!";
-        descText.innerText = "Good attempt! You are getting comfortable with presentation enhancements. To build extra proficiency, re-read textbook chapters 34 through 44 on tools under the Insert, Animations, and Transitions tabs.";
+        titleText.innerText = "👍 Classroom Presentation Designer!";
+        descText.innerText = "Great job finishing the lab! Try refreshing your familiarity with the Insert, Animations, and Transitions ribbons to target a flawless 500-point score next time.";
     }
 }
 

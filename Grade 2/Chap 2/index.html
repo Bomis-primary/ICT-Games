@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MS Paint Sandbox Game</title>
+<title>Grade 2 MS Paint Sandbox Game</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
 <style>
 :root {
@@ -316,11 +316,13 @@ body {
 // 5-Second Pure White Delay Splash Screen Framework
 setTimeout(() => {
     const splash = document.getElementById("splashScreen");
-    splash.style.opacity = "0";
-    setTimeout(() => {
-        splash.style.setProperty("display", "none", "important");
-        document.getElementById("appMainWrapper").classList.remove("hidden");
-    }, 500);
+    if(splash) {
+        splash.style.opacity = "0";
+        setTimeout(() => {
+            splash.style.setProperty("display", "none", "important");
+            document.getElementById("appMainWrapper").classList.remove("hidden");
+        }, 500);
+    }
 }, 5000);
 
 const levelEngineDatabase = {
@@ -382,6 +384,7 @@ let gameActiveLevel = 1;
 let currentScorePoints = 0;
 let isCanvasInteractable = false;
 let draggedToolIdGlobal = null;
+let levelLockoutState = false; // Prevents processing drops double times on clear tasks
 
 // Drawing State Pipeline Tracking Data Properties
 let htmlCanvas, drawingContext;
@@ -392,11 +395,16 @@ function playSound(elementId) {
     const audioNode = document.getElementById(elementId);
     if(audioNode) {
         audioNode.currentTime = 0;
-        audioNode.play().catch(e => console.log("Audio lock bypass tracking context:", e));
+        audioNode.play().catch(e => console.log("Audio pipeline interaction trigger:", e));
     }
 }
 
 function startGameSession() {
+    // Force and initialize audio track objects within the click callback context
+    document.getElementById("audioCorrect").load();
+    document.getElementById("audioWrong").load();
+    document.getElementById("audioClap").load();
+
     playSound("audioCorrect");
     document.getElementById("introScreen").classList.add("hidden");
     document.getElementById("gamePlayPanel").classList.remove("hidden");
@@ -409,18 +417,15 @@ function initializeCanvasEngine() {
     htmlCanvas = document.getElementById("paintCanvas");
     drawingContext = htmlCanvas.getContext("2d");
     
-    // Resize coordinates to map structural parent bounding rect properties
     const boundingBox = htmlCanvas.parentElement.getBoundingClientRect();
     htmlCanvas.width = boundingBox.width;
-    htmlCanvas.height = boundingBox.height - 60; // Leaves space layout footprint clear for the custom palette bar
+    htmlCanvas.height = boundingBox.height - 60;
     
-    // Mount custom tracking event pipelines for absolute painting logic
     htmlCanvas.addEventListener("mousedown", (e) => { if(isCanvasInteractable) startStrokeLine(e.offsetX, e.offsetY); });
     htmlCanvas.addEventListener("mousemove", (e) => { if(isCanvasInteractable) drawStrokeLine(e.offsetX, e.offsetY); });
     htmlCanvas.addEventListener("mouseup", endStrokeLine);
     htmlCanvas.addEventListener("mouseleave", endStrokeLine);
 
-    // Touch Support for Mobile / Tablets
     htmlCanvas.addEventListener("touchstart", (e) => {
         if(!isCanvasInteractable) return;
         const t = e.touches[0]; const r = htmlCanvas.getBoundingClientRect();
@@ -442,7 +447,7 @@ function startStrokeLine(x, y) {
 
 function drawStrokeLine(x, y) {
     if(!isPaintingCursorActive) return;
-    drawingContext.lineWidth = gameActiveLevel === 3 ? 24 : 6; // Thicker lines when Eraser Tool is the active theme
+    drawingContext.lineWidth = gameActiveLevel === 3 ? 24 : 6;
     drawingContext.lineCap = "round";
     drawingContext.strokeStyle = gameActiveLevel === 3 ? "#ffffff" : currentBrushColorSelected;
     drawingContext.lineTo(x, y);
@@ -461,6 +466,9 @@ function selectBrushColor(hexColor, domElement) {
 
 function buildCurrentLevelChallenge() {
     isCanvasInteractable = false;
+    levelLockoutState = false;
+    draggedToolIdGlobal = null;
+    
     document.getElementById("pointsDisplayLabel").innerText = currentScorePoints;
     document.getElementById("hudAlertCard").classList.add("hidden");
     
@@ -473,11 +481,9 @@ function buildCurrentLevelChallenge() {
     document.getElementById("levelGoalText").innerText = data.goal;
     document.getElementById("systemStatusBarToast").innerText = "Grab the correct tool from the list and drop it onto the targets container area.";
 
-    // Wipe canvas to pure white profile default
     drawingContext.fillStyle = "#ffffff";
     drawingContext.fillRect(0, 0, htmlCanvas.width, htmlCanvas.height);
 
-    // Render tools list elements
     const cabinet = document.getElementById("toolsCabinetVault");
     cabinet.innerHTML = "";
     
@@ -488,38 +494,37 @@ function buildCurrentLevelChallenge() {
         item.id = tool.id;
         item.draggable = true;
         
-        // Drag and Drop Event Wiring Handlers
         item.addEventListener("dragstart", (e) => {
             draggedToolIdGlobal = tool.id;
-            e.dataTransfer.setData("text/plain", tool.id);
         });
         
         cabinet.appendChild(item);
     });
-
-    // Wire up landing target zone operational triggers
-    targetZone.addEventListener("dragover", (e) => e.preventDefault());
-    targetZone.addEventListener("dragenter", () => targetZone.classList.add("drag-over"));
-    targetZone.addEventListener("dragleave", () => targetZone.classList.remove("drag-over"));
-    targetZone.addEventListener("drop", handleToolDropEvent);
 }
 
-function handleToolDropEvent(e) {
+// Attach drop mechanics outside standard database reset loops
+const targetZoneElement = document.getElementById("dropTargetContainer");
+targetZoneElement.addEventListener("dragover", (e) => e.preventDefault());
+targetZoneElement.addEventListener("dragenter", () => targetZoneElement.classList.add("drag-over"));
+targetZoneElement.addEventListener("dragleave", () => targetZoneElement.classList.remove("drag-over"));
+targetZoneElement.addEventListener("drop", (e) => {
     e.preventDefault();
-    const data = levelEngineDatabase[gameActiveLevel];
-    const targetZone = document.getElementById("dropTargetContainer");
-    const alertBox = document.getElementById("hudAlertCard");
+    targetZoneElement.classList.remove("drag-over");
     
-    targetZone.classList.remove("drag-over");
+    if(levelLockoutState) return; 
+    
+    const data = levelEngineDatabase[gameActiveLevel];
+    const alertBox = document.getElementById("hudAlertCard");
 
+    // Check modern global variable instead of secure-locked dataTransfer objects
     if(draggedToolIdGlobal === data.correctId) {
-        // CORRECT DROP MATCH
+        levelLockoutState = true;
         currentScorePoints += 100;
         document.getElementById("pointsDisplayLabel").innerText = currentScorePoints;
         
-        targetZone.innerHTML = "✅ Tool Active!";
-        targetZone.style.borderColor = "var(--paint-green)";
-        targetZone.style.background = "#f0fdf4";
+        targetZoneElement.innerHTML = "✅ Tool Active!";
+        targetZoneElement.style.borderColor = "var(--paint-green)";
+        targetZoneElement.style.background = "#f0fdf4";
 
         alertBox.className = "hud-correction-panel";
         alertBox.style.background = "#dff0d8";
@@ -527,21 +532,19 @@ function handleToolDropEvent(e) {
         alertBox.innerText = `🎉 Success! ${data.name} enabled. You can now color and draw inside the drawing box!`;
         alertBox.classList.remove("hidden");
 
-        document.getElementById("systemStatusBarToast").innerText = "Excellent! Moving to the next task in 5 seconds...";
+        document.getElementById("systemStatusBarToast").innerText = "Excellent! Moving to the next task in 4 seconds...";
         
         playSound("audioCorrect");
         confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
 
-        // Turn on real sandbox paintbrush capabilities
         isCanvasInteractable = true;
         data.onSuccess(drawingContext, htmlCanvas.width, htmlCanvas.height);
 
         setTimeout(() => {
             advanceSequenceWorkflow();
-        }, 5000);
+        }, 4000);
 
     } else {
-        // WRONG DROP MATCH
         playSound("audioWrong");
         
         alertBox.className = "hud-correction-panel";
@@ -552,14 +555,13 @@ function handleToolDropEvent(e) {
         alertBox.innerText = `💡 Try Again: Remember, ${data.solutionTip} Drag the ${correctInfo.name} tool.`;
         alertBox.classList.remove("hidden");
     }
-}
+});
 
 function advanceSequenceWorkflow() {
     gameActiveLevel++;
     if(levelEngineDatabase[gameActiveLevel]) {
         buildCurrentLevelChallenge();
     } else {
-        // Complete campaign workflow resolution screen
         document.getElementById("gamePlayPanel").classList.add("hidden");
         document.getElementById("hudAlertCard").classList.add("hidden");
         document.getElementById("resultScreenCard").classList.remove("hidden");

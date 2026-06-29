@@ -1,1 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Innovine Scratch Block Master - Internet & Netiquette Edition</title>
+<style>
+:root {
+    --scratch-orange: #ffab19;
+    --scratch-blue: #4c97ff;
+    --scratch-purple: #9966ff;
+    --scratch-green: #2ecc71;
+    --scratch-pink: #ff6680;
+    --dark-bg: #0f172a;
+    --panel-bg: #1e293b;
+}
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+}
+
+body {
+    background: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: background 0.5s ease;
+}
+
+body.game-active {
+    background: linear-gradient(135deg, #1e293b, var(--dark-bg));
+}
+
+/* 5-Second Innovine Splash Screen Layout */
+#splashScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.innovine-badge {
+    text-align: center;
+    animation: floatingLogo 3s infinite ease-in-out;
+}
+
+.innovine-svg {
+    width: 130px;
+    height: 130px;
+    margin-bottom: 20px;
+}
+
+.brand-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #0f172a;
+    letter-spacing: 3px;
+}
+
+.brand-subtitle {
+    font-size: 0.9rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    margin-top: 6px;
+}
+
+@keyframes floatingLogo {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-15px); }
+}
+
+/* Primary Shell Elements */
+.app-window {
+    width: 95vw;
+    max-width: 1100px;
+    height: 88vh;
+    min-height: 600px;
+    z-index: 10;
+}
+
+.welcome-card {
+    background: #ffffff;
+    border: 3px solid #e2e8f0;
+    border-radius: 32px;
+    padding: 50px;
+    text-align: center;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.15);
+    max-width: 650px;
+    margin: 0 auto;
+}
+
+.welcome-card h1 {
+    font-size: 2.5rem;
+    color: var(--scratch-blue);
+    margin-bottom: 15px;
+}
+
+.welcome-card p {
+    color: #475569;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+/* Main Grid Workbench System */
+.game-layout {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100%;
+    gap: 15px;
+}
+
+.top-hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--panel-bg);
+    border: 2px solid #334155;
+    padding: 14px 25px;
+    border-radius: 16px;
+    color: white;
+    font-weight: 700;
+}
+
+.badge-level {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+.lvl-easy { background: var(--scratch-green); }
+.lvl-medium { background: var(--scratch-orange); }
+.lvl-hard { background: var(--scratch-pink); }
+
+.workbench-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1.3fr 1fr;
+    gap: 15px;
+    min-height: 0;
+}
+
+.column-board {
+    background: rgba(255, 255, 255, 0.96);
+    border: 2px solid #cbd5e1;
+    border-radius: 20px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+}
+
+body.game-active .column-board {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+.board-header {
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #94a3b8;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #475569;
+    padding-bottom: 8px;
+}
+
+/* Authentic Block System Shapes */
+.scratch-block {
+    padding: 12px 16px;
+    color: white;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border-radius: 8px;
+    cursor: grab;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+.scratch-block:active { cursor: grabbing; }
+
+/* Scratch Categories Colors */
+.cat-events { background: var(--scratch-orange); border-left: 5px solid #d98200; }
+.cat-motion { background: var(--scratch-blue); border-left: 5px solid #1a66cc; }
+.cat-looks { background: var(--scratch-purple); border-left: 5px solid #7742d3; }
+.cat-control { background: #ffbc34; color: #222; border-left: 5px solid #cc9110; }
+.cat-sound { background: #cf63cf; border-left: 5px solid #9c369c; }
+
+/* Drop Target Box Track Container */
+.script-dropzone {
+    background: #f8fafc;
+    border: 3px dashed #cbd5e1;
+    border-radius: 16px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 12px;
+    min-height: 200px;
+    transition: background 0.3s;
+}
+body.game-active .script-dropzone {
+    background: #0f172a;
+    border-color: #334155;
+}
+.script-dropzone.drag-hover {
+    background: rgba(76, 151, 255, 0.15);
+    border-color: var(--scratch-blue);
+}
+
+/* Correction HUD Interface Box */
+.correction-engine-card {
+    background: #fef2f2;
+    border: 2px solid #fca5a5;
+    border-radius: 14px;
+    padding: 14px;
+    margin-top: auto;
+}
+.correction-title {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #b91c1c;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+.correction-item {
+    font-size: 0.85rem;
+    color: #7f1d1d;
+    font-weight: 600;
+    padding: 4px 0;
+}
+
+/* Sprite Stage View Preview Box */
+.stage-preview {
+    background: white;
+    border-radius: 16px;
+    border: 3px solid #475569;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+body.game-active .stage-preview {
+    background: #1e293b;
+    background-image: radial-gradient(#334155 1px, transparent 1px);
+    background-size: 20px 20px;
+}
+
+.sprite-actor {
+    font-size: 4.5rem;
+    transition: transform 0.4s ease, filter 0.3s;
+}
+
+.action-trigger-btn {
+    background: var(--scratch-green);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 24px;
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(46,204,113,0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.1s;
+}
+.action-trigger-btn:hover { transform: scale(1.03); }
+
+.footer-bar {
+    background: #1e293b;
+    color: #94a3b8;
+    padding: 12px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: 1px solid #334155;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--scratch-blue), #2563eb);
+    color: white;
+    border: none;
+    padding: 14px 36px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(76,151,255,0.4);
+    transition: transform 0.2s;
+}
+.btn-primary:hover { transform: translateY(-2px); }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<audio id="audioChime" src="assets/chime.mp3" preload="auto"></audio>
+<audio id="audioBeat" src="assets/melodic-beat.mp3" preload="auto"></audio>
+<audio id="audioAlert" src="assets/alert.mp3" preload="auto"></audio>
+
+<div id="splashScreen">
+    <div class="innovine-badge">
+        <svg class="innovine-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="badgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#4c97ff" />
+                    <stop offset="100%" style="stop-color:#0f172a" />
+                </linearGradient>
+            </defs>
+            <circle cx="50" cy="50" r="46" fill="url(#badgeGrad)" />
+            <path d="M35 65 L50 35 L65 65 Z" fill="none" stroke="#ffab19" stroke-width="5" stroke-linejoin="round" />
+            <circle cx="50" cy="35" r="4" fill="#ffffff" />
+            <path d="M45 65 L50 52 L55 65 Z" fill="#ffffff" />
+        </svg>
+        <div class="brand-title">INNOVINE</div>
+        <div class="brand-subtitle">Digital Safety Lab</div>
+        <p style="margin-top:20px; font-weight:600; color:#64748b;">Loading Internet & Netiquette Simulation...</p>
+    </div>
+</div>
+
+<div class="app-window hidden" id="appInterfaceShell">
+
+    <div id="introPanelCard" class="welcome-card">
+        <h1>Netiquette Code Master!</h1>
+        <h3 style="color:#64748b; margin-bottom:15px;">Chapter: Internet & Cyber Etiquette Safety</h3>
+        <p>
+            Welcome, Digital Citizen! Drag, drop, and snap Scratch blocks into the workspace to teach our robot sprite how to behave safely and politely on the internet. Conquer 3 levels (Easy, Medium, Hard) to earn your Cyber Safety Certificate!
+        </p>
+        <button class="btn-primary" onclick="initiateChallengeSession()">Enter Cyber Lab</button>
+    </div>
+
+    <div id="gameViewPanel" class="game-layout hidden">
+        <div class="top-hud">
+            <div>🏆 Safety Points: <span id="scoreDisplayLabel" style="color:var(--scratch-orange)">0</span></div>
+            <div style="font-size:1.1rem;">🌐 Mission: <span id="missionLevelTitle" style="color:#60a5fa">Level 1</span></div>
+            <div id="difficultyBadge" class="badge-level lvl-easy">Easy</div>
+        </div>
+
+        <div class="workbench-grid">
+            <div class="column-board">
+                <div class="board-header">Palette (Click or Drag Blocks)</div>
+                <div id="blockPaletteContainer" style="display:flex; flex-direction:column; gap:10px;"></div>
+            </div>
+
+            <div class="column-board" style="background: rgba(255,255,255,0.02)">
+                <div class="board-header">Your Script Track Workspace</div>
+                <div class="script-dropzone" id="scriptDockWorkspace" ondragover="allowDropBlockTrack(event)" ondragleave="clearDragOverState(event)" ondrop="handleDropBlockTrack(event)"></div>
+                
+                <div class="correction-engine-card hidden" id="correctionHUD">
+                    <div class="correction-title">❌ Correct Netiquette Script Order:</div>
+                    <div id="correctionSolutionDock"></div>
+                </div>
+            </div>
+
+            <div class="column-board">
+                <div class="board-header">Stage Monitor Preview</div>
+                <div class="stage-preview">
+                    <div class="sprite-actor" id="catSpriteElement">🤖</div>
+                    <div id="speechBubble" style="position:absolute; top:20px; background:white; color:black; padding:8px 12px; border-radius:12px; font-weight:bold; font-size:0.85rem; display:none; max-width:80%; text-align:center; border:2px solid #334155;"></div>
+                    <div style="position:absolute; bottom:12px; font-size:0.75rem; font-weight:bold; color:#64748b;">STAGE CANVAS</div>
+                </div>
+                <button class="action-trigger-btn" onclick="executeBlocksPipeline()">
+                    <span style="font-size:1.2rem;">🏁</span> Run Safety Script
+                </button>
+            </div>
+        </div>
+
+        <div class="footer-bar" id="gameConsoleStatusToast">Drag blocks into the workspace to execute your safety program sequence.</div>
+    </div>
+
+    <div id="evaluationReportCard" class="welcome-card hidden">
+        <h1 style="color:var(--scratch-green)">🎉 Digital Citizenship Certified!</h1>
+        <p style="margin-top:15px; font-size:1.15rem;" id="finalPerformanceReportSummary">
+            Fantastic logic execution! You successfully completed all code tracks.
+        </p>
+        <div style="font-size: 4.5rem; margin: 25px 0;">🛡️💻🌟</div>
+        <button class="btn-primary" onclick="restartCampaignSession()">Test New Session</button>
+    </div>
+
+</div>
+
+<script>
+/* Required 5-Second Delay Initialization Process Module */
+setTimeout(() => {
+    const splashNode = document.getElementById("splashScreen");
+    splashNode.style.opacity = "0";
+    setTimeout(() => {
+        splashNode.style.setProperty("display", "none", "important");
+        document.body.classList.add("game-active");
+        document.getElementById("appInterfaceShell").classList.remove("hidden");
+    }, 600);
+}, 5000);
+
+/* Configuration Data Tree for the 3 Level Matrices (Easy, Medium, Hard) */
+const levelCampaignDatabase = {
+    1: {
+        title: "Level 1: Polite Messages",
+        difficulty: "Easy",
+        badgeClass: "lvl-easy",
+        instructions: "Teach the robot to follow communication Netiquette! Arrange: When Green Flag Clicked ➔ Avoid Typing in ALL CAPS ➔ Say 'Be Kind Online!'",
+        targetSequence: ["flag", "nocaps", "bekind"],
+        paletteBlocks: [
+            { id: "nocaps", text: "🔠 Avoid Typing in ALL CAPS (Shouting)", category: "cat-looks" },
+            { id: "flag", text: "🏁 When Green Flag Clicked", category: "cat-events" },
+            { id: "bekind", text: "💬 Say 'Be Kind Online!'", category: "cat-looks" },
+            { id: "spam", text: "📨 Send 100 Spam Emails", category: "cat-motion" }
+        ],
+        actionEffect: () => {
+            const sprite = document.getElementById("catSpriteElement");
+            const bubble = document.getElementById("speechBubble");
+            sprite.style.transform = "scale(1.2)";
+            bubble.innerText = "Be Kind Online! 😊";
+            bubble.style.display = "block";
+            setTimeout(() => { 
+                sprite.style.transform = "none";
+                bubble.style.display = "none";
+            }, 2500);
+        }
+    },
+    2: {
+        title: "Level 2: Password Guard",
+        difficulty: "Medium",
+        badgeClass: "lvl-medium",
+        instructions: "Help the robot safely handle login credentials! Arrange: When Password Requested ➔ Keep Password Secret ➔ Alert Parent/Teacher",
+        targetSequence: ["request", "secret", "alert"],
+        paletteBlocks: [
+            { id: "secret", text: "🔒 Keep Password Secret from Friends", category: "cat-control" },
+            { id: "request", text: "🔑 When Password Requested Online", category: "cat-events" },
+            { id: "share", text: "📢 Post Password on Social Media", category: "cat-motion" },
+            { id: "alert", text: "🚨 Alert Parent or Teacher Immediately", category: "cat-sound" }
+        ],
+        actionEffect: () => {
+            const sprite = document.getElementById("catSpriteElement");
+            const bubble = document.getElementById("speechBubble");
+            sprite.style.filter = "hue-rotate(90deg)";
+            bubble.innerText = "Password Guard Shield Activated! 🛡️";
+            bubble.style.display = "block";
+            setTimeout(() => { 
+                sprite.style.filter = "none";
+                bubble.style.display = "none";
+            }, 2500);
+        }
+    },
+    3: {
+        title: "Level 3: Safe Surfing Loop",
+        difficulty: "Hard",
+        badgeClass: "lvl-hard",
+        instructions: "Establish a constant internet safety scanning protocol! Arrange: When Web Browser Opened ➔ Repeat Forever ➔ If Strangers Ask for Personal Info Then ➔ Block and Report",
+        targetSequence: ["browser", "forever", "if_stranger", "block_report"],
+        paletteBlocks: [
+            { id: "forever", text: "🔄 Repeat Forever Loop", category: "cat-control" },
+            { id: "browser", text: "🌐 When Web Browser Opened", category: "cat-events" },
+            { id: "if_stranger", text: "🌿 If Strangers Ask for Personal Info Then", category: "cat-control" },
+            { id: "block_report", text: "🚫 Block and Report immediately", category: "cat-sound" },
+            { id: "accept_meet", text: "🤝 Agree to Meet Stranger Alone", category: "cat-motion" }
+        ],
+        actionEffect: () => {
+            const sprite = document.getElementById("catSpriteElement");
+            let count = 0;
+            const loop = setInterval(() => {
+                sprite.style.transform = count % 2 === 0 ? "rotate(15deg) scale(1.1)" : "rotate(-15deg) scale(1.1)";
+                count++;
+                if (count > 6) {
+                    clearInterval(loop);
+                    sprite.style.transform = "none";
+                }
+            }, 300);
+        }
+    }
+};
+
+// Application State Tracking Variables
+let currentActiveLevel = 1;
+let systemAccumulatedScore = 0;
+let userWorkspaceStack = [];
+let interactionActiveLock = false;
+let draggedBlockKey = null;
+
+function initiateChallengeSession() {
+    document.getElementById("introPanelCard").classList.add("hidden");
+    document.getElementById("gameViewPanel").classList.remove("hidden");
+    currentActiveLevel = 1;
+    systemAccumulatedScore = 0;
+    setupCurrentLevelParameters();
+}
+
+function setupCurrentLevelParameters() {
+    interactionActiveLock = false;
+    userWorkspaceStack = [];
+    draggedBlockKey = null;
+    
+    document.getElementById("scoreDisplayLabel").innerText = systemAccumulatedScore;
+    document.getElementById("scriptDockWorkspace").innerHTML = "";
+    document.getElementById("correctionHUD").classList.add("hidden");
+
+    const levelMetadata = levelCampaignDatabase[currentActiveLevel];
+    
+    document.getElementById("missionLevelTitle").innerText = levelMetadata.title;
+    const badge = document.getElementById("difficultyBadge");
+    badge.innerText = levelMetadata.difficulty;
+    badge.className = `badge-level ${levelMetadata.badgeClass}`;
+
+    document.getElementById("gameConsoleStatusToast").innerText = levelMetadata.instructions;
+
+    // Load and render Palette blocks dynamically
+    const paletteBox = document.getElementById("blockPaletteContainer");
+    paletteBox.innerHTML = "";
+    
+    levelMetadata.paletteBlocks.forEach(block => {
+        const item = document.createElement("div");
+        item.className = `scratch-block ${block.category}`;
+        item.innerText = block.text;
+        item.draggable = true;
+        item.id = `palette-node-${block.id}`;
+        
+        // Drag-and-Drop Native Event Listeners
+        item.addEventListener("dragstart", (e) => {
+            if(interactionActiveLock) return;
+            draggedBlockKey = block.id;
+            e.dataTransfer.setData("text/plain", block.id);
+        });
+
+        // Click alternative backup strategy implementation for ease-of-use
+        item.onclick = () => {
+            if(interactionActiveLock) return;
+            appendBlockToWorkspace(block.id, block.text, block.category);
+        };
+
+        paletteBox.appendChild(item);
+    });
+}
+
+function allowDropBlockTrack(e) {
+    e.preventDefault();
+    document.getElementById("scriptDockWorkspace").classList.add("drag-hover");
+}
+
+function clearDragOverState(e) {
+    document.getElementById("scriptDockWorkspace").classList.remove("drag-hover");
+}
+
+function handleDropBlockTrack(e) {
+    e.preventDefault();
+    document.getElementById("scriptDockWorkspace").classList.remove("drag-hover");
+    if(interactionActiveLock) return;
+
+    const blockId = e.dataTransfer.getData("text/plain") || draggedBlockKey;
+    if (!blockId) return;
+
+    const levelMetadata = levelCampaignDatabase[currentActiveLevel];
+    const match = levelMetadata.paletteBlocks.find(b => b.id === blockId);
+    if(match) {
+        appendBlockToWorkspace(match.id, match.text, match.category);
+    }
+}
+
+function appendBlockToWorkspace(id, text, category) {
+    if(userWorkspaceStack.includes(id)) return; // Prevent duplicates inside active workspace track
+
+    userWorkspaceStack.push(id);
+    document.getElementById(`palette-node-${id}`).style.opacity = "0.3";
+
+    const workspaceDock = document.getElementById("scriptDockWorkspace");
+    const node = document.createElement("div");
+    node.className = `scratch-block ${category}`;
+    node.innerText = text;
+    workspaceDock.appendChild(node);
+}
+
+function executeBlocksPipeline() {
+    if (interactionActiveLock) return;
+    
+    const configData = levelCampaignDatabase[currentActiveLevel];
+    const consoleBox = document.getElementById("gameConsoleStatusToast");
+
+    if (userWorkspaceStack.length === 0) {
+        consoleBox.innerText = "⚠️ Workspace Empty! Append or drag cybersecurity blocks inside your target sequence.";
+        return;
+    }
+
+    interactionActiveLock = true;
+    let sequenceIsValid = true;
+
+    if (userWorkspaceStack.length !== configData.targetSequence.length) {
+        sequenceIsValid = false;
+    } else {
+        for (let i = 0; i < configData.targetSequence.length; i++) {
+            if (userWorkspaceStack[i] !== configData.targetSequence[i]) {
+                sequenceIsValid = false;
+                break;
+            }
+        }
+    }
+
+    if (sequenceIsValid) {
+        systemAccumulatedScore += 100;
+        document.getElementById("scoreDisplayLabel").innerText = systemAccumulatedScore;
+        consoleBox.innerText = "✅ Smart Choices! Running Safety Script Action Sequence...";
+        
+        // Play success audio from local resources track
+        triggerLocalAudioNode("audioChime");
+        configData.actionEffect();
+
+        setTimeout(() => {
+            advancePlatformSequence();
+        }, 2600);
+
+    } else {
+        consoleBox.innerText = "❌ Cyber Risk Detected. Review the correct netiquette rule architecture below.";
+        triggerLocalAudioNode("audioAlert");
+
+        // Generate and exhibit clear answer solution map
+        const solutionDock = document.getElementById("correctionSolutionDock");
+        solutionDock.innerHTML = "";
+        
+        configData.targetSequence.forEach((targetId, index) => {
+            const blockInfo = configData.paletteBlocks.find(b => b.id === targetId);
+            const entry = document.createElement("div");
+            entry.className = "correction-item";
+            entry.innerHTML = `<strong>Step ${index + 1}:</strong> ${blockInfo.text}`;
+            solutionDock.appendChild(entry);
+        });
+
+        document.getElementById("correctionHUD").classList.remove("hidden");
+
+        setTimeout(() => {
+            advancePlatformSequence();
+        }, 6000);
+    }
+}
+
+function triggerLocalAudioNode(elementId) {
+    const audioNode = document.getElementById(elementId);
+    if(audioNode) {
+        audioNode.currentTime = 0;
+        audioNode.play().catch(err => console.log("Audio asset triggered:", err));
+    }
+}
+
+function advancePlatformSequence() {
+    currentActiveLevel++;
+    if (levelCampaignDatabase[currentActiveLevel]) {
+        setupCurrentLevelParameters();
+    } else {
+        // Route execution straight to summary view card
+        document.getElementById("gameViewPanel").classList.add("hidden");
+        document.getElementById("evaluationReportCard").classList.remove("hidden");
+        
+        triggerLocalAudioNode("audioBeat");
+        document.getElementById("finalPerformanceReportSummary").innerHTML = 
+            `Superb! You demonstrated complete command over safe web browsing protocol, secure account management, and courteous digital ethics.<br><br><strong>Final Score: ${systemAccumulatedScore} / 300 Safety Points</strong>`;
+    }
+}
+
+function restartCampaignSession() {
+    document.getElementById("evaluationReportCard").classList.add("hidden");
+    document.getElementById("gameViewPanel").classList.remove("hidden");
+    currentActiveLevel = 1;
+    systemAccumulatedScore = 0;
+    setupCurrentLevelParameters();
+}
+</script>
+
+</body>
+</html>

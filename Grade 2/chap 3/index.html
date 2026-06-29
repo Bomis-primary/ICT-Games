@@ -1,421 +1,397 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MS Paint Color Splash</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
-<style>
-:root {
-    --paint-blue: #3b82f6;
-    --paint-red: #ef4444;
-    --paint-yellow: #eab308;
-    --paint-green: #10b981;
-    --window-border: #1e3a8a;
-}
-* { 
-    margin: 0; 
-    padding: 0; 
-    box-sizing: border-box; 
-    font-family: 'Segoe UI', system-ui, sans-serif; 
-    user-select: none; 
-}
-body { 
-    background: linear-gradient(135deg, #fef08a, #bbf7d0); 
-    min-height: 100vh; 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    overflow: hidden; 
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission: The Great Innovine Logo Glitch!</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fafafa;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #2c3e50;
+            overflow-x: hidden;
+        }
 
-/* 5-Second Splash Overlay Layout */
-#splashScreen {
-    position: fixed; 
-    top: 0; 
-    left: 0; 
-    width: 100%; 
-    height: 100%; 
-    background: #ffffff;
-    display: flex; 
-    flex-direction: column; 
-    justify-content: center; 
-    align-items: center; 
-    z-index: 9999;
-    transition: opacity 0.5s ease;
-}
-#splashScreen img { 
-    width: 280px; 
-    max-width: 80%;
-    animation: bounce 2s infinite ease-in-out; 
-}
-@keyframes bounce { 
-    0%, 100% { transform: translateY(0); } 
-    50% { transform: translateY(-10px); } 
-}
+        /* 5-Second Animated Splash Overlay */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #1a252f;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+            color: white;
+        }
 
-/* Master Grid UI Frame Box Wrapper */
-.app-window { 
-    width: 95vw; 
-    max-width: 1150px; 
-    height: 90vh; 
-    background: #f8fafc; 
-    border: 4px solid var(--window-border); 
-    border-radius: 18px; 
-    display: flex; 
-    flex-direction: column; 
-    overflow: hidden; 
-    box-shadow: 0 25px 50px rgba(0,0,0,0.25); 
-}
-.paint-window-header { 
-    background: linear-gradient(to right, #1e3a8a, #3b82f6); 
-    color: white; 
-    padding: 10px 14px; 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-}
-.window-title-side { 
-    display: flex; 
-    align-items: center; 
-    gap: 8px; 
-    font-weight: 700; 
-}
-.window-title-side img { 
-    width: 18px; 
-    height: 18px; 
-}
-.window-control-buttons {
-    display: flex;
-    gap: 6px;
-}
-.window-control-buttons img {
-    width: 22px;
-    height: 22px;
-    cursor: pointer;
-}
+        #splash-screen img {
+            max-width: 280px;
+            margin-bottom: 25px;
+            animation: glitch 1s infinite alternate;
+        }
 
-.window-body-content { 
-    padding: 16px; 
-    display: flex; 
-    flex-direction: column; 
-    gap: 12px; 
-    flex-grow: 1; 
-    min-height: 0; 
-}
-.hidden { display: none !important; }
+        @keyframes glitch {
+            0% { transform: skew(2deg); filter: hue-rotate(0deg); }
+            100% { transform: skew(-2deg); filter: hue-rotate(90deg); }
+        }
 
-.welcome-card { text-align: center; max-width: 650px; margin: auto; padding: 20px; }
-.welcome-card h1 span { 
-    background: linear-gradient(135deg, var(--paint-red), var(--paint-blue)); 
-    -webkit-background-clip: text; 
-    -webkit-text-fill-color: transparent; 
-    font-size: 2.8rem; 
-    font-weight: 800; 
-}
+        /* Workspace setup */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 950px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
 
-.top-hud { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    background: #ffffff; 
-    border: 2px solid #cbd5e1; 
-    padding: 12px 20px; 
-    border-radius: 12px; 
-    font-weight: 700; 
-}
-.game-workspace { 
-    display: grid; 
-    grid-template-columns: 260px 1fr; 
-    gap: 16px; 
-    flex-grow: 1; 
-    min-height: 0; 
-}
-.left-panel { 
-    background: #ffffff; 
-    border: 2px solid #cbd5e1; 
-    border-radius: 14px; 
-    padding: 15px; 
-    display: flex; 
-    flex-direction: column; 
-    gap: 12px; 
-}
-.tools-vault { display: flex; flex-direction: column; gap: 10px; }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            background: white;
+            padding: 15px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
 
-.tool-btn { 
-    background: #f8fafc; 
-    border: 2px solid #cbd5e1; 
-    padding: 12px; 
-    border-radius: 12px; 
-    font-weight: 700; 
-    cursor: pointer; 
-    display: flex; 
-    align-items: center; 
-    gap: 12px; 
-    width: 100%; 
-    transition: all 0.2s; 
-}
-.tool-btn:hover { background: #f1f5f9; transform: translateY(-1px); }
-.tool-btn.active-selected { 
-    background: #e0f2fe; 
-    border-color: var(--paint-blue); 
-    box-shadow: 0 0 8px rgba(59,130,246,0.3); 
-}
-.tool-btn img, .tool-btn span { pointer-events: none; }
-.tool-btn img { width: 32px; height: 32px; object-fit: contain; }
+        .logo-area img {
+            height: 55px;
+        }
 
-.canvas-container { 
-    background: #ffffff; 
-    border: 3px solid #cbd5e1; 
-    border-radius: 14px; 
-    position: relative; 
-    overflow: hidden; 
-    display: flex; 
-    flex-direction: column; 
-}
-#splashCanvas { width: 100%; flex-grow: 1; background: #ffffff; cursor: pointer; }
+        .game-grid {
+            display: flex;
+            gap: 25px;
+            width: 100%;
+        }
 
-.palette-row { 
-    display: flex; 
-    gap: 10px; 
-    background: #f8fafc; 
-    padding: 10px; 
-    justify-content: center; 
-    border-top: 2px solid #e2e8f0; 
-}
-.color-swatch { 
-    width: 30px; 
-    height: 30px; 
-    border-radius: 50%; 
-    cursor: pointer; 
-    border: 3px solid white; 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15); 
-}
-.color-swatch.selected { transform: scale(1.25); border-color: #0f172a; }
+        /* Control Panel Styles */
+        .sidebar {
+            flex: 1;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
 
-.feedback-bar { padding: 10px; border-radius: 10px; font-weight: 700; text-align: center; }
-.footer-toast { background: #334155; color: white; padding: 10px; border-radius: 10px; text-align: center; font-weight: 600; }
-.btn-primary { 
-    background: linear-gradient(135deg, var(--paint-blue), #1d4ed8); 
-    color: white; 
-    border: none; 
-    padding: 12px 32px; 
-    border-radius: 25px; 
-    font-size: 1.1rem; 
-    font-weight: 700; 
-    cursor: pointer; 
-}
-</style>
+        .instruction-card {
+            background-color: #fff9db;
+            border-left: 5px solid #fcc419;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .instruction-card h3 {
+            margin: 0 0 8px 0;
+            color: #e67e22;
+        }
+
+        /* Toolbar simulation */
+        .tool-rack {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .tool-btn {
+            background: #f1f3f5;
+            border: 2px solid #dee2e6;
+            padding: 12px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tool-btn:hover { background: #e9ecef; }
+        .tool-btn.active {
+            background: #e7f5ff;
+            border-color: #339af0;
+        }
+
+        .palette {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+
+        .color-dot {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            border: 2px solid #dee2e6;
+            cursor: pointer;
+        }
+        .color-dot.active { border: 3px solid #2b2b2b; }
+
+        /* Action Buttons */
+        .action-btn {
+            background-color: #22b8cf;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        /* Canvas window */
+        .canvas-window {
+            flex: 1.5;
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .canvas-meta {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 13px;
+            color: #495057;
+        }
+
+        canvas {
+            background: white;
+            border: 2px solid #ced4da;
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        }
+    </style>
 </head>
 <body>
 
-<audio id="audioCorrect" src="assets/correct.mp3" preload="auto"></audio>
-<audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
-<audio id="audioClap" src="assets/clap.mp3" preload="auto"></audio>
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/250x90?text=Innovine';">
+        <h2>⚠️ SYSTEM ERROR: GLITCH DETECTED!</h2>
+    </div>
 
-<div id="splashScreen">
-    <img src="assets/innovine-logo.png" alt="Logo">
-    <h2 style="margin-top:15px; color:#475569;">Loading Color Splash Symmetry...</h2>
-</div>
+    <div class="main-content" id="app-workspace">
+        <header>
+            <div>
+                <h1 style="margin:0; font-size: 22px; color: #2c3e50;">🖌️ MS Paint 2: Advanced Lab</h1>
+                <p style="margin:4px 0 0 0; font-size:13px; color:#7f8c8d;">Grade 2 - Fill, Magnify & Text Tools</p>
+            </div>
+            <div class="logo-area">
+                <img src="assets/innovine-logo.png" alt="Innovine" onerror="this.src='https://via.placeholder.com/150x50?text=Innovine';">
+            </div>
+        </header>
 
-<div class="app-window hidden" id="appMainWrapper">
-    <div class="paint-window-header">
-        <div class="window-title-side">
-            <img src="assets/ms paint.png" alt="Paint">
-            <span>Color Splash Studio 2 </span>
-        </div>
-        <div class="window-control-buttons">
-            <img src="assets/minimize.png" alt="-">
-            <img src="assets/maximize.png" alt="[]">
-            <img src="assets/close.png" alt="X">
+        <div class="game-grid">
+            <div class="sidebar">
+                <div>
+                    <div class="instruction-card">
+                        <h3 id="mission-title">🔍 Stage 1: The Invisible Bug</h3>
+                        <p id="mission-desc">The logo is tiny! Select the <b>Magnifier (🔍)</b> tool, then click on the logo block to find out where the error is hidden!</p>
+                    </div>
+
+                    <span style="font-weight:bold; font-size:13px; color:#666;">Advanced Toolbox:</span>
+                    <div class="tool-rack">
+                        <button class="tool-btn active" id="tool-zoom" onclick="selectTool('zoom')">🔍</button>
+                        <button class="tool-btn" id="tool-fill" onclick="selectTool('fill')">🪣</button>
+                        <button class="tool-btn" id="tool-text" onclick="selectTool('text')">🅰️</button>
+                    </div>
+
+                    <span style="font-weight:bold; font-size:13px; color:#666;">Color Panel:</span>
+                    <div class="palette">
+                        <div class="color-dot active" style="background:#e74c3c;" onclick="selectColor('#e74c3c', this)"></div>
+                        <div class="color-dot" style="background:#2ecc71;" onclick="selectColor('#2ecc71', this)"></div>
+                        <div class="color-dot" style="background:#3498db;" onclick="selectColor('#3498db', this)"></div>
+                    </div>
+                </div>
+
+                <button class="action-btn" id="next-btn" onclick="processStage()" disabled style="background-color:#95a5a6; cursor:not-allowed;">Solve Current Objective First</button>
+            </div>
+
+            <div class="canvas-window">
+                <div class="canvas-meta">
+                    <span id="active-tool-label">Active Tool: Magnifier</span>
+                    <span id="score-label">Status: Restoring Assets...</span>
+                </div>
+                <canvas id="paintCanvas" width="500" height="380"></canvas>
+            </div>
         </div>
     </div>
 
-    <div class="window-body-content">
-        <div id="introScreen" class="welcome-card">
-            <img src="assets/innovine-logo.png" style="max-width:180px; margin-bottom:15px;" alt="Logo">
-            <h1><span>COLOR SPLASH SYMMETRY!</span></h1>
-            <p style="margin: 15px 0; color:#475569; font-size:1.1rem;">Choose your active workspace tool, pick a fancy color swatch at the bottom, and repair the drawings!</p>
-            <button class="btn-primary" onclick="startSymmetryGame()">Launch Sandbox Game</button>
-        </div>
+    <audio id="snd-clap" src="assets/clap.mp3" preload="auto"></audio>
+    <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
-        <div id="gamePlayPanel" class="hidden" style="display:flex; flex-direction:column; gap:12px; flex-grow:1; min-height:0;">
-            <div class="top-hud">
-                <div>⭐ Score: <span id="scoreDisplay" style="color:var(--paint-yellow);">0</span></div>
-                <div>🎬 Mission: <span id="levelTitle" style="color:var(--paint-blue);">Level 1</span></div>
-                <div>🎯 Objective: <span id="levelObjective" style="color:var(--paint-green);">Loading...</span></div>
-            </div>
-            <div class="game-workspace">
-                <div class="left-panel">
-                    <div class="tools-vault">
-                        <button class="tool-btn" id="tool-bucket" onclick="pickTool('tool-bucket')">
-                            <img src="assets/fill-with-color.png"><span>Color Bucket</span>
-                        </button>
-                        <button class="tool-btn" id="tool-eraser" onclick="pickTool('tool-eraser')">
-                            <img src="assets/eraser.png"><span>Eraser Tool</span>
-                        </button>
-                        <button class="tool-btn" id="tool-pencil" onclick="pickTool('tool-pencil')">
-                            <img src="assets/pencil.png"><span>Pencil Tool</span>
-                        </button>
-                    </div>
-                </div>
-                <div class="canvas-container">
-                    <canvas id="splashCanvas"></canvas>
-                    <div class="palette-row">
-                        <div class="color-swatch selected" style="background:#ef4444;" onclick="changeColor('#ef4444', this)"></div>
-                        <div class="color-swatch" style="background:#3b82f6;" onclick="changeColor('#3b82f6', this)"></div>
-                        <div class="color-swatch" style="background:#eab308;" onclick="changeColor('#eab308', this)"></div>
-                        <div class="color-swatch" style="background:#10b981;" onclick="changeColor('#10b981', this)"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="feedback-bar hidden" id="feedbackNotification"></div>
-            <div class="footer-toast" id="statusBarText">Pick a paint tool and color swatch!</div>
-        </div>
+    <script>
+        // Splash page runtime limit management
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.opacity = '0';
+                document.getElementById('splash-screen').style.visibility = 'hidden';
+                document.getElementById('app-workspace').style.opacity = '1';
+                initCanvas();
+            }, 5000);
+        });
 
-        <div id="resultScreenCard" class="welcome-card hidden">
-            <h1 style="color:var(--paint-green);">🎉 Painting Expert Unlocked!</h1>
-            <p style="margin:25px 0; font-size:1.25rem;" id="victoryMessageText"></p>
-            <button class="btn-primary" onclick="location.reload()">Play Game Again</button>
-        </div>
-    </div>
-</div>
+        const canvas = document.getElementById('paintCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let currentStage = 1;
+        let selectedTool = 'zoom';
+        let selectedColor = '#e74c3c';
+        let isZoomed = false;
+        let isFilled = false;
+        let textEntered = false;
 
-<script>
-setTimeout(() => {
-    document.getElementById("splashScreen").style.opacity = "0";
-    setTimeout(() => { 
-        document.getElementById("splashScreen").style.setProperty("display", "none", "important"); 
-        document.getElementById("appMainWrapper").classList.remove("hidden"); 
-    }, 500);
-}, 5000);
+        // Audio helper wrappers
+        function playAssetSound(id) {
+            const sound = document.getElementById(id);
+            if(sound) {
+                sound.currentTime = 0;
+                sound.play().catch(e => console.log("Audio waiting for user gesture"));
+            }
+        }
 
-const levelsData = {
-    1: { 
-        title: "Level 1: Pour the Circle Color", 
-        objective: "Pick the Color Bucket tool, choose a color, and tap inside the round shape ring!", 
-        requiredTool: "tool-bucket", 
-        hint: "The Color Bucket fills elements completely!", 
-        draw: (ctx, w, h) => { ctx.strokeStyle = "#000"; ctx.lineWidth = 4; ctx.beginPath(); ctx.arc(w/2, h/2, 60, 0, Math.PI*2); ctx.stroke(); }, 
-        check: (x, y, w, h) => Math.sqrt((x - w/2)**2 + (y - h/2)**2) < 75, 
-        fill: (ctx, w, h, c) => { ctx.fillStyle = c; ctx.beginPath(); ctx.arc(w/2, h/2, 58, 0, Math.PI*2); ctx.fill(); } 
-    },
-    2: { 
-        title: "Level 2: Erase the Stain", 
-        objective: "Oh no, a grey ink stain is blocking the frame! Select the Eraser Tool and click on it!", 
-        requiredTool: "tool-eraser", 
-        hint: "The Eraser cleans unwanted brush lines!", 
-        draw: (ctx, w, h) => { ctx.fillStyle = "#64748b"; ctx.beginPath(); ctx.arc(w/2, h/2, 45, 0, Math.PI*2); ctx.fill(); }, 
-        check: (x, y, w, h) => Math.sqrt((x - w/2)**2 + (y - h/2)**2) < 65, 
-        fill: (ctx, w, h) => { ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(w/2, h/2, 55, 0, Math.PI*2); ctx.fill(); } 
-    },
-    3: { 
-        title: "Level 3: Draw the Line Anchor", 
-        objective: "Use the Pencil Tool to color the center marker point!", 
-        requiredTool: "tool-pencil", 
-        hint: "The pencil draws clean lines or patches!", 
-        draw: (ctx, w, h) => { ctx.strokeStyle = "#ef4444"; ctx.lineWidth = 3; ctx.strokeRect(w/2 - 40, h/2 - 40, 80, 80); }, 
-        check: (x, y, w, h) => Math.abs(x - w/2) < 60 && Math.abs(y - h/2) < 60, 
-        fill: (ctx, w, h, c) => { ctx.fillStyle = c; ctx.fillRect(w/2 - 40, h/2 - 40, 80, 80); } 
-    }
-};
+        function initCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Draw a tiny glitch box simulating a small scrambled segment
+            ctx.fillStyle = "#e74c3c";
+            ctx.fillRect(235, 165, 30, 30);
+            
+            ctx.fillStyle = "#2c3e50";
+            ctx.font = "12px Arial";
+            ctx.fillText("Glitch Box", 225, 150);
+        }
 
-let currentLevel = 1, score = 0, toolSelected = null, currentColor = "#ef4444", activeState = true, canvasElement, canvasCtx;
+        function selectTool(tool) {
+            selectedTool = tool;
+            document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`tool-${tool}`).classList.add('active');
+            document.getElementById('active-tool-label').innerText = `Active Tool: ${tool.toUpperCase()}`;
+        }
 
-function playSound(id) { 
-    let a = document.getElementById(id); 
-    if(a) { a.currentTime = 0; a.play().catch(()=>{}); } 
-}
+        function selectColor(color, element) {
+            selectedColor = color;
+            document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+            element.classList.add('active');
+        }
 
-function startSymmetryGame() { 
-    playSound("audioCorrect"); 
-    document.getElementById("introScreen").classList.add("hidden"); 
-    document.getElementById("gamePlayPanel").classList.remove("hidden"); 
-    canvasElement = document.getElementById("splashCanvas"); 
-    canvasCtx = canvasElement.getContext("2d"); 
-    let b = canvasElement.parentElement.getBoundingClientRect(); 
-    canvasElement.width = b.width; 
-    canvasElement.height = b.height - 55; 
-    
-    canvasElement.addEventListener("mousedown", handleCanvasClick);
-    canvasElement.addEventListener("touchstart", (e) => {
-        e.preventDefault();
-        const t = e.touches[0]; const r = canvasElement.getBoundingClientRect();
-        handleCanvasClick({ offsetX: t.clientX - r.left, offsetY: t.clientY - r.top });
-    });
-    loadLevelEngine(); 
-}
+        // Handle inner Canvas click physics
+        canvas.addEventListener('click', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
 
-function loadLevelEngine() { 
-    activeState = true; 
-    toolSelected = null; 
-    document.getElementById("scoreDisplay").innerText = score; 
-    document.getElementById("feedbackNotification").classList.add("hidden"); 
-    document.querySelectorAll(".tool-btn").forEach(b => b.classList.remove("active-selected")); 
-    let d = levelsData[currentLevel]; 
-    document.getElementById("levelTitle").innerText = d.title; 
-    document.getElementById("levelObjective").innerText = d.objective; 
-    canvasCtx.fillStyle = "#ffffff"; 
-    canvasCtx.fillRect(0,0,canvasElement.width,canvasElement.height); 
-    d.draw(canvasCtx, canvasElement.width, canvasElement.height); 
-}
+            if (currentStage === 1 && selectedTool === 'zoom') {
+                // If user clicks near the small asset block
+                if(x >= 200 && x <= 300 && y >= 130 && y <= 210) {
+                    isZoomed = true;
+                    playAssetSound('snd-correct');
+                    
+                    // Emulate Zoom window effect
+                    ctx.clearRect(0,0,canvas.width,canvas.height);
+                    ctx.fillStyle = "#e74c3c";
+                    ctx.fillRect(150, 90, 200, 200); // Glitch box grew bigger!
+                    
+                    document.getElementById('score-label').innerText = "Status: Glitch uncovered!";
+                    unlockNext();
+                } else {
+                    playAssetSound('snd-wrong');
+                }
+            }
+            else if (currentStage === 2 && selectedTool === 'fill') {
+                // Check color matching (Targeting Bright Innovine Green #2ecc71 to fix glitch)
+                if(selectedColor === '#2ecc71') {
+                    isFilled = true;
+                    playAssetSound('snd-correct');
+                    
+                    ctx.fillStyle = "#2ecc71";
+                    ctx.fillRect(150, 90, 200, 200);
+                    
+                    document.getElementById('score-label').innerText = "Status: Color Restored!";
+                    unlockNext();
+                } else {
+                    playAssetSound('snd-wrong'); // Wrong structural color selected
+                }
+            }
+            else if (currentStage === 3 && selectedTool === 'text') {
+                if(!textEntered) {
+                    textEntered = true;
+                    playAssetSound('snd-clap');
+                    
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "bold 24px sans-serif";
+                    ctx.fillText("INNOVINE", 185, 200);
+                    
+                    document.getElementById('score-label').innerText = "Status: System Patched Successfully!";
+                    unlockNext();
+                }
+            }
+        });
 
-function pickTool(id) { 
-    if(!activeState) return; 
-    toolSelected = id; 
-    document.querySelectorAll(".tool-btn").forEach(b => b.classList.remove("active-selected")); 
-    document.getElementById(id).classList.add("active-selected"); 
-    playSound("audioCorrect"); 
-}
+        function unlockNext() {
+            const btn = document.getElementById('next-btn');
+            btn.disabled = false;
+            btn.style.backgroundColor = "#2f9e44";
+            btn.style.cursor = "pointer";
+            btn.innerText = currentStage === 3 ? "Complete Mission 🎉" : "Advance System Engine ➡️";
+        }
 
-function changeColor(c, el) { 
-    currentColor = c; 
-    document.querySelectorAll(".color-swatch").forEach(s => s.classList.remove("selected")); 
-    el.classList.add("selected"); 
-}
+        function processStage() {
+            const title = document.getElementById('mission-title');
+            const desc = document.getElementById('mission-desc');
+            const btn = document.getElementById('next-btn');
+            
+            // Relock button for security checks in next round
+            btn.disabled = true;
+            btn.style.backgroundColor = "#95a5a6";
+            btn.style.cursor = "not-allowed";
+            btn.innerText = "Solve Current Objective First";
 
-function handleCanvasClick(e) { 
-    if(!activeState) return; 
-    let d = levelsData[currentLevel]; 
-    if(!toolSelected) { 
-        document.getElementById("statusBarText").innerText = "⚠️ Select a tool from the side panel layout first!";
-        playSound("audioWrong"); 
-        return; 
-    } 
-    if(toolSelected !== d.requiredTool) { 
-        playSound("audioWrong"); 
-        let f = document.getElementById("feedbackNotification"); 
-        f.className="feedback-bar"; f.style.background="#f2dede"; f.style.color="#a94442"; 
-        f.innerText=`❌ Incorrect tool asset choice! Hint: ${d.hint}`; 
-        f.classList.remove("hidden"); 
-        return; 
-    } 
-    if(d.check(e.offsetX, e.offsetY, canvasElement.width, canvasElement.height)) { 
-        activeState = false; 
-        score += 100; 
-        d.fill(canvasCtx, canvasElement.width, canvasElement.height, currentColor); 
-        playSound("audioCorrect"); 
-        confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } }); 
-        let f = document.getElementById("feedbackNotification"); 
-        f.className="feedback-bar"; f.style.background="#dff0d8"; f.style.color="#3c763d"; 
-        f.innerText="🎉 Excellent! Canvas repaired completely."; 
-        f.classList.remove("hidden"); 
-        setTimeout(() => { 
-            currentLevel++; 
-            if(levelsData[currentLevel]) { 
-                loadLevelEngine(); 
-            } else { 
-                document.getElementById("gamePlayPanel").classList.add("hidden"); 
-                document.getElementById("resultScreenCard").classList.remove("hidden"); 
-                playSound("audioClap"); 
-                document.getElementById("victoryMessageText").innerHTML = `Fantastic! You matched all color palettes perfectly!<br><br><strong>Final Score: ${score} Points!</strong>`; 
-            } 
-        }, 3000); 
-    } else {
-        document.getElementById("statusBarText").innerText = "Missed! Click inside the designated target outline asset area.";
-        playSound("audioWrong");
-    }
-}
-</script>
+            if (currentStage === 1) {
+                currentStage = 2;
+                title.innerText = "🪣 Stage 2: The Color Bucket Refill";
+                desc.innerText = "Wow! The glitch box is huge now. Switch to the Paint Bucket (🪣) tool, select the Green panel dot, and paint the box over to cleanse the error.";
+                selectTool('fill');
+            } else if (currentStage === 2) {
+                currentStage = 3;
+                title.innerText = "🅰️ Stage 3: Stamp out the Brand Text";
+                desc.innerText = "Perfectly filled! Now pick the Text Tool (🅰️), click right inside the green shape box to print out the final corporate label watermark code!";
+                selectTool('text');
+            } else {
+                // Game finished successfully wrap-around loop
+                alert("Wonderful! Asset structure restored to optimal performance metrics!");
+                currentStage = 1;
+                isZoomed = false;
+                isFilled = false;
+                textEntered = false;
+                title.innerText = "🔍 Stage 1: The Invisible Bug";
+                desc.innerText = "The logo is tiny! Select the Magnifier (🔍) tool, then click on the logo block to find out where the error is hidden!";
+                selectTool('zoom');
+                initCanvas();
+            }
+        }
+    </script>
 </body>
 </html>

@@ -1,1 +1,263 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Computer Memory Game</title>
+
+<style>
+body {
+    font-family: Arial;
+    text-align: center;
+    background: linear-gradient(to right, #a1c4fd, #c2e9fb);
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+}
+
+h1 { color: #333; }
+
+#levelSelect button {
+    padding: 10px;
+    margin: 5px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    background: #ff9800;
+    color: white;
+}
+
+.question {
+    font-size: 20px;
+    margin: 15px 0;
+}
+
+.draggable {
+    padding: 10px;
+    margin: 5px;
+    background: #4CAF50;
+    color: white;
+    border-radius: 10px;
+    cursor: grab;
+}
+
+.dropzone {
+    margin: 20px;
+    padding: 20px;
+    border: 3px dashed #333;
+    border-radius: 10px;
+}
+
+#timer {
+    font-size: 18px;
+    color: red;
+}
+
+#restartBtn {
+    display: none;
+    padding: 12px;
+    font-size: 18px;
+    background: #ff5722;
+    color: white;
+    border: none;
+    border-radius: 10px;
+}
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🧠 Computer Memory Game</h1>
+
+<div id="levelSelect">
+    <p>Select Level:</p>
+    <button onclick="startGame('easy')">Easy</button>
+    <button onclick="startGame('medium')">Medium</button>
+    <button onclick="startGame('hard')">Hard</button>
+</div>
+
+<div id="gameArea" style="display:none;">
+    <div id="timer">Time: 30</div>
+    <div class="question" id="question"></div>
+
+    <div id="options"></div>
+
+    <div class="dropzone" ondrop="drop(event)" ondragover="allowDrop(event)">
+        Drop Answer Here
+    </div>
+</div>
+
+<h2 id="score"></h2>
+<button id="restartBtn" onclick="restartGame()">Restart</button>
+
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+// SOUND
+let correctSound = new Audio("correct.mp3");
+let wrongSound = new Audio("wrong.mp3");
+
+correctSound.volume = 1.0;
+wrongSound.volume = 1.0;
+
+// QUESTIONS BY LEVEL
+let levels = {
+easy: [
+{q:"Temporary memory?", o:["RAM","ROM"], a:"RAM"},
+{q:"Permanent memory?", o:["RAM","ROM"], a:"ROM"}
+],
+medium: [
+{q:"RAM stands for?", o:["Random Access Memory","Read Memory"], a:"Random Access Memory"},
+{q:"Storage device?", o:["Keyboard","Hard Disk"], a:"Hard Disk"}
+],
+hard: [
+{q:"Fastest memory?", o:["Cache","Hard Disk"], a:"Cache"},
+{q:"Memory inside CPU?", o:["Cache","RAM"], a:"Cache"}
+]
+};
+
+let questions = [];
+let current = 0;
+let score = 0;
+let timer;
+let timeLeft = 30;
+
+// VOICE
+function speak(text) {
+    let msg = new SpeechSynthesisUtterance(text);
+    speechSynthesis.speak(msg);
+}
+
+function startGame(level) {
+    questions = levels[level].sort(() => Math.random() - 0.5);
+    document.getElementById("levelSelect").style.display = "none";
+    document.getElementById("gameArea").style.display = "block";
+
+    speak("Welcome! Drag the correct answer.");
+
+    startTimer();
+    loadQuestion();
+}
+
+function startTimer() {
+    timer = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timer").innerText = "Time: " + timeLeft;
+
+        if (timeLeft <= 0) {
+            endGame();
+        }
+    }, 1000);
+}
+
+function loadQuestion() {
+    if (current >= questions.length) {
+        endGame();
+        return;
+    }
+
+    let q = questions[current];
+    document.getElementById("question").innerText = q.q;
+    speak(q.q);
+
+    let optionsDiv = document.getElementById("options");
+    optionsDiv.innerHTML = "";
+
+    q.o.forEach(opt => {
+        let div = document.createElement("div");
+        div.className = "draggable";
+        div.innerText = opt;
+        div.draggable = true;
+        div.ondragstart = drag;
+        optionsDiv.appendChild(div);
+    });
+}
+
+function drag(ev) {
+    ev.dataTransfer.setData("text", ev.target.innerText);
+}
+
+function allowDrop(ev) {
+    ev.preventDefault();
+}
+
+function drop(ev) {
+    ev.preventDefault();
+    let data = ev.dataTransfer.getData("text");
+
+    if (data === questions[current].a) {
+        score++;
+        correctSound.play();
+        startConfetti();
+    } else {
+        wrongSound.play();
+    }
+
+    current++;
+    setTimeout(loadQuestion, 800);
+}
+
+function endGame() {
+    clearInterval(timer);
+    document.getElementById("gameArea").innerHTML = "<h2>🎉 Game Over!</h2>";
+    document.getElementById("score").innerText = "Score: " + score;
+    document.getElementById("restartBtn").style.display = "inline-block";
+}
+
+function restartGame() {
+    location.reload();
+}
+
+// CONFETTI
+let canvas = document.getElementById("confetti");
+let ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let confetti = [];
+
+function startConfetti() {
+    for (let i = 0; i < 80; i++) {
+        confetti.push({
+            x: Math.random()*canvas.width,
+            y: Math.random()*canvas.height,
+            r: Math.random()*6
+        });
+    }
+    drawConfetti();
+}
+
+function drawConfetti() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+
+    confetti.forEach((c,i)=>{
+        ctx.beginPath();
+        ctx.arc(c.x,c.y,c.r,0,Math.PI*2);
+        ctx.fillStyle="blue";
+        ctx.fill();
+        c.y+=2;
+        if(c.y>canvas.height) confetti.splice(i,1);
+    });
+
+    requestAnimationFrame(drawConfetti);
+}
+</script>
+
+</body>
+</html>

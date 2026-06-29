@@ -38,7 +38,7 @@ body.game-active {
     background: linear-gradient(135deg, #1e293b, var(--dark-bg));
 }
 
-/* Hardcoded 5-Second Innovine Splash Screen Layout Grid */
+/* 5-Second Innovine Splash Screen Layout Grid */
 #splashScreen {
     position: fixed;
     top: 0;
@@ -105,19 +105,6 @@ body.game-active {
     margin: 0 auto;
 }
 
-.welcome-card h1 {
-    font-size: 2.5rem;
-    color: var(--scratch-blue);
-    margin-bottom: 15px;
-}
-
-.welcome-card p {
-    color: #475569;
-    font-size: 1.1rem;
-    line-height: 1.6;
-    margin-bottom: 30px;
-}
-
 .game-layout {
     display: grid;
     grid-template-rows: auto 1fr auto;
@@ -180,7 +167,7 @@ body.game-active .column-board {
     padding-bottom: 8px;
 }
 
-/* Authentic Blocks CSS Styling Rules */
+/* Authentic Scratch Blocks CSS Styling Rules */
 .scratch-block {
     padding: 12px 16px;
     color: white;
@@ -343,16 +330,7 @@ body.game-active .stage-preview {
 
 <div class="app-window hidden" id="appInterfaceShell">
 
-    <div id="introPanelCard" class="welcome-card">
-        <h1>Netiquette Code Master!</h1>
-        <h3 style="color:#64748b; margin-bottom:15px;">Chapter: Internet & Cyber Etiquette Safety</h3>
-        <p>
-            Welcome, Digital Citizen! Drag, drop, and snap Scratch blocks into the workspace to teach our robot sprite how to behave safely and politely on the internet. Conquer 3 levels (Easy, Medium, Hard) to earn your Cyber Safety Certificate!
-        </p>
-        <button class="btn-primary" onclick="initiateChallengeSession()">Enter Cyber Lab</button>
-    </div>
-
-    <div id="gameViewPanel" class="game-layout hidden">
+    <div id="gameViewPanel" class="game-layout">
         <div class="top-hud">
             <div>🏆 Safety Points: <span id="scoreDisplayLabel" style="color:var(--scratch-orange)">0</span></div>
             <div style="font-size:1.1rem;">🌐 Mission: <span id="missionLevelTitle" style="color:#60a5fa">Level 1</span></div>
@@ -370,7 +348,7 @@ body.game-active .stage-preview {
                 <div class="script-dropzone" id="scriptDockWorkspace" ondragover="allowDropBlockTrack(event)" ondragleave="clearDragOverState(event)" ondrop="handleDropBlockTrack(event)"></div>
                 
                 <div class="correction-engine-card hidden" id="correctionHUD">
-                    <div class="correction-title">❌ Correct Netiquette Script Order:</div>
+                    <div class="correction-title" id="correctionHUDTitle">❌ Correct Netiquette Script Order:</div>
                     <div id="correctionSolutionDock"></div>
                 </div>
             </div>
@@ -411,6 +389,8 @@ setTimeout(() => {
         splashNode.style.setProperty("display", "none", "important");
         document.body.classList.add("game-active");
         document.getElementById("appInterfaceShell").classList.remove("hidden");
+        // Prime first workspace assets automatically
+        setupCurrentLevelParameters();
     }, 600);
 }, 5000);
 
@@ -501,26 +481,13 @@ function triggerLocalAudioNode(elementId) {
     const audioNode = document.getElementById(elementId);
     if(audioNode) {
         audioNode.currentTime = 0;
-        audioNode.play().catch(err => console.log("Audio unlock system note:", err));
+        audioNode.play().catch(err => console.log("Audio pipeline tracker active:", err));
     }
 }
 
 function fireConfettiCelebration() {
-    // Left side anchor explosion
-    confetti({ particleCount: 40, angle: 60, spread: 55, origin: { x: 0, y: 0.8 } });
-    // Right side anchor explosion
-    confetti({ particleCount: 40, angle: 120, spread: 55, origin: { x: 1, y: 0.8 } });
-}
-
-function initiateChallengeSession() {
-    // Instantly activates the web audio context via physical touch permission loop
-    triggerLocalAudioNode("audioChime");
-    
-    document.getElementById("introPanelCard").classList.add("hidden");
-    document.getElementById("gameViewPanel").classList.remove("hidden");
-    currentActiveLevel = 1;
-    systemAccumulatedScore = 0;
-    setupCurrentLevelParameters();
+    confetti({ particleCount: 50, angle: 60, spread: 60, origin: { x: 0, y: 0.8 } });
+    confetti({ particleCount: 50, angle: 120, spread: 60, origin: { x: 1, y: 0.8 } });
 }
 
 function setupCurrentLevelParameters() {
@@ -601,6 +568,35 @@ function appendBlockToWorkspace(id, text, category) {
     workspaceDock.appendChild(node);
 }
 
+function displayCorrectionSolution(configData, isCorrect) {
+    const titleBox = document.getElementById("correctionHUDTitle");
+    const solutionDock = document.getElementById("correctionSolutionDock");
+    solutionDock.innerHTML = "";
+    
+    if (isCorrect) {
+        titleBox.innerHTML = "✅ Well Done! Correct Solution Code Architecture:";
+        titleBox.style.color = "#15803d";
+        document.getElementById("correctionHUD").style.background = "#f0fdf4";
+        document.getElementById("correctionHUD").style.borderColor = "#bbf7d0";
+    } else {
+        titleBox.innerHTML = "❌ Attempt Mistake! Correct Netiquette Script Order:";
+        titleBox.style.color = "#b91c1c";
+        document.getElementById("correctionHUD").style.background = "#fef2f2";
+        document.getElementById("correctionHUD").style.borderColor = "#fca5a5";
+    }
+
+    configData.targetSequence.forEach((targetId, index) => {
+        const blockInfo = configData.paletteBlocks.find(b => b.id === targetId);
+        const entry = document.createElement("div");
+        entry.className = "correction-item";
+        entry.style.color = isCorrect ? "#166534" : "#7f1d1d";
+        entry.innerHTML = `<strong>Step ${index + 1}:</strong> ${blockInfo.text}`;
+        solutionDock.appendChild(entry);
+    });
+
+    document.getElementById("correctionHUD").classList.remove("hidden");
+}
+
 function executeBlocksPipeline() {
     if (interactionActiveLock) return;
     
@@ -631,33 +627,23 @@ function executeBlocksPipeline() {
         document.getElementById("scoreDisplayLabel").innerText = systemAccumulatedScore;
         consoleBox.innerText = "✅ Smart Choices! Running Safety Script Action Sequence...";
         
-        // Trigger correct answer sound effect alongside canvas-confetti particle burst
         triggerLocalAudioNode("audioChime");
         fireConfettiCelebration();
         configData.actionEffect();
 
+        // Always render target sequence solution blocks after checking result
+        displayCorrectionSolution(configData, true);
+
         setTimeout(() => {
             advancePlatformSequence();
-        }, 2600);
+        }, 3500);
 
     } else {
         consoleBox.innerText = "❌ Cyber Risk Detected. Review the correct netiquette rule architecture below.";
-        
-        // Trigger wrong answer asset audio track instantly
         triggerLocalAudioNode("audioAlert");
 
-        const solutionDock = document.getElementById("correctionSolutionDock");
-        solutionDock.innerHTML = "";
-        
-        configData.targetSequence.forEach((targetId, index) => {
-            const blockInfo = configData.paletteBlocks.find(b => b.id === targetId);
-            const entry = document.createElement("div");
-            entry.className = "correction-item";
-            entry.innerHTML = `<strong>Step ${index + 1}:</strong> ${blockInfo.text}`;
-            solutionDock.appendChild(entry);
-        });
-
-        document.getElementById("correctionHUD").classList.remove("hidden");
+        // Render correct answers layout block instantly 
+        displayCorrectionSolution(configData, false);
 
         setTimeout(() => {
             advancePlatformSequence();

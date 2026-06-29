@@ -1,1 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scratch Coding Story - Visual Scripting Lab</title>
+<style>
+:root {
+    --scratch-orange: #ffab19;
+    --scratch-blue: #4c97ff;
+    --scratch-purple: #9966ff;
+    --scratch-pink: #cf63cf;
+    --workspace-bg: #e0e4ed;
+    --studio-dark: #111827;
+}
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+}
+
+body {
+    background: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    transition: background 0.4s ease;
+}
+
+body.active-studio {
+    background: linear-gradient(135deg, #1f2937, var(--studio-dark));
+}
+
+/* 5-Second Pure White Splash Screen */
+#splashScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+#splashScreen img {
+    width: 240px;
+    max-width: 80%;
+    animation: bounceFloating 2s infinite ease-in-out;
+}
+
+@keyframes bounceFloating {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+.main-container {
+    width: 95vw;
+    max-width: 1000px;
+    height: 88vh;
+    min-height: 620px;
+    z-index: 10;
+}
+
+/* Introduction Menu Card */
+.panel-card {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 28px;
+    text-align: center;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+    max-width: 620px;
+    margin: 0 auto;
+    border: 3px solid #e2e8f0;
+}
+
+.panel-card h1 {
+    font-size: 2.4rem;
+    color: var(--scratch-orange);
+    margin-bottom: 12px;
+}
+
+.panel-card p {
+    color: #475569;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+/* Game Studio Layout */
+.game-grid {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100%;
+    gap: 15px;
+}
+
+.status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(31, 41, 55, 0.9);
+    padding: 12px 25px;
+    border-radius: 14px;
+    color: #ffffff;
+    font-weight: 700;
+    border: 1px solid #374151;
+}
+
+/* Workbench Splits */
+.scratch-workbench {
+    display: grid;
+    grid-template-columns: 0.9fr 1.1fr 1fr;
+    gap: 15px;
+    min-height: 0;
+}
+
+.column-panel {
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 16px;
+    border: 2px solid #e5e7eb;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+}
+
+.panel-title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #6b7280;
+    border-bottom: 2px solid #f3f4f6;
+    padding-bottom: 6px;
+    margin-bottom: 4px;
+}
+
+/* Scratch Custom Blocks CSS Styling */
+.scratch-block {
+    padding: 12px 16px;
+    color: white;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    position: relative;
+    transition: transform 0.2s, opacity 0.2s;
+}
+.scratch-block:hover {
+    transform: scale(1.03);
+}
+
+/* Blocks categorized exactly like Scratch */
+.block-events { background: var(--scratch-orange); border-bottom: 4px solid #d98200; border-radius: 16px 16px 8px 8px; } /* Hat shape */
+.block-motion { background: var(--scratch-blue); border-bottom: 4px solid #1a66cc; }
+.block-looks { background: var(--scratch-purple); border-bottom: 4px solid #7740e6; }
+.block-sound { background: var(--scratch-pink); border-bottom: 4px solid #b342b3; }
+
+/* Script Target Area drop dock */
+.script-editor-dock {
+    background: var(--workspace-bg);
+    border: 3px dashed #cbd5e1;
+    border-radius: 16px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px; /* Blocks stack tight in Scratch! */
+    min-height: 200px;
+}
+
+.script-editor-dock .scratch-block {
+    cursor: default;
+    animation: slideInBlock 0.25s ease;
+}
+
+@keyframes slideInBlock {
+    0% { transform: translateY(-10px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+/* Live Interactive Stage Window Canvas */
+.stage-canvas {
+    background: #ffffff;
+    border: 4px solid #4b5563;
+    border-radius: 16px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    background-image: radial-gradient(#e5e7eb 1px, transparent 1px);
+    background-size: 16px 16px;
+}
+
+.sprite-actor {
+    font-size: 4.5rem;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    z-index: 5;
+}
+
+/* Live Code Action Animations */
+.action-move { transform: translateX(40px); }
+.action-dance { animation: spriteDance 0.5s infinite alternate; }
+
+@keyframes spriteDance {
+    0% { transform: translateX(40px) translateY(0) rotate(0deg); }
+    100% { transform: translateX(40px) translateY(-20px) rotate(15deg); }
+}
+
+.speech-bubble {
+    position: absolute;
+    background: white;
+    border: 3px solid #4b5563;
+    padding: 8px 16px;
+    border-radius: 16px;
+    font-weight: 700;
+    color: #1f2937;
+    top: 30px;
+    font-size: 1rem;
+    animation: popBubble 0.3s ease;
+}
+.speech-bubble::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 12px 12px 0;
+    border-style: solid;
+    border-color: white transparent;
+    display: block;
+    width: 0;
+}
+
+.toast-tray {
+    background: rgba(17, 24, 39, 0.95);
+    border: 1px solid #374151;
+    color: #9ca3af;
+    padding: 14px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.btn-action {
+    background: linear-gradient(135deg, var(--scratch-orange), #e08e00);
+    color: white;
+    border: none;
+    padding: 12px 36px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    cursor: pointer;
+    box-shadow: 0 5px 15px rgba(255, 171, 25, 0.3);
+    transition: transform 0.2s;
+}
+.btn-action:hover { transform: translateY(-2px); }
+.btn-clear {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.8rem;
+    margin-top: auto;
+}
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<div id="splashScreen">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'">
+</div>
+
+<div class="main-container hidden" id="appFrame">
+
+    <div id="menuView" class="panel-card">
+        <img src="assets/innovine-logo.png" alt="Innovine" style="max-width: 140px; margin-bottom: 15px;" onerror="this.style.display='none'">
+        <h1>The Sprite's Magic Script</h1>
+        <h3 style="color:#64748b; margin-bottom: 20px;">Chapter 7: Interactive Scratch Laboratory</h3>
+        <p>
+            Oh no! Our friendly Scratch Sprite is stuck outside the secret coding portal! To open it, you must click on the blocks to build a flawless block script in the exact logical order. Ready to code?
+        </p>
+        <button class="btn-action" onclick="launchScratchLab()">Enter Block Studio</button>
+    </div>
+
+    <div id="gameView" class="game-grid hidden">
+        <div class="status-bar">
+            <div>🐱 Scratch Story Mode</div>
+            <button class="btn-action" style="padding: 6px 20px; font-size:0.9rem;" onclick="runCompiledScript()">▶ Run Script</button>
+        </div>
+
+        <div class="scratch-workbench">
+            <div class="column-panel">
+                <div class="panel-title">Block Palette</div>
+                <div class="scratch-block block-motion" id="palette-motion" onclick="addBlockToStack('motion', '👟 Move 10 Steps')">👟 Move 10 Steps</div>
+                <div class="scratch-block block-events" id="palette-events" onclick="addBlockToStack('events', '🏁 When Green Flag Clicked')">🏁 When Green Flag Clicked</div>
+                <div class="scratch-block block-sound" id="palette-sound" onclick="addBlockToStack('sound', '🔊 Play Sound Meow')">🔊 Play Sound Meow</div>
+                <div class="scratch-block block-looks" id="palette-looks" onclick="addBlockToStack('looks', '💬 Say Hello!')">💬 Say Hello!</div>
+            </div>
+
+            <div class="column-panel" style="background:#f3f4f6;">
+                <div class="panel-title">Script Editor Workspace</div>
+                <div class="script-editor-dock" id="scriptWorkspace">
+                    </div>
+                <button class="btn-clear" onclick="clearWorkspaceStack()">Clear Script</button>
+            </div>
+
+            <div class="column-panel" style="padding:0; overflow:hidden;">
+                <div class="stage-canvas" id="stageCanvasFrame" style="height:100%;">
+                    <div class="speech-bubble hidden" id="spriteBubble">Hello!</div>
+                    <div class="sprite-actor" id="catSprite">🐱</div>
+                    <div style="position:absolute; bottom:10px; font-size:0.75rem; font-weight:700; color:#9ca3af;">PROJECT STAGE VIEW</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="toast-tray" id="consoleNotice">Click blocks from the Palette to build a complete script! (Remember: Scripts always begin with a Hat block!)</div>
+    </div>
+
+    <div id="endView" class="panel-card hidden">
+        <img src="assets/innovine-logo.png" alt="Innovine" style="max-width: 110px; margin-bottom: 10px;" onerror="this.style.display='none'">
+        <h1 style="color:#16a34a;">✨ Welcome to Code Mastery!</h1>
+        <p id="endSummaryDesc" style="margin-top: 15px; font-size: 1.15rem; color: #475569; line-height:1.6;">
+            Sensational job, Super Coder! You arranged the logic blocks flawlessly and brought the sprite to life. Your logic skills are outstanding! Keep exploring, keep creating, and remember that every great game starts with a single line of script!
+        </p>
+        
+        <div style="font-size: 5rem; margin: 15px 0;">🏆</div>
+        
+        <button class="btn-action" onclick="resetScratchLabLoop()">Code a New Journey</button>
+    </div>
+
+</div>
+
+<audio id="soundCorrect" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="soundWrong" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="soundClap" src="assets/clap.mp3" preload="auto"></audio>
+
+<script>
+/* Required 5-Second Delay Splash Screen Controller Pipeline */
+setTimeout(() => {
+    const splash = document.getElementById("splashScreen");
+    splash.style.opacity = "0";
+    setTimeout(() => {
+        splash.style.setProperty("display", "none", "important");
+        document.body.classList.add("active-studio");
+        document.getElementById("appFrame").classList.remove("hidden");
+    }, 500);
+}, 5000);
+
+function playAudioTrack(id) {
+    try {
+        const audio = document.getElementById(id);
+        if (audio) {
+            audio.currentTime = 0;
+            audio.play().catch(e => console.log("Audio lock active."));
+        }
+    } catch(err) {}
+}
+
+let compiledScriptStack = [];
+const properLogicalOrder = ["events", "motion", "looks", "sound"];
+
+function launchScratchLab() {
+    playAudioTrack("soundCorrect");
+    document.getElementById("menuView").classList.add("hidden");
+    document.getElementById("gameView").classList.remove("hidden");
+    clearWorkspaceStack();
+}
+
+function addBlockToStack(category, label) {
+    if (compiledScriptStack.length >= 4) return;
+    
+    // Check if the block category is already in the workspace to prevent duplicates
+    if (compiledScriptStack.includes(category)) return;
+
+    compiledScriptStack.push(category);
+    playAudioTrack("soundCorrect");
+
+    // Dynamically append the element block into the Script Workspace
+    const workspace = document.getElementById("scriptWorkspace");
+    const newBlock = document.createElement("div");
+    newBlock.className = `scratch-block block-${category}`;
+    newBlock.innerText = label;
+    workspace.appendChild(newBlock);
+
+    // Turn off visibility in palette to show it's used
+    document.getElementById(`palette-${category}`).style.opacity = "0.4";
+}
+
+function clearWorkspaceStack() {
+    compiledScriptStack = [];
+    document.getElementById("scriptWorkspace").innerHTML = "";
+    
+    const categories = ["events", "motion", "looks", "sound"];
+    categories.forEach(cat => {
+        document.getElementById(`palette-${cat}`).style.opacity = "1";
+    });
+
+    // Reset visual stage parameters
+    document.getElementById("catSprite").className = "sprite-actor";
+    document.getElementById("spriteBubble").classList.add("hidden");
+    
+    document.getElementById("consoleNotice").className = "toast-tray";
+    document.getElementById("consoleNotice").innerText = "Click palette blocks to build a script block sequence!";
+}
+
+function runCompiledScript() {
+    const noticeBox = document.getElementById("consoleNotice");
+    
+    if (compiledScriptStack.length < 4) {
+        playAudioTrack("soundWrong");
+        noticeBox.className = "toast-tray";
+        noticeBox.innerText = "⚠️ Your block script is incomplete! Add all 4 blocks to fire the execution routine.";
+        return;
+    }
+
+    // Verify correct logical order sequence array metrics
+    let isCorrectOrder = true;
+    for (let i = 0; i < 4; i++) {
+        if (compiledScriptStack[i] !== properLogicalOrder[i]) {
+            isCorrectOrder = false;
+            break;
+        }
+    }
+
+    if (isCorrectOrder) {
+        playAudioTrack("soundCorrect");
+        noticeBox.className = "toast-tray";
+        noticeBox.innerText = "🚀 Logic script verified! Compiling action timelines inside the project stage view...";
+        
+        // Execute the visual animation timeline chain on the stage frame canvas
+        const sprite = document.getElementById("catSprite");
+        const bubble = document.getElementById("spriteBubble");
+
+        setTimeout(() => { sprite.classList.add("action-move"); }, 600);
+        setTimeout(() => { bubble.classList.remove("hidden"); }, 1400);
+        setTimeout(() => { 
+            bubble.classList.add("hidden");
+            sprite.classList.add("action-dance");
+        }, 2600);
+
+        // Move to the motivational welcome results dashboard view
+        setTimeout(() => {
+            document.getElementById("gameView").classList.add("hidden");
+            document.getElementById("endView").classList.remove("hidden");
+            playAudioTrack("soundClap");
+        }, 4800);
+
+    } else {
+        playAudioTrack("soundWrong");
+        noticeBox.className = "toast-tray";
+        noticeBox.innerText = "❌ Mismatch sequence! Remember: In Scratch, an action track always begins with a curved Hat event block (🏁), followed by moving, talking, and sound tracks!";
+    }
+}
+
+function resetScratchLabLoop() {
+    playAudioTrack("soundCorrect");
+    document.getElementById("endView").classList.add("hidden");
+    document.getElementById("gameView").classList.remove("hidden");
+    clearWorkspaceStack();
+}
+</script>
+</body>
+</html>

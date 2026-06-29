@@ -1,815 +1,550 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Grade 2 - MS Paint Adventure</title>
-
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
+<title>Innovine MS Paint Studio - Grade 2 Edition</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Comic Sans MS',cursive;
+:root {
+    --paint-blue: #3b82f6;
+    --paint-red: #ef4444;
+    --paint-yellow: #eab308;
+    --paint-green: #10b981;
+    --paint-purple: #8b5cf6;
+    --dark-bg: #0f172a;
+    --panel-bg: #1e293b;
 }
 
-body{
-background:linear-gradient(135deg,#74ebd5,#ACB6E5);
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-padding:20px;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
 }
 
-.screen{
-display:none;
-background:white;
-width:95%;
-max-width:1200px;
-padding:25px;
-border-radius:25px;
-box-shadow:0 10px 30px rgba(0,0,0,0.2);
-text-align:center;
+body {
+    background: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    transition: background 0.5s ease;
 }
 
-.active{
-display:block;
+body.game-active {
+    background: linear-gradient(135deg, #f1f5f9, #cbd5e1);
 }
 
-.logo{
-width:140px;
-margin-bottom:10px;
+/* Required 5-Second Pure White Splash Screen with Image Logo Layout */
+#splashScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-h1{
-color:#1565c0;
-margin-bottom:15px;
+#splashScreen img {
+    width: 280px;
+    max-width: 80%;
+    animation: pulse 2s infinite ease-in-out;
 }
 
-.question{
-font-size:28px;
-font-weight:bold;
-margin:20px 0;
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
 }
 
-.option-container{
-display:flex;
-justify-content:center;
-gap:20px;
-flex-wrap:wrap;
-margin-top:20px;
+/* Primary Game Interface Layout Shell */
+.app-window {
+    width: 95vw;
+    max-width: 1100px;
+    height: 88vh;
+    min-height: 600px;
+    z-index: 10;
 }
 
-.option{
-background:#e3f2fd;
-padding:15px;
-border-radius:20px;
-cursor:pointer;
-transition:0.3s;
-width:220px;
-font-size:22px;
-font-weight:bold;
+.welcome-card {
+    background: rgba(255, 255, 255, 0.96);
+    border: 2px solid #cbd5e1;
+    border-radius: 32px;
+    padding: 42px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+    max-width: 620px;
+    margin: 0 auto;
 }
 
-.option:hover{
-transform:scale(1.05);
-background:#90caf9;
+.welcome-card h1 span {
+    background: linear-gradient(135deg, var(--paint-red), var(--paint-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
 }
 
-.option img{
-width:120px;
-height:120px;
-object-fit:contain;
-margin-bottom:10px;
+.game-layout {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100%;
+    gap: 15px;
 }
 
-.btn{
-background:#ff7043;
-color:white;
-border:none;
-padding:14px 28px;
-border-radius:40px;
-font-size:22px;
-font-weight:bold;
-cursor:pointer;
-margin-top:20px;
+.top-hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    padding: 14px 25px;
+    border-radius: 16px;
+    color: #1e293b;
+    font-weight: 700;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-.btn:hover{
-transform:scale(1.05);
+.badge-level {
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    color: white;
+}
+.lvl-1 { background: var(--paint-blue); }
+.lvl-2 { background: var(--paint-red); }
+.lvl-3 { background: var(--paint-yellow); color: #000; }
+.lvl-4 { background: var(--paint-green); }
+
+.workbench-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 15px;
+    min-height: 0;
 }
 
-.feedback{
-font-size:30px;
-font-weight:bold;
-height:40px;
-margin-top:20px;
+.column-board {
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    border-radius: 20px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow-y: auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-.score{
-font-size:24px;
-font-weight:bold;
-margin-top:15px;
-color:#ff6f00;
+.board-header {
+    font-size: 0.9rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: #64748b;
+    letter-spacing: 1px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 8px;
 }
 
-input{
-padding:14px;
-width:90%;
-border-radius:12px;
-border:2px solid #ccc;
-font-size:20px;
-margin-top:20px;
+/* MS Paint Authentic Tool Ribbon Buttons */
+.paint-tool-btn {
+    padding: 14px 16px;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    color: #334155;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s;
+}
+.paint-tool-btn:hover {
+    background: #f1f5f9;
+    border-color: var(--paint-blue);
+    transform: translateY(-1px);
+}
+.paint-tool-btn.active {
+    background: var(--paint-blue);
+    color: white;
+    border-color: #2563eb;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
-.drag-container{
-display:flex;
-justify-content:center;
-gap:30px;
-flex-wrap:wrap;
-margin-top:25px;
+/* Simulated Paint Drawing Screen Canvas Area */
+.canvas-display-monitor {
+    background: #ffffff;
+    border: 4px solid #94a3b8;
+    border-radius: 16px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.4s ease;
 }
 
-.drag-item{
-background:#c8e6c9;
-padding:12px;
-border-radius:15px;
-font-size:22px;
-font-weight:bold;
-cursor:grab;
-margin-bottom:15px;
+.drawing-graphic {
+    font-size: 6rem;
+    transition: transform 0.3s ease, filter 0.3s;
 }
 
-.drop-box{
-width:220px;
-height:80px;
-border:3px dashed #1565c0;
-border-radius:15px;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:22px;
-font-weight:bold;
-background:#f5f5f5;
-margin-bottom:15px;
+/* Interactive Color Selection Box Palettes */
+.color-bar-wrapper {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 5px;
+    background: #f1f5f9;
+    padding: 8px;
+    border-radius: 10px;
+}
+.color-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
-.paint-window{
-position:relative;
-width:100%;
-max-width:900px;
-height:450px;
-background:#f5f5f5;
-border:5px solid #1565c0;
-margin:auto;
-border-radius:20px;
-overflow:hidden;
+/* Automated Help Desk Feedback Verification Frame */
+.correction-engine-card {
+    border-radius: 14px;
+    padding: 14px;
+    margin-top: auto;
+    border: 2px solid transparent;
+    text-align: center;
 }
 
-.paint-top{
-background:#1976d2;
-height:60px;
-display:flex;
-align-items:center;
-justify-content:center;
-color:white;
-font-size:30px;
-font-weight:bold;
+.footer-bar {
+    background: #ffffff;
+    color: #475569;
+    padding: 12px;
+    border-radius: 12px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: 2px solid #cbd5e1;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
 }
 
-.paint-toolbar{
-height:90px;
-background:#bbdefb;
-display:flex;
-justify-content:space-around;
-align-items:center;
+.btn-primary {
+    background: linear-gradient(135deg, var(--paint-blue), #2563eb);
+    color: white;
+    border: none;
+    padding: 14px 36px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(59,130,246,0.4);
+    transition: transform 0.2s;
 }
+.btn-primary:hover { transform: translateY(-1px); }
 
-.paint-toolbar img{
-width:70px;
-height:70px;
-object-fit:contain;
-}
-
-.paint-canvas{
-height:300px;
-background:white;
-position:relative;
-}
-
-.label-target{
-position:absolute;
-width:170px;
-height:50px;
-border:3px dashed #ff7043;
-border-radius:15px;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:18px;
-font-weight:bold;
-background:rgba(255,255,255,0.9);
-}
-
-.final-score{
-font-size:70px;
-font-weight:bold;
-color:#ff6f00;
-margin:20px 0;
-}
-
-@media(max-width:768px){
-
-.option{
-width:150px;
-font-size:18px;
-}
-
-.question{
-font-size:22px;
-}
-
-.paint-window{
-height:500px;
-}
-
-}
-
+.hidden { display: none !important; }
 </style>
-
 </head>
-
 <body>
 
-<audio id="correctSound" src="assets/correct-1.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="audioCorrect" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="audioClap" src="assets/clap.mp3" preload="auto"></audio>
 
-<!-- INTRO -->
-
-<div class="screen active" id="intro">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<h1>🎨 MS Paint Adventure</h1>
-
-<input type="text" id="studentName" placeholder="Enter Student Name">
-
-<br>
-
-<button class="btn" onclick="startGame()">
-🚀 Start Game
-</button>
-
+<div id="splashScreen">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'">
+    <p style="margin-top:20px; font-weight:600; color:#64748b; letter-spacing: 1px;">Loading Chapter 2: Fun with MS Paint...</p>
 </div>
 
-<!-- MENU -->
+<div class="app-window hidden" id="appInterfaceShell">
 
-<div class="screen" id="menu">
+    <div id="introView" class="welcome-card">
+        <img src="assets/innovine-logo.png" alt="Logo" style="max-width:140px; margin-bottom:15px;" onerror="this.style.display='none'">
+        <h1><span>FUN WITH MS PAINT</span></h1>
+        <h2 style="color: #64748b; font-size: 1.1rem; margin-bottom: 24px;">Painting Sandbox</h2>
+        <p style="text-align: left; line-height: 1.7; color: #475569; margin-bottom: 26px; background: #f1f5f9; padding: 20px; border-radius: 14px; font-size: 0.95rem;">
+            Welcome, Little Artist! Today we will discover the magical digital tool ribbon inside MS Paint. Click correct paint utility tool triggers on the ribbon rack workspace to draw custom shapes, fill empty spaces with color palettes, and clear line mistakes!
+        </p>
+        <button class="btn-primary" onclick="launchSimulator()">Open MS Paint Studio</button>
+    </div>
 
-<img src="assets/innovine-logo.png" class="logo">
+    <div id="gameViewPanel" class="game-layout hidden">
+        <div class="top-hud">
+            <div>🏆 Stars Collected: <span id="scoreDisplayLabel" style="color:var(--paint-yellow)">⭐ 0</span></div>
+            <div style="font-size:1.1rem;">🎨 Tool Task: <span id="missionLevelTitle" style="color:var(--paint-blue)">Level 1</span></div>
+            <div id="difficultyBadge" class="badge-level lvl-1">Level 1</div>
+        </div>
 
-<h1>🎮 Choose Activity</h1>
+        <div class="workbench-grid">
+            <div class="column-board">
+                <div class="board-header">MS Paint Tools Ribbon</div>
+                <div id="paintToolsRibbonGroup" style="display:flex; flex-direction:column; gap:10px; margin-top:5px;">
+                    </div>
 
-<button class="btn" onclick="startPictureGame()">
-🖼️ Picture Identification
-</button>
+                <div class="board-header" style="margin-top:15px;">Color Palette Box</div>
+                <div class="color-bar-wrapper">
+                    <div class="color-dot" style="background:var(--paint-red)"></div>
+                    <div class="color-dot" style="background:var(--paint-blue)"></div>
+                    <div class="color-dot" style="background:var(--paint-yellow)"></div>
+                    <div class="color-dot" style="background:var(--paint-green)"></div>
+                    <div class="color-dot" style="background:var(--paint-purple)"></div>
+                    <div class="color-dot" style="background:#000000"></div>
+                </div>
+            </div>
 
-<button class="btn" onclick="startWordGame()">
-⌨️ One Word Answer
-</button>
+            <div class="column-board" style="background: #f8fafc;">
+                <div class="board-header">Paint Canvas Area</div>
+                <div class="canvas-display-monitor" id="paintCanvasScreen">
+                    <div class="drawing-graphic" id="canvasArtAsset">✏️</div>
+                    <div style="position:absolute; bottom:12px; font-size:0.75rem; font-weight:bold; color:#94a3b8; tracking-content:1px;">UNTITLED - PAINT</div>
+                </div>
 
-<button class="btn" onclick="startLabelGame()">
-🧩 Label MS Paint Window
-</button>
+                <div class="correction-engine-card hidden" id="correctionHUD">
+                    <div id="correctionSolutionDock" style="font-weight:700; font-size:1rem;"></div>
+                </div>
+            </div>
+        </div>
 
-</div>
+        <div class="footer-bar" id="gameConsoleStatusToast">Click on the matching paint tool inside the left ribbon to solve the canvas challenge!</div>
+    </div>
 
-<!-- PICTURE IDENTIFICATION -->
-
-<div class="screen" id="pictureScreen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<div class="question" id="pictureQuestion"></div>
-
-<div class="option-container" id="pictureOptions"></div>
-
-<div class="feedback" id="pictureFeedback"></div>
-
-<div class="score" id="scoreDisplay">
-Score : 0
-</div>
-
-<button class="btn" onclick="nextPictureQuestion()">
-Next ➜
-</button>
-
-</div>
-
-<!-- ONE WORD -->
-
-<div class="screen" id="wordScreen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<div class="question" id="wordQuestion"></div>
-
-<img id="wordImage" src="" style="width:180px;height:180px;object-fit:contain;">
-
-<br>
-
-<input type="text" id="wordInput" placeholder="Type your answer">
-
-<br>
-
-<button class="btn" onclick="checkWordAnswer()">
-Submit
-</button>
-
-<div class="feedback" id="wordFeedback"></div>
-
-</div>
-
-<!-- LABEL GAME -->
-
-<div class="screen" id="labelScreen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<h1>🧩 Label the MS Paint Window</h1>
-
-<div class="paint-window">
-
-<div class="paint-top">
-MS Paint
-</div>
-
-<div class="paint-toolbar">
-
-<img src="assets/pencil.png">
-<img src="assets/text-tool.png">
-<img src="assets/fill-with-color.png">
-<img src="assets/eraser.png">
-
-</div>
-
-<div class="paint-canvas">
-
-<div class="label-target" data-answer="Pencil"
-style="top:20px;left:20px;">
-Drop Here
-</div>
-
-
-
-<div class="label-target" data-answer="Color"
-style="bottom:20px;left:40%;">
-Drop Here
-</div>
- <div class="label-target" data-answer="Eraser"
-style="top:100px;right:20px;">
-Drop Here
-</div>
-
-</div>
-
-</div>
-
-<div class="drag-container">
-
-<div>
-
-<div class="drag-item" draggable="true" id="Pencil">
-Pencil
-</div>
-
-
-
-<div class="drag-item" draggable="true" id="Color">
-Color
-</div>
-  <div class="drag-item" draggable="true" id="Eraser">
-Eraser
-</div>
-
-</div>
-
-</div>
-
-<div class="feedback" id="labelFeedback"></div>
-
-<button class="btn" onclick="showFinal()">
-Finish Game
-</button>
-
-</div>
-
-<!-- FINAL -->
-
-<div class="screen" id="finalScreen">
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<h1>🏆 Congratulations</h1>
-
-<h2 id="studentDisplay"></h2>
-
-<div class="final-score" id="finalScore"></div>
-
-<h2 id="rank"></h2>
-
-<button class="btn" onclick="location.reload()">
-🔄 Play Again
-</button>
+    <div id="evaluationReportCard" class="welcome-card hidden">
+        <h1 style="color:var(--paint-green)">🎉 Master MS Paint Artist Certified!</h1>
+        <p style="margin-top:15px; font-size:1.15rem;" id="finalPerformanceReportSummary"></p>
+        <div style="font-size: 4.5rem; margin: 25px 0;">🎨✏️🧼⭐</div>
+        <button class="btn-primary" onclick="restartCampaignSession()">Paint a New Picture</button>
+    </div>
 
 </div>
 
 <script>
+/* 5-Second Delay Splash Screen Driver Transition */
+setTimeout(() => {
+    const splashNode = document.getElementById("splashScreen");
+    splashNode.style.opacity = "0";
+    setTimeout(() => {
+        splashNode.style.setProperty("display", "none", "important");
+        document.body.classList.add("game-active");
+        document.getElementById("appInterfaceShell").classList.remove("hidden");
+    }, 600);
+}, 5000);
 
-let student="";
-let score=0;
+const levelCampaignDatabase = {
+    1: {
+        title: "Level 1: Draw Freehand Lines",
+        difficulty: "Task 1",
+        badgeClass: "lvl-1",
+        instructions: "Find and select the tool used to draw thin freehand lines like a real wooden pencil!",
+        correctToolId: "btn-pencil",
+        initialGraphic: "❓",
+        successGraphic: "✏️",
+        successText: "Excellent! The Pencil Tool lets you draw clean lines on the digital canvas.",
+        ribbonToolsList: [
+            { id: "btn-eraser", text: "🧼 Eraser Tool", icon: "🧼" },
+            { id: "btn-pencil", text: "✏️ Pencil Tool", icon: "✏️" },
+            { id: "btn-bucket", text: "🪣 Fill With Color", icon: "🪣" }
+        ],
+        actionEffect: () => {
+            document.getElementById("paintCanvasScreen").style.backgroundColor = "#ffffff";
+        }
+    },
+    2: {
+        title: "Level 2: Pour Beautiful Colors",
+        difficulty: "Task 2",
+        badgeClass: "lvl-2",
+        instructions: "Find and select the bucket tool used to fill an entire shape area with solid color at once!",
+        correctToolId: "btn-bucket",
+        initialGraphic: "⚪",
+        successGraphic: "🔴",
+        successText: "Perfect! The Fill With Color (Bucket) Tool splashes colors into completely closed lines instantly.",
+        ribbonToolsList: [
+            { id: "btn-bucket", text: "🪣 Fill With Color", icon: "🪣" },
+            { id: "btn-shapes", text: "📐 Shapes Tool", icon: "📐" },
+            { id: "btn-pencil", text: "✏️ Pencil Tool", icon: "✏️" }
+        ],
+        actionEffect: () => {
+            document.getElementById("paintCanvasScreen").style.backgroundColor = "var(--paint-red)";
+        }
+    },
+    3: {
+        title: "Level 3: Fix Drawing Mistakes",
+        difficulty: "Task 3",
+        badgeClass: "lvl-3",
+        instructions: "Oh no, there is a messy scribble mark! Select the tool used to rub out drawing mistakes safely.",
+        correctToolId: "btn-eraser",
+        initialGraphic: "🪱",
+        successGraphic: "✨",
+        successText: "Great job! The Eraser Tool removes parts of your drawing to keep sketches neat.",
+        ribbonToolsList: [
+            { id: "btn-pencil", text: "✏️ Pencil Tool", icon: "✏️" },
+            { id: "btn-shapes", text: "📐 Shapes Tool", icon: "📐" },
+            { id: "btn-eraser", text: "🧼 Eraser Tool", icon: "🧼" }
+        ],
+        actionEffect: () => {
+            document.getElementById("paintCanvasScreen").style.backgroundColor = "#ffffff";
+        }
+    },
+    4: {
+        title: "Level 4: Add Perfect Shapes",
+        difficulty: "Task 4",
+        badgeClass: "lvl-4",
+        instructions: "Let's build a house graphic! Select the tool used to insert perfect Circles, Rectangles, and Stars.",
+        correctToolId: "btn-shapes",
+        initialGraphic: "✏️",
+        successGraphic: "⭐🏠📐",
+        successText: "Magnificent! The Shapes Tool provides readymade geometric profiles to speed up complex drawings.",
+        ribbonToolsList: [
+            { id: "btn-shapes", text: "📐 Shapes Tool", icon: "📐" },
+            { id: "btn-bucket", text: "🪣 Fill With Color", icon: "🪣" },
+            { id: "btn-eraser", text: "🧼 Eraser Tool", icon: "🧼" }
+        ],
+        actionEffect: () => {
+            document.getElementById("paintCanvasScreen").style.backgroundColor = "#e0f2fe";
+        }
+    }
+};
 
-/* PICTURE QUESTIONS */
+let currentActiveLevel = 1;
+let systemAccumulatedScore = 0;
+let interactionActiveLock = false;
 
-const pictureQuestions=[
-
-{
-question:"Click the Pencil Tool",
-options:[
-{img:"assets/pencil.png",text:"Pencil"},
-{img:"assets/eraser.png",text:"Eraser"},
-{img:"assets/color .png",text:"Color"}
-],
-answer:"Pencil"
-},
-
-{
-question:"Click the Eraser Tool",
-options:[
-{img:"assets/text-tool.png",text:"Text"},
-{img:"assets/eraser.png",text:"Eraser"},
-{img:"assets/triangle.png",text:"Triangle"}
-],
-answer:"Eraser"
-},
-
-{
-question:"Click the Fill With Color Tool",
-options:[
-{img:"assets/fill-with-color.png",text:"Fill"},
-{img:"assets/close.png",text:"Close"},
-{img:"assets/minimize.png",text:"Minimize"}
-],
-answer:"Fill"
-},
-
-{
-question:"Click the Maximize Button",
-options:[
-{img:"assets/minimize.png",text:"Minimize"},
-{img:"assets/maximize.png",text:"Maximize"},
-{img:"assets/close.png",text:"Close"}
-],
-answer:"Maximize"
+function triggerLocalAudioNode(elementId) {
+    const audioNode = document.getElementById(elementId);
+    if(audioNode) {
+        audioNode.currentTime = 0;
+        audioNode.play().catch(err => console.log("Audio asset processing tracker:", err));
+    }
 }
 
-];
-
-let pictureIndex=0;
-
-/* WORD QUESTIONS */
-
-const wordQuestions=[
-
-{
-question:"Type the name of this tool",
-img:"assets/pencil.png",
-answer:"pencil"
-},
-
-{
-question:"Type the name of this shape",
-img:"assets/triangle.png",
-answer:"triangle"
-},
-
-{
-question:"Type the name of this tool",
-img:"assets/eraser.png",
-answer:"eraser"
+function fireConfettiCelebration() {
+    confetti({ particleCount: 40, angle: 60, spread: 50, origin: { x: 0, y: 0.8 } });
+    confetti({ particleCount: 40, angle: 120, spread: 50, origin: { x: 1, y: 0.8 } });
 }
 
-];
-
-let wordIndex=0;
-
-/* START */
-
-function startGame(){
-
-student=document.getElementById("studentName").value;
-
-if(student===""){
-alert("Please Enter Student Name");
-return;
+function launchSimulator() {
+    triggerLocalAudioNode("audioCorrect");
+    document.getElementById("introView").classList.add("hidden");
+    document.getElementById("gameViewPanel").classList.remove("hidden");
+    setupCurrentLevelParameters();
 }
 
-showScreen("menu");
+function setupCurrentLevelParameters() {
+    interactionActiveLock = false;
+    document.getElementById("scoreDisplayLabel").innerText = `⭐ ${systemAccumulatedScore}`;
+    document.getElementById("correctionHUD").classList.add("hidden");
 
+    const levelMetadata = levelCampaignDatabase[currentActiveLevel];
+    
+    document.getElementById("missionLevelTitle").innerText = levelMetadata.title;
+    const badge = document.getElementById("difficultyBadge");
+    badge.innerText = levelMetadata.difficulty;
+    badge.className = `badge-level ${levelMetadata.badgeClass}`;
+    document.getElementById("gameConsoleStatusToast").innerText = levelMetadata.instructions;
+
+    document.getElementById("canvasArtAsset").innerText = levelMetadata.initialGraphic;
+    document.getElementById("paintCanvasScreen").style.backgroundColor = "#ffffff";
+
+    const ribbonContainer = document.getElementById("paintToolsRibbonGroup");
+    ribbonContainer.innerHTML = "";
+    
+    levelMetadata.ribbonToolsList.forEach(tool => {
+        const btn = document.createElement("button");
+        btn.className = "paint-tool-btn";
+        btn.id = tool.id;
+        btn.innerText = tool.text;
+        
+        btn.onclick = () => {
+            if(interactionActiveLock) return;
+            evaluateToolSelection(tool.id, btn);
+        };
+        ribbonContainer.appendChild(btn);
+    });
 }
 
-/* SCREEN */
+function evaluateToolSelection(selectedId, buttonDomElement) {
+    if (interactionActiveLock) return;
+    interactionActiveLock = true;
 
-function showScreen(id){
+    const levelMetadata = levelCampaignDatabase[currentActiveLevel];
+    const consoleBox = document.getElementById("gameConsoleStatusToast");
+    const hudCard = document.getElementById("correctionHUD");
+    const solutionDock = document.getElementById("correctionSolutionDock");
+    
+    buttonDomElement.classList.add("active");
 
-document.querySelectorAll(".screen").forEach(screen=>{
-screen.classList.remove("active");
-});
+    if (selectedId === levelMetadata.correctToolId) {
+        systemAccumulatedScore += 100;
+        document.getElementById("scoreDisplayLabel").innerText = `⭐ ${systemAccumulatedScore}`;
+        consoleBox.innerText = "🎉 Success! Canvas configuration processing complete.";
+        
+        triggerLocalAudioNode("audioCorrect");
+        fireConfettiCelebration();
+        
+        document.getElementById("canvasArtAsset").innerText = levelMetadata.successGraphic;
+        levelMetadata.actionEffect();
 
-document.getElementById(id).classList.add("active");
+        hudCard.style.background = "#f0fdf4";
+        hudCard.style.borderColor = "#bbf7d0";
+        solutionDock.style.color = "#166534";
+        solutionDock.innerText = `✅ Perfect: ${levelMetadata.successText}`;
+        hudCard.classList.remove("hidden");
 
+        setTimeout(() => {
+            advancePlatformSequence();
+        }, 3500);
+
+    } else {
+        consoleBox.innerText = "❌ Bug Spotted! Let's examine the tool function profile below.";
+        triggerLocalAudioNode("audioWrong");
+
+        hudCard.style.background = "#fef2f2";
+        hudCard.style.borderColor = "#fca5a5";
+        solutionDock.style.color = "#991b1b";
+        
+        const correctToolInfo = levelMetadata.ribbonToolsList.find(t => t.id === levelMetadata.correctToolId);
+        solutionDock.innerText = `💡 Try Again: For this task, we needed the ${correctToolInfo.text}.`;
+        hudCard.classList.remove("hidden");
+
+        setTimeout(() => {
+            advancePlatformSequence();
+        }, 5000);
+    }
 }
 
-/* PICTURE GAME */
-
-function startPictureGame(){
-
-pictureIndex=0;
-
-showScreen("pictureScreen");
-
-loadPictureQuestion();
-
+function advancePlatformSequence() {
+    currentActiveLevel++;
+    if (levelCampaignDatabase[currentActiveLevel]) {
+        setupCurrentLevelParameters();
+    } else {
+        document.getElementById("gameViewPanel").classList.add("hidden");
+        document.getElementById("evaluationReportCard").classList.remove("hidden");
+        
+        triggerLocalAudioNode("audioClap");
+        document.getElementById("finalPerformanceReportSummary").innerHTML = 
+            `Spectacular Sketching Logic! You correctly managed all 4 key MS Paint ribbon tools.<br><br><strong>Final Performance: ${systemAccumulatedScore} / 400 Painting Points</strong>`;
+    }
 }
 
-function loadPictureQuestion(){
-
-let q=pictureQuestions[pictureIndex];
-
-document.getElementById("pictureQuestion").innerHTML=q.question;
-
-let html="";
-
-q.options.forEach(option=>{
-
-html+=`
-
-<div class="option"
-onclick="checkPictureAnswer('${option.text}')">
-
-<img src="${option.img}">
-
-${option.text}
-
-</div>
-
-`;
-
-});
-
-document.getElementById("pictureOptions").innerHTML=html;
-
-document.getElementById("pictureFeedback").innerHTML="";
-
-document.getElementById("scoreDisplay").innerHTML=
-"Score : "+score;
-
+function restartCampaignSession() {
+    document.getElementById("evaluationReportCard").classList.add("hidden");
+    document.getElementById("gameViewPanel").classList.remove("hidden");
+    
+    currentActiveLevel = 1;
+    systemAccumulatedScore = 0;
+    setupCurrentLevelParameters();
 }
-
-function checkPictureAnswer(selected){
-
-let q=pictureQuestions[pictureIndex];
-
-if(selected===q.answer){
-
-document.getElementById("pictureFeedback").innerHTML=
-"✅ Correct";
-
-document.getElementById("pictureFeedback").style.color="green";
-
-document.getElementById("correctSound").play();
-
-score++;
-
-confetti({
-particleCount:150,
-spread:90
-});
-
-}else{
-
-document.getElementById("pictureFeedback").innerHTML=
-"❌ Wrong";
-
-document.getElementById("pictureFeedback").style.color="red";
-
-document.getElementById("wrongSound").play();
-
-}
-
-}
-
-function nextPictureQuestion(){
-
-pictureIndex++;
-
-if(pictureIndex>=pictureQuestions.length){
-
-startWordGame();
-
-}else{
-
-loadPictureQuestion();
-
-}
-
-}
-
-/* WORD GAME */
-
-function startWordGame(){
-
-wordIndex=0;
-
-showScreen("wordScreen");
-
-loadWordQuestion();
-
-}
-
-function loadWordQuestion(){
-
-let q=wordQuestions[wordIndex];
-
-document.getElementById("wordQuestion").innerHTML=q.question;
-
-document.getElementById("wordImage").src=q.img;
-
-document.getElementById("wordInput").value="";
-
-document.getElementById("wordFeedback").innerHTML="";
-
-}
-
-function checkWordAnswer(){
-
-let q=wordQuestions[wordIndex];
-
-let ans=document.getElementById("wordInput").value.toLowerCase();
-
-if(ans===q.answer){
-
-document.getElementById("wordFeedback").innerHTML=
-"✅ Correct";
-
-document.getElementById("wordFeedback").style.color="green";
-
-document.getElementById("correctSound").play();
-
-score++;
-
-confetti({
-particleCount:120,
-spread:80
-});
-
-}else{
-
-document.getElementById("wordFeedback").innerHTML=
-"❌ Wrong";
-
-document.getElementById("wordFeedback").style.color="red";
-
-document.getElementById("wrongSound").play();
-
-}
-
-wordIndex++;
-
-if(wordIndex<wordQuestions.length){
-
-setTimeout(loadWordQuestion,1200);
-
-}else{
-
-setTimeout(startLabelGame,1200);
-
-}
-
-}
-
-/* LABEL GAME */
-
-function startLabelGame(){
-
-showScreen("labelScreen");
-
-}
-
-let correctDrops=0;
-
-document.querySelectorAll('.drag-item').forEach(item=>{
-
-item.addEventListener('dragstart',e=>{
-e.dataTransfer.setData('text',e.target.id);
-});
-
-});
-
-document.querySelectorAll('.label-target').forEach(box=>{
-
-box.addEventListener('dragover',e=>{
-e.preventDefault();
-});
-
-box.addEventListener('drop',e=>{
-
-e.preventDefault();
-
-const data=e.dataTransfer.getData('text');
-
-if(data===box.dataset.answer){
-
-box.style.background='lightgreen';
-
-box.innerHTML='✅ '+data;
-
-document.getElementById("correctSound").play();
-
-score++;
-
-correctDrops++;
-
-document.getElementById("labelFeedback").innerHTML=
-"🎉 Correct Label";
-
-document.getElementById("labelFeedback").style.color="green";
-
-confetti({
-particleCount:120,
-spread:70
-});
-
-}else{
-
-document.getElementById("wrongSound").play();
-
-document.getElementById("labelFeedback").innerHTML=
-"❌ Wrong Label";
-
-document.getElementById("labelFeedback").style.color="red";
-
-}
-
-});
-
-});
-
-/* FINAL */
-
-function showFinal(){
-
-showScreen("finalScreen");
-
-document.getElementById("studentDisplay").innerHTML=
-student;
-
-document.getElementById("finalScore").innerHTML=
-score+" Points";
-
-let rank="";
-
-if(score>=8){
-
-rank="🏆 MS Paint Champion";
-
-}else if(score>=5){
-
-rank="🌟 Excellent";
-
-}else{
-
-rank="👍 Keep Practicing";
-
-}
-
-document.getElementById("rank").innerHTML=rank;
-
-confetti({
-particleCount:350,
-spread:150
-});
-
-}
-
 </script>
-
 </body>
-
 </html>

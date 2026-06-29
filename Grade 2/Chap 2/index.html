@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grade 2 MS Paint Sandbox Game</title>
+<title>MS Paint Rescue Squad</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
 <style>
 :root {
@@ -11,7 +11,7 @@
     --paint-red: #ef4444;
     --paint-yellow: #eab308;
     --paint-green: #10b981;
-    --slate-700: #334155;
+    --window-border: #1e3a8a;
 }
 
 * {
@@ -23,7 +23,7 @@
 }
 
 body {
-    background: linear-gradient(135deg, #f1f5f9, #cbd5e1);
+    background: linear-gradient(135deg, #fed7aa, #fef08a);
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -31,7 +31,6 @@ body {
     overflow: hidden;
 }
 
-/* 5-Second Pure White Splash Screen */
 #splashScreen {
     position: fixed;
     top: 0;
@@ -46,13 +45,10 @@ body {
     z-index: 9999;
     transition: opacity 0.5s ease;
 }
-
 #splashScreen img {
-    width: 250px;
-    max-width: 80%;
+    width: 280px;
     animation: bounce 2s infinite ease-in-out;
 }
-
 @keyframes bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
@@ -62,180 +58,142 @@ body {
     width: 95vw;
     max-width: 1150px;
     height: 90vh;
-    min-height: 620px;
-    background: #ffffff;
-    border-radius: 24px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-    padding: 20px;
+    background: #f8fafc;
+    border: 4px solid var(--window-border);
+    border-radius: 18px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.25);
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    overflow: hidden;
+}
+
+.paint-window-header {
+    background: linear-gradient(to right, #1e3a8a, #3b82f6);
+    color: white;
+    padding: 10px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.window-title-side {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+}
+.window-title-side img { width: 18px; height: 18px; }
+.window-control-buttons { display: flex; gap: 6px; }
+.window-control-buttons img { width: 22px; height: 22px; cursor: pointer; }
+
+.window-body-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex-grow: 1;
+    min-height: 0;
 }
 
 .hidden { display: none !important; }
 
-/* Welcome Card Screen Styles */
-.welcome-card {
-    text-align: center;
-    max-width: 600px;
-    margin: auto;
-    padding: 20px;
-}
+.welcome-card { text-align: center; max-width: 650px; margin: auto; padding: 20px; }
 .welcome-card h1 span {
     background: linear-gradient(135deg, var(--paint-red), var(--paint-blue));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     font-weight: 800;
 }
 
-/* Header HUD Grid Layout */
 .top-hud {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #f8fafc;
-    border: 2px solid #e2e8f0;
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
     padding: 12px 20px;
-    border-radius: 16px;
+    border-radius: 12px;
     font-weight: 700;
 }
 
-/* Game Interface Panel Layout Split */
 .game-workspace {
     display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 20px;
+    grid-template-columns: 260px 1fr;
+    gap: 16px;
     flex-grow: 1;
     min-height: 0;
 }
 
 .left-panel {
-    background: #f1f5f9;
-    border-radius: 16px;
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    border-radius: 14px;
     padding: 15px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
 }
 
-.section-title {
-    font-size: 0.85rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    color: #64748b;
-    letter-spacing: 0.5px;
-    border-bottom: 2px solid #cbd5e1;
-    padding-bottom: 5px;
-}
-
-/* Drag and Drop Items Styling */
-.tools-vault {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.draggable-tool {
-    background: #ffffff;
+.tools-vault { display: flex; flex-direction: column; gap: 10px; }
+.tool-btn {
+    background: #f8fafc;
     border: 2px solid #cbd5e1;
-    padding: 12px 15px;
+    padding: 12px;
     border-radius: 12px;
     font-weight: 700;
-    cursor: grab;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 10px;
-    transition: transform 0.2s, box-shadow 0.2s;
+    gap: 12px;
+    transition: all 0.2s;
 }
-.draggable-tool:active { cursor: grabbing; }
-.draggable-tool:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-}
-
-/* Target Drop Zone Area Box */
-.drop-zone-target {
-    background: #ffffff;
-    border: 3px dashed var(--paint-blue);
-    border-radius: 16px;
-    padding: 20px;
-    text-align: center;
-    font-weight: bold;
-    color: var(--paint-blue);
-    min-height: 90px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: background 0.2s;
-}
-.drop-zone-target.drag-over {
+.tool-btn:hover { background: #f1f5f9; transform: translateY(-1px); }
+.tool-btn.active-selected {
     background: #e0f2fe;
+    border-color: var(--paint-blue);
+    box-shadow: 0 0 8px rgba(59,130,246,0.3);
 }
 
-/* Canvas Area Frame Configuration */
+/* Ensure images don't block clicks */
+.tool-btn img, .tool-btn span { pointer-events: none; }
+.tool-btn img { width: 32px; height: 32px; object-fit: contain; }
+
 .canvas-container {
     background: #ffffff;
-    border: 4px solid #cbd5e1;
-    border-radius: 20px;
+    border: 3px solid #cbd5e1;
+    border-radius: 14px;
     position: relative;
     overflow: hidden;
     display: flex;
     flex-direction: column;
 }
+#rescueCanvas { width: 100%; flex-grow: 1; background: #ffffff; }
 
-#paintCanvas {
-    width: 100%;
-    flex-grow: 1;
-    background: #ffffff;
-    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="%233b82f6" d="M14.06,9L15,9.94L5.92,19H5V18.08L14.06,9M17.66,3C17.41,3 17.15,4 16.96,4.19L15.13,6.02L18,8.85L19.81,7.02C20.2,6.63 20.2,6 19.81,5.61L18.39,4.19C18.2,4 17.93,3 17.66,3M14.06,6.19L3,17.25V21H6.75L17.81,9.94L15,7.11L14.06,6.19Z"/></svg>') 0 20, pointer;
-}
-
-/* Color Picker Row */
 .palette-row {
     display: flex;
     gap: 10px;
-    background: #f1f5f9;
+    background: #f8fafc;
     padding: 10px;
     justify-content: center;
     border-top: 2px solid #e2e8f0;
 }
 .color-swatch {
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     cursor: pointer;
     border: 3px solid white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-    transition: transform 0.1s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
 }
-.color-swatch.selected {
-    transform: scale(1.2);
-    border-color: #334155;
-}
+.color-swatch.selected { transform: scale(1.25); border-color: #0f172a; }
 
-/* Correction Alert Box Box */
-.hud-correction-panel {
-    padding: 12px;
-    border-radius: 12px;
-    font-weight: 700;
-    text-align: center;
-}
-
-.footer-toast {
-    background: var(--slate-700);
-    color: white;
-    padding: 12px;
-    border-radius: 12px;
-    text-align: center;
-    font-weight: 600;
-}
-
+.feedback-bar { padding: 10px; border-radius: 10px; font-weight: 700; text-align: center; }
+.footer-toast { background: #334155; color: white; padding: 10px; border-radius: 10px; text-align: center; font-weight: 600; }
 .btn-primary {
     background: linear-gradient(135deg, var(--paint-blue), #1d4ed8);
     color: white;
     border: none;
-    padding: 12px 30px;
+    padding: 12px 32px;
     border-radius: 25px;
     font-size: 1.1rem;
     font-weight: 700;
@@ -248,72 +206,86 @@ body {
 
 <audio id="audioCorrect" src="assets/correct.mp3" preload="auto"></audio>
 <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
-<audio id="audioClap" src="assets/clap.mp3" preload="auto"></audio>
+<audio id="audioClap" src="assets/correct-1.mp3" preload="auto"></audio>
 
 <div id="splashScreen">
-    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'">
-    <h2 style="margin-top:15px; color:#64748b; font-weight:600;">Loading MS Paint Playground...</h2>
+    <img src="assets/innovine-logo.png" alt="Logo">
+    <h2 style="margin-top:15px; color:#475569;">Opening MS Paint Rescue Mission...</h2>
 </div>
 
 <div class="app-window hidden" id="appMainWrapper">
-
-    <div id="introScreen" class="welcome-card">
-        <h1><span>FUN WITH MS PAINT!</span></h1>
-        <p style="margin: 20px 0; color:#475569; line-height:1.6; font-size:1.05rem;">
-            Hello Little Artist! Let's match up real tools inside MS Paint. 
-            <strong>Drag the correct drawing tool</strong> from the toolkit cabinet on the left side and drop it onto the blue targets box workspace to start coloring your canvas!
-        </p>
-        <button class="btn-primary" onclick="startGameSession()">Start Painting Game</button>
+    <div class="paint-window-header">
+        <div class="window-title-side">
+            <img src="assets/ms paint.png" alt="Paint">
+            <span>Paint Rescue Squad! (Grade 2 Game)</span>
+        </div>
+        <div class="window-control-buttons">
+            <img src="assets/minimize.png" alt="-">
+            <img src="assets/maximize.png" alt="[]">
+            <img src="assets/close.png" alt="X">
+        </div>
     </div>
 
-    <div id="gamePlayPanel" class="game-layout hidden">
-        <div class="top-hud">
-            <div>⭐ Points: <span id="pointsDisplayLabel" style="color:var(--paint-yellow);">0</span></div>
-            <div>🎨 Current Level: <span id="currentLevelText" style="color:var(--paint-blue);">Level 1</span></div>
-            <div>🎯 Level Goal: <span id="levelGoalText" style="color:var(--paint-green);">Drag a Tool!</span></div>
+    <div class="window-body-content">
+        <div id="introScreen" class="welcome-card">
+            <img src="assets/innovine-logo.png" style="max-width:180px; margin-bottom:15px;" alt="Logo">
+            <h1><span>PAINT RESCUE SQUAD</span></h1>
+            <p style="margin: 15px 0; color:#475569; line-height:1.6; font-size:1.1rem;">
+                The Pixel Monster has broken our lovely drawing canvases! <br>
+                Look at the mission goal, **select the right tool**, and repair the drawing canvas to win stars!
+            </p>
+            <button class="btn-primary" onclick="startRescueGame()">Launch Rescue Mission</button>
         </div>
 
-        <div class="game-workspace">
-            <div class="left-panel">
-                <div class="section-title">1. Grab Your Tool</div>
-                <div class="tools-vault" id="toolsCabinetVault">
+        <div id="gamePlayPanel" class="game-layout hidden" style="display:flex; flex-direction:column; gap:12px; flex-grow:1; min-height:0;">
+            <div class="top-hud">
+                <div>⭐ Score: <span id="scoreDisplay" style="color:var(--paint-yellow);">0</span></div>
+                <div>🎬 Mission: <span id="levelTitle" style="color:var(--paint-blue);">Level 1</span></div>
+                <div>🎯 Objective: <span id="levelObjective" style="color:var(--paint-green);">Loading...</span></div>
+            </div>
+
+            <div class="game-workspace">
+                <div class="left-panel">
+                    <div style="font-size:0.85rem; font-weight:800; color:#64748b; border-bottom:2px solid #e2e8f0; padding-bottom:5px;">PICK YOUR TOOL</div>
+                    <div class="tools-vault">
+                        <button class="tool-btn" id="tool-pencil" onclick="chooseTool('tool-pencil')">
+                            <img src="assets/pencil.png" alt="Pencil"><span>Pencil Tool</span>
+                        </button>
+                        <button class="tool-btn" id="tool-bucket" onclick="chooseTool('tool-bucket')">
+                            <img src="assets/fill-with-color.png" alt="Bucket"><span>Color Bucket</span>
+                        </button>
+                        <button class="tool-btn" id="tool-eraser" onclick="chooseTool('tool-eraser')">
+                            <img src="assets/eraser.png" alt="Eraser"><span>Eraser Tool</span>
+                        </button>
                     </div>
+                </div>
 
-                <div class="section-title" style="margin-top:10px;">2. Drop Zone Target</div>
-                <div class="drop-zone-target" id="dropTargetContainer">
-                    Drop Tool Here! 📥
+                <div class="canvas-container">
+                    <canvas id="rescueCanvas"></canvas>
+                    <div class="palette-row">
+                        <div class="color-swatch selected" style="background:#ef4444;" onclick="changeSwatchColor('var(--paint-red)', this)"></div>
+                        <div class="color-swatch" style="background:#3b82f6;" onclick="changeSwatchColor('var(--paint-blue)', this)"></div>
+                        <div class="color-swatch" style="background:#eab308;" onclick="changeSwatchColor('var(--paint-yellow)', this)"></div>
+                        <div class="color-swatch" style="background:#10b981;" onclick="changeSwatchColor('var(--paint-green)', this)"></div>
+                    </div>
                 </div>
             </div>
 
-            <div class="canvas-container">
-                <canvas id="paintCanvas"></canvas>
-                
-                <div class="palette-row" id="colorPaletteGroup">
-                    <div class="color-swatch selected" style="background:#000000;" onclick="selectBrushColor('#000000', this)"></div>
-                    <div class="color-swatch" style="background:var(--paint-red);" onclick="selectBrushColor('var(--paint-red)', this)"></div>
-                    <div class="color-swatch" style="background:var(--paint-blue);" onclick="selectBrushColor('var(--paint-blue)', this)"></div>
-                    <div class="color-swatch" style="background:var(--paint-yellow);" onclick="selectBrushColor('var(--paint-yellow)', this)"></div>
-                    <div class="color-swatch" style="background:var(--paint-green);" onclick="selectBrushColor('var(--paint-green)', this)"></div>
-                </div>
-            </div>
+            <div class="feedback-bar hidden" id="feedbackNotification"></div>
+            <div class="footer-toast" id="statusBarText">Click a tool from the side panel to start rescuing!</div>
         </div>
 
-        <div class="hud-correction-panel hidden" id="hudAlertCard"></div>
-
-        <div class="footer-toast" id="systemStatusBarToast">Drag a matching tool into the Drop Zone to turn on the paint box canvas!</div>
+        <div id="resultScreenCard" class="welcome-card hidden">
+            <h1 style="color:var(--paint-green);">🏆 Spectacular Work, Hero!</h1>
+            <p style="margin:25px 0; font-size:1.25rem; line-height:1.6;" id="victoryMessageText"></p>
+            <div style="font-size:5rem; margin-bottom:15px;">🎨⭐🧙‍♂️🚀</div>
+            <button class="btn-primary" onclick="restartWholeCampaign()">Play Again</button>
+        </div>
     </div>
-
-    <div id="resultScreenCard" class="welcome-card hidden">
-        <h1 style="color:var(--paint-green);">🎉 Certificate of Painting Excellence!</h1>
-        <p style="margin:20px 0; font-size:1.2rem; line-height:1.6;" id="finalPerformanceReportSummary"></p>
-        <div style="font-size:5rem; margin:20px 0;">🎨✨✏️🏆</div>
-        <button class="btn-primary" onclick="resetGameCampaign()">Play Playground Sandbox Again</button>
-    </div>
-
 </div>
 
 <script>
-// 5-Second Pure White Delay Splash Screen Framework
+// 5-Second Splash screen timeout
 setTimeout(() => {
     const splash = document.getElementById("splashScreen");
     if(splash) {
@@ -325,82 +297,152 @@ setTimeout(() => {
     }
 }, 5000);
 
-const levelEngineDatabase = {
+const levelsData = {
     1: {
-        name: "Level 1: Pencil Lines",
-        goal: "Find the Pencil Tool to write text or draw freehand lines!",
-        correctId: "tool-pencil",
-        solutionTip: "Pencil Tool helps draw smooth lines with real lead profiles.",
-        toolsList: [
-            { id: "tool-eraser", name: "🧼 Eraser Tool" },
-            { id: "tool-pencil", name: "✏️ Pencil Tool" },
-            { id: "tool-bucket", name: "🪣 Fill Color Bucket" }
-        ],
-        onSuccess: (ctx, w, h) => {
-            ctx.fillStyle = "#cbd5e1";
-            ctx.font = "bold 20px sans-serif";
-            ctx.fillText("✨ Now move mouse/finger inside white box to draw freehand! ✨", w/2 - 250, 40);
+        title: "Level 1: The Empty Balloon",
+        objective: "The balloon lost its red paint! Grab the Color Bucket and click inside the balloon to pour paint!",
+        requiredTool: "tool-bucket",
+        hint: "The Color Bucket drops full colors into empty lines instantly!",
+        render: (ctx, w, h) => {
+            // Draw a simple balloon silhouette
+            ctx.strokeStyle = "#1e293b";
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.arc(w/2, h/2 - 20, 60, 0, Math.PI * 2);
+            ctx.moveTo(w/2, h/2 + 40);
+            ctx.lineTo(w/2 - 5, h/2 + 50);
+            ctx.lineTo(w/2 + 5, h/2 + 50);
+            ctx.closePath();
+            ctx.stroke();
+            // Balloon String
+            ctx.beginPath();
+            ctx.moveTo(w/2, h/2 + 50);
+            ctx.quadraticCurveTo(w/2 - 20, h/2 + 90, w/2, h/2 + 130);
+            ctx.stroke();
+        },
+        verifyAction: (x, y, w, h) => {
+            // Check if user clicked roughly inside the balloon area circle radius
+            let dist = Math.sqrt((x - w/2)**2 + (y - (h/2 - 20))**2);
+            return dist < 60;
+        },
+        solve: (ctx, w, h, color) => {
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(w/2, h/2 - 20, 58, 0, Math.PI * 2);
+            ctx.fill();
         }
     },
     2: {
-        name: "Level 2: Splash Colors",
-        goal: "Find the Fill Color Bucket Tool to pour paint across the drawing background!",
-        correctId: "tool-bucket",
-        solutionTip: "Fill With Color Tool can splash a whole section with paint instantly.",
-        toolsList: [
-            { id: "tool-bucket", name: "🪣 Fill Color Bucket" },
-            { id: "tool-shapes", name: "📐 Readymade Shapes" },
-            { id: "tool-pencil", name: "✏️ Pencil Tool" }
-        ],
-        onSuccess: (ctx, w, h) => {
-            ctx.fillStyle = "#fee2e2";
-            ctx.fillRect(0, 0, w, h);
-            ctx.fillStyle = "#ef4444";
-            ctx.font = "bold 20px sans-serif";
-            ctx.fillText("🎨 Canvas Filled with Red tint! Click/drag to draw paths.", w/2 - 220, 40);
+        title: "Level 2: Finish the House Door",
+        objective: "The door frame lines are incomplete! Grab the Pencil Tool and trace or click inside the red target square to draw the missing door!",
+        requiredTool: "tool-pencil",
+        hint: "The Pencil tool helps draw fine black lines anywhere.",
+        render: (ctx, w, h) => {
+            ctx.strokeStyle = "#000000";
+            ctx.lineWidth = 5;
+            // Draw House frame structure
+            ctx.strokeRect(w/2 - 100, h/2 - 40, 200, 140);
+            // Roof
+            ctx.beginPath();
+            ctx.moveTo(w/2 - 120, h/2 - 40);
+            ctx.lineTo(w/2, h/2 - 110);
+            ctx.lineTo(w/2 + 120, h/2 - 40);
+            ctx.closePath();
+            ctx.stroke();
+            // Dotted missing door guide box target area
+            ctx.strokeStyle = "#ef4444";
+            ctx.lineWidth = 3;
+            ctx.setLineDash([5, 5]);
+            ctx.strokeRect(w/2 - 30, h/2 + 20, 60, 80);
+            ctx.setLineDash([]); // Reset dash line pattern properties
+        },
+        verifyAction: (x, y, w, h) => {
+            // Check if interaction hits inside door target dimensions
+            return (x >= w/2 - 35 && x <= w/2 + 35 && y >= h/2 + 15 && y <= h/2 + 105);
+        },
+        solve: (ctx, w, h, color) => {
+            ctx.fillStyle = "#b45309"; // Solid wood door color fill
+            ctx.fillRect(w/2 - 30, h/2 + 20, 60, 80);
+            ctx.strokeStyle = "#000000";
+            ctx.lineWidth = 5;
+            ctx.strokeRect(w/2 - 30, h/2 + 20, 60, 80);
         }
     },
     3: {
-        name: "Level 3: Clean Mistakes",
-        goal: "Find the Eraser Tool to scrub away mistake marks on a picture!",
-        correctId: "tool-eraser",
-        solutionTip: "Eraser Tool safely changes pixels back to solid clean white.",
-        toolsList: [
-            { id: "tool-pencil", name: "✏️ Pencil Tool" },
-            { id: "tool-shapes", name: "📐 Readymade Shapes" },
-            { id: "tool-eraser", name: "🧼 Eraser Tool" }
-        ],
-        onSuccess: (ctx, w, h) => {
+        title: "Level 3: Clean Up the Smiling Sun",
+        objective: "Oh no! Monster drew black scribbles all over the sun! Grab the Eraser Tool and click the scribble to brush it clean!",
+        requiredTool: "tool-eraser",
+        hint: "The Eraser tool wipes away bad lines cleanly back to white.",
+        render: (ctx, w, h) => {
+            // Yellow sun shape
+            ctx.fillStyle = "#f59e0b";
+            ctx.beginPath();
+            ctx.arc(w/2, h/2, 60, 0, Math.PI * 2);
+            ctx.fill();
+            // Eyes and Smile
+            ctx.fillStyle = "#000000";
+            ctx.beginPath(); ctx.arc(w/2 - 20, h/2 - 15, 6, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(w/2 + 20, h/2 - 15, 6, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = "#000000"; ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.arc(w/2, h/2 + 10, 25, 0, Math.PI); ctx.stroke();
+            
+            // Monster Scribble marks layered right on top
+            ctx.strokeStyle = "#000000";
+            ctx.lineWidth = 12;
+            ctx.beginPath();
+            ctx.moveTo(w/2 - 80, h/2 - 10);
+            ctx.lineTo(w/2 + 80, h/2 + 15);
+            ctx.moveTo(w/2 - 40, h/2 + 40);
+            ctx.lineTo(w/2 + 50, h/2 - 45);
+            ctx.stroke();
+        },
+        verifyAction: (x, y, w, h) => {
+            // Hit box anywhere near the central canvas face zone layout footprint
+            let dist = Math.sqrt((x - w/2)**2 + (y - h/2)**2);
+            return dist < 90;
+        },
+        solve: (ctx, w, h, color) => {
+            // Re-render completely pristine sun face artwork clear of black lines
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(0, 0, w, h);
-            ctx.fillStyle = "#0f172a";
-            ctx.font = "bold 20px sans-serif";
-            ctx.fillText("🧼 Eraser loaded! Drag inside canvas to clear areas clean.", w/2 - 240, 40);
+            ctx.fillStyle = "#f59e0b";
+            ctx.beginPath(); ctx.arc(w/2, h/2, 60, 0, Math.PI * 2); ctx.fill();
+            ctx.fillStyle = "#000000";
+            ctx.beginPath(); ctx.arc(w/2 - 20, h/2 - 15, 6, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(w/2 + 20, h/2 - 15, 6, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = "#000000"; ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.arc(w/2, h/2 + 10, 25, 0, Math.PI); ctx.stroke();
+            
+            // Ray lines glowing outwards
+            ctx.lineWidth = 4; ctx.strokeStyle = "#f59e0b";
+            for(let a=0; a<360; a+=45) {
+                let rad = a * Math.PI / 180;
+                ctx.beginPath();
+                ctx.moveTo(w/2 + Math.cos(rad)*75, h/2 + Math.sin(rad)*75);
+                ctx.lineTo(w/2 + Math.cos(rad)*95, h/2 + Math.sin(rad)*95);
+                ctx.stroke();
+            }
         }
     }
 };
 
-let gameActiveLevel = 1;
-let currentScorePoints = 0;
-let isCanvasInteractable = false;
-let draggedToolIdGlobal = null;
-let levelLockoutState = false; // Prevents processing drops double times on clear tasks
+let currentLevel = 1;
+let gameScore = 0;
+let selectedToolId = null;
+let currentActiveColor = "var(--paint-red)";
+let levelSolvedState = false;
 
-// Drawing State Pipeline Tracking Data Properties
-let htmlCanvas, drawingContext;
-let isPaintingCursorActive = false;
-let currentBrushColorSelected = "#000000";
+let canvasElement, canvasCtx;
 
 function playSound(elementId) {
-    const audioNode = document.getElementById(elementId);
-    if(audioNode) {
-        audioNode.currentTime = 0;
-        audioNode.play().catch(e => console.log("Audio pipeline interaction trigger:", e));
+    const audio = document.getElementById(elementId);
+    if(audio) {
+        audio.currentTime = 0;
+        audio.play().catch(err => console.log("Sound bypass active:", err));
     }
 }
 
-function startGameSession() {
-    // Force and initialize audio track objects within the click callback context
+function startRescueGame() {
     document.getElementById("audioCorrect").load();
     document.getElementById("audioWrong").load();
     document.getElementById("audioClap").load();
@@ -408,176 +450,132 @@ function startGameSession() {
     playSound("audioCorrect");
     document.getElementById("introScreen").classList.add("hidden");
     document.getElementById("gamePlayPanel").classList.remove("hidden");
-    
-    initializeCanvasEngine();
-    buildCurrentLevelChallenge();
-}
 
-function initializeCanvasEngine() {
-    htmlCanvas = document.getElementById("paintCanvas");
-    drawingContext = htmlCanvas.getContext("2d");
-    
-    const boundingBox = htmlCanvas.parentElement.getBoundingClientRect();
-    htmlCanvas.width = boundingBox.width;
-    htmlCanvas.height = boundingBox.height - 60;
-    
-    htmlCanvas.addEventListener("mousedown", (e) => { if(isCanvasInteractable) startStrokeLine(e.offsetX, e.offsetY); });
-    htmlCanvas.addEventListener("mousemove", (e) => { if(isCanvasInteractable) drawStrokeLine(e.offsetX, e.offsetY); });
-    htmlCanvas.addEventListener("mouseup", endStrokeLine);
-    htmlCanvas.addEventListener("mouseleave", endStrokeLine);
+    canvasElement = document.getElementById("rescueCanvas");
+    canvasCtx = canvasElement.getContext("2d");
 
-    htmlCanvas.addEventListener("touchstart", (e) => {
-        if(!isCanvasInteractable) return;
-        const t = e.touches[0]; const r = htmlCanvas.getBoundingClientRect();
-        startStrokeLine(t.clientX - r.left, t.clientY - r.top);
+    // Map parent display bounding box attributes cleanly
+    const bounds = canvasElement.parentElement.getBoundingClientRect();
+    canvasElement.width = bounds.width;
+    canvasElement.height = bounds.height - 55;
+
+    // Attach click and touch selectors onto canvas board
+    canvasElement.addEventListener("mousedown", handleCanvasInteraction);
+    canvasElement.addEventListener("touchstart", (e) => {
+        const t = e.touches[0]; const r = canvasElement.getBoundingClientRect();
+        handleCanvasInteraction({ offsetX: t.clientX - r.left, offsetY: t.clientY - r.top });
     });
-    htmlCanvas.addEventListener("touchmove", (e) => {
-        if(!isCanvasInteractable) return;
-        const t = e.touches[0]; const r = htmlCanvas.getBoundingClientRect();
-        drawStrokeLine(t.clientX - r.left, t.clientY - r.top);
-    });
-    htmlCanvas.addEventListener("touchend", endStrokeLine);
+
+    setupLevelInterface();
 }
 
-function startStrokeLine(x, y) {
-    isPaintingCursorActive = true;
-    drawingContext.beginPath();
-    drawingContext.moveTo(x, y);
+function setupLevelInterface() {
+    levelSolvedState = false;
+    selectedToolId = null;
+    document.getElementById("scoreDisplay").innerText = gameScore;
+    document.getElementById("feedbackNotification").classList.add("hidden");
+    document.getElementById("statusBarText").innerText = "Select your tool from the left toolbar pane, then click the problem section on the canvas!";
+
+    // Clear background toolbar item focus highlighting states
+    document.querySelectorAll(".tool-btn").forEach(btn => btn.classList.remove("active-selected"));
+
+    const data = levelsData[currentLevel];
+    document.getElementById("levelTitle").innerText = data.title;
+    document.getElementById("levelObjective").innerText = data.objective;
+
+    // Flush canvas board frame clear
+    canvasCtx.fillStyle = "#ffffff";
+    canvasCtx.fillRect(0, 0, canvasElement.width, canvasElement.height);
+
+    // Call dynamic level rendering routine
+    data.render(canvasCtx, canvasElement.width, canvasElement.height);
 }
 
-function drawStrokeLine(x, y) {
-    if(!isPaintingCursorActive) return;
-    drawingContext.lineWidth = gameActiveLevel === 3 ? 24 : 6;
-    drawingContext.lineCap = "round";
-    drawingContext.strokeStyle = gameActiveLevel === 3 ? "#ffffff" : currentBrushColorSelected;
-    drawingContext.lineTo(x, y);
-    drawingContext.stroke();
+function chooseTool(toolId) {
+    if(levelSolvedState) return;
+    selectedToolId = toolId;
+    document.querySelectorAll(".tool-btn").forEach(btn => btn.classList.remove("active-selected"));
+    document.getElementById(toolId).classList.add("active-selected");
+    
+    document.getElementById("statusBarText").innerText = `Active tool loaded. Now fix the canvas item!`;
+    playSound("audioCorrect");
 }
 
-function endStrokeLine() {
-    isPaintingCursorActive = false;
-}
-
-function selectBrushColor(hexColor, domElement) {
-    currentBrushColorSelected = hexColor;
-    document.querySelectorAll(".color-swatch").forEach(node => node.classList.remove("selected"));
+function changeSwatchColor(colorVal, domElement) {
+    currentActiveColor = colorVal;
+    document.querySelectorAll(".color-swatch").forEach(sw => sw.classList.remove("selected"));
     domElement.classList.add("selected");
 }
 
-function buildCurrentLevelChallenge() {
-    isCanvasInteractable = false;
-    levelLockoutState = false;
-    draggedToolIdGlobal = null;
+function handleCanvasInteraction(e) {
+    if(levelSolvedState) return;
     
-    document.getElementById("pointsDisplayLabel").innerText = currentScorePoints;
-    document.getElementById("hudAlertCard").classList.add("hidden");
-    
-    const targetZone = document.getElementById("dropTargetContainer");
-    targetZone.innerHTML = "Drop Tool Here! 📥";
-    targetZone.className = "drop-zone-target";
+    const data = levelsData[currentLevel];
+    const alertBox = document.getElementById("feedbackNotification");
 
-    const data = levelEngineDatabase[gameActiveLevel];
-    document.getElementById("currentLevelText").innerText = `Level ${gameActiveLevel} / 3`;
-    document.getElementById("levelGoalText").innerText = data.goal;
-    document.getElementById("systemStatusBarToast").innerText = "Grab the correct tool from the list and drop it onto the targets container area.";
-
-    drawingContext.fillStyle = "#ffffff";
-    drawingContext.fillRect(0, 0, htmlCanvas.width, htmlCanvas.height);
-
-    const cabinet = document.getElementById("toolsCabinetVault");
-    cabinet.innerHTML = "";
-    
-    data.toolsList.forEach(tool => {
-        const item = document.createElement("div");
-        item.className = "draggable-tool";
-        item.innerText = tool.name;
-        item.id = tool.id;
-        item.draggable = true;
-        
-        item.addEventListener("dragstart", (e) => {
-            draggedToolIdGlobal = tool.id;
-        });
-        
-        cabinet.appendChild(item);
-    });
-}
-
-// Attach drop mechanics outside standard database reset loops
-const targetZoneElement = document.getElementById("dropTargetContainer");
-targetZoneElement.addEventListener("dragover", (e) => e.preventDefault());
-targetZoneElement.addEventListener("dragenter", () => targetZoneElement.classList.add("drag-over"));
-targetZoneElement.addEventListener("dragleave", () => targetZoneElement.classList.remove("drag-over"));
-targetZoneElement.addEventListener("drop", (e) => {
-    e.preventDefault();
-    targetZoneElement.classList.remove("drag-over");
-    
-    if(levelLockoutState) return; 
-    
-    const data = levelEngineDatabase[gameActiveLevel];
-    const alertBox = document.getElementById("hudAlertCard");
-
-    // Check modern global variable instead of secure-locked dataTransfer objects
-    if(draggedToolIdGlobal === data.correctId) {
-        levelLockoutState = true;
-        currentScorePoints += 100;
-        document.getElementById("pointsDisplayLabel").innerText = currentScorePoints;
-        
-        targetZoneElement.innerHTML = "✅ Tool Active!";
-        targetZoneElement.style.borderColor = "var(--paint-green)";
-        targetZoneElement.style.background = "#f0fdf4";
-
-        alertBox.className = "hud-correction-panel";
-        alertBox.style.background = "#dff0d8";
-        alertBox.style.color = "#3c763d";
-        alertBox.innerText = `🎉 Success! ${data.name} enabled. You can now color and draw inside the drawing box!`;
-        alertBox.classList.remove("hidden");
-
-        document.getElementById("systemStatusBarToast").innerText = "Excellent! Moving to the next task in 4 seconds...";
-        
-        playSound("audioCorrect");
-        confetti({ particleCount: 50, spread: 60, origin: { y: 0.8 } });
-
-        isCanvasInteractable = true;
-        data.onSuccess(drawingContext, htmlCanvas.width, htmlCanvas.height);
-
-        setTimeout(() => {
-            advanceSequenceWorkflow();
-        }, 4000);
-
-    } else {
+    if(!selectedToolId) {
+        document.getElementById("statusBarText").innerText = "⚠️ Oops! You must choose a tool from the left side box first!";
         playSound("audioWrong");
-        
-        alertBox.className = "hud-correction-panel";
+        return;
+    }
+
+    if(selectedToolId !== data.requiredTool) {
+        playSound("audioWrong");
+        alertBox.className = "feedback-bar";
         alertBox.style.background = "#f2dede";
         alertBox.style.color = "#a94442";
-        
-        const correctInfo = data.toolsList.find(t => t.id === data.correctId);
-        alertBox.innerText = `💡 Try Again: Remember, ${data.solutionTip} Drag the ${correctInfo.name} tool.`;
+        alertBox.innerText = `💡 Incorrect Tool chosen! Hint: ${data.hint}`;
         alertBox.classList.remove("hidden");
+        return;
     }
-});
 
-function advanceSequenceWorkflow() {
-    gameActiveLevel++;
-    if(levelEngineDatabase[gameActiveLevel]) {
-        buildCurrentLevelChallenge();
-    } else {
-        document.getElementById("gamePlayPanel").classList.add("hidden");
-        document.getElementById("hudAlertCard").classList.add("hidden");
-        document.getElementById("resultScreenCard").classList.remove("hidden");
+    // Verify if interaction lands on target hotspot coordinates correctly
+    if(data.verifyAction(e.offsetX, e.offsetY, canvasElement.width, canvasElement.height)) {
+        levelSolvedState = true;
+        gameScore += 100;
+        document.getElementById("scoreDisplay").innerText = gameScore;
+
+        data.solve(canvasCtx, canvasElement.width, canvasElement.height, currentActiveColor);
         
-        playSound("audioClap");
-        document.getElementById("finalPerformanceReportSummary").innerHTML = 
-            `Awesome work, Little Artist! You mastered the Pencil, Fill Bucket, and Eraser Tools successfully.<br><br><strong>Final Performance Score: ${currentScorePoints} / 300 Studio Points!</strong>`;
+        playSound("audioCorrect");
+        confetti({ particleCount: 60, spread: 70, origin: { y: 0.75 } });
+
+        alertBox.className = "feedback-bar";
+        alertBox.style.background = "#dff0d8";
+        alertBox.style.color = "#3c763d";
+        alertBox.innerText = `🎉 Amazing Rescue! You used the right tool perfectly! Preparing next drawing in 4 seconds...`;
+        alertBox.classList.remove("hidden");
+
+        setTimeout(() => {
+            progressGamePipeline();
+        }, 4000);
+    } else {
+        document.getElementById("statusBarText").innerText = "Target missed! Click closer onto the problem item inside the drawings box.";
+        playSound("audioWrong");
     }
 }
 
-function resetGameCampaign() {
-    gameActiveLevel = 1;
-    currentScorePoints = 0;
+function progressGamePipeline() {
+    currentLevel++;
+    if(levelsData[currentLevel]) {
+        setupLevelInterface();
+    } else {
+        document.getElementById("gamePlayPanel").classList.add("hidden");
+        document.getElementById("feedbackNotification").classList.add("hidden");
+        document.getElementById("resultScreenCard").classList.remove("hidden");
+
+        playSound("audioClap");
+        document.getElementById("victoryMessageText").innerHTML = 
+            `Sensational Job, Master Artist!<br>You protected our digital studio using the **Pencil, Paint Bucket, and Eraser** correctly.<br><br><strong>Final Champion Score: ${gameScore} / 300 Points!</strong>`;
+    }
+}
+
+function restartWholeCampaign() {
+    currentLevel = 1;
+    gameScore = 0;
     document.getElementById("resultScreenCard").classList.add("hidden");
     document.getElementById("gamePlayPanel").classList.remove("hidden");
-    buildCurrentLevelChallenge();
+    setupLevelInterface();
 }
 </script>
 </body>

@@ -145,6 +145,8 @@ body {
     display: flex;
     align-items: center;
     gap: 12px;
+    width: 100%;
+    text-align: left;
     transition: all 0.2s;
 }
 .tool-btn:hover { background: #f1f5f9; transform: translateY(-1px); }
@@ -154,7 +156,6 @@ body {
     box-shadow: 0 0 8px rgba(59,130,246,0.3);
 }
 
-/* Ensure images don't block clicks */
 .tool-btn img, .tool-btn span { pointer-events: none; }
 .tool-btn img { width: 32px; height: 32px; object-fit: contain; }
 
@@ -167,7 +168,7 @@ body {
     display: flex;
     flex-direction: column;
 }
-#rescueCanvas { width: 100%; flex-grow: 1; background: #ffffff; }
+#rescueCanvas { width: 100%; flex-grow: 1; background: #ffffff; cursor: pointer; }
 
 .palette-row {
     display: flex;
@@ -263,10 +264,10 @@ body {
                 <div class="canvas-container">
                     <canvas id="rescueCanvas"></canvas>
                     <div class="palette-row">
-                        <div class="color-swatch selected" style="background:#ef4444;" onclick="changeSwatchColor('var(--paint-red)', this)"></div>
-                        <div class="color-swatch" style="background:#3b82f6;" onclick="changeSwatchColor('var(--paint-blue)', this)"></div>
-                        <div class="color-swatch" style="background:#eab308;" onclick="changeSwatchColor('var(--paint-yellow)', this)"></div>
-                        <div class="color-swatch" style="background:#10b981;" onclick="changeSwatchColor('var(--paint-green)', this)"></div>
+                        <div class="color-swatch selected" style="background:#ef4444;" onclick="changeSwatchColor('#ef4444', this)"></div>
+                        <div class="color-swatch" style="background:#3b82f6;" onclick="changeSwatchColor('#3b82f6', this)"></div>
+                        <div class="color-swatch" style="background:#eab308;" onclick="changeSwatchColor('#eab308', this)"></div>
+                        <div class="color-swatch" style="background:#10b981;" onclick="changeSwatchColor('#10b981', this)"></div>
                     </div>
                 </div>
             </div>
@@ -278,14 +279,13 @@ body {
         <div id="resultScreenCard" class="welcome-card hidden">
             <h1 style="color:var(--paint-green);">🏆 Spectacular Work, Hero!</h1>
             <p style="margin:25px 0; font-size:1.25rem; line-height:1.6;" id="victoryMessageText"></p>
-            <div style="font-size:5rem; margin-bottom:15px;">🎨⭐🧙‍♂️🚀</div>
+            <div style="font-size:5rem; margin-bottom:15px;">🎨⭐🚀</div>
             <button class="btn-primary" onclick="restartWholeCampaign()">Play Again</button>
         </div>
     </div>
 </div>
 
 <script>
-// 5-Second Splash screen timeout
 setTimeout(() => {
     const splash = document.getElementById("splashScreen");
     if(splash) {
@@ -300,11 +300,10 @@ setTimeout(() => {
 const levelsData = {
     1: {
         title: "Level 1: The Empty Balloon",
-        objective: "The balloon lost its red paint! Grab the Color Bucket and click inside the balloon to pour paint!",
+        objective: "The balloon lost its color! Grab the Color Bucket and click inside the balloon to pour paint!",
         requiredTool: "tool-bucket",
-        hint: "The Color Bucket drops full colors into empty lines instantly!",
+        hint: "The Color Bucket drops full colors into empty shapes instantly!",
         render: (ctx, w, h) => {
-            // Draw a simple balloon silhouette
             ctx.strokeStyle = "#1e293b";
             ctx.lineWidth = 5;
             ctx.beginPath();
@@ -314,16 +313,15 @@ const levelsData = {
             ctx.lineTo(w/2 + 5, h/2 + 50);
             ctx.closePath();
             ctx.stroke();
-            // Balloon String
+            
             ctx.beginPath();
             ctx.moveTo(w/2, h/2 + 50);
             ctx.quadraticCurveTo(w/2 - 20, h/2 + 90, w/2, h/2 + 130);
             ctx.stroke();
         },
         verifyAction: (x, y, w, h) => {
-            // Check if user clicked roughly inside the balloon area circle radius
             let dist = Math.sqrt((x - w/2)**2 + (y - (h/2 - 20))**2);
-            return dist < 60;
+            return dist < 75; // Generous collision radius for kids
         },
         solve: (ctx, w, h, color) => {
             ctx.fillStyle = color;
@@ -334,34 +332,32 @@ const levelsData = {
     },
     2: {
         title: "Level 2: Finish the House Door",
-        objective: "The door frame lines are incomplete! Grab the Pencil Tool and trace or click inside the red target square to draw the missing door!",
+        objective: "The door frame lines are missing! Grab the Pencil Tool and tap inside the red dotted target to draw the door!",
         requiredTool: "tool-pencil",
-        hint: "The Pencil tool helps draw fine black lines anywhere.",
+        hint: "The Pencil tool helps draw clean lines to fix sketches.",
         render: (ctx, w, h) => {
             ctx.strokeStyle = "#000000";
             ctx.lineWidth = 5;
-            // Draw House frame structure
             ctx.strokeRect(w/2 - 100, h/2 - 40, 200, 140);
-            // Roof
+            
             ctx.beginPath();
             ctx.moveTo(w/2 - 120, h/2 - 40);
             ctx.lineTo(w/2, h/2 - 110);
             ctx.lineTo(w/2 + 120, h/2 - 40);
             ctx.closePath();
             ctx.stroke();
-            // Dotted missing door guide box target area
+            
             ctx.strokeStyle = "#ef4444";
             ctx.lineWidth = 3;
             ctx.setLineDash([5, 5]);
             ctx.strokeRect(w/2 - 30, h/2 + 20, 60, 80);
-            ctx.setLineDash([]); // Reset dash line pattern properties
+            ctx.setLineDash([]);
         },
         verifyAction: (x, y, w, h) => {
-            // Check if interaction hits inside door target dimensions
-            return (x >= w/2 - 35 && x <= w/2 + 35 && y >= h/2 + 15 && y <= h/2 + 105);
+            return (x >= w/2 - 45 && x <= w/2 + 45 && y >= h/2 + 10 && y <= h/2 + 110);
         },
         solve: (ctx, w, h, color) => {
-            ctx.fillStyle = "#b45309"; // Solid wood door color fill
+            ctx.fillStyle = "#b45309"; 
             ctx.fillRect(w/2 - 30, h/2 + 20, 60, 80);
             ctx.strokeStyle = "#000000";
             ctx.lineWidth = 5;
@@ -370,23 +366,21 @@ const levelsData = {
     },
     3: {
         title: "Level 3: Clean Up the Smiling Sun",
-        objective: "Oh no! Monster drew black scribbles all over the sun! Grab the Eraser Tool and click the scribble to brush it clean!",
+        objective: "Oh no! Black scribbles are hiding the sun! Grab the Eraser Tool and click the scribble to brush it clean!",
         requiredTool: "tool-eraser",
-        hint: "The Eraser tool wipes away bad lines cleanly back to white.",
+        hint: "The Eraser tool wipes away bad marks cleanly back to white.",
         render: (ctx, w, h) => {
-            // Yellow sun shape
             ctx.fillStyle = "#f59e0b";
             ctx.beginPath();
             ctx.arc(w/2, h/2, 60, 0, Math.PI * 2);
             ctx.fill();
-            // Eyes and Smile
+            
             ctx.fillStyle = "#000000";
             ctx.beginPath(); ctx.arc(w/2 - 20, h/2 - 15, 6, 0, Math.PI*2); ctx.fill();
             ctx.beginPath(); ctx.arc(w/2 + 20, h/2 - 15, 6, 0, Math.PI*2); ctx.fill();
             ctx.strokeStyle = "#000000"; ctx.lineWidth = 4;
             ctx.beginPath(); ctx.arc(w/2, h/2 + 10, 25, 0, Math.PI); ctx.stroke();
             
-            // Monster Scribble marks layered right on top
             ctx.strokeStyle = "#000000";
             ctx.lineWidth = 12;
             ctx.beginPath();
@@ -397,12 +391,10 @@ const levelsData = {
             ctx.stroke();
         },
         verifyAction: (x, y, w, h) => {
-            // Hit box anywhere near the central canvas face zone layout footprint
             let dist = Math.sqrt((x - w/2)**2 + (y - h/2)**2);
-            return dist < 90;
+            return dist < 110;
         },
         solve: (ctx, w, h, color) => {
-            // Re-render completely pristine sun face artwork clear of black lines
             ctx.fillStyle = "#ffffff";
             ctx.fillRect(0, 0, w, h);
             ctx.fillStyle = "#f59e0b";
@@ -413,7 +405,6 @@ const levelsData = {
             ctx.strokeStyle = "#000000"; ctx.lineWidth = 4;
             ctx.beginPath(); ctx.arc(w/2, h/2 + 10, 25, 0, Math.PI); ctx.stroke();
             
-            // Ray lines glowing outwards
             ctx.lineWidth = 4; ctx.strokeStyle = "#f59e0b";
             for(let a=0; a<360; a+=45) {
                 let rad = a * Math.PI / 180;
@@ -429,16 +420,15 @@ const levelsData = {
 let currentLevel = 1;
 let gameScore = 0;
 let selectedToolId = null;
-let currentActiveColor = "var(--paint-red)";
+let currentActiveColor = "#ef4444";
 let levelSolvedState = false;
-
 let canvasElement, canvasCtx;
 
 function playSound(elementId) {
     const audio = document.getElementById(elementId);
     if(audio) {
         audio.currentTime = 0;
-        audio.play().catch(err => console.log("Sound bypass active:", err));
+        audio.play().catch(err => console.log("Audio update pass:", err));
     }
 }
 
@@ -454,14 +444,13 @@ function startRescueGame() {
     canvasElement = document.getElementById("rescueCanvas");
     canvasCtx = canvasElement.getContext("2d");
 
-    // Map parent display bounding box attributes cleanly
     const bounds = canvasElement.parentElement.getBoundingClientRect();
     canvasElement.width = bounds.width;
-    canvasElement.height = bounds.height - 55;
+    canvasElement.height = bounds.height - 60;
 
-    // Attach click and touch selectors onto canvas board
     canvasElement.addEventListener("mousedown", handleCanvasInteraction);
     canvasElement.addEventListener("touchstart", (e) => {
+        e.preventDefault();
         const t = e.touches[0]; const r = canvasElement.getBoundingClientRect();
         handleCanvasInteraction({ offsetX: t.clientX - r.left, offsetY: t.clientY - r.top });
     });
@@ -474,20 +463,16 @@ function setupLevelInterface() {
     selectedToolId = null;
     document.getElementById("scoreDisplay").innerText = gameScore;
     document.getElementById("feedbackNotification").classList.add("hidden");
-    document.getElementById("statusBarText").innerText = "Select your tool from the left toolbar pane, then click the problem section on the canvas!";
+    document.getElementById("statusBarText").innerText = "Select a tool from the side menu box, then click the problem target area inside the canvas frame!";
 
-    // Clear background toolbar item focus highlighting states
     document.querySelectorAll(".tool-btn").forEach(btn => btn.classList.remove("active-selected"));
 
     const data = levelsData[currentLevel];
     document.getElementById("levelTitle").innerText = data.title;
     document.getElementById("levelObjective").innerText = data.objective;
 
-    // Flush canvas board frame clear
     canvasCtx.fillStyle = "#ffffff";
     canvasCtx.fillRect(0, 0, canvasElement.width, canvasElement.height);
-
-    // Call dynamic level rendering routine
     data.render(canvasCtx, canvasElement.width, canvasElement.height);
 }
 
@@ -497,7 +482,7 @@ function chooseTool(toolId) {
     document.querySelectorAll(".tool-btn").forEach(btn => btn.classList.remove("active-selected"));
     document.getElementById(toolId).classList.add("active-selected");
     
-    document.getElementById("statusBarText").innerText = `Active tool loaded. Now fix the canvas item!`;
+    document.getElementById("statusBarText").innerText = `Active tool loaded. Complete the canvas design!`;
     playSound("audioCorrect");
 }
 
@@ -514,7 +499,7 @@ function handleCanvasInteraction(e) {
     const alertBox = document.getElementById("feedbackNotification");
 
     if(!selectedToolId) {
-        document.getElementById("statusBarText").innerText = "⚠️ Oops! You must choose a tool from the left side box first!";
+        document.getElementById("statusBarText").innerText = "⚠️ Select a tool from the toolbar panel first!";
         playSound("audioWrong");
         return;
     }
@@ -529,7 +514,6 @@ function handleCanvasInteraction(e) {
         return;
     }
 
-    // Verify if interaction lands on target hotspot coordinates correctly
     if(data.verifyAction(e.offsetX, e.offsetY, canvasElement.width, canvasElement.height)) {
         levelSolvedState = true;
         gameScore += 100;
@@ -543,12 +527,12 @@ function handleCanvasInteraction(e) {
         alertBox.className = "feedback-bar";
         alertBox.style.background = "#dff0d8";
         alertBox.style.color = "#3c763d";
-        alertBox.innerText = `🎉 Amazing Rescue! You used the right tool perfectly! Preparing next drawing in 4 seconds...`;
+        alertBox.innerText = `🎉 Amazing Rescue! Moving to the next task in 3 seconds...`;
         alertBox.classList.remove("hidden");
 
         setTimeout(() => {
             progressGamePipeline();
-        }, 4000);
+        }, 3000);
     } else {
         document.getElementById("statusBarText").innerText = "Target missed! Click closer onto the problem item inside the drawings box.";
         playSound("audioWrong");

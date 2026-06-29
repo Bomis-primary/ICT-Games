@@ -38,7 +38,7 @@ body.game-active {
     background: linear-gradient(135deg, #1e293b, var(--dark-bg));
 }
 
-/* 5-Second Innovine Splash Screen Layout Grid */
+/* Required 5-Second Pure White Splash Screen with Image Logo Layout */
 #splashScreen {
     position: fixed;
     top: 0;
@@ -54,35 +54,15 @@ body.game-active {
     transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.innovine-badge {
-    text-align: center;
-    animation: floatingLogo 3s infinite ease-in-out;
+#splashScreen img {
+    width: 280px;
+    max-width: 80%;
+    animation: pulse 2s infinite ease-in-out;
 }
 
-.innovine-svg {
-    width: 130px;
-    height: 130px;
-    margin-bottom: 20px;
-}
-
-.brand-title {
-    font-size: 2.5rem;
-    font-weight: 900;
-    color: #0f172a;
-    letter-spacing: 3px;
-}
-
-.brand-subtitle {
-    font-size: 0.9rem;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 5px;
-    margin-top: 6px;
-}
-
-@keyframes floatingLogo {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-15px); }
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
 }
 
 /* Primary Game Interface Layout Shell */
@@ -95,14 +75,21 @@ body.game-active {
 }
 
 .welcome-card {
-    background: #ffffff;
-    border: 3px solid #e2e8f0;
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(255,255,255,0.5);
     border-radius: 32px;
-    padding: 50px;
+    padding: 42px;
     text-align: center;
-    box-shadow: 0 30px 70px rgba(0,0,0,0.15);
-    max-width: 650px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    max-width: 620px;
     margin: 0 auto;
+}
+
+.welcome-card h1 span {
+    background: linear-gradient(135deg, var(--scratch-orange), var(--scratch-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
 }
 
 .game-layout {
@@ -250,8 +237,6 @@ body.game-active .stage-preview {
 }
 
 .stage-preview.bg-space { background-color: #111432; background-image: radial-gradient(white 1px, transparent 0); background-size: 24px 24px; }
-.stage-preview.bg-desert { background-color: #f39c12; }
-.stage-preview.bg-party { background-color: #9b59b6; }
 
 .sprite-actor {
     font-size: 4.5rem;
@@ -309,28 +294,23 @@ body.game-active .stage-preview {
 <audio id="audioClap" src="assets/clap.mp3" preload="auto"></audio>
 
 <div id="splashScreen">
-    <div class="innovine-badge">
-        <svg class="innovine-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <linearGradient id="badgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#ffab19" />
-                    <stop offset="100%" style="stop-color:#4c97ff" />
-                </linearGradient>
-            </defs>
-            <circle cx="50" cy="50" r="46" fill="url(#badgeGrad)" />
-            <path d="M35 65 L50 35 L65 65 Z" fill="none" stroke="#ffffff" stroke-width="5" stroke-linejoin="round" />
-            <circle cx="50" cy="35" r="4" fill="#ffffff" />
-            <path d="M45 65 L50 52 L55 65 Z" fill="#ffffff" />
-        </svg>
-        <div class="brand-title">INNOVINE</div>
-        <div class="brand-subtitle">Scratch Story Lab</div>
-        <p style="margin-top:20px; font-weight:600; color:#64748b;">Loading Chapter 7: Interactive Programming...</p>
-    </div>
+    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'">
+    <p style="margin-top:20px; font-weight:600; color:#64748b; tracking-content: 1px;">Loading Chapter 7: Interactive Programming...</p>
 </div>
 
 <div class="app-window hidden" id="appInterfaceShell">
 
-    <div id="gameViewPanel" class="game-layout">
+    <div id="introView" class="welcome-card">
+        <img src="assets/innovine-logo.png" alt="Logo" style="max-width:140px; margin-bottom:15px;" onerror="this.style.display='none'">
+        <h1><span>SCRATCH STORY STUDIO</span></h1>
+        <h2 style="color: #64748b; font-size: 1.1rem; margin-bottom: 24px;">Grade 4 Chapter 7 Interactive Engine</h2>
+        <p style="text-align: left; line-height: 1.7; color: #475569; margin-bottom: 26px; background: #f1f5f9; padding: 20px; border-radius: 14px; font-size: 0.95rem;">
+            Welcome, Script Animator! Today you are manipulating logical story scripts inside a dynamic Scratch engine block environment. Drag structural script blocks into the timeline workspace to configure custom movement pipelines, costumes, backgrounds, and triggers to command your active workspace cat hero!
+        </p>
+        <button class="btn-primary" onclick="launchSimulator()">Boot Customizer Module</button>
+    </div>
+
+    <div id="gameViewPanel" class="game-layout hidden">
         <div class="top-hud">
             <div>🏆 Coding Score: <span id="scoreDisplayLabel" style="color:var(--scratch-orange)">0</span></div>
             <div style="font-size:1.1rem;">🎬 Script Scene: <span id="missionLevelTitle" style="color:#60a5fa">Level 1</span></div>
@@ -379,7 +359,7 @@ body.game-active .stage-preview {
 </div>
 
 <script>
-/* 5-Second Delay Handler Logic Blueprint Module */
+/* 5-Second Delay Splash Screen Driver Transition */
 setTimeout(() => {
     const splashNode = document.getElementById("splashScreen");
     splashNode.style.opacity = "0";
@@ -387,7 +367,6 @@ setTimeout(() => {
         splashNode.style.setProperty("display", "none", "important");
         document.body.classList.add("game-active");
         document.getElementById("appInterfaceShell").classList.remove("hidden");
-        setupCurrentLevelParameters();
     }, 600);
 }, 5000);
 
@@ -451,7 +430,7 @@ const levelCampaignDatabase = {
         ],
         actionEffect: () => {
             const sprite = document.getElementById("catSpriteElement");
-            sprite.innerText = "🦁"; // Costume change simulation
+            sprite.innerText = "🦁"; 
             sprite.style.transform = "scale(1.3)";
             setTimeout(() => { 
                 sprite.style.transform = "scale(1)";
@@ -495,13 +474,20 @@ function triggerLocalAudioNode(elementId) {
     const audioNode = document.getElementById(elementId);
     if(audioNode) {
         audioNode.currentTime = 0;
-        audioNode.play().catch(err => console.log("Audio asset element tracking:", err));
+        audioNode.play().catch(err => console.log("Audio pipeline active:", err));
     }
 }
 
 function fireConfettiCelebration() {
     confetti({ particleCount: 50, angle: 60, spread: 60, origin: { x: 0, y: 0.8 } });
     confetti({ particleCount: 50, angle: 120, spread: 60, origin: { x: 1, y: 0.8 } });
+}
+
+function launchSimulator() {
+    triggerLocalAudioNode("audioCorrect");
+    document.getElementById("introView").classList.add("hidden");
+    document.getElementById("gameViewPanel").classList.remove("hidden");
+    setupCurrentLevelParameters();
 }
 
 function setupCurrentLevelParameters() {
@@ -682,7 +668,6 @@ function restartCampaignSession() {
     document.getElementById("evaluationReportCard").classList.add("hidden");
     document.getElementById("gameViewPanel").classList.remove("hidden");
     
-    // Reset defaults
     document.getElementById("catSpriteElement").innerText = "🐱";
     document.getElementById("stageCanvas").className = "stage-preview";
     

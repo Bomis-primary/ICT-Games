@@ -3,18 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Slide Deck Designer: Multimedia Presentations</title>
+<title>The Font-Tastic Rescue: Presentation Design Lab</title>
 
 <style>
 :root {
-    --primary: #ec4899; /* Vibrant Pink/Magenta for creativity */
-    --primary-dark: #be185d;
-    --secondary: #a855f7; /* Creative Purple */
-    --success: #10b981;
-    --danger: #ef4444;
-    --dark: #1e1b4b;
-    --light: #f8fafc;
+    --space-dark: #0b0f19;
     --panel-bg: rgba(255, 255, 255, 0.96);
+    --primary-neon: #38bdf8; /* Space Blue */
+    --accent-purple: #818cf8;
+    --success-green: #4ade80;
+    --danger-red: #f87171;
 }
 
 * {
@@ -37,10 +35,10 @@ body {
 }
 
 body.game-mode {
-    background: linear-gradient(135deg, #f472b6, #a855f7, #3b82f6);
+    background: linear-gradient(135deg, #0f172a, #1e1b4b, #2e1065);
 }
 
-/* Floating Geometric Design Shapes */
+/* Space Stars Generator Particles */
 .bg-particles {
     position: absolute;
     width: 100%;
@@ -54,16 +52,16 @@ body.game-mode {
 }
 body.game-mode .bg-particles { display: block; }
 
-.shape {
+.star {
     position: absolute;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    animation: floatAround linear infinite;
+    background: #ffffff;
+    border-radius: 50%;
+    animation: twinkle linear infinite;
 }
-@keyframes floatAround {
-    0% { transform: translateY(110vh) rotate(0deg) scale(0.6); opacity: 0; }
-    15% { opacity: 1; }
-    100% { transform: translateY(-20vh) rotate(360deg) scale(1.4); opacity: 0; }
+@keyframes twinkle {
+    0% { transform: translateY(110vh) scale(0.3); opacity: 0.2; }
+    50% { opacity: 1; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
 }
 
 /* Required 5-Second Pure White Splash Screen */
@@ -89,179 +87,193 @@ body.game-mode .bg-particles { display: block; }
     50% { transform: scale(1.04); }
 }
 
-/* App Bounds Wrapper */
+/* Main UI Shell Wrapper */
 .container {
     width: 95vw;
-    max-width: 900px;
-    height: 85vh;
-    min-height: 560px;
+    max-width: 950px;
+    height: 88vh;
+    min-height: 580px;
     z-index: 2;
 }
 
 .intro-card {
     background: var(--panel-bg);
-    padding: 42px;
+    padding: 40px;
     border-radius: 32px;
     text-align: center;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
-    max-width: 620px;
+    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+    max-width: 650px;
     margin: 0 auto;
-    border: 1px solid rgba(255,255,255,0.5);
+    border: 2px solid rgba(56, 189, 248, 0.2);
 }
 .intro-card h1 span {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    background: linear-gradient(135deg, var(--primary-neon), #4f46e5);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-weight: 800;
 }
 
-/* Presentation Studio Board Layout */
+/* Game Interface Grid Splitting Dashboard and Status Panel */
 .game-layout {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
     height: 100%;
-    gap: 20px;
+    gap: 15px;
 }
 
-.top-bar {
+.control-header {
     display: flex;
     justify-content: space-between;
-    background: var(--panel-bg);
+    align-items: center;
+    background: rgba(15, 23, 42, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 12px 24px;
     border-radius: 16px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-    font-weight: 700;
-    color: #334155;
+    color: white;
+    font-weight: bold;
 }
 
-/* Slide Canvas Display Frame */
-.slide-canvas {
-    background: #1e1b4b;
-    border: 6px solid #ffffff;
+/* Fuel Meter Component Visuals */
+.fuel-system {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0,0,0,0.3);
+    padding: 6px 15px;
+    border-radius: 20px;
+    border: 1px solid #334155;
+    min-width: 240px;
+}
+.fuel-track {
+    flex-grow: 1;
+    height: 14px;
+    background: #1e293b;
+    border-radius: 7px;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid #475569;
+}
+.fuel-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #f43f5e, #eab308, #22c55e);
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Center Interactive Simulator Frame split into Bug-Viewer and Options Grid */
+.stage-arena {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 15px;
+    height: 100%;
+    min-height: 0; /* Prevents overflow in flex/grid items */
+}
+
+/* The Glitched Presentation Slide Frame simulate bad design styles dynamically */
+.glitch-slide-monitor {
+    background: #ffffff;
+    border: 8px solid #475569;
     border-radius: 24px;
-    padding: 35px;
+    padding: 25px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    min-height: 220px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-    position: relative;
-    color: white;
     text-align: center;
+    position: relative;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.1), 0 10px 30px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
 }
 
-.slide-canvas::before {
-    content: "🖥️ PRESENTATION MONITOR";
-    position: absolute;
-    top: 10px;
-    font-size: 0.75rem;
-    letter-spacing: 2px;
-    color: rgba(255, 255, 255, 0.4);
-    font-weight: bold;
-}
+/* Dynamic Class Changes driven by JavaScript state rules */
+.crime-contrast { background: #ffffff !important; color: #facc15 !important; } /* Light yellow on white text crime */
+.crime-size { font-size: 8px !important; color: #000 !important; }
+.crime-crowd { padding: 5px !important; font-size: 11px !important; line-height: 1.1 !important; color: #1e293b !important; text-align: justify !important; }
+.crime-font { font-family: 'Impact', 'Arial Black', sans-serif !important; color: #ec4899 !important; transform: skewX(-15deg); }
 
-.multimedia-task {
-    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    max-width: 600px;
+/* Workspace Selection Panel Grid */
+.workspace-deck {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: center;
 }
-@keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-.multimedia-task h2 {
-    font-size: 1.4rem;
-    color: #f472b6;
-    margin-bottom: 12px;
-    font-weight: 800;
-}
-.multimedia-task p {
-    font-size: 1.05rem;
-    color: #cbd5e1;
-    font-weight: 500;
-    line-height: 1.5;
-}
-
-/* Toolkit Options Grid */
-.options-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-}
-.option-btn {
+.fix-option-btn {
     background: var(--panel-bg);
-    border: 3px solid #e2e8f0;
-    padding: 20px;
-    border-radius: 20px;
+    border: 2px solid #cbd5e1;
+    border-radius: 16px;
+    padding: 16px 20px;
     cursor: pointer;
-    text-align: left;
     display: flex;
     align-items: center;
     gap: 15px;
+    text-align: left;
     transition: all 0.2s ease;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
 }
-.option-btn:hover {
-    transform: translateY(-3px);
-    border-color: var(--secondary);
-    box-shadow: 0 12px 25px rgba(168, 85, 247, 0.15);
+.fix-option-btn:hover {
+    transform: translateX(-5px);
+    border-color: var(--primary-neon);
+    box-shadow: 0 5px 15px rgba(56, 189, 248, 0.2);
 }
-.option-btn .icon-box {
-    font-size: 2rem;
+.fix-option-btn .badge-num {
     background: #f1f5f9;
-    padding: 10px;
-    border-radius: 12px;
-    min-width: 55px;
-    text-align: center;
-}
-.option-btn .text-box h3 {
-    font-size: 1.1rem;
-    color: var(--dark);
-    margin-bottom: 2px;
+    color: #475569;
     font-weight: 800;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
 }
-.option-btn .text-box p {
+.fix-option-btn h4 {
+    font-size: 1rem;
+    color: #0f172a;
+    font-weight: 700;
+    margin-bottom: 2px;
+}
+.fix-option-btn p {
     font-size: 0.8rem;
     color: #64748b;
-    font-weight: 600;
+    font-weight: 500;
 }
 
-/* Feedback Alert Block */
+/* Space Engine Feedback Notification Banner */
 .feedback-shelf {
-    background: var(--panel-bg);
-    padding: 16px 24px;
-    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid #334155;
+    padding: 14px;
+    border-radius: 14px;
     text-align: center;
-    font-weight: 700;
-    font-size: 1rem;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-    opacity: 0;
-    transition: opacity 0.2s ease;
+    color: #94a3b8;
+    font-weight: 600;
+    font-size: 0.95rem;
 }
-.feedback-shelf.visible { opacity: 1; }
-.feedback-shelf.success { border-left: 8px solid var(--success); color: #047857; background: #ecfdf5; }
-.feedback-shelf.error { border-left: 8px solid var(--danger); color: #b91c1c; background: #fef2f2; }
+.feedback-shelf.success { border-color: var(--success-green); color: var(--success-green); }
+.feedback-shelf.error { border-color: var(--danger-red); color: var(--danger-red); }
 
-/* Control Buttons */
+/* Core Operations Button styles */
 .action-btn {
-    padding: 14px 36px;
+    padding: 14px 40px;
     border: none;
     border-radius: 35px;
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    background: linear-gradient(135deg, var(--primary-neon), var(--accent-purple));
     color: white;
     font-size: 1.1rem;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 6px 18px rgba(236,72,153,0.3);
+    box-shadow: 0 6px 20px rgba(56, 189, 248, 0.3);
     transition: all 0.2s ease;
 }
-.action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(236,72,153,0.4); }
+.action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(56, 189, 248, 0.45); }
 
 .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<div class="bg-particles" id="studioBg"></div>
+<div class="bg-particles" id="spaceStarsContainer"></div>
 
 <div id="splash">
     <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'">
@@ -271,73 +283,73 @@ body.game-mode .bg-particles { display: block; }
 
     <div id="introView" class="intro-card">
         <img src="assets/innovine-logo.png" alt="Logo" style="max-width:140px; margin-bottom:15px;" onerror="this.style.display='none'">
-        <h1><span>MULTIMEDIA SLIDE STUDIO</span></h1>
-        <h2 style="color: #64748b; font-size: 1.1rem; margin-bottom: 24px;">Grade 4 Presentation Creators</h2>
+        <h1><span>FONT-TASTIC RESCUE!</span></h1>
+        <h2 style="color: #64748b; font-size: 1.1rem; margin-bottom: 24px;">PowerPoint Mission Control Lab</h2>
         <p style="text-align: left; line-height: 1.7; color: #475569; margin-bottom: 26px; background: #f1f5f9; padding: 20px; border-radius: 14px; font-size: 0.95rem;">
-            Welcome, Creative Director! Clients are sending requests to fix their PowerPoint slides. A real multimedia presentation uses text, images, animations, and sound to make ideas exciting!
+            <b>Emergency Alert Design Doctor!</b> A malicious computer virus has modified our Mars Rocket presentation slides with awful formatting layout crimes! The astronauts can't read the launch instructions!
             <br><br>
-            Look at the client's problem on the presentation monitor, then click on the perfect <b>Multimedia Tool</b> from your workspace deck to save the day!
+            Examine the broken slides inside the monitor terminal, use your expert PowerPoint knowledge to pick the right design repair tool, and fill up the rocket's fuel cells for liftoff!
         </p>
-        <button class="action-btn" onclick="startGame()">Launch Slide Engine</button>
+        <button class="action-btn" onclick="startGame()">Initiate System Patch</button>
     </div>
 
     <div id="gameView" class="game-layout hidden">
         
-        <div class="top-bar">
-            <div>🎨 Client Request: <span id="slideCount">1</span> / 6</div>
-            <div>⭐ Design Rating: <span id="scoreVal">0</span> Stars</div>
-        </div>
-
-        <div class="slide-canvas">
-            <div class="multimedia-task" id="currentTask">
-                <h2 id="taskTitle">Loading Request...</h2>
-                <p id="taskDesc">Syncing multimedia design project components...</p>
-            </div>
-        </div>
-
-        <div class="feedback-shelf" id="feedbackShelf">Select a tool to modify the active slide deck...</div>
-
-        <div class="options-grid">
-            <div class="option-btn" onclick="checkAnswer(0)">
-                <div class="icon-box" id="icon0">📝</div>
-                <div class="text-box">
-                    <h3 id="optTitle0">Text &amp; Titles</h3>
-                    <p id="optDesc0">Toolbox Option A</p>
-                </div>
-            </div>
-            <div class="option-btn" onclick="checkAnswer(1)">
-                <div class="icon-box" id="icon1">🖼️</div>
-                <div class="text-box">
-                    <h3 id="optTitle1">Images &amp; Graphics</h3>
-                    <p id="optDesc1">Toolbox Option B</p>
-                </div>
-            </div>
-            <div class="option-btn" onclick="checkAnswer(2)">
-                <div class="icon-box" id="icon2">🎬</div>
-                <div class="text-box">
-                    <h3 id="optTitle2">Animations &amp; Actions</h3>
-                    <p id="optDesc2">Toolbox Option C</p>
-                </div>
-            </div>
-            <div class="option-btn" onclick="checkAnswer(3)">
-                <div class="icon-box" id="icon3">🎵</div>
-                <div class="text-box">
-                    <h3 id="optTitle3">Audio &amp; Sounds</h3>
-                    <p id="optDesc3">Toolbox Option D</p>
+        <div class="control-header">
+            <div>🚀 Locked Slide Circuit: <span id="slideCounter">1</span> / 5</div>
+            <div class="fuel-system">
+                <span>🔋 Fuel Status:</span>
+                <div class="fuel-track">
+                    <div class="fuel-fill" id="fuelMeterBar"></div>
                 </div>
             </div>
         </div>
+
+        <div class="stage-arena">
+            <div class="glitched-monitor-frame" style="position: relative; height: 100%;">
+                <div class="glitch-slide-monitor" id="slideCanvas">
+                    <h2 id="slideHeadline" style="margin-bottom:10px; font-weight:800;">Slide Title Label</h2>
+                    <p id="slideParagraph" style="font-weight:600;">Slide details information snippet block layout.</p>
+                </div>
+            </div>
+
+            <div class="workspace-deck">
+                <div class="fix-option-btn" onclick="applyDesignFix(0)">
+                    <div class="badge-num">1</div>
+                    <div>
+                        <h4 id="fixTitle0">Fix Configuration Alpha</h4>
+                        <p id="fixDesc0">Workspace patch option description block.</p>
+                    </div>
+                </div>
+                <div class="fix-option-btn" onclick="applyDesignFix(1)">
+                    <div class="badge-num">2</div>
+                    <div>
+                        <h4 id="fixTitle1">Fix Configuration Beta</h4>
+                        <p id="fixDesc1">Workspace patch option description block.</p>
+                    </div>
+                </div>
+                <div class="fix-option-btn" onclick="applyDesignFix(2)">
+                    <div class="badge-num">3</div>
+                    <div>
+                        <h4 id="fixTitle2">Fix Configuration Gamma</h4>
+                        <p id="fixDesc2">Workspace patch option description block.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="feedback-shelf" id="systemTerminalMessage">Awaiting presentation fix command instructions matrix...</div>
 
     </div>
 
     <div id="finishView" class="intro-card hidden">
-        <h1 style="font-size:2.2rem; margin-bottom:15px;">🎉 Studio Portfolio Finalized!</h1>
-        <p style="font-size:1.1rem; color:#475569; line-height:1.7; margin-bottom:15px;" id="victoryMsg">
-            Stellar job! You customized slides with headings, embedded multimedia clips, triggered sound effects, and animated components beautifully.
+        <h1 style="font-size:2.2rem; margin-bottom:15px;" id="endHeader">🚀 Rocket Liftoff Confirmed!</h1>
+        <p style="font-size:1.1rem; color:#475569; line-height:1.7; margin-bottom:15px;" id="victoryMessage">
+            Outstanding slide repair maneuvers! The rocket crew read your beautifully reformatted slides effortlessly and zoomed straight past orbit safely!
         </p>
-        <div style="font-size:2rem; font-weight:800; color:var(--primary); margin-bottom:20px;" id="finalScoreBox">Final Score: 0 / 6</div>
-        <div style="font-size:4.2rem; margin-bottom:24px; letter-spacing: 10px;">🖥️✨🖼️🔊</div>
-        <button class="action-btn" onclick="restartGame()">Design Next Project</button>
+        <div style="font-size:2rem; font-weight:800; color:var(--accent-purple); margin-bottom:20px;" id="finalFuelBox">Fuel Cells: 0%</div>
+        <div style="font-size:4.5rem; margin-bottom:24px; animation: bounce 2s infinite;" id="rocketEmoji">🚀🌌🛸</div>
+        <button class="action-btn" onclick="restartMission()">Repair Alternative Deck</button>
     </div>
 
 </div>
@@ -347,205 +359,234 @@ body.game-mode .bg-particles { display: block; }
 <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
 
 <script>
-/* Floating Shape Background System */
+/* Digital Starfield Background Particles Particle Vector Engine */
 try {
-    const bg = document.getElementById("studioBg");
-    for(let i=0; i<15; i++) {
-        let s = document.createElement("div");
-        s.classList.add("shape");
-        s.style.left = Math.random()*100 + "%";
-        s.style.top = Math.random()*100 + "%";
-        s.style.animationDuration = (Math.random()*6+8) + "s";
-        s.style.animationDelay = Math.random()*2 + "s";
-        s.style.width = (Math.random()*20+15) + "px";
-        s.style.height = s.style.width;
-        if(i % 2 === 0) s.style.borderRadius = "50%"; // Mix of circles and squares
-        bg.appendChild(s);
+    const starField = document.getElementById("spaceStarsContainer");
+    for(let i=0; i<30; i++) {
+        let star = document.createElement("div");
+        star.classList.add("star");
+        star.style.left = Math.random()*100 + "%";
+        star.style.top = Math.random()*100 + "%";
+        star.style.animationDuration = (Math.random()*4+5) + "s";
+        star.style.animationDelay = Math.random()*2 + "s";
+        let targetSize = Math.random()*4+2;
+        star.style.width = targetSize + "px";
+        star.style.height = targetSize + "px";
+        starField.appendChild(star);
     }
 } catch(e){}
 
-/* Automatic 5-Second Pure White Splash Screen Driver */
+/* Required 5-Second Pure White Delay Transitions Sequencer Framework */
 setTimeout(() => {
     document.getElementById("splash").style.setProperty("display", "none", "important");
     document.body.classList.add("game-mode");
     document.getElementById("gameApp").classList.remove("hidden");
 }, 5000);
 
-/* Sound Handler Component */
+/* Sound Driver Fallback Engine Interface */
 function playAudioSafely(id) {
     try {
-        const audio = document.getElementById(id);
-        if (audio) {
-            audio.currentTime = 0;
-            audio.play().catch(err => {
-                console.log("Audio play blocked by browser sandbox policy.");
-            });
+        const sound = document.getElementById(id);
+        if (sound) {
+            sound.currentTime = 0;
+            sound.play().catch(e => console.log("Audio pipeline muted by context container framework handles."));
         }
     } catch(e) {}
 }
 
-/* 4-Choice Presentation Concept Question Dataset Matrix */
-const studioTasks = [
+/* Design Crime Question Dataset Matrix Arrays */
+const missionScenarios = [
     {
-        title: "❓ Problem: The Invisible Message",
-        desc: "The client says: 'People are looking at our blank slide and don't know what our science project is named!' What should we add to show words clearly?",
-        correctIndex: 0, // Text & Titles
-        explain: "Awesome! We use Titles and Text Boxes to write words, sentences, and main ideas on slides.",
+        headline: "WELCOME TO MARS!",
+        paragraph: "Learn about the red planet atmosphere parameters and space module conditions.",
+        crimeClass: "crime-contrast",
+        correctIndex: 1, // Fix Background Contrast
+        explain: "Great fix! Light yellow words on a white layout are impossible to read. High contrast backgrounds keep text highly legible!",
         options: [
-            { title: "Text & Titles", desc: "Add titles or text fields", icon: "📝" },
-            { title: "Images & Graphics", desc: "Insert background vectors", icon: "🖼️" },
-            { title: "Animations", desc: "Make elements fly around", icon: "🎬" },
-            { title: "Audio & Sounds", desc: "Play background songs", icon: "🎵" }
+            { title: "Shrink Font Scale", desc: "Decrease font size down to 8pt value" },
+            { title: "Fix Contrast Color", desc: "Switch to Dark Blue text on White background" },
+            { title: "Apply Shimmer Sound", desc: "Play loud explosion noise trigger clips" }
         ]
     },
     {
-        title: "❓ Problem: The Boring Tiger Slide",
-        desc: "The client says: 'Our slide about wild tigers only has written paragraphs. It looks too boring for 4th graders!' How can we show what a tiger actually looks like?",
-        correctIndex: 1, // Images & Graphics
-        explain: "Fantastic! Adding Images, Photographs, and Shapes brings life and color to a presentation.",
+        headline: "⚠️ ENGINE DANGER WARNING SYSTEM",
+        paragraph: "If the nuclear fuel grid expands past threshold lines immediately clear the exhaust vector chambers to secure the hull infrastructure nodes.",
+        crimeClass: "crime-size",
+        correctIndex: 0, // Make Text Large
+        explain: "Brilliant! Important warning alerts on slides should always use Large, clear headings so everyone sees them instantly!",
         options: [
-            { title: "Audio Tracks", desc: "Add sound elements", icon: "🎵" },
-            { title: "Images & Graphics", desc: "Insert photos or clip art", icon: "🖼️" },
-            { title: "Text Box Layout", desc: "Write more massive words", icon: "📝" },
-            { title: "Slide Triggers", desc: "Create blank layouts", icon: "⚙️" }
+            { title: "Maximize Text Font", desc: "Increase slide text sizing up to 36pt" },
+            { title: "Add 4 More Pictures", desc: "Crowd the frame space with vector stickers" },
+            { title: "Convert to Lavender Theme", desc: "Change canvas borders to pastel colors" }
         ]
     },
     {
-        title: "❓ Problem: Sudden Pop-Up Objects",
-        desc: "The client says: 'When our slide opens, all 5 answers jump onto the screen instantly! We want them to slide in one-by-one when we click the mouse!'",
-        correctIndex: 2, // Animations & Actions
-        explain: "Brilliant work! Animations control how objects enter or move across your presentation screen.",
+        headline: "🚀 Emergency Evacuation Protocol Guide Procedures Checklist Matrix Systems Module",
+        paragraph: "Step 1: Unhook connection line belts. Step 2: Grab primary oxygen helmet tanks from overhead secondary storage bins. Step 3: Run directly to airlock hatch levers. Step 4: Secure physical safety seals. Step 5: Press illuminated green cockpit escape triggers right away.",
+        crimeClass: "crime-crowd",
+        correctIndex: 2, // Bullet Points Layout
+        explain: "Fantastic! Huge walls of squished paragraph rows are terrifying to read. Bulleted short lists organize layout information cleanly!",
         options: [
-            { title: "Color Themes", desc: "Change canvas styles", icon: "🎨" },
-            { title: "Audio Files", desc: "Embed recorded speech", icon: "🔊" },
-            { title: "Animations & Actions", desc: "Apply Fly In or Fade effects", icon: "🎬" },
-            { title: "WordArt Tool", desc: "Make decorative text", icon: "🔤" }
+            { title: "Add Crazy Text Rotation", desc: "Spin all paragraph blocks upside down" },
+            { title: "Hide the Heading Title", desc: "Remove top presentation label text blocks" },
+            { title: "Apply Bulleted List Fix", desc: "Break information down into short Bullet Points" }
         ]
     },
     {
-        title: "❓ Problem: The Quiet Volcano Video",
-        desc: "The client says: 'We added a cool video of an erupting volcano, but the classroom cannot hear the rumbling rocks explosion sound!' What multimedia element is missing?",
-        correctIndex: 3, // Audio & Sounds
-        explain: "Spot on! Audio elements like music, recordings, and sound effects make presentation layers acoustic and fun.",
+        headline: "👽 ALIEN RADAR DATA TRANSMISSION",
+        paragraph: "Deep signal patterns detected moving through asteroid belt quadrant 7.",
+        crimeClass: "crime-font",
+        correctIndex: 0, // Clear Readable Font Style
+        explain: "Perfect work! Wild, jagged decorative fonts are fine for art, but standard clean fonts like Arial or Calibri are best for regular presentation text reading!",
         options: [
-            { title: "Font Size Panel", desc: "Increase item character scales", icon: "🔚" },
-            { title: "Shapes Generator", desc: "Draw polygon structures", icon: "⬡" },
-            { title: "Page Numbers", desc: "Label index margins", icon: "🔢" },
-            { title: "Audio & Sounds", desc: "Turn up volume and embed mp3 sound", icon: "🎵" }
+            { title: "Change to Arial Font", desc: "Apply a clean, clear, standard font face" },
+            { title: "Add Rainbow Glitter", desc: "Make text flash 12 flashing glowing color shifts" },
+            { title: "Delete Heading Labels", desc: "Clear titles from the presentation tracker frame" }
         ]
     },
     {
-        title: "❓ Problem: Turning the Page Smoothly",
-        desc: "The client says: 'Going from Slide 1 to Slide 2 is too rough! We want Slide 1 to gently disappear like a bubble popping when we move forward.'",
-        correctIndex: 2, // Transitions (Under Animations category)
-        explain: "Perfect choice! Transitions are special motion effects that play when you move from one slide to another.",
+        headline: "THANK YOU CREW!",
+        paragraph: "Safe travels back to planet Earth base camp.",
+        crimeClass: "crime-contrast", // Bad starting appearance context
+        correctIndex: 1, // Insert Multimedia Clip
+        explain: "Splendid choice! A great closing slide looks wonderful when adding an Image, Graphic, or Illustration asset alongside text labels!",
         options: [
-            { title: "Spell Checker", desc: "Fix wrong text letters", icon: "🔠" },
-            { title: "Slide Transitions", desc: "Apply Morph, Fade, or Wipe motion", icon: "🎬" },
-            { title: "Image Filters", desc: "Make pictures brighter", icon: "🖼️" },
-            { title: "Save Command", desc: "Write project file onto storage", icon: "💾" }
-        ]
-    },
-    {
-        title: "❓ Problem: The Smart Chart Project",
-        desc: "The client says: 'We have a long list of numbers showing how much rain fell this week. It's confusing! We need a colorful picture chart to compare it instantly.'",
-        correctIndex: 1, // Images & Graphics (Charts/SmartArt)
-        explain: "Spectacular! PowerPoint lets you add Charts and Diagrams to turn numbers into clear, easy-to-read graphics.",
-        options: [
-            { title: "Microphone Input", desc: "Record audio messages", icon: "🎤" },
-            { title: "Hyperlink Node", desc: "Attach internet website tags", icon: "🌐" },
-            { title: "Charts & SmartArt", desc: "Insert visual bars and graphics", icon: "🖼️" },
-            { title: "Paragraph Bullets", desc: "Put dots before text items", icon: "•" }
+            { title: "Duplicate Text Paragraphs", desc: "Copy the same words 4 extra times" },
+            { title: "Insert Space Graphics", desc: "Add a crisp, high-quality picture illustration of Earth" },
+            { title: "Turn Text Sizing Tiny", desc: "Make the closing letters invisible to read" }
         ]
     }
 ];
 
-let gameIndex = 0;
-let pointsScore = 0;
-let isWaiting = false;
+let roundIndex = 0;
+let correctFixesCount = 0;
+let blockInteraction = false;
 
 function startGame() {
     playAudioSafely("correctSound");
     document.getElementById("introView").classList.add("hidden");
     document.getElementById("gameView").classList.remove("hidden");
-    gameIndex = 0;
-    pointsScore = 0;
-    showTask();
+    roundIndex = 0;
+    correctFixesCount = 0;
+    loadMissionSlide();
 }
 
-function showTask() {
-    isWaiting = false;
-    document.getElementById("slideCount").innerText = gameIndex + 1;
-    document.getElementById("scoreVal").innerText = pointsScore;
+function loadMissionSlide() {
+    blockInteraction = false;
+    document.getElementById("slideCounter").innerText = roundIndex + 1;
     
-    const currentQuestion = studioTasks[gameIndex];
-    document.getElementById("taskTitle").innerText = currentQuestion.title;
-    document.getElementById("taskDesc").innerText = currentQuestion.desc;
+    // Refresh visual progress bar calculated cleanly
+    let fuelPercentage = (correctFixesCount / missionScenarios.length) * 100;
+    document.getElementById("fuelMeterBar").style.width = fuelPercentage + "%";
     
-    // Distribute content into the 4 option buttons dynamically
-    for (let i = 0; i < 4; i++) {
-        const optData = currentQuestion.options[i];
-        document.getElementById(`optTitle${i}`).innerText = optData.title;
-        document.getElementById(`optDesc${i}`).innerText = optData.desc;
-        document.getElementById(`icon${i}`).innerText = optData.icon;
+    const data = missionScenarios[roundIndex];
+    
+    // Set text elements inside simulated PPT slide node canvas frame
+    const canvas = document.getElementById("slideCanvas");
+    const headline = document.getElementById("slideHeadline");
+    const para = document.getElementById("slideParagraph");
+    
+    headline.innerText = data.headline;
+    para.innerText = data.paragraph;
+    
+    // Reset canvas system styles and apply current design crime class
+    canvas.className = "glitch-slide-monitor " + data.crimeClass;
+    
+    // Pull multi-choice options blocks texts mapping loops arrays
+    for (let i = 0; i < 3; i++) {
+        document.getElementById(`fixTitle${i}`).innerText = data.options[i].title;
+        document.getElementById(`fixDesc${i}`).innerText = data.options[i].desc;
     }
     
-    const shelf = document.getElementById("feedbackShelf");
-    shelf.className = "feedback-shelf";
-    shelf.innerText = "Study the slide deck request above and choose the correct tool option!";
+    const terminal = document.getElementById("systemTerminalMessage");
+    terminal.className = "feedback-shelf";
+    terminal.innerText = "Scan the monitor frame above and trigger a presentation formatting repair tool!";
 }
 
-function checkAnswer(chosenIndex) {
-    if (isWaiting) return;
-    isWaiting = true;
+function applyDesignFix(chosenIndex) {
+    if (blockInteraction) return;
+    blockInteraction = true;
     
-    const currentQuestion = studioTasks[gameIndex];
-    const shelf = document.getElementById("feedbackShelf");
+    const data = missionScenarios[roundIndex];
+    const terminal = document.getElementById("systemTerminalMessage");
+    const canvas = document.getElementById("slideCanvas");
     
-    if (chosenIndex === currentQuestion.correctIndex) {
-        pointsScore++;
-        document.getElementById("scoreVal").innerText = pointsScore;
+    if (chosenIndex === data.correctIndex) {
+        correctFixesCount++;
+        let currentFuel = (correctFixesCount / missionScenarios.length) * 100;
+        document.getElementById("fuelMeterBar").style.width = currentFuel + "%";
+        
         playAudioSafely("correctSound");
-        shelf.className = "feedback-shelf visible success";
-        shelf.innerHTML = `🌟 ${currentQuestion.explain}`;
+        
+        // Instant visual confirmation styling fix on the slide canvas monitor frame!
+        canvas.className = "glitch-slide-monitor"; 
+        canvas.style.background = "#e0f2fe"; // Clean pleasant blue sky color style patch
+        canvas.style.color = "#0369a1";
+        canvas.style.fontSize = "1rem";
+        canvas.style.fontFamily = "sans-serif";
+        canvas.style.transform = "none";
+        
+        terminal.className = "feedback-shelf success";
+        terminal.innerHTML = `🛡️ System Patched: ${data.explain}`;
     } else {
         playAudioSafely("wrongSound");
-        shelf.className = "feedback-shelf visible error";
-        shelf.innerHTML = `⚠️ Draft Correction Needed! That element doesn't solve this specific multimedia bug.`;
+        
+        // Add shaking visual indication response to bad entries
+        canvas.style.transform = "scale(0.95)";
+        setTimeout(() => canvas.style.transform = "scale(1)", 150);
+        
+        terminal.className = "feedback-shelf error";
+        terminal.innerHTML = `⚠️ Engine Mismatch Splutter! That action didn't solve the active presentation design crime. Try again on the next node circuitry!`;
     }
     
-    // Pause for 3.5 seconds so students read the feedback description cleanly
+    // Hold frame lock for 4 seconds allowing Grade 4 reading tracks completion paces
     setTimeout(() => {
-        gameIndex++;
-        if (gameIndex < studioTasks.length) {
-            showTask();
+        // Clear runtime manual inline fixes styling rules injected above
+        canvas.style.background = "";
+        canvas.style.color = "";
+        canvas.style.fontSize = "";
+        canvas.style.fontFamily = "";
+        canvas.style.transform = "";
+        
+        roundIndex++;
+        if (roundIndex < missionScenarios.length) {
+            loadMissionSlide();
         } else {
-            endGame();
+            concludeMission();
         }
-    }, 3500);
+    }, 4000);
 }
 
-function endGame() {
+function concludeMission() {
     playAudioSafely("clapSound");
     document.getElementById("gameView").classList.add("hidden");
     document.getElementById("finishView").classList.remove("hidden");
-    document.getElementById("finalScoreBox").innerText = `Final Rating: ${pointsScore} / ${studioTasks.length} Stars`;
     
-    const msg = document.getElementById("victoryMsg");
-    if (pointsScore >= 5) {
-        msg.innerText = "🏆 Master Media Architect! You balanced text structures, graphical objects, action timers, and sound blocks flawlessly like a professional designer!";
+    let endPercentage = Math.round((correctFixesCount / missionScenarios.length) * 100);
+    document.getElementById("finalFuelBox").innerText = `Fuel Cells Charged: ${endPercentage}%`;
+    
+    const header = document.getElementById("endHeader");
+    const msg = document.getElementById("victoryMessage");
+    const emoji = document.getElementById("rocketEmoji");
+    
+    if (correctFixesCount >= 4) {
+        header.innerText = "🚀 Rocket Liftoff Successful!";
+        msg.innerText = "🏆 Master Design Commander! Your formatting adjustments fixed contrast visibility, layout sizing rules, and element spacing perfectly. The mission is salvaging deep space tracking databases cleanly!";
+        emoji.innerText = "🚀🌟🪐🛸";
     } else {
-        msg.innerText = "👍 Slide Assistant! You have a solid grasp of presentation builders, but keep practicing: Text tells the facts, Images show the action, Animations create motion, and Audio builds atmosphere!";
+        header.innerText = "💥 Engine Power Insufficient!";
+        msg.innerText = "👍 Mission Completed! The rocket launched but ran low on power in upper stratospheres. Remember: Presentations need clear dark text on bright slides, clean standard fonts, and neat bullet lists to succeed!";
+        emoji.innerText = "🚀💨⚠️";
     }
 }
 
-function restartGame() {
+function restartMission() {
     playAudioSafely("correctSound");
     document.getElementById("finishView").classList.add("hidden");
     document.getElementById("gameView").classList.remove("hidden");
-    gameIndex = 0;
-    pointsScore = 0;
-    showTask();
+    roundIndex = 0;
+    correctFixesCount = 0;
+    loadMissionSlide();
 }
 </script>
 </body>

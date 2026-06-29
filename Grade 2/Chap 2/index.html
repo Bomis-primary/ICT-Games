@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mission: The Missing Innovine Mascot!</title>
     <style>
-        /* CSS styling for a fun, arcade-like educational interface */
+        /* General Setup */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0f4f8;
@@ -15,6 +15,51 @@
             flex-direction: column;
             align-items: center;
             color: #333;
+            overflow-x: hidden;
+        }
+
+        /* 5-Second Splash Screen Overlay */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
+
+        #splash-screen img {
+            max-width: 300px;
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        #splash-screen h2 {
+            color: #1e3a8a;
+            font-size: 28px;
+            margin: 0;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Main Game Layout (Hidden initially behind splash screen) */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            opacity: 0;
+            transition: opacity 1s ease;
         }
 
         header {
@@ -32,7 +77,7 @@
         }
 
         .logo-area img {
-            height: 60px; /* Adjust based on your actual Innovine logo dimensions */
+            height: 60px;
             object-fit: contain;
         }
 
@@ -54,7 +99,7 @@
             max-width: 900px;
         }
 
-        /* Sidebar Instructions & Controls */
+        /* Instructions & UI Panel */
         .sidebar {
             flex: 1;
             background-color: #ffffff;
@@ -85,7 +130,6 @@
             line-height: 1.4;
         }
 
-        /* Color Palette & Tool styling */
         .controls-group {
             margin-top: 15px;
         }
@@ -121,7 +165,7 @@
             border-color: #111827;
         }
 
-        /* Standard Innovine Brand Palette colors simulated here */
+        /* Color profiles based on corporate asset tones */
         #color-blue { background-color: #0284c7; }
         #color-orange { background-color: #f97316; }
         #color-green { background-color: #22c55e; }
@@ -143,7 +187,7 @@
             background-color: #059669;
         }
 
-        /* Canvas Window Design simulating MS Paint */
+        /* MS Paint Style Canvas Viewport */
         .canvas-area {
             flex: 2;
             background-color: #e5e7eb;
@@ -175,55 +219,75 @@
 </head>
 <body>
 
-    <header>
-        <div class="title-area">
-            <h1>🎨 Mission: The Missing Innovine Mascot</h1>
-            <p>Introduction to MS Paint</p>
-        </div>
-        <div class="logo-area">
-            <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/150x60?text=Innovine+Logo';">
-        </div>
-    </header>
-
-    <div class="game-container">
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/250x100?text=Innovine+Logo';">
         
-        <div class="sidebar">
-            <div>
-                <div class="mission-box" id="step-box">
-                    <h3 id="step-title">🚀 Level 1: Start Engine</h3>
-                    <p id="step-text">Click inside the white canvas drawing box to wake up your digital pencil and make your first sound!</p>
-                </div>
+    </div>
 
-                <div class="controls-group">
-                    <span class="label">Innovine Power Palette:</span>
-                    <div class="palette">
-                        <button class="color-btn active" id="color-blue" onclick="changeColor('#0284c7', this)"></button>
-                        <button class="color-btn" id="color-orange" onclick="changeColor('#f97316', this)"></button>
-                        <button class="color-btn" id="color-green" onclick="changeColor('#22c55e', this)"></button>
+    <div class="main-content" id="game-workspace">
+        <header>
+            <div class="title-area">
+                <h1>🎨 Mission: The Missing Innovine Mascot</h1>
+                <p>Introduction to MS Paint </p>
+            </div>
+                    </header>
+
+        <div class="game-container">
+            <div class="sidebar">
+                <div>
+                    <div class="mission-box" id="step-box">
+                        <h3 id="step-title">🚀 Level 1: Start Engine</h3>
+                        <p id="step-text">Click inside the white canvas drawing box to wake up your digital pencil and make your first sound!</p>
+                    </div>
+
+                    <div class="controls-group">
+                        <span class="label">Innovine Power Palette:</span>
+                        <div class="palette">
+                            <button class="color-btn active" id="color-blue" onclick="changeColor('#0284c7', this)"></button>
+                            <button class="color-btn" id="color-orange" onclick="changeColor('#f97316', this)"></button>
+                            <button class="color-btn" id="color-green" onclick="changeColor('#22c55e', this)"></button>
+                        </div>
                     </div>
                 </div>
+
+                <button class="action-btn" id="next-btn" onclick="advanceLevel()">Next Level ➡️</button>
             </div>
 
-            <button class="action-btn" id="next-btn" onclick="advanceLevel()">Next Level ➡️</button>
-        </div>
-
-        <div class="canvas-area">
-            <div class="paint-header">
-                <span>✏️ Pencil Tool Active</span>
-                <span id="canvas-status">Status: Waiting for Artist</span>
+            <div class="canvas-area">
+                <div class="paint-header">
+                    <span>✏️ Pencil Tool Active</span>
+                    <span id="canvas-status">Status: Waiting for Artist</span>
+                </div>
+                <canvas id="paintCanvas" width="500" height="380"></canvas>
             </div>
-            <canvas id="paintCanvas" width="500" height="380"></canvas>
         </div>
     </div>
 
     <script>
+        // Splash Screen Timer Control Loop
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                const workspace = document.getElementById('game-workspace');
+                
+                // Triggers smooth CSS layout transitions
+                splash.style.opacity = '0';
+                splash.style.visibility = 'hidden';
+                workspace.style.opacity = '1';
+                
+                // Welcome Chime Sound
+                setTimeout(() => { playLevelUpSound(); }, 200);
+            }, 5000); // 5000ms = Exactly 5 Seconds
+        });
+
+        // App State Properties
         const canvas = document.getElementById('paintCanvas');
         const ctx = canvas.getContext('2d');
         let isDrawing = false;
         let currentColor = '#0284c7'; 
         let currentLevel = 1;
 
-        // Audio Context setup for synthesising sounds directly safely
+        // Custom Sound Synth Generator Engine
         let audioCtx = null;
         function playTone(freq, type, duration) {
             if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -239,18 +303,18 @@
             osc.stop(audioCtx.currentTime + duration);
         }
 
-        // Sound Triggers for Grade 2 feedback
         function playDrawSound() { playTone(300, 'triangle', 0.1); }
         function playLevelUpSound() {
-            playTone(523.25, 'sine', 0.15); // C5
-            setTimeout(() => playTone(659.25, 'sine', 0.15), 100); // E5
-            setTimeout(() => playTone(783.99, 'sine', 0.3), 200); // G5
+            playTone(523.25, 'sine', 0.15); 
+            setTimeout(() => playTone(659.25, 'sine', 0.15), 100); 
+            setTimeout(() => playTone(783.99, 'sine', 0.3), 200); 
         }
 
-        // Canvas Drawing Physics
+        // Setup Drawing Canvas Defaults
         ctx.lineCap = 'round';
         ctx.lineWidth = 4;
 
+        // Drawing Event Hooks
         canvas.addEventListener('mousedown', (e) => {
             isDrawing = true;
             ctx.beginPath();
@@ -263,7 +327,7 @@
             ctx.lineTo(e.offsetX, e.offsetY);
             ctx.strokeStyle = currentColor;
             ctx.stroke();
-            if(Math.random() < 0.15) playDrawSound(); // Play feedback sound periodically during strokes
+            if(Math.random() < 0.15) playDrawSound(); 
         });
 
         canvas.addEventListener('mouseup', () => {
@@ -272,15 +336,15 @@
         });
         canvas.addEventListener('mouseleave', () => isDrawing = false);
 
-        // Color Management Logic
+        // Color Changer API
         function changeColor(colorHex, buttonElement) {
             currentColor = colorHex;
             document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
             buttonElement.classList.add('active');
-            playTone(440, 'sine', 0.05); // Short click sound
+            playTone(440, 'sine', 0.05); 
         }
 
-        // Gamified Progress Loop Engine
+        // Level Advancing State Machine
         function advanceLevel() {
             currentLevel++;
             const title = document.getElementById('step-title');
@@ -302,7 +366,6 @@
                 btn.innerText = "Start New Session 🔄";
                 btn.style.backgroundColor = '#3b82f6';
             } else {
-                // Reset Game loop
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 currentLevel = 1;
                 title.innerText = "🚀 Level 1: Start Engine";

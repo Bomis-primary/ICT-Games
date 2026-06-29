@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scratch Coding Story - Visual Scripting Lab</title>
+<title>Scratch Coding Safari - Round 1 Master Edition</title>
 <style>
 :root {
     --scratch-orange: #ffab19;
     --scratch-blue: #4c97ff;
     --scratch-purple: #9966ff;
     --scratch-pink: #cf63cf;
+    --scratch-ai: #0fbd8c;
     --workspace-bg: #e0e4ed;
     --studio-dark: #111827;
 }
@@ -63,9 +64,9 @@ body.active-studio {
 
 .main-container {
     width: 95vw;
-    max-width: 1000px;
-    height: 88vh;
-    min-height: 620px;
+    max-width: 1100px;
+    height: 90vh;
+    min-height: 640px;
     z-index: 10;
 }
 
@@ -76,7 +77,7 @@ body.active-studio {
     border-radius: 28px;
     text-align: center;
     box-shadow: 0 25px 60px rgba(0,0,0,0.4);
-    max-width: 620px;
+    max-width: 650px;
     margin: 0 auto;
     border: 3px solid #e2e8f0;
 }
@@ -114,10 +115,30 @@ body.active-studio {
     border: 1px solid #374151;
 }
 
+/* Green Flag Image Button Mockup */
+.green-flag-btn {
+    background: #4c97ff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 20px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 10px rgba(76,151,255,0.3);
+}
+
+.green-flag-img {
+    width: 20px;
+    height: 20px;
+}
+
 /* Workbench Splits */
 .scratch-workbench {
     display: grid;
-    grid-template-columns: 0.9fr 1.1fr 1fr;
+    grid-template-columns: 1fr 1fr 1.1fr;
     gap: 15px;
     min-height: 0;
 }
@@ -145,41 +166,42 @@ body.active-studio {
 
 /* Scratch Custom Blocks CSS Styling */
 .scratch-block {
-    padding: 12px 16px;
+    padding: 12px 14px;
     color: white;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     border-radius: 8px;
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     position: relative;
-    transition: transform 0.2s, opacity 0.2s;
+    transition: transform 0.15s, opacity 0.15s;
 }
 .scratch-block:hover {
-    transform: scale(1.03);
+    transform: scale(1.02);
 }
 
-/* Blocks categorized exactly like Scratch */
-.block-events { background: var(--scratch-orange); border-bottom: 4px solid #d98200; border-radius: 16px 16px 8px 8px; } /* Hat shape */
+/* Blocks categories matched perfectly to Scratch Rules */
+.block-events { background: var(--scratch-orange); border-bottom: 4px solid #d98200; border-radius: 16px 16px 8px 8px; display: flex; align-items: center; gap: 5px; }
 .block-motion { background: var(--scratch-blue); border-bottom: 4px solid #1a66cc; }
 .block-looks { background: var(--scratch-purple); border-bottom: 4px solid #7740e6; }
 .block-sound { background: var(--scratch-pink); border-bottom: 4px solid #b342b3; }
+.block-ai { background: var(--scratch-ai); border-bottom: 4px solid #0b8f6a; }
 
-/* Script Target Area drop dock */
+/* Workspace Editor Space */
 .script-editor-dock {
     background: var(--workspace-bg);
     border: 3px dashed #cbd5e1;
     border-radius: 16px;
-    padding: 15px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 2px; /* Blocks stack tight in Scratch! */
-    min-height: 200px;
+    gap: 2px;
+    min-height: 240px;
 }
 
 .script-editor-dock .scratch-block {
     cursor: default;
-    animation: slideInBlock 0.25s ease;
+    animation: slideInBlock 0.2s ease;
 }
 
 @keyframes slideInBlock {
@@ -187,7 +209,7 @@ body.active-studio {
     100% { transform: translateY(0); opacity: 1; }
 }
 
-/* Live Interactive Stage Window Canvas */
+/* Live Stage Interactive Preview Panel */
 .stage-canvas {
     background: #ffffff;
     border: 4px solid #4b5563;
@@ -209,13 +231,14 @@ body.active-studio {
     z-index: 5;
 }
 
-/* Live Code Action Animations */
-.action-move { transform: translateX(40px); }
-.action-dance { animation: spriteDance 0.5s infinite alternate; }
+/* Animation triggers */
+.action-move { transform: translateX(45px); }
+.action-jump { transform: translateY(-30px) translateX(45px); }
+.action-spin { animation: fullSpin 0.6s linear; }
 
-@keyframes spriteDance {
-    0% { transform: translateX(40px) translateY(0) rotate(0deg); }
-    100% { transform: translateX(40px) translateY(-20px) rotate(15deg); }
+@keyframes fullSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 .speech-bubble {
@@ -226,9 +249,8 @@ body.active-studio {
     border-radius: 16px;
     font-weight: 700;
     color: #1f2937;
-    top: 30px;
+    top: 25px;
     font-size: 1rem;
-    animation: popBubble 0.3s ease;
 }
 .speech-bubble::after {
     content: '';
@@ -243,14 +265,31 @@ body.active-studio {
     width: 0;
 }
 
+/* Assist Box Framework Overlay */
+.assist-overlay-card {
+    background: #fff3cd;
+    border: 2px solid #ffeba2;
+    border-radius: 12px;
+    padding: 10px;
+    margin-top: auto;
+}
+.assist-title {
+    font-size: 0.8rem;
+    font-weight: bold;
+    color: #856404;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+}
+
 .toast-tray {
     background: rgba(17, 24, 39, 0.95);
     border: 1px solid #374151;
     color: #9ca3af;
-    padding: 14px;
+    padding: 12px;
     border-radius: 12px;
     text-align: center;
     font-weight: 600;
+    font-size: 0.95rem;
 }
 
 .btn-action {
@@ -266,17 +305,6 @@ body.active-studio {
     transition: transform 0.2s;
 }
 .btn-action:hover { transform: translateY(-2px); }
-.btn-clear {
-    background: #ef4444;
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 0.8rem;
-    margin-top: auto;
-}
 
 .hidden { display: none !important; }
 </style>
@@ -291,58 +319,68 @@ body.active-studio {
 
     <div id="menuView" class="panel-card">
         <img src="assets/innovine-logo.png" alt="Innovine" style="max-width: 140px; margin-bottom: 15px;" onerror="this.style.display='none'">
-        <h1>The Sprite's Magic Script</h1>
-        <h3 style="color:#64748b; margin-bottom: 20px;">Chapter 7: Interactive Scratch Laboratory</h3>
+        <h1>Scratch Scripting Odyssey</h1>
+        <h3 style="color:#64748b; margin-bottom: 20px;">Round 1: Core Logic & AI Extensions Lab</h3>
         <p>
-            Oh no! Our friendly Scratch Sprite is stuck outside the secret coding portal! To open it, you must click on the blocks to build a flawless block script in the exact logical order. Ready to code?
+            Welcome, Young Programmer! Help our friendly sprite navigate 4 distinct challenges. Tap palette blocks in chronological order to build logic stacks using Motion, Looks, Sounds, and AI triggers!
         </p>
-        <button class="btn-action" onclick="launchScratchLab()">Enter Block Studio</button>
+        <button class="btn-action" onclick="launchGameRound()">Start Round 1</button>
     </div>
 
     <div id="gameView" class="game-grid hidden">
         <div class="status-bar">
-            <div>🐱 Scratch Story Mode</div>
-            <button class="btn-action" style="padding: 6px 20px; font-size:0.9rem;" onclick="runCompiledScript()">▶ Run Script</button>
+            <div>🚀 Game Challenge: <span id="gameLevelTracker">1</span> / 4</div>
+            <button class="green-flag-btn" onclick="executeCurrentScript()">
+                <svg class="green-flag-img" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 4V22M4 5C7.5 2 10.5 8 14 5C17.5 2 20 5 20 5V14C20 14 17.5 11 14 14C10.5 17 7.5 11 4 14" stroke="#10b981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Run Script
+            </button>
         </div>
 
         <div class="scratch-workbench">
-            <div class="column-panel">
+            <div class="column-panel" id="palettePanel">
                 <div class="panel-title">Block Palette</div>
-                <div class="scratch-block block-motion" id="palette-motion" onclick="addBlockToStack('motion', '👟 Move 10 Steps')">👟 Move 10 Steps</div>
-                <div class="scratch-block block-events" id="palette-events" onclick="addBlockToStack('events', '🏁 When Green Flag Clicked')">🏁 When Green Flag Clicked</div>
-                <div class="scratch-block block-sound" id="palette-sound" onclick="addBlockToStack('sound', '🔊 Play Sound Meow')">🔊 Play Sound Meow</div>
-                <div class="scratch-block block-looks" id="palette-looks" onclick="addBlockToStack('looks', '💬 Say Hello!')">💬 Say Hello!</div>
+                <div class="scratch-block block-events" id="btn-events" onclick="pushBlock('events', '🏁 When Green Flag Clicked')">
+                    <svg style="width:14px; height:14px;" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M4 4V22M4 5C7.5 2 10.5 8 14 5C17.5 2 20 5 20 5V14C20 14 17.5 11 14 14C10.5 17 7.5 11 4 14" stroke="white" stroke-width="2"/></svg>
+                    When Green Flag Clicked
+                </div>
+                <div class="scratch-block block-motion" id="btn-motion" onclick="pushBlock('motion', '👟 Move 15 Steps')">👟 Move 15 Steps</div>
+                <div class="scratch-block block-looks" id="btn-looks" onclick="pushBlock('looks', '💬 Say Ready Player One!')">💬 Say Ready Player One!</div>
+                <div class="scratch-block block-sound" id="btn-sound" onclick="pushBlock('sound', '🔊 Play Sound Laser')">🔊 Play Sound Laser</div>
+                <div class="scratch-block block-ai" id="btn-ai" onclick="pushBlock('ai', '🤖 If Face Detected -> Jump')">🤖 If Face Detected -> Jump</div>
             </div>
 
             <div class="column-panel" style="background:#f3f4f6;">
-                <div class="panel-title">Script Editor Workspace</div>
-                <div class="script-editor-dock" id="scriptWorkspace">
-                    </div>
-                <button class="btn-clear" onclick="clearWorkspaceStack()">Clear Script</button>
+                <div class="panel-title">Script Workspace Editor</div>
+                <div class="script-editor-dock" id="editorWorkspaceWindow"></div>
+                
+                <div class="assist-overlay-card hidden" id="correctionSystemHUD">
+                    <div class="assist-title">💡 System Code Assistant</div>
+                    <div style="font-size:0.85rem; color:#66511a; font-weight:600;" id="correctSolutionText">The correct configuration order is...</div>
+                </div>
             </div>
 
             <div class="column-panel" style="padding:0; overflow:hidden;">
-                <div class="stage-canvas" id="stageCanvasFrame" style="height:100%;">
-                    <div class="speech-bubble hidden" id="spriteBubble">Hello!</div>
-                    <div class="sprite-actor" id="catSprite">🐱</div>
-                    <div style="position:absolute; bottom:10px; font-size:0.75rem; font-weight:700; color:#9ca3af;">PROJECT STAGE VIEW</div>
+                <div class="stage-canvas">
+                    <div class="speech-bubble hidden" id="bubbleText">Hello!</div>
+                    <div class="sprite-actor" id="spriteObject">🤖</div>
+                    <div style="position:absolute; bottom:10px; font-size:0.75rem; font-weight:700; color:#9ca3af;">PROJECT PREVIEW STAGE</div>
                 </div>
             </div>
         </div>
 
-        <div class="toast-tray" id="consoleNotice">Click blocks from the Palette to build a complete script! (Remember: Scripts always begin with a Hat block!)</div>
+        <div class="toast-tray" id="consoleOutputNotice">Click blocks to stack them up in logical order starting with the Events Hat block!</div>
     </div>
 
     <div id="endView" class="panel-card hidden">
-        <img src="assets/innovine-logo.png" alt="Innovine" style="max-width: 110px; margin-bottom: 10px;" onerror="this.style.display='none'">
-        <h1 style="color:#16a34a;">✨ Welcome to Code Mastery!</h1>
-        <p id="endSummaryDesc" style="margin-top: 15px; font-size: 1.15rem; color: #475569; line-height:1.6;">
-            Sensational job, Super Coder! You arranged the logic blocks flawlessly and brought the sprite to life. Your logic skills are outstanding! Keep exploring, keep creating, and remember that every great game starts with a single line of script!
+        <img src="assets/innovine-logo.png" alt="Innovine" style="max-width: 120px; margin-bottom: 10px;" onerror="this.style.display='none'">
+        <h1 style="color:#10b981;">✨ Welcome to Code Master League!</h1>
+        <p style="margin-top: 15px; font-size: 1.15rem; color: #475569; line-height:1.6;">
+            Sensational effort! You completed Round 1 with excellence, managing Events, Motion, Looks, Sounds, and AI blocks together perfectly. You are thoroughly prepared to design next-level automated smart apps! Keep your momentum high!
         </p>
-        
-        <div style="font-size: 5rem; margin: 15px 0;">🏆</div>
-        
-        <button class="btn-action" onclick="resetScratchLabLoop()">Code a New Journey</button>
+        <div style="font-size: 5rem; margin: 15px 0;">🌟</div>
+        <button class="btn-action" onclick="resetGameRoundLoop()">Run Round 1 Again</button>
     </div>
 
 </div>
@@ -352,7 +390,7 @@ body.active-studio {
 <audio id="soundClap" src="assets/clap.mp3" preload="auto"></audio>
 
 <script>
-/* Required 5-Second Delay Splash Screen Controller Pipeline */
+/* Required 5-Second Delay Controller Modules Initialization Pipeline */
 setTimeout(() => {
     const splash = document.getElementById("splashScreen");
     splash.style.opacity = "0";
@@ -363,118 +401,170 @@ setTimeout(() => {
     }, 500);
 }, 5000);
 
-function playAudioTrack(id) {
+function playAudioNode(id) {
     try {
         const audio = document.getElementById(id);
         if (audio) {
             audio.currentTime = 0;
-            audio.play().catch(e => console.log("Audio lock active."));
+            audio.play().catch(e => console.log("Audio contexts active."));
         }
     } catch(err) {}
 }
 
-let compiledScriptStack = [];
-const properLogicalOrder = ["events", "motion", "looks", "sound"];
+/* 4 Unique Games/Levels Dynamic Setup Metrics Mapping Array Structs */
+const levelDataMatrix = [
+    {
+        objective: "Game 1 (Events & Motion): Program the robot to march forward. Click the correct two blocks in linear order:",
+        expectedSequence: ["events", "motion"],
+        solutionLabel: "1. When Green Flag Clicked ➔ 2. Move 15 Steps",
+        spriteSymbol: "🤖"
+    },
+    {
+        objective: "Game 2 (Looks): Make the space alien speak its welcome greeting code. Form the correct chain:",
+        expectedSequence: ["events", "looks"],
+        solutionLabel: "1. When Green Flag Clicked ➔ 2. Say Ready Player One!",
+        spriteSymbol: "👽"
+    },
+    {
+        objective: "Game 3 (Sound): Code the space monkey to trigger laser energy acoustic effects:",
+        expectedSequence: ["events", "sound"],
+        solutionLabel: "1. When Green Flag Clicked ➔ 2. Play Sound Laser",
+        spriteSymbol: "🐒"
+    },
+    {
+        objective: "Game 4 (AI Tool Extension): Connect a computer vision model block to make the cat leap upon sight:",
+        expectedSequence: ["events", "ai"],
+        solutionLabel: "1. When Green Flag Clicked ➔ 2. If Face Detected -> Jump",
+        spriteSymbol: "🐱"
+    }
+];
 
-function launchScratchLab() {
-    playAudioTrack("soundCorrect");
+let stageIndex = 0;
+let userWorkspaceBlocksStack = [];
+let executionBlocker = false;
+
+function launchGameRound() {
+    playAudioNode("soundCorrect");
     document.getElementById("menuView").classList.add("hidden");
     document.getElementById("gameView").classList.remove("hidden");
-    clearWorkspaceStack();
+    stageIndex = 0;
+    loadChallengeGame();
 }
 
-function addBlockToStack(category, label) {
-    if (compiledScriptStack.length >= 4) return;
+function loadChallengeGame() {
+    executionBlocker = false;
+    userWorkspaceBlocksStack = [];
     
-    // Check if the block category is already in the workspace to prevent duplicates
-    if (compiledScriptStack.includes(category)) return;
+    document.getElementById("gameLevelTracker").innerText = stageIndex + 1;
+    document.getElementById("editorWorkspaceWindow").innerHTML = "";
+    document.getElementById("correctionSystemHUD").classList.add("hidden");
 
-    compiledScriptStack.push(category);
-    playAudioTrack("soundCorrect");
+    // Reset palette transparency states
+    const IDs = ["events", "motion", "looks", "sound", "ai"];
+    IDs.forEach(id => { document.getElementById(`btn-${id}`).style.opacity = "1"; });
 
-    // Dynamically append the element block into the Script Workspace
-    const workspace = document.getElementById("scriptWorkspace");
-    const newBlock = document.createElement("div");
-    newBlock.className = `scratch-block block-${category}`;
-    newBlock.innerText = label;
-    workspace.appendChild(newBlock);
+    // Reset preview window states
+    const activeData = levelDataMatrix[stageIndex];
+    document.getElementById("spriteObject").innerText = activeData.spriteSymbol;
+    document.getElementById("spriteObject").className = "sprite-actor";
+    document.getElementById("bubbleText").classList.add("hidden");
 
-    // Turn off visibility in palette to show it's used
-    document.getElementById(`palette-${category}`).style.opacity = "0.4";
+    document.getElementById("consoleOutputNotice").className = "toast-tray";
+    document.getElementById("consoleOutputNotice").innerText = activeData.objective;
 }
 
-function clearWorkspaceStack() {
-    compiledScriptStack = [];
-    document.getElementById("scriptWorkspace").innerHTML = "";
-    
-    const categories = ["events", "motion", "looks", "sound"];
-    categories.forEach(cat => {
-        document.getElementById(`palette-${cat}`).style.opacity = "1";
-    });
+function pushBlock(category, titleText) {
+    if (executionBlocker) return;
+    if (userWorkspaceBlocksStack.includes(category)) return;
 
-    // Reset visual stage parameters
-    document.getElementById("catSprite").className = "sprite-actor";
-    document.getElementById("spriteBubble").classList.add("hidden");
-    
-    document.getElementById("consoleNotice").className = "toast-tray";
-    document.getElementById("consoleNotice").innerText = "Click palette blocks to build a script block sequence!";
+    userWorkspaceBlocksStack.push(category);
+    playAudioNode("soundCorrect");
+
+    // Mount structural block code dynamically into the Editor Window Panel
+    const dock = document.getElementById("editorWorkspaceWindow");
+    const blockEl = document.createElement("div");
+    blockEl.className = `scratch-block block-${category}`;
+    blockEl.innerText = titleText;
+    dock.appendChild(blockEl);
+
+    document.getElementById(`btn-${category}`).style.opacity = "0.4";
 }
 
-function runCompiledScript() {
-    const noticeBox = document.getElementById("consoleNotice");
+function executeCurrentScript() {
+    if (executionBlocker) return;
     
-    if (compiledScriptStack.length < 4) {
-        playAudioTrack("soundWrong");
-        noticeBox.className = "toast-tray";
-        noticeBox.innerText = "⚠️ Your block script is incomplete! Add all 4 blocks to fire the execution routine.";
+    const activeData = levelDataMatrix[stageIndex];
+    const noticeBox = document.getElementById("consoleOutputNotice");
+    
+    if (userWorkspaceBlocksStack.length < activeData.expectedSequence.length) {
+        playAudioNode("soundWrong");
+        noticeBox.innerText = "⚠️ Missing blocks! Stacking rule requirements are incomplete to compile code.";
         return;
     }
 
-    // Verify correct logical order sequence array metrics
-    let isCorrectOrder = true;
-    for (let i = 0; i < 4; i++) {
-        if (compiledScriptStack[i] !== properLogicalOrder[i]) {
-            isCorrectOrder = false;
+    executionBlocker = true;
+
+    // Check strict array indices sequence
+    let codeMatchesPerfect = true;
+    for (let i = 0; i < activeData.expectedSequence.length; i++) {
+        if (userWorkspaceBlocksStack[i] !== activeData.expectedSequence[i]) {
+            codeMatchesPerfect = false;
             break;
         }
     }
 
-    if (isCorrectOrder) {
-        playAudioTrack("soundCorrect");
+    const sprite = document.getElementById("spriteObject");
+    const bubble = document.getElementById("bubbleText");
+
+    if (codeMatchesPerfect) {
+        playAudioNode("soundCorrect");
         noticeBox.className = "toast-tray";
-        noticeBox.innerText = "🚀 Logic script verified! Compiling action timelines inside the project stage view...";
-        
-        // Execute the visual animation timeline chain on the stage frame canvas
-        const sprite = document.getElementById("catSprite");
-        const bubble = document.getElementById("spriteBubble");
+        noticeBox.innerText = "🚀 Verification Success! Code running seamlessly inside stage view...";
 
-        setTimeout(() => { sprite.classList.add("action-move"); }, 600);
-        setTimeout(() => { bubble.classList.remove("hidden"); }, 1400);
-        setTimeout(() => { 
-            bubble.classList.add("hidden");
-            sprite.classList.add("action-dance");
-        }, 2600);
+        // Trigger contextual stage visual action animations routines
+        if (stageIndex === 0) { sprite.classList.add("action-move"); }
+        if (stageIndex === 1) { bubble.innerText = "Ready Player One!"; bubble.classList.remove("hidden"); }
+        if (stageIndex === 2) { sprite.classList.add("action-spin"); }
+        if (stageIndex === 3) { sprite.classList.add("action-jump"); }
 
-        // Move to the motivational welcome results dashboard view
         setTimeout(() => {
-            document.getElementById("gameView").classList.add("hidden");
-            document.getElementById("endView").classList.remove("hidden");
-            playAudioTrack("soundClap");
-        }, 4800);
+            transitionNextStep();
+        }, 3000);
 
     } else {
-        playAudioTrack("soundWrong");
+        playAudioNode("soundWrong");
         noticeBox.className = "toast-tray";
-        noticeBox.innerText = "❌ Mismatch sequence! Remember: In Scratch, an action track always begins with a curved Hat event block (🏁), followed by moving, talking, and sound tracks!";
+        noticeBox.innerText = "❌ Script Logic Incomplete/Mismatched. Study the correction system below.";
+        
+        // Dynamic Correction Module - showing correct block layout order automatically
+        document.getElementById("correctSolutionText").innerText = activeData.solutionLabel;
+        document.getElementById("correctionSystemHUD").classList.remove("hidden");
+
+        setTimeout(() => {
+            transitionNextStep();
+        }, 5000);
     }
 }
 
-function resetScratchLabLoop() {
-    playAudioTrack("soundCorrect");
+function transitionNextStep() {
+    stageIndex++;
+    if (stageIndex < levelDataMatrix.length) {
+        loadChallengeGame();
+    } else {
+        playAudioNode("soundClap");
+        document.getElementById("gameView").classList.add("hidden");
+        document.getElementById("endView").classList.remove("hidden");
+    }
+}
+
+function resetGameRoundLoop() {
+    playAudioNode("soundCorrect");
     document.getElementById("endView").classList.add("hidden");
     document.getElementById("gameView").classList.remove("hidden");
-    clearWorkspaceStack();
+    stageIndex = 0;
+    loadChallengeGame();
 }
 </script>
+
 </body>
 </html>

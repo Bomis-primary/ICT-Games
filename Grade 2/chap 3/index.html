@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mission: The Great Innovine Logo Glitch!</title>
     <style>
+        /* General Layout */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #fafafa;
@@ -17,7 +18,7 @@
             overflow-x: hidden;
         }
 
-        /* 5-Second Animated Splash Overlay */
+        /* 5-Second Splash Screen Overlay */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -37,15 +38,16 @@
         #splash-screen img {
             max-width: 280px;
             margin-bottom: 25px;
-            animation: glitch 1s infinite alternate;
+            animation: pulse 1.5s infinite ease-in-out;
         }
 
-        @keyframes glitch {
-            0% { transform: skew(2deg); filter: hue-rotate(0deg); }
-            100% { transform: skew(-2deg); filter: hue-rotate(90deg); }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
-        /* Workspace setup */
+        /* Main Game Work Environment */
         .main-content {
             display: flex;
             flex-direction: column;
@@ -79,7 +81,7 @@
             width: 100%;
         }
 
-        /* Control Panel Styles */
+        /* Interactive Sidebar */
         .sidebar {
             flex: 1;
             background: white;
@@ -104,7 +106,7 @@
             color: #e67e22;
         }
 
-        /* Toolbar simulation */
+        /* Tool Palette Layout */
         .tool-rack {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -143,7 +145,6 @@
         }
         .color-dot.active { border: 3px solid #2b2b2b; }
 
-        /* Action Buttons */
         .action-btn {
             background-color: #22b8cf;
             color: white;
@@ -156,7 +157,7 @@
             width: 100%;
         }
 
-        /* Canvas window */
+        /* Canvas Space Setup */
         .canvas-window {
             flex: 1.5;
             background: #e9ecef;
@@ -186,37 +187,39 @@
     </style>
 </head>
 <body>
-    <div class="bg-particles" id="matrixBg"></div>
 
-<div id="splash">
-    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'">
-        <h2>⚠️ SYSTEM ERROR: GLITCH DETECTED!</h2>
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/250x90?text=Innovine';">
+        <h2>System Booting... Preparing Canvas Lab</h2>
     </div>
 
     <div class="main-content" id="app-workspace">
         <header>
             <div>
-                <h1 style="margin:0; font-size: 22px; color: #2c3e50;">🖌️ MS Paint 2: Advanced Lab</h1>
-                <p style="margin:4px 0 0 0; font-size:13px; color:#7f8c8d;"> Fill, Magnify & Text Tools</p>
+                <h1 style="margin:0; font-size: 22px; color: #2c3e50;">🖌️ MS Paint 2: Advanced Studio</h1>
+                <p style="margin:4px 0 0 0; font-size:13px; color:#7f8c8d;">Grade 2 - Fill, Magnify & Text Tools</p>
             </div>
-                    </header>
+            <div class="logo-area">
+                <img src="assets/innovine-logo.png" alt="Innovine" onerror="this.src='https://via.placeholder.com/150x50?text=Innovine';">
+            </div>
+        </header>
 
         <div class="game-grid">
             <div class="sidebar">
                 <div>
                     <div class="instruction-card">
-                        <h3 id="mission-title">🔍 Stage 1: The Invisible Bug</h3>
-                        <p id="mission-desc">The logo is tiny! Select the <b>Magnifier (🔍)</b> tool, then click on the logo block to find out where the error is hidden!</p>
+                        <h3 id="mission-title">🔍 Stage 1: Find the Secret Bug</h3>
+                        <p id="mission-desc">The glitch inside the logo is too tiny to see! Choose the <b>Magnifier (🔍)</b> tool, then click directly on the tiny red block to zoom in!</p>
                     </div>
 
-                    <span style="font-weight:bold; font-size:13px; color:#666;">Advanced Toolbox:</span>
+                    <span style="font-weight:bold; font-size:13px; color:#666;">Advanced Tools:</span>
                     <div class="tool-rack">
                         <button class="tool-btn active" id="tool-zoom" onclick="selectTool('zoom')">🔍</button>
                         <button class="tool-btn" id="tool-fill" onclick="selectTool('fill')">🪣</button>
                         <button class="tool-btn" id="tool-text" onclick="selectTool('text')">🅰️</button>
                     </div>
 
-                    <span style="font-weight:bold; font-size:13px; color:#666;">Color Panel:</span>
+                    <span style="font-weight:bold; font-size:13px; color:#666;">Color Palette:</span>
                     <div class="palette">
                         <div class="color-dot active" style="background:#e74c3c;" onclick="selectColor('#e74c3c', this)"></div>
                         <div class="color-dot" style="background:#2ecc71;" onclick="selectColor('#2ecc71', this)"></div>
@@ -224,25 +227,25 @@
                     </div>
                 </div>
 
-                <button class="action-btn" id="next-btn" onclick="processStage()" disabled style="background-color:#95a5a6; cursor:not-allowed;">Solve Current Objective First</button>
+                <button class="action-btn" id="next-btn" onclick="processStage()" disabled style="background-color:#95a5a6; cursor:not-allowed;">Find Glitch on Canvas First</button>
             </div>
 
             <div class="canvas-window">
                 <div class="canvas-meta">
                     <span id="active-tool-label">Active Tool: Magnifier</span>
-                    <span id="score-label">Status: Restoring Assets...</span>
+                    <span id="score-label">Status: System Initialized</span>
                 </div>
                 <canvas id="paintCanvas" width="500" height="380"></canvas>
             </div>
         </div>
     </div>
 
-    <audio id="snd-clap" src="assets/clap.mp3" preload="auto"></audio>
     <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="snd-clap" src="assets/clap.mp3" preload="auto"></audio>
     <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <script>
-        // Splash page runtime limit management
+        // Splash page timing engine (5000 milliseconds = 5 seconds)
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 document.getElementById('splash-screen').style.opacity = '0';
@@ -262,24 +265,24 @@
         let isFilled = false;
         let textEntered = false;
 
-        // Audio helper wrappers
-        function playAssetSound(id) {
-            const sound = document.getElementById(id);
-            if(sound) {
-                sound.currentTime = 0;
-                sound.play().catch(e => console.log("Audio waiting for user gesture"));
+        // Triggers the respective audio objects loaded from repository
+        function triggerSound(elementId) {
+            const audioTrack = document.getElementById(elementId);
+            if(audioTrack) {
+                audioTrack.currentTime = 0;
+                audioTrack.play().catch(err => console.log("Browser sound focus waiting for gesture interaction"));
             }
         }
 
         function initCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            // Draw a tiny glitch box simulating a small scrambled segment
+            // Paint the small canvas target box
             ctx.fillStyle = "#e74c3c";
             ctx.fillRect(235, 165, 30, 30);
             
             ctx.fillStyle = "#2c3e50";
             ctx.font = "12px Arial";
-            ctx.fillText("Glitch Box", 225, 150);
+            ctx.fillText("Glitch Element", 215, 150);
         }
 
         function selectTool(tool) {
@@ -295,55 +298,57 @@
             element.classList.add('active');
         }
 
-        // Handle inner Canvas click physics
+        // Processing student interactions inside canvas view
         canvas.addEventListener('click', function(e) {
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
 
-            if (currentStage === 1 && selectedTool === 'zoom') {
-                // If user clicks near the small asset block
-                if(x >= 200 && x <= 300 && y >= 130 && y <= 210) {
+            // STAGE 1 LOGIC
+            if (currentStage === 1) {
+                if (selectedTool === 'zoom' && (x >= 210 && x <= 280 && y >= 140 && y <= 210)) {
                     isZoomed = true;
-                    playAssetSound('snd-correct');
+                    triggerSound('snd-correct'); // Right step sound
                     
-                    // Emulate Zoom window effect
-                    ctx.clearRect(0,0,canvas.width,canvas.height);
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.fillStyle = "#e74c3c";
-                    ctx.fillRect(150, 90, 200, 200); // Glitch box grew bigger!
+                    ctx.fillRect(150, 90, 200, 200); // Emulates dynamic magnifying glass upgrade
                     
-                    document.getElementById('score-label').innerText = "Status: Glitch uncovered!";
+                    document.getElementById('score-label').innerText = "Status: Target magnified!";
                     unlockNext();
                 } else {
-                    playAssetSound('snd-wrong');
+                    triggerSound('snd-wrong'); // Wrong selection sound
                 }
             }
-            else if (currentStage === 2 && selectedTool === 'fill') {
-                // Check color matching (Targeting Bright Innovine Green #2ecc71 to fix glitch)
-                if(selectedColor === '#2ecc71') {
+            // STAGE 2 LOGIC
+            else if (currentStage === 2) {
+                if (selectedTool === 'fill' && selectedColor === '#2ecc71' && (x >= 150 && x <= 350 && y >= 90 && y <= 290)) {
                     isFilled = true;
-                    playAssetSound('snd-correct');
+                    triggerSound('snd-correct'); // Right tool color match combination
                     
                     ctx.fillStyle = "#2ecc71";
                     ctx.fillRect(150, 90, 200, 200);
                     
-                    document.getElementById('score-label').innerText = "Status: Color Restored!";
+                    document.getElementById('score-label').innerText = "Status: Color Fixed!";
                     unlockNext();
                 } else {
-                    playAssetSound('snd-wrong'); // Wrong structural color selected
+                    triggerSound('snd-wrong'); // Incorrect color or placement
                 }
             }
-            else if (currentStage === 3 && selectedTool === 'text') {
-                if(!textEntered) {
+            // STAGE 3 LOGIC
+            else if (currentStage === 3) {
+                if (selectedTool === 'text' && !textEntered && (x >= 150 && x <= 350 && y >= 90 && y <= 290)) {
                     textEntered = true;
-                    playAssetSound('snd-clap');
+                    triggerSound('snd-clap'); // Big applause success theme triggered on final code completion
                     
                     ctx.fillStyle = "#ffffff";
                     ctx.font = "bold 24px sans-serif";
                     ctx.fillText("INNOVINE", 185, 200);
                     
-                    document.getElementById('score-label').innerText = "Status: System Patched Successfully!";
+                    document.getElementById('score-label').innerText = "Status: Canvas Fully Restored!";
                     unlockNext();
+                } else if(selectedTool !== 'text') {
+                    triggerSound('snd-wrong');
                 }
             }
         });
@@ -361,33 +366,32 @@
             const desc = document.getElementById('mission-desc');
             const btn = document.getElementById('next-btn');
             
-            // Relock button for security checks in next round
             btn.disabled = true;
             btn.style.backgroundColor = "#95a5a6";
             btn.style.cursor = "not-allowed";
-            btn.innerText = "Solve Current Objective First";
+            btn.innerText = "Complete Action on Canvas First";
 
             if (currentStage === 1) {
                 currentStage = 2;
                 title.innerText = "🪣 Stage 2: The Color Bucket Refill";
-                desc.innerText = "Wow! The glitch box is huge now. Switch to the Paint Bucket (🪣) tool, select the Green panel dot, and paint the box over to cleanse the error.";
+                desc.innerText = "Great job zooming in! Now pick up your Paint Bucket (🪣), click the Green color dot from the palette, and flood fill the big box to clean it.";
                 selectTool('fill');
             } else if (currentStage === 2) {
                 currentStage = 3;
-                title.innerText = "🅰️ Stage 3: Stamp out the Brand Text";
-                desc.innerText = "Perfectly filled! Now pick the Text Tool (🅰️), click right inside the green shape box to print out the final corporate label watermark code!";
+                title.innerText = "🅰️ Stage 3: Stamp out the Brand Label";
+                desc.innerText = "Nice color fix! Lastly, click the Text tool (🅰️) and click inside the green canvas square to write down the final 'INNOVINE' watermark stamp code.";
                 selectTool('text');
             } else {
-                // Game finished successfully wrap-around loop
-                alert("Wonderful! Asset structure restored to optimal performance metrics!");
+                // Loop execution wrap-around
                 currentStage = 1;
                 isZoomed = false;
                 isFilled = false;
                 textEntered = false;
-                title.innerText = "🔍 Stage 1: The Invisible Bug";
-                desc.innerText = "The logo is tiny! Select the Magnifier (🔍) tool, then click on the logo block to find out where the error is hidden!";
+                title.innerText = "🔍 Stage 1: Find the Secret Bug";
+                desc.innerText = "The glitch inside the logo is too tiny to see! Choose the Magnifier (🔍) tool, then click directly on the tiny red block to zoom in!";
                 selectTool('zoom');
                 initCanvas();
+                document.getElementById('score-label').innerText = "Status: Reset complete.";
             }
         }
     </script>

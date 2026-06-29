@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Innovine Scratch Block Master - Grade 4 Edition</title>
+<title>Innovine Scratch Block Master - Interactive Story Edition</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
 <style>
 :root {
     --scratch-orange: #ffab19;
@@ -11,8 +12,8 @@
     --scratch-purple: #9966ff;
     --scratch-green: #2ecc71;
     --scratch-pink: #ff6680;
-    --dark-bg: #111217;
-    --panel-bg: #1e1e24;
+    --dark-bg: #0f172a;
+    --panel-bg: #1e293b;
 }
 
 * {
@@ -34,10 +35,10 @@ body {
 }
 
 body.game-active {
-    background: linear-gradient(135deg, #1a1b23, var(--dark-bg));
+    background: linear-gradient(135deg, #1e293b, var(--dark-bg));
 }
 
-/* 5-Second Innovine Splash Screen Layout */
+/* 5-Second Innovine Splash Screen Layout Grid */
 #splashScreen {
     position: fixed;
     top: 0;
@@ -84,7 +85,7 @@ body.game-active {
     50% { transform: translateY(-15px); }
 }
 
-/* Primary Shell Elements */
+/* Primary Game Interface Layout Shell */
 .app-window {
     width: 95vw;
     max-width: 1100px;
@@ -104,20 +105,6 @@ body.game-active {
     margin: 0 auto;
 }
 
-.welcome-card h1 {
-    font-size: 2.5rem;
-    color: var(--scratch-blue);
-    margin-bottom: 15px;
-}
-
-.welcome-card p {
-    color: #475569;
-    font-size: 1.1rem;
-    line-height: 1.6;
-    margin-bottom: 30px;
-}
-
-/* Main Grid Workbench System */
 .game-layout {
     display: grid;
     grid-template-rows: auto 1fr auto;
@@ -130,7 +117,7 @@ body.game-active {
     justify-content: space-between;
     align-items: center;
     background: var(--panel-bg);
-    border: 2px solid #2d2d38;
+    border: 2px solid #334155;
     padding: 14px 25px;
     border-radius: 16px;
     color: white;
@@ -143,9 +130,10 @@ body.game-active {
     font-size: 0.9rem;
     text-transform: uppercase;
 }
-.lvl-easy { background: var(--scratch-green); }
-.lvl-medium { background: var(--scratch-orange); }
-.lvl-hard { background: var(--scratch-pink); }
+.lvl-1 { background: var(--scratch-blue); }
+.lvl-2 { background: var(--scratch-purple); }
+.lvl-3 { background: var(--scratch-orange); }
+.lvl-4 { background: var(--scratch-pink); }
 
 .workbench-grid {
     display: grid;
@@ -166,8 +154,8 @@ body.game-active {
 }
 
 body.game-active .column-board {
-    background: #1e1e24;
-    border-color: #2d2d38;
+    background: #1e293b;
+    border-color: #334155;
 }
 
 .board-header {
@@ -176,16 +164,16 @@ body.game-active .column-board {
     text-transform: uppercase;
     color: #94a3b8;
     letter-spacing: 1px;
-    border-bottom: 2px solid #334155;
+    border-bottom: 2px solid #475569;
     padding-bottom: 8px;
 }
 
-/* Authentic Block System Shapes */
+/* Authentic Scratch Blocks CSS Styling Rules */
 .scratch-block {
     padding: 12px 16px;
     color: white;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     border-radius: 8px;
     cursor: grab;
     position: relative;
@@ -197,14 +185,12 @@ body.game-active .column-board {
 }
 .scratch-block:active { cursor: grabbing; }
 
-/* Scratch Categories Colors */
 .cat-events { background: var(--scratch-orange); border-left: 5px solid #d98200; }
 .cat-motion { background: var(--scratch-blue); border-left: 5px solid #1a66cc; }
 .cat-looks { background: var(--scratch-purple); border-left: 5px solid #7742d3; }
 .cat-control { background: #ffbc34; color: #222; border-left: 5px solid #cc9110; }
 .cat-sound { background: #cf63cf; border-left: 5px solid #9c369c; }
 
-/* Drop Target Box Track Container */
 .script-dropzone {
     background: #f8fafc;
     border: 3px dashed #cbd5e1;
@@ -218,41 +204,38 @@ body.game-active .column-board {
     transition: background 0.3s;
 }
 body.game-active .script-dropzone {
-    background: #15151a;
-    border-color: #3f3f4e;
+    background: #0f172a;
+    border-color: #334155;
 }
 .script-dropzone.drag-hover {
     background: rgba(76, 151, 255, 0.15);
     border-color: var(--scratch-blue);
 }
 
-/* Correction HUD Interface Box */
+/* Automated Evaluation Feedback Correction HUD Area */
 .correction-engine-card {
-    background: #fef2f2;
-    border: 2px solid #fca5a5;
     border-radius: 14px;
     padding: 14px;
     margin-top: auto;
+    border: 2px solid transparent;
 }
 .correction-title {
     font-size: 0.8rem;
     font-weight: 800;
-    color: #b91c1c;
     text-transform: uppercase;
     margin-bottom: 6px;
 }
 .correction-item {
     font-size: 0.85rem;
-    color: #7f1d1d;
     font-weight: 600;
     padding: 4px 0;
 }
 
-/* Sprite Stage View Preview Box */
+/* Stage Canvas Preview Component Workspace */
 .stage-preview {
     background: white;
     border-radius: 16px;
-    border: 3px solid #334155;
+    border: 3px solid #475569;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
@@ -260,13 +243,18 @@ body.game-active .script-dropzone {
     align-items: center;
     position: relative;
     overflow: hidden;
+    transition: background-color 0.5s ease;
 }
 body.game-active .stage-preview {
-    background: #15151a;
+    background: #2c3e50;
 }
 
+.stage-preview.bg-space { background-color: #111432; background-image: radial-gradient(white 1px, transparent 0); background-size: 24px 24px; }
+.stage-preview.bg-desert { background-color: #f39c12; }
+.stage-preview.bg-party { background-color: #9b59b6; }
+
 .sprite-actor {
-    font-size: 4rem;
+    font-size: 4.5rem;
     transition: transform 0.4s ease, filter 0.3s;
 }
 
@@ -288,14 +276,14 @@ body.game-active .stage-preview {
 .action-trigger-btn:hover { transform: scale(1.03); }
 
 .footer-bar {
-    background: #1e1e24;
+    background: #1e293b;
     color: #94a3b8;
     padding: 12px;
     border-radius: 12px;
     text-align: center;
     font-weight: 600;
     font-size: 0.95rem;
-    border: 1px solid #2d2d38;
+    border: 1px solid #334155;
 }
 
 .btn-primary {
@@ -310,58 +298,48 @@ body.game-active .stage-preview {
     box-shadow: 0 6px 20px rgba(76,151,255,0.4);
     transition: transform 0.2s;
 }
-.btn-primary:hover { transform: translateY(-2px); }
 
 .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<audio id="audioChime" src="assets/chime.mp3" preload="auto"></audio>
-<audio id="audioBeat" src="assets/melodic-beat.mp3" preload="auto"></preload>
-<audio id="audioAlert" src="assets/alert.mp3" preload="auto"></audio>
+<audio id="audioCorrect" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="audioClap" src="assets/clap.mp3" preload="auto"></audio>
 
 <div id="splashScreen">
     <div class="innovine-badge">
         <svg class="innovine-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <defs>
                 <linearGradient id="badgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#4c97ff" />
-                    <stop offset="100%" style="stop-color:#111217" />
+                    <stop offset="0%" style="stop-color:#ffab19" />
+                    <stop offset="100%" style="stop-color:#4c97ff" />
                 </linearGradient>
             </defs>
             <circle cx="50" cy="50" r="46" fill="url(#badgeGrad)" />
-            <path d="M35 65 L50 35 L65 65 Z" fill="none" stroke="#ffab19" stroke-width="5" stroke-linejoin="round" />
+            <path d="M35 65 L50 35 L65 65 Z" fill="none" stroke="#ffffff" stroke-width="5" stroke-linejoin="round" />
             <circle cx="50" cy="35" r="4" fill="#ffffff" />
             <path d="M45 65 L50 52 L55 65 Z" fill="#ffffff" />
         </svg>
         <div class="brand-title">INNOVINE</div>
-        <div class="brand-subtitle">Interactive Learning Lab</div>
-        <p style="margin-top:20px; font-weight:600; color:#94a3b8;">Loading Grade 4 Game Platform...</p>
+        <div class="brand-subtitle">Scratch Story Lab</div>
+        <p style="margin-top:20px; font-weight:600; color:#64748b;">Loading Chapter 7: Interactive Programming...</p>
     </div>
 </div>
 
 <div class="app-window hidden" id="appInterfaceShell">
 
-    <div id="introPanelCard" class="welcome-card">
-        <h1>Scratch Block Master!</h1>
-        <h3 style="color:#64748b; margin-bottom:15px;">Chapter 7 Code Architecture Mission</h3>
-        <p>
-            Welcome programmer! Drag and snap block structures together to control the actor sprite. Complete 3 sequential progression tiers (Easy, Medium, and Hard). Earn high scores and inspect layout answers dynamically.
-        </p>
-        <button class="btn-primary" onclick="initiateChallengeSession()">Launch Game Arena</button>
-    </div>
-
-    <div id="gameViewPanel" class="game-layout hidden">
+    <div id="gameViewPanel" class="game-layout">
         <div class="top-hud">
-            <div>🏆 Total Score: <span id="scoreDisplayLabel" style="color:var(--scratch-orange)">0</span></div>
-            <div style="font-size:1.1rem;">🎯 Mission: <span id="missionLevelTitle" style="color:#60a5fa">Level 1</span></div>
-            <div id="difficultyBadge" class="badge-level lvl-easy">Easy</div>
+            <div>🏆 Coding Score: <span id="scoreDisplayLabel" style="color:var(--scratch-orange)">0</span></div>
+            <div style="font-size:1.1rem;">🎬 Script Scene: <span id="missionLevelTitle" style="color:#60a5fa">Level 1</span></div>
+            <div id="difficultyBadge" class="badge-level lvl-1">Level 1</div>
         </div>
 
         <div class="workbench-grid">
             <div class="column-board">
-                <div class="board-header">Block Palette (Click or Drag blocks)</div>
+                <div class="board-header">Blocks Palette (Click or Drag Blocks)</div>
                 <div id="blockPaletteContainer" style="display:flex; flex-direction:column; gap:10px;"></div>
             </div>
 
@@ -370,39 +348,38 @@ body.game-active .stage-preview {
                 <div class="script-dropzone" id="scriptDockWorkspace" ondragover="allowDropBlockTrack(event)" ondragleave="clearDragOverState(event)" ondrop="handleDropBlockTrack(event)"></div>
                 
                 <div class="correction-engine-card hidden" id="correctionHUD">
-                    <div class="correction-title">❌ Correct Code Configuration Solution:</div>
+                    <div class="correction-title" id="correctionHUDTitle">Correct Script Sequence:</div>
                     <div id="correctionSolutionDock"></div>
                 </div>
             </div>
 
             <div class="column-board">
-                <div class="board-header">Stage Simulation Preview</div>
-                <div class="stage-preview">
+                <div class="board-header">Stage Monitor Preview</div>
+                <div class="stage-preview" id="stageCanvas">
                     <div class="sprite-actor" id="catSpriteElement">🐱</div>
-                    <div style="position:absolute; bottom:12px; font-size:0.75rem; font-weight:bold; color:#64748b;">STAGE CANVAS</div>
+                    <div id="speechBubble" style="position:absolute; top:20px; background:white; color:black; padding:8px 12px; border-radius:12px; font-weight:bold; font-size:0.85rem; display:none; max-width:80%; text-align:center; border:2px solid #334155;"></div>
+                    <div style="position:absolute; bottom:12px; font-size:0.75rem; font-weight:bold; color:#ffffff; background: rgba(0,0,0,0.5); padding: 2px 8px; border-radius: 10px;">STAGE</div>
                 </div>
                 <button class="action-trigger-btn" onclick="executeBlocksPipeline()">
-                    <span style="font-size:1.2rem;">🏁</span> Run Program Code
+                    <span style="font-size:1.2rem;">🏁</span> Run Story Block
                 </button>
             </div>
         </div>
 
-        <div class="footer-bar" id="gameConsoleStatusToast">Drag blocks into the workspace to execute your program sequence.</div>
+        <div class="footer-bar" id="gameConsoleStatusToast">Drag your custom story blocks into the track space to execute your code.</div>
     </div>
 
     <div id="evaluationReportCard" class="welcome-card hidden">
-        <h1 style="color:var(--scratch-green)">🎉 Campaign Completed!</h1>
-        <p style="margin-top:15px; font-size:1.15rem;" id="finalPerformanceReportSummary">
-            Fantastic logic execution! You successfully completed all code tracks.
-        </p>
-        <div style="font-size: 4.5rem; margin: 25px 0;">🥇👾⚡</div>
-        <button class="btn-primary" onclick="restartCampaignSession()">Restart System Diagnostics</button>
+        <h1 style="color:var(--scratch-green)">🎉 Scratch Story Animator Certified!</h1>
+        <p style="margin-top:15px; font-size:1.15rem;" id="finalPerformanceReportSummary"></p>
+        <div style="font-size: 4.5rem; margin: 25px 0;">🚀🐱🎬⭐</div>
+        <button class="btn-primary" onclick="restartCampaignSession()">Animate a New Story</button>
     </div>
 
 </div>
 
 <script>
-/* Required 5-Second Delay Initialization Process Module */
+/* 5-Second Delay Handler Logic Blueprint Module */
 setTimeout(() => {
     const splashNode = document.getElementById("splashScreen");
     splashNode.style.opacity = "0";
@@ -410,94 +387,121 @@ setTimeout(() => {
         splashNode.style.setProperty("display", "none", "important");
         document.body.classList.add("game-active");
         document.getElementById("appInterfaceShell").classList.remove("hidden");
+        setupCurrentLevelParameters();
     }, 600);
 }, 5000);
 
-/* Configuration Data Tree for the 3 Level Matrices (Easy, Medium, Hard) */
 const levelCampaignDatabase = {
     1: {
-        title: "Level 1: Sprite Walk",
-        difficulty: "Easy",
-        badgeClass: "lvl-easy",
-        instructions: "Make the cat sprite move and speak! Arrange: When Green Flag Clicked ➔ Move 10 Steps ➔ Say 'Hello!'",
-        targetSequence: ["flag", "move", "say"],
+        title: "Level 1: Start the Adventure",
+        difficulty: "Scene 1",
+        badgeClass: "lvl-1",
+        instructions: "Initiate your animation and introduce your main sprite! Order: When Green Flag Clicked ➔ Say 'Welcome to Space!' ➔ Switch Backdrop to Space",
+        targetSequence: ["flag", "say_welcome", "bg_space"],
         paletteBlocks: [
-            { id: "move", text: "🎬 Move 10 Steps", category: "cat-motion" },
+            { id: "say_welcome", text: "💬 Say 'Welcome to Space!'", category: "cat-looks" },
             { id: "flag", text: "🏁 When Green Flag Clicked", category: "cat-events" },
-            { id: "say", text: "💬 Say 'Hello!' for 2 secs", category: "cat-looks" },
-            { id: "turn", text: "↩️ Turn Left 15 Degrees", category: "cat-motion" }
+            { id: "bg_space", text: "🖼️ Switch Backdrop to Space", category: "cat-looks" },
+            { id: "turn_wrong", text: "🔄 Turn Right 90 Degrees", category: "cat-motion" }
         ],
         actionEffect: () => {
             const sprite = document.getElementById("catSpriteElement");
-            sprite.style.transform = "translateX(45px)";
-            setTimeout(() => { sprite.innerText = "🐱 [Hello!]"; }, 400);
+            const bubble = document.getElementById("speechBubble");
+            const stage = document.getElementById("stageCanvas");
+            
+            stage.className = "stage-preview bg-space";
+            bubble.innerText = "Welcome to Space! 🚀";
+            bubble.style.display = "block";
+            setTimeout(() => { 
+                bubble.style.display = "none";
+            }, 2500);
         }
     },
     2: {
-        title: "Level 2: Costume Loop",
-        difficulty: "Medium",
-        badgeClass: "lvl-medium",
-        instructions: "Create an active movement loop! Arrange: When Space Key Pressed ➔ Repeat 4 Times ➔ Next Costume",
-        targetSequence: ["space", "repeat", "costume"],
+        title: "Level 2: Activating Movement",
+        difficulty: "Scene 2",
+        badgeClass: "lvl-2",
+        instructions: "Program your hero character to move across coordinates! Order: When Space Key Pressed ➔ Move 50 Steps Forward ➔ Glide 1 Sec to Center",
+        targetSequence: ["space_key", "move_steps", "glide_home"],
         paletteBlocks: [
-            { id: "repeat", text: "🔄 Repeat 4 Times", category: "cat-control" },
-            { id: "space", text: "⌨️ When Space Key Pressed", category: "cat-events" },
-            { id: "costume", text: "👕 Next Costume", category: "cat-looks" },
-            { id: "hide", text: "👻 Hide Sprite", category: "cat-looks" }
+            { id: "move_steps", text: "🏃 Move 50 Steps Forward", category: "cat-motion" },
+            { id: "space_key", text: "⌨️ When Space Key Pressed", category: "cat-events" },
+            { id: "hide_wrong", text: "👻 Hide Sprite", category: "cat-looks" },
+            { id: "glide_home", text: "✈️ Glide 1 Sec to Center (x:0, y:0)", category: "cat-motion" }
         ],
         actionEffect: () => {
             const sprite = document.getElementById("catSpriteElement");
-            let state = 0;
-            const interval = setInterval(() => {
-                sprite.innerText = state % 2 === 0 ? "🦁" : "🐱";
-                sprite.style.transform = `scale(1.15) translateY(${state % 2 === 0 ? '-10px' : '0px'})`;
-                state++;
-                if(state >= 6) {
-                    clearInterval(interval);
-                    sprite.innerText = "🐱";
-                    sprite.style.transform = "none";
-                }
-            }, 300);
+            sprite.style.transform = "translateX(60px)";
+            setTimeout(() => {
+                sprite.style.transform = "translateX(0px)";
+            }, 1200);
         }
     },
     3: {
-        title: "Level 3: Sound Collision",
-        difficulty: "Hard",
-        badgeClass: "lvl-hard",
-        instructions: "Program collision audio rules! Arrange: When Sprite Clicked ➔ Play Sound 'Meow' ➔ If Touching Edge Then ➔ Bounce",
-        targetSequence: ["click", "sound", "if", "bounce"],
+        title: "Level 3: Custom Sprite Interaction",
+        difficulty: "Scene 3",
+        badgeClass: "lvl-3",
+        instructions: "Configure interaction triggers and costume swaps! Order: When This Sprite Clicked ➔ Play Sound 'Meow' ➔ Next Costume Pattern",
+        targetSequence: ["sprite_click", "sound_meow", "next_costume"],
         paletteBlocks: [
-            { id: "if", text: "🌿 If Touching Edge Then", category: "cat-control" },
-            { id: "sound", text: "🎵 Play Sound 'Meow' Until Done", category: "cat-sound" },
-            { id: "click", text: "🖱️ When This Sprite Clicked", category: "cat-events" },
-            { id: "bounce", text: "💥 If on Edge, Bounce", category: "cat-motion" },
-            { id: "clear", text: "❌ Clear Graphic Effects", category: "cat-looks" }
+            { id: "sound_meow", text: "🔊 Play Sound 'Meow' Until Done", category: "cat-sound" },
+            { id: "sprite_click", text: "🖱️ When This Sprite Clicked", category: "cat-events" },
+            { id: "next_costume", text: "👗 Next Costume Pattern", category: "cat-looks" },
+            { id: "stop_wrong", text: "🛑 Stop All Scripts", category: "cat-control" }
         ],
         actionEffect: () => {
             const sprite = document.getElementById("catSpriteElement");
-            sprite.style.transform = "translateX(120px) rotate(180deg)";
-            sprite.style.filter = "hue-rotate(140deg)";
-            setTimeout(() => {
-                sprite.style.transform = "translateX(0px) rotate(0deg)";
-                sprite.style.filter = "none";
-            }, 1500);
+            sprite.innerText = "🦁"; // Costume change simulation
+            sprite.style.transform = "scale(1.3)";
+            setTimeout(() => { 
+                sprite.style.transform = "scale(1)";
+            }, 2000);
+        }
+    },
+    4: {
+        title: "Level 4: Loop Dance Animation",
+        difficulty: "Scene 4",
+        badgeClass: "lvl-4",
+        instructions: "Assemble repetitive looping mechanics for special routines! Order: When I Receive Celebration ➔ Repeat 10 Times Loop ➔ Turn 15 Degrees Right",
+        targetSequence: ["receive_msg", "repeat_loop", "turn_deg"],
+        paletteBlocks: [
+            { id: "repeat_loop", text: "🔄 Repeat 10 Times Loop", category: "cat-control" },
+            { id: "receive_msg", text: "✉️ When I Receive Celebration", category: "cat-events" },
+            { id: "turn_deg", text: "↪️ Turn 15 Degrees Right", category: "cat-motion" },
+            { id: "clear_wrong", text: "🧽 Clear Graphic Effects", category: "cat-looks" }
+        ],
+        actionEffect: () => {
+            const sprite = document.getElementById("catSpriteElement");
+            let count = 0;
+            const loop = setInterval(() => {
+                sprite.style.transform = `rotate(${count * 15}deg)`;
+                count++;
+                if (count > 10) {
+                    clearInterval(loop);
+                    sprite.style.transform = "none";
+                }
+            }, 150);
         }
     }
 };
 
-// Application State Tracking Variables
 let currentActiveLevel = 1;
 let systemAccumulatedScore = 0;
 let userWorkspaceStack = [];
 let interactionActiveLock = false;
 let draggedBlockKey = null;
 
-function initiateChallengeSession() {
-    document.getElementById("introPanelCard").classList.add("hidden");
-    document.getElementById("gameViewPanel").classList.remove("hidden");
-    currentActiveLevel = 1;
-    systemAccumulatedScore = 0;
-    setupCurrentLevelParameters();
+function triggerLocalAudioNode(elementId) {
+    const audioNode = document.getElementById(elementId);
+    if(audioNode) {
+        audioNode.currentTime = 0;
+        audioNode.play().catch(err => console.log("Audio asset element tracking:", err));
+    }
+}
+
+function fireConfettiCelebration() {
+    confetti({ particleCount: 50, angle: 60, spread: 60, origin: { x: 0, y: 0.8 } });
+    confetti({ particleCount: 50, angle: 120, spread: 60, origin: { x: 1, y: 0.8 } });
 }
 
 function setupCurrentLevelParameters() {
@@ -515,10 +519,8 @@ function setupCurrentLevelParameters() {
     const badge = document.getElementById("difficultyBadge");
     badge.innerText = levelMetadata.difficulty;
     badge.className = `badge-level ${levelMetadata.badgeClass}`;
-
     document.getElementById("gameConsoleStatusToast").innerText = levelMetadata.instructions;
 
-    // Load and render Palette blocks dynamically
     const paletteBox = document.getElementById("blockPaletteContainer");
     paletteBox.innerHTML = "";
     
@@ -529,19 +531,16 @@ function setupCurrentLevelParameters() {
         item.draggable = true;
         item.id = `palette-node-${block.id}`;
         
-        // Drag-and-Drop Native Event Listeners
         item.addEventListener("dragstart", (e) => {
             if(interactionActiveLock) return;
             draggedBlockKey = block.id;
             e.dataTransfer.setData("text/plain", block.id);
         });
 
-        // Click alternative backup strategy implementation for ease-of-use
         item.onclick = () => {
             if(interactionActiveLock) return;
             appendBlockToWorkspace(block.id, block.text, block.category);
         };
-
         paletteBox.appendChild(item);
     });
 }
@@ -571,7 +570,7 @@ function handleDropBlockTrack(e) {
 }
 
 function appendBlockToWorkspace(id, text, category) {
-    if(userWorkspaceStack.includes(id)) return; // Prevent duplicates inside active workspace track
+    if(userWorkspaceStack.includes(id)) return;
 
     userWorkspaceStack.push(id);
     document.getElementById(`palette-node-${id}`).style.opacity = "0.3";
@@ -583,6 +582,36 @@ function appendBlockToWorkspace(id, text, category) {
     workspaceDock.appendChild(node);
 }
 
+function displayCorrectionSolution(configData, isCorrect) {
+    const titleBox = document.getElementById("correctionHUDTitle");
+    const solutionDock = document.getElementById("correctionSolutionDock");
+    const hudCard = document.getElementById("correctionHUD");
+    solutionDock.innerHTML = "";
+    
+    if (isCorrect) {
+        titleBox.innerHTML = "✅ Script Sequence Executed Perfectly:";
+        titleBox.style.color = "#15803d";
+        hudCard.style.background = "#f0fdf4";
+        hudCard.style.borderColor = "#bbf7d0";
+    } else {
+        titleBox.innerHTML = "❌ Compilation Error! Correct Block Order Plan:";
+        titleBox.style.color = "#b91c1c";
+        hudCard.style.background = "#fef2f2";
+        hudCard.style.borderColor = "#fca5a5";
+    }
+
+    configData.targetSequence.forEach((targetId, index) => {
+        const blockInfo = configData.paletteBlocks.find(b => b.id === targetId);
+        const entry = document.createElement("div");
+        entry.className = "correction-item";
+        entry.style.color = isCorrect ? "#166534" : "#7f1d1d";
+        entry.innerHTML = `<strong>Step ${index + 1}:</strong> ${blockInfo.text}`;
+        solutionDock.appendChild(entry);
+    });
+
+    hudCard.classList.remove("hidden");
+}
+
 function executeBlocksPipeline() {
     if (interactionActiveLock) return;
     
@@ -590,7 +619,7 @@ function executeBlocksPipeline() {
     const consoleBox = document.getElementById("gameConsoleStatusToast");
 
     if (userWorkspaceStack.length === 0) {
-        consoleBox.innerText = "⚠️ Workspace Empty! Append or drag command blocks inside your target sequence.";
+        consoleBox.innerText = "⚠️ Workspace Track Empty! Add or drag logic sequence elements into the workspace dock.";
         return;
     }
 
@@ -611,45 +640,27 @@ function executeBlocksPipeline() {
     if (sequenceIsValid) {
         systemAccumulatedScore += 100;
         document.getElementById("scoreDisplayLabel").innerText = systemAccumulatedScore;
-        consoleBox.innerText = "✅ Excellent Code Structuring! Running Sprite Animation Sequence...";
+        consoleBox.innerText = "✅ Compilation Successful! Running Story Animation Render Canvas...";
         
-        // Play success audio from local resources track
-        triggerLocalAudioNode("audioChime");
+        triggerLocalAudioNode("audioCorrect");
+        fireConfettiCelebration();
         configData.actionEffect();
+
+        displayCorrectionSolution(configData, true);
 
         setTimeout(() => {
             advancePlatformSequence();
-        }, 2600);
+        }, 3500);
 
     } else {
-        consoleBox.innerText = "❌ Logic Order Sequence Error. Correct layout structure loaded below.";
-        triggerLocalAudioNode("audioAlert");
+        consoleBox.innerText = "❌ Logic Bug Encountered! Check the standard block blueprint guidelines below.";
+        triggerLocalAudioNode("audioWrong");
 
-        // Generate and exhibit clear answer solution map
-        const solutionDock = document.getElementById("correctionSolutionDock");
-        solutionDock.innerHTML = "";
-        
-        configData.targetSequence.forEach((targetId, index) => {
-            const blockInfo = configData.paletteBlocks.find(b => b.id === targetId);
-            const entry = document.createElement("div");
-            entry.className = "correction-item";
-            entry.innerHTML = `<strong>Step ${index + 1}:</strong> ${blockInfo.text}`;
-            solutionDock.appendChild(entry);
-        });
-
-        document.getElementById("correctionHUD").classList.remove("hidden");
+        displayCorrectionSolution(configData, false);
 
         setTimeout(() => {
             advancePlatformSequence();
         }, 6000);
-    }
-}
-
-function triggerLocalAudioNode(elementId) {
-    const audioNode = document.getElementById(elementId);
-    if(audioNode) {
-        audioNode.currentTime = 0;
-        audioNode.play().catch(err => console.log("Audio pipeline active tracking:", err));
     }
 }
 
@@ -658,24 +669,27 @@ function advancePlatformSequence() {
     if (levelCampaignDatabase[currentActiveLevel]) {
         setupCurrentLevelParameters();
     } else {
-        // Clear workspace view and route execution straight to summary view card
         document.getElementById("gameViewPanel").classList.add("hidden");
         document.getElementById("evaluationReportCard").classList.remove("hidden");
         
-        triggerLocalAudioNode("audioBeat");
+        triggerLocalAudioNode("audioClap");
         document.getElementById("finalPerformanceReportSummary").innerHTML = 
-            `You completed all three Scratch logic pipeline operations.<br><br><strong>Final Combined Score: ${systemAccumulatedScore} Points</strong>`;
+            `Awesome Coding Logic! You successfully created all 4 interactive story animation tracks.<br><br><strong>Final Score: ${systemAccumulatedScore} / 400 Logic Points</strong>`;
     }
 }
 
 function restartCampaignSession() {
     document.getElementById("evaluationReportCard").classList.add("hidden");
     document.getElementById("gameViewPanel").classList.remove("hidden");
+    
+    // Reset defaults
+    document.getElementById("catSpriteElement").innerText = "🐱";
+    document.getElementById("stageCanvas").className = "stage-preview";
+    
     currentActiveLevel = 1;
     systemAccumulatedScore = 0;
     setupCurrentLevelParameters();
 }
 </script>
-
 </body>
 </html>

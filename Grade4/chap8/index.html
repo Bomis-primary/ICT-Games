@@ -3,17 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Innovine Scratch Block Master - Internet & Netiquette Edition</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
+<title>Internet & Netiquette Simulation Hub</title>
+
 <style>
 :root {
+    --primary: #4c97ff;
+    --primary-dark: #1a66cc;
+    --success: #10b981;
+    --danger: #ef4444;
+    --dark: #0f172a;
+    --light: #f8fafc;
+    --panel-bg: rgba(255, 255, 255, 0.96);
     --scratch-orange: #ffab19;
-    --scratch-blue: #4c97ff;
     --scratch-purple: #9966ff;
-    --scratch-green: #2ecc71;
-    --scratch-pink: #ff6680;
-    --dark-bg: #0f172a;
-    --panel-bg: #1e293b;
 }
 
 * {
@@ -31,15 +33,42 @@ body {
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    position: relative;
     transition: background 0.5s ease;
 }
 
-body.game-active {
-    background: linear-gradient(135deg, #1e293b, var(--dark-bg));
+body.game-mode {
+    background: linear-gradient(135deg, #60a5fa, #3b82f6, #1e3a8a);
 }
 
-/* 5-Second Innovine Splash Screen Layout Grid */
-#splashScreen {
+/* Cosmic Design Background Particles */
+.bg-particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    z-index: 1;
+    pointer-events: none;
+    display: none;
+}
+body.game-mode .bg-particles { display: block; }
+
+.particle {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 50%;
+    animation: floatUp linear infinite;
+}
+@keyframes floatUp {
+    0% { transform: translateY(110vh) scale(0.5); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translateY(-20vh) scale(1.2); opacity: 0; }
+}
+
+/* Required 5-Second Pure White Splash Screen with requested Logo Layout */
+#splash {
     position: fixed;
     top: 0;
     left: 0;
@@ -51,626 +80,438 @@ body.game-active {
     justify-content: center;
     align-items: center;
     z-index: 9999;
-    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+#splash img {
+    width: 280px;
+    max-width: 80%;
+    animation: pulse 2s infinite ease-in-out;
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
 }
 
-.innovine-badge {
-    text-align: center;
-    animation: floatingLogo 3s infinite ease-in-out;
-}
-
-.innovine-svg {
-    width: 130px;
-    height: 130px;
-    margin-bottom: 20px;
-}
-
-.brand-title {
-    font-size: 2.5rem;
-    font-weight: 900;
-    color: #0f172a;
-    letter-spacing: 3px;
-}
-
-.brand-subtitle {
-    font-size: 0.9rem;
-    color: #64748b;
-    text-transform: uppercase;
-    letter-spacing: 5px;
-    margin-top: 6px;
-}
-
-@keyframes floatingLogo {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-15px); }
-}
-
-/* Primary Game Interface Layout Shell */
-.app-window {
+/* Interactive Board Setup */
+.container {
     width: 95vw;
-    max-width: 1100px;
-    height: 88vh;
-    min-height: 600px;
-    z-index: 10;
+    max-width: 1140px;
+    height: 85vh;
+    min-height: 580px;
+    z-index: 2;
 }
 
-.welcome-card {
-    background: #ffffff;
-    border: 3px solid #e2e8f0;
-    border-radius: 32px;
-    padding: 50px;
-    text-align: center;
-    box-shadow: 0 30px 70px rgba(0,0,0,0.15);
-    max-width: 650px;
-    margin: 0 auto;
-}
-
-.game-layout {
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    height: 100%;
-    gap: 15px;
-}
-
-.top-hud {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.intro-card {
     background: var(--panel-bg);
-    border: 2px solid #334155;
-    padding: 14px 25px;
-    border-radius: 16px;
-    color: white;
-    font-weight: 700;
+    padding: 42px;
+    border-radius: 32px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    max-width: 620px;
+    margin: 0 auto;
+    border: 1px solid rgba(255,255,255,0.5);
+}
+.intro-card h1 span {
+    background: linear-gradient(135deg, var(--primary-dark), #1e3a8a);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
 }
 
-.badge-level {
-    padding: 6px 16px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-}
-.lvl-easy { background: var(--scratch-green); }
-.lvl-medium { background: var(--scratch-orange); }
-.lvl-hard { background: var(--scratch-pink); }
-
-.workbench-grid {
+/* Live Studio Grid Layout */
+.studio-layout {
     display: grid;
-    grid-template-columns: 1.2fr 1.3fr 1fr;
-    gap: 15px;
-    min-height: 0;
+    grid-template-columns: 350px 1fr;
+    gap: 24px;
+    height: 100%;
 }
 
-.column-board {
-    background: rgba(255, 255, 255, 0.96);
-    border: 2px solid #cbd5e1;
-    border-radius: 20px;
-    padding: 18px;
+/* Design Control Center Dashboard Panel */
+.control-panel {
+    background: var(--panel-bg);
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
     overflow-y: auto;
+    border: 1px solid rgba(255,255,255,0.6);
 }
-
-body.game-active .column-board {
-    background: #1e293b;
-    border-color: #334155;
+.panel-section {
+    background: #f1f5f9;
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
 }
-
-.board-header {
-    font-size: 0.85rem;
-    font-weight: 800;
+.panel-section h3 {
+    font-size: 0.9rem;
+    color: #475569;
+    margin-bottom: 12px;
     text-transform: uppercase;
-    color: #94a3b8;
-    letter-spacing: 1px;
-    border-bottom: 2px solid #475569;
-    padding-bottom: 8px;
+    letter-spacing: 0.5px;
 }
 
-/* Authentic Scratch Blocks CSS Styling Rules */
-.scratch-block {
-    padding: 12px 16px;
-    color: white;
+/* Interactive Option Tools Grid */
+.option-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+}
+.tool-btn {
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    padding: 12px 14px;
+    border-radius: 12px;
     font-weight: 700;
     font-size: 0.85rem;
-    border-radius: 8px;
-    cursor: grab;
-    position: relative;
+    cursor: pointer;
+    text-align: left;
+    color: #334155;
     display: flex;
     align-items: center;
-    gap: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: transform 0.2s;
+    gap: 10px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.scratch-block:active { cursor: grabbing; }
+.tool-btn:hover {
+    border-color: var(--primary);
+    background: #eff6ff;
+    transform: translateY(-1px);
+}
+.tool-btn.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary-dark);
+    box-shadow: 0 4px 10px rgba(76, 151, 255, 0.25);
+}
 
-.cat-events { background: var(--scratch-orange); border-left: 5px solid #d98200; }
-.cat-motion { background: var(--scratch-blue); border-left: 5px solid #1a66cc; }
-.cat-looks { background: var(--scratch-purple); border-left: 5px solid #7742d3; }
-.cat-control { background: #ffbc34; color: #222; border-left: 5px solid #cc9110; }
-.cat-sound { background: #cf63cf; border-left: 5px solid #9c369c; }
-
-.script-dropzone {
-    background: #f8fafc;
-    border: 3px dashed #cbd5e1;
-    border-radius: 16px;
-    flex-grow: 1;
+/* Virtual Display Hardware Shell Monitor Workspace */
+.display-workspace {
+    background: #1e293b;
+    border-radius: 28px;
+    border: 14px solid #475569;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 12px;
-    min-height: 200px;
-    transition: background 0.3s;
-}
-body.game-active .script-dropzone {
-    background: #0f172a;
-    border-color: #334155;
-}
-.script-dropzone.drag-hover {
-    background: rgba(76, 151, 255, 0.15);
-    border-color: var(--scratch-blue);
 }
 
-/* Automated Evaluation Feedback Correction HUD Area */
-.correction-engine-card {
-    background: #fef2f2;
-    border: 2px solid #fca5a5;
-    border-radius: 14px;
-    padding: 14px;
-    margin-top: auto;
-}
-.correction-title {
-    font-size: 0.8rem;
-    font-weight: 800;
-    color: #b91c1c;
-    text-transform: uppercase;
-    margin-bottom: 6px;
-}
-.correction-item {
-    font-size: 0.85rem;
-    color: #7f1d1d;
-    font-weight: 600;
-    padding: 4px 0;
-}
-
-/* Stage Canvas Preview Component Workspace */
-.stage-preview {
-    background: white;
-    border-radius: 16px;
-    border: 3px solid #475569;
-    flex-grow: 1;
+/* Real-Time Updating Netiquette Canvas */
+.virtual-desktop {
+    flex: 1;
+    position: relative;
+    background-color: #0f172a;
+    background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px);
+    background-size: 24px 24px;
+    transition: all 0.4s ease;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    position: relative;
-    overflow: hidden;
-}
-body.game-active .stage-preview {
-    background: #1e293b;
-    background-image: radial-gradient(#334155 1px, transparent 1px);
-    background-size: 20px 20px;
+    padding: 20px;
 }
 
+/* Cyber Safety Character Profile Node Component */
 .sprite-actor {
-    font-size: 4.5rem;
-    transition: transform 0.4s ease, filter 0.3s;
+    font-size: 5rem;
+    margin-bottom: 15px;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s;
 }
 
-.action-trigger-btn {
-    background: var(--scratch-green);
-    border: none;
-    padding: 12px 24px;
-    border-radius: 24px;
-    color: white;
-    font-weight: bold;
+.speech-bubble {
+    background: white;
+    color: #0f172a;
+    padding: 14px 20px;
+    border-radius: 16px;
+    font-weight: 700;
     font-size: 1rem;
-    cursor: pointer;
-    box-shadow: 0 6px 15px rgba(46,204,113,0.3);
+    max-width: 80%;
+    text-align: center;
+    border: 3px solid var(--primary);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    position: relative;
+}
+
+/* Interactive Live Warning Overlays */
+.alert-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 50;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 2rem;
+    font-weight: 800;
+    animation: fadeIn 0.3s ease;
+    text-align: center;
+    padding: 30px;
+}
+.ss-block { background: rgba(239, 68, 68, 0.95); backdrop-filter: blur(8px); }
+.ss-shield { background: rgba(16, 185, 129, 0.95); backdrop-filter: blur(8px); }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* Simulated Interactive OS Taskbar Layout */
+.virtual-taskbar {
+    height: 46px;
+    background: rgba(15, 23, 42, 0.9);
+    backdrop-filter: blur(12px);
     display: flex;
     align-items: center;
-    gap: 8px;
-    transition: transform 0.1s;
+    justify-content: space-between;
+    padding: 0 16px;
+    border-top: 1px solid rgba(255,255,255,0.12);
 }
-.action-trigger-btn:hover { transform: scale(1.03); }
-
-.footer-bar {
-    background: #1e293b;
-    color: #94a3b8;
-    padding: 12px;
-    border-radius: 12px;
-    text-align: center;
-    font-weight: 600;
-    font-size: 0.95rem;
-    border: 1px solid #334155;
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, var(--scratch-blue), #2563eb);
+.start-btn {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
-    border: none;
-    padding: 14px 36px;
-    border-radius: 30px;
-    font-weight: 700;
-    font-size: 1.1rem;
-    cursor: pointer;
-    box-shadow: 0 6px 20px rgba(76,151,255,0.4);
-    transition: transform 0.2s;
+    padding: 6px 16px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 800;
 }
-.btn-primary:hover { transform: translateY(-2px); }
+.taskbar-clock {
+    color: #f1f5f9;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+/* Global Action Command Mechanics Buttons */
+.action-btn {
+    padding: 14px 36px;
+    border: none;
+    border-radius: 35px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 18px rgba(76,151,255,0.35);
+    transition: all 0.2s ease;
+}
+.action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(76,151,255,0.45); }
 
 .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<audio id="audioChime" src="assets/chime.mp3" preload="auto"></audio>
-<audio id="audioBeat" src="assets/melodic-beat.mp3" preload="auto"></audio>
-<audio id="audioAlert" src="assets/alert.mp3" preload="auto"></audio>
+<div class="bg-particles" id="matrixBg"></div>
 
-<div id="splashScreen">
-    <div class="innovine-badge">
-        <svg class="innovine-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-                <linearGradient id="badgeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" style="stop-color:#4c97ff" />
-                    <stop offset="100%" style="stop-color:#0f172a" />
-                </linearGradient>
-            </defs>
-            <circle cx="50" cy="50" r="46" fill="url(#badgeGrad)" />
-            <path d="M35 65 L50 35 L65 65 Z" fill="none" stroke="#ffab19" stroke-width="5" stroke-linejoin="round" />
-            <circle cx="50" cy="35" r="4" fill="#ffffff" />
-            <path d="M45 65 L50 52 L55 65 Z" fill="#ffffff" />
-        </svg>
-        <div class="brand-title">INNOVINE</div>
-        <div class="brand-subtitle">Digital Safety Lab</div>
-        <p style="margin-top:20px; font-weight:600; color:#64748b;">Loading Internet & Netiquette Simulation...</p>
-    </div>
+<div id="splash">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'">
 </div>
 
-<div class="app-window hidden" id="appInterfaceShell">
+<div class="container hidden" id="gameApp">
 
-    <div id="gameViewPanel" class="game-layout">
-        <div class="top-hud">
-            <div>🏆 Safety Points: <span id="scoreDisplayLabel" style="color:var(--scratch-orange)">0</span></div>
-            <div style="font-size:1.1rem;">🌐 Mission: <span id="missionLevelTitle" style="color:#60a5fa">Level 1</span></div>
-            <div id="difficultyBadge" class="badge-level lvl-easy">Easy</div>
-        </div>
-
-        <div class="workbench-grid">
-            <div class="column-board">
-                <div class="board-header">Palette (Click or Drag Blocks)</div>
-                <div id="blockPaletteContainer" style="display:flex; flex-direction:column; gap:10px;"></div>
-            </div>
-
-            <div class="column-board" style="background: rgba(255,255,255,0.02)">
-                <div class="board-header">Your Script Track Workspace</div>
-                <div class="script-dropzone" id="scriptDockWorkspace" ondragover="allowDropBlockTrack(event)" ondragleave="clearDragOverState(event)" ondrop="handleDropBlockTrack(event)"></div>
-                
-                <div class="correction-engine-card hidden" id="correctionHUD">
-                    <div class="correction-title" id="correctionHUDTitle">❌ Correct Netiquette Script Order:</div>
-                    <div id="correctionSolutionDock"></div>
-                </div>
-            </div>
-
-            <div class="column-board">
-                <div class="board-header">Stage Monitor Preview</div>
-                <div class="stage-preview">
-                    <div class="sprite-actor" id="catSpriteElement">🤖</div>
-                    <div id="speechBubble" style="position:absolute; top:20px; background:white; color:black; padding:8px 12px; border-radius:12px; font-weight:bold; font-size:0.85rem; display:none; max-width:80%; text-align:center; border:2px solid #334155;"></div>
-                    <div style="position:absolute; bottom:12px; font-size:0.75rem; font-weight:bold; color:#64748b;">STAGE CANVAS</div>
-                </div>
-                <button class="action-trigger-btn" onclick="executeBlocksPipeline()">
-                    <span style="font-size:1.2rem;">🏁</span> Run Safety Script
-                </button>
-            </div>
-        </div>
-
-        <div class="footer-bar" id="gameConsoleStatusToast">Drag blocks into the workspace to execute your safety program sequence.</div>
-    </div>
-
-    <div id="evaluationReportCard" class="welcome-card hidden">
-        <h1 style="color:var(--scratch-green)">🎉 Digital Citizenship Certified!</h1>
-        <p style="margin-top:15px; font-size:1.15rem;" id="finalPerformanceReportSummary">
-            Fantastic logic execution! You successfully completed all code tracks.
+    <div id="introView" class="intro-card">
+        <img src="assets/innovine-logo.png" alt="Logo" style="max-width:140px; margin-bottom:15px;" onerror="this.style.display='none'">
+        <h1><span>NETIQUETTE LAB STUDIO</span></h1>
+        <h2 style="color: #64748b; font-size: 1.1rem; margin-bottom: 24px;">Grade 4 Chapter 8 Simulation</h2>
+        <p style="text-align: left; line-height: 1.7; color: #475569; margin-bottom: 26px; background: #f1f5f9; padding: 20px; border-radius: 14px; font-size: 0.95rem;">
+            Welcome, Cyber Citizen! Today you are working inside a live Internet & Safety framework sandbox. Select rules inside the Netiquette tool core matrix to configure proper messaging standards, protect secure passwords, manage online privacy controls, and immediately deploy simulated defense algorithms!
         </p>
-        <div style="font-size: 4.5rem; margin: 25px 0;">🛡️💻🌟</div>
-        <button class="btn-primary" onclick="restartCampaignSession()">Test New Session</button>
+        <button class="action-btn" onclick="launchSimulator()">Boot Netiquette Module</button>
+    </div>
+
+    <div id="studioView" class="studio-layout hidden">
+        
+        <div class="control-panel">
+            <h2 style="font-size: 1.2rem; color: var(--dark); font-weight: 800; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">Safety Controls</h2>
+            
+            <div class="panel-section">
+                <h3>1. Online Messaging Rules</h3>
+                <div class="option-grid">
+                    <button class="tool-btn active" id="msg1" onclick="triggerNetiquetteAction('kind', 'msg1')"><span>💬</span> Say Kind Words</button>
+                    <button class="tool-btn" id="msg2" onclick="triggerNetiquetteAction('caps', 'msg2')"><span>🔠</span> Type in ALL CAPS</button>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>2. Password Security Profiles</h3>
+                <div class="option-grid">
+                    <button class="tool-btn" id="pass1" onclick="triggerNetiquetteAction('secret', 'pass1')"><span>🔒</span> Keep Password Secret</button>
+                    <button class="tool-btn" id="pass2" onclick="triggerNetiquetteAction('share', 'pass2')"><span>📢</span> Share with Friends</button>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h3>3. Stranger Interactions Loop</h3>
+                <div class="option-grid">
+                    <button class="tool-btn" id="st1" onclick="triggerNetiquetteAction('report', 'st1')"><span>🚫</span> Block and Report</button>
+                    <button class="tool-btn" id="st2" onclick="triggerNetiquetteAction('meet', 'st2')"><span>🤝</span> Meet Alone</button>
+                </div>
+            </div>
+
+            <button class="action-btn" style="margin-top:auto; font-size:0.95rem; padding:12px;" onclick="finishDesign()">Lock Security Layout</button>
+        </div>
+
+        <div class="display-workspace">
+            
+            <div class="virtual-desktop" id="desktopScreen">
+                
+                <div class="sprite-actor" id="avatarIcon">🤖</div>
+                <div class="speech-bubble" id="avatarBubble">Welcome to the safe internet network zone! Adjust the tools on the left to test netiquette rules.</div>
+
+                <div id="safetyOverlay" class="alert-overlay hidden" onclick="dismissOverlayAlert()">
+                    <span id="overlayContent"></span>
+                </div>
+
+            </div>
+
+            <div class="virtual-taskbar">
+                <div class="start-btn">⊞ CyberStart</div>
+                <div class="taskbar-clock" id="liveSysClock">12:00 PM</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div id="finishView" class="intro-card hidden">
+        <h1 style="font-size:2.2rem; margin-bottom:15px;">🎉 Citizenship Lock Deployed!</h1>
+        <p style="font-size:1.1rem; color:#475569; line-height:1.7; margin-bottom:26px;">
+            Perfect! You successfully managed all netiquette profiles: establishing proper conversational safety, enforcing strong structural access protocols, and deploying alert response systems!
+        </p>
+        <div style="font-size:4.2rem; margin-bottom:24px; letter-spacing: 10px;">🛡️💻🌟</div>
+        <button class="action-btn" onclick="restartStudio()">Reboot Netiquette Studio</button>
     </div>
 
 </div>
+
+<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
 
 <script>
-/* 5-Second Delay Handler Logic Blueprint Module */
+/* Aesthetic Background Float Particle Generator Engine */
+try {
+    const bg = document.getElementById("matrixBg");
+    for(let i=0; i<25; i++) {
+        let p = document.createElement("div");
+        p.classList.add("particle");
+        p.style.left = Math.random()*100 + "%";
+        p.style.top = Math.random()*100 + "%";
+        p.style.animationDuration = (Math.random()*6+8) + "s";
+        p.style.animationDelay = Math.random()*3 + "s";
+        p.style.width = (Math.random()*6+4) + "px";
+        p.style.height = p.style.width;
+        bg.appendChild(p);
+    }
+} catch(e){}
+
+/* Automatic 5-Second Pure White Screen Transition Driver */
 setTimeout(() => {
-    const splashNode = document.getElementById("splashScreen");
-    splashNode.style.opacity = "0";
-    setTimeout(() => {
-        splashNode.style.setProperty("display", "none", "important");
-        document.body.classList.add("game-active");
-        document.getElementById("appInterfaceShell").classList.remove("hidden");
-        // Prime first workspace assets automatically
-        setupCurrentLevelParameters();
-    }, 600);
+    document.getElementById("splash").style.setProperty("display", "none", "important");
+    document.body.classList.add("game-mode");
+    document.getElementById("gameApp").classList.remove("hidden");
+    updateClock();
+    setInterval(updateClock, 60000);
 }, 5000);
 
-const levelCampaignDatabase = {
-    1: {
-        title: "Level 1: Polite Messages",
-        difficulty: "Easy",
-        badgeClass: "lvl-easy",
-        instructions: "Teach the robot to follow communication Netiquette! Arrange: When Green Flag Clicked ➔ Avoid Typing in ALL CAPS ➔ Say 'Be Kind Online!'",
-        targetSequence: ["flag", "nocaps", "bekind"],
-        paletteBlocks: [
-            { id: "nocaps", text: "🔠 Avoid Typing in ALL CAPS (Shouting)", category: "cat-looks" },
-            { id: "flag", text: "🏁 When Green Flag Clicked", category: "cat-events" },
-            { id: "bekind", text: "💬 Say 'Be Kind Online!'", category: "cat-looks" },
-            { id: "spam", text: "📨 Send 100 Spam Emails", category: "cat-motion" }
-        ],
-        actionEffect: () => {
-            const sprite = document.getElementById("catSpriteElement");
-            const bubble = document.getElementById("speechBubble");
-            sprite.style.transform = "scale(1.2)";
-            bubble.innerText = "Be Kind Online! 😊";
-            bubble.style.display = "block";
-            setTimeout(() => { 
-                sprite.style.transform = "none";
-                bubble.style.display = "none";
-            }, 2500);
+/* Custom System Clock Simulation Tool */
+function updateClock() {
+    const now = new Date();
+    let hours = now.getHours();
+    let minutes = now.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    document.getElementById("liveSysClock").innerText = `${hours}:${minutes} ${ampm}`;
+}
+
+/* Bulletproof Intercept Asynchronous Audio Processing Layer */
+function playAudioSafely(id) {
+    try {
+        const audio = document.getElementById(id);
+        if (audio) {
+            audio.currentTime = 0;
+            audio.play().catch(err => {
+                console.log("Browser protection engine bypass active for audio element.");
+            });
         }
-    },
-    2: {
-        title: "Level 2: Password Guard",
-        difficulty: "Medium",
-        badgeClass: "lvl-medium",
-        instructions: "Help the robot safely handle login credentials! Arrange: When Password Requested ➔ Keep Password Secret ➔ Alert Parent/Teacher",
-        targetSequence: ["request", "secret", "alert"],
-        paletteBlocks: [
-            { id: "secret", text: "🔒 Keep Password Secret from Friends", category: "cat-control" },
-            { id: "request", text: "🔑 When Password Requested Online", category: "cat-events" },
-            { id: "share", text: "📢 Post Password on Social Media", category: "cat-motion" },
-            { id: "alert", text: "🚨 Alert Parent or Teacher Immediately", category: "cat-sound" }
-        ],
-        actionEffect: () => {
-            const sprite = document.getElementById("catSpriteElement");
-            const bubble = document.getElementById("speechBubble");
-            sprite.style.filter = "hue-rotate(90deg)";
-            bubble.innerText = "Password Guard Shield Activated! 🛡️";
-            bubble.style.display = "block";
-            setTimeout(() => { 
-                sprite.style.filter = "none";
-                bubble.style.display = "none";
-            }, 2500);
-        }
-    },
-    3: {
-        title: "Level 3: Safe Surfing Loop",
-        difficulty: "Hard",
-        badgeClass: "lvl-hard",
-        instructions: "Establish a constant internet safety scanning protocol! Arrange: When Web Browser Opened ➔ Repeat Forever ➔ If Strangers Ask for Personal Info Then ➔ Block and Report",
-        targetSequence: ["browser", "forever", "if_stranger", "block_report"],
-        paletteBlocks: [
-            { id: "forever", text: "🔄 Repeat Forever Loop", category: "cat-control" },
-            { id: "browser", text: "🌐 When Web Browser Opened", category: "cat-events" },
-            { id: "if_stranger", text: "🌿 If Strangers Ask for Personal Info Then", category: "cat-control" },
-            { id: "block_report", text: "🚫 Block and Report immediately", category: "cat-sound" },
-            { id: "accept_meet", text: "🤝 Agree to Meet Stranger Alone", category: "cat-motion" }
-        ],
-        actionEffect: () => {
-            const sprite = document.getElementById("catSpriteElement");
-            let count = 0;
-            const loop = setInterval(() => {
-                sprite.style.transform = count % 2 === 0 ? "rotate(15deg) scale(1.1)" : "rotate(-15deg) scale(1.1)";
-                count++;
-                if (count > 6) {
-                    clearInterval(loop);
-                    sprite.style.transform = "none";
-                }
-            }, 300);
-        }
-    }
-};
+    } catch(e) {}
+}
 
-let currentActiveLevel = 1;
-let systemAccumulatedScore = 0;
-let userWorkspaceStack = [];
-let interactionActiveLock = false;
-let draggedBlockKey = null;
+/* Game Core Module Operations Mapping Engine */
+function launchSimulator() {
+    playAudioSafely("correctSound");
+    document.getElementById("introView").classList.add("hidden");
+    document.getElementById("studioView").classList.remove("hidden");
+}
 
-function triggerLocalAudioNode(elementId) {
-    const audioNode = document.getElementById(elementId);
-    if(audioNode) {
-        audioNode.currentTime = 0;
-        audioNode.play().catch(err => console.log("Audio pipeline tracker active:", err));
+function triggerNetiquetteAction(actionKey, btnId) {
+    const avatar = document.getElementById("avatarIcon");
+    const bubble = document.getElementById("avatarBubble");
+    const overlay = document.getElementById("safetyOverlay");
+    const overlayContent = document.getElementById("overlayContent");
+
+    // Manage clear selection array mappings
+    const allButtons = ['msg1', 'msg2', 'pass1', 'pass2', 'st1', 'st2'];
+    allButtons.forEach(id => document.getElementById(id).classList.remove("active"));
+    document.getElementById(btnId).classList.add("active");
+
+    switch(actionKey) {
+        case 'kind':
+            playAudioSafely("correctSound");
+            avatar.style.transform = "scale(1.2) rotate(5deg)";
+            bubble.innerText = "Be Kind Online! Politeness builds safe and supportive digital spaces. 😊";
+            break;
+        case 'caps':
+            playAudioSafely("wrongSound");
+            avatar.style.transform = "scale(0.9)";
+            bubble.innerText = "WAIT! TYPING IN ALL CAPS LOOKS LIKE SHOUTING ONLINE! 📢 Let's type carefully.";
+            break;
+        case 'secret':
+            playAudioSafely("correctSound");
+            overlay.className = "alert-overlay ss-shield";
+            overlayContent.innerHTML = "🔒 PASSWORD SHIELD ACTIVATED!<br><span style='font-size:1.2rem; font-weight:500;'>Keeping passwords secure protects your online personal data.</span>";
+            overlay.classList.remove("hidden");
+            break;
+        case 'share':
+            playAudioSafely("wrongSound");
+            overlay.className = "alert-overlay ss-block";
+            overlayContent.innerHTML = "🚨 SECURITY WARNING!<br><span style='font-size:1.2rem; font-weight:500;'>Never share passwords with friends. Keep profiles private!</span>";
+            overlay.classList.remove("hidden");
+            break;
+        case 'report':
+            playAudioSafely("correctSound");
+            overlay.className = "alert-overlay ss-shield";
+            overlayContent.innerHTML = "🚫 DEFENSE ENGINE OPERATIONAL!<br><span style='font-size:1.2rem; font-weight:500;'>Smart move! Always tell a teacher or parent immediately if strangers contact you.</span>";
+            overlay.classList.remove("hidden");
+            break;
+        case 'meet':
+            playAudioSafely("wrongSound");
+            overlay.className = "alert-overlay ss-block";
+            overlayContent.innerHTML = "❌ DANGEROUS DISCOVERY!<br><span style='font-size:1.2rem; font-weight:500;'>Critical Cyber Risk. Never agree to meet a stranger alone online.</span>";
+            overlay.classList.remove("hidden");
+            break;
     }
 }
 
-function fireConfettiCelebration() {
-    confetti({ particleCount: 50, angle: 60, spread: 60, origin: { x: 0, y: 0.8 } });
-    confetti({ particleCount: 50, angle: 120, spread: 60, origin: { x: 1, y: 0.8 } });
+function dismissOverlayAlert() {
+    playAudioSafely("wrongSound"); // Plays specialized dismiss click frequency sound
+    document.getElementById("safetyOverlay").classList.add("hidden");
+    document.getElementById("avatarIcon").style.transform = "none";
 }
 
-function setupCurrentLevelParameters() {
-    interactionActiveLock = false;
-    userWorkspaceStack = [];
-    draggedBlockKey = null;
-    
-    document.getElementById("scoreDisplayLabel").innerText = systemAccumulatedScore;
-    document.getElementById("scriptDockWorkspace").innerHTML = "";
-    document.getElementById("correctionHUD").classList.add("hidden");
-
-    const levelMetadata = levelCampaignDatabase[currentActiveLevel];
-    
-    document.getElementById("missionLevelTitle").innerText = levelMetadata.title;
-    const badge = document.getElementById("difficultyBadge");
-    badge.innerText = levelMetadata.difficulty;
-    badge.className = `badge-level ${levelMetadata.badgeClass}`;
-    document.getElementById("gameConsoleStatusToast").innerText = levelMetadata.instructions;
-
-    const paletteBox = document.getElementById("blockPaletteContainer");
-    paletteBox.innerHTML = "";
-    
-    levelMetadata.paletteBlocks.forEach(block => {
-        const item = document.createElement("div");
-        item.className = `scratch-block ${block.category}`;
-        item.innerText = block.text;
-        item.draggable = true;
-        item.id = `palette-node-${block.id}`;
-        
-        item.addEventListener("dragstart", (e) => {
-            if(interactionActiveLock) return;
-            draggedBlockKey = block.id;
-            e.dataTransfer.setData("text/plain", block.id);
-        });
-
-        item.onclick = () => {
-            if(interactionActiveLock) return;
-            appendBlockToWorkspace(block.id, block.text, block.category);
-        };
-        paletteBox.appendChild(item);
-    });
+function finishDesign() {
+    playAudioSafely("clapSound");
+    document.getElementById("studioView").classList.add("hidden");
+    document.getElementById("finishView").classList.remove("hidden");
 }
 
-function allowDropBlockTrack(e) {
-    e.preventDefault();
-    document.getElementById("scriptDockWorkspace").classList.add("drag-hover");
-}
-
-function clearDragOverState(e) {
-    document.getElementById("scriptDockWorkspace").classList.remove("drag-hover");
-}
-
-function handleDropBlockTrack(e) {
-    e.preventDefault();
-    document.getElementById("scriptDockWorkspace").classList.remove("drag-hover");
-    if(interactionActiveLock) return;
-
-    const blockId = e.dataTransfer.getData("text/plain") || draggedBlockKey;
-    if (!blockId) return;
-
-    const levelMetadata = levelCampaignDatabase[currentActiveLevel];
-    const match = levelMetadata.paletteBlocks.find(b => b.id === blockId);
-    if(match) {
-        appendBlockToWorkspace(match.id, match.text, match.category);
-    }
-}
-
-function appendBlockToWorkspace(id, text, category) {
-    if(userWorkspaceStack.includes(id)) return;
-
-    userWorkspaceStack.push(id);
-    document.getElementById(`palette-node-${id}`).style.opacity = "0.3";
-
-    const workspaceDock = document.getElementById("scriptDockWorkspace");
-    const node = document.createElement("div");
-    node.className = `scratch-block ${category}`;
-    node.innerText = text;
-    workspaceDock.appendChild(node);
-}
-
-function displayCorrectionSolution(configData, isCorrect) {
-    const titleBox = document.getElementById("correctionHUDTitle");
-    const solutionDock = document.getElementById("correctionSolutionDock");
-    solutionDock.innerHTML = "";
-    
-    if (isCorrect) {
-        titleBox.innerHTML = "✅ Well Done! Correct Solution Code Architecture:";
-        titleBox.style.color = "#15803d";
-        document.getElementById("correctionHUD").style.background = "#f0fdf4";
-        document.getElementById("correctionHUD").style.borderColor = "#bbf7d0";
-    } else {
-        titleBox.innerHTML = "❌ Attempt Mistake! Correct Netiquette Script Order:";
-        titleBox.style.color = "#b91c1c";
-        document.getElementById("correctionHUD").style.background = "#fef2f2";
-        document.getElementById("correctionHUD").style.borderColor = "#fca5a5";
-    }
-
-    configData.targetSequence.forEach((targetId, index) => {
-        const blockInfo = configData.paletteBlocks.find(b => b.id === targetId);
-        const entry = document.createElement("div");
-        entry.className = "correction-item";
-        entry.style.color = isCorrect ? "#166534" : "#7f1d1d";
-        entry.innerHTML = `<strong>Step ${index + 1}:</strong> ${blockInfo.text}`;
-        solutionDock.appendChild(entry);
-    });
-
-    document.getElementById("correctionHUD").classList.remove("hidden");
-}
-
-function executeBlocksPipeline() {
-    if (interactionActiveLock) return;
-    
-    const configData = levelCampaignDatabase[currentActiveLevel];
-    const consoleBox = document.getElementById("gameConsoleStatusToast");
-
-    if (userWorkspaceStack.length === 0) {
-        consoleBox.innerText = "⚠️ Workspace Empty! Append or drag cybersecurity blocks inside your target sequence.";
-        return;
-    }
-
-    interactionActiveLock = true;
-    let sequenceIsValid = true;
-
-    if (userWorkspaceStack.length !== configData.targetSequence.length) {
-        sequenceIsValid = false;
-    } else {
-        for (let i = 0; i < configData.targetSequence.length; i++) {
-            if (userWorkspaceStack[i] !== configData.targetSequence[i]) {
-                sequenceIsValid = false;
-                break;
-            }
-        }
-    }
-
-    if (sequenceIsValid) {
-        systemAccumulatedScore += 100;
-        document.getElementById("scoreDisplayLabel").innerText = systemAccumulatedScore;
-        consoleBox.innerText = "✅ Smart Choices! Running Safety Script Action Sequence...";
-        
-        triggerLocalAudioNode("audioChime");
-        fireConfettiCelebration();
-        configData.actionEffect();
-
-        // Always render target sequence solution blocks after checking result
-        displayCorrectionSolution(configData, true);
-
-        setTimeout(() => {
-            advancePlatformSequence();
-        }, 3500);
-
-    } else {
-        consoleBox.innerText = "❌ Cyber Risk Detected. Review the correct netiquette rule architecture below.";
-        triggerLocalAudioNode("audioAlert");
-
-        // Render correct answers layout block instantly 
-        displayCorrectionSolution(configData, false);
-
-        setTimeout(() => {
-            advancePlatformSequence();
-        }, 6000);
-    }
-}
-
-function advancePlatformSequence() {
-    currentActiveLevel++;
-    if (levelCampaignDatabase[currentActiveLevel]) {
-        setupCurrentLevelParameters();
-    } else {
-        document.getElementById("gameViewPanel").classList.add("hidden");
-        document.getElementById("evaluationReportCard").classList.remove("hidden");
-        
-        triggerLocalAudioNode("audioBeat");
-        document.getElementById("finalPerformanceReportSummary").innerHTML = 
-            `Superb! You demonstrated complete command over safe web browsing protocol, secure account management, and courteous digital ethics.<br><br><strong>Final Score: ${systemAccumulatedScore} / 300 Safety Points</strong>`;
-    }
-}
-
-function restartCampaignSession() {
-    document.getElementById("evaluationReportCard").classList.add("hidden");
-    document.getElementById("gameViewPanel").classList.remove("hidden");
-    currentActiveLevel = 1;
-    systemAccumulatedScore = 0;
-    setupCurrentLevelParameters();
+function restartStudio() {
+    playAudioSafely("correctSound");
+    document.getElementById("finishView").classList.add("hidden");
+    document.getElementById("studioView").classList.remove("hidden");
+    triggerNetiquetteAction('kind', 'msg1');
+    dismissOverlayAlert();
 }
 </script>
 </body>

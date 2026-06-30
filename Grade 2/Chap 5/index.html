@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KidPix: Mega Tech Showdown</title>
+    <title>KidPix : The Magic Silhouette Challenge</title>
     <style>
         body {
             font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
-            background-color: #c084fc; /* Vibrant purple KidPix background */
+            background-color: #f0fdf4; /* Creative mint green background */
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #1e1b4b;
+            color: #14532d;
             overflow-x: hidden;
             user-select: none;
         }
@@ -35,18 +35,17 @@
         }
 
         #splash-screen img {
-            max-width: 290px;
+            max-width: 280px;
             margin-bottom: 20px;
-            animation: spin-pulse 1.5s infinite ease-in-out;
+            animation: bounce-in 1.2s infinite alternate ease-in-out;
         }
 
-        @keyframes spin-pulse {
-            0% { transform: scale(1) rotate(0deg); }
-            50% { transform: scale(1.08) rotate(3deg); }
-            100% { transform: scale(1) rotate(0deg); }
+        @keyframes bounce-in {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.06) rotate(-2deg); }
         }
 
-        /* Workspace Grid Wrapper */
+        /* Main Game Layout */
         .main-content {
             display: flex;
             flex-direction: column;
@@ -62,8 +61,8 @@
             width: 100%;
             padding: 15px;
             border-radius: 20px;
-            border: 4px solid #7c3aed;
-            box-shadow: 6px 6px 0px #5b21b6;
+            border: 4px solid #22c55e;
+            box-shadow: 6px 6px 0px #15803d;
             margin-bottom: 20px;
             text-align: center;
         }
@@ -71,31 +70,31 @@
         header h1 {
             margin: 0;
             font-size: 26px;
-            color: #7c3aed;
+            color: #16a34a;
         }
 
         .game-grid {
             display: flex;
-            gap: 20px;
+            gap: 25px;
             width: 100%;
         }
 
-        /* Instructions Side Window */
+        /* Control Panel Sidebar */
         .sidebar {
             flex: 1;
             background: white;
             padding: 20px;
             border-radius: 20px;
-            border: 4px solid #2563eb;
-            box-shadow: 6px 6px 0px #1d4ed8;
+            border: 4px solid #ea580c;
+            box-shadow: 6px 6px 0px #9a3412;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
         .instruction-card {
-            background-color: #f0f9ff;
-            border: 3px dashed #3b82f6;
+            background-color: #fff7ed;
+            border: 3px dashed #ea580c;
             padding: 15px;
             border-radius: 12px;
             margin-bottom: 15px;
@@ -103,74 +102,55 @@
 
         .instruction-card h3 {
             margin: 0 0 6px 0;
-            color: #1d4ed8;
+            color: #c2410c;
             font-size: 18px;
         }
 
-        /* Pop Quiz Option Blocks */
-        .quiz-box {
-            display: none;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .quiz-option {
-            background: #f3f4f6;
-            border: 2px solid #d1d5db;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            text-align: left;
-            transition: background 0.2s;
-        }
-
-        .quiz-option:hover {
-            background: #e5e7eb;
-        }
-
-        .tool-rack {
+        /* Quiz Choices Selection Boxes */
+        .guess-box {
             display: flex;
+            flex-direction: column;
             gap: 10px;
             margin: 15px 0;
         }
 
-        .tool-btn {
-            flex: 1;
+        .guess-btn {
             background: #f8fafc;
             border: 3px solid #cbd5e1;
             padding: 12px;
-            font-size: 18px;
+            font-size: 16px;
+            font-weight: bold;
             border-radius: 12px;
             cursor: pointer;
+            text-align: left;
+            transition: background 0.2s, transform 0.1s;
         }
 
-        .tool-btn.active {
-            background: #fef2f2;
-            border-color: #ef4444;
+        .guess-btn:hover {
+            background: #f1f5f9;
+            transform: scale(1.02);
         }
 
         .action-btn {
-            background-color: #10b981;
+            background-color: #a855f7;
             color: white;
             font-size: 16px;
             font-weight: bold;
             padding: 14px;
             border: none;
             border-radius: 12px;
-            box-shadow: 4px 4px 0px #047857;
+            box-shadow: 4px 4px 0px #6b21a8;
             cursor: pointer;
         }
 
-        /* Studio Interactive Window Viewport */
+        /* Studio Canvas Window */
         .canvas-window {
             flex: 1.6;
             background: #ffffff;
             padding: 15px;
             border-radius: 20px;
-            border: 4px solid #f59e0b;
-            box-shadow: 6px 6px 0px #d97706;
+            border: 4px solid #06b6d4;
+            box-shadow: 6px 6px 0px #0e7490;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -182,14 +162,13 @@
             justify-content: space-between;
             margin-bottom: 10px;
             font-weight: bold;
-            color: #b45309;
+            color: #0e7490;
         }
 
         canvas {
-            background: #ffffff;
+            background: #0f172a; /* Futuristic dark drawing screen */
             border: 4px solid #cbd5e1;
             border-radius: 12px;
-            cursor: crosshair;
         }
     </style>
 </head>
@@ -197,44 +176,35 @@
 
     <div id="splash-screen">
         <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/250x90?text=Innovine';">
-        <h2>🚀 KidPix: The Tech Showdown Arena! 🚀</h2>
+        <h2>✏️ KidPix 2: The Silhouette Drawer! ✏️</h2>
     </div>
 
     <div class="main-content" id="app-workspace">
         <header>
-            <h1>⚡ KidPix  Arcade: Action, Painting & Trivia! ⚡</h1>
+            <h1>🔍 Watch Closely: What Is The Computer Drawing? 🔍</h1>
         </header>
 
         <div class="game-grid">
             <div class="sidebar">
                 <div>
                     <div class="instruction-card">
-                        <h3 id="stage-title">🎮 Round 1: Catch the Glitch Bug!</h3>
-                        <p id="stage-desc">A jumping glitch bug is hidden in the dark! Select the <b>Wacky Brush (🖌️)</b> tool and click on the moving target block on the canvas to trap it!</p>
+                        <h3 id="round-title">🎨 Round 1: The Secret Blueprint</h3>
+                        <p id="round-desc">Look at the dark drawing page! The magic paintbrush is sketching an important school technology item. Choose your guess below!</p>
                     </div>
 
-                    <div class="quiz-box" id="quiz-container">
-                        <span style="font-weight: bold; color: #4b5563; margin-bottom: 5px;">Choose the correct Answer:</span>
-                        <button class="quiz-option" onclick="checkQuizAnswer(false)">A) The Text Typer Tool</button>
-                        <button class="quiz-option" onclick="checkQuizAnswer(true)">B) The Moving Van Selection Tool</button>
-                        <button class="quiz-option" onclick="checkQuizAnswer(false)">C) The Trash Can Erase</button>
-                    </div>
-
-                    <div class="tool-rack" id="tools-div">
-                        <button class="tool-btn active" id="tool-brush" onclick="selectTool('brush')">🖌️ Brush</button>
-                        <button class="tool-btn" id="tool-stamp" onclick="selectTool('stamp')">⭐ Stamp</button>
-                    </div>
+                    <div class="guess-box" id="options-container">
+                        </div>
                 </div>
 
-                <button class="action-btn" id="next-btn" onclick="advanceStage()" disabled style="background-color:#94a3b8; box-shadow:none; cursor:not-allowed;">Solve Round Objective First</button>
+                <button class="action-btn" id="next-btn" onclick="advanceRound()" disabled style="background-color:#94a3b8; box-shadow:none; cursor:not-allowed;">Guess Correctly to Advance</button>
             </div>
 
             <div class="canvas-window">
                 <div class="canvas-meta">
-                    <span id="active-tool-label">Active Tool: Wacky Brush</span>
-                    <span id="status-label">Status: Battle On!</span>
+                    <span id="drawing-speed-label">Laser Tracer: Active ⚡</span>
+                    <span id="status-label">Status: Drawing Object...</span>
                 </div>
-                <canvas id="showdownCanvas" width="550" height="400"></canvas>
+                <canvas id="sketchCanvas" width="550" height="400"></canvas>
             </div>
         </div>
     </div>
@@ -249,191 +219,193 @@
                 document.getElementById('splash-screen').style.opacity = '0';
                 document.getElementById('splash-screen').style.visibility = 'hidden';
                 document.getElementById('app-workspace').style.opacity = '1';
-                startRound1();
+                setupRound();
             }, 5000);
         });
 
-        const canvas = document.getElementById('showdownCanvas');
+        const canvas = document.getElementById('sketchCanvas');
         const ctx = canvas.getContext('2d');
-        
-        let currentRound = 1;
-        let selectedTool = 'brush';
-        let round1Hit = false;
-        let round3Count = 0;
 
-        // Target coordinates for moving box action scene
-        let bugX = 120;
-        let bugY = 160;
-        let bugTimer = null;
+        let activeRound = 1;
+        let drawingInterval = null;
+        let traceProgress = 0;
+        let roundSolved = false;
+
+        // Data Structure holding unique procedural line blueprints for kids to decipher
+        const roundData = {
+            1: {
+                title: "🎨 Round 1: The Secret Blueprint",
+                desc: "Look at the screen! The neon laser brush is sketching a classic classroom screen display. What tool is it?",
+                options: ["A) A Computer Monitor Screen", "B) A Handheld Scanner", "C) A Computer Mouse"],
+                correctIndex: 0,
+                draw: function(prog) {
+                    ctx.strokeStyle = "#38bdf8"; // Neon light blue
+                    ctx.lineWidth = 6;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = "#38bdf8";
+                    ctx.beginPath();
+                    
+                    // Step-by-step drawing interpolation based on progress counter
+                    if(prog > 10) ctx.lineTo(400, 100);
+                    if(prog > 30) ctx.lineTo(400, 280);
+                    if(prog > 50) ctx.lineTo(150, 280);
+                    if(prog > 70) ctx.lineTo(150, 100);
+                    // Stand mount legs
+                    if(prog > 85) {
+                        ctx.moveTo(275, 280);
+                        ctx.lineTo(275, 330);
+                        ctx.lineTo(220, 330);
+                        ctx.lineTo(330, 330);
+                    }
+                    ctx.stroke();
+                }
+            },
+            2: {
+                title: "⌨️ Round 2: Typing Foundation",
+                desc: "The brush is running again! Wow, look at all those little key rows being formed right now. What is it?",
+                options: ["A) Headphones", "B) A Typing Keyboard", "C) A Floppy Disk"],
+                correctIndex: 1,
+                draw: function(prog) {
+                    ctx.strokeStyle = "#f43f5e"; // Neon red-pink
+                    ctx.shadowColor = "#f43f5e";
+                    ctx.lineWidth = 5;
+                    ctx.beginPath();
+                    
+                    // Draw outer chassis frame
+                    if(prog > 10) ctx.strokeRect(100, 150, 350, 120);
+                    // Draw grid key rows
+                    if(prog > 40) {
+                        ctx.moveTo(120, 190); ctx.lineTo(430, 190);
+                        ctx.moveTo(120, 230); ctx.lineTo(430, 230);
+                    }
+                    // Spacebar box stamp
+                    if(prog > 80) {
+                        ctx.strokeRect(200, 240, 150, 20);
+                    }
+                    ctx.stroke();
+                }
+            },
+            3: {
+                title: "🖨️ Round 3: The Paper Machine",
+                desc: "Final round! The automated printer module is spitting out digital documents on our canvas stack. Guess the hardware asset!",
+                options: ["A) A Web Camera", "B) VR Goggles", "C) A Office Printer"],
+                correctIndex: 2,
+                draw: function(prog) {
+                    ctx.strokeStyle = "#a855f7"; // Magic violet neon tint
+                    ctx.shadowColor = "#a855f7";
+                    ctx.lineWidth = 6;
+                    ctx.beginPath();
+                    
+                    // Main printer box shape body frame setup
+                    if(prog > 10) ctx.strokeRect(140, 160, 270, 130);
+                    // Top paper tray feed slot line element structures
+                    if(prog > 40) {
+                        ctx.moveTo(190, 160); ctx.lineTo(190, 100);
+                        ctx.lineTo(360, 100); ctx.lineTo(360, 160);
+                    }
+                    // Bottom exit slot page print paper tray
+                    if(prog > 85) {
+                        ctx.strokeRect(190, 290, 170, 30);
+                    }
+                    ctx.stroke();
+                }
+            }
+        };
 
         function playSound(id) {
-            const el = document.getElementById(id);
-            if(el) {
-                el.currentTime = 0;
-                el.play().catch(() => {});
+            const sound = document.getElementById(id);
+            if(sound) {
+                sound.currentTime = 0;
+                sound.play().catch(() => {});
             }
         }
 
-        function selectTool(tool) {
-            selectedTool = tool;
-            document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`tool-${tool}`).classList.add('active');
-            document.getElementById('active-tool-label').innerText = `Active Tool: ${tool === 'brush' ? 'Wacky Brush' : 'Mystery Stamp'}`;
-        }
-
-        // --- ROUND INITIALIZATION LOOPS ---
-        function startRound1() {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            // Flash random background grids
-            ctx.fillStyle = "#1e293b";
-            ctx.fillRect(0,0,canvas.width,canvas.height);
+        function setupRound() {
+            roundSolved = false;
+            traceProgress = 0;
+            clearInterval(drawingInterval);
             
-            // Loop move intervals
-            bugTimer = setInterval(() => {
-                ctx.fillStyle = "#1e293b";
-                ctx.fillRect(0,0,canvas.width,canvas.height);
-                
-                // Randomly spawn bugs
-                bugX = Math.random() * (canvas.width - 100) + 20;
-                bugY = Math.random() * (canvas.height - 100) + 20;
-                
-                ctx.fillStyle = "#ef4444";
-                ctx.fillRect(bugX, bugY, 60, 60);
-                ctx.fillStyle = "#ffffff";
-                ctx.font = "14px Arial";
-                ctx.fillText("BUG 👾", bugX + 8, bugY + 35);
-            }, 900);
-        }
+            // Clear canvas viewport space black color slate layout
+            ctx.shadowBlur = 0; 
+            ctx.fillStyle = "#0f172a";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        function loadRound2() {
-            clearInterval(bugTimer);
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            
-            // Render quiz layout background screen frame
-            ctx.fillStyle = "#38bdf8";
-            ctx.fillRect(20, 20, canvas.width - 40, canvas.height - 40);
-            
-            ctx.fillStyle = "#1e3a8a";
-            ctx.font = "bold 22px 'Comic Sans MS'";
-            ctx.fillText("❓ KIDPIX 2 POP TRIVIA CHALLENGE ❓", 50, 100);
-            ctx.font = "18px sans-serif";
-            ctx.fillText("Which advanced KidPix tool lets you grab a drawing", 60, 170);
-            ctx.fillText("and drag it to another spot across the screen?", 60, 200);
-        }
+            const currentData = roundData[activeRound];
+            document.getElementById('round-title').innerText = currentData.title;
+            document.getElementById('round-desc').innerText = currentData.desc;
+            document.getElementById('status-label').innerText = "Status: Painting silhouette...";
 
-        function loadRound3() {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = "#fef08a";
-            ctx.fillRect(0,0,canvas.width,canvas.height);
-            
-            ctx.fillStyle = "#ca8a04";
-            ctx.font = "bold 24px sans-serif";
-            ctx.fillText("🏆 VICTORY WALL STAMP CELEBRATION 🏆", 40, 80);
-            ctx.fillText("Stamp 5 Golden Medals on the Wall!", 100, 340);
-        }
+            // Load selection options onto HTML nodes interface layout dynamically
+            const container = document.getElementById('options-container');
+            container.innerHTML = "";
+            currentData.options.forEach((opt, idx) => {
+                let btn = document.createElement('button');
+                btn.className = "guess-btn";
+                btn.innerText = opt;
+                btn.onclick = () => submitGuess(idx);
+                container.appendChild(btn);
+            });
 
-        // --- INTERACTIVE EVENT ACTION PROCESSING ---
-        canvas.addEventListener('click', function(e) {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            if (currentRound === 1 && selectedTool === 'brush') {
-                // Check if user hit the active moving bug location coordinates
-                if (x >= bugX && x <= (bugX + 60) && y >= bugY && y <= (bugY + 60)) {
-                    round1Hit = true;
-                    clearInterval(bugTimer);
-                    playSound('snd-correct');
-                    
-                    ctx.fillStyle = "#10b981";
-                    ctx.fillRect(0,0,canvas.width,canvas.height);
-                    ctx.fillStyle = "#ffffff";
-                    ctx.font = "bold 40px sans-serif";
-                    ctx.fillText("🎯 BUG CAPTURED! 🎯", 90, 220);
-                    
-                    document.getElementById('status-label').innerText = "Status: Cache cleared of bugs!";
-                    unlockNext();
+            // Start running the live vector sketch engine frame updates
+            drawingInterval = setInterval(() => {
+                if (traceProgress < 100) {
+                    traceProgress += 2;
+                    currentData.draw(traceProgress);
                 } else {
-                    playSound('snd-wrong');
+                    clearInterval(drawingInterval);
+                    document.getElementById('status-label').innerText = "Status: Sketch complete! Make your guess.";
                 }
-            }
-            else if (currentRound === 3 && selectedTool === 'stamp') {
-                round3Count++;
-                if (round3Count === 5) {
-                    playSound('snd-clap'); // Cheering applause triggered on final score
+            }, 60);
+        }
+
+        function submitGuess(chosenIndex) {
+            if (roundSolved) return;
+            const currentData = roundData[activeRound];
+
+            if (chosenIndex === currentData.correctIndex) {
+                roundSolved = true;
+                clearInterval(drawingInterval);
+                
+                // Uncover full asset lighting glow
+                traceProgress = 100;
+                currentData.draw(100);
+
+                if (activeRound === 3) {
+                    playSound('snd-clap'); // Big applause finish celebration triggered at round 3 finish lines
+                    document.getElementById('status-label').innerText = "Status: ALL CHAMPION BLUEPRINTS UNSCRAMBLED! 🏆";
                 } else {
                     playSound('snd-correct');
+                    document.getElementById('status-label').innerText = "Status: Spot On! Blueprint verified! ✅";
                 }
-
-                ctx.font = "60px Arial";
-                ctx.fillText("🥇", x - 30, y + 25);
                 
-                document.getElementById('status-label').innerText = `Medals Placed: ${round3Count} / 5`;
-                if(round3Count >= 5) unlockNext();
-            }
-        });
-
-        function checkQuizAnswer(isCorrect) {
-            if(currentRound !== 2) return;
-            
-            if(isCorrect) {
-                playSound('snd-correct');
-                ctx.fillStyle = "#15803d";
-                ctx.font = "bold 26px sans-serif";
-                ctx.fillText("✅ CORRECT! Moving Van Drives Objects!", 50, 280);
-                document.getElementById('status-label').innerText = "Status: Quiz Cleared!";
-                unlockNext();
+                // Unlock navigation control keys
+                const nextBtn = document.getElementById('next-btn');
+                nextBtn.disabled = false;
+                nextBtn.style.backgroundColor = "#22c55e";
+                nextBtn.style.boxShadow = "4px 4px 0px #16a34a";
+                nextBtn.style.cursor = "pointer";
+                nextBtn.innerText = activeRound === 3 ? "Restart Studio Room 🔄" : "Load Next Blueprint ➡️";
             } else {
                 playSound('snd-wrong');
-                alert("Oops! Try again! Think about transportation tools! 🚚");
+                alert("Oh, that choice doesn't match the lines! Watch the laser drawing move again! 👀");
             }
         }
 
-        function unlockNext() {
-            const btn = document.getElementById('next-btn');
-            btn.disabled = false;
-            btn.style.backgroundColor = "#10b981";
-            btn.style.cursor = "pointer";
-            btn.innerText = currentRound === 3 ? "Reset Arena Space 🔄" : "Proceed Up ➡️";
-        }
+        function advanceRound() {
+            const nextBtn = document.getElementById('next-btn');
+            nextBtn.disabled = true;
+            nextBtn.style.backgroundColor = "#94a3b8";
+            nextBtn.style.boxShadow = "none";
+            nextBtn.style.cursor = "not-allowed";
+            nextBtn.innerText = "Guess Correctly to Advance";
 
-        function advanceStage() {
-            const title = document.getElementById('stage-title');
-            const desc = document.getElementById('stage-desc');
-            const btn = document.getElementById('next-btn');
-            const quizBox = document.getElementById('quiz-container');
-            const toolsBox = document.getElementById('tools-div');
-
-            btn.disabled = true;
-            btn.style.backgroundColor = "#94a3b8";
-            btn.style.cursor = "not-allowed";
-            btn.innerText = "Solve Round Objective First";
-
-            if (currentRound === 1) {
-                currentRound = 2;
-                title.innerText = "❓ Round 2: Trivia Brain Quiz";
-                desc.innerText = "Awesome clicks! Look at the sidebar options below and select the correct matching choice to pass the test!";
-                toolsBox.style.display = "none";
-                quizBox.style.display = "flex";
-                loadRound2();
-            } else if (currentRound === 2) {
-                currentRound = 3;
-                title.innerText = "🥇 Round 3: Stamp Wall Fame";
-                desc.innerText = "Incredible smarts! Switch onto the <b>Mystery Stamp (⭐)</b> tool, and stamp 5 championship medals on the golden wall display area!";
-                quizBox.style.display = "none";
-                toolsBox.style.display = "flex";
-                selectTool('stamp');
-                loadRound3();
+            if (activeRound < 3) {
+                activeRound++;
+                setupRound();
             } else {
-                // Loop wrap back up
-                currentRound = 1;
-                round1Hit = false;
-                round3Count = 0;
-                title.innerText = "🎮 Round 1: Catch the Glitch Bug!";
-                desc.innerText = "A jumping glitch bug is hidden in the dark! Select the Wacky Brush (🖌️) tool and click on the moving target block on the canvas to trap it!";
-                selectTool('brush');
-                startRound1();
-                document.getElementById('status-label').innerText = "Status: Room Reset Complete.";
+                // Loop execution resetting base variables configuration state parameters
+                activeRound = 1;
+                setupRound();
             }
         }
     </script>

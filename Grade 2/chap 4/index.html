@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KidPix 1: The Wacky Shape Chase!</title>
+    <title>KidPix: Pixel Pets Rescue!</title>
     <style>
         body {
             font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
-            background-color: #e0f2fe; /* Soft sky blue KidPix theme */
+            background-color: #fbcfe8; /* Fun bubblegum pink background */
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #0f172a;
+            color: #1e293b;
             overflow-x: hidden;
             user-select: none;
         }
@@ -37,21 +37,21 @@
         #splash-screen img {
             max-width: 280px;
             margin-bottom: 25px;
-            animation: wiggle 1s infinite alternate;
+            animation: bounce 1s infinite alternate;
         }
 
         #splash-screen h2 {
-            color: #0284c7;
-            font-size: 28px;
+            color: #db2777;
+            font-size: 30px;
             margin: 0;
         }
 
-        @keyframes wiggle {
-            0% { transform: rotate(-3deg); }
-            100% { transform: rotate(3deg); }
+        @keyframes bounce {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-15px) scale(1.03); }
         }
 
-        /* Main Game Layout */
+        /* Main Workspace Design */
         .main-content {
             display: flex;
             flex-direction: column;
@@ -66,9 +66,9 @@
             background: #ffffff;
             width: 100%;
             padding: 15px 30px;
-            border-radius: 20px;
-            border: 4px solid #f43f5e;
-            box-shadow: 6px 6px 0px #be123c;
+            border-radius: 25px;
+            border: 4px solid #db2777;
+            box-shadow: 6px 6px 0px #9d174d;
             margin-bottom: 25px;
             box-sizing: border-box;
             text-align: center;
@@ -76,8 +76,8 @@
 
         header h1 {
             margin: 0;
-            font-size: 26px;
-            color: #e11d48;
+            font-size: 28px;
+            color: #db2777;
         }
 
         .game-grid {
@@ -86,12 +86,12 @@
             width: 100%;
         }
 
-        /* Instructions & Toolbox */
+        /* Side Controls & Toolbox */
         .sidebar {
             flex: 1;
             background: white;
             padding: 25px;
-            border-radius: 20px;
+            border-radius: 22px;
             border: 4px solid #3b82f6;
             box-shadow: 6px 6px 0px #1d4ed8;
             display: flex;
@@ -101,9 +101,9 @@
 
         .instruction-card {
             background-color: #eff6ff;
-            border: 3px dashed #2563eb;
+            border: 3px dashed #3b82f6;
             padding: 15px;
-            border-radius: 12px;
+            border-radius: 14px;
             margin-bottom: 20px;
         }
 
@@ -115,24 +115,26 @@
 
         .tool-rack {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
             margin-bottom: 20px;
         }
 
         .tool-btn {
             background: #f8fafc;
             border: 3px solid #cbd5e1;
-            padding: 14px;
-            font-size: 20px;
+            padding: 12px 6px;
+            font-size: 16px;
+            font-weight: bold;
             border-radius: 12px;
             cursor: pointer;
-            transition: transform 0.1s;
+            transition: transform 0.1s, background-color 0.1s;
         }
 
         .tool-btn.active {
             background: #fef2f2;
             border-color: #ef4444;
+            transform: scale(1.05);
         }
 
         .action-btn {
@@ -148,14 +150,14 @@
             width: 100%;
         }
 
-        /* Canvas Arena */
+        /* Canvas Viewport Window */
         .canvas-window {
             flex: 1.8;
             background: #ffffff;
             padding: 15px;
-            border-radius: 20px;
-            border: 4px solid #a855f7;
-            box-shadow: 6px 6px 0px #7e22ce;
+            border-radius: 25px;
+            border: 4px solid #f59e0b;
+            box-shadow: 6px 6px 0px #d97706;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -167,14 +169,14 @@
             justify-content: space-between;
             margin-bottom: 12px;
             font-weight: bold;
-            color: #5b21b6;
+            color: #b45309;
         }
 
         canvas {
-            background: #2563eb; /* Hidden darkness background where things hide */
+            background: #ffffff;
             border: 4px solid #e2e8f0;
-            border-radius: 12px;
-            cursor: pointer;
+            border-radius: 16px;
+            cursor: crosshair;
         }
     </style>
 </head>
@@ -182,38 +184,39 @@
 
     <div id="splash-screen">
         <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/250x90?text=Innovine';">
-        <h2>🎨 KidPix 1: Wacky Shape Chase Booting...</h2>
+        <h2>🐶 KidPix 1: Pixel Pets Rescue! 🐱</h2>
     </div>
 
     <div class="main-content" id="app-workspace">
         <header>
-            <h1>✨ KidPix 1: The Wacky Shape Chase! ✨</h1>
+            <h1>🐾 KidPix Rescue Room: Save the Animals! 🐾</h1>
         </header>
 
         <div class="game-grid">
             <div class="sidebar">
                 <div>
                     <div class="instruction-card">
-                        <h3 id="mission-title">🖌️ Stage 1: Reveal the Hidden Star</h3>
-                        <p id="mission-desc">A magical star is hiding in the blue dark sky! Select the <b>Wacky Brush (🖌️)</b> tool and paint right over the center of the canvas to uncover it!</p>
+                        <h3 id="round-title">🧼 Round 1: Wash the Muddy Puppy</h3>
+                        <p id="round-desc">A poor puppy got stuck in digital mud! Select the <b>Magic Wand (🪄)</b> tool and tap the giant brown mud puddle on the canvas to clean his fur!</p>
                     </div>
 
-                    <span style="font-weight:bold; font-size:14px; color:#475569; display:block; margin-bottom:8px;">KidPix Tool Chest:</span>
+                    <span style="font-weight:bold; font-size:14px; color:#475569; display:block; margin-bottom:8px;">KidPix Gadgets:</span>
                     <div class="tool-rack">
-                        <button class="tool-btn active" id="tool-brush" onclick="selectTool('brush')">🖌️ Wacky Brush</button>
-                        <button class="tool-btn" id="tool-move" onclick="selectTool('move')">🚚 Moving Van</button>
+                        <button class="tool-btn active" id="tool-wand" onclick="selectTool('wand')">🪄 Wand</button>
+                        <button class="tool-btn" id="tool-spray" onclick="selectTool('spray')">💨 Spray</button>
+                        <button class="tool-btn" id="tool-stamp" onclick="selectTool('stamp')">⭐ Stamp</button>
                     </div>
                 </div>
 
-                <button class="action-btn" id="next-btn" onclick="processStage()" disabled style="background-color:#94a3b8; box-shadow:none; cursor:not-allowed;">Find the Star First</button>
+                <button class="action-btn" id="next-btn" onclick="advanceRound()" disabled style="background-color:#94a3b8; box-shadow:none; cursor:not-allowed;">Solve Round Objective First</button>
             </div>
 
             <div class="canvas-window">
                 <div class="canvas-meta">
-                    <span id="active-tool-label">Active Tool: Wacky Brush</span>
-                    <span id="score-label">Status: Paint to find the secret!</span>
+                    <span id="active-tool-label">Active Tool: Magic Wand</span>
+                    <span id="status-label">Status: Rescue Mission Started!</span>
                 </div>
-                <canvas id="gameCanvas" width="550" height="400"></canvas>
+                <canvas id="rescueCanvas" width="550" height="400"></canvas>
             </div>
         </div>
     </div>
@@ -228,100 +231,138 @@
                 document.getElementById('splash-screen').style.opacity = '0';
                 document.getElementById('splash-screen').style.visibility = 'hidden';
                 document.getElementById('app-workspace').style.opacity = '1';
-                initCanvas();
+                loadRound1();
             }, 5000);
         });
 
-        const canvas = document.getElementById('gameCanvas');
+        const canvas = document.getElementById('rescueCanvas');
         const ctx = canvas.getContext('2d');
         
-        let currentStage = 1;
-        let selectedTool = 'brush';
-        let starRevealed = false;
-        let starMoved = false;
-
-        // Coordinates for our hidden item placement properties
-        let starX = 250;
-        let starY = 180;
+        let activeRound = 1;
+        let selectedTool = 'wand';
+        let round1Cleared = false;
+        let round2Count = 0;
+        let round3Count = 0;
 
         function playSound(id) {
-            const track = document.getElementById(id);
-            if(track) {
-                track.currentTime = 0;
-                track.play().catch(() => {});
+            const sound = document.getElementById(id);
+            if(sound) {
+                sound.currentTime = 0;
+                sound.play().catch(() => {});
             }
-        }
-
-        function initCanvas() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            // Paint the sky darkness
-            ctx.fillStyle = "#1e3a8a";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
         function selectTool(tool) {
             selectedTool = tool;
             document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(`tool-${tool}`).classList.add('active');
-            document.getElementById('active-tool-label').innerText = `Active Tool: ${tool === 'brush' ? 'Wacky Brush' : 'Moving Van'}`;
+            
+            let name = "Magic Wand";
+            if(tool === 'spray') name = "Color Spray Can";
+            if(tool === 'stamp') name = "Mystery Stamp";
+            document.getElementById('active-tool-label').innerText = `Active Tool: ${name}`;
         }
 
+        // --- ROUND INITIALIZATIONS ---
+        function loadRound1() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Draw a big brown mud patch over a puppy emoji
+            ctx.fillStyle = "#854d0e";
+            ctx.beginPath();
+            ctx.arc(275, 200, 90, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.font = "30px sans-serif";
+            ctx.fillText("Mud Pile", 215, 80);
+        }
+
+        function loadRound2() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Draw a sad cat container needing custom grass feed background
+            ctx.fillStyle = "#cbd5e1";
+            ctx.fillRect(50, 50, canvas.width - 100, canvas.height - 100);
+            
+            ctx.font = "80px Arial";
+            ctx.fillText("🐱", 230, 220);
+            
+            ctx.fillStyle = "#334155";
+            ctx.font = "bold 20px sans-serif";
+            ctx.fillText("Spray 5 fields of Green Grass around the kitten!", 70, 320);
+        }
+
+        function loadRound3() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Draw an empty wildlife forest sanctuary background
+            ctx.fillStyle = "#bbf7d0";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = "#166534";
+            ctx.font = "bold 20px sans-serif";
+            ctx.fillText("🌲 Nature Park Sanctuary 🌲", 140, 50);
+            ctx.fillText("Place 5 Animal Stamps into their forest home!", 70, 350);
+        }
+
+        // --- CANVAS CLICK INTERACTION ENGINE ---
         canvas.addEventListener('click', function(e) {
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
 
-            // STAGE 1: PAINT BRUSH EXPLORATION
-            if (currentStage === 1) {
-                if (selectedTool === 'brush') {
-                    // Click near the hidden center area coordinates
-                    if (x >= 200 && x <= 320 && y >= 130 && y <= 230) {
-                        starRevealed = true;
-                        playSound('snd-correct');
-                        
-                        // Draw the glowing discovered target star
-                        ctx.fillStyle = "#facc15";
-                        ctx.font = "72px Arial";
-                        ctx.fillText("⭐", starX, starY + 50);
-                        
-                        document.getElementById('score-label').innerText = "Status: You found the Magic Star!";
+            // ROUND 1 LOGIC
+            if (activeRound === 1) {
+                if (selectedTool === 'wand' && x >= 185 && x <= 365 && y >= 110 && y <= 290) {
+                    round1Cleared = true;
+                    playSound('snd-correct');
+                    
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.font = "110px Arial";
+                    ctx.fillText("🐶", 215, 230);
+                    
+                    document.getElementById('status-label').innerText = "Status: Puppy Clean & Happy!";
+                    unlockNext();
+                } else {
+                    playSound('snd-wrong');
+                }
+            }
+            // ROUND 2 LOGIC
+            if (activeRound === 2) {
+                if (selectedTool === 'spray') {
+                    round2Count++;
+                    playSound('snd-correct');
+                    
+                    // Draw neon green grass patterns
+                    ctx.fillStyle = "#22c55e";
+                    for(let i=0; i<15; i++) {
+                        let rx = x + (Math.random() * 40 - 20);
+                        let ry = y + (Math.random() * 40 - 20);
+                        ctx.fillRect(rx, ry, 6, 6);
+                    }
+                    
+                    document.getElementById('status-label').innerText = `Grass Fields Fed: ${round2Count} / 5`;
+                    if(round2Count >= 5) {
+                        playSound('snd-clap'); // Success sound clip
                         unlockNext();
-                    } else {
-                        // Wrong location stroke sound feedback
-                        playSound('snd-wrong');
-                        // Draw funny bright splash textures
-                        ctx.fillStyle = "#ec4899";
-                        ctx.beginPath();
-                        ctx.arc(x, y, 15, 0, Math.PI * 2);
-                        ctx.fill();
                     }
                 } else {
                     playSound('snd-wrong');
                 }
             }
-            // STAGE 2: MOVING VAN PHYSICS
-            else if (currentStage === 2) {
-                if (selectedTool === 'move') {
-                    // Click on the old star position to "pick it up" and move it to safety
-                    if (!starMoved && x >= 230 && x <= 320 && y >= 150 && y <= 240) {
-                        starMoved = true;
-                        playSound('snd-clap'); // Big round of applause clap theme on target captured
-                        
-                        // Erase old position
-                        ctx.fillStyle = "#1e3a8a";
-                        ctx.fillRect(230, 150, 100, 100);
-                        
-                        // Draw inside its new safe cage destination house icon box
-                        ctx.fillStyle = "#4ade80";
-                        ctx.fillRect(430, 280, 100, 100);
-                        ctx.fillStyle = "#facc15";
-                        ctx.font = "50px Arial";
-                        ctx.fillText("⭐", 450, 350);
-                        
-                        document.getElementById('score-label').innerText = "Status: Star safely locked home!";
+            // ROUND 3 LOGIC
+            if (activeRound === 3) {
+                if (selectedTool === 'stamp') {
+                    round3Count++;
+                    playSound('snd-correct');
+                    
+                    const junglePets = ['🦁', '🐯', '🐼', '🐨', '🦊', '🐰'];
+                    let pet = junglePets[Math.floor(Math.random() * junglePets.length)];
+                    
+                    ctx.font = "55px Arial";
+                    ctx.fillText(pet, x - 25, y + 25);
+                    
+                    document.getElementById('status-label').innerText = `Animals Saved: ${round3Count} / 5`;
+                    if(round3Count >= 5) {
+                        playSound('snd-clap'); // Big round of applause triggered
                         unlockNext();
-                    } else {
-                        playSound('snd-wrong');
                     }
                 } else {
                     playSound('snd-wrong');
@@ -334,38 +375,45 @@
             btn.disabled = false;
             btn.style.backgroundColor = "#10b981";
             btn.style.cursor = "pointer";
-            btn.innerText = currentStage === 2 ? "Reset Playground 🎉" : "Load Next Truck ➡️";
+            btn.innerText = activeRound === 3 ? "Complete All Missions! 🏆" : "Go to Next Round ➡️";
         }
 
-        function processStage() {
-            const title = document.getElementById('mission-title');
-            const desc = document.getElementById('mission-desc');
+        function advanceRound() {
+            const title = document.getElementById('round-title');
+            const desc = document.getElementById('round-desc');
             const btn = document.getElementById('next-btn');
             
             btn.disabled = true;
             btn.style.backgroundColor = "#94a3b8";
             btn.style.cursor = "not-allowed";
-            btn.innerText = "Complete Action on Canvas First";
+            btn.innerText = "Solve Round Objective First";
 
-            if (currentStage === 1) {
-                currentStage = 2;
-                title.innerText = "🚚 Stage 2: Load the Moving Van";
-                desc.innerText = "Awesome paintwork! Now select the <b>Moving Van tool (🚚)</b>, click directly on the star, and drive it down safely to the green home box in the bottom corner!";
-                
-                // Draw target safe house base box mapping indicators
-                ctx.strokeStyle = "#4ade80";
-                ctx.lineWidth = 4;
-                ctx.strokeRect(430, 280, 100, 100);
-                selectTool('move');
+            if (activeRound === 1) {
+                activeRound = 2;
+                title.innerText = "💨 Round 2: Feed the Hungry Kitten";
+                desc.innerText = "The kitten needs some cozy green grass fields! Grab the <b>Color Spray Can (💨)</b> and click 5 times around the canvas to spray clean green grass patches!";
+                selectTool('spray');
+                loadRound2();
+                document.getElementById('status-label').innerText = "Status: Protect the kitty.";
+            } else if (activeRound === 2) {
+                activeRound = 3;
+                title.innerText = "⭐ Round 3: The Sanctuary Repopulation";
+                desc.innerText = "Let's welcome animals back home. Select the <b>Mystery Stamp tool (⭐)</b> and click 5 times to stamp wild friends safely inside the green nature park protection zone!";
+                selectTool('stamp');
+                loadRound3();
+                document.getElementById('status-label').innerText = "Status: Populating forest...";
             } else {
-                currentStage = 1;
-                starRevealed = false;
-                starMoved = false;
-                title.innerText = "🖌️ Stage 1: Reveal the Hidden Star";
-                desc.innerText = "A magical star is hiding in the blue dark sky! Select the Wacky Brush (🖌️) tool and paint right over the center of the canvas to uncover it!";
-                selectTool('brush');
-                initCanvas();
-                document.getElementById('score-label').innerText = "Status: Canvas Cleared.";
+                // Wrap game around loop smoothly
+                alert("Spectacular Work, Hero! You rescued all the digital pixel pets!");
+                activeRound = 1;
+                round1Cleared = false;
+                round2Count = 0;
+                round3Count = 0;
+                title.innerText = "🧼 Round 1: Wash the Muddy Puppy";
+                desc.innerText = "A poor puppy got stuck in digital mud! Select the Magic Wand (🪄) tool and tap the giant brown mud puddle on the canvas to clean his fur!";
+                selectTool('wand');
+                loadRound1();
+                document.getElementById('status-label').innerText = "Status: Playground Reset Complete.";
             }
         }
     </script>

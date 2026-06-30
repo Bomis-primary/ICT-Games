@@ -1,877 +1,441 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>Kid Pix Race Challenge</title>
-
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Comic Sans MS',cursive;
-}
-
-body{
-
-background:url('assets/background.png');
-background-size:cover;
-background-position:center;
-background-repeat:no-repeat;
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-padding:10px;
-overflow-x:hidden;
-
-}
-
-#gameBox{
-
-width:100%;
-max-width:1150px;
-background:rgba(255,255,255,0.95);
-border-radius:30px;
-padding:20px;
-box-shadow:0 10px 35px rgba(0,0,0,0.3);
-overflow:hidden;
-position:relative;
-
-}
-
-.logo{
-
-width:120px;
-display:block;
-margin:auto;
-margin-bottom:10px;
-
-}
-
-.screen{
-display:none;
-animation:fade 0.5s;
-}
-
-.active{
-display:block;
-}
-
-@keyframes fade{
-
-from{
-opacity:0;
-transform:translateY(20px);
-}
-
-to{
-opacity:1;
-transform:translateY(0);
-}
-
-}
-
-h1,h2,h3{
-
-text-align:center;
-color:#6a1b9a;
-margin-bottom:15px;
-
-}
-
-.question{
-
-font-size:28px;
-font-weight:bold;
-text-align:center;
-margin:20px 0;
-line-height:1.4;
-color:#4a148c;
-
-}
-
-.btn{
-
-background:#ff7043;
-color:white;
-border:none;
-padding:14px 24px;
-border-radius:40px;
-font-size:20px;
-font-weight:bold;
-cursor:pointer;
-margin:10px;
-transition:0.3s;
-
-}
-
-.btn:hover{
-
-transform:scale(1.05);
-
-}
-
-input{
-
-padding:14px;
-width:90%;
-max-width:400px;
-border-radius:12px;
-border:2px solid #ccc;
-font-size:18px;
-margin-top:15px;
-
-}
-
-.scoreBox{
-
-font-size:24px;
-font-weight:bold;
-text-align:center;
-color:#ff6f00;
-margin-bottom:10px;
-
-}
-
-.raceTrack{
-
-width:100%;
-height:150px;
-background:
-repeating-linear-gradient(
-90deg,
-#90caf9 0px,
-#90caf9 80px,
-#64b5f6 80px,
-#64b5f6 160px
-);
-
-border-radius:20px;
-position:relative;
-overflow:hidden;
-margin-top:20px;
-border:5px solid white;
-
-}
-
-.finishLine{
-
-position:absolute;
-right:0;
-top:0;
-height:100%;
-width:80px;
-
-background:
-repeating-linear-gradient(
-45deg,
-black 0px,
-black 10px,
-white 10px,
-white 20px
-);
-
-}
-
-.runner{
-
-position:absolute;
-left:10px;
-top:40px;
-font-size:70px;
-transition:0.5s;
-
-}
-
-.option-container{
-
-display:flex;
-justify-content:center;
-gap:20px;
-flex-wrap:wrap;
-margin-top:20px;
-
-}
-
-.option{
-
-background:#f3e5f5;
-padding:18px;
-border-radius:20px;
-cursor:pointer;
-font-size:22px;
-font-weight:bold;
-min-width:180px;
-text-align:center;
-transition:0.3s;
-box-shadow:0 5px 10px rgba(0,0,0,0.1);
-
-}
-
-.option:hover{
-
-background:#ce93d8;
-transform:scale(1.05);
-
-}
-
-.feedback{
-
-font-size:28px;
-font-weight:bold;
-text-align:center;
-margin-top:20px;
-min-height:50px;
-
-}
-
-.game-image{
-
-width:220px;
-height:180px;
-object-fit:contain;
-border-radius:20px;
-background:#fff3e0;
-padding:10px;
-box-shadow:0 5px 15px rgba(0,0,0,0.2);
-cursor:pointer;
-transition:0.3s;
-
-}
-
-.game-image:hover{
-
-transform:scale(1.08);
-
-}
-
-.dropdown{
-
-padding:14px;
-font-size:20px;
-border-radius:12px;
-margin-top:20px;
-width:300px;
-
-}
-
-.final-score{
-
-font-size:70px;
-font-weight:bold;
-text-align:center;
-color:#ff6f00;
-margin:20px 0;
-
-}
-
-.rank{
-
-font-size:30px;
-font-weight:bold;
-text-align:center;
-color:#1565c0;
-
-}
-
-@media(max-width:768px){
-
-.question{
-font-size:22px;
-}
-
-.option{
-width:100%;
-font-size:18px;
-}
-
-.runner{
-font-size:55px;
-}
-
-.game-image{
-width:150px;
-height:120px;
-}
-
-.final-score{
-font-size:50px;
-}
-
-}
-
-</style>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KidPix: Mega Tech Showdown</title>
+    <style>
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
+            background-color: #c084fc; /* Vibrant purple KidPix background */
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #1e1b4b;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        /* 5-Second Splash Screen (Logo Only Appears Here) */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        #splash-screen img {
+            max-width: 290px;
+            margin-bottom: 20px;
+            animation: spin-pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes spin-pulse {
+            0% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.08) rotate(3deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        /* Workspace Grid Wrapper */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 1050px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        header {
+            background: #ffffff;
+            width: 100%;
+            padding: 15px;
+            border-radius: 20px;
+            border: 4px solid #7c3aed;
+            box-shadow: 6px 6px 0px #5b21b6;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 26px;
+            color: #7c3aed;
+        }
+
+        .game-grid {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+        }
+
+        /* Instructions Side Window */
+        .sidebar {
+            flex: 1;
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            border: 4px solid #2563eb;
+            box-shadow: 6px 6px 0px #1d4ed8;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .instruction-card {
+            background-color: #f0f9ff;
+            border: 3px dashed #3b82f6;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+
+        .instruction-card h3 {
+            margin: 0 0 6px 0;
+            color: #1d4ed8;
+            font-size: 18px;
+        }
+
+        /* Pop Quiz Option Blocks */
+        .quiz-box {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .quiz-option {
+            background: #f3f4f6;
+            border: 2px solid #d1d5db;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            text-align: left;
+            transition: background 0.2s;
+        }
+
+        .quiz-option:hover {
+            background: #e5e7eb;
+        }
+
+        .tool-rack {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .tool-btn {
+            flex: 1;
+            background: #f8fafc;
+            border: 3px solid #cbd5e1;
+            padding: 12px;
+            font-size: 18px;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .tool-btn.active {
+            background: #fef2f2;
+            border-color: #ef4444;
+        }
+
+        .action-btn {
+            background-color: #10b981;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 4px 4px 0px #047857;
+            cursor: pointer;
+        }
+
+        /* Studio Interactive Window Viewport */
+        .canvas-window {
+            flex: 1.6;
+            background: #ffffff;
+            padding: 15px;
+            border-radius: 20px;
+            border: 4px solid #f59e0b;
+            box-shadow: 6px 6px 0px #d97706;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .canvas-meta {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #b45309;
+        }
+
+        canvas {
+            background: #ffffff;
+            border: 4px solid #cbd5e1;
+            border-radius: 12px;
+            cursor: crosshair;
+        }
+    </style>
 </head>
-
 <body>
 
-<div id="gameBox">
-
-<audio id="correctSound"
-src="assets/correct-1.mp3"></audio>
-
-<audio id="wrongSound"
-src="assets/wrong.mp3"></audio>
-
-<!-- INTRO -->
-
-<div class="screen active"
-id="intro">
-
-<img src="assets/innovine-logo.png"
-class="logo">
-
-<h1>🏁 Kid Pix Race Challenge</h1>
-
-<center>
-
-<input type="text"
-id="studentName"
-placeholder="Enter Student Name">
-
-<br>
-
-<button class="btn"
-onclick="startGame()">
-🚀 Start Race
-</button>
-
-</center>
-
-</div>
-
-<!-- GAME SCREEN -->
-
-<div class="screen"
-id="gameScreen">
-
-<img src="assets/innovine-logo.png"
-class="logo">
-
-<div class="scoreBox">
-
-⭐ Score :
-<span id="score">0</span>
-
-</div>
-
-<div class="raceTrack">
-
-<div class="runner"
-id="runner">
-🏃
-</div>
-
-<div class="finishLine"></div>
-
-</div>
-
-<div class="question"
-id="question"></div>
-
-<div class="option-container"
-id="options"></div>
-
-<div class="feedback"
-id="feedback"></div>
-
-<center>
-
-<button class="btn"
-onclick="nextQuestion()">
-Next ➜
-</button>
-
-</center>
-
-</div>
-
-<!-- FINAL -->
-
-<div class="screen"
-id="finalScreen">
-
-<img src="assets/innovine-logo.png"
-class="logo">
-
-<h1>🏆 Race Complete!</h1>
-
-<h2 id="studentDisplay"></h2>
-
-<div class="final-score"
-id="finalScore"></div>
-
-<div class="rank"
-id="rank"></div>
-
-<center>
-
-<button class="btn"
-onclick="location.reload()">
-🔄 Play Again
-</button>
-
-</center>
-
-</div>
-
-</div>
-
-<script>
-
-let student="";
-let score=0;
-let currentQuestion=0;
-let position=10;
-
-const questions=[
-
-{
-type:"image",
-q:"Click the Animation Tool",
-images:[
-{
-src:"assets/animation.png",
-correct:true
-},
-{
-src:"assets/sound.png",
-correct:false
-},
-{
-src:"assets/sticker.png",
-correct:false
-}
-]
-},
-
-{
-type:"image",
-q:"Click the Sound Tool",
-images:[
-{
-src:"assets/sticker.png",
-correct:false
-},
-{
-src:"assets/sound.png",
-correct:true
-},
-{
-src:"assets/animation.png",
-correct:false
-}
-]
-},
-
-{
-type:"image",
-q:"Click the Sticker Tool",
-images:[
-{
-src:"assets/animation.png",
-correct:false
-},
-{
-src:"assets/sticker.png",
-correct:true
-},
-{
-src:"assets/sound.png",
-correct:false
-}
-]
-},
-
-{
-type:"dropdown",
-q:"Select the tool used to add sounds",
-options:[
-"Sound Tool",
-"Sticker Tool",
-"Animation Tool"
-],
-answer:"Sound Tool"
-},
-
-{
-type:"mcq",
-q:"Which tool makes pictures move?",
-options:[
-"Animation Tool",
-"Sound Tool",
-"Sticker Tool"
-],
-answer:"Animation Tool"
-},
-
-{
-type:"dropdown",
-q:"Select the tool used for funny moving pictures",
-options:[
-"Animation Tool",
-"Brush Tool",
-"Text Tool"
-],
-answer:"Animation Tool"
-},
-
-{
-type:"mcq",
-q:"Which tool adds decorative pictures?",
-options:[
-"Sticker Tool",
-"Sound Tool",
-"Eraser Tool"
-],
-answer:"Sticker Tool"
-},
-
-{
-type:"dropdown",
-q:"Select the tool used to decorate pictures",
-options:[
-"Sticker Tool",
-"Line Tool",
-"Text Tool"
-],
-answer:"Sticker Tool"
-},
-
-{
-type:"mcq",
-q:"Which tool plays funny sounds?",
-options:[
-"Sound Tool",
-"Brush Tool",
-"Shape Tool"
-],
-answer:"Sound Tool"
-},
-
-{
-type:"mcq",
-q:"Which Kid Pix tool makes cartoons fun?",
-options:[
-"Animation Tool",
-"Text Tool",
-"Line Tool"
-],
-answer:"Animation Tool"
-}
-
-];
-
-/* START */
-
-function startGame(){
-
-student=
-document.getElementById("studentName").value;
-
-if(student===""){
-
-alert("Please Enter Student Name");
-return;
-
-}
-
-showScreen("gameScreen");
-
-loadQuestion();
-
-}
-
-/* SCREEN */
-
-function showScreen(id){
-
-document.querySelectorAll(".screen")
-.forEach(screen=>{
-screen.classList.remove("active");
-});
-
-document.getElementById(id)
-.classList.add("active");
-
-}
-
-/* LOAD QUESTION */
-
-function loadQuestion(){
-
-let q=questions[currentQuestion];
-
-document.getElementById("question")
-.innerHTML=
-"Q"+(currentQuestion+1)+". "+q.q;
-
-let html="";
-
-if(q.type==="mcq"){
-
-q.options.forEach(opt=>{
-
-html+=`
-<div class="option"
-onclick="checkAnswer('${opt}')">
-${opt}
-</div>
-`;
-
-});
-
-}
-
-else if(q.type==="image"){
-
-q.images.forEach(img=>{
-
-html+=`
-<img src="${img.src}"
-class="game-image"
-onclick="checkImage(${img.correct})">
-`;
-
-});
-
-}
-
-else if(q.type==="dropdown"){
-
-html=`
-
-<center>
-
-<select id="dropdownAnswer"
-class="dropdown">
-
-<option value="">
-Select Answer
-</option>
-
-${q.options.map(opt=>
-`<option value="${opt}">
-${opt}
-</option>`
-).join("")}
-
-</select>
-
-<br>
-
-<button class="btn"
-onclick="checkDropdown()">
-Submit
-</button>
-
-</center>
-
-`;
-
-}
-
-document.getElementById("options")
-.innerHTML=html;
-
-document.getElementById("feedback")
-.innerHTML="";
-
-}
-
-/* CORRECT */
-
-function correctAnswer(){
-
-score+=2;
-
-document.getElementById("score")
-.innerHTML=score;
-
-position+=70;
-
-if(position>850){
-position=850;
-}
-
-document.getElementById("runner")
-.style.left=position+"px";
-
-document.getElementById("correctSound")
-.play();
-
-document.getElementById("feedback")
-.innerHTML=
-"🎉 Correct! Speed Boost";
-
-document.getElementById("feedback")
-.style.color="green";
-
-confetti({
-particleCount:150,
-spread:120
-});
-
-}
-
-/* WRONG */
-
-function wrongAnswer(){
-
-score--;
-
-if(score<0){
-score=0;
-}
-
-document.getElementById("score")
-.innerHTML=score;
-
-position-=25;
-
-if(position<10){
-position=10;
-}
-
-document.getElementById("runner")
-.style.left=position+"px";
-
-document.getElementById("wrongSound")
-.play();
-
-document.getElementById("feedback")
-.innerHTML=
-"😢 Wrong! Speed Slowed";
-
-document.getElementById("feedback")
-.style.color="red";
-
-}
-
-/* MCQ */
-
-function checkAnswer(ans){
-
-let q=questions[currentQuestion];
-
-if(ans===q.answer){
-
-correctAnswer();
-
-}else{
-
-wrongAnswer();
-
-}
-
-}
-
-/* IMAGE */
-
-function checkImage(correct){
-
-if(correct){
-
-correctAnswer();
-
-}else{
-
-wrongAnswer();
-
-}
-
-}
-
-/* DROPDOWN */
-
-function checkDropdown(){
-
-let value=
-document.getElementById("dropdownAnswer").value;
-
-let q=questions[currentQuestion];
-
-if(value===q.answer){
-
-correctAnswer();
-
-}else{
-
-wrongAnswer();
-
-}
-
-}
-
-/* NEXT */
-
-function nextQuestion(){
-
-currentQuestion++;
-
-if(currentQuestion>=questions.length){
-
-showFinal();
-
-}else{
-
-loadQuestion();
-
-}
-
-}
-
-/* FINAL */
-
-function showFinal(){
-
-showScreen("finalScreen");
-
-document.getElementById("studentDisplay")
-.innerHTML=
-"👏 "+student;
-
-document.getElementById("finalScore")
-.innerHTML=
-score+" Points";
-
-let rank="";
-
-if(score>=18){
-
-rank="🏆 Kid Pix Champion";
-
-}else if(score>=10){
-
-rank="🌟 Creative Racer";
-
-}else{
-
-rank="👍 Keep Practicing";
-
-}
-
-document.getElementById("rank")
-.innerHTML=rank;
-
-confetti({
-particleCount:500,
-spread:220
-});
-
-}
-
-</script>
-
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/250x90?text=Innovine';">
+        <h2>🚀 KidPix: The Tech Showdown Arena! 🚀</h2>
+    </div>
+
+    <div class="main-content" id="app-workspace">
+        <header>
+            <h1>⚡ KidPix  Arcade: Action, Painting & Trivia! ⚡</h1>
+        </header>
+
+        <div class="game-grid">
+            <div class="sidebar">
+                <div>
+                    <div class="instruction-card">
+                        <h3 id="stage-title">🎮 Round 1: Catch the Glitch Bug!</h3>
+                        <p id="stage-desc">A jumping glitch bug is hidden in the dark! Select the <b>Wacky Brush (🖌️)</b> tool and click on the moving target block on the canvas to trap it!</p>
+                    </div>
+
+                    <div class="quiz-box" id="quiz-container">
+                        <span style="font-weight: bold; color: #4b5563; margin-bottom: 5px;">Choose the correct Answer:</span>
+                        <button class="quiz-option" onclick="checkQuizAnswer(false)">A) The Text Typer Tool</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(true)">B) The Moving Van Selection Tool</button>
+                        <button class="quiz-option" onclick="checkQuizAnswer(false)">C) The Trash Can Erase</button>
+                    </div>
+
+                    <div class="tool-rack" id="tools-div">
+                        <button class="tool-btn active" id="tool-brush" onclick="selectTool('brush')">🖌️ Brush</button>
+                        <button class="tool-btn" id="tool-stamp" onclick="selectTool('stamp')">⭐ Stamp</button>
+                    </div>
+                </div>
+
+                <button class="action-btn" id="next-btn" onclick="advanceStage()" disabled style="background-color:#94a3b8; box-shadow:none; cursor:not-allowed;">Solve Round Objective First</button>
+            </div>
+
+            <div class="canvas-window">
+                <div class="canvas-meta">
+                    <span id="active-tool-label">Active Tool: Wacky Brush</span>
+                    <span id="status-label">Status: Battle On!</span>
+                </div>
+                <canvas id="showdownCanvas" width="550" height="400"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="snd-clap" src="assets/clap.mp3" preload="auto"></audio>
+    <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.getElementById('splash-screen').style.opacity = '0';
+                document.getElementById('splash-screen').style.visibility = 'hidden';
+                document.getElementById('app-workspace').style.opacity = '1';
+                startRound1();
+            }, 5000);
+        });
+
+        const canvas = document.getElementById('showdownCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let currentRound = 1;
+        let selectedTool = 'brush';
+        let round1Hit = false;
+        let round3Count = 0;
+
+        // Target coordinates for moving box action scene
+        let bugX = 120;
+        let bugY = 160;
+        let bugTimer = null;
+
+        function playSound(id) {
+            const el = document.getElementById(id);
+            if(el) {
+                el.currentTime = 0;
+                el.play().catch(() => {});
+            }
+        }
+
+        function selectTool(tool) {
+            selectedTool = tool;
+            document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`tool-${tool}`).classList.add('active');
+            document.getElementById('active-tool-label').innerText = `Active Tool: ${tool === 'brush' ? 'Wacky Brush' : 'Mystery Stamp'}`;
+        }
+
+        // --- ROUND INITIALIZATION LOOPS ---
+        function startRound1() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            // Flash random background grids
+            ctx.fillStyle = "#1e293b";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            // Loop move intervals
+            bugTimer = setInterval(() => {
+                ctx.fillStyle = "#1e293b";
+                ctx.fillRect(0,0,canvas.width,canvas.height);
+                
+                // Randomly spawn bugs
+                bugX = Math.random() * (canvas.width - 100) + 20;
+                bugY = Math.random() * (canvas.height - 100) + 20;
+                
+                ctx.fillStyle = "#ef4444";
+                ctx.fillRect(bugX, bugY, 60, 60);
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "14px Arial";
+                ctx.fillText("BUG 👾", bugX + 8, bugY + 35);
+            }, 900);
+        }
+
+        function loadRound2() {
+            clearInterval(bugTimer);
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            
+            // Render quiz layout background screen frame
+            ctx.fillStyle = "#38bdf8";
+            ctx.fillRect(20, 20, canvas.width - 40, canvas.height - 40);
+            
+            ctx.fillStyle = "#1e3a8a";
+            ctx.font = "bold 22px 'Comic Sans MS'";
+            ctx.fillText("❓ KIDPIX 2 POP TRIVIA CHALLENGE ❓", 50, 100);
+            ctx.font = "18px sans-serif";
+            ctx.fillText("Which advanced KidPix tool lets you grab a drawing", 60, 170);
+            ctx.fillText("and drag it to another spot across the screen?", 60, 200);
+        }
+
+        function loadRound3() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = "#fef08a";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            ctx.fillStyle = "#ca8a04";
+            ctx.font = "bold 24px sans-serif";
+            ctx.fillText("🏆 VICTORY WALL STAMP CELEBRATION 🏆", 40, 80);
+            ctx.fillText("Stamp 5 Golden Medals on the Wall!", 100, 340);
+        }
+
+        // --- INTERACTIVE EVENT ACTION PROCESSING ---
+        canvas.addEventListener('click', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            if (currentRound === 1 && selectedTool === 'brush') {
+                // Check if user hit the active moving bug location coordinates
+                if (x >= bugX && x <= (bugX + 60) && y >= bugY && y <= (bugY + 60)) {
+                    round1Hit = true;
+                    clearInterval(bugTimer);
+                    playSound('snd-correct');
+                    
+                    ctx.fillStyle = "#10b981";
+                    ctx.fillRect(0,0,canvas.width,canvas.height);
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "bold 40px sans-serif";
+                    ctx.fillText("🎯 BUG CAPTURED! 🎯", 90, 220);
+                    
+                    document.getElementById('status-label').innerText = "Status: Cache cleared of bugs!";
+                    unlockNext();
+                } else {
+                    playSound('snd-wrong');
+                }
+            }
+            else if (currentRound === 3 && selectedTool === 'stamp') {
+                round3Count++;
+                if (round3Count === 5) {
+                    playSound('snd-clap'); // Cheering applause triggered on final score
+                } else {
+                    playSound('snd-correct');
+                }
+
+                ctx.font = "60px Arial";
+                ctx.fillText("🥇", x - 30, y + 25);
+                
+                document.getElementById('status-label').innerText = `Medals Placed: ${round3Count} / 5`;
+                if(round3Count >= 5) unlockNext();
+            }
+        });
+
+        function checkQuizAnswer(isCorrect) {
+            if(currentRound !== 2) return;
+            
+            if(isCorrect) {
+                playSound('snd-correct');
+                ctx.fillStyle = "#15803d";
+                ctx.font = "bold 26px sans-serif";
+                ctx.fillText("✅ CORRECT! Moving Van Drives Objects!", 50, 280);
+                document.getElementById('status-label').innerText = "Status: Quiz Cleared!";
+                unlockNext();
+            } else {
+                playSound('snd-wrong');
+                alert("Oops! Try again! Think about transportation tools! 🚚");
+            }
+        }
+
+        function unlockNext() {
+            const btn = document.getElementById('next-btn');
+            btn.disabled = false;
+            btn.style.backgroundColor = "#10b981";
+            btn.style.cursor = "pointer";
+            btn.innerText = currentRound === 3 ? "Reset Arena Space 🔄" : "Proceed Up ➡️";
+        }
+
+        function advanceStage() {
+            const title = document.getElementById('stage-title');
+            const desc = document.getElementById('stage-desc');
+            const btn = document.getElementById('next-btn');
+            const quizBox = document.getElementById('quiz-container');
+            const toolsBox = document.getElementById('tools-div');
+
+            btn.disabled = true;
+            btn.style.backgroundColor = "#94a3b8";
+            btn.style.cursor = "not-allowed";
+            btn.innerText = "Solve Round Objective First";
+
+            if (currentRound === 1) {
+                currentRound = 2;
+                title.innerText = "❓ Round 2: Trivia Brain Quiz";
+                desc.innerText = "Awesome clicks! Look at the sidebar options below and select the correct matching choice to pass the test!";
+                toolsBox.style.display = "none";
+                quizBox.style.display = "flex";
+                loadRound2();
+            } else if (currentRound === 2) {
+                currentRound = 3;
+                title.innerText = "🥇 Round 3: Stamp Wall Fame";
+                desc.innerText = "Incredible smarts! Switch onto the <b>Mystery Stamp (⭐)</b> tool, and stamp 5 championship medals on the golden wall display area!";
+                quizBox.style.display = "none";
+                toolsBox.style.display = "flex";
+                selectTool('stamp');
+                loadRound3();
+            } else {
+                // Loop wrap back up
+                currentRound = 1;
+                round1Hit = false;
+                round3Count = 0;
+                title.innerText = "🎮 Round 1: Catch the Glitch Bug!";
+                desc.innerText = "A jumping glitch bug is hidden in the dark! Select the Wacky Brush (🖌️) tool and click on the moving target block on the canvas to trap it!";
+                selectTool('brush');
+                startRound1();
+                document.getElementById('status-label').innerText = "Status: Room Reset Complete.";
+            }
+        }
+    </script>
 </body>
 </html>
-

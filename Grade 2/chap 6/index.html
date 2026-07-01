@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Robo-Safety: 20-20-20 Eye & Body Break</title>
+    <title>Wire Detective: Hazard Hunter</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #e0f2fe; /* Soft blue to minimize eye strain */
+            background-color: #fef3c7; /* Warm detective amber-yellow tint */
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #1e3a8a;
+            color: #78350f;
             user-select: none;
         }
 
-        /* 5-Second Splash Screen (Innovine Logo Only) */
+        /* 5-Second Splash Screen (Innovine Logo Space Only) */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -36,12 +36,12 @@
         #splash-screen img {
             max-width: 260px;
             margin-bottom: 20px;
-            animation: pulse 1.5s infinite ease-in-out;
+            animation: pulse-grow 1.6s infinite ease-in-out;
         }
 
-        @keyframes pulse {
+        @keyframes pulse-grow {
             0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            50% { transform: scale(1.04); }
             100% { transform: scale(1); }
         }
 
@@ -50,7 +50,7 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 1000px;
+            max-width: 1050px;
             opacity: 0;
             transition: opacity 0.8s ease;
         }
@@ -60,14 +60,15 @@
             width: 100%;
             padding: 15px;
             border-radius: 16px;
-            border: 4px solid #0284c7;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 4px solid #b45309;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             margin-bottom: 20px;
             text-align: center;
+            box-sizing: border-box;
         }
 
-        header h1 { margin: 0; font-size: 26px; color: #0369a1; }
-        header p { margin: 5px 0 0 0; color: #0284c7; font-weight: bold; }
+        header h1 { margin: 0; font-size: 26px; color: #b45309; }
+        header p { margin: 5px 0 0 0; color: #d97706; font-weight: bold; font-size: 14px; }
 
         .game-grid { display: flex; gap: 25px; width: 100%; }
 
@@ -76,7 +77,7 @@
             background: white;
             padding: 25px;
             border-radius: 16px;
-            border: 4px solid #0ea5e9;
+            border: 4px solid #d97706;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
@@ -84,18 +85,40 @@
         }
 
         .instruction-card {
-            background-color: #f0f9ff;
-            border-left: 5px solid #0284c7;
+            background-color: #fffbeb;
+            border-left: 5px solid #d97706;
             padding: 15px;
             border-radius: 0 12px 12px 0;
             margin-bottom: 20px;
         }
 
-        .instruction-card h3 { margin: 0 0 8px 0; color: #1e3a8a; font-size: 18px; }
-        .instruction-card p { font-size: 14px; line-height: 1.5; color: #334155; margin: 0; }
+        .instruction-card h3 { margin: 0 0 8px 0; color: #78350f; font-size: 18px; }
+        .instruction-card p { font-size: 14px; line-height: 1.5; color: #451a03; margin: 0; }
+
+        /* Checklist Tracker UI */
+        .checklist {
+            margin: 15px 0;
+            padding: 0;
+            list-style-type: none;
+        }
+
+        .checklist li {
+            font-size: 15px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #9a3412;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .checklist li.found {
+            color: #16a34a;
+            text-decoration: line-through;
+        }
 
         .action-btn {
-            background-color: #2563eb;
+            background-color: #10b981;
             color: white;
             font-size: 18px;
             font-weight: bold;
@@ -103,12 +126,11 @@
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            transition: all 0.2s ease;
             width: 100%;
-            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+            transition: all 0.2s;
         }
 
-        .action-btn:hover { background-color: #1d4ed8; }
         .action-btn:disabled {
             background-color: #cbd5e1;
             box-shadow: none;
@@ -116,10 +138,10 @@
             color: #64748b;
         }
 
-        /* Computer Monitor Frame Styling */
+        /* Lab Investigation Viewport Window */
         .canvas-window {
-            flex: 1.6;
-            background: #0f172a;
+            flex: 1.7;
+            background: #1e293b;
             padding: 15px;
             border-radius: 20px;
             border: 6px solid #475569;
@@ -139,26 +161,27 @@
         canvas {
             background: #ffffff;
             border-radius: 8px;
+            cursor: cell; /* Custom detective crosshair feel */
         }
 
-        /* End Game Rewards Badge */
+        /* Congratulations Badge Layout */
         #badge-screen {
             display: none;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             background: white;
-            border: 4px solid #facc15;
+            border: 5px solid #10b981;
             border-radius: 20px;
             padding: 40px;
             text-align: center;
             box-shadow: 0 10px 25px rgba(0,0,0,0.05);
             margin-top: 20px;
-            max-width: 500px;
-            animation: popUp 0.4s ease-out;
+            max-width: 520px;
+            animation: scaleUp 0.4s ease-out;
         }
 
-        @keyframes popUp {
+        @keyframes scaleUp {
             0% { transform: scale(0.8); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
@@ -168,41 +191,50 @@
 
     <div id="splash-screen">
         <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/250x90?text=Innovine';">
-        <h2>🤖 Loading Computing Safety Break Routine... 🧘</h2>
+        <h2>🔍 Booting Safety Detective Lab... 🔎</h2>
     </div>
 
     <div class="main-content" id="app-workspace">
         <header>
-            <h1>🛡️ The 20-20-20 Eye & Body Break Studio 🛡️</h1>
-            <p>Physical Movement & Screen Fatigue Prevention</p>
+            <h1>🕵️ Computer Room Safety: Wire Detective! 🕵️</h1>
+            <p>Grade 2: Hunt Down and Fix the Hidden Clutter Hazards</p>
         </header>
 
         <div class="game-grid" id="main-game-layout">
             <div class="sidebar">
-                <div class="instruction-card">
-                    <h3 id="break-title">👀 Action 1: Look at a Distant Wall</h3>
-                    <p id="break-desc">Stand up up from your chair, turn away from the computer monitor screen completely, and look across the classroom room at a distant wall for 5 seconds!</p>
+                <div>
+                    <div class="instruction-card">
+                        <h3>🔍 Your Mission:</h3>
+                        <p>Look carefully at the computer room workspace window. There are **3 dangerous computing hazards** hidden among the normal items. Click on them to fix them up safely!</p>
+                    </div>
+
+                    <span style="font-weight: bold; font-size: 14px; color: #78350f;">Hazards Found Checklist:</span>
+                    <ul class="checklist">
+                        <li id="chk-cable">❌ Broken Frayed Power Cable</li>
+                        <li id="chk-water">❌ Water Bottle on Computer Tower</li>
+                        <li id="chk-trip">❌ Loose Walking Aisle Trip Wire</li>
+                    </ul>
                 </div>
 
-                <button class="action-btn" id="stretch-btn" onclick="startBreakTimer()">⚡ Start 5s Break Timer</button>
+                <button class="action-btn" id="finish-btn" onclick="claimBadge()" disabled style="background-color:#94a3b8; box-shadow:none; cursor:not-allowed;">Find All 3 Hazards First</button>
             </div>
 
             <div class="canvas-window">
                 <div class="canvas-meta">
-                    <span id="step-count">Break Exercise: 1 of 3</span>
-                    <span id="timer-status">Status: Waiting to start...</span>
+                    <span id="score-counter">Hazards Fixed: 0 / 3</span>
+                    <span id="detective-status">Status: Scan the room for danger...</span>
                 </div>
-                <canvas id="ergoCanvas" width="520" height="360"></canvas>
+                <canvas id="detectiveCanvas" width="540" height="380"></canvas>
             </div>
         </div>
 
         <div id="badge-screen">
-            <span style="font-size: 90px;">🏅</span>
-            <h2 style="color: #1e3a8a; margin: 15px 0;">INNOVINE ERGO-SAFETY BADGE!</h2>
-            <p style="font-size: 16px; color: #475569; line-height: 1.6; margin-bottom: 25px;">
-                Excellent compliance! You completed your physical stretching loops, effectively prevented screen eye fatigue, and kept your body completely safe while computing!
+            <span style="font-size: 90px;">🕵️‍♂️🏅</span>
+            <h2 style="color: #065f46; margin: 15px 0;">INNOVINE CERTIFIED HAZARD HUNTER!</h2>
+            <p style="font-size: 16px; color: #4b5563; line-height: 1.6; margin-bottom: 25px;">
+                Brilliant spatial scanning! You spotted the liquid threats and electrical hazards, successfully secured the lab space, and kept everyone safe!
             </p>
-            <button class="action-btn" style="background:#10b981; max-width:200px;" onclick="location.reload()">Restart Break 🔄</button>
+            <button class="action-btn" style="max-width:220px;" onclick="location.reload()">Inspect Lab Again 🔄</button>
         </div>
     </div>
 
@@ -216,162 +248,174 @@
                 document.getElementById('splash-screen').style.opacity = '0';
                 document.getElementById('splash-screen').style.visibility = 'hidden';
                 document.getElementById('app-workspace').style.opacity = '1';
-                drawRobotGuide("🤖", "Hi friend! Time to protect our eyes and bodies!");
+                drawLabEnvironment();
             }, 5000);
         });
 
-        const canvas = document.getElementById('ergoCanvas');
+        const canvas = document.getElementById('detectiveCanvas');
         const ctx = canvas.getContext('2d');
 
-        let activeStep = 1;
-        let timeLeft = 5;
-        let clockTimer = null;
-        let waitingForStretchedConfirmation = false;
+        let hazardsFoundCount = 0;
+
+        // Coordinates & properties for interactive room entities
+        const targets = {
+            cable: { x: 40, y: 140, w: 60, h: 40, found: false, name: "Frayed Cable" },
+            water: { x: 235, y: 95, w: 40, h: 50, found: false, name: "Water Bottle" },
+            trip:  { x: 340, y: 310, w: 160, h: 40, found: false, name: "Trip Wire" }
+        };
 
         function playSound(id) {
-            const el = document.getElementById(id);
-            if(el) {
-                el.currentTime = 0;
-                el.play().catch(() => {});
+            const track = document.getElementById(id);
+            if(track) {
+                track.currentTime = 0;
+                track.play().catch(() => {});
             }
         }
 
-        // --- VECTOR GRAPHICS DRAWING ENGINE FOR ROBOT AVATAR ---
-        function drawRobotGuide(emoji, text) {
+        // --- DRAWING ENGINE: BUILDING CLUTTERED LABORATORY SCENE ---
+        function drawLabEnvironment() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Clean interface background canvas setup
-            ctx.fillStyle = "#f8fafc";
+            // Background floor and classroom walls layout
+            ctx.fillStyle = "#f1f5f9";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#cbd5e1"; // Baseboard floor split border
+            ctx.fillRect(0, 280, canvas.width, 100);
 
-            // Animated Robot Avatar Construction Elements
-            ctx.fillStyle = "#94a3b8"; // Head block
-            ctx.fillRect(220, 60, 80, 50);
-            ctx.fillStyle = "#cbd5e1"; // Body block
-            ctx.fillRect(180, 110, 160, 110);
-            
-            // Robot Antenna
-            ctx.strokeStyle = "#64748b";
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.moveTo(260, 60); ctx.lineTo(260, 30);
-            ctx.stroke();
-            ctx.fillStyle = "#ef4444";
-            ctx.beginPath();
-            ctx.arc(260, 25, 8, 0, Math.PI * 2);
-            ctx.fill();
+            // --- SAFE ROOM CONTENT ITEMS (DECOYS) ---
+            ctx.fillStyle = "#475569"; // Main computer monitor housing
+            ctx.fillRect(120, 80, 140, 100);
+            ctx.fillStyle = "#1e293b"; // Inner screen space
+            ctx.fillRect(130, 90, 120, 80);
+            ctx.fillStyle = "#64748b"; // Monitor neck stand base
+            ctx.fillRect(180, 180, 20, 40);
+            ctx.fillRect(150, 220, 80, 10);
 
-            // Glowing Blue Electronic Screen Eyes
-            ctx.fillStyle = "#06b6d4";
-            ctx.beginPath();
-            ctx.arc(240, 85, 8, 0, Math.PI * 2);
-            ctx.arc(280, 85, 8, 0, Math.PI * 2);
-            ctx.fill();
+            // Safe Headphones on the desk
+            ctx.fillStyle = "#3b82f6";
+            ctx.font = "30px Arial";
+            ctx.fillText("🎧", 330, 200);
 
-            // Render Current Physical Target Emoji Object Action inside Robot chest panel
-            ctx.fillStyle = "#1e293b";
-            ctx.font = "38px Arial";
-            ctx.fillText(emoji, 240, 180);
+            // Safe Notebook stack pile
+            ctx.fillStyle = "#ec4899";
+            ctx.fillRect(50, 210, 60, 15);
+            ctx.fillStyle = "#10b981";
+            ctx.fillRect(52, 195, 55, 15);
 
-            // Dialogue Bubble interface text rendering blocks
-            ctx.fillStyle = "#f0fdf4";
-            ctx.fillRect(40, 260, canvas.width - 80, 70);
-            ctx.strokeStyle = "#10b981";
-            ctx.lineWidth = 3;
-            ctx.strokeRect(40, 260, canvas.width - 80, 70);
+            // --- INTERACTIVE TARGET OBJECT HAZARDS ---
 
-            ctx.fillStyle = "#115e59";
-            ctx.font = "bold 15px sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText(text, canvas.width / 2, 300);
-            ctx.textAlign = "left"; // Return global alignment behavior baseline defaults
-        }
-
-        function drawTimerDisplay(seconds) {
-            ctx.fillStyle = "#f43f5e";
-            ctx.fillRect(25, 25, 75, 45);
-            ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 24px sans-serif";
-            ctx.fillText(seconds + "s", 43, 57);
-        }
-
-        // --- INTERACTIVE TIMING & VERIFICATION LOOPS ---
-        function startBreakTimer() {
-            if(waitingForStretchedConfirmation) {
-                confirmComplianceClick();
-                return;
-            }
-
-            playSound('snd-correct');
-            const btn = document.getElementById('stretch-btn');
-            btn.disabled = true;
-            document.getElementById('timer-status').innerText = "Status: Activity Active! Stand up and perform the action!";
-
-            timeLeft = 5;
-            
-            clockTimer = setInterval(() => {
-                timeLeft--;
-                if(activeStep === 1) drawRobotGuide("🧱", "Keep looking back at the distant wall space!");
-                if(activeStep === 2) drawRobotGuide("🙆", "Stretch your arms way up high to the ceiling!");
-                if(activeStep === 3) drawRobotGuide("💧", "Blink quickly to clear and rest your eyes!");
-                
-                drawTimerDisplay(timeLeft);
-
-                if(timeLeft <= 0) {
-                    clearInterval(clockTimer);
-                    finishActiveExercise();
-                }
-            }, 1000);
-
-            // Instantly render original framework timeline sync state indicators
-            drawTimerDisplay(timeLeft);
-        }
-
-        function finishActiveExercise() {
-            playSound('snd-clap'); // Cheering sound automatically plays when timer finishes
-            document.getElementById('timer-status').innerText = "Status: Countdown finished! Confirm your stretch.";
-            
-            waitingForStretchedConfirmation = true;
-            const btn = document.getElementById('stretch-btn');
-            btn.disabled = false;
-            btn.innerText = "I'm Stretched! 🎉";
-            btn.style.backgroundColor = "#10b981";
-            btn.style.boxShadow = "0 4px 6px rgba(16, 185, 129, 0.2)";
-
-            drawRobotGuide("⭐", "Stretch complete! Click the green button below to resume!");
-        }
-
-        function confirmComplianceClick() {
-            waitingForStretchedConfirmation = false;
-            const btn = document.getElementById('stretch-btn');
-            const title = document.getElementById('break-title');
-            const desc = document.getElementById('break-desc');
-            const stepLabel = document.getElementById('step-count');
-
-            // Reset action buttons layout configuration parameters back to active standards
-            btn.innerText = "⚡ Start 5s Break Timer";
-            btn.style.backgroundColor = "#2563eb";
-            btn.style.boxShadow = "0 4px 6px rgba(37, 99, 235, 0.2)";
-            document.getElementById('timer-status').innerText = "Status: Ready for next safety action.";
-
-            if (activeStep === 1) {
-                activeStep = 2;
-                stepLabel.innerText = "Break Exercise: 2 of 3";
-                title.innerText = "🙆 Action 2: Sky High Body Stretch";
-                desc.innerText = "Time to unlock your posture! Stand up completely tall, lock your hands together above your head, and reach up high to loosen your back shoulders!";
-                drawRobotGuide("🤖", "Ready to stretch your body muscles? Press start!");
-            } else if (activeStep === 2) {
-                activeStep = 3;
-                stepLabel.innerText = "Break Exercise: 3 of 3";
-                title.innerText = "💧 Action 3: The Rapid Eye Blink";
-                desc.innerText = "Sit back down safely. To complete the screen fatigue routine, blink your eyes very rapidly 10 times to clean away glare and screen strain!";
-                drawRobotGuide("🤖", "Ready for the eye blink routine? Press start!");
+            // 1. Hazard: Frayed Power Cable (Left Wall Socket Area)
+            if (!targets.cable.found) {
+                ctx.strokeStyle = "#ef4444"; // Dangerous raw red line links
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(20, 160);
+                ctx.bezierCurveTo(40, 130, 70, 180, 90, 150);
+                ctx.stroke();
+                // Little yellow lightning bolt hazard indicator highlights for Grade 2 focus
+                ctx.fillStyle = "#eab308";
+                ctx.font = "bold 14px sans-serif";
+                ctx.fillText("⚡", 50, 145);
             } else {
-                // Remove game screen layouts and expose achievement metrics certificates
-                document.getElementById('main-game-layout').style.display = 'none';
-                document.getElementById('badge-screen').style.display = 'flex';
-                playSound('snd-clap'); // Finale badge celebration sound asset loop triggered
+                // Fixed: Covered securely with clean safety duct tape strip vectors
+                ctx.fillStyle = "#78716c";
+                ctx.fillRect(25, 145, 65, 25);
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "bold 11px sans-serif";
+                ctx.fillText("SAFETY TAPE", 27, 162);
             }
+
+            // 2. Hazard: Spilled Water Bottle on Computer System Unit Box Tower
+            ctx.fillStyle = "#334155"; // Computer CPU Tower box chassis frame
+            ctx.fillRect(220, 140, 70, 110);
+            if (!targets.water.found) {
+                ctx.fillStyle = "#38bdf8"; // Clear fluid plastic water bottle mockups
+                ctx.fillRect(240, 100, 25, 40);
+                ctx.fillStyle = "#ef4444"; // Warning cap highlight
+                ctx.fillRect(245, 95, 15, 6);
+                ctx.fillStyle = "#38bdf8"; // Danger droplet
+                ctx.fillText("💧", 272, 135);
+            } else {
+                ctx.fillStyle = "#16a34a";
+                ctx.font = "14px sans-serif";
+                ctx.fillText("✅ CLEARED", 222, 130);
+            }
+
+            // 3. Hazard: Dangerous Loose Trip Wire across the floor aisle space
+            if (!targets.trip.found) {
+                ctx.strokeStyle = "#dc2626";
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(340, 330);
+                ctx.lineTo(500, 320);
+                ctx.stroke();
+                ctx.fillStyle = "#dc2626";
+                ctx.font = "12px sans-serif";
+                ctx.fillText("⚠️ LOOSE WIRE", 380, 310);
+            } else {
+                ctx.fillStyle = "#78716c"; // Taped down cleanly flat on baseboard
+                ctx.fillRect(340, 318, 160, 14);
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "9px sans-serif";
+                ctx.fillText("TAPED DOWN SECURE", 375, 329);
+            }
+        }
+
+        // --- COORDINATES EVENT HIT SCANNING DETECTION ENGINE ---
+        canvas.addEventListener('click', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            let localizedHitRegistered = false;
+
+            // Iterate across targets map object matrix array records
+            for (let key in targets) {
+                let tgt = targets[key];
+                if (!tgt.found) {
+                    if (mouseX >= tgt.x && mouseX <= (tgt.x + tgt.w) && mouseY >= tgt.y && mouseY <= (tgt.y + tgt.h)) {
+                        tgt.found = true;
+                        localizedHitRegistered = true;
+                        hazardsFoundCount++;
+                        
+                        playSound('snd-correct');
+                        document.getElementById(`chk-${key}`).className = "found";
+                        document.getElementById(`chk-${key}`).innerText = `✅ Fixed: ${tgt.name}!`;
+                        document.getElementById('score-counter').innerText = `Hazards Fixed: ${hazardsFoundCount} / 3`;
+                        document.getElementById('detective-status').innerText = `Status: Great eye! Secured the ${tgt.name}!`;
+
+                        drawLabEnvironment(); // Refresh visual models buffer state instantly
+
+                        if (hazardsFoundCount === 3) {
+                            unlockBadgeStepButton();
+                        }
+                        break;
+                    }
+                }
+            }
+
+            // If player clicked empty decoy or safe zone, handle penalties
+            if (!localizedHitRegistered) {
+                playSound('snd-wrong');
+                document.getElementById('detective-status').innerText = "Status: That item is safe! Keep hunting for electrical or water hazards.";
+            }
+        });
+
+        function unlockBadgeStepButton() {
+            playSound('snd-clap'); // Ring out intermediate applause loops for motivation tracking metrics
+            const btn = document.getElementById('finish-btn');
+            btn.disabled = false;
+            btn.style.backgroundColor = "#10b981";
+            btn.style.boxShadow = "0 4px 10px rgba(16, 185, 129, 0.3)";
+            btn.style.cursor = "pointer";
+            btn.innerText = "Review Inspection Records ➡️";
+            document.getElementById('detective-status').innerText = "Status: Lab Secure! Click button to claim badge!";
+        }
+
+        function claimBadge() {
+            document.getElementById('main-game-layout').style.display = 'none';
+            document.getElementById('badge-screen').style.display = 'flex';
+            playSound('snd-clap'); // Play final celebratory applause
         }
     </script>
 </body>

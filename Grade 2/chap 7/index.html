@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Typing Kingdom: OpenOffice Writer Challenge</title>
+    <title>Writer Diagnostic Lab: Tool Detective</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0fdf4; /* Playful soft light green/mint backdrop */
+            background-color: #f8fafc;
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #1e293b;
+            color: #334155;
             user-select: none;
         }
 
-        /* 5-Second Splash Screen (Innovine Logo Space Only) */
+        /* Guaranteed 5-Second Brand Overlay */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -30,500 +30,447 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.6s ease, visibility 0.6s ease;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
         }
 
         #splash-screen img {
-            max-width: 280px;
+            max-width: 260px;
             margin-bottom: 20px;
-            animation: pulse-grow 1.5s infinite ease-in-out;
+            animation: pulse 1.5s infinite ease-in-out;
         }
 
-        @keyframes pulse-grow {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
         }
 
-        .main-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .main-container {
             width: 100%;
-            max-width: 1100px;
+            max-width: 1000px;
             opacity: 0;
-            transition: opacity 0.8s ease;
+            transition: opacity 0.5s ease;
         }
 
         header {
-            background: white;
-            width: 100%;
-            padding: 15px;
-            border-radius: 20px;
-            border: 4px solid #10b981;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
             text-align: center;
-            box-sizing: border-box;
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            border: 2px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
         }
 
-        header h1 { margin: 0; font-size: 28px; color: #047857; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
-        header p { margin: 6px 0 0 0; color: #059669; font-weight: bold; font-size: 15px; }
+        header h1 { margin: 0; font-size: 26px; color: #0f172a; }
+        header p { margin: 6px 0 0 0; color: #64748b; font-size: 14px; font-weight: 500; }
 
-        .game-grid { display: flex; gap: 25px; width: 100%; }
+        .game-layout {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 24px;
+        }
 
-        .sidebar {
-            flex: 1.1;
+        .card {
             background: white;
-            padding: 25px;
-            border-radius: 20px;
-            border: 4px solid #10b981;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            border-radius: 16px;
+            border: 2px solid #e2e8f0;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
-        .instruction-card {
+        .riddle-box {
             background-color: #f0fdf4;
-            border-left: 6px solid #10b981;
-            padding: 15px;
-            border-radius: 0 14px 14px 0;
+            border: 1px solid #bbf7d0;
+            border-radius: 12px;
+            padding: 16px;
             margin-bottom: 20px;
         }
 
-        .instruction-card h3 { margin: 0 0 6px 0; color: #065f46; font-size: 19px; }
-        .instruction-card p { font-size: 14px; line-height: 1.5; color: #14532d; margin: 0; font-weight: 500; }
+        .riddle-box h3 { margin: 0 0 6px 0; color: #166534; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .riddle-box p { margin: 0; font-size: 16px; font-weight: 600; color: #14532d; line-height: 1.4; }
 
-        /* Goal Matcher Indicator Box */
-        .goal-box {
-            background: #f8fafc;
-            border: 2px dashed #94a3b8;
-            border-radius: 12px;
+        /* Simulated OpenOffice Writer Tool Dock */
+        .oo-dock {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
             padding: 12px;
             margin-bottom: 20px;
-            text-align: center;
-        }
-        .goal-label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #64748b;
-            font-weight: bold;
-            margin-bottom: 6px;
-        }
-        #target-preview {
-            font-size: 16px;
-            min-height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
-        /* OpenOffice Simulated Interactive Toolbar */
-        .oo-toolbar {
-            background: #e2e8f0;
-            border: 2px solid #cbd5e1;
-            border-radius: 10px;
-            padding: 8px 12px;
+        .oo-toolbar-row {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
             flex-wrap: wrap;
-            margin-bottom: 15px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        .oo-img-btn {
+        .oo-btn {
             background: white;
             border: 1px solid #94a3b8;
             border-radius: 6px;
-            width: 38px;
-            height: 38px;
+            width: 40px;
+            height: 40px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 4px;
-            transition: all 0.15s ease;
+            transition: all 0.1s ease;
         }
 
-        .oo-img-btn:hover {
-            background: #f1f5f9;
-            border-color: #64748b;
-        }
-
-        .oo-img-btn img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .oo-img-btn.active {
-            background: #bae6fd;
+        .oo-btn:hover { background: #f8fafc; }
+        .oo-btn img { width: 100%; height: 100%; object-fit: contain; }
+        .oo-btn.active {
+            background: #e0f2fe;
             border-color: #0284c7;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
         }
 
-        .oo-select {
-            padding: 4px 8px;
+        .oo-dropdown {
+            height: 40px;
+            padding: 0 8px;
             border-radius: 6px;
             border: 1px solid #94a3b8;
-            font-weight: bold;
-            height: 38px;
             background: white;
+            font-weight: 600;
             color: #334155;
             cursor: pointer;
         }
 
-        .divider {
-            width: 2px;
-            height: 26px;
-            background-color: #cbd5e1;
-            margin: 0 2px;
+        .separator {
+            width: 1px;
+            height: 28px;
+            background: #cbd5e1;
+            margin: 0 4px;
         }
 
-        .action-btn {
-            background-color: #10b981;
+        .submit-btn {
+            background-color: #2563eb;
             color: white;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
-            padding: 16px;
+            padding: 14px;
             border: none;
-            border-radius: 14px;
+            border-radius: 10px;
             cursor: pointer;
+            transition: background 0.2s;
             width: 100%;
-            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
-            transition: all 0.2s ease;
         }
+        .submit-btn:hover { background-color: #1d4ed8; }
 
-        .action-btn:hover:not(:disabled) {
-            background-color: #059669;
-            transform: translateY(-1px);
-        }
-
-        .action-btn:disabled {
-            background-color: #cbd5e1;
-            box-shadow: none;
-            cursor: not-allowed;
-            color: #64748b;
-        }
-
-        /* Screen Document Layout Window */
-        .canvas-window {
-            flex: 1.5;
-            background: #334155;
-            padding: 18px;
-            border-radius: 24px;
-            box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+        /* Document Display Area */
+        .preview-pane {
+            background: #475569;
+            border-radius: 16px;
+            padding: 16px;
             display: flex;
             flex-direction: column;
+            gap: 12px;
         }
 
-        .canvas-meta {
-            width: 100%;
+        .pane-header {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 12px;
-            font-weight: bold;
-            color: #94a3b8;
-            font-size: 14px;
-            padding: 0 4px;
-        }
-
-        #wizard-status {
-            color: #38bdf8;
-            transition: all 0.3s ease;
+            color: #cbd5e1;
+            font-size: 13px;
+            font-weight: 600;
         }
 
         canvas {
             background: #ffffff;
-            border-radius: 12px;
-            box-shadow: inset 0 4px 10px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            width: 100%;
+            height: auto;
         }
 
-        #badge-screen {
+        /* Teacher Diagnostic Assessment Display Screen */
+        #diagnostic-screen {
             display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
             background: white;
-            border: 6px solid #10b981;
-            border-radius: 24px;
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-            margin-top: 20px;
-            max-width: 550px;
-            animation: scaleUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 32px;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
         }
 
-        @keyframes scaleUp {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        .metric-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 12px;
+        }
+
+        .rating-bar-bg {
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .rating-bar-fill {
+            background: #10b981;
+            height: 100%;
+            width: 0%;
+            transition: width 1s ease-out;
         }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/260x90?text=Innovine';">
-        <h2 style="color: #059669; font-family: sans-serif; letter-spacing: 0.5px;">📜 Loading OpenOffice Writer Magic... 🏰</h2>
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/250x90?text=Innovine';">
+        <h3 style="color: #64748b; font-weight: 500;">Analyzing Diagnostic Assets...</h3>
     </div>
 
-    <div class="main-content" id="app-workspace">
+    <div class="main-container" id="workspace">
         <header>
-            <h1>🏰 The Typing Kingdom: OpenOffice Writer Mastery 🏰</h1>
-            <p>Become a Word Wizard by Mastering Formatting Toolbars!</p>
+            <h1>🕵️‍♂️ OpenOffice Writer: Tool Detective</h1>
+            <p>Grade 2 Ability & Concept Recognition Diagnostic Environment</p>
         </header>
 
-        <div class="game-grid" id="main-game-layout">
-            <div class="sidebar">
+        <div class="game-layout" id="game-core">
+            <div class="card">
                 <div>
-                    <div class="instruction-card">
-                        <h3 id="task-title">👑 Quest 1: The Bold Royal Decree</h3>
-                        <p id="task-desc">The King's proclamation isn't strong enough! Find and click the **Bold (B)** tool icon on the OpenOffice toolbar below to cast your text spell.</p>
+                    <div class="riddle-box">
+                        <h3 id="round-number">Task 1: Tool Purpose Challenge</h3>
+                        <p id="riddle-text">"I want to make my words look extra thick, dark, and heavy so they stand out. Which layout tool do I click?"</p>
                     </div>
 
-                    <div class="goal-box">
-                        <div class="goal-label">🎯 Goal Target Style View</div>
-                        <div id="target-preview">Hear Ye! The Castle is Safe!</div>
-                    </div>
-
-                    <span style="font-weight: bold; font-size: 13px; color: #047857; margin-bottom: 8px; display: block;">OpenOffice Formatting Bar Layout:</span>
+                    <p style="font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 8px;">Find and configure the tool match below:</p>
                     
-                    <div class="oo-toolbar">
-                        <button class="oo-img-btn" title="Undo" onclick="triggerHistoryAlert()"><img src="assets/undo.png" alt="Undo"></button>
-                        <button class="oo-img-btn" title="Redo" onclick="triggerHistoryAlert()"><img src="assets/redo.png" alt="Redo"></button>
-                        
-                        <div class="divider"></div>
+                    <div class="oo-dock">
+                        <div class="oo-toolbar-row">
+                            <button class="oo-btn" title="Undo" onclick="registerAction('undo')"><img src="assets/undo.png" alt="Undo"></button>
+                            <button class="oo-btn" title="Redo" onclick="registerAction('redo')"><img src="assets/redo.png" alt="Redo"></button>
+                            
+                            <div class="separator"></div>
 
-                        <select id="font-size-select" class="oo-select" onchange="updateToolbarState()">
-                            <option value="22">22 pt</option>
-                            <option value="32">32 pt</option>
-                            <option value="42">42 pt</option>
-                        </select>
-                        
-                        <div class="divider"></div>
+                            <select id="size-dropdown" class="oo-dropdown" onchange="registerAction('size')">
+                                <option value="24">24 pt</option>
+                                <option value="36">36 pt</option>
+                            </select>
 
-                        <button id="btn-bold" class="oo-img-btn" title="Bold" onclick="toggleStyle('bold')">
-                            <img src="assets/bold.png" alt="B">
-                        </button>
-                        <button id="btn-italic" class="oo-img-btn" title="Italic" onclick="toggleStyle('italic')">
-                            <img src="assets/Italic.png" alt="I">
-                        </button>
-                        <button id="btn-underline" class="oo-img-btn" title="Underline" onclick="toggleStyle('underline')">
-                            <img src="assets/underline.png" alt="U">
-                        </button>
-                        
-                        <div class="divider"></div>
+                            <div class="separator"></div>
 
-                        <select id="font-color-select" class="oo-select" onchange="updateToolbarState()">
-                            <option value="black">⚫ Black</option>
-                            <option value="purple">🔮 Purple</option>
-                            <option value="darkgreen">🌿 Green</option>
-                        </select>
+                            <button id="tool-bold" class="oo-btn" title="Bold" onclick="toggleModifier('bold')"><img src="assets/bold.png" alt="B"></button>
+                            <button id="tool-italic" class="oo-btn" title="Italic" onclick="toggleModifier('italic')"><img src="assets/Italic.png" alt="I"></button>
+                            <button id="tool-underline" class="oo-btn" title="Underline" onclick="toggleModifier('underline')"><img src="assets/underline.png" alt="U"></button>
+                            
+                            <div class="separator"></div>
+
+                            <select id="color-dropdown" class="oo-dropdown" onchange="registerAction('color')">
+                                <option value="black">⚫ Black</option>
+                                <option value="purple">🔮 Purple</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <button class="action-btn" id="next-btn" onclick="advanceQuest()" disabled style="background-color:#94a3b8; box-shadow:none; cursor:not-allowed;">Match the Target Style First</button>
+                <button class="submit-btn" onclick="evaluateCurrentRound()">Test Selection & Confirm 🔐</button>
             </div>
 
-            <div class="canvas-window">
-                <div class="canvas-meta">
-                    <span id="quest-counter" style="color: #f1f5f9; background: #059669; padding: 2px 10px; border-radius: 20px;">Scroll: 1 / 3</span>
-                    <span id="wizard-status">Status: Click tools to edit document...</span>
+            <div class="preview-pane">
+                <div class="pane-header">
+                    <span>Writer Sandbox View</span>
+                    <span id="diagnostic-log" style="color: #60a5fa;">Awaiting adjustment...</span>
                 </div>
-                <canvas id="writerCanvas" width="540" height="380"></canvas>
+                <canvas id="docCanvas" width="460" height="320"></canvas>
             </div>
         </div>
 
-        <div id="badge-screen">
-            <span style="font-size: 100px; animation: pulse-grow 2s infinite ease-in-out; display: inline-block;">🏆📜✍️</span>
-            <h2 style="color: #047857; margin: 15px 0 5px 0; font-size: 28px;">INNOVINE CERTIFIED WRITER WIZARD!</h2>
-            <p style="font-size: 16px; color: #475569; line-height: 1.6; margin-bottom: 30px; max-width: 460px;">
-                Incredible! You effectively used real styling shortcuts inside OpenOffice Writer to safely edit, align, and organize the Kingdom's official scrolls!
-            </p>
-            <button class="action-btn" style="max-width: 250px;" onclick="location.reload()">Enter Lab Sandbox Again 🔄</button>
+        <div id="diagnostic-screen">
+            <h2 style="margin: 0 0 4px 0; color: #0f172a;">📊 Teacher Assessment Profile</h2>
+            <p style="margin: 0 0 24px 0; color: #64748b; font-size: 14px;">Real-time analysis based on interface interaction parameters.</p>
+            
+            <div class="metric-card">
+                <div style="display:flex; justify-content:space-between; font-weight:600;">
+                    <span>Icon/Symbol Identification Ability</span>
+                    <span id="score-ident">0%</span>
+                </div>
+                <p style="margin:4px 0 0 0; font-size:12px; color:#64748b;">Measures capability to translate semantic descriptions into spatial toolbar clicks.</p>
+                <div class="rating-bar-bg"><div id="bar-ident" class="rating-bar-fill"></div></div>
+            </div>
+
+            <div class="metric-card">
+                <div style="display:flex; justify-content:space-between; font-weight:600;">
+                    <span>Property & Attribute Awareness</span>
+                    <span id="score-attr">0%</span>
+                </div>
+                <p style="margin:4px 0 0 0; font-size:12px; color:#64748b;">Measures comprehension of contextual modifications (Font Sizing / Coloring parameters).</p>
+                <div class="rating-bar-bg"><div id="bar-attr" class="rating-bar-fill"></div></div>
+            </div>
+
+            <div class="metric-card">
+                <div style="display:flex; justify-content:space-between; font-weight:600;">
+                    <span>Motor Interface Efficiency</span>
+                    <span id="score-motor">Excellent</span>
+                </div>
+                <p style="margin:4px 0 0 0; font-size:12px; color:#64748b;">Tracks mis-clicks and interaction friction paths with toolbar buttons.</p>
+            </div>
+
+            <button class="submit-btn" style="margin-top:24px; background:#475569;" onclick="location.reload()">Reset Diagnostic Run 🔄</button>
         </div>
     </div>
 
-    <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="snd-clap" src="assets/clap.mp3" preload="auto"></audio>
-    <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="sound-yes" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="sound-no" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="sound-fanfare" src="assets/clap.mp3" preload="auto"></audio>
 
     <script>
-        // STRICT 5-SECOND EXCLUSIVE BRAND LOADING MECHANISM
+        // FORCED BRAND VISIBILITY DELAY AT INITIALIZATION
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                const app = document.getElementById('app-workspace');
-                splash.style.opacity = '0';
-                splash.style.visibility = 'hidden';
-                app.style.opacity = '1';
-                
-                // Initialize workspace environments safely
-                applyTargetStylePreview();
-                renderScrollDocument();
+                document.getElementById('splash-screen').style.opacity = '0';
+                document.getElementById('splash-screen').style.visibility = 'hidden';
+                document.getElementById('workspace').style.opacity = '1';
+                drawCanvasDocument();
             }, 5000);
         });
 
-        const canvas = document.getElementById('writerCanvas');
+        const canvas = document.getElementById('docCanvas');
         const ctx = canvas.getContext('2d');
 
-        let currentQuest = 1;
-        let isBold = false;
-        let isItalic = false;
-        let isUnderline = false;
+        let activeRound = 1;
+        let selectedBold = false;
+        let selectedItalic = false;
+        let selectedUnderline = false;
 
-        // Structured interactive scenarios
-        const quests = {
-            1: { text: "Hear Ye! The Castle is Safe!", bold: true, italic: false, underline: false, size: "22", color: "black" },
-            2: { text: "The Princess's Magic Wand", bold: false, italic: true, underline: false, size: "32", color: "purple" },
-            3: { text: "IMPORTANT: Guard the Gate!", bold: true, italic: false, underline: true, size: "22", color: "darkgreen" }
+        // Metric Trackers to judge actual student aptitude
+        let totalMisClicks = 0;
+        let correctIdentifications = 0;
+        let correctAttributes = 0;
+
+        // Interactive evaluation tasks
+        const roundData = {
+            1: { riddle: '"I want to make my words look extra thick, dark, and heavy so they stand out. Which button tool do I turn on?"', bold: true, italic: false, underline: false, size: "24", color: "black" },
+            2: { riddle: '"The text needs to slant slightly forwards, like it is leaning or sliding into place. Help me locate the correct style tool!"', bold: false, italic: true, underline: false, size: "24", color: "black" },
+            3: { riddle: '"Urgent Alert! We must emphasize this text by placing a solid horizontal line directly underneath it, changing the size to 36pt and text color to Purple!"', bold: false, italic: false, underline: true, size: "36", color: "purple" }
         };
 
-        function playSound(id) {
-            const clip = document.getElementById(id);
-            if(clip) {
-                clip.currentTime = 0;
-                clip.play().catch(() => {});
+        function audioTrigger(id) {
+            const player = document.getElementById(id);
+            if(player) { player.currentTime = 0; player.play().catch(()=>{}); }
+        }
+
+        function registerAction(actionType) {
+            if(actionType === 'undo' || actionType === 'redo') {
+                totalMisClicks++;
+                audioTrigger('sound-no');
+                document.getElementById('diagnostic-log').innerText = "Notice: That button changes document history, not text appearance!";
+                return;
             }
+            drawCanvasDocument();
         }
 
-        function triggerHistoryAlert() {
-            playSound('snd-wrong');
-            document.getElementById('wizard-status').style.color = '#ef4444';
-            document.getElementById('wizard-status').innerText = "Status: Canvas text is pristine! Use Style tools.";
-        }
-
-        function toggleStyle(style) {
+        function toggleModifier(style) {
             if(style === 'bold') {
-                isBold = !isBold;
-                document.getElementById('btn-bold').classList.toggle('active', isBold);
+                selectedBold = !selectedBold;
+                document.getElementById('tool-bold').classList.toggle('active', selectedBold);
             }
             if(style === 'italic') {
-                isItalic = !isItalic;
-                document.getElementById('btn-italic').classList.toggle('active', isItalic);
+                selectedItalic = !selectedItalic;
+                document.getElementById('tool-italic').classList.toggle('active', selectedItalic);
             }
             if(style === 'underline') {
-                isUnderline = !isUnderline;
-                document.getElementById('btn-underline').classList.toggle('active', isUnderline);
+                selectedUnderline = !selectedUnderline;
+                document.getElementById('tool-underline').classList.toggle('active', selectedUnderline);
             }
-            updateToolbarState();
+            drawCanvasDocument();
         }
 
-        // Apply interactive preview styling patterns dynamically to help Grade 2 students
-        function applyTargetStylePreview() {
-            const previewEl = document.getElementById('target-preview');
-            const target = quests[currentQuest];
-            
-            previewEl.innerText = target.text;
-            previewEl.style.fontWeight = target.bold ? 'bold' : 'normal';
-            previewEl.style.fontStyle = target.italic ? 'italic' : 'normal';
-            previewEl.style.textDecoration = target.underline ? 'underline' : 'none';
-            previewEl.style.color = target.color;
-            previewEl.style.fontSize = target.size === '22' ? '16px' : target.size === '32' ? '22px' : '26px';
-        }
-
-        // Canvas Working Sheet Document Generation Engine
-        function renderScrollDocument() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw standard modern margin sheets
+        function drawCanvasDocument() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
             ctx.fillStyle = "#ffffff";
-            ctx.fillRect(20, 20, canvas.width - 40, canvas.height - 40);
-            ctx.strokeStyle = "#cbd5e1";
-            ctx.lineWidth = 2;
-            ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
-
-            let size = document.getElementById('font-size-select').value;
-            let color = document.getElementById('font-color-select').value;
+            ctx.fillRect(15,15,canvas.width-30,canvas.height-30);
             
-            let styleQuery = "";
-            if (isItalic) styleQuery += "italic ";
-            if (isBold) styleQuery += "bold ";
-            styleQuery += size + "px Arial";
+            let currentSize = document.getElementById('size-dropdown').value;
+            let currentColor = document.getElementById('color-dropdown').value;
             
-            ctx.font = styleQuery;
-            ctx.fillStyle = color;
-
-            let currentText = quests[currentQuest].text;
-            let drawX = 40;
-            let drawY = 190;
-
-            ctx.fillText(currentText, drawX, drawY);
-
-            if (isUnderline) {
-                let metricsWidth = ctx.measureText(currentText).width;
-                ctx.strokeStyle = color;
+            let fontStyle = "";
+            if(selectedItalic) fontStyle += "italic ";
+            if(selectedBold) fontStyle += "bold ";
+            fontStyle += currentSize + "px Arial";
+            
+            ctx.font = fontStyle;
+            ctx.fillStyle = currentColor;
+            
+            let sampleString = "Writer Test Page";
+            ctx.fillText(sampleString, 60, 160);
+            
+            if(selectedUnderline) {
+                let w = ctx.measureText(sampleString).width;
+                ctx.strokeStyle = currentColor;
                 ctx.lineWidth = 3;
                 ctx.beginPath();
-                ctx.moveTo(drawX, drawY + 8);
-                ctx.lineTo(drawX + metricsWidth, drawY + 8);
+                ctx.moveTo(60, 170);
+                ctx.lineTo(60 + w, 170);
                 ctx.stroke();
             }
         }
 
-        function updateToolbarState() {
-            renderScrollDocument();
-            
-            let target = quests[currentQuest];
-            let userSize = document.getElementById('font-size-select').value;
-            let userColor = document.getElementById('font-color-select').value;
+        function evaluateCurrentRound() {
+            let target = roundData[activeRound];
+            let currentSize = document.getElementById('size-dropdown').value;
+            let currentColor = document.getElementById('color-dropdown').value;
 
-            if (isBold === target.bold && 
-                isItalic === target.italic && 
-                isUnderline === target.underline &&
-                userSize === target.size && 
-                userColor === target.color) {
-                
-                playSound('snd-correct');
-                const status = document.getElementById('wizard-status');
-                status.style.color = '#4ade80';
-                status.innerText = "Status: Marvelous! Style configurations match!";
-                
-                const nextBtn = document.getElementById('next-btn');
-                nextBtn.disabled = false;
-                nextBtn.style.backgroundColor = "#10b981";
-                nextBtn.style.cursor = "pointer";
-                nextBtn.innerText = currentQuest === 3 ? "Claim Wizard Crown 👑" : "Next Document Scroll ➡️";
+            // Diagnostic assessment matching logic
+            let isIconCorrect = (selectedBold === target.bold && selectedItalic === target.italic && selectedUnderline === target.underline);
+            let isAttributeCorrect = (currentSize === target.size && currentColor === target.color);
+
+            if(isIconCorrect) correctIdentifications++;
+            if(isAttributeCorrect) correctAttributes++;
+
+            if(isIconCorrect && isAttributeCorrect) {
+                audioTrigger('sound-yes');
+                document.getElementById('diagnostic-log').innerText = "Success: Correct choice mapped!";
             } else {
-                const status = document.getElementById('wizard-status');
-                status.style.color = '#38bdf8';
-                status.innerText = "Status: Modifying scroll... Check against the preview target window!";
+                audioTrigger('sound-no');
+                document.getElementById('diagnostic-log').innerText = "Recorded: Moving forward to build baseline profile.";
+            }
+
+            // Move to next diagnostic challenge or generate diagnostic sheet
+            if(activeRound < 3) {
+                activeRound++;
+                document.getElementById('round-number').innerText = `Task ${activeRound}: Diagnostic Progression`;
+                document.getElementById('riddle-text').innerText = roundData[activeRound].riddle;
                 
-                const nextBtn = document.getElementById('next-btn');
-                nextBtn.disabled = true;
-                nextBtn.style.backgroundColor = "#94a3b8";
-                nextBtn.style.cursor = "not-allowed";
-                nextBtn.innerText = "Match the Target Style First";
+                // Clear selection vectors
+                selectedBold = false; selectedItalic = false; selectedUnderline = false;
+                document.getElementById('tool-bold').classList.remove('active');
+                document.getElementById('tool-italic').classList.remove('active');
+                document.getElementById('tool-underline').classList.remove('active');
+                drawCanvasDocument();
+            } else {
+                showDiagnosticMatrix();
             }
         }
 
-        function advanceQuest() {
-            if (currentQuest < 3) {
-                currentQuest++;
-                document.getElementById('quest-counter').innerText = `Scroll: ${currentQuest} / 3`;
-                
-                const title = document.getElementById('task-title');
-                const desc = document.getElementById('task-desc');
+        function showDiagnosticMatrix() {
+            document.getElementById('game-core').style.display = 'none';
+            document.getElementById('diagnostic-screen').style.display = 'block';
+            audioTrigger('sound-fanfare');
 
-                if (currentQuest === 2) {
-                    title.innerText = "🔮 Quest 2: The Princess's Magic Wand";
-                    desc.innerText = "Help fix the royal spellbook! Change the style format directly to **Italic** (turn off Bold), grow the size value to **32 pt**, and configure your text color to **Purple**!";
-                } else if (currentQuest === 3) {
-                    title.innerText = "🌿 Quest 3: The Underlined Warning";
-                    desc.innerText = "Final task! Shrink the text sizing value safely down to **22 pt**, toggle on **Bold**, pick **Green**, and press the **Underline** layout button to alert the gate guards!";
-                }
-                
-                applyTargetStylePreview();
-                updateToolbarState();
-            } else {
-                document.getElementById('main-game-layout').style.display = 'none';
-                document.getElementById('badge-screen').style.display = 'flex';
-                playSound('snd-clap');
-            }
+            let identificationPercentage = Math.round((correctIdentifications / 3) * 100);
+            let attributePercentage = Math.round((correctAttributes / 3) * 100);
+
+            document.getElementById('score-ident').innerText = identificationPercentage + "%";
+            document.getElementById('bar-ident').style.width = identificationPercentage + "%";
+
+            document.getElementById('score-attr').innerText = attributePercentage + "%";
+            document.getElementById('bar-attr').style.width = attributePercentage + "%";
+
+            let motorStatus = "High Efficiency";
+            if(totalMisClicks > 2) motorStatus = "Developing Spatial Control";
+            if(totalMisClicks > 5) motorStatus = "Needs Assistance with Targeted Clicks";
+            document.getElementById('score-motor').innerText = motorStatus;
         }
     </script>
 </body>

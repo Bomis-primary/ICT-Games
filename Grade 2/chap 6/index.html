@@ -3,23 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ErgoBot: Health & Safety Training</title>
+    <title>Robo-Safety: 20-20-20 Eye & Body Break</title>
     <style>
-        /* Modern Educational Theme styling */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f1f5f9;
+            background-color: #e0f2fe; /* Soft blue to minimize eye strain */
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #334155;
-            overflow-x: hidden;
+            color: #1e3a8a;
             user-select: none;
         }
 
-        /* 5-Second Animated Loading Splash */
+        /* 5-Second Splash Screen (Innovine Logo Only) */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -32,27 +30,21 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
         }
 
         #splash-screen img {
-            max-width: 250px;
-            margin-bottom: 25px;
-            animation: bounce 1.5s infinite alternate ease-in-out;
+            max-width: 260px;
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite ease-in-out;
         }
 
-        @keyframes bounce {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-20px); }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
-        #splash-screen h2 {
-            color: #2563eb;
-            font-size: 28px;
-            margin: 0;
-        }
-
-        /* Main Game Environment */
         .main-content {
             display: flex;
             flex-direction: column;
@@ -60,45 +52,31 @@
             width: 100%;
             max-width: 1000px;
             opacity: 0;
-            transition: opacity 1s ease;
+            transition: opacity 0.8s ease;
         }
 
         header {
-            background-color: #ffffff;
+            background: white;
             width: 100%;
-            padding: 15px 30px;
-            border-radius: 15px;
-            border: 4px solid #2563eb;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 15px;
+            border-radius: 16px;
+            border: 4px solid #0284c7;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             margin-bottom: 20px;
-            box-sizing: border-box;
             text-align: center;
         }
 
-        header h1 {
-            margin: 0;
-            font-size: 24px;
-            color: #1e3a8a;
-        }
+        header h1 { margin: 0; font-size: 26px; color: #0369a1; }
+        header p { margin: 5px 0 0 0; color: #0284c7; font-weight: bold; }
 
-        header p {
-            margin: 5px 0 0 0;
-            font-size: 14px;
-            color: #6b7280;
-        }
+        .game-grid { display: flex; gap: 25px; width: 100%; }
 
-        .game-grid {
-            display: flex;
-            gap: 25px;
-            width: 100%;
-        }
-
-        /* Sidebar Control Center */
         .sidebar {
             flex: 1;
-            background-color: #ffffff;
+            background: white;
             padding: 25px;
-            border-radius: 15px;
+            border-radius: 16px;
+            border: 4px solid #0ea5e9;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
@@ -106,107 +84,83 @@
         }
 
         .instruction-card {
-            background-color: #eff6ff;
-            border-left: 5px solid #2563eb;
+            background-color: #f0f9ff;
+            border-left: 5px solid #0284c7;
             padding: 15px;
-            border-radius: 0 10px 10px 0;
+            border-radius: 0 12px 12px 0;
             margin-bottom: 20px;
         }
 
-        .instruction-card h3 {
-            margin: 0 0 8px 0;
-            color: #1d4ed8;
-            font-size: 18px;
-        }
-
-        .instruction-card p {
-            font-size: 14px;
-            line-height: 1.5;
-            margin: 0;
-        }
+        .instruction-card h3 { margin: 0 0 8px 0; color: #1e3a8a; font-size: 18px; }
+        .instruction-card p { font-size: 14px; line-height: 1.5; color: #334155; margin: 0; }
 
         .action-btn {
-            background-color: #059669;
+            background-color: #2563eb;
             color: white;
             font-size: 18px;
             font-weight: bold;
-            padding: 15px;
+            padding: 16px;
             border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 12px;
             cursor: pointer;
+            transition: all 0.2s ease;
             width: 100%;
-            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
         }
 
-        .action-btn:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        .action-btn:hover { background-color: #1d4ed8; }
+        .action-btn:disabled {
+            background-color: #cbd5e1;
+            box-shadow: none;
+            cursor: not-allowed;
+            color: #64748b;
         }
 
-        /* Canvas Display Window */
+        /* Computer Monitor Frame Styling */
         .canvas-window {
-            flex: 1.8;
-            background-color: #ffffff;
+            flex: 1.6;
+            background: #0f172a;
             padding: 15px;
-            border-radius: 15px;
-            border: 4px solid #f97316;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            border-radius: 20px;
+            border: 6px solid #475569;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
 
         .canvas-meta {
             width: 100%;
             display: flex;
             justify-content: space-between;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             font-weight: bold;
-            color: #c2410c;
+            color: #94a3b8;
+            font-size: 14px;
         }
 
         canvas {
-            background-color: #f8fafc;
-            border: 3px solid #cbd5e1;
-            border-radius: 10px;
-            cursor: pointer;
+            background: #ffffff;
+            border-radius: 8px;
         }
 
-        /* Badge Popup Styles */
-        #badge-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(0,0,0,0.7);
+        /* End Game Rewards Badge */
+        #badge-screen {
             display: none;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            z-index: 10000;
-        }
-
-        #badge-modal {
-            background-color: white;
-            padding: 40px;
+            justify-content: center;
+            background: white;
+            border: 4px solid #facc15;
             border-radius: 20px;
-            border: 6px solid #facc15;
+            padding: 40px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: badgeScale 0.5s ease-out;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            margin-top: 20px;
+            max-width: 500px;
+            animation: popUp 0.4s ease-out;
         }
 
-        #badge-icon {
-            font-size: 100px;
-            margin-bottom: 20px;
-            color: #facc15;
-        }
-
-        @keyframes badgeScale {
-            0% { transform: scale(0.1) rotate(-180deg); opacity: 0; }
-            80% { transform: scale(1.1) rotate(10deg); opacity: 1; }
-            100% { transform: scale(1) rotate(0); }
+        @keyframes popUp {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
         }
     </style>
 </head>
@@ -214,44 +168,41 @@
 
     <div id="splash-screen">
         <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/250x90?text=Innovine';">
-        <h2>🛠️ Computing Safety Lab Booting... 🕹️</h2>
+        <h2>🤖 Loading Computing Safety Break Routine... 🧘</h2>
     </div>
 
     <div class="main-content" id="app-workspace">
         <header>
-            <h1>ErgoBot: Health & Safety Computing Challenge!</h1>
-            <p>Stay Safe while using the Computer Room</p>
+            <h1>🛡️ The 20-20-20 Eye & Body Break Studio 🛡️</h1>
+            <p>Physical Movement & Screen Fatigue Prevention</p>
         </header>
 
-        <div class="game-grid">
+        <div class="game-grid" id="main-game-layout">
             <div class="sidebar">
-                <div>
-                    <div class="instruction-card">
-                        <h3 id="stage-title">🦴 Stage 1: Fix ErgoBot's Posture!</h3>
-                        <p id="stage-desc">Look at ErgoBot! His chair is too high, and he is slumping! Use your mouse to **click directly on the chair base** to lower it down safely for his feet!</p>
-                    </div>
+                <div class="instruction-card">
+                    <h3 id="break-title">👀 Action 1: Look at a Distant Wall</h3>
+                    <p id="break-desc">Stand up up from your chair, turn away from the computer monitor screen completely, and look across the classroom room at a distant wall for 5 seconds!</p>
                 </div>
 
-                <button class="action-btn" id="next-btn" onclick="processStage()" disabled style="background-color:#94a3b8; box-shadow:none; cursor:not-allowed;">Solve Stage Goal First</button>
+                <button class="action-btn" id="stretch-btn" onclick="startBreakTimer()">⚡ Start 5s Break Timer</button>
             </div>
 
             <div class="canvas-window">
                 <div class="canvas-meta">
-                    <span id="score-label">Stage 1 of 3</span>
-                    <span id="status-label">Status: System Online</span>
+                    <span id="step-count">Break Exercise: 1 of 3</span>
+                    <span id="timer-status">Status: Waiting to start...</span>
                 </div>
-                <canvas id="gameCanvas" width="550" height="400"></canvas>
+                <canvas id="ergoCanvas" width="520" height="360"></canvas>
             </div>
         </div>
-    </div>
 
-    <div id="badge-overlay">
-        <div id="badge-modal">
-            <div id="badge-icon">🌟</div>
-            <h2>MISSION ACCOMPLISHED!</h2>
-            <p>You are now an Innovine Certified Computing Safety Expert!</p>
-            <p>🏅 **Health & Safety Badger Awarded!** 🏅</p>
-            <button class="action-btn" style="margin-top:20px;" onclick="location.reload();">Play Again 🔄</button>
+        <div id="badge-screen">
+            <span style="font-size: 90px;">🏅</span>
+            <h2 style="color: #1e3a8a; margin: 15px 0;">INNOVINE ERGO-SAFETY BADGE!</h2>
+            <p style="font-size: 16px; color: #475569; line-height: 1.6; margin-bottom: 25px;">
+                Excellent compliance! You completed your physical stretching loops, effectively prevented screen eye fatigue, and kept your body completely safe while computing!
+            </p>
+            <button class="action-btn" style="background:#10b981; max-width:200px;" onclick="location.reload()">Restart Break 🔄</button>
         </div>
     </div>
 
@@ -260,211 +211,166 @@
     <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <script>
-        // Splash page timing management
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 document.getElementById('splash-screen').style.opacity = '0';
                 document.getElementById('splash-screen').style.visibility = 'hidden';
                 document.getElementById('app-workspace').style.opacity = '1';
-                loadStage1();
+                drawRobotGuide("🤖", "Hi friend! Time to protect our eyes and bodies!");
             }, 5000);
         });
 
-        const canvas = document.getElementById('gameCanvas');
+        const canvas = document.getElementById('ergoCanvas');
         const ctx = canvas.getContext('2d');
-        
-        let currentStage = 1;
-        let goalAchieved = false;
+
+        let activeStep = 1;
+        let timeLeft = 5;
+        let clockTimer = null;
+        let waitingForStretchedConfirmation = false;
 
         function playSound(id) {
-            const track = document.getElementById(id);
-            if(track) {
-                track.currentTime = 0;
-                track.play().catch(e => console.log("Sound waiting for focus."));
+            const el = document.getElementById(id);
+            if(el) {
+                el.currentTime = 0;
+                el.play().catch(() => {});
             }
         }
 
-        function initCanvas() {
+        // --- VECTOR GRAPHICS DRAWING ENGINE FOR ROBOT AVATAR ---
+        function drawRobotGuide(emoji, text) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        // --- ROUND DRAWING FUNCTIONS ---
-        function loadStage1() {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            // Draw a high, bad posture desk chair structure
-            ctx.fillStyle = "#334155";
-            ctx.font = "20px sans-serif";
-            ctx.fillText("Slumping Robot", 190, 40);
-
-            // Bad Chair base (Target Zone properties)
-            ctx.fillStyle = "#b91c1c";
-            ctx.fillRect(200, 280, 150, 40);
             
-            ctx.fillStyle = "#475569";
-            ctx.fillRect(200, 150, 150, 130);
-            ctx.fillStyle = "#1e3a8a";
-            ctx.font = "80px Arial";
-            ctx.fillText("🤖", 230, 220); // ErgoBot slumping
-        }
+            // Clean interface background canvas setup
+            ctx.fillStyle = "#f8fafc";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        function loadStage2() {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            ctx.fillStyle = "#475569";
-            ctx.fillRect(150, 80, 250, 180);
-            ctx.fillStyle = "#ffffff";
-            ctx.font = "80px Arial";
-            ctx.fillText("🤖", 230, 200); // ErgoBot smiling at screen
+            // Animated Robot Avatar Construction Elements
+            ctx.fillStyle = "#94a3b8"; // Head block
+            ctx.fillRect(220, 60, 80, 50);
+            ctx.fillStyle = "#cbd5e1"; // Body block
+            ctx.fillRect(180, 110, 160, 110);
             
-            // Draw glaring eye indicator lines from screen
-            ctx.strokeStyle = "#e11d48";
-            ctx.lineWidth = 3;
-            ctx.beginPath();
-            ctx.moveTo(150, 80); ctx.lineTo(100, 40);
-            ctx.moveTo(400, 80); ctx.lineTo(450, 40);
-            ctx.moveTo(150, 260); ctx.lineTo(100, 300);
-            ctx.moveTo(400, 260); ctx.lineTo(450, 300);
-            ctx.stroke();
-
-            // Screen Brightness Button (Target Zone properties)
-            ctx.fillStyle = "#059669";
-            ctx.fillRect(430, 120, 60, 60);
-            ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 16px sans-serif";
-            ctx.fillText("🔆", 450, 155);
-        }
-
-        function loadStage3() {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
-            // Draw a computer mouse positioned too far away in target zone setup
-            ctx.fillStyle = "#475569";
-            ctx.fillRect(100, 100, 350, 200); // Large desk space
-            
-            // Mouse propertiesfar away (Target Zone)
-            ctx.fillStyle = "#facc15";
-            ctx.fillRect(400, 170, 80, 50);
-            ctx.fillStyle = "#1e293b";
-            ctx.font = "bold 16px sans-serif";
-            ctx.fillText("🐭Far", 420, 200);
-            
-            // Proper nearby spotindicator indications structure indicating goal placement goals
-            ctx.strokeStyle = "#059669";
+            // Robot Antenna
+            ctx.strokeStyle = "#64748b";
             ctx.lineWidth = 4;
-            ctx.strokeRect(100, 170, 80, 50);
+            ctx.beginPath();
+            ctx.moveTo(260, 60); ctx.lineTo(260, 30);
+            ctx.stroke();
+            ctx.fillStyle = "#ef4444";
+            ctx.beginPath();
+            ctx.arc(260, 25, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Glowing Blue Electronic Screen Eyes
+            ctx.fillStyle = "#06b6d4";
+            ctx.beginPath();
+            ctx.arc(240, 85, 8, 0, Math.PI * 2);
+            ctx.arc(280, 85, 8, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Render Current Physical Target Emoji Object Action inside Robot chest panel
+            ctx.fillStyle = "#1e293b";
+            ctx.font = "38px Arial";
+            ctx.fillText(emoji, 240, 180);
+
+            // Dialogue Bubble interface text rendering blocks
+            ctx.fillStyle = "#f0fdf4";
+            ctx.fillRect(40, 260, canvas.width - 80, 70);
+            ctx.strokeStyle = "#10b981";
+            ctx.lineWidth = 3;
+            ctx.strokeRect(40, 260, canvas.width - 80, 70);
+
+            ctx.fillStyle = "#115e59";
+            ctx.font = "bold 15px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText(text, canvas.width / 2, 300);
+            ctx.textAlign = "left"; // Return global alignment behavior baseline defaults
         }
 
-        // --- CANVAS CLICK INTERACTOR ENGINE ---
-        canvas.addEventListener('click', function(e) {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-
-            if (goalAchieved) return; // Ignore if stage solved
-
-            if (currentStage === 1) {
-                // Clicking on the Bad Chair base properties (red zone)
-                if (x >= 200 && x <= 350 && y >= 280 && y <= 320) {
-                    goalAchieved = true;
-                    playSound('snd-correct');
-                    
-                    // Repaint chair at safe low height parameters
-                    ctx.clearRect(0,0,canvas.width,canvas.height);
-                    ctx.fillStyle = "#1d4ed8"; // Feet zone lower safe zone
-                    ctx.fillRect(200, 330, 150, 40);
-                    ctx.fillStyle = "#059669"; // Correct Chair
-                    ctx.fillRect(200, 200, 150, 130);
-                    ctx.fillStyle = "#ffffff";
-                    ctx.font = "80px Arial";
-                    ctx.fillText("🤖", 230, 270);
-                    
-                    document.getElementById('status-label').innerText = "Status: Posture Fixed!";
-                    unlockNext();
-                } else {
-                    playSound('snd-wrong');
-                }
-            }
-            else if (currentStage === 2) {
-                // Clicking on the bright screen button properties
-                if (x >= 430 && x <= 490 && y >= 120 && y <= 180) {
-                    goalAchieved = true;
-                    playSound('snd-correct');
-                    
-                    // Unload glare and soften screen properties
-                    ctx.clearRect(0,0,canvas.width,canvas.height);
-                    ctx.fillStyle = "#1e293b"; // Dark screen
-                    ctx.fillRect(150, 80, 250, 180);
-                    ctx.fillStyle = "#ffffff";
-                    ctx.font = "80px Arial";
-                    ctx.fillText("🤖", 230, 200); // ErgoBot smiling comfortably
-                    
-                    document.getElementById('status-label').innerText = "Status: Brightness Dimmed!";
-                    unlockNext();
-                } else {
-                    playSound('snd-wrong');
-                }
-            }
-            else if (currentStage === 3) {
-                // Clicking far away properties mouse goal area to move it nearby goals
-                if (x >= 400 && x <= 480 && y >= 170 && y <= 220) {
-                    goalAchieved = true;
-                    
-                    // Repaint nearby safe zone mouse parameters
-                    ctx.clearRect(0,0,canvas.width,canvas.height);
-                    ctx.fillStyle = "#475569";
-                    ctx.fillRect(100, 100, 350, 200); // Desk
-                    ctx.fillStyle = "#059669"; // Near Mouse
-                    ctx.fillRect(100, 170, 80, 50);
-                    ctx.fillStyle = "#ffffff";
-                    ctx.font = "bold 16px sans-serif";
-                    ctx.fillText("🐭Near", 120, 200);
-                    
-                    // This final success triggers applause and badge overlay display
-                    playSound('snd-clap');
-                    document.getElementById('status-label').innerText = "Status: Mouse Moved Nearby!";
-                    unlockNext();
-                } else {
-                    playSound('snd-wrong');
-                }
-            }
-        });
-
-        function unlockNext() {
-            const btn = document.getElementById('next-btn');
-            btn.disabled = false;
-            btn.style.backgroundColor = "#059669";
-            btn.style.boxShadow = "0 4px 10px rgba(0,0,0,0.1)";
-            btn.style.cursor = "pointer";
-            btn.innerText = currentStage === 3 ? "Complete Mission 🎉" : "Load Next Safety Rule ➡️";
+        function drawTimerDisplay(seconds) {
+            ctx.fillStyle = "#f43f5e";
+            ctx.fillRect(25, 25, 75, 45);
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 24px sans-serif";
+            ctx.fillText(seconds + "s", 43, 57);
         }
 
-        function processStage() {
-            const title = document.getElementById('stage-title');
-            const desc = document.getElementById('stage-desc');
-            const btn = document.getElementById('next-btn');
-            const scoreLabel = document.getElementById('score-label');
+        // --- INTERACTIVE TIMING & VERIFICATION LOOPS ---
+        function startBreakTimer() {
+            if(waitingForStretchedConfirmation) {
+                confirmComplianceClick();
+                return;
+            }
 
-            goalAchieved = false;
+            playSound('snd-correct');
+            const btn = document.getElementById('stretch-btn');
             btn.disabled = true;
-            btn.style.backgroundColor = "#94a3b8";
-            btn.style.boxShadow = "none";
-            btn.style.cursor = "not-allowed";
-            btn.innerText = "Solve Stage Goal First";
+            document.getElementById('timer-status').innerText = "Status: Activity Active! Stand up and perform the action!";
 
-            if (currentStage === 1) {
-                currentStage = 2;
-                scoreLabel.innerText = "Stage 2 of 3";
-                title.innerText = "👀 Stage 2: Stop the Screen Glare!";
-                desc.innerText = "ErgoBot is squinting! The computer screen is too bright! Use your mouse and **click the green 🔆 button** next to the monitor to dim the screen for his eyes.";
-                loadStage2();
-            } else if (currentStage === 2) {
-                currentStage = 3;
-                scoreLabel.innerText = "Stage 3 of 3";
-                title.innerText = "🐭 Stage 3: The Far-away Mouse!";
-                desc.innerText = "The computer mouse is too far away on the right! ErgoBot has to stretch! Use your mouse and **click directly on the Far-away mouse** to move it safely nearby ErgoBot's hand!";
-                loadStage3();
-            } else if (currentStage === 3) {
-                // Final completion triggers the badge award modal display
-                document.getElementById('badge-overlay').style.display = 'flex';
-                playSound('snd-clap');
+            timeLeft = 5;
+            
+            clockTimer = setInterval(() => {
+                timeLeft--;
+                if(activeStep === 1) drawRobotGuide("🧱", "Keep looking back at the distant wall space!");
+                if(activeStep === 2) drawRobotGuide("🙆", "Stretch your arms way up high to the ceiling!");
+                if(activeStep === 3) drawRobotGuide("💧", "Blink quickly to clear and rest your eyes!");
+                
+                drawTimerDisplay(timeLeft);
+
+                if(timeLeft <= 0) {
+                    clearInterval(clockTimer);
+                    finishActiveExercise();
+                }
+            }, 1000);
+
+            // Instantly render original framework timeline sync state indicators
+            drawTimerDisplay(timeLeft);
+        }
+
+        function finishActiveExercise() {
+            playSound('snd-clap'); // Cheering sound automatically plays when timer finishes
+            document.getElementById('timer-status').innerText = "Status: Countdown finished! Confirm your stretch.";
+            
+            waitingForStretchedConfirmation = true;
+            const btn = document.getElementById('stretch-btn');
+            btn.disabled = false;
+            btn.innerText = "I'm Stretched! 🎉";
+            btn.style.backgroundColor = "#10b981";
+            btn.style.boxShadow = "0 4px 6px rgba(16, 185, 129, 0.2)";
+
+            drawRobotGuide("⭐", "Stretch complete! Click the green button below to resume!");
+        }
+
+        function confirmComplianceClick() {
+            waitingForStretchedConfirmation = false;
+            const btn = document.getElementById('stretch-btn');
+            const title = document.getElementById('break-title');
+            const desc = document.getElementById('break-desc');
+            const stepLabel = document.getElementById('step-count');
+
+            // Reset action buttons layout configuration parameters back to active standards
+            btn.innerText = "⚡ Start 5s Break Timer";
+            btn.style.backgroundColor = "#2563eb";
+            btn.style.boxShadow = "0 4px 6px rgba(37, 99, 235, 0.2)";
+            document.getElementById('timer-status').innerText = "Status: Ready for next safety action.";
+
+            if (activeStep === 1) {
+                activeStep = 2;
+                stepLabel.innerText = "Break Exercise: 2 of 3";
+                title.innerText = "🙆 Action 2: Sky High Body Stretch";
+                desc.innerText = "Time to unlock your posture! Stand up completely tall, lock your hands together above your head, and reach up high to loosen your back shoulders!";
+                drawRobotGuide("🤖", "Ready to stretch your body muscles? Press start!");
+            } else if (activeStep === 2) {
+                activeStep = 3;
+                stepLabel.innerText = "Break Exercise: 3 of 3";
+                title.innerText = "💧 Action 3: The Rapid Eye Blink";
+                desc.innerText = "Sit back down safely. To complete the screen fatigue routine, blink your eyes very rapidly 10 times to clean away glare and screen strain!";
+                drawRobotGuide("🤖", "Ready for the eye blink routine? Press start!");
+            } else {
+                // Remove game screen layouts and expose achievement metrics certificates
+                document.getElementById('main-game-layout').style.display = 'none';
+                document.getElementById('badge-screen').style.display = 'flex';
+                playSound('snd-clap'); // Finale badge celebration sound asset loop triggered
             }
         }
     </script>

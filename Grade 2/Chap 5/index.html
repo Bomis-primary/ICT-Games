@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KidPix : The Magic Silhouette Challenge</title>
+    <title>KidPix 2: Wacky TV Studio</title>
     <style>
         body {
-            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
-            background-color: #f0fdf4; /* Creative mint green background */
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            background-color: #ffde59; /* Classic bright retro KidPix yellow */
             margin: 0;
             padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #14532d;
-            overflow-x: hidden;
+            color: #1a1a1a;
             user-select: none;
         }
 
@@ -31,129 +30,113 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
         }
 
         #splash-screen img {
             max-width: 280px;
             margin-bottom: 20px;
-            animation: bounce-in 1.2s infinite alternate ease-in-out;
+            animation: bounce 1s infinite alternate;
         }
 
-        @keyframes bounce-in {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.06) rotate(-2deg); }
+        @keyframes bounce {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-15px); }
         }
 
-        /* Main Game Layout */
         .main-content {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 1050px;
+            max-width: 1000px;
             opacity: 0;
-            transition: opacity 1s ease;
+            transition: opacity 0.8s ease;
         }
 
         header {
-            background: #ffffff;
+            background: white;
             width: 100%;
-            padding: 15px;
-            border-radius: 20px;
-            border: 4px solid #22c55e;
-            box-shadow: 6px 6px 0px #15803d;
+            padding: 12px;
+            border-radius: 16px;
+            border: 4px solid #ff5757;
+            box-shadow: 5px 5px 0px #cb2d2d;
             margin-bottom: 20px;
             text-align: center;
         }
 
-        header h1 {
-            margin: 0;
-            font-size: 26px;
-            color: #16a34a;
-        }
+        header h1 { margin: 0; font-size: 26px; color: #ff5757; }
 
-        .game-grid {
-            display: flex;
-            gap: 25px;
-            width: 100%;
-        }
+        .game-grid { display: flex; gap: 20px; width: 100%; }
 
-        /* Control Panel Sidebar */
+        /* Classic Retro Tool Dock Style */
         .sidebar {
             flex: 1;
-            background: white;
+            background: #f0f0f0;
             padding: 20px;
-            border-radius: 20px;
-            border: 4px solid #ea580c;
-            box-shadow: 6px 6px 0px #9a3412;
+            border-radius: 16px;
+            border: 4px solid #38b6ff;
+            box-shadow: 5px 5px 0px #0080ff;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
         .instruction-card {
-            background-color: #fff7ed;
-            border: 3px dashed #ea580c;
-            padding: 15px;
-            border-radius: 12px;
+            background-color: white;
+            border: 3px solid #38b6ff;
+            padding: 12px;
+            border-radius: 8px;
             margin-bottom: 15px;
         }
 
-        .instruction-card h3 {
-            margin: 0 0 6px 0;
-            color: #c2410c;
-            font-size: 18px;
-        }
+        .instruction-card h3 { margin: 0 0 6px 0; color: #0080ff; }
 
-        /* Quiz Choices Selection Boxes */
-        .guess-box {
-            display: flex;
-            flex-direction: column;
+        /* Grid for KidPix Tools */
+        .tool-dock {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 10px;
-            margin: 15px 0;
+            margin-bottom: 15px;
         }
 
-        .guess-btn {
-            background: #f8fafc;
+        .kidpix-tool {
+            background: white;
             border: 3px solid #cbd5e1;
             padding: 12px;
             font-size: 16px;
             font-weight: bold;
-            border-radius: 12px;
+            border-radius: 8px;
             cursor: pointer;
-            text-align: left;
-            transition: background 0.2s, transform 0.1s;
+            text-align: center;
         }
 
-        .guess-btn:hover {
-            background: #f1f5f9;
+        .kidpix-tool.active {
+            background: #ffde59;
+            border-color: #ff5757;
             transform: scale(1.02);
         }
 
         .action-btn {
-            background-color: #a855f7;
+            background-color: #52b788;
             color: white;
             font-size: 16px;
             font-weight: bold;
-            padding: 14px;
+            padding: 12px;
             border: none;
-            border-radius: 12px;
-            box-shadow: 4px 4px 0px #6b21a8;
+            border-radius: 8px;
+            box-shadow: 3px 3px 0px #2d6a4f;
             cursor: pointer;
         }
 
-        /* Studio Canvas Window */
+        /* Canvas Style to look like the Classic KidPix CRT monitor box */
         .canvas-window {
-            flex: 1.6;
-            background: #ffffff;
+            flex: 1.7;
+            background: #333;
             padding: 15px;
             border-radius: 20px;
-            border: 4px solid #06b6d4;
-            box-shadow: 6px 6px 0px #0e7490;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            border: 8px solid #545454;
+            box-shadow: 6px 6px 0px #1a1a1a;
         }
 
         .canvas-meta {
@@ -162,13 +145,13 @@
             justify-content: space-between;
             margin-bottom: 10px;
             font-weight: bold;
-            color: #0e7490;
+            color: #fff;
         }
 
         canvas {
-            background: #0f172a; /* Futuristic dark drawing screen */
-            border: 4px solid #cbd5e1;
-            border-radius: 12px;
+            background: #ffffff;
+            border-radius: 4px;
+            cursor: crosshair;
         }
     </style>
 </head>
@@ -176,35 +159,39 @@
 
     <div id="splash-screen">
         <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/250x90?text=Innovine';">
-        <h2>✏️ KidPix 2: The Silhouette Drawer! ✏️</h2>
+        <h2>🎨 Loading KidPix Wacky Studio... 📺</h2>
     </div>
 
     <div class="main-content" id="app-workspace">
         <header>
-            <h1>🔍 Watch Closely: What Is The Computer Drawing? 🔍</h1>
+            <h1>💥 KidPix: Interactive Tool Studio! 💥</h1>
         </header>
 
         <div class="game-grid">
             <div class="sidebar">
                 <div>
                     <div class="instruction-card">
-                        <h3 id="round-title">🎨 Round 1: The Secret Blueprint</h3>
-                        <p id="round-desc">Look at the dark drawing page! The magic paintbrush is sketching an important school technology item. Choose your guess below!</p>
+                        <h3 id="round-title">📺 Round 1: Fix the Wacky TV!</h3>
+                        <p id="round-desc">Oh no! The KidPix TV is showing fuzzy static. Choose the <b>Wacky Brush (🖌️)</b> tool and brush over the middle of the screen to reveal the image!</p>
                     </div>
 
-                    <div class="guess-box" id="options-container">
-                        </div>
+                    <span style="font-weight:bold; font-size:14px; color:#4a4a4a; margin-bottom:5px; display:block;">KidPix Tool Panel:</span>
+                    <div class="tool-dock">
+                        <button class="kidpix-tool active" id="tool-brush" onclick="selectTool('brush')">🖌️ Wacky Brush</button>
+                        <button class="kidpix-tool" id="tool-stamp" onclick="selectTool('stamp')">🦁 Stamp Pad</button>
+                        <button class="kidpix-tool" id="tool-dynamite" onclick="selectTool('dynamite')">🧨 Dynamite</button>
+                    </div>
                 </div>
 
-                <button class="action-btn" id="next-btn" onclick="advanceRound()" disabled style="background-color:#94a3b8; box-shadow:none; cursor:not-allowed;">Guess Correctly to Advance</button>
+                <button class="action-btn" id="next-btn" onclick="advanceRound()" disabled style="background-color:#94a3b8; box-shadow:none; cursor:not-allowed;">Solve Current Tool Goal</button>
             </div>
 
             <div class="canvas-window">
                 <div class="canvas-meta">
-                    <span id="drawing-speed-label">Laser Tracer: Active ⚡</span>
-                    <span id="status-label">Status: Drawing Object...</span>
+                    <span id="active-tool-label">Active Tool: Wacky Brush</span>
+                    <span id="status-label">Status: TV Static Detected!</span>
                 </div>
-                <canvas id="sketchCanvas" width="550" height="400"></canvas>
+                <canvas id="kidpixCanvas" width="540" height="380"></canvas>
             </div>
         </div>
     </div>
@@ -219,193 +206,184 @@
                 document.getElementById('splash-screen').style.opacity = '0';
                 document.getElementById('splash-screen').style.visibility = 'hidden';
                 document.getElementById('app-workspace').style.opacity = '1';
-                setupRound();
+                loadRound1();
             }, 5000);
         });
 
-        const canvas = document.getElementById('sketchCanvas');
+        const canvas = document.getElementById('kidpixCanvas');
         const ctx = canvas.getContext('2d');
 
-        let activeRound = 1;
-        let drawingInterval = null;
-        let traceProgress = 0;
-        let roundSolved = false;
-
-        // Data Structure holding unique procedural line blueprints for kids to decipher
-        const roundData = {
-            1: {
-                title: "🎨 Round 1: The Secret Blueprint",
-                desc: "Look at the screen! The neon laser brush is sketching a classic classroom screen display. What tool is it?",
-                options: ["A) A Computer Monitor Screen", "B) A Handheld Scanner", "C) A Computer Mouse"],
-                correctIndex: 0,
-                draw: function(prog) {
-                    ctx.strokeStyle = "#38bdf8"; // Neon light blue
-                    ctx.lineWidth = 6;
-                    ctx.shadowBlur = 10;
-                    ctx.shadowColor = "#38bdf8";
-                    ctx.beginPath();
-                    
-                    // Step-by-step drawing interpolation based on progress counter
-                    if(prog > 10) ctx.lineTo(400, 100);
-                    if(prog > 30) ctx.lineTo(400, 280);
-                    if(prog > 50) ctx.lineTo(150, 280);
-                    if(prog > 70) ctx.lineTo(150, 100);
-                    // Stand mount legs
-                    if(prog > 85) {
-                        ctx.moveTo(275, 280);
-                        ctx.lineTo(275, 330);
-                        ctx.lineTo(220, 330);
-                        ctx.lineTo(330, 330);
-                    }
-                    ctx.stroke();
-                }
-            },
-            2: {
-                title: "⌨️ Round 2: Typing Foundation",
-                desc: "The brush is running again! Wow, look at all those little key rows being formed right now. What is it?",
-                options: ["A) Headphones", "B) A Typing Keyboard", "C) A Floppy Disk"],
-                correctIndex: 1,
-                draw: function(prog) {
-                    ctx.strokeStyle = "#f43f5e"; // Neon red-pink
-                    ctx.shadowColor = "#f43f5e";
-                    ctx.lineWidth = 5;
-                    ctx.beginPath();
-                    
-                    // Draw outer chassis frame
-                    if(prog > 10) ctx.strokeRect(100, 150, 350, 120);
-                    // Draw grid key rows
-                    if(prog > 40) {
-                        ctx.moveTo(120, 190); ctx.lineTo(430, 190);
-                        ctx.moveTo(120, 230); ctx.lineTo(430, 230);
-                    }
-                    // Spacebar box stamp
-                    if(prog > 80) {
-                        ctx.strokeRect(200, 240, 150, 20);
-                    }
-                    ctx.stroke();
-                }
-            },
-            3: {
-                title: "🖨️ Round 3: The Paper Machine",
-                desc: "Final round! The automated printer module is spitting out digital documents on our canvas stack. Guess the hardware asset!",
-                options: ["A) A Web Camera", "B) VR Goggles", "C) A Office Printer"],
-                correctIndex: 2,
-                draw: function(prog) {
-                    ctx.strokeStyle = "#a855f7"; // Magic violet neon tint
-                    ctx.shadowColor = "#a855f7";
-                    ctx.lineWidth = 6;
-                    ctx.beginPath();
-                    
-                    // Main printer box shape body frame setup
-                    if(prog > 10) ctx.strokeRect(140, 160, 270, 130);
-                    // Top paper tray feed slot line element structures
-                    if(prog > 40) {
-                        ctx.moveTo(190, 160); ctx.lineTo(190, 100);
-                        ctx.lineTo(360, 100); ctx.lineTo(360, 160);
-                    }
-                    // Bottom exit slot page print paper tray
-                    if(prog > 85) {
-                        ctx.strokeRect(190, 290, 170, 30);
-                    }
-                    ctx.stroke();
-                }
-            }
-        };
+        let currentRound = 1;
+        let selectedTool = 'brush';
+        let tvCleaned = false;
+        let round2Placed = false;
+        let dynamiteBlown = false;
 
         function playSound(id) {
-            const sound = document.getElementById(id);
-            if(sound) {
-                sound.currentTime = 0;
-                sound.play().catch(() => {});
+            const track = document.getElementById(id);
+            if(track) {
+                track.currentTime = 0;
+                track.play().catch(() => {});
             }
         }
 
-        function setupRound() {
-            roundSolved = false;
-            traceProgress = 0;
-            clearInterval(drawingInterval);
+        function selectTool(tool) {
+            selectedTool = tool;
+            document.querySelectorAll('.kidpix-tool').forEach(b => b.classList.remove('active'));
+            document.getElementById(`tool-${tool}`).classList.add('active');
             
-            // Clear canvas viewport space black color slate layout
-            ctx.shadowBlur = 0; 
-            ctx.fillStyle = "#0f172a";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            const currentData = roundData[activeRound];
-            document.getElementById('round-title').innerText = currentData.title;
-            document.getElementById('round-desc').innerText = currentData.desc;
-            document.getElementById('status-label').innerText = "Status: Painting silhouette...";
-
-            // Load selection options onto HTML nodes interface layout dynamically
-            const container = document.getElementById('options-container');
-            container.innerHTML = "";
-            currentData.options.forEach((opt, idx) => {
-                let btn = document.createElement('button');
-                btn.className = "guess-btn";
-                btn.innerText = opt;
-                btn.onclick = () => submitGuess(idx);
-                container.appendChild(btn);
-            });
-
-            // Start running the live vector sketch engine frame updates
-            drawingInterval = setInterval(() => {
-                if (traceProgress < 100) {
-                    traceProgress += 2;
-                    currentData.draw(traceProgress);
-                } else {
-                    clearInterval(drawingInterval);
-                    document.getElementById('status-label').innerText = "Status: Sketch complete! Make your guess.";
-                }
-            }, 60);
+            let labels = { 'brush': 'Wacky Brush', 'stamp': 'Stamp Pad', 'dynamite': 'Dynamite Eraser' };
+            document.getElementById('active-tool-label').innerText = `Active Tool: ${labels[tool]}`;
         }
 
-        function submitGuess(chosenIndex) {
-            if (roundSolved) return;
-            const currentData = roundData[activeRound];
-
-            if (chosenIndex === currentData.correctIndex) {
-                roundSolved = true;
-                clearInterval(drawingInterval);
-                
-                // Uncover full asset lighting glow
-                traceProgress = 100;
-                currentData.draw(100);
-
-                if (activeRound === 3) {
-                    playSound('snd-clap'); // Big applause finish celebration triggered at round 3 finish lines
-                    document.getElementById('status-label').innerText = "Status: ALL CHAMPION BLUEPRINTS UNSCRAMBLED! 🏆";
-                } else {
-                    playSound('snd-correct');
-                    document.getElementById('status-label').innerText = "Status: Spot On! Blueprint verified! ✅";
+        // --- ROUND DRAWING FUNCTIONS ---
+        function loadRound1() {
+            // Draw gray static fuzz inside canvas
+            ctx.fillStyle = "#8e8e8e";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < canvas.width; i += 4) {
+                for (let j = 0; j < canvas.height; j += 4) {
+                    if (Math.random() > 0.5) {
+                        ctx.fillStyle = "#d0d0d0";
+                        ctx.fillRect(i, j, 4, 4);
+                    }
                 }
-                
-                // Unlock navigation control keys
-                const nextBtn = document.getElementById('next-btn');
-                nextBtn.disabled = false;
-                nextBtn.style.backgroundColor = "#22c55e";
-                nextBtn.style.boxShadow = "4px 4px 0px #16a34a";
-                nextBtn.style.cursor = "pointer";
-                nextBtn.innerText = activeRound === 3 ? "Restart Studio Room 🔄" : "Load Next Blueprint ➡️";
-            } else {
-                playSound('snd-wrong');
-                alert("Oh, that choice doesn't match the lines! Watch the laser drawing move again! 👀");
             }
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 20px sans-serif";
+            ctx.fillText("📺 TV STATIC 📺", 190, 40);
+        }
+
+        function loadRound2() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = "#f8fafc";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            // Draw Target Outline for Stamp Tool matching
+            ctx.strokeStyle = "#cbd5e1";
+            ctx.lineWidth = 4;
+            ctx.strokeRect(220, 140, 100, 100);
+            
+            ctx.fillStyle = "#94a3b8";
+            ctx.font = "16px sans-serif";
+            ctx.fillText("Drop Lion Stamp Here", 190, 120);
+        }
+
+        function loadRound3() {
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.fillStyle = "#ffe4e6";
+            ctx.fillRect(0,0,canvas.width,canvas.height);
+            
+            // Draw a big black ink mistake spill that needs to be cleared with dynamite
+            ctx.fillStyle = "#111827";
+            ctx.beginPath();
+            ctx.arc(270, 190, 70, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = "#ef4444";
+            ctx.font = "bold 18px sans-serif";
+            ctx.fillText("🚨 INK SPILL ERROR 🚨", 180, 80);
+        }
+
+        // --- CANVAS CLICK INTERACTOR ENGINE ---
+        canvas.addEventListener('click', function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            if (currentRound === 1) {
+                if (selectedTool === 'brush' && x > 150 && x < 400 && y > 100 && y < 300) {
+                    tvCleaned = true;
+                    playSound('snd-correct');
+                    
+                    // Reveal hidden picture
+                    ctx.fillStyle = "#38b6ff";
+                    ctx.fillRect(0,0,canvas.width,canvas.height);
+                    ctx.font = "100px Arial";
+                    ctx.fillText("🎨", 210, 220);
+                    
+                    document.getElementById('status-label').innerText = "Status: TV Screen Restored!";
+                    unlockNext();
+                } else {
+                    playSound('snd-wrong');
+                }
+            }
+            else if (currentRound === 2) {
+                if (selectedTool === 'stamp' && x >= 210 && x <= 330 && y >= 130 && y <= 250) {
+                    round2Placed = true;
+                    playSound('snd-correct');
+                    
+                    // Stamp KidPix Lion onto area
+                    ctx.font = "75px Arial";
+                    ctx.fillText("🦁", 230, 215);
+                    
+                    document.getElementById('status-label').innerText = "Status: Stamp Matched Perfectly!";
+                    unlockNext();
+                } else {
+                    playSound('snd-wrong');
+                }
+            }
+            else if (currentRound === 3) {
+                if (selectedTool === 'dynamite' && x >= 190 && x <= 350 && y >= 110 && y <= 270) {
+                    dynamiteBlown = true;
+                    playSound('snd-clap'); // Big explosion celebration applause theme!
+                    
+                    // Emulate classic KidPix dynamite whole-screen clear blast
+                    ctx.fillStyle = "#ffffff";
+                    ctx.fillRect(0,0,canvas.width,canvas.height);
+                    ctx.font = "bold 32px sans-serif";
+                    ctx.fillStyle = "#22c55e";
+                    ctx.fillText("💥 KABOOM! CANVAS CLEAN! 💥", 40, 200);
+                    
+                    document.getElementById('status-label').innerText = "Status: Canvas Erased!";
+                    unlockNext();
+                } else {
+                    playSound('snd-wrong');
+                }
+            }
+        });
+
+        function unlockNext() {
+            const btn = document.getElementById('next-btn');
+            btn.disabled = false;
+            btn.style.backgroundColor = "#52b788";
+            btn.style.cursor = "pointer";
+            btn.innerText = currentRound === 3 ? "Restart Studio Room 🔄" : "Load Next KidPix Tool ➡️";
         }
 
         function advanceRound() {
-            const nextBtn = document.getElementById('next-btn');
-            nextBtn.disabled = true;
-            nextBtn.style.backgroundColor = "#94a3b8";
-            nextBtn.style.boxShadow = "none";
-            nextBtn.style.cursor = "not-allowed";
-            nextBtn.innerText = "Guess Correctly to Advance";
+            const title = document.getElementById('round-title');
+            const desc = document.getElementById('round-desc');
+            const btn = document.getElementById('next-btn');
 
-            if (activeRound < 3) {
-                activeRound++;
-                setupRound();
+            btn.disabled = true;
+            btn.style.backgroundColor = "#94a3b8";
+            btn.style.cursor = "not-allowed";
+            btn.innerText = "Solve Current Tool Goal";
+
+            if (currentRound === 1) {
+                currentRound = 2;
+                title.innerText = "🦁 Round 2: The Stamp Pad Match";
+                desc.innerText = "Great work! Now select the <b>Stamp Pad (🦁)</b> and drop the wild animal stamp directly inside the dotted square target boundary box!";
+                selectTool('stamp');
+                loadRound2();
+            } else if (currentRound === 2) {
+                currentRound = 3;
+                title.innerText = "🧨 Round 3: Dynamite Screen Bomb!";
+                desc.innerText = "A huge black ink accident ruined the workspace. Select the iconic <b>Dynamite Eraser (🧨)</b> and click right on the ink to blow it up!";
+                selectTool('dynamite');
+                loadRound3();
             } else {
-                // Loop execution resetting base variables configuration state parameters
-                activeRound = 1;
-                setupRound();
+                // Loop execution reset
+                currentRound = 1;
+                tvCleaned = false;
+                round2Placed = false;
+                dynamiteBlown = false;
+                title.innerText = "📺 Round 1: Fix the Wacky TV!";
+                desc.innerText = "Oh no! The KidPix TV is showing fuzzy static. Choose the Wacky Brush (🖌️) tool and brush over the middle of the screen to reveal the image!";
+                selectTool('brush');
+                loadRound1();
+                document.getElementById('status-label').innerText = "Status: TV Static Detected!";
             }
         }
     </script>

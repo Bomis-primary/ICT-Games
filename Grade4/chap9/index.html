@@ -3,15 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Email Tycoon: Word Catcher Arcade</title>
+<title>Innovine Email Etiquette: Balloon Pop Arcade</title>
 <style>
 :root {
-    --desktop-bg: #0f172a;
-    --canvas-bg: #1e293b;
-    --good-pill: #10b981;
-    --bad-pill: #ef4444;
-    --accent: #38bdf8;
-    --ui-panel: #334155;
+    --sky-bg: linear-gradient(to top, #e0f2fe, #bae6fd);
+    --hud-panel: #0f172a;
+    --accent-sky: #0284c7;
+    --success-green: #10b981;
+    --error-red: #ef4444;
 }
 
 * {
@@ -26,7 +25,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: var(--desktop-bg);
+    background: #0f172a;
     overflow: hidden;
     padding: 10px;
     user-select: none;
@@ -57,14 +56,14 @@ body {
     50% { transform: scale(1.06); }
 }
 
-/* App Core Framing */
+/* App Core Container */
 .container {
     width: 100%;
-    max-width: 800px;
-    background: #f8fafc;
-    border-radius: 20px;
+    max-width: 850px;
+    background: #ffffff;
+    border-radius: 24px;
     padding: 25px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     position: relative;
     z-index: 10;
     text-align: center;
@@ -74,9 +73,9 @@ body {
     display: none !important;
 }
 
-/* Tycoon Cockpit Menu */
+/* Main Dashboard Panel */
 .intro-panel h1 {
-    font-size: 2.3rem;
+    font-size: 2.2rem;
     color: #1e3a8a;
     margin-bottom: 8px;
     font-weight: 800;
@@ -84,7 +83,7 @@ body {
 
 .mode-badge {
     display: inline-block;
-    padding: 5px 15px;
+    padding: 6px 16px;
     background: #e0f2fe;
     color: #0369a1;
     border-radius: 20px;
@@ -94,27 +93,26 @@ body {
 }
 
 .briefing {
-    background: #ffffff;
+    background: #f8fafc;
     padding: 20px;
-    border-radius: 12px;
-    border-left: 6px solid #0284c7;
+    border-radius: 14px;
+    border-left: 6px solid var(--accent-sky);
     text-align: left;
     margin-bottom: 25px;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
 }
 
 .briefing ol {
     margin-left: 20px;
     line-height: 1.7;
     color: #475569;
-    font-size: 1rem;
+    font-size: 0.95rem;
 }
 
 button.act-btn {
-    padding: 15px 40px;
+    padding: 16px 42px;
     background: linear-gradient(135deg, #0284c7, #0369a1);
     color: white;
-    font-size: 1.15rem;
+    font-size: 1.1rem;
     font-weight: 700;
     border: none;
     border-radius: 12px;
@@ -124,7 +122,7 @@ button.act-btn {
 
 button.act-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 15px rgba(2, 132, 199, 0.4);
+    box-shadow: 0 8px 20px rgba(2, 132, 199, 0.4);
 }
 
 /* Active Arcade HUD */
@@ -136,70 +134,86 @@ button.act-btn:hover {
 }
 
 .hud-card {
-    background: var(--ui-panel);
+    background: var(--hud-panel);
     color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
+    padding: 12px 22px;
+    border-radius: 10px;
     font-weight: 700;
     font-size: 0.95rem;
 }
 
-/* Real-time Flying Words Arena Track Canvas */
-.arcade-arena {
+/* Balloon Sky Arena Grid */
+.arena-sky {
     width: 100%;
-    height: 400px;
-    background: var(--canvas-bg);
-    border-radius: 16px;
+    height: 460px;
+    background: var(--sky-bg);
+    border-radius: 20px;
     position: relative;
     overflow: hidden;
-    border: 4px solid var(--ui-panel);
-    cursor: none; /* Hide hardware mouse arrow to display stylized catcher bin */
+    border: 4px solid var(--hud-panel);
 }
 
-/* Flying Text Words Elements */
-.flying-word-pill {
+/* Floating Balloon Interactive Canvas Element */
+.balloon-wrapper {
     position: absolute;
-    padding: 10px 16px;
-    background: #ffffff;
-    border: 2px solid #cbd5e1;
-    color: var(--desktop-bg);
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 0.95rem;
-    white-space: nowrap;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.2);
-    pointer-events: none;
-    will-change: top;
+    bottom: -120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    will-change: transform;
 }
 
-/* User Digital Catcher Basket Bin */
-#catcherBin {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    width: 140px;
-    height: 35px;
-    background: linear-gradient(135deg, #38bdf8, #0284c7);
-    border-radius: 10px;
-    border: 2px solid #ffffff;
-    box-shadow: 0 8px 16px rgba(56, 189, 248, 0.4);
-    transform: translateX(-50%);
+.balloon-body {
+    width: 90px;
+    height: 110px;
+    border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+    position: relative;
+    box-shadow: inset -8px -10px 15px rgba(0,0,0,0.15);
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
-    font-weight: 800;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    pointer-events: none;
+    transition: transform 0.1s ease;
 }
 
-/* Instant Educational Feedback Banner */
+/* Balloon string hook knots */
+.balloon-body::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 41px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+}
+
+.balloon-string {
+    width: 2px;
+    height: 35px;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+/* Content labels affixed elegantly beside/on balloons */
+.balloon-label {
+    position: absolute;
+    top: -30px;
+    background: #ffffff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #1e293b;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    white-space: nowrap;
+    border: 2px solid #cbd5e1;
+}
+
+/* Real-time Ticker Audit Feedback Box */
 .ticker-feedback {
     margin-top: 15px;
     padding: 15px;
-    border-radius: 10px;
+    border-radius: 12px;
     text-align: left;
     font-weight: 600;
     font-size: 0.95rem;
@@ -212,24 +226,24 @@ button.act-btn:hover {
 
 .ticker-feedback.good {
     background: #ecfdf5;
-    border-left-color: var(--good-pill);
+    border-left-color: var(--success-green);
     color: #065f46;
 }
 
 .ticker-feedback.bad {
     background: #fef2f2;
-    border-left-color: var(--bad-pill);
+    border-left-color: var(--error-red);
     color: #991b1b;
 }
 
-/* Final Scoreboard Dashboard */
+/* Performance Assessment Dashboard */
 .rank-shell {
-    width: 140px;
-    height: 140px;
+    width: 145px;
+    height: 145px;
     border-radius: 50%;
-    background: var(--ui-panel);
+    background: var(--hud-panel);
     color: white;
-    font-size: 2.2rem;
+    font-size: 2.3rem;
     font-weight: 800;
     display: flex;
     justify-content: center;
@@ -253,41 +267,40 @@ button.act-btn:hover {
 
 <div class="container hidden" id="appMainframe">
     <div id="menuPanel" class="intro-panel">
-        <h1>Email Tycoon: Word Catcher</h1>
-        <div class="mode-badge">Arcade Motion Tracker • Grade 4 Netiquette</div>
+        <h1>Email Etiquette Balloon Pop</h1>
+        <div class="mode-badge">Kinetic Motion Tracker </div>
         
         <div class="briefing">
-            <p style="font-weight:700; margin-bottom:8px; color:#0f172a;">How to Control Your Catcher Bin:</p>
+            <p style="font-weight:700; margin-bottom:10px; color:#0f172a;">Flight Control Operation Rules:</p>
             <ol>
-                <li>Move your mouse mouse (or swipe your finger) left and right to guide the blue Catcher Bin across the arena floor.</li>
-                <li><strong>CATCH:</strong> Polite greetings, clean subjects, privacy rules, and helpful signatures.</li>
-                <li><strong>DODGE / MISS:</strong> Angry ALL-CAPS words, suspicious click links, and messy text message codes.</li>
-                <li>Catching a bad text or dropping a helpful etiquette item triggers an immediate filing penalty fault!</li>
-                <li>Exactly 15 active phrases will drop. Catch perfectly to claim the ultimate Tycoon Rank!</li>
+                <li>Balloons holding email communication practices will drift upwards from the bottom floor[cite: 2266].</li>
+                <li><strong>POP IT (Click/Tap):</strong> If the statement displays a **Safe, Courteous, or Correct 7 Cs Etiquette Practice**[cite: 2261, 2297]!</li>
+                <li><strong>IGNORE IT (Let it Fly Away):</strong> If the statement displays a **Spam message, virus threat, or uppercase shouting rule**[cite: 2264, 2267, 2270]!</li>
+                <li>Popping a dangerous spam balloon or missing a polite rule balloon triggers a score deduction penalty!</li>
+                <li>Exactly 12 textbook instances will launch. Finish the deck to evaluate your Audit Grade Rank!</li>
             </ol>
         </div>
-        <button class="act-btn" onclick="launchArcadeShift()">Initialize Arena Console ➜</button>
+        <button class="act-btn" onclick="launchBalloonShift()">Initialize Terminal Console ➜</button>
     </div>
 
     <div id="gamePanel" class="hidden">
         <div class="hud">
-            <div class="hud-card">📥 Caught Metrics: <span id="countHUD">0</span> / 15</div>
+            <div class="hud-card">🎈 Evaluated Data: <span id="countHUD">0</span> / 12</div>
             <div class="hud-card" style="background:#0284c7;">🏆 Score Balance: <span id="scoreHUD">0</span></div>
         </div>
 
-        <div class="arcade-arena" id="arenaTrack" onmousemove="trackCatcherBin(event)" ontouchmove="trackCatcherBinTouch(event)">
-            <div id="catcherBin">📬 Netiquette Bin</div>
-        </div>
+        <div class="arena-sky" id="skyArena">
+            </div>
 
-        <div class="ticker-feedback" id="tickerBox">Move your basket to capture the falling phrases! Game stops at 15 items.</div>
+        <div class="ticker-feedback" id="tickerBox">Click or tap safe etiquette balloons! Ignore bad spam and threat balloons.</div>
     </div>
 
     <div id="reportPanel" class="hidden">
-        <h1 style="color:#1e3a8a; font-size:2.2rem;">📊 Executive Shift Analytics</h1>
+        <h1 style="color:#1e3a8a; font-size:2.2rem;">📊 Netiquette Audit Analytics</h1>
         <div class="rank-shell"><span id="finalScore">0</span></div>
-        <div class="rank-title" id="finalRank">Calculating Title...</div>
+        <div class="rank-title" id="finalRank">Evaluating Credentials...</div>
         <p id="finalSummary" style="color:#475569; margin-bottom:25px; line-height:1.6; max-width:600px; margin-left:auto; margin-right:auto;"></p>
-        <button class="act-btn" onclick="location.reload()">Boot New Operational Shift 🔄</button>
+        <button class="act-btn" onclick="location.reload()">Boot New Evaluation Shift 🔄</button>
     </div>
 </div>
 
@@ -296,214 +309,209 @@ button.act-btn:hover {
 <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
 
 <script>
-/* Enforce splash lock window duration of exactly 5000ms */
+/* Freeze system look window duration on splash for exactly 5000ms */
 setTimeout(() => {
     document.getElementById("splash").style.display = "none";
     document.getElementById("appMainframe").classList.remove("hidden");
 }, 5000);
 
-/* Complete 15 Word/Phrase Elements Dataset Matrix */
-const netiquetteDatabase = [
-    { label: "Dear Mr. Davis,", isGood: true, log: "Nice Catch! 'Dear' followed by the teacher's last name is the perfect respectful greeting greeting format." },
-    { label: "HELP ME NOW!!!", isGood: false, log: "Filing Penalty! Shouting in ALL-CAPS with exclamation symbols looks angry and demanding." },
-    { label: "Subject: Math Quiz Help", isGood: true, log: "Nice Catch! Clear subject lines state the topic beautifully so readers understand instantly." },
-    { label: "Sincerely, Marcus Lee", isGood: true, log: "Nice Catch! Professional sign-offs like 'Sincerely' leave a brilliant final impression." },
-    { label: "CLICK HERE FOR FREE TOYS", isGood: false, log: "Filing Penalty! Unknown links offering gifts are dangerous spam files containing viruses." },
-    { label: "My Password is: 123Gamer", isGood: false, log: "Filing Penalty! Private logins and account keys must never be broadcast over text notes." },
-    { label: "Using Paperclip for files", isGood: true, log: "Nice Catch! The paperclip tool is the verified utility mechanism to organize outbound files cleanly." },
-    { label: "Forwarding mean classmate photos", isGood: false, log: "Filing Penalty! Spreading embarrassing files or photos of other kids is online bullying." },
-    { label: "Please & Thank You", isGood: true, log: "Nice Catch! Helpful words set a polite tone since the recipient can't see your smile." },
-    { label: "Yo Davis wake up", isGood: false, log: "Filing Penalty! Street slang forms are disrespectful to use when writing to school adults." },
-    { label: "Leaving Subject Box Blank", isGood: false, log: "Filing Penalty! Blank header boxes make files look highly suspicious or look like junk text." },
-    { label: "Waiting until calm to write", isGood: true, log: "Nice Catch! Pausing protects you from typing reactive, mean words about a bad grade." },
-    { label: "Sending quick polite apology", isGood: true, log: "Nice Catch! Sending a fast apology clears up accidental file delivery mistakes gracefully." },
-    { label: "text ya later byeeee rawr", isGood: false, log: "Filing Penalty! Sloppy text communication models look lazy inside school channels." },
-    { label: "Leo Room 4B", isGood: true, log: "Nice Catch! Including your name and room code allows staff to assist you without delays." }
+/* Chapter 9 E-mail Etiquette Verbatim Content Database Matrix [cite: 2261, 2264, 2266, 2267, 2270, 2297] */
+const etiquetteDataset = [
+    { text: "Greeting with 'Hi' or 'Good morning'", isSafe: true, info: "Perfect! Greeting others in an email is as important as doing so in person[cite: 2263, 2264]." },
+    { text: "SHOUTING IN ALL UPPERCASE LETTERS", isSafe: false, info: "Warning! Writing in all capital letters fails to convey a good impression and looks like shouting[cite: 2264, 2265]." },
+    { text: "Closing with 'Thank you' or 'Regards'", isSafe: true, info: "Perfect! Always close your message with a courteous line followed by your name[cite: 2261]." },
+    { text: "Clicking links inside a Spam message", isSafe: false, info: "Danger! Clicking unknown links or downloading files from strangers can infect computers with malicious viruses[cite: 2266, 2269, 2270]." },
+    { text: "Checking grammar, spelling & punctuation", isSafe: true, info: "Perfect! Taking time to construct a clean, accurate body shows extreme respect[cite: 2262, 2263]." },
+    { text: "Opening email messages from strangers", isSafe: false, info: "Danger! If you receive an advertisement or a message from a stranger, do not open it[cite: 2268, 2269]." },
+    { text: "Keeping the body short and concise", isSafe: true, info: "Perfect! Try to keep your email text content short and clear for effective reading[cite: 2265, 2297]." },
+    { text: "Sharing your game password with online friends", isSafe: false, info: "Danger! You must keep your system logins and passwords fully confidential to protect privacy[cite: 2147, 2027]." },
+    { text: "Using 'Courteous' and polite phrasing", isSafe: true, info: "Perfect! 'Courteous' is one of the verified 7 Cs of effective email communication[cite: 2296, 2297]." },
+    { text: "Using sloppy lowercase text all over", isSafe: false, info: "Warning! Avoiding standard punctuation and writing only in lowercase creates a lazy impression[cite: 2264, 2265]." },
+    { text: "Applying 'Clear, Correct & Complete' facts", isSafe: true, info: "Perfect! Ensuring your email is Clear, Correct, Coherent, and Complete matches the 7 Cs framework[cite: 2296, 2297]." },
+    { text: "Downloading attachments from unknown sources", isSafe: false, info: "Danger! Unknown files can run dangerous code that harms your hardware[cite: 2266, 2270, 2271]." }
 ];
 
-let databaseDeck = [];
-let currentIndex = 0;
-let pointsTotal = 0;
-let loopIntervalId;
-let gameIsActive = false;
+let randomizedDeck = [];
+let targetIndex = 0;
+let cumulativePoints = 0;
+let gameSessionRunning = false;
 
-// Basket tracking parameters
-const binEl = document.getElementById("catcherBin");
-const trackEl = document.getElementById("arenaTrack");
-let binX = 200; // Relative internal horizontal footprint coordinate coordinate location
+const skyArena = document.getElementById("skyArena");
 
-function launchArcadeShift() {
-    databaseDeck = [...netiquetteDatabase].sort(() => Math.random() - 0.5);
-    currentIndex = 0;
-    pointsTotal = 0;
-    gameIsActive = true;
+// Pastel Palette Array to make balloons look highly dynamic and vibrant
+const balloonColors = ['#f43f5e', '#3b82f6', '#10b981', '#a855f7', '#f59e0b', '#06b6d4', '#ec4899'];
 
-    document.getElementById("menuPanel").classList.add("hidden");
+function launchBalloonShift() {
+    randomizedDeck = [...etiquetteDataset].sort(() => Math.random() - 0.5);
+    targetIndex = 0;
+    cumulativePoints = 0;
+    gameSessionRunning = true;
+
+    document.getElementById("menuPanel").className = "intro-panel hidden";
     document.getElementById("gamePanel").classList.remove("hidden");
     
-    deployNextFlyingPill();
+    spawnNextBalloonPill();
 }
 
-function trackCatcherBin(e) {
-    if (!gameIsActive) return;
-    const trackBounds = trackEl.getBoundingClientRect();
-    let computedX = e.clientX - trackBounds.left;
-    updateBinPosition(computedX);
-}
-
-function trackCatcherBinTouch(e) {
-    if (!gameIsActive || e.touches.length === 0) return;
-    const trackBounds = trackEl.getBoundingClientRect();
-    let computedX = e.touches[0].clientX - trackBounds.left;
-    updateBinPosition(computedX);
-}
-
-function updateBinPosition(targetX) {
-    const halfBinWidth = 70; // 140px total width / 2
-    // Enforce lateral boundaries inside canvas
-    if (targetX < halfBinWidth) targetX = halfBinWidth;
-    if (targetX > trackEl.clientWidth - halfBinWidth) targetX = trackEl.clientWidth - halfBinWidth;
-    
-    binX = targetX;
-    binEl.style.left = targetX + "px";
-}
-
-function deployNextFlyingPill() {
-    if (currentIndex >= databaseDeck.length) {
-        terminateArcadeSession();
+function spawnNextBalloonPill() {
+    if (targetIndex >= randomizedDeck.length) {
+        terminateSkyShift();
         return;
     }
 
-    document.getElementById("countHUD").innerText = currentIndex;
+    document.getElementById("countHUD").innerText = targetIndex;
+    const currentItem = randomizedDeck[targetIndex];
 
-    const currentData = databaseDeck[currentIndex];
+    // Build visual compound node components
+    const wrapper = document.createElement("div");
+    wrapper.className = "balloon-wrapper";
     
-    // Construct dynamic visual object canvas element
-    const pill = document.createElement("div");
-    pill.className = "flying-word-pill";
-    pill.innerText = currentData.label;
-    trackEl.appendChild(pill);
+    const balloon = document.createElement("div");
+    balloon.className = "balloon-body";
+    
+    // Distribute random cosmetic color configuration layouts
+    const chosenColor = balloonColors[Math.floor(Math.random() * balloonColors.length)];
+    balloon.style.backgroundColor = chosenColor;
+    
+    // CSS trick to align the triangle color with the balloon base color dynamically
+    const styleSheetRule = document.createElement("style");
+    styleSheetRule.innerHTML = `.b-knot-${targetIndex}::after { border-bottom: 8px solid ${chosenColor} !important; }`;
+    document.head.appendChild(styleSheetRule);
+    balloon.classList.add(`b-knot-${targetIndex}`);
 
-    // Dynamic horizontal physics spawn spacing limits calculation
-    const trackWidth = trackEl.clientWidth;
-    const pillWidth = pill.clientWidth || 150;
-    const maximumX = trackWidth - pillWidth - 20;
-    const initializedX = Math.max(10, Math.floor(Math.random() * maximumX));
-    
-    pill.style.left = initializedX + "px";
-    
-    let verticalY = -40; // High entry point
-    const frameSpeed = 3.5; // Constant falling drop speed scalar pace metric
+    const string = document.createElement("div");
+    string.className = "balloon-string";
 
-    function dropPhysicsAnimation() {
-        if (!gameIsActive) {
-            pill.remove();
+    const label = document.createElement("div");
+    label.className = "balloon-label";
+    label.innerText = currentItem.text;
+
+    wrapper.appendChild(label);
+    wrapper.appendChild(balloon);
+    wrapper.appendChild(string);
+    skyArena.appendChild(wrapper);
+
+    // Dynamic horizontal tracking spawn safety positions
+    const arenaWidth = skyArena.clientWidth;
+    const wrapperWidth = label.clientWidth || 160;
+    const paddingOffset = 30;
+    const leftX = Math.max(paddingOffset, Math.floor(Math.random() * (arenaWidth - wrapperWidth - paddingOffset)));
+    wrapper.style.left = leftX + "px";
+
+    let pixelY = -120; // Lower threshold tracking line boundary baseline
+    const driftSpeed = 2.2; // Linear floating drift metric index coefficient
+    let wasProcessed = false;
+
+    // Popping Event Trigger Action Handlers
+    wrapper.addEventListener("mousedown", (e) => {
+        if (wasProcessed) return;
+        wasProcessed = true;
+        e.stopPropagation();
+        
+        // Visual Pop Animation sequence
+        balloon.style.transform = "scale(1.4)";
+        balloon.style.opacity = "0";
+        label.style.opacity = "0";
+        setTimeout(() => wrapper.remove(), 100);
+
+        processInteractionOutcome(true, currentItem);
+    });
+
+    function ascendAnimationLoop() {
+        if (!gameSessionRunning) {
+            wrapper.remove();
             return;
         }
 
-        verticalY += frameSpeed;
-        pill.style.top = verticalY + "px";
+        if (wasProcessed) return;
 
-        const arenaHeight = trackEl.clientHeight;
-        const targetCatchLine = arenaHeight - 45; // Alignment cross intersection baseline check zone
+        pixelY += driftSpeed;
+        wrapper.style.transform = `translateY(-${pixelY}px)`;
 
-        // Collision Tracking Loop Intersection Logic
-        if (verticalY >= targetCatchLine && verticalY <= targetCatchLine + 20) {
-            const leftEdge = initializedX;
-            const rightEdge = initializedX + pillWidth;
-            
-            // Catcher dynamic horizontal span coverage coordinates evaluation
-            const binLeft = binX - 70;
-            const binRight = binX + 70;
+        const arenaHeight = skyArena.clientHeight;
 
-            // Intersect verification matching matrix math check
-            if (rightEdge >= binLeft && leftEdge <= binRight) {
-                pill.remove();
-                handleSortOutcome(true, currentData);
-                return;
-            }
-        }
-
-        // Out of Bounds Tracking Branch
-        if (verticalY > arenaHeight + 10) {
-            pill.remove();
-            handleSortOutcome(false, currentData);
+        // Verify if balloon has floated completely out of bounds at the top
+        if (pixelY > arenaHeight + 160) {
+            wasProcessed = true;
+            wrapper.remove();
+            processInteractionOutcome(false, currentItem);
             return;
         }
 
-        requestAnimationFrame(dropPhysicsAnimation);
+        requestAnimationFrame(ascendAnimationLoop);
     }
 
-    requestAnimationFrame(dropPhysicsAnimation);
+    requestAnimationFrame(ascendAnimationLoop);
 }
 
-function handleSortOutcome(wasCaught, itemRef) {
-    const feedbackBox = document.getElementById("tickerBox");
-    
-    if (wasCaught) {
-        if (itemRef.isGood) {
-            pointsTotal += 100;
-            // Play BOTH correct audio layers simultaneously
-            try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
-            try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
-            feedbackBox.className = "ticker-feedback good";
-            feedbackBox.innerHTML = `<strong>🏅 SUCCESS!</strong> ${itemRef.log}`;
+function processInteractionOutcome(userPoppedIt, dataRef) {
+    const feedbackField = document.getElementById("tickerBox");
+
+    if (userPoppedIt) {
+        if (dataRef.isSafe) {
+            cumulativePoints += 100;
+            // Execute simultaneous double positive audio streams
+            try { document.getElementById("correctSound").play().catch(()=>{}); } catch(f){}
+            try { document.getElementById("clapSound").play().catch(()=>{}); } catch(f){}
+            feedbackField.className = "ticker-feedback good";
+            feedbackField.innerHTML = `<strong>🎈 POPPED SAFELY!</strong> ${dataRef.info}`;
         } else {
-            pointsTotal = Math.max(0, pointsTotal - 50);
-            try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
-            feedbackBox.className = "ticker-feedback bad";
-            feedbackBox.innerHTML = `<strong>💥 COLLISION HAZARD!</strong> Caught dangerous spam: ${itemRef.log}`;
+            cumulativePoints = Math.max(0, cumulativePoints - 60);
+            try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(f){}
+            feedbackField.className = "ticker-feedback bad";
+            feedbackField.innerHTML = `<strong>💥 SECURITY BREACH CRASH!</strong> You popped a hazardous threat: ${dataRef.info}`;
         }
     } else {
-        // Condition: The word element dropped past the catcher threshold
-        if (itemRef.isGood) {
-            pointsTotal = Math.max(0, pointsTotal - 50);
-            try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
-            feedbackBox.className = "ticker-feedback bad";
-            feedbackBox.innerHTML = `<strong>❌ MISSED PROTOCOL!</strong> You dropped a safe item: ${itemRef.log}`;
+        // Condition: Balloon drifted untouched straight past the roof line boundary check
+        if (dataRef.isSafe) {
+            // Negative response: User missed a safe policy practice vector
+            cumulativePoints = Math.max(0, cumulativePoints - 60);
+            try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(f){}
+            feedbackField.className = "ticker-feedback bad";
+            feedbackField.innerHTML = `<strong>❌ AUDIT LOSS!</strong> A standard safe etiquette rule slipped away: ${dataRef.info}`;
         } else {
-            // Student correctly let a bad phrase pass safely down the drain
-            pointsTotal += 100;
-            try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
-            try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
-            feedbackBox.className = "ticker-feedback good";
-            feedbackBox.innerHTML = `<strong>🛡️ SAFELY DODGED!</strong> Ignored harmful spam block correctly.`;
+            // Positive response: Student correctly allowed malware/shouting to clear space safely
+            cumulativePoints += 100;
+            try { document.getElementById("correctSound").play().catch(()=>{}); } catch(f){}
+            try { document.getElementById("clapSound").play().catch(()=>{}); } catch(f){}
+            feedbackField.className = "ticker-feedback good";
+            feedbackField.innerHTML = `<strong>🛡️ THREAT DEFLECTED!</strong> Safely ignored harmful spam/threat configuration.`;
         }
     }
 
-    document.getElementById("scoreHUD").innerText = pointsTotal;
+    document.getElementById("scoreHUD").innerText = cumulativePoints;
     
-    currentIndex++;
-    // Brief spacing gap interval before launching next flying challenge item
+    targetIndex++;
+    // Buffer timing interval offset window gap sequence before displaying next active round
     setTimeout(() => {
-        if (gameIsActive) deployNextFlyingPill();
-    }, 1200);
+        if (gameSessionRunning) spawnNextBalloonPill();
+    }, 1300);
 }
 
-function terminateArcadeSession() {
-    gameIsActive = false;
-    document.getElementById("gamePanel").classList.add("hidden");
+function terminateSkyShift() {
+    gameSessionRunning = false;
+    document.getElementById("gamePanel").className = "hidden";
     document.getElementById("reportPanel").classList.remove("hidden");
     
-    document.getElementById("finalScore").innerText = pointsTotal;
-    try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+    document.getElementById("finalScore").innerText = cumulativePoints;
+    try { document.getElementById("clapSound").play().catch(()=>{}); } catch(f){}
 
-    let titleStr = "";
-    let bioStr = "";
+    let finalTitle = "";
+    let finalSummary = "";
 
-    if (pointsTotal >= 1200) {
-        titleStr = "👑 Master Netiquette Executive";
-        bioStr = "Sensational arcade maneuvering! You caught professional phrasing vectors perfectly while keeping spam, capital text shouting, and security risk blocks out of your server. Truly elite corporate work.";
-    } else if (pointsTotal >= 700) {
-        titleStr = "💼 Senior Communications Officer";
-        bioStr = "Fantastic work catching the correct items! Your score layout is strong. Continue tracking capital letter bursts or strange toy links with care to secure a flawless audit run.";
+    if (cumulativePoints >= 1000) {
+        finalTitle = "👑 Elite Netiquette Systems Director";
+        finalSummary = "Stunning display of precision! You checked and popped every core 7 Cs policy element cleanly [cite: 2297], while systematically letting external spam hazards and uppercase shouting drift out safely into isolation[cite: 2264, 2267]. Truly elite system operation.";
+    } else if (cumulativePoints >= 650) {
+        finalTitle = "💼 Senior Communication Auditor";
+        finalSummary = "Terrific work managing the data pipeline! Your email posture metrics are sound. Keep a sharper watch for sudden uppercase shouts or unknown download links to claim a flawless run next time[cite: 2264, 2266].";
     } else {
-        titleStr = "🌱 Probationary Mail Clerk";
-        bioStr = "Several bad phrase elements corrupted your storage system or valuable polite text packets fell down the drain unchecked. Reset the terminal machine deck and restart your sorting shift!";
+        finalTitle = "🌱 Assistant Sandbox Intern";
+        finalSummary = "The corporate server space was corrupted! Too many dangerous emails or spam files were opened [cite: 2267, 2270], or essential courteous greetings drifted away unattended[cite: 2261, 2264]. Flush the system logs and boot a fresh shift!";
     }
 
-    document.getElementById("finalRank").innerText = titleStr;
-    document.getElementById("finalSummary").innerText = bioStr;
+    document.getElementById("finalRank").innerText = finalTitle;
+    document.getElementById("finalSummary").innerText = finalSummary;
 }
 </script>
 </body>

@@ -3,16 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Magnetism: The Field Deflector Arcade</title>
+<title>Magnetism: Electromagnetic Crane Simulator</title>
 <style>
 :root {
-    --bg-dark: #0b0f19;
-    --panel-bg: #1e293b;
-    --north-red: #ef4444;
-    --south-blue: #3b82f6;
-    --neutral-gray: #64748b;
-    --gold: #f59e0b;
-    --success-glow: #10b981;
+    --bg-dark: #0b1329;
+    --terminal-bg: #1c2541;
+    --crane-gold: #ffb703;
+    --success-green: #10b981;
+    --danger-red: #ef4444;
+    --sky-glow: #3a86ff;
 }
 
 * {
@@ -33,7 +32,7 @@ body {
     user-select: none;
 }
 
-/* 5-Second Exclusive Splash Screen Layer */
+/* 5-Second Exclusive Splash Screen Overlay */
 #splash {
     position: fixed;
     top: 0;
@@ -50,15 +49,15 @@ body {
 #splash img {
     width: 250px;
     max-width: 80%;
-    animation: bouncePulse 2s infinite ease-in-out;
+    animation: pulseAnimation 2s infinite ease-in-out;
 }
 
-@keyframes bouncePulse {
-    0%, 100__% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+@keyframes pulseAnimation {
+    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(0,0,0,0)); }
+    50% { transform: scale(1.04); filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15)); }
 }
 
-/* Core Mainframe Container */
+/* Main Container Frame */
 .container {
     width: 100%;
     max-width: 850px;
@@ -75,7 +74,7 @@ body {
     display: none !important;
 }
 
-/* Dashboard Launch Panels */
+/* Main Dashboard Welcome Panels */
 .intro-panel h1 {
     font-size: 2.2rem;
     color: #1e3a8a;
@@ -99,7 +98,7 @@ body {
     background: #f8fafc;
     padding: 20px;
     border-radius: 14px;
-    border-left: 6px solid var(--south-blue);
+    border-left: 6px solid var(--sky-glow);
     text-align: left;
     margin-bottom: 25px;
 }
@@ -128,7 +127,7 @@ button.act-btn:hover {
     box-shadow: 0 8px 20px rgba(2, 132, 199, 0.4);
 }
 
-/* Operational HUD */
+/* Operational Cockpit HUD */
 .hud {
     display: flex;
     justify-content: space-between;
@@ -137,7 +136,7 @@ button.act-btn:hover {
 }
 
 .hud-card {
-    background: var(--panel-bg);
+    background: var(--terminal-bg);
     color: white;
     padding: 10px 20px;
     border-radius: 10px;
@@ -145,8 +144,8 @@ button.act-btn:hover {
     font-size: 0.95rem;
 }
 
-/* Logic Target Request Window */
-.logic-panel {
+/* Instruction Command Banner */
+.command-banner {
     background: #eff6ff;
     border: 2px solid #bfdbfe;
     padding: 15px;
@@ -155,109 +154,104 @@ button.act-btn:hover {
     font-weight: 700;
     color: #1e40af;
     margin-bottom: 15px;
-    min-height: 70px;
+    min-height: 65px;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-/* Field Physics Lab Arena Box */
-.arena-field {
+/* Factory Scrap Grid Canvas Arena */
+.grid-arena {
     width: 100%;
-    height: 300px;
+    height: 320px;
     background: #0f172a;
     border-radius: 16px;
+    border: 4px solid var(--terminal-bg);
     position: relative;
     overflow: hidden;
-    border: 4px solid var(--panel-bg);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px 0;
 }
 
-/* Core Target Display Node */
-.physics-target {
-    width: 130px;
-    padding: 12px;
+/* Graphical Crosshair Electromagnetic Crane Claw */
+#craneClaw {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    border: 3px dashed var(--crane-gold);
+    border-radius: 50%;
+    background: rgba(255, 183, 3, 0.15);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.8rem;
+    box-shadow: 0 0 15px var(--crane-gold);
+    transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+    z-index: 50;
+}
+
+/* Dynamic Object Target Nodes placed on the Grid map */
+.grid-target {
+    position: absolute;
+    padding: 12px 18px;
     background: #334155;
     color: white;
     border: 2px solid #cbd5e1;
     border-radius: 8px;
     font-weight: 800;
     font-size: 0.95rem;
-    box-shadow: 0 4px 15px rgba(255,255,255,0.1);
-    z-index: 10;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: transform 0.2s;
 }
 
-/* Visual Force Flux Rays */
-.flux-beam {
-    width: 4px;
-    height: 60px;
-    background: linear-gradient(to bottom, transparent, var(--gold));
-    box-shadow: 0 0 10px var(--gold);
-    animation: streamFlux 1s infinite linear;
+.grid-target:hover {
+    transform: scale(1.05);
 }
 
-@keyframes streamFlux {
-    0% { transform: translateY(-10px); opacity: 0; }
-    50% { opacity: 1; }
-    100% { transform: translateY(10px); opacity: 0; }
-}
-
-/* Dual-Pole Laboratory Bar Magnet Mockup */
-.bar-magnet-node {
-    width: 160px;
-    height: 40px;
-    display: flex;
-    border-radius: 6px;
-    overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-    border: 2px solid #ffffff;
-}
-
-.pole-half {
-    width: 50%;
+/* Navigation D-Pad Control Panel */
+.dpad-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
-    font-weight: 900;
-    font-size: 1.1rem;
-    letter-spacing: 1px;
-}
-
-.pole-half.north { background: var(--north-red); }
-.pole-half.south { background: var(--south-blue); }
-
-/* Interaction Option Selection Buttons Tray */
-.action-tray {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
+    gap: 10px;
     margin-top: 15px;
 }
 
-.logic-choice-btn {
-    background: #ffffff;
+.dpad-btn {
+    width: 55px;
+    height: 55px;
+    background: #f1f5f9;
     border: 2px solid #cbd5e1;
-    padding: 14px;
     border-radius: 12px;
-    font-weight: 700;
-    font-size: 1.05rem;
+    font-size: 1.3rem;
+    font-weight: 800;
     color: #334155;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.1s;
 }
 
-.logic-choice-btn:hover {
-    transform: translateY(-2px);
-    border-color: var(--south-blue);
-    background: #f8fafc;
+.dpad-btn:active {
+    background: #cbd5e1;
+    transform: scale(0.95);
 }
 
-/* Status Audit Footer Log Ticker */
+.action-trigger-btn {
+    padding: 0 25px;
+    height: 55px;
+    background: var(--crane-gold);
+    color: #0f172a;
+    border: none;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    text-transform: uppercase;
+    box-shadow: 0 4px 10px rgba(255, 183, 3, 0.3);
+}
+
+/* System Live Audio Log Ticker */
 .ticker-feedback {
     margin-top: 15px;
     padding: 15px;
@@ -274,22 +268,22 @@ button.act-btn:hover {
 
 .ticker-feedback.good {
     background: #ecfdf5;
-    border-left-color: var(--success-glow);
+    border-left-color: var(--success-green);
     color: #065f46;
 }
 
 .ticker-feedback.bad {
     background: #fef2f2;
-    border-left-color: var(--north-red);
+    border-left-color: var(--danger-red);
     color: #991b1b;
 }
 
-/* Scoring Dashboard Elements */
+/* End Diagnostics Leaderboard Panel */
 .rank-shell {
     width: 140px;
     height: 140px;
     border-radius: 50%;
-    background: var(--panel-bg);
+    background: var(--terminal-bg);
     color: white;
     font-size: 2.2rem;
     font-weight: 800;
@@ -315,53 +309,53 @@ button.act-btn:hover {
 
 <div class="container hidden" id="appMainframe">
     <div id="menuPanel" class="intro-panel">
-        <h1>Magnetism: The Field Deflector</h1>
-        <div class="mode-badge">Perspective Logic Sim • Page 109 Textbook Core</div>
+        <h1>Magnetism: Electromagnetic Crane</h1>
+        <div class="mode-badge">Spatial Grid Navigation • Interactive Logistics</div>
         
         <div class="briefing">
-            <p style="font-weight:700; margin-bottom:10px; color:#0f172a;">Laboratory Mission Briefing:</p>
+            <p style="font-weight:700; margin-bottom:10px; color:#0f172a;">Crane Operation Rules:</p>
             <ol>
-                <li>Analyze the specific **Magnetic Objective** and **Target Material Node** shown inside the lab bay.</li>
-                <li>Consider the laws of attraction, repulsion, and material properties covered from page 109 onwards.</li>
-                <li>Select the correct **Magnetic Field Alignment** option below to successfully fulfill the physics requirements.</li>
-                <li>Choosing an invalid field polarity triggers an immediate short-circuit field crash penalty!</li>
-                <li>Solve all 10 field puzzles to lock in your official Magnetic Research Scientist Rank.</li>
+                <li>Read the **Sorting Directive** given by the factory supervisor at the top of the terminal screen.</li>
+                <li><strong>NAVIGATION:</strong> Click/Tap on the direct item cards inside the yard to immediately snap the claw over them, or use the **D-Pad Controls / Keyboard Arrow Keys** to move.</li>
+                <li><strong>ACTION:</strong> Click **[ENGAGE ELECTROMAGNET 🧲]** once your crane claw loop is directly positioned over the target material you want to collect.</li>
+                <li>Activating your magnet over a wrong material or field hazard triggers an instant system fault point penalty!</li>
+                <li>Clean up all 10 sorting segments to evaluate your official Crane Logistics Engineer title.</li>
             </ol>
         </div>
-        <button class="act-btn" onclick="launchDeflectorShift()">Boot Quantum Field Desk ➜</button>
+        <button class="act-btn" onclick="startCraneSimulator()">Boot Crane Control Deck ➜</button>
     </div>
 
     <div id="gamePanel" class="hidden">
         <div class="hud">
-            <div class="hud-card">🧲 Fields Aligned: <span id="countHUD">0</span> / 10</div>
-            <div class="hud-card" style="background:var(--gold);">🏆 Quantum Balance: <span id="scoreHUD">0</span></div>
+            <div class="hud-card">📦 Materials Sorted: <span id="countHUD">0</span> / 10</div>
+            <div class="hud-card" style="background:var(--crane-gold); color:#0f172a;">🏆 Efficiency Score: <span id="scoreHUD">0</span></div>
         </div>
 
-        <div class="logic-panel" id="objectiveField">Loading flux parameters...</div>
+        <div class="command-banner" id="commandField">Connecting crane hydraulic lines...</div>
 
-        <div class="arena-field">
-            <div class="physics-target" id="targetNode">Loading Material</div>
-            <div class="flux-beam"></div>
-            <div class="bar-magnet-node">
-                <div class="pole-half north">N</div>
-                <div class="pole-half south">S</div>
-            </div>
+        <div class="grid-arena" id="factoryFloor">
+            <div id="craneClaw">🧲</div>
+            <div class="grid-target" id="itemAlpha" onclick="snapClawToNode(0)">Target A</div>
+            <div class="grid-target" id="itemBeta" onclick="snapClawToNode(1)">Target B</div>
         </div>
 
-        <div class="action-tray" id="choicesTray">
-            <button class="logic-choice-btn" onclick="evaluatePolarityClick(0)">Option A</button>
-            <button class="logic-choice-btn" onclick="evaluatePolarityClick(1)">Option B</button>
+        <div class="dpad-container">
+            <button class="dpad-btn" onclick="nudgeClaw(0, -35)">⬅️</button>
+            <button class="dpad-btn" onclick="nudgeClaw(-35, 0)">⬆️</button>
+            <button class="dpad-btn" onclick="nudgeClaw(35, 0)">⬇️</button>
+            <button class="dpad-btn" onclick="nudgeClaw(0, 35)">➡️</button>
+            <button class="action-trigger-btn" onclick="engageElectromagnetClaw()">Engage Electromagnet 🧲</button>
         </div>
 
-        <div class="ticker-feedback" id="tickerBox">Examine the target material closely and choose the matching law of magnetism!</div>
+        <div class="ticker-feedback" id="tickerBox">Position your crane loop over the correct element card, then fire up the electromagnet!</div>
     </div>
 
     <div id="reportPanel" class="hidden">
-        <h1 style="color:#1e3a8a; font-size:2.2rem;">📊 Quantum Field Diagnostic Log</h1>
+        <h1 style="color:#1e3a8a; font-size:2.2rem;">📊 Sorting Yard Efficiency Analysis</h1>
         <div class="rank-shell"><span id="finalScore">0</span></div>
-        <div class="rank-title" id="finalRank">Assembling Credentials...</div>
+        <div class="rank-title" id="finalRank">Assembling Performance Log...</div>
         <p id="finalSummary" style="color:#475569; margin-bottom:25px; line-height:1.6; max-width:600px; margin-left:auto; margin-right:auto;"></p>
-        <button class="act-btn" onclick="location.reload()">Reset Lab Console 🔄</button>
+        <button class="act-btn" onclick="location.reload()">Reset Sorting Shift 🔄</button>
     </div>
 </div>
 
@@ -370,133 +364,203 @@ button.act-btn:hover {
 <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
 
 <script>
-/* Release system core view panel lock right at 5000ms splash limit */
+/* Clear screen lock exactly at 5000 milliseconds splash timeline expiration */
 setTimeout(() => {
     document.getElementById("splash").style.display = "none";
     document.getElementById("appMainframe").classList.remove("hidden");
 }, 5000);
 
-/* Core Textbook Magnetism Chapter Problems Array Matrix (Page 109+) */
-const magnetismDatabase = [
-    { objective: "A permanent magnet is brought close to a block of iron. What happens to the iron?", target: "🗜️ Iron Block", opt1: "🧲 It is pulled closer (Attracted)", opt2: "💨 It is pushed away (Repelled)", correctIdx: 0, log: "Magnets attract certain metals like iron, steel, nickel, and cobalt." },
-    { objective: "Two magnets are brought close with their North poles facing each other. Predict the field outcome.", target: "🧲 North to North", opt1: "💨 They push away (Repelled)", opt2: "🤝 They pull together (Attracted)", correctIdx: 0, log: "Like poles (North-North or South-South) push away or repel each other." },
-    { objective: "A North pole of one magnet is brought close to the South pole of another magnet. What happens?", target: "🧲 North to South", opt1: "🤝 They pull together (Attracted)", opt2: "💨 They push away (Repelled)", correctIdx: 0, log: "Opposite poles (North and South) pull towards each other or attract." },
-    { objective: "How many poles will you find on a standard bar or cylindrical magnet?", target: "🧲 Bar Magnet", opt1: "✌️ Two Poles (North & South)", opt2: "☝️ One Single Pole", correctIdx: 0, log: "Each and every magnet has exactly two poles: a North Pole and a South Pole." },
-    { objective: "An iron object becomes magnetic only for a short time when rubbed with a magnet. What is it called?", target: "🔨 Iron Nail", opt1: "⏳ Temporary Magnet", opt2: "💎 Permanent Magnet", correctIdx: 0, log: "Temporary magnets act like magnets for a short time when influenced by a magnetic field." },
-    { objective: "A piece of plastic toy is placed right next to a strong disc magnet. What is the observed reaction?", target: "🧸 Plastic Toy", opt1: "⚪ No Action (Not Magnetic)", opt2: "🤝 Strong Attraction", correctIdx: 0, log: "Plastic is a non-magnetic material and is completely unaffected by magnets." },
-    { objective: "These magnets remain magnetic at all times, without needing external helper currents or triggers.", target: "🧲 Always Active", opt1: "💎 Permanent Magnets", opt2: "⏳ Temporary Magnets", correctIdx: 0, log: "Permanent magnets always retain their magnetism." },
-    { objective: "Which item uses magnets internally to store digital computer data on its spinning metal plates?", target: "💾 Hard Disk Drive", opt1: "🔄 Storing Data in Hard Drives", opt2: "🧼 Washing Clothes Machine", correctIdx: 0, log: "Magnets are widely used in daily life, including storing data inside computer hard drives." },
-    { objective: "A student snaps a bar magnet completely into two separate pieces. What happens to the broken pieces?", target: "🪓 Broken Magnet", opt1: "🧩 Each piece becomes a complete 2-pole magnet", opt2: "❌ Both pieces lose magnetism completely", correctIdx: 0, log: "Breaking a magnet simply creates smaller, complete magnets, each with its own North and South poles." },
-    { objective: "Identify the element that has absolutely nothing to do with magnetic poles or magnetic properties.", target: "⌨️ Desk Component", opt1: "🖥️ Computer Keyboard", opt2: "🧭 Compass Needle", correctIdx: 0, log: "A keyboard is a computer input device and is completely unrelated to magnetic fields." }
+/* Complete Chapter Physics Data Matrix System (Page 109 Textbook) */
+const yardDatabase = [
+    { directive: "CRANE MISSION: Lower the crane and lift an object that is a highly magnetic natural metal compound.", choiceA: "🔩 Solid Iron Block", choiceB: "🪵 Wooden Planking", correctIndex: 0, reason: "Iron is a strong magnetic metal attracted to electromagnetic crane fields." },
+    { directive: "CRANE MISSION: Pick up a material that will be completely unaffected or ignored by your magnet field.", choiceA: "🧸 Plastic Doll Scraps", choiceB: "📎 Steel Paperclips", correctIndex: 0, reason: "Plastic is completely non-magnetic and will not stick to a magnet." },
+    { directive: "CRANE MISSION: Move the claw over the pole pair combination that results in magnets forcing away from each other.", choiceA: "🧲 North facing North", choiceB: "🧲 North facing South", correctIndex: 0, reason: "Like poles (North to North) push away from each other due to repulsive force." },
+    { directive: "CRANE MISSION: Target the pole configuration that results in magnets locking securely together.", choiceA: "🧲 South facing North", choiceB: "🧲 South facing South", correctIndex: 0, reason: "Opposite poles (South and North) pull towards each other due to attractive force." },
+    { directive: "CRANE MISSION: Sort out the tool that utilizes magnetic fields inside its frame to direct travelers North.", choiceA: "🧭 Navigational Compass", choiceB: "📏 Metric Ruler Scale", correctIndex: 0, reason: "A compass needle is a small, lightweight magnet that aligns with Earth's magnetic fields." },
+    { directive: "CRANE MISSION: Isolate the element describing a magnet that retains its fields permanently at all times.", choiceA: "💎 Permanent Magnet", choiceB: "⏳ Temporary Magnet", correctIndex: 0, reason: "Permanent magnets always retain their active magnetic properties." },
+    { directive: "CRANE MISSION: Target the item type that becomes magnetic only for a brief moment under rubbing friction.", choiceA: "⏳ Temporary Magnet", choiceB: "💎 Permanent Magnet", correctIndex: 0, reason: "Temporary magnets act like magnets for a short window under external magnetic influence." },
+    { directive: "CRANE MISSION: Safely collect a computer hardware storage unit that relies directly on spinning magnetic platters.", choiceA: "💾 Magnetic Hard Drive", optB: "🧼 Household Appliance", correctIndex: 0, reason: "Computer hard drives use magnetism internally to read and write digital data files safely." },
+    { directive: "CRANE MISSION: Predict the structural outcome if a worker accidentally shears a bar magnet right down the middle.", choiceA: "🧩 Two smaller, complete magnets form", choiceB: "❌ All magnetic fields instantly vanish", correctIndex: 0, reason: "Snapping a magnet produces two separate, smaller magnets, each possessing a complete North and South pole." },
+    { directive: "CRANE MISSION: Target the component that has zero relation to physical electromagnetic properties.", choiceA: "⌨️ Office Desktop Keyboard", choiceB: "🧲 Iron-Core Cylinder", correctIndex: 0, reason: "A computer keyboard is a simple data input panel and does not possess active magnetic pole properties." }
 ];
 
-let randomizedDeck = [];
-let challengeIndex = 0;
-let quantumScore = 0;
-let controlsActive = false;
+let randomizedYardDeck = [];
+let operationalIndex = 0;
+let craneScoreBalance = 0;
+let cockpitActive = false;
 
-function launchDeflectorShift() {
-    randomizedDeck = [...magnetismDatabase].sort(() => Math.random() - 0.5);
-    challengeIndex = 0;
-    quantumScore = 0;
-    controlsActive = true;
+// Crane Grid Coordinates Tracking Indexes
+let craneX = 50; 
+let craneY = 120; 
+
+const craneClaw = document.getElementById("craneClaw");
+const alphaNode = document.getElementById("itemAlpha");
+const betaNode = document.getElementById("itemBeta");
+
+/* Direct Sync Keyboard Event Arrow Triggers */
+window.addEventListener("keydown", (e) => {
+    if (!cockpitActive) return;
+    if (e.key === "ArrowLeft") nudgeClaw(0, -35);
+    if (e.key === "ArrowUp") nudgeClaw(-35, 0);
+    if (e.key === "ArrowDown") nudgeClaw(35, 0);
+    if (e.key === "ArrowRight") nudgeClaw(0, 35);
+    if (e.key === " " || e.key === "Enter") engageElectromagnetClaw();
+});
+
+function renderPositionUpdates() {
+    craneClaw.style.top = craneY + "px";
+    craneClaw.style.left = craneX + "px";
+}
+
+function nudgeClaw(deltaY, deltaX) {
+    if (!cockpitActive) return;
+    craneX = Math.max(10, Math.min(document.getElementById("factoryFloor").clientWidth - 80, craneX + deltaX));
+    craneY = Math.max(10, Math.min(document.getElementById("factoryFloor").clientHeight - 80, craneY + deltaY));
+    renderPositionUpdates();
+}
+
+/* Quick Snap-To-Node Option for Mouse/Touch Players */
+function snapClawToNode(nodeIndex) {
+    if (!cockpitActive) return;
+    const targetNode = (nodeIndex === 0) ? alphaNode : betaNode;
+    craneX = parseInt(targetNode.style.left) - 10;
+    craneY = parseInt(targetNode.style.top) - 10;
+    renderPositionUpdates();
+}
+
+function startCraneSimulator() {
+    randomizedYardDeck = [...yardDatabase].sort(() => Math.random() - 0.5);
+    operationalIndex = 0;
+    craneScoreBalance = 0;
+    cockpitActive = true;
 
     document.getElementById("menuPanel").className = "intro-panel hidden";
     document.getElementById("gamePanel").classList.remove("hidden");
     
-    renderCurrentMagneticPuzzle();
+    repositionYardMaterialNodes();
 }
 
-function renderCurrentMagneticPuzzle() {
-    document.getElementById("countHUD").innerText = challengeIndex;
+function repositionYardMaterialNodes() {
+    document.getElementById("countHUD").innerText = operationalIndex;
+    const activeLevel = randomizedYardDeck[operationalIndex];
+    document.getElementById("commandField").innerText = activeLevel.directive;
+
+    // Distribute item placements across separate quadrants inside the grid
+    alphaNode.style.top = "60px";
+    alphaNode.style.left = "80px";
     
-    const activeData = randomizedDeck[challengeIndex];
-    document.getElementById("objectiveField").innerText = `🔬 CURRENT OBJECTIVE: ${activeData.objective}`;
-    document.getElementById("targetNode").innerText = activeData.target;
-    
-    const choiceButtons = document.getElementById("choicesTray").getElementsByTagName("button");
-    
-    // Randomize button assignment positions to ensure student reads options dynamically
-    const reversePositions = Math.random() > 0.5;
-    if (reversePositions) {
-        choiceButtons[0].innerText = activeData.opt2;
-        choiceButtons[0].setAttribute("data-correct", "false");
-        choiceButtons[1].innerText = activeData.opt1;
-        choiceButtons[1].setAttribute("data-correct", "true");
+    betaNode.style.top = "180px";
+    betaNode.style.left = "450px";
+
+    // Randomize choice assignments to prevent spatial memory patterns
+    const invertDataLayout = Math.random() > 0.5;
+    if (invertDataLayout) {
+        alphaNode.innerText = activeLevel.choiceB;
+        alphaNode.setAttribute("data-solution", "false");
+        betaNode.innerText = activeLevel.choiceA;
+        betaNode.setAttribute("data-solution", "true");
     } else {
-        choiceButtons[0].innerText = activeData.opt1;
-        choiceButtons[0].setAttribute("data-correct", "true");
-        choiceButtons[1].innerText = activeData.opt2;
-        choiceButtons[1].setAttribute("data-correct", "false");
+        alphaNode.innerText = activeLevel.choiceA;
+        alphaNode.setAttribute("data-solution", "true");
+        betaNode.innerText = activeLevel.choiceB;
+        betaNode.setAttribute("data-solution", "false");
     }
+
+    // Default resetting anchor paths
+    craneX = 280;
+    craneY = 120;
+    renderPositionUpdates();
 
     document.getElementById("tickerBox").className = "ticker-feedback";
-    document.getElementById("tickerBox").innerHTML = "Analyze the target properties and select the correct field outcome path.";
+    document.getElementById("tickerBox").innerHTML = "Steer the crane over the correct payload card and fire up the electromagnet tool power lines!";
     
-    controlsActive = true;
+    cockpitActive = true;
 }
 
-function evaluatePolarityClick(btnIdx) {
-    if (!controlsActive) return;
-    controlsActive = false;
+function engageElectromagnetClaw() {
+    if (!cockpitActive) return;
+    cockpitActive = false;
 
-    const clickedBtn = document.getElementById("choicesTray").getElementsByTagName("button")[btnIdx];
-    const userWasCorrect = clickedBtn.getAttribute("data-correct") === "true";
-    
-    const currentItem = randomizedDeck[challengeIndex];
-    const logTicker = document.getElementById("tickerBox");
+    // Calculate proximity bounding box to determine matching selection coordinates
+    const clawCenterX = craneX + 35;
+    const clawCenterY = craneY + 35;
 
-    if (userWasCorrect) {
-        quantumScore += 100;
-        // Engage dual simultaneous affirmative sound channels
-        try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
-        try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
-        logTicker.className = "ticker-feedback good";
-        logTicker.innerHTML = `<strong>⚡ FIELD ALIGNED!</strong> ${currentItem.log}`;
-    } else {
-        quantumScore = Math.max(0, quantumScore - 50);
-        try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
-        logTicker.className = "ticker-feedback bad";
-        logTicker.innerHTML = `<strong>💥 FIELD CLASH COLLISION!</strong> Alignment failed. Keep in mind: ${currentItem.log}`;
+    function getDistanceToNode(nodeEl) {
+        const nX = parseInt(nodeEl.style.left) + (nodeEl.clientWidth / 2);
+        const nY = parseInt(nodeEl.style.top) + (nodeEl.clientHeight / 2);
+        return Math.sqrt(Math.pow(clawCenterX - nX, 2) + Math.pow(clawCenterY - nY, 2));
     }
 
-    document.getElementById("scoreHUD").innerText = quantumScore;
-    challengeIndex++;
+    const distToAlpha = getDistanceToNode(alphaNode);
+    const distToBeta = getDistanceToNode(betaNode);
 
-    // Spacing timeout delay buffer before pushing subsequent board layout configurations
-    setTimeout(() => {
-        if (challengeIndex < randomizedDeck.length) {
-            renderCurrentMagneticPuzzle();
+    let chosenNode = null;
+    // Bounding circle threshold tracking limit metric
+    if (distToAlpha < distToBeta && distToAlpha < 120) {
+        chosenNode = alphaNode;
+    } else if (distToBeta < distToAlpha && distToBeta < 120) {
+        chosenNode = betaNode;
+    }
+
+    const feedbackLog = document.getElementById("tickerBox");
+    const currentQuestion = randomizedYardDeck[operationalIndex];
+
+    if (chosenNode && chosenNode.getAttribute("data-solution") === "true") {
+        craneScoreBalance += 100;
+        // Trigger synchronized parallel positive sound arrays
+        try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
+        try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+        feedbackLog.className = "ticker-feedback good";
+        feedbackLog.innerHTML = `<strong>⚡ LOAD SECURED SUCCESSFULLY!</strong> ${currentQuestion.reason}`;
+    } else {
+        craneScoreBalance = Math.max(0, craneScoreBalance - 50);
+        try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
+        feedbackLog.className = "ticker-feedback bad";
+        if (!chosenNode) {
+            feedbackLog.innerHTML = `<strong>💥 VACUUM DISCHARGE!</strong> Magnet fired into empty air space. No materials were collected!`;
         } else {
-            finalizeQuantumAudit();
+            feedbackLog.innerHTML = `<strong>💥 INDUCTION FAULT CORE EXCEEDED!</strong> Wrong materials loaded into hopper. Remember: ${currentQuestion.reason}`;
         }
-    }, 2200);
+    }
+
+    document.getElementById("scoreHUD").innerText = craneScoreBalance;
+    operationalIndex++;
+
+    // Timing gap safety buffer window to allow audio execution before recycling level loops
+    setTimeout(() => {
+        if (operationalIndex < randomizedYardDeck.length) {
+            repositionYardMaterialNodes();
+        } else {
+            compileFinalLogSummary();
+        }
+    }, 2500);
 }
 
-function finalizeQuantumAudit() {
+function compileFinalLogSummary() {
+    cockpitActive = false;
     document.getElementById("gamePanel").className = "hidden";
     document.getElementById("reportPanel").classList.remove("hidden");
     
-    document.getElementById("finalScore").innerText = quantumScore;
+    document.getElementById("finalScore").innerText = craneScoreBalance;
     try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
 
-    let rankTitle = "";
-    let structuralBio = "";
-    const alignmentRatio = quantumScore / 1000;
+    let performanceTitle = "";
+    let technicalRemarks = "";
+    const alignmentRatio = craneScoreBalance / 1000;
 
     if (alignmentRatio >= 0.85) {
-        rankTitle = "👑 Elite Magnetic Field Director";
-        structuralBio = "Phenomenal spatial logic and perspective tracking! You effortlessly predicted attraction and repulsion mechanics, safely identified non-magnetic plastics, and handled broken magnet poles cleanly without a single field explosion. Outstanding work.";
+        performanceTitle = "👑 Chief Automation Sorting Engineer";
+        technicalRemarks = "Flawless performance maneuvering the electromagnetic crane! You perfectly aligned polar fields, safely isolated non-magnetic elements, and loaded the processing hopper with exceptional precision.";
     } else if (alignmentRatio >= 0.55) {
-        rankTitle = "💼 Senior Electromagnetic Analyst";
-        structuralBio = "Very strong textbook application run! Most field alignments clicked into place beautifully. Watch out for the specific behaviors of permanent versus temporary magnets next shift to secure the peak score rating.";
+        performanceTitle = "💼 Senior Crane Dispatch Officer";
+        technicalRemarks = "Solid logistical workspace run! Most magnetic scrap modules were routed cleanly. Focus closely on target placement locks and avoid premature magnet discharges to capture the top score ranking next shift.";
     } else {
-        rankTitle = "🌱 Apprentice Field Core Trainee";
-        structuralBio = "Multiple polarity vector clashes caused a complete quantum field collapse inside the testing bay! Re-read the laws of poles and magnetic attraction from the handbook and boot up another operational desk shift.";
+        performanceTitle = "🌱 Yard Crane Operator Trainee";
+        technicalRemarks = "Multiple grid alignment errors triggered automated safety circuit breaker shutdowns! Review the physical laws of attraction, repulsion, and material properties, then restart the console shift.";
     }
 
-    document.getElementById("finalRank").innerText = rankTitle;
-    document.getElementById("finalSummary").innerText = structuralBio;
+    document.getElementById("finalRank").innerText = performanceTitle;
+    document.getElementById("finalSummary").innerText = technicalRemarks;
 }
 </script>
 </body>

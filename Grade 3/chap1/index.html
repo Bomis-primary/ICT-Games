@@ -1,1 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Computer Factory: Hardware & Software Sorter</title>
+<style>
+:root {
+    --bg-factory: #0f172a;
+    --panel-dark: #1e293b;
+    --hardware-orange: #f97316;
+    --software-purple: #a855f7;
+    --gold: #eab308;
+    --success-green: #22c55e;
+    --danger-red: #ef4444;
+}
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: var(--bg-factory);
+    overflow: hidden;
+    padding: 10px;
+    user-select: none;
+}
+
+/* 5-Second Exclusive Splash Screen */
+#splash {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+#splash img {
+    width: 250px;
+    max-width: 80%;
+    animation: simplePulse 2s infinite ease-in-out;
+}
+
+@keyframes simplePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* Core Main Frame Layout */
+.container {
+    width: 100%;
+    max-width: 850px;
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 25px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    position: relative;
+    z-index: 10;
+    text-align: center;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Welcome Entrance Panels */
+.intro-panel h1 {
+    font-size: 2.2rem;
+    color: #1e3a8a;
+    margin-bottom: 8px;
+    font-weight: 800;
+}
+
+.mode-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: #e0f2fe;
+    color: #0369a1;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.briefing {
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 14px;
+    border-left: 6px solid #3b82f6;
+    text-align: left;
+    margin-bottom: 25px;
+}
+
+.briefing ol {
+    margin-left: 20px;
+    line-height: 1.7;
+    color: #475569;
+    font-size: 0.95rem;
+}
+
+button.act-btn {
+    padding: 16px 45px;
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    color: white;
+    font-size: 1.15rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+button.act-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(2, 132, 199, 0.4);
+}
+
+/* Active HUD Dashboard */
+.hud {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    gap: 10px;
+}
+
+.hud-card {
+    background: var(--panel-dark);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+/* Conveyor Target Card Slot */
+.item-drop-zone {
+    background: #f1f5f9;
+    border: 3px dashed #cbd5e1;
+    padding: 15px;
+    border-radius: 16px;
+    margin-bottom: 15px;
+}
+
+.item-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 4px;
+}
+
+.item-desc {
+    font-size: 0.95rem;
+    color: #64748b;
+    font-weight: 600;
+}
+
+/* Factory Conveyor Visualization Area */
+.factory-floor {
+    width: 100%;
+    height: 180px;
+    background: #1e293b;
+    border-radius: 16px;
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border: 4px solid #0f172a;
+    overflow: hidden;
+}
+
+.processing-bin {
+    width: 40%;
+    height: 120px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: 800;
+    font-size: 1.2rem;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    border: 2px solid rgba(255,255,255,0.1);
+}
+
+.processing-bin.hw { background: linear-gradient(135deg, #f97316, #ea580c); }
+.processing-bin.sw { background: linear-gradient(135deg, #a855f7, #9333ea); }
+
+.processing-bin span {
+    font-size: 0.85rem;
+    font-weight: 600;
+    opacity: 0.9;
+    margin-top: 5px;
+    text-transform: uppercase;
+}
+
+/* Routing Control Buttons Deck */
+.control-deck {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.sort-action-btn {
+    padding: 16px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.2s;
+    text-transform: uppercase;
+}
+
+.sort-action-btn.hw-btn {
+    background: var(--hardware-orange);
+    box-shadow: 0 4px 14px rgba(249, 115, 22, 0.3);
+}
+
+.sort-action-btn.sw-btn {
+    background: var(--software-purple);
+    box-shadow: 0 4px 14px rgba(168, 85, 247, 0.3);
+}
+
+.sort-action-btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Live Operational Log Ticker */
+.ticker-feedback {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95rem;
+    min-height: 55px;
+    display: flex;
+    align-items: center;
+    border-left: 5px solid transparent;
+    background: #f1f5f9;
+}
+
+.ticker-feedback.good {
+    background: #ecfdf5;
+    border-left-color: var(--success-green);
+    color: #065f46;
+}
+
+.ticker-feedback.bad {
+    background: #fef2f2;
+    border-left-color: var(--danger-red);
+    color: #991b1b;
+}
+
+/* End Diagnostics Scoreboard */
+.rank-shell {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: var(--panel-dark);
+    color: white;
+    font-size: 2.2rem;
+    font-weight: 800;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px auto;
+}
+
+.rank-title {
+    font-size: 1.5rem;
+    color: #1e3a8a;
+    font-weight: 800;
+    margin-bottom: 12px;
+}
+</style>
+</head>
+<body>
+
+<div id="splash">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo">
+</div>
+
+<div class="container hidden" id="appMainframe">
+    <div id="menuPanel" class="intro-panel">
+        <h1>The Hardware & Software Conveyor</h1>
+        <div class="mode-badge">Interactive Factory Sorter • Grade 3 Chapter 1</div>
+        
+        <div class="briefing">
+            <p style="font-weight:700; margin-bottom:10px; color:#0f172a;">Conveyor Operation Guidelines:</p>
+            <ol>
+                <li>Look at the **Computer Component Asset** placed on the loading deck box at the top.</li>
+                <li><strong>RULE:</strong> If it's a physical device you can **see and touch**, it belongs to **HARDWARE**!</li>
+                <li>If it's a **set of programs or apps** running inside that you cannot touch, it belongs to **SOFTWARE**!</li>
+                <li>Click the correct matching colorful sorting button below to route the component into its factory bin.</li>
+                <li>Sort all 10 computer items cleanly to lock in your official Systems Engineer Rank Badge!</li>
+            </ol>
+        </div>
+        <button class="act-btn" onclick="launchConveyorShift()">Boot Conveyor System ➜</button>
+    </div>
+
+    <div id="gamePanel" class="hidden">
+        <div class="hud">
+            <div class="hud-card">📦 Assets Processed: <span id="countHUD">0</span> / 10</div>
+            <div class="hud-card" style="background:var(--gold); color:#0f172a;">🏆 Sort Accuracy: <span id="scoreHUD">0</span></div>
+        </div>
+
+        <div class="item-drop-zone">
+            <div class="item-title" id="assetName">Loading Asset...</div>
+            <div class="item-desc" id="assetHint">Analyzing item properties...</div>
+        </div>
+
+        <div class="factory-floor">
+            <div class="processing-bin hw">⚙️ Hardware<span>Physical Parts</span></div>
+            <div class="processing-bin sw">💿 Software<span>Programs & Apps</span></div>
+        </div>
+
+        <div class="control-deck">
+            <button class="sort-action-btn hw-btn" onclick="processRoutingChoice('hardware')">Route to Hardware ⚙️</button>
+            <button class="sort-action-btn sw-btn" onclick="processRoutingChoice('software')">Route to Software 💿</button>
+        </div>
+
+        <div class="ticker-feedback" id="tickerBox">Examine the asset, then click a sorting button to route it down the conveyor line!</div>
+    </div>
+
+    <div id="reportPanel" class="hidden">
+        <h1 style="color:#1e3a8a; font-size:2.2rem;">📊 Factory Operations Summary</h1>
+        <div class="rank-shell"><span id="finalScore">0</span></div>
+        <div class="rank-title" id="finalRank">Assembling Performance Log...</div>
+        <p id="finalSummary" style="color:#475569; margin-bottom:25px; line-height:1.6; max-width:600px; margin-left:auto; margin-right:auto;"></p>
+        <button class="act-btn" onclick="location.reload()">Start New Factory Shift 🔄</button>
+    </div>
+</div>
+
+<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
+
+<script>
+/* Release screen lock precisely at 5000 milliseconds splash timeline expiration */
+setTimeout(() => {
+    document.getElementById("splash").style.display = "none";
+    document.getElementById("appMainframe").classList.remove("hidden");
+}, 5000);
+
+/* Chapter 1 Grade 3 Dataset (Based on pages 7-15 of the textbook) */
+const factoryDatabase = [
+    { name: "🖱️ Computer Mouse", type: "hardware", hint: "A physical object on your desk used to point and click.", log: "Hardware consists of the physical parts of a computer that you can see and touch." },
+    { name: "🎮 Paint Program (MS Paint)", type: "software", hint: "An application on the computer screen used for drawing pictures.", log: "Software refers to sets of instructions or programs that tell the computer what to do." },
+    { name: "⌨️ Keyboard", type: "hardware", hint: "The physical board filled with plastic buttons used to type letters.", log: "Keyboards are input hardware devices because you can physically touch and type on them." },
+    { name: "🌐 Web Browser (Google Chrome)", type: "software", hint: "A computer application used to explore websites on the internet.", log: "Web browsers are software applications because they run inside the computer as instructions." },
+    { name: "🖥️ Monitor Screen", type: "hardware", hint: "The big physical glass display screen that shows pictures and text.", log: "The monitor is a hardware output device because it is a physical part of the computer setup." },
+    { name: "🤖 Computer Games", type: "software", hint: "Digital games that run inside the system memory.", log: "Video games are software programs made of electronic code instructions." },
+    { name: "🖨️ Printer Machine", type: "hardware", hint: "A heavy physical machine used to print papers out onto real sheets.", log: "Printers are output hardware components that you can see and touch in your lab." },
+    { name: "📁 Operating System (Windows)", type: "software", hint: "The main background program that makes the whole computer start up and work.", log: "An Operating System is the most essential software program that controls the computer's hardware parts." },
+    { name: "🔊 Sound Speakers", type: "hardware", hint: "Physical audio boxes plugged into the computer that emit music.", log: "Speakers are physical hardware parts responsible for outputting audio soundwaves." },
+    { name: "📝 Media Player App", type: "software", hint: "An application used to play videos and songs on the screen.", log: "Media players are software utilities because they are programs, not touchable electronic machinery." }
+];
+
+let randomizedFactoryDeck = [];
+let conveyorIndex = 0;
+let factoryScoreBalance = 0;
+let beltActive = false;
+
+function launchConveyorShift() {
+    randomizedFactoryDeck = [...factoryDatabase].sort(() => Math.random() - 0.5);
+    conveyorIndex = 0;
+    factoryScoreBalance = 0;
+    beltActive = true;
+
+    document.getElementById("menuPanel").className = "intro-panel hidden";
+    document.getElementById("gamePanel").classList.remove("hidden");
+    
+    loadNextConveyorAsset();
+}
+
+function loadNextConveyorAsset() {
+    document.getElementById("countHUD").innerText = conveyorIndex;
+    const activeAsset = randomizedFactoryDeck[conveyorIndex];
+    
+    document.getElementById("assetName").innerText = activeAsset.name;
+    document.getElementById("assetHint").innerText = `🏭 DIAGNOSTIC HINT: ${activeAsset.hint}`;
+
+    document.getElementById("tickerBox").className = "ticker-feedback";
+    document.getElementById("tickerBox").innerHTML = "Analyze the item qualities and select its correct processing conveyor channel route.";
+    
+    beltActive = true;
+}
+
+function processRoutingChoice(chosenCategory) {
+    if (!beltActive) return;
+    beltActive = false;
+
+    const currentAsset = randomizedFactoryDeck[conveyorIndex];
+    const userWasCorrect = (chosenCategory === currentAsset.type);
+    const logTicker = document.getElementById("tickerBox");
+
+    if (userWasCorrect) {
+        factoryScoreBalance += 100;
+        // Engage dual simultaneous positive audio channels
+        try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
+        try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+        logTicker.className = "ticker-feedback good";
+        logTicker.innerHTML = `<strong>⚡ ROUTE SUCCESSFUL!</strong> ${currentAsset.log}`;
+    } else {
+        factoryScoreBalance = Math.max(0, factoryScoreBalance - 50);
+        try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
+        logTicker.className = "ticker-feedback bad";
+        logTicker.innerHTML = `<strong>💥 CONVEYOR JAMMED!</strong> Wrong chamber selected. Keep in mind: ${currentAsset.log}`;
+    }
+
+    document.getElementById("scoreHUD").innerText = factoryScoreBalance;
+    conveyorIndex++;
+
+    // Timing buffer delay before recycling next item onto the conveyor belt
+    setTimeout(() => {
+        if (conveyorIndex < randomizedFactoryDeck.length) {
+            loadNextConveyorAsset();
+        } else {
+            compileFactoryAudit();
+        }
+    }, 2500);
+}
+
+function compileFactoryAudit() {
+    beltActive = false;
+    document.getElementById("gamePanel").className = "hidden";
+    document.getElementById("reportPanel").classList.remove("hidden");
+    
+    document.getElementById("finalScore").innerText = factoryScoreBalance;
+    try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+
+    let performanceTitle = "";
+    let technicalRemarks = "";
+    const sortRatio = factoryScoreBalance / 1000;
+
+    if (sortRatio >= 0.85) {
+        performanceTitle = "👑 Master IT Systems Systems Engineer";
+        technicalRemarks = "Outstanding! You sorted every single monitor, browser, and keyboard into the right categories perfectly without jamming the machinery. Excellent Grade 3 computing fundamentals.";
+    } else if (sortRatio >= 0.55) {
+        performanceTitle = "💼 Senior Tech Warehouse Supervisor";
+        technicalRemarks = "Great operational run! Most computer items were routed accurately. Keep an extra close eye out for background apps like Operating Systems to lock down a flawless factory line next shift.";
+    } else {
+        performanceTitle = "🌱 Apprentice Factory Line Trainee";
+        technicalRemarks = "Too many hardware items jammed the software channels, causing a conveyor line blackout! Review the difference between touchable parts and screen apps, and start your shift over.";
+    }
+
+    document.getElementById("finalRank").innerText = performanceTitle;
+    document.getElementById("finalSummary").innerText = technicalRemarks;
+}
+</script>
+</body>
+</html>

@@ -1,1 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email Tycoon: Inbox Zero</title>
+<style>
+:root {
+    --primary-desktop: #1e293b;
+    --folder-good: #10b981;
+    --folder-trash: #ef4444;
+    --accent-blue: #0284c7;
+    --text-dark: #0f172a;
+}
 
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #0f172a;
+    overflow: hidden;
+    padding: 15px;
+    position: relative;
+}
+
+/* 5-Second Exclusive Splash Screen */
+#splash {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+#splash img {
+    width: 260px;
+    max-width: 80%;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* Tycoon Mainframe Container */
+.container {
+    width: 100%;
+    max-width: 850px;
+    background: #f8fafc;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 10;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Welcome Tycoon Menu */
+.intro-panel h1 {
+    font-size: 2.5rem;
+    color: #1e3a8a;
+    margin-bottom: 10px;
+    font-weight: 800;
+}
+
+.badge {
+    display: inline-block;
+    padding: 6px 16px;
+    background: #dbeafe;
+    color: #1e40af;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+}
+
+.briefing-box {
+    background: #ffffff;
+    padding: 24px;
+    border-radius: 12px;
+    border-left: 6px solid var(--accent-blue);
+    text-align: left;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    margin-bottom: 25px;
+}
+
+.briefing-box ol {
+    margin-left: 20px;
+    line-height: 1.8;
+    color: #475569;
+}
+
+button.start-tycoon-btn {
+    padding: 16px 45px;
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+button.start-tycoon-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(2, 132, 199, 0.4);
+}
+
+/* Active Tycoon HUD Display */
+.hud-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.hud-item {
+    background: var(--primary-desktop);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.progress-track {
+    width: 100%;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 25px;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--accent-blue);
+    transition: width 0.3s ease;
+}
+
+/* Pending Tray Terminal Workspace */
+.pending-tray {
+    background: #f1f5f9;
+    border: 3px dashed #cbd5e1;
+    border-radius: 16px;
+    padding: 25px;
+    min-height: 200px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.email-snippet-card {
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    width: 100%;
+    max-width: 600px;
+    text-align: left;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+    animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideIn {
+    0% { transform: translateY(15px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+.card-header {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    border-bottom: 1px dashed #e2e8f0;
+    padding-bottom: 6px;
+}
+
+.card-body {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    line-height: 1.5;
+}
+
+/* Routing Router Control Elements */
+.routing-cabinet {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.cabinet-door {
+    padding: 20px;
+    border: none;
+    border-radius: 14px;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.cabinet-door.professional {
+    background: linear-gradient(135deg, #10b981, #059669);
+}
+
+.cabinet-door.trash {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.cabinet-door:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.08);
+}
+
+/* Inspector Feedback Box */
+.inspector-memo {
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: left;
+    display: none;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.inspector-memo.success {
+    background: #ecfdf5;
+    border-left: 6px solid var(--folder-good);
+    color: #065f46;
+}
+
+.inspector-memo.error {
+    background: #fef2f2;
+    border-left: 6px solid var(--folder-trash);
+    color: #991b1b;
+}
+
+/* Final Scoreboard Matrix */
+.ranking-circle {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1e293b, #0f172a);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 25px auto;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.tycoon-title {
+    font-size: 1.6rem;
+    color: #1e3a8a;
+    font-weight: 800;
+    margin-bottom: 15px;
+}
+
+.tycoon-summary {
+    font-size: 1.1rem;
+    color: #475569;
+    line-height: 1.6;
+    margin-bottom: 25px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+</style>
+</head>
+<body>
+
+<div id="splash">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo">
+</div>
+
+<div class="container hidden" id="mainframe">
+    <div id="introPanel" class="intro-panel">
+        <h1>Email Tycoon: Inbox Zero</h1>
+        <div class="badge">HQ Simulator • Grade 4 Netiquette</div>
+        
+        <div class="briefing-box">
+            <p style="font-weight: 700; margin-bottom: 10px; color: var(--text-dark);">Office Operation Briefing:</p>
+            <ol>
+                <li>Rapid snippets of office communication cards will arrive directly in your Pending Tray.</li>
+                <li>Analyze the message content instantly for safety, proper casings, tones, and attachments.</li>
+                <li>Route professional items to the <strong>👍 Professional Folder</strong> and bad, rude, or unsafe messages to the <strong>❌ Trash Bin</strong>!</li>
+                <li>Your office processing budget window drops down continuously at a rate of <strong>60 seconds</strong> per memo.</li>
+                <li>Sort all 15 operational records accurately to establish your Corporate Executive Title Rank!</li>
+            </ol>
+        </div>
+        <button class="start-tycoon-btn" onclick="startOfficeShift()">Initialize Console ➜</button>
+    </div>
+
+    <div id="gamePanel" class="hidden">
+        <div class="hud-bar">
+            <div class="hud-item">📁 Cleared: <span id="processedCounter">0</span> / 15</div>
+            <div class="hud-item" style="background: #7c3aed;">⏰ Timer: <span id="countdown">60</span>s</div>
+        </div>
+        
+        <div class="progress-track">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+        
+        <div class="pending-tray">
+            <div class="email-snippet-card" id="activeMemo">
+                <div class="card-header" id="memoType">Scanner Initialization</div>
+                <div class="card-body" id="memoPayload">Buffering database...</div>
+            </div>
+        </div>
+
+        <div class="routing-cabinet" id="routerControls">
+            <button class="cabinet-door professional" onclick="routeEmail(true)">
+                <span>💼 👍</span>
+                <span>Professional Folder</span>
+            </button>
+            <button class="cabinet-door trash" onclick="routeEmail(false)">
+                <span>🗑️ ❌</span>
+                <span>Trash Bin</span>
+            </button>
+        </div>
+
+        <div class="inspector-memo" id="memoReport"></div>
+        <button id="nextMemoBtn" class="start-tycoon-btn hidden" style="margin-top: 20px; padding: 12px 35px; font-size: 1.05rem;" onclick="loadNextMemo()">Pull Next Memo ➜</button>
+    </div>
+
+    <div id="scorePanel" class="hidden">
+        <h1 style="color: #1e3a8a; font-size: 2.3rem;">📊 Shift Final Report</h1>
+        <div class="ranking-circle"><span id="finalScore">0</span></div>
+        <div class="tycoon-title" id="earnedTitle">Processing Rank...</div>
+        <div class="tycoon-summary" id="finalSummary">Assembling corporate tracking metrics...</div>
+        <button class="start-tycoon-btn" onclick="location.reload()">Open New Office Shift 🔄</button>
+    </div>
+</div>
+
+<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
+
+<script>
+/* Release Mainframe precisely at 5000ms */
+setTimeout(() => {
+    document.getElementById("splash").style.display = "none";
+    document.getElementById("mainframe").classList.remove("hidden");
+}, 5000);
+
+/* Exactly 15 Unique Simulation Matrix Records */
+const officeDatabase = [
+    { type: "Subject Field Record", payload: "Subject Line: 'Question about math homework - Tina Room 4B'", isGood: true, explanation: "Excellent! The subject line states the exact homework topic, student's name, and room number cleanly." },
+    { type: "Subject Field Record", payload: "Subject Line: 'HELP ME!!! IMMEDIATELY!!!'", isGood: false, explanation: "Rude Setup! Shouting with multiple exclamation marks and uppercase strings is aggressive and poor etiquette." },
+    { type: "Inbound Greeting Line", payload: "Greeting: 'Dear Mr. Davis,'", isGood: true, explanation: "Polite and accurate! Commencing with 'Dear' followed by the teacher's last name is the optimal professional standard." },
+    { type: "Inbound Greeting Line", payload: "Greeting: 'Yo Davis wake up, give me the grade sheets'", isGood: false, explanation: "Unprofessional! Casual slang demands fail corporate respect and teacher-student communication protocols." },
+    { type: "Message Text Case Style", payload: "Body Paragraph: 'I NEED ASSISTANCE WITH MY LAB ASSIGNMENT NOW.'", isGood: false, explanation: "Text Casing Error! Typing a whole email message in ALL CAPITAL LETTERS reads like electronic shouting." },
+    { type: "Outbound Sign-Off Line", payload: "Signature Block: 'Sincerely, Marcus Lee'", isGood: true, explanation: "Clean Close! Ending formal notes with 'Sincerely' followed by your full name leaves a brilliant professional footprint." },
+    { type: "Outbound Sign-Off Line", payload: "Signature Block: 'bye bye catch ya later rawr got to go'", isGood: false, explanation: "Formatting Hazard! Casual texting codes look sloppy and unprofessional when writing letters to adults." },
+    { type: "Corporate Communication Tone", payload: "Body Phrase: Using friendly words like 'Please' and 'Thank you' inside an assignment extension query.", isGood: true, explanation: "Awesome Tone! Since the recipient can't see your facial expressions, polite vocabulary signals your friendly intentions clearly." },
+    { type: "Network Security Flag", payload: "Incoming Warning: An email from an unknown external source stating: 'YOU WON FREE ROBOTS! CLICK HERE INSTANTLY!'", isGood: false, explanation: "Dangerous Space Spam! Clicking strange links from unknown senders can install severe computer viruses." },
+    { type: "Network Security Flag", payload: "Incoming Data Request: A classmate asks via email: 'Hey, can you quickly reply with your personal login password?'", isGood: false, explanation: "Privacy Violation! Account passwords are completely secret data and must never be shared over clear text channels." },
+    { type: "Attachment Utility Asset", payload: "Hardware Action: Clicking the single designated paperclip icon utility to attach your homework picture link.", isGood: true, explanation: "Optimal Protocol! The standard paperclip tool is the verified, correct digital mechanism to clip file packages cleanly." },
+    { type: "Behavioral Standard Vector", payload: "Forward Action: Forwarding an embarrassing or mean photo of a classmate into a crowded student chat thread.", isGood: false, explanation: "Cyberbullying Alert! Forwarding harmful or distressing files across email spaces breaches core digital safety rules." },
+    { type: "Subject Field Record", payload: "Transmission Field: Leaving the subject line completely blank because your computer battery is running low.", isGood: false, explanation: "Missing Metric! Leaving a subject area blank makes the mail look suspicious or completely confusing to open." },
+    { type: "Accountability Loop Record", payload: "Resolution Note: Sending a swift, courteous apology note to a classmate because you sent a text attachment to them by mistake.", isGood: true, explanation: "Accountable Design! Sending a quick, polite clarification repairs accidental distribution errors seamlessly." },
+    { type: "Behavioral Standard Vector", payload: "Emotional Buffer Rule: Waiting until you feel entirely calm and level-headed before composing an email about a low quiz score.", isGood: true, explanation: "Wise Strategy! Pausing guarantees you construct clean, professional arguments rather than angry, defensive outbursts." }
+];
+
+let officeDeck = [];
+let matrixIndex = 0;
+let scoreMetric = 0;
+let officeTimer;
+let secondsRemaining = 60;
+
+function startOfficeShift() {
+    /* Randomize array sequence to maximize simulator engagement loops */
+    officeDeck = [...officeDatabase].sort(() => Math.random() - 0.5);
+    matrixIndex = 0;
+    scoreMetric = 0;
+    
+    document.getElementById("introPanel").classList.add("hidden");
+    document.getElementById("gamePanel").classList.remove("hidden");
+    processNextTrayItem();
+}
+
+function processNextTrayItem() {
+    secondsRemaining = 60;
+    runTerminalClock();
+
+    document.getElementById("processedCounter").innerText = matrixIndex;
+    document.getElementById("progressBar").style.width = (matrixIndex / officeDeck.length) * 100 + "%";
+    
+    const activeItem = officeDeck[matrixIndex];
+    document.getElementById("memoType").innerText = activeItem.type;
+    document.getElementById("memoPayload").innerText = activeItem.payload;
+    
+    document.getElementById("memoReport").style.display = "none";
+    document.getElementById("nextMemoBtn").classList.add("hidden");
+    
+    document.querySelectorAll(".cabinet-door").forEach(door => door.style.pointerEvents = "auto");
+}
+
+function runTerminalClock() {
+    clearInterval(officeTimer);
+    document.getElementById("countdown").innerText = secondsRemaining;
+    officeTimer = setInterval(() => {
+        secondsRemaining--;
+        document.getElementById("countdown").innerText = secondsRemaining;
+        if(secondsRemaining <= 0) {
+            clearInterval(officeTimer);
+            renderInspectorLog(false, "⏰ Budget Depleted (Time Out)", officeDeck[matrixIndex].explanation);
+        }
+    }, 1000);
+}
+
+function routeEmail(playerRoutedToProfessional) {
+    clearInterval(officeTimer);
+    const selectedItem = officeDeck[matrixIndex];
+    const validationSuccess = (playerRoutedToProfessional === selectedItem.isGood);
+
+    document.querySelectorAll(".cabinet-door").forEach(door => door.style.pointerEvents = "none");
+
+    if(validationSuccess) {
+        scoreMetric++;
+        /* Simultaneous Double Audio Trigger */
+        try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
+        try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+        renderInspectorLog(true, "✅ Item Correctly Filtered!", selectedItem.explanation);
+    } else {
+        try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
+        renderInspectorLog(false, "❌ Filing Error Detected!", selectedItem.explanation);
+    }
+}
+
+function renderInspectorLog(isSuccess, summaryTitle, coreFact) {
+    const reportBox = document.getElementById("memoReport");
+    reportBox.style.display = "block";
+    reportBox.className = "inspector-memo " + (isSuccess ? "success" : "error");
+    reportBox.innerHTML = `<strong>${summaryTitle}</strong><br><br>${coreFact}`;
+    
+    document.getElementById("nextMemoBtn").classList.remove("hidden");
+}
+
+function loadNextMemo() {
+    matrixIndex++;
+    if(matrixIndex < officeDeck.length) {
+        processNextTrayItem();
+    } else {
+        compileFinalEvaluationReport();
+    }
+}
+
+function compileFinalEvaluationReport() {
+    document.getElementById("gamePanel").classList.add("hidden");
+    document.getElementById("scorePanel").classList.remove("hidden");
+    document.getElementById("finalScore").innerText = `${scoreMetric} / ${officeDeck.length}`;
+    
+    try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+
+    let assignedRankTitle = "";
+    let evaluativeSummaryText = "";
+    const corporatePerformanceRatio = scoreMetric / officeDeck.length;
+    
+    if(corporatePerformanceRatio >= 0.85) {
+        assignedRankTitle = "👑 CEO of Email Communications";
+        evaluativeSummaryText = "Magnificent office performance data! Your precision filing kept our database running perfectly. You completely understand privacy configurations, professional headers, and attachment rules.";
+    } else if(corporatePerformanceRatio >= 0.55) {
+        assignedRankTitle = "💼 Senior Communication Director";
+        evaluativeSummaryText = "Great overall simulation run! Most messages reached their targets cleanly. Watch out for capitalized shout-texts or blank headers next time to secure the top tier.";
+    } else {
+        assignedRankTitle = "🌱 Trainee Mail Clerk";
+        evaluativeSummaryText = "Several pieces of digital spam and toxic text files leaked into our professional directories. Refresh your training log parameters and launch another management shift!";
+    }
+    
+    document.getElementById("earnedTitle").innerText = assignedRankTitle;
+    document.getElementById("finalSummary").innerText = evaluativeSummaryText;
+}
+</script>
+</body>
+</html>

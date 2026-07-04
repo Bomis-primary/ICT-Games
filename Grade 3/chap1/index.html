@@ -3,23 +3,23 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Computer Factory: Hardware & Software Sorter</title>
+<title>Tech Treasure Hunter: Hardware vs Software Matrix</title>
 <style>
 :root {
-    --bg-factory: #0f172a;
-    --panel-dark: #1e293b;
-    --hardware-orange: #f97316;
-    --software-purple: #a855f7;
-    --gold: #eab308;
-    --success-green: #22c55e;
-    --danger-red: #ef4444;
+    --bg-safari: #0d9488; /* Fresh emerald-teal background */
+    --panel-sun: #fef08a; /* Soft sunny yellow accent panels */
+    --wood-dark: #111827;
+    --hardware-gold: #eab308;
+    --software-cyan: #06b6d4;
+    --success-green: #10b981;
+    --danger-pink: #f43f5e;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Comic Sans MS', 'Segoe UI', Tahoma, sans-serif;
 }
 
 body {
@@ -27,9 +27,9 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: var(--bg-factory);
+    background: var(--bg-safari);
     overflow: hidden;
-    padding: 10px;
+    padding: 12px;
     user-select: none;
 }
 
@@ -50,210 +50,220 @@ body {
 #splash img {
     width: 250px;
     max-width: 80%;
-    animation: simplePulse 2s infinite ease-in-out;
+    animation: expeditionPulse 2s infinite ease-in-out;
 }
 
-@keyframes simplePulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.05); }
+@keyframes expeditionPulse {
+    0%, 100% { transform: scale(1); filter: opacity(0.9); }
+    50% { transform: scale(1.06); filter: opacity(1); }
 }
 
-/* Core Main Frame Layout */
+/* Core Container Setup */
 .container {
     width: 100%;
     max-width: 850px;
     background: #ffffff;
-    border-radius: 24px;
+    border-radius: 30px;
     padding: 25px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.4);
     position: relative;
     z-index: 10;
     text-align: center;
+    border: 6px solid var(--panel-sun);
 }
 
 .hidden {
     display: none !important;
 }
 
-/* Welcome Entrance Panels */
+/* Main Menu Dashboard Styling */
 .intro-panel h1 {
-    font-size: 2.2rem;
-    color: #1e3a8a;
+    font-size: 2.4rem;
+    color: #111827;
     margin-bottom: 8px;
-    font-weight: 800;
+    font-weight: 900;
 }
 
 .mode-badge {
     display: inline-block;
-    padding: 6px 16px;
-    background: #e0f2fe;
-    color: #0369a1;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 0.85rem;
+    padding: 8px 18px;
+    background: var(--panel-sun);
+    color: #854d0e;
+    border-radius: 25px;
+    font-weight: 800;
+    font-size: 0.9rem;
     margin-bottom: 20px;
     text-transform: uppercase;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
 .briefing {
-    background: #f8fafc;
+    background: #f0fdfa;
     padding: 20px;
-    border-radius: 14px;
-    border-left: 6px solid #3b82f6;
+    border-radius: 18px;
+    border-left: 6px solid #14b8a6;
     text-align: left;
     margin-bottom: 25px;
 }
 
 .briefing ol {
-    margin-left: 20px;
-    line-height: 1.7;
-    color: #475569;
+    margin-left: 22px;
+    line-height: 1.8;
+    color: #374151;
     font-size: 0.95rem;
 }
 
 button.act-btn {
-    padding: 16px 45px;
-    background: linear-gradient(135deg, #0284c7, #0369a1);
+    padding: 18px 50px;
+    background: linear-gradient(135deg, #0d9488, #115e59);
     color: white;
-    font-size: 1.15rem;
-    font-weight: 700;
+    font-size: 1.2rem;
+    font-weight: 800;
     border: none;
-    border-radius: 12px;
+    border-radius: 15px;
     cursor: pointer;
     transition: all 0.2s;
+    box-shadow: 0 6px 15px rgba(13, 148, 136, 0.3);
 }
 
 button.act-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(2, 132, 199, 0.4);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(13, 148, 136, 0.5);
 }
 
-/* Active HUD Dashboard */
+/* Real-Time HUD Panels */
 .hud {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 15px;
     gap: 10px;
 }
 
 .hud-card {
-    background: var(--panel-dark);
+    background: var(--wood-dark);
     color: white;
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-weight: 700;
-    font-size: 0.95rem;
-}
-
-/* Conveyor Target Card Slot */
-.item-drop-zone {
-    background: #f1f5f9;
-    border: 3px dashed #cbd5e1;
-    padding: 15px;
-    border-radius: 16px;
-    margin-bottom: 15px;
-}
-
-.item-title {
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: #0f172a;
-    margin-bottom: 4px;
-}
-
-.item-desc {
-    font-size: 0.95rem;
-    color: #64748b;
-    font-weight: 600;
-}
-
-/* Factory Conveyor Visualization Area */
-.factory-floor {
-    width: 100%;
-    height: 180px;
-    background: #1e293b;
-    border-radius: 16px;
-    position: relative;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    border: 4px solid #0f172a;
-    overflow: hidden;
-}
-
-.processing-bin {
-    width: 40%;
-    height: 120px;
+    padding: 12px 22px;
     border-radius: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    border: 2px solid var(--panel-sun);
+}
+
+/* Excavation Discovery Zone Presentation */
+.discovery-zone {
+    background: #fffbeb;
+    border: 3px dashed #f59e0b;
+    padding: 20px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    min-height: 110px;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: white;
-    font-weight: 800;
-    font-size: 1.2rem;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-    border: 2px solid rgba(255,255,255,0.1);
 }
 
-.processing-bin.hw { background: linear-gradient(135deg, #f97316, #ea580c); }
-.processing-bin.sw { background: linear-gradient(135deg, #a855f7, #9333ea); }
-
-.processing-bin span {
-    font-size: 0.85rem;
-    font-weight: 600;
-    opacity: 0.9;
-    margin-top: 5px;
-    text-transform: uppercase;
+.artifact-title {
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: #1e293b;
+    margin-bottom: 5px;
 }
 
-/* Routing Control Buttons Deck */
-.control-deck {
+.artifact-context {
+    font-size: 1rem;
+    color: #6b7280;
+    font-weight: bold;
+}
+
+/* Interactive Discovery Grid Layout */
+.expedition-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    background: #f4f4f5;
+    padding: 15px;
+    border-radius: 20px;
+    margin-bottom: 25px;
+    border: 3px solid #e4e4e7;
+}
+
+.grid-cell {
+    background: #ccfbf1;
+    border: 2px solid #99f6e4;
+    height: 70px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0f766e;
+    transition: all 0.15s ease-in-out;
+}
+
+.grid-cell:hover {
+    background: var(--panel-sun);
+    border-color: #f59e0b;
+    transform: scale(1.05);
+}
+
+.grid-cell.scanned {
+    background: #e4e4e7;
+    border-color: #d4d4d8;
+    color: #a1a1aa;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Classification Action Buttons */
+.tools-tray {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 15px;
-    margin-top: 15px;
+    gap: 20px;
 }
 
-.sort-action-btn {
-    padding: 16px;
-    border-radius: 12px;
-    font-weight: 800;
-    font-size: 1.1rem;
-    color: white;
-    border: none;
+.classify-btn {
+    padding: 18px;
+    border-radius: 14px;
+    font-weight: 900;
+    font-size: 1.15rem;
+    color: #111827;
+    border: 3px solid #111827;
     cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.2s;
+    transition: all 0.1s;
     text-transform: uppercase;
 }
 
-.sort-action-btn.hw-btn {
-    background: var(--hardware-orange);
-    box-shadow: 0 4px 14px rgba(249, 115, 22, 0.3);
+.classify-btn.hw-gear {
+    background: var(--hardware-gold);
+    box-shadow: 0 5px 0px #b45309;
 }
 
-.sort-action-btn.sw-btn {
-    background: var(--software-purple);
-    box-shadow: 0 4px 14px rgba(168, 85, 247, 0.3);
+.classify-btn.sw-gear {
+    background: var(--software-cyan);
+    box-shadow: 0 5px 0px #0e7490;
 }
 
-.sort-action-btn:hover {
-    transform: translateY(-2px);
+.classify-btn:active {
+    transform: translateY(4px);
+    box-shadow: none;
 }
 
-/* Live Operational Log Ticker */
+/* Live Activity Log Stream Ticker */
 .ticker-feedback {
-    margin-top: 15px;
-    padding: 15px;
-    border-radius: 12px;
+    margin-top: 20px;
+    padding: 16px;
+    border-radius: 14px;
     text-align: left;
-    font-weight: 600;
-    font-size: 0.95rem;
-    min-height: 55px;
+    font-weight: 700;
+    font-size: 1rem;
+    min-height: 60px;
     display: flex;
     align-items: center;
-    border-left: 5px solid transparent;
-    background: #f1f5f9;
+    border-left: 6px solid transparent;
+    background: #f3f4f6;
 }
 
 .ticker-feedback.good {
@@ -264,29 +274,49 @@ button.act-btn:hover {
 
 .ticker-feedback.bad {
     background: #fef2f2;
-    border-left-color: var(--danger-red);
+    border-left-color: var(--danger-pink);
     color: #991b1b;
 }
 
-/* End Diagnostics Scoreboard */
+/* Celebration Confetti Sound Banner Animation */
+.party-blower-banner {
+    background: linear-gradient(90deg, #ff007f, #7f00ff, #00ffff, #ffff00);
+    color: white;
+    font-weight: 900;
+    padding: 8px;
+    border-radius: 8px;
+    margin-top: 10px;
+    animation: rainbowFlash 0.5s infinite linear;
+    display: none;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+}
+
+@keyframes rainbowFlash {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+/* End Game Diagnostic Leaderboard Display */
 .rank-shell {
     width: 140px;
     height: 140px;
     border-radius: 50%;
-    background: var(--panel-dark);
+    background: var(--wood-dark);
     color: white;
-    font-size: 2.2rem;
-    font-weight: 800;
+    font-size: 2.3rem;
+    font-weight: 900;
     display: flex;
     justify-content: center;
     align-items: center;
     margin: 20px auto;
+    border: 5px solid var(--panel-sun);
 }
 
 .rank-title {
-    font-size: 1.5rem;
-    color: #1e3a8a;
-    font-weight: 800;
+    font-size: 1.6rem;
+    color: #0f766e;
+    font-weight: 900;
     margin-bottom: 12px;
 }
 </style>
@@ -299,52 +329,51 @@ button.act-btn:hover {
 
 <div class="container hidden" id="appMainframe">
     <div id="menuPanel" class="intro-panel">
-        <h1>The Hardware & Software Conveyor</h1>
-        <div class="mode-badge">Interactive Factory Sorter • Grade 3 Chapter 1</div>
+        <h1>The Tech Treasure Hunter</h1>
+        <div class="mode-badge">Matrix Discovery Expedition • Grade 3 Systems</div>
         
         <div class="briefing">
-            <p style="font-weight:700; margin-bottom:10px; color:#0f172a;">Conveyor Operation Guidelines:</p>
+            <p style="font-weight:900; margin-bottom:12px; color:#111827;">Expedition Guide Rules:</p>
             <ol>
-                <li>Look at the **Computer Component Asset** placed on the loading deck box at the top.</li>
-                <li><strong>RULE:</strong> If it's a physical device you can **see and touch**, it belongs to **HARDWARE**!</li>
-                <li>If it's a **set of programs or apps** running inside that you cannot touch, it belongs to **SOFTWARE**!</li>
-                <li>Click the correct matching colorful sorting button below to route the component into its factory bin.</li>
-                <li>Sort all 10 computer items cleanly to lock in your official Systems Engineer Rank Badge!</li>
+                <li>Click an active **Teal Coordinate Box [ ? ]** inside the island map grid to unearth a hidden computer component.</li>
+                <li>Analyze the artifact properties instantly shown on your supervisor screen layout above.</li>
+                <li><strong>HARDWARE RULES:</strong> If it's a physical device part you can physically touch, hit **[HARDWARE GEAR ⚙️]**!</li>
+                <li><strong>SOFTWARE RULES:</strong> If it's an application or software code program that runs on screen, hit **[SOFTWARE GEAR 💿]**!</li>
+                <li> pocket exactly 10 artifacts cleanly to claim your legendary Grand Discovery Rank Title!</li>
             </ol>
         </div>
-        <button class="act-btn" onclick="launchConveyorShift()">Boot Conveyor System ➜</button>
+        <button class="act-btn" onclick="startTreasureHunt()">Begin Island Dig ➜</button>
     </div>
 
     <div id="gamePanel" class="hidden">
         <div class="hud">
-            <div class="hud-card">📦 Assets Processed: <span id="countHUD">0</span> / 10</div>
-            <div class="hud-card" style="background:var(--gold); color:#0f172a;">🏆 Sort Accuracy: <span id="scoreHUD">0</span></div>
+            <div class="hud-card">🤠 Artifacts Pocketed: <span id="countHUD">0</span> / 10</div>
+            <div class="hud-card" style="background:var(--panel-sun); color:#854d0e;">🏆 Treasure Worth: <span id="scoreHUD">0</span></div>
         </div>
 
-        <div class="item-drop-zone">
-            <div class="item-title" id="assetName">Loading Asset...</div>
-            <div class="item-desc" id="assetHint">Analyzing item properties...</div>
+        <div class="discovery-zone">
+            <div class="artifact-title" id="itemName">Select a Grid Cell</div>
+            <div class="artifact-context" id="itemContext">Click on any teal square below to scan for items...</div>
+            <div class="party-blower-banner" id="confettiBanner">🎉 CONFETTI POPPED! CELEBRATION MODE ACTIVE 🎉</div>
         </div>
 
-        <div class="factory-floor">
-            <div class="processing-bin hw">⚙️ Hardware<span>Physical Parts</span></div>
-            <div class="processing-bin sw">💿 Software<span>Programs & Apps</span></div>
+        <div class="expedition-grid" id="mapGrid">
+            </div>
+
+        <div class="tools-tray">
+            <button class="classify-btn hw-gear" onclick="submitDiscoveryClassification('hardware')">Hardware Gear ⚙️</button>
+            <button class="classify-btn sw-gear" onclick="submitDiscoveryClassification('software')">Software Gear 💿</button>
         </div>
 
-        <div class="control-deck">
-            <button class="sort-action-btn hw-btn" onclick="processRoutingChoice('hardware')">Route to Hardware ⚙️</button>
-            <button class="sort-action-btn sw-btn" onclick="processRoutingChoice('software')">Route to Software 💿</button>
-        </div>
-
-        <div class="ticker-feedback" id="tickerBox">Examine the asset, then click a sorting button to route it down the conveyor line!</div>
+        <div class="ticker-feedback" id="tickerBox">Unearth a coordinate block slot first before engaging your classification tool keys!</div>
     </div>
 
     <div id="reportPanel" class="hidden">
-        <h1 style="color:#1e3a8a; font-size:2.2rem;">📊 Factory Operations Summary</h1>
+        <h1 style="color:#0f766e; font-size:2.2rem;">📊 Expedition Log Summary</h1>
         <div class="rank-shell"><span id="finalScore">0</span></div>
-        <div class="rank-title" id="finalRank">Assembling Performance Log...</div>
-        <p id="finalSummary" style="color:#475569; margin-bottom:25px; line-height:1.6; max-width:600px; margin-left:auto; margin-right:auto;"></p>
-        <button class="act-btn" onclick="location.reload()">Start New Factory Shift 🔄</button>
+        <div class="rank-title" id="finalRank">Evaluating Discoveries...</div>
+        <p id="finalSummary" style="color:#374151; margin-bottom:25px; line-height:1.7; max-width:600px; margin-left:auto; margin-right:auto;"></p>
+        <button class="act-btn" onclick="location.reload()">Start New Expedition 🔄</button>
     </div>
 </div>
 
@@ -353,116 +382,147 @@ button.act-btn:hover {
 <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
 
 <script>
-/* Release screen lock precisely at 5000 milliseconds splash timeline expiration */
+/* Clear screen overlay lock precisely at 5000 milliseconds splash timeline expiration */
 setTimeout(() => {
     document.getElementById("splash").style.display = "none";
     document.getElementById("appMainframe").classList.remove("hidden");
 }, 5000);
 
-/* Chapter 1 Grade 3 Dataset (Based on pages 7-15 of the textbook) */
-const factoryDatabase = [
-    { name: "🖱️ Computer Mouse", type: "hardware", hint: "A physical object on your desk used to point and click.", log: "Hardware consists of the physical parts of a computer that you can see and touch." },
-    { name: "🎮 Paint Program (MS Paint)", type: "software", hint: "An application on the computer screen used for drawing pictures.", log: "Software refers to sets of instructions or programs that tell the computer what to do." },
-    { name: "⌨️ Keyboard", type: "hardware", hint: "The physical board filled with plastic buttons used to type letters.", log: "Keyboards are input hardware devices because you can physically touch and type on them." },
-    { name: "🌐 Web Browser (Google Chrome)", type: "software", hint: "A computer application used to explore websites on the internet.", log: "Web browsers are software applications because they run inside the computer as instructions." },
-    { name: "🖥️ Monitor Screen", type: "hardware", hint: "The big physical glass display screen that shows pictures and text.", log: "The monitor is a hardware output device because it is a physical part of the computer setup." },
-    { name: "🤖 Computer Games", type: "software", hint: "Digital games that run inside the system memory.", log: "Video games are software programs made of electronic code instructions." },
-    { name: "🖨️ Printer Machine", type: "hardware", hint: "A heavy physical machine used to print papers out onto real sheets.", log: "Printers are output hardware components that you can see and touch in your lab." },
-    { name: "📁 Operating System (Windows)", type: "software", hint: "The main background program that makes the whole computer start up and work.", log: "An Operating System is the most essential software program that controls the computer's hardware parts." },
-    { name: "🔊 Sound Speakers", type: "hardware", hint: "Physical audio boxes plugged into the computer that emit music.", log: "Speakers are physical hardware parts responsible for outputting audio soundwaves." },
-    { name: "📝 Media Player App", type: "software", hint: "An application used to play videos and songs on the screen.", log: "Media players are software utilities because they are programs, not touchable electronic machinery." }
+/* Complete Grade 3 Chapter 1 Hardware vs Software Problem Matrix Dataset */
+const islandDatabase = [
+    { name: "🖱️ Desktop Mouse", category: "hardware", context: "A physical plastic mouse used to move pointers on screen.", ruleLog: "Hardware refers to the physical parts of a computer that you can see and touch." },
+    { name: "🎨 Paint Drawing App", category: "software", context: "The electronic program used on your screen to color sketches.", ruleLog: "Software is a collection of code instructions or programs running inside the machine." },
+    { name: "⌨️ Typing Keyboard", category: "hardware", context: "A rectangular board with keys that you physically type on.", ruleLog: "Keyboards are physical input components and are classified as hardware." },
+    { name: "🌐 Internet Browser", category: "software", context: "An app used to search websites and browse online stories.", ruleLog: "Browsers run internally as virtual instructions, making them software applications." },
+    { name: "🖥️ Monitor Screen", category: "hardware", context: "The glass-faced visual unit that shows pictures on your desk.", ruleLog: "The monitor display is a solid, visible piece of computer hardware machinery." },
+    { name: "🕹️ Computer Game app", category: "software", context: "A gaming program loaded inside the system memories.", ruleLog: "Video games are software products compiled from electronic code structures." },
+    { name: "🖨️ Printer Machine", category: "hardware", context: "A box machine that takes sheets of paper and prints ink on them.", ruleLog: "Printers are touchable hardware output machinery parts." },
+    { name: "⚙️ Operating System", category: "software", context: "The background program (like Windows) that boots up the hardware.", ruleLog: "An Operating System is the primary software asset running your computer hardware tracks." },
+    { name: "🔊 Sound Box Speaker", category: "hardware", context: "A wooden or plastic audio module emitting songs.", ruleLog: "Speakers are touchable, physical output elements known as hardware." },
+    { name: "🎬 Video Player App", category: "software", context: "A utility program executed on screen to view animation movies.", ruleLog: "Video/Media players are digital application software programs, not hardware items." }
 ];
 
-let randomizedFactoryDeck = [];
-let conveyorIndex = 0;
-let factoryScoreBalance = 0;
-let beltActive = false;
+let dynamicDigDeck = [];
+let matrixPositionIndex = 0;
+let explorerScoreBalance = 0;
+let discoveryActive = false;
+let itemDiscovered = false;
 
-function launchConveyorShift() {
-    randomizedFactoryDeck = [...factoryDatabase].sort(() => Math.random() - 0.5);
-    conveyorIndex = 0;
-    factoryScoreBalance = 0;
-    beltActive = true;
+function startTreasureHunt() {
+    dynamicDigDeck = [...islandDatabase].sort(() => Math.random() - 0.5);
+    matrixPositionIndex = 0;
+    explorerScoreBalance = 0;
+    discoveryActive = true;
+    itemDiscovered = false;
 
     document.getElementById("menuPanel").className = "intro-panel hidden";
     document.getElementById("gamePanel").classList.remove("hidden");
     
-    loadNextConveyorAsset();
+    generateVisualMapMatrixCells();
 }
 
-function loadNextConveyorAsset() {
-    document.getElementById("countHUD").innerText = conveyorIndex;
-    const activeAsset = randomizedFactoryDeck[conveyorIndex];
+function generateVisualMapMatrixCells() {
+    const gridParent = document.getElementById("mapGrid");
+    gridParent.innerHTML = "";
     
-    document.getElementById("assetName").innerText = activeAsset.name;
-    document.getElementById("assetHint").innerText = `🏭 DIAGNOSTIC HINT: ${activeAsset.hint}`;
+    // Construct 10 physical matrix block coordinates dynamically
+    for (let i = 0; i < 10; i++) {
+        const gridBox = document.createElement("div");
+        gridBox.className = "grid-cell";
+        gridBox.innerText = `?`;
+        gridBox.setAttribute("id", `cellNode_${i}`);
+        gridBox.setAttribute("onclick", `triggerExcavationScan(${i})`);
+        gridParent.appendChild(gridBox);
+    }
+}
+
+function triggerExcavationScan(cellID) {
+    if (!discoveryActive || itemDiscovered) return;
+    
+    const targetedCell = document.getElementById(`cellNode_${cellID}`);
+    if (targetedCell.classList.contains("scanned")) return;
+
+    itemDiscovered = true;
+    targetedCell.classList.add("scanned");
+    targetedCell.innerText = "🔍";
+
+    const currentItem = dynamicDigDeck[matrixPositionIndex];
+    document.getElementById("itemName").innerText = currentItem.name;
+    document.getElementById("itemContext").innerText = `🔍 EXPLORATION FIND: ${currentItem.context}`;
 
     document.getElementById("tickerBox").className = "ticker-feedback";
-    document.getElementById("tickerBox").innerHTML = "Analyze the item qualities and select its correct processing conveyor channel route.";
-    
-    beltActive = true;
+    document.getElementById("tickerBox").innerHTML = "Artifact extracted! Click either **Hardware Gear** or **Software Gear** below to record it.";
 }
 
-function processRoutingChoice(chosenCategory) {
-    if (!beltActive) return;
-    beltActive = false;
+function submitDiscoveryClassification(userSelection) {
+    if (!discoveryActive || !itemDiscovered) return;
+    itemDiscovered = false;
 
-    const currentAsset = randomizedFactoryDeck[conveyorIndex];
-    const userWasCorrect = (chosenCategory === currentAsset.type);
-    const logTicker = document.getElementById("tickerBox");
+    const targetedItem = dynamicDigDeck[matrixPositionIndex];
+    const optionIsCorrect = (userSelection === targetedItem.category);
+    
+    const loggingFeedbackNode = document.getElementById("tickerBox");
+    const confettiRibbon = document.getElementById("confettiBanner");
 
-    if (userWasCorrect) {
-        factoryScoreBalance += 100;
-        // Engage dual simultaneous positive audio channels
+    if (optionIsCorrect) {
+        explorerScoreBalance += 100;
+        // Engage dual simultaneous affirmative sound streams
         try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
         try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
-        logTicker.className = "ticker-feedback good";
-        logTicker.innerHTML = `<strong>⚡ ROUTE SUCCESSFUL!</strong> ${currentAsset.log}`;
+        
+        // Show visual celebration stream ticker to simulate confetti pops
+        confettiRibbon.style.display = "block";
+        loggingFeedbackNode.className = "ticker-feedback good";
+        loggingFeedbackNode.innerHTML = `<strong>🎉 ARTIFACT POCKETED!</strong> ${targetedItem.ruleLog}`;
     } else {
-        factoryScoreBalance = Math.max(0, factoryScoreBalance - 50);
+        explorerScoreBalance = Math.max(0, explorerScoreBalance - 50);
         try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
-        logTicker.className = "ticker-feedback bad";
-        logTicker.innerHTML = `<strong>💥 CONVEYOR JAMMED!</strong> Wrong chamber selected. Keep in mind: ${currentAsset.log}`;
+        loggingFeedbackNode.className = "ticker-feedback bad";
+        loggingFeedbackNode.innerHTML = `<strong>💥 SITE OVERLOAD CAVED IN!</strong> Classification failed. Keep in mind: ${targetedItem.ruleLog}`;
     }
 
-    document.getElementById("scoreHUD").innerText = factoryScoreBalance;
-    conveyorIndex++;
+    document.getElementById("scoreHUD").innerText = explorerScoreBalance;
+    matrixPositionIndex++;
 
-    // Timing buffer delay before recycling next item onto the conveyor belt
+    // Timing delay window buffer to handle confetti display before cleaning fields for subsequent matrix selection steps
     setTimeout(() => {
-        if (conveyorIndex < randomizedFactoryDeck.length) {
-            loadNextConveyorAsset();
+        confettiRibbon.style.display = "none";
+        if (matrixPositionIndex < dynamicDigDeck.length) {
+            document.getElementById("itemName").innerText = "Select Next Cell";
+            document.getElementById("itemContext").innerText = "Click another active coordinate square block [ ? ] down on the field map grid.";
+            loggingFeedbackNode.className = "ticker-feedback";
+            loggingFeedbackNode.innerHTML = "Awaiting coordinate block target choices inside the island sector grid map.";
         } else {
-            compileFactoryAudit();
+            compileExpeditionAuditLog();
         }
     }, 2500);
 }
 
-function compileFactoryAudit() {
-    beltActive = false;
+function compileExpeditionAuditLog() {
+    discoveryActive = false;
     document.getElementById("gamePanel").className = "hidden";
     document.getElementById("reportPanel").classList.remove("hidden");
     
-    document.getElementById("finalScore").innerText = factoryScoreBalance;
+    document.getElementById("finalScore").innerText = explorerScoreBalance;
     try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
 
-    let performanceTitle = "";
-    let technicalRemarks = "";
-    const sortRatio = factoryScoreBalance / 1000;
+    let grandRankTitle = "";
+    let qualitativeRemarks = "";
+    const balanceRatio = explorerScoreBalance / 1000;
 
-    if (sortRatio >= 0.85) {
-        performanceTitle = "👑 Master IT Systems Systems Engineer";
-        technicalRemarks = "Outstanding! You sorted every single monitor, browser, and keyboard into the right categories perfectly without jamming the machinery. Excellent Grade 3 computing fundamentals.";
-    } else if (sortRatio >= 0.55) {
-        performanceTitle = "💼 Senior Tech Warehouse Supervisor";
-        technicalRemarks = "Great operational run! Most computer items were routed accurately. Keep an extra close eye out for background apps like Operating Systems to lock down a flawless factory line next shift.";
+    if (balanceRatio >= 0.85) {
+        grandRankTitle = "👑 Master Island Tech Explorer";
+        qualitativeRemarks = "Magnificent artifact analysis! You correctly logged every single monitor glass, browser program, and typing keyboard without a single classification fault. Exceptional understanding of Grade 3 computing principles.";
+    } else if (balanceRatio >= 0.55) {
+        grandRankTitle = "💼 Senior Museum Curator";
+        qualitativeRemarks = "Fantastic exploration run! Most tech components were pocketed flawlessly. Pay a bit more attention to digital application programs like video players to secure a perfect evaluation next trip.";
     } else {
-        performanceTitle = "🌱 Apprentice Factory Line Trainee";
-        technicalRemarks = "Too many hardware items jammed the software channels, causing a conveyor line blackout! Review the difference between touchable parts and screen apps, and start your shift over.";
+        grandRankTitle = "🌱 Student Dig Site Intern";
+        qualitativeRemarks = "Too many matrix grid errors caused a cave-in breakdown at the dig site! Review the core differences between tangible physical parts and virtual screen apps, then boot up a fresh map run.";
     }
 
-    document.getElementById("finalRank").innerText = performanceTitle;
-    document.getElementById("finalSummary").innerText = technicalRemarks;
+    document.getElementById("finalRank").innerText = grandRankTitle;
+    document.getElementById("finalSummary").innerText = qualitativeRemarks;
 }
 </script>
 </body>

@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tinkercad Circuit Spark Runner</title>
+<title>Tinkercad: The Wire Weaver Puzzle</title>
 <style>
 :root {
-    --bg-dark: #090d16;
-    --panel-bg: #1e293b;
-    --wire-green: #10b981;
-    --error-red: #ef4444;
-    --neon-blue: #38bdf8;
-    --gold: #f59e0b;
+    --breadboard-bg: #e2e8f0;
+    --terminal-strip: #f8fafc;
+    --panel-dark: #0f172a;
+    --accent-glow: #10b981;
+    --wire-red: #ef4444;
+    --wire-blue: #3b82f6;
+    --gold: #eab308;
 }
 
 * {
@@ -26,13 +27,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: var(--bg-dark);
+    background: var(--panel-dark);
     overflow: hidden;
-    padding: 10px;
+    padding: 12px;
     user-select: none;
 }
 
-/* 5-Second Exclusive Splash Screen */
+/* 5-Second Exclusive Splash Overlay Screen */
 #splash {
     position: fixed;
     top: 0;
@@ -49,22 +50,22 @@ body {
 #splash img {
     width: 250px;
     max-width: 80%;
-    animation: pulseGlow 2s infinite ease-in-out;
+    animation: anchorGlow 2s infinite ease-in-out;
 }
 
-@keyframes pulseGlow {
-    0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0px rgba(0,0,0,0)); }
-    50% { transform: scale(1.05); filter: drop-shadow(0 4px 10px rgba(0,0,0,0.1)); }
+@keyframes anchorGlow {
+    0%, 100% { transform: scale(1); filter: opacity(0.9); }
+    50% { transform: scale(1.05); filter: opacity(1); }
 }
 
-/* Main Container Frame */
+/* Core System Layout Wrapper */
 .container {
     width: 100%;
     max-width: 850px;
     background: #ffffff;
     border-radius: 24px;
     padding: 25px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
     position: relative;
     z-index: 10;
     text-align: center;
@@ -74,9 +75,9 @@ body {
     display: none !important;
 }
 
-/* Main Menu Welcome Panel */
+/* Dashboard Launch Frame Panels */
 .intro-panel h1 {
-    font-size: 2.2rem;
+    font-size: 2.3rem;
     color: #1e3a8a;
     margin-bottom: 8px;
     font-weight: 800;
@@ -85,20 +86,20 @@ body {
 .mode-badge {
     display: inline-block;
     padding: 6px 16px;
-    background: #e0f2fe;
-    color: #0369a1;
+    background: #dbeafe;
+    color: #1e40af;
     border-radius: 20px;
     font-weight: 700;
     font-size: 0.85rem;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
     text-transform: uppercase;
 }
 
 .briefing {
-    background: #f8fafc;
+    background: #f1f5f9;
     padding: 20px;
     border-radius: 14px;
-    border-left: 6px solid var(--neon-blue);
+    border-left: 6px solid #3b82f6;
     text-align: left;
     margin-bottom: 25px;
 }
@@ -112,7 +113,7 @@ body {
 
 button.act-btn {
     padding: 16px 45px;
-    background: linear-gradient(135deg, #0284c7, #0369a1);
+    background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
     color: white;
     font-size: 1.15rem;
     font-weight: 700;
@@ -124,119 +125,108 @@ button.act-btn {
 
 button.act-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(2, 132, 199, 0.4);
+    box-shadow: 0 8px 20px rgba(29, 78, 216, 0.4);
 }
 
-/* Active Arcade Game HUD */
+/* Real-Time Operational HUD */
 .hud {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 12px;
+    margin-bottom: 15px;
     gap: 10px;
 }
 
 .hud-card {
-    background: var(--panel-bg);
-    color: white;
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-weight: 700;
-    font-size: 0.95rem;
-}
-
-/* Question Banner Panel */
-.question-banner {
-    background: #f1f5f9;
-    border: 2px solid #cbd5e1;
-    padding: 15px;
-    border-radius: 12px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin-bottom: 15px;
-    min-height: 70px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Circuit Track Runner Canvas Highway Area */
-.arena-track {
-    width: 100%;
-    height: 380px;
-    background: #111827;
-    border-radius: 16px;
-    position: relative;
-    overflow: hidden;
-    border: 4px solid var(--panel-bg);
-}
-
-/* Lane Dividers representing Breadboard strip grids */
-.track-lane-line {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 50%;
-    width: 4px;
-    background: dashed rgba(255, 255, 255, 0.15);
-    transform: translateX(-50%);
-}
-
-/* The Player Spark Particle Element */
-#playerSpark {
-    position: absolute;
-    bottom: 30px;
-    width: 40px;
-    height: 40px;
-    background: var(--wire-green);
-    border-radius: 50%;
-    box-shadow: 0 0 20px var(--wire-green), 0 0 40px var(--wire-green);
-    transition: left 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.2rem;
-    z-index: 100;
-}
-
-/* Flying Gateway Obstacle Rows */
-.gateway-row {
-    position: absolute;
-    top: -80px;
-    left: 0;
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    height: 60px;
-    will-change: top;
-}
-
-.gateway-lane {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    padding: 5px;
-}
-
-.component-block {
-    background: #334155;
+    background: var(--panel-dark);
     color: white;
     padding: 10px 20px;
     border-radius: 8px;
     font-weight: 700;
-    font-size: 1rem;
-    border: 2px solid var(--neon-blue);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    width: 80%;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: 0.95rem;
 }
 
-/* Real-Time Result Log Footer Ticker */
+/* Dynamic Goal Window Panel */
+.goal-panel {
+    background: #eff6ff;
+    border: 2px solid #bfdbfe;
+    padding: 16px;
+    border-radius: 14px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1e40af;
+    margin-bottom: 20px;
+    min-height: 75px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Schematic Visualized Breadboard Grid Area */
+.breadboard-chassis {
+    background: var(--breadboard-bg);
+    border: 4px solid #cbd5e1;
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    box-shadow: inset 0 4px 10px rgba(0,0,0,0.06);
+}
+
+.terminal-strip-row {
+    background: var(--terminal-strip);
+    border: 1px solid #94a3b8;
+    border-radius: 8px;
+    height: 45px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.plug-hole {
+    width: 14px;
+    height: 14px;
+    background: #475569;
+    border-radius: 30%;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* Active Choice Components Dock */
+.components-dock {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.wire-choice-btn {
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #334155;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.wire-choice-btn:hover {
+    transform: translateY(-2px);
+    border-color: #3b82f6;
+    background: #f8fafc;
+}
+
+/* Live Operational Status Banner Ticker */
 .ticker-feedback {
-    margin-top: 15px;
+    margin-top: 20px;
     padding: 15px;
     border-radius: 12px;
     text-align: left;
@@ -251,24 +241,24 @@ button.act-btn:hover {
 
 .ticker-feedback.good {
     background: #ecfdf5;
-    border-left-color: var(--wire-green);
+    border-left-color: var(--accent-glow);
     color: #065f46;
 }
 
 .ticker-feedback.bad {
     background: #fef2f2;
-    border-left-color: var(--error-red);
+    border-left-color: var(--wire-red);
     color: #991b1b;
 }
 
-/* Final Scoreboard Elements */
+/* Assessment Ranking Scoreboard Elements */
 .rank-shell {
     width: 140px;
     height: 140px;
     border-radius: 50%;
-    background: var(--panel-bg);
+    background: var(--panel-dark);
     color: white;
-    font-size: 2.2rem;
+    font-size: 2.3rem;
     font-weight: 800;
     display: flex;
     justify-content: center;
@@ -292,44 +282,50 @@ button.act-btn:hover {
 
 <div class="container hidden" id="appMainframe">
     <div id="menuPanel" class="intro-panel">
-        <h1>Tinkercad Circuit Spark Runner</h1>
-        <div class="mode-badge">Interactive Arcade Sim • Tinkercad Chapter</div>
+        <h1>Tinkercad: The Wire Weaver</h1>
+        <div class="mode-badge">Logistical Circuit Linker • Interactive Grid</div>
         
         <div class="briefing">
-            <p style="font-weight:700; margin-bottom:10px; color:#0f172a;">How to Control Your Electronic Spark Particle:</p>
+            <p style="font-weight:700; margin-bottom:10px; color:#0f172a;">Circuit Routing Protocols:</p>
             <ol>
-                <li>Your Green Spark moves along a 2-lane virtual circuit board highway track.</li>
-                <li><strong>CONTROLS:</strong> Click/Tap on the **Left Side** or **Right Side** of the track arena (or use the **Left/Right Arrow Keys**) to quickly switch lanes!</li>
-                <li><strong>GOAL:</strong> Read the Tinkercad circuit question at the top, then steer your spark to **crash through the lane matching the correct component tool**.</li>
-                <li>Crashing through the wrong lane or failing to make a connection triggers an instant structural power fault code deduction penalty!</li>
-                <li>Clear all 10 simulation modules to evaluate your Electronic Design Engineer Rank.</li>
+                <li>Review the specific **Tinkercad Engineering Goal** displayed at the top of your workstation terminal desk.</li>
+                <li>Analyze the two colorful **Wire Link Components** waiting inside the warehouse inventory tray deck below.</li>
+                <li>Select and click the optimal component string to wire up and seal the breadboard channel grid seamlessly!</li>
+                <li>Plugging in incorrect wire configurations instantly triggers an overloading fuse error layout deduction penalty.</li>
+                <li>Exactly 10 board schematics are active. Connect them accurately to declare your System Engineering Rank!</li>
             </ol>
         </div>
-        <button class="act-btn" onclick="launchSparkShift()">Initialize Circuit Matrix ➜</button>
+        <button class="act-btn" onclick="initializeWeaverShift()">Boot Workstation Terminal ➜</button>
     </div>
 
     <div id="gamePanel" class="hidden">
         <div class="hud">
-            <div class="hud-card">⚡ Circuit Gates: <span id="countHUD">0</span> / 10</div>
-            <div class="hud-card" style="background:var(--gold);">🏆 Power Score: <span id="scoreHUD">0</span></div>
+            <div class="hud-card">🔌 Routed Rails: <span id="countHUD">0</span> / 10</div>
+            <div class="hud-card" style="background:var(--gold);">🏆 Grid Continuity: <span id="scoreHUD">0</span></div>
         </div>
 
-        <div class="question-banner" id="questionField">Loading terminal diagnostics...</div>
+        <div class="goal-panel" id="goalField">Synchronizing schematic buffers...</div>
 
-        <div class="arena-track" id="arenaHighway" onclick="handleTrackClick(event)">
-            <div class="track-lane-line"></div>
-            <div id="playerSpark">⚡</div>
+        <div class="breadboard-chassis">
+            <div class="terminal-strip-row"><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div></div>
+            <div class="terminal-strip-row" style="margin-bottom: 10px;"><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div></div>
+            <div class="terminal-strip-row"><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div></div>
         </div>
 
-        <div class="ticker-feedback" id="tickerBox">Use Arrow Keys or Click the lanes to steer into the right component!</div>
+        <div class="components-dock" id="choicesTray">
+            <button class="wire-choice-btn" onclick="verifyWireSelection(0)">Option A</button>
+            <button class="wire-choice-btn" onclick="verifyWireSelection(1)">Option B</button>
+        </div>
+
+        <div class="ticker-feedback" id="tickerBox">Analyze the schematic request goals, then choose the correct matching wire rail!</div>
     </div>
 
     <div id="reportPanel" class="hidden">
-        <h1 style="color:#1e3a8a; font-size:2.2rem;">📊 Engineering Diagnostics Log</h1>
+        <h1 style="color:#1e3a8a; font-size:2.2rem;">📊 Structural Integration Summary</h1>
         <div class="rank-shell"><span id="finalScore">0</span></div>
-        <div class="rank-title" id="finalRank">Calculating Title Rank...</div>
+        <div class="rank-title" id="finalRank">Assembling Ranking Credentials...</div>
         <p id="finalSummary" style="color:#475569; margin-bottom:25px; line-height:1.6; max-width:600px; margin-left:auto; margin-right:auto;"></p>
-        <button class="act-btn" onclick="location.reload()">Re-initialize Testing Console 🔄</button>
+        <button class="act-btn" onclick="location.reload()">Boot New Design Deck 🔄</button>
     </div>
 </div>
 
@@ -338,206 +334,117 @@ button.act-btn:hover {
 <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
 
 <script>
-/* Clear Splash screen locking constraint window right at 5000ms */
+/* Release Mainframe precisely at 5000ms splash window lock expiration */
 setTimeout(() => {
     document.getElementById("splash").style.display = "none";
     document.getElementById("appMainframe").classList.remove("hidden");
 }, 5000);
 
-/* Core Syllabus Concept Circuit Questions Framework Array Matrix Dataset */
-const circuitDatabase = [
-    { q: "Which tool allows you to design and test digital circuits on a computer safely without using real physical hardware components?", right: "Tinkercad", wrong: "MS Word", reason: "Tinkercad provides a full virtual simulator workspace environment on a computer browser." },
-    { q: "Which essential circuit item provides electrical power to make the components work?", right: "Battery", wrong: "Resistor", reason: "The battery supplies the chemical power needed to move current inside circuit lines." },
-    { q: "Which small circuit component produces and emits bright visible light when powered up accurately?", right: "LED", wrong: "Switch", reason: "An LED (Light Emitting Diode) lights up immediately when current paths cross it correctly." },
-    { q: "Which tool controls or restricts the amount of electric current flowing to protect a delicate LED from burning out?", right: "Resistor", wrong: "Breadboard", reason: "A resistor reduces current levels safely so components don't receive too much power." },
-    { q: "What grid board is used to temporarily plug in and cleanly link multiple components together without soldering them?", right: "Breadboard", wrong: "Battery", reason: "A breadboard is packed with interior connection holes to easily link circuit leads together." },
-    { q: "Which manual asset is used to deliberately break or complete a circuit connection path to toggle an LED on and off?", right: "Switch", wrong: "Resistor", reason: "A switch physically opens or seals the current flow channel when clicked." },
-    { q: "What happens inside an active Tinkercad simulation when the switch is not pressed or clicked down?", right: "Circuit breaks", wrong: "LED glows", reason: "An unpressed switch acts as an open air gap, causing the circuit flow to break." },
-    { q: "If your Tinkercad workspace design displays no response at all, what element should be thoroughly reviewed first?", right: "Proper connections", wrong: "Screen brightness", reason: "Misaligned wires or backwards component leads are the main reason simulations fail." },
-    { q: "Which of the following elements is completely unrelated to circuit design inside a software environment?", right: "Spreadsheet", wrong: "LED", reason: "Spreadsheets are data tracking sheets, completely separate from physical electronic components." },
-    { q: "When a circuit wire loop forms a fully sealed, unbroken line from power positive to negative, it is called a/an:", right: "Complete circuit", wrong: "Incomplete circuit", reason: "A complete circuit pathway is necessary for current to travel through your lines safely." }
+/* Complete Chapter Circuit Diagram Configuration Problems Dataset Array */
+const puzzleDatabase = [
+    { target: "We need a software application to model, wire, and execute hardware simulations safely on a browser layout window.", opt1: "🔴 Tinkercad Simulation Tool", opt2: "🔵 MS Word Document Layout", correctIdx: 0, feedback: "Tinkercad allows browser-based execution testing without needing physical wires or batteries." },
+    { target: "Identify the vital component block that provides power current so the electronic tracks can turn on.", opt1: "🔵 9V Energy Battery Unit", opt2: "🔴 Ceramic Current Resistor", correctIdx: 0, feedback: "The battery supplies the active electric current loop to the grid lines." },
+    { target: "We want to incorporate a component that directly transforms electric lines into bright visible light outputs.", opt1: "🔴 Light Emitting Diode (LED)", opt2: "🔵 Push Button Switch Module", correctIdx: 0, feedback: "An LED converts electrical energy paths directly into glowing photon light outputs." },
+    { target: "Prevent your delicate LED from burning out or popping due to massive raw electricity overflows.", opt1: "🔵 Inline Safety Resistor", opt2: "🔴 Unprotected Copper Wire", correctIdx: 0, feedback: "Resistors intentionally restrict current density flow scales to shield sensitive assets." },
+    { target: "Select the plastic solderless prototyping terminal map board used to hold multiple components cleanly.", opt1: "🔴 Grid Terminal Breadboard", opt2: "🔵 Solid Sealed Metal Battery Case", correctIdx: 0, feedback: "Breadboards contain hundreds of interior grid plug holes to safely interlink separate component wires." },
+    { target: "We need a mechanism to deliberately open or seal the hardware wire tracks at will.", opt1: "🔵 Interactive Push-Button Switch", opt2: "🔴 Fixed Protective Resistor Block", correctIdx: 0, feedback: "Switches physically break or restore circuit rail connections when toggled manually." },
+    { target: "What state occurs inside your Tinkercad workspace when a switch is left fully unpressed?", opt1: "🔴 Circuit breaks (Open Path)", opt2: "🔵 LED glows infinitely brighter", correctIdx: 0, feedback: "An unpressed switch breaks continuity, creating an air gap that blocks electricity." },
+    { target: "The simulation is running but your schematic is completely non-responsive. Where is the fault?", opt1: "🔵 Misaligned/Proper Connections check", opt2: "🔴 Screen resolution density settings", correctIdx: 0, feedback: "Re-verifying proper component polarities and wire connections resolves most circuit simulation faults." },
+    { target: "Isolate the file asset option that has absolutely no function inside an electronic circuit board assembly workspace.", opt1: "🔴 Spreadsheet Document App", opt2: "🔵 Virtual Breadboard Rail Plate", correctIdx: 0, feedback: "Spreadsheets track accounting text tables and are completely unrelated to hardware circuit design elements." },
+    { target: "A completely sealed wire path running flawlessly from positive to negative battery points is called a/an:", opt1: "🔵 Complete Unbroken Circuit", opt2: "🔴 Damaged Incomplete Route", correctIdx: 0, feedback: "A complete circuit path allows current to loop safely without encountering blockages." }
 ];
 
 let randomizedDeck = [];
-let targetIndex = 0;
-let corePointsScore = 0;
-let arcadeActive = false;
-let trackingLane = 0; // 0 = Left Lane, 1 = Right Lane
+let matrixIndex = 0;
+let continuityScore = 0;
+let panelControlsEnabled = false;
 
-const sparkEl = document.getElementById("playerSpark");
-const trackEl = document.getElementById("arenaHighway");
-
-/* Align Player Spark Left Horizontal Properties */
-function snapSparkToLane() {
-    if (trackingLane === 0) {
-        sparkEl.style.left = "calc(25% - 20px)";
-    } else {
-        sparkEl.style.left = "calc(75% - 20px)";
-    }
-}
-
-/* Keyboard Input Hook Monitors */
-window.addEventListener("keydown", (e) => {
-    if (!arcadeActive) return;
-    if (e.key === "ArrowLeft") {
-        trackingLane = 0;
-        snapSparkToLane();
-    } else if (e.key === "ArrowRight") {
-        trackingLane = 1;
-        snapSparkToLane();
-    }
-});
-
-/* Click Lane Detection Handler */
-function handleTrackClick(e) {
-    if (!arcadeActive) return;
-    const rect = trackEl.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    if (clickX < rect.width / 2) {
-        trackingLane = 0;
-    } else {
-        trackingLane = 1;
-    }
-    snapSparkToLane();
-}
-
-function launchSparkShift() {
-    randomizedDeck = [...circuitDatabase].sort(() => Math.random() - 0.5);
-    targetIndex = 0;
-    corePointsScore = 0;
-    trackingLane = 0;
-    arcadeActive = true;
-    
-    snapSparkToLane();
+function initializeWeaverShift() {
+    randomizedDeck = [...puzzleDatabase].sort(() => Math.random() - 0.5);
+    matrixIndex = 0;
+    continuityScore = 0;
+    panelControlsEnabled = true;
 
     document.getElementById("menuPanel").className = "intro-panel hidden";
     document.getElementById("gamePanel").classList.remove("hidden");
     
-    deployNextCircuitGate();
+    renderCurrentWeavePuzzle();
 }
 
-function deployNextCircuitGate() {
-    if (targetIndex >= randomizedDeck.length) {
-        terminateShiftSequence();
-        return;
-    }
+function renderCurrentWeavePuzzle() {
+    document.getElementById("countHUD").innerText = matrixIndex;
+    
+    const activePuzzle = randomizedDeck[matrixIndex];
+    document.getElementById("goalField").innerText = `🔧 MISSION GOAL: ${activePuzzle.target}`;
+    
+    const buttons = document.getElementById("choicesTray").getElementsByTagName("button");
+    buttons[0].innerText = activePuzzle.opt1;
+    buttons[1].innerText = activePuzzle.opt2;
 
-    document.getElementById("countHUD").innerText = targetIndex;
-    const itemData = randomizedDeck[targetIndex];
-    document.getElementById("questionField").innerText = itemData.q;
-
-    // Build dynamic physical obstacle row gateway
-    const row = document.createElement("div");
-    row.className = "gateway-row";
-
-    const leftContainer = document.createElement("div");
-    leftContainer.className = "gateway-lane";
-    const rightContainer = document.createElement("div");
-    rightContainer.className = "gateway-lane";
-
-    const leftBlock = document.createElement("div");
-    leftBlock.className = "component-block";
-    const rightBlock = document.createElement("div");
-    rightBlock.className = "component-block";
-
-    // Randomly assign which lane gets the correct item to avoid predictive repetition patterns
-    const solutionLaneAssignment = Math.floor(Math.random() * 2); // 0 = Left is correct, 1 = Right is correct
-    if (solutionLaneAssignment === 0) {
-        leftBlock.innerText = itemData.right;
-        rightBlock.innerText = itemData.wrong;
-    } else {
-        leftBlock.innerText = itemData.wrong;
-        rightBlock.innerText = itemData.right;
-    }
-
-    leftContainer.appendChild(leftBlock);
-    rightContainer.appendChild(rightBlock);
-    row.appendChild(leftContainer);
-    row.appendChild(rightContainer);
-    trackEl.appendChild(row);
-
-    let verticalPos = -60;
-    const descentRate = 3.2; // Speed pacing configuration variable metric
-    let loopHandled = false;
-
-    function animateGateDescent() {
-        if (!arcadeActive) {
-            row.remove();
-            return;
-        }
-        if (loopHandled) return;
-
-        verticalPos += descentRate;
-        row.style.top = verticalPos + "px";
-
-        // Collision Window Check Line Intersection Zone
-        const targetCollisionLine = trackEl.clientHeight - 75; // Matches the physical placement height of Spark particle
-
-        if (verticalPos >= targetCollisionLine && verticalPos <= targetCollisionLine + 25) {
-            loopHandled = true;
-            row.remove();
-            
-            // Compare Player's trackingLane with the solutionLaneAssignment index matrix
-            const playerChosenCorrectly = (trackingLane === solutionLaneAssignment);
-            evaluateRoundPerformance(playerChosenCorrectly, itemData);
-            return;
-        }
-
-        requestAnimationFrame(animateGateDescent);
-    }
-    requestAnimationFrame(animateGateDescent);
+    document.getElementById("tickerBox").className = "ticker-feedback";
+    document.getElementById("tickerBox").innerHTML = "Select the correct component link from the tray to weave into the board holes safely.";
+    
+    panelControlsEnabled = true;
 }
 
-function evaluateRoundPerformance(isCorrect, databaseRef) {
-    const logBox = document.getElementById("tickerBox");
+function verifyWireSelection(clickedIndex) {
+    if (!panelControlsEnabled) return;
+    panelControlsEnabled = false;
 
-    if (isCorrect) {
-        corePointsScore += 100;
-        // Launch dual affirmative sound layer arrays simultaneously
-        try { document.getElementById("correctSound").play().catch(()=>{}); } catch(err){}
-        try { document.getElementById("clapSound").play().catch(()=>{}); } catch(err){}
-        logBox.className = "ticker-feedback good";
-        logBox.innerHTML = `<strong>⚡ SUCCESSFUL CONNECTION!</strong> ${databaseRef.reason}`;
+    const currentPuzzle = randomizedDeck[matrixIndex];
+    const userChoiceCorrect = (clickedIndex === currentPuzzle.correctIdx);
+    const feedbackBox = document.getElementById("tickerBox");
+
+    if (userChoiceCorrect) {
+        continuityScore += 100;
+        // Engage double simultaneous positive audio streams
+        try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
+        try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+        feedbackBox.className = "ticker-feedback good";
+        feedbackBox.innerHTML = `<strong>⚡ LINK ESTABLISHED!</strong> ${currentPuzzle.feedback}`;
     } else {
-        corePointsScore = Math.max(0, corePointsScore - 50);
-        try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(err){}
-        logBox.className = "ticker-feedback bad";
-        logBox.innerHTML = `<strong>💥 SHORT CIRCUIT ERROR!</strong> You hit the wrong component. Remember: ${databaseRef.reason}`;
+        continuityScore = Math.max(0, continuityScore - 50);
+        try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
+        feedbackBox.className = "ticker-feedback bad";
+        feedbackBox.innerHTML = `<strong>💥 CURRENT OVERLOAD FUSE BLOWN!</strong> Connection failed. Remember: ${currentPuzzle.feedback}`;
     }
 
-    document.getElementById("scoreHUD").innerText = corePointsScore;
-    targetIndex++;
+    document.getElementById("scoreHUD").innerText = continuityScore;
+    matrixIndex++;
 
-    // Spacing interval timeout delay buffer to allow text digestion before launching next lane row
+    // Spacing window buffer timeout delay before loading subsequent puzzle
     setTimeout(() => {
-        if (arcadeActive) deployNextCircuitGate();
-    }, 1500);
+        if (matrixIndex < randomizedDeck.length) {
+            renderCurrentWeavePuzzle();
+        } else {
+            compileFinalEngineeringAudit();
+        }
+    }, 2000);
 }
 
-function terminateShiftSequence() {
-    arcadeActive = false;
+function compileFinalEngineeringAudit() {
     document.getElementById("gamePanel").className = "hidden";
     document.getElementById("reportPanel").classList.remove("hidden");
     
-    document.getElementById("finalScore").innerText = corePointsScore;
-    try { document.getElementById("clapSound").play().catch(()=>{}); } catch(err){}
+    document.getElementById("finalScore").innerText = continuityScore;
+    try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
 
-    let performanceTitle = "";
+    let assignedTitle = "";
     let analyticalSummary = "";
-    const performanceRatio = corePointsScore / 1000;
+    const designContinuityRatio = continuityScore / 1000;
 
-    if (performanceRatio >= 0.85) {
-        performanceTitle = "👑 Elite Circuit Simulation Architect";
-        analyticalSummary = "Phenomenal maneuvering speeds down the breadboard rows! You effortlessly identified resistors, switches, and batteries while keeping your circuit current perfectly secure and balanced. Flawless hardware diagnostics engineering.";
-    } else if (performanceRatio >= 0.55) {
-        performanceTitle = "💼 Senior Tinkercad Systems Technician";
-        analyticalSummary = "Excellent overall track execution run! Most component connections linked up cleanly. Keep a closer visual monitor out for the difference between a resistor and a breadboard grid pattern to lock the peak tier.";
+    if (designContinuityRatio >= 0.85) {
+        assignedTitle = "👑 Master Breadboard Wire Weaver";
+        analyticalSummary = "Exquisite spatial connection choices! You flawlessly routed resistors, switch contacts, and LEDs across the grid rails without causing a single system explosion. Outstanding Tinkercad systems execution.";
+    } else if (designContinuityRatio >= 0.55) {
+        assignedTitle = "💼 Senior Circuit Logic Designer";
+        analyticalSummary = "Strong logic integration run! Most terminal rails closed up seamlessly. Be more cautious about open switch breaks and grounding channels next time to claim the top certification.";
     } else {
-        performanceTitle = "🌱 Apprentice Tinkercad Repair Trainee";
-        analyticalSummary = "Severe short circuits occurred along the line, causing system overloading structural diagnostic errors! Re-read the Tinkercad component definition framework and boot up another operational runner shift.";
+        assignedTitle = "🌱 Hardware Prototyping Student";
+        analyticalSummary = "Multiple wire links triggered severe circuit faults, causing terminal grid power blackouts. Recheck the circuit connection protocols inside the handbook log and rerun the terminal shift deck!";
     }
 
-    document.getElementById("finalRank").innerText = performanceTitle;
+    document.getElementById("finalRank").innerText = assignedTitle;
     document.getElementById("finalSummary").innerText = analyticalSummary;
 }
 </script>

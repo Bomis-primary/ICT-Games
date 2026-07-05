@@ -1,1 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Processing Master - Ribbon Rescue</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
+    <style>
+        :root {
+            --word-blue: #2b579a;
+            --word-light-blue: #107c41;
+            --scratch-orange: #ffab19;
+            --scratch-purple: #9966ff;
+            --scratch-pink: #ff6680;
+            --dark-bg: #0b1329;
+            --panel-bg: #1c2541;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transition: background 0.5s ease;
+        }
+
+        body.game-active {
+            background: linear-gradient(135deg, #1c2541, var(--dark-bg));
+        }
+
+        /* 5-Second Pure White Splash Screen */
+        #splashScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #splashScreen img {
+            width: 280px;
+            max-width: 80%;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        /* Main Game Shell Window */
+        .app-window {
+            width: 95vw;
+            max-width: 1000px;
+            height: 88vh;
+            min-height: 600px;
+            z-index: 10;
+        }
+
+        .welcome-card {
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 32px;
+            padding: 42px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            max-width: 620px;
+            margin: 0 auto;
+        }
+
+        .welcome-card h1 span {
+            background: linear-gradient(135deg, var(--word-blue), #4a90e2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        /* Conveyor Layout Structure */
+        .game-layout {
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            height: 100%;
+            gap: 15px;
+        }
+
+        .top-hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--panel-bg);
+            border: 2px solid #3b4b75;
+            padding: 14px 25px;
+            border-radius: 16px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .badge-level {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+        .lvl-active { background: var(--word-blue); }
+
+        /* Conveyor Track Arena */
+        .conveyor-arena {
+            background: #1c2541;
+            border: 3px solid #3b4b75;
+            border-radius: 24px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        .conveyor-track {
+            flex-grow: 1;
+            width: 100%;
+            position: relative;
+        }
+
+        /* Falling Command / Component Node */
+        .falling-item {
+            position: absolute;
+            left: 50%;
+            top: 10%;
+            transform: translateX(-50%);
+            background: #0b1329;
+            border: 3px dashed var(--word-blue);
+            border-radius: 16px;
+            padding: 16px 30px;
+            color: white;
+            font-weight: 800;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+            animation: itemSlideDown 4.5s linear infinite;
+        }
+
+        @keyframes itemSlideDown {
+            0% { top: 5%; opacity: 0; transform: translateX(-50%) scale(0.9); }
+            15% { opacity: 1; transform: translateX(-50%) scale(1); }
+            85% { opacity: 1; }
+            100% { top: 65%; opacity: 0; transform: translateX(-50%) scale(0.8); }
+        }
+
+        /* Target Receptor Container Bucket */
+        .active-bin-receptor {
+            background: rgba(255, 255, 255, 0.05);
+            border: 3px solid var(--scratch-orange);
+            border-radius: 20px;
+            width: 320px;
+            padding: 15px;
+            text-align: center;
+            color: white;
+            font-weight: 800;
+            font-size: 1.2rem;
+            box-shadow: 0 0 20px rgba(255, 171, 25, 0.2);
+            transition: all 0.2s ease;
+            margin-bottom: 10px;
+        }
+
+        /* Interaction Swapper Grid Control Deck */
+        .controller-deck {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            width: 100%;
+            max-width: 750px;
+        }
+
+        .switch-btn {
+            padding: 14px;
+            border-radius: 14px;
+            border: 2px solid #3b4b75;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-comp { background: #1e3a8a; }
+        .btn-shortcuts { background: var(--scratch-purple); }
+        .btn-rules { background: var(--scratch-pink); }
+        
+        .switch-btn:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+        .switch-btn.active-choice {
+            border-color: #ffffff;
+            box-shadow: 0 0 15px white;
+            transform: scale(1.02);
+        }
+
+        /* Central Popups Frame System */
+        .pop-shroud {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 19, 41, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        .pop-shroud.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .pop-card {
+            background: white;
+            border-radius: 24px;
+            padding: 30px;
+            width: 420px;
+            max-width: 85%;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        }
+
+        .pop-btn {
+            background: var(--word-blue);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: bold;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--word-blue), #4a90e2);
+            color: white;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(43,87,154,0.4);
+            transition: transform 0.2s;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <audio id="audioCorrect" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="audioClap" src="assets/clap.mp3" preload="auto"></audio>
+
+    <div id="splashScreen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/280x100?text=Innovine+Universal'">
+        <p style="margin-top:20px; font-weight:600; color:#3b4b75; letter-spacing: 1px;">Loading Chapter 3: Word Processing in MS Word - 1...</p>
+    </div>
+
+    <div class="app-window hidden" id="appInterfaceShell">
+        
+        <div id="introView" class="welcome-card">
+            <img src="assets/innovine-logo.png" alt="Logo" style="max-width:140px; margin-bottom:15px;" onerror="this.style.display='none'">
+            <h1><span>RIBBON RUNNER ARCADE</span></h1>
+            <h2 style="color: #64748b; font-size: 1.1rem; margin-bottom: 24px;">Grade 3 Chapter 3 Interactive Challenge</h2>
+            <p style="text-align: left; line-height: 1.7; color: #475569; margin-bottom: 26px; background: #f1f5f9; padding: 20px; border-radius: 14px; font-size: 0.95rem;">
+                Welcome, Future Editor! MS Word interface elements, command features, and shortcut key questions are descending down the arcade track. Quickly read the item, then click the correct classification buttons to swap the active collection bucket before the item passes!
+            </p>
+            <button class="btn-primary" onclick="launchSimulator()">Launch Ribbon Runner</button>
+        </div>
+
+        <div id="gameViewPanel" class="game-layout hidden">
+            <div class="top-hud">
+                <div>🏆 Score: <span id="scoreDisplayLabel" style="color:var(--scratch-orange)">0</span></div>
+                <div style="font-size:1.1rem;">⚡ Item Wave: <span id="missionLevelTitle" style="color:#60a5fa">1 / 10</span></div>
+                <div id="difficultyBadge" class="badge-level lvl-active">MS Word - 1</div>
+            </div>
+
+            <div class="conveyor-arena">
+                
+                <div class="conveyor-track">
+                    <div class="falling-item" id="activeFallingNode">
+                        <span id="nodeIcon">💻</span>
+                        <span id="nodeName">Document1</span>
+                    </div>
+                </div>
+
+                <div class="active-bin-receptor" id="receptorDisplayBox">
+                    📂 Active: Window Components
+                </div>
+
+                <div class="controller-deck">
+                    <button class="switch-btn btn-comp active-choice" onclick="toggleActiveBucket('components', this)">🖥️ Window Layout</button>
+                    <button class="switch-btn btn-shortcuts" onclick="toggleActiveBucket('shortcuts', this)">⌨️ Shortcut Keys</button>
+                    <button class="switch-btn btn-rules" onclick="toggleActiveBucket('operations', this)">⚙️ Document Actions</button>
+                </div>
+
+                <div class="pop-shroud" id="feedbackPopupShroud">
+                    <div class="pop-card">
+                        <div id="popIcon" style="font-size:3.5rem; margin-bottom:10px;">✨</div>
+                        <h2 id="popTitle" style="margin-bottom:10px;">Verification Result</h2>
+                        <p id="popBody" style="color:#475569; font-size:0.95rem; line-height:1.4; margin-bottom:15px;">Evaluating ribbon placement data...</p>
+                        <button class="pop-btn" onclick="dismissArcadeModal()">Next Question</button>
+                    </div>
+                </div>
+
+            </div>
+            <div style="background:#1c2541; color:#94a3b8; text-align:center; padding:10px; border-radius:10px; font-size:0.85rem; font-weight:bold;">
+                Tip: Work quickly to select your target bucket classification before clicking or finalizing your assessment!
+            </div>
+        </div>
+
+        <div id="evaluationReportCard" class="welcome-card hidden">
+            <h1 style="color:#107c41">🎉 Word Mastery Complete!</h1>
+            <p style="margin-top:15px; font-size:1.15rem;" id="finalPerformanceReportSummary"></p>
+            <div style="font-size: 4.5rem; margin: 25px 0;">📝💻⌨️⭐</div>
+            <button class="btn-primary" onclick="restartCampaignSession()">Restart Arcade Run</button>
+        </div>
+
+    </div>
+
+    <script>
+        // 5-Second Exclusive Splash Screen Timeout Hook [cite: 170]
+        setTimeout(() => {
+            const splashNode = document.getElementById("splashScreen");
+            splashNode.style.opacity = "0";
+            setTimeout(() => {
+                splashNode.style.setProperty("display", "none", "important");
+                document.body.classList.add("game-active");
+                document.getElementById("appInterfaceShell").classList.remove("hidden");
+            }, 600);
+        }, 5000);
+
+        // Linear Database Checklist Matrix (10 Items covering MS Word - 1 explicitly) [cite: 157]
+        const waveDatabase = [
+            { name: "Temporary Name: Document1", icon: "📄", cat: "components", hint: "Correct! When opened, MS Word creates a blank workspace called Document1[cite: 174]." },
+            { name: "Shortcut: Ctrl + N", icon: "⌨️", cat: "shortcuts", hint: "Perfect! Ctrl + N instantly launches a clean, brand-new workspace file[cite: 196]." },
+            { name: "Title Bar", icon: "🔝", cat: "components", hint: "Spot on! The Title Bar resides at the very top and tracks the file and application name[cite: 179, 180]." },
+            { name: "Quick Access Toolbar", icon: "⚡", cat: "components", hint: "Excellent! This toolbar keeps fast actions like Save, Undo, and Redo ready to click[cite: 178, 179]." },
+            { name: "Shortcut: Ctrl + S", icon: "💾", cat: "shortcuts", hint: "That's it! Ctrl + S commits text data permanently to a disk storage address[cite: 210, 214]." },
+            { name: "Action: Save As Dialog Box", icon: "⚙️", cat: "operations", hint: "Correct! When saving for the first time, you type your custom name inside this box[cite: 213]." },
+            { name: "Status Bar", icon: "📊", cat: "components", hint: "Brilliant! The Status Bar displays page tallies and counts active document word elements[cite: 192]." },
+            { name: "Extension: .docx or .doc", icon: "🏷️", cat: "operations", hint: "Great! MS Word appends these default formatting tags when completing a file save[cite: 225]." },
+            { name: "Shortcut: Ctrl + O", icon: "📂", cat: "shortcuts", hint: "Fantastic! Ctrl + O triggers the system file viewer to launch pre-existing documents[cite: 224]." },
+            { name: "Action: Pressing Backspace", icon: "⬅️", cat: "operations", hint: "Wonderful! Backspace clears text segments directly to the left side of your blinking cursor[cite: 216]." }
+        ];
+
+        let waveIndex = 0;
+        let arcadeScore = 0;
+        let selectedBucketType = "components";
+        let interactionActive = false;
+
+        function triggerAudioNode(id) {
+            const audio = document.getElementById(id);
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(e => console.log("Audio kick:", e));
+            }
+        }
+
+        function launchSimulator() {
+            triggerAudioNode("audioCorrect");
+            document.getElementById("introView").classList.add("hidden");
+            document.getElementById("gameViewPanel").classList.remove("hidden");
+            loadWaveNodeParameters();
+        }
+
+        function toggleActiveBucket(type, buttonElement) {
+            if (interactionActive) return;
+            selectedBucketType = type;
+            
+            // Manage button toggle CSS classes 
+            document.querySelectorAll('.switch-btn').forEach(b => b.classList.remove('active-choice'));
+            buttonElement.classList.add('active-choice');
+            
+            // Format receptor text box title label
+            const titleMap = { components: "🖥️ Window Layout", shortcuts: "⌨️ Shortcut Keys", operations: "⚙️ Document Actions" };
+            document.getElementById("receptorDisplayBox").innerText = `📂 Active: ${titleMap[type]}`;
+
+            // Evaluate answer immediately upon switching to matching slot
+            evaluateActiveLanding();
+        }
+
+        function loadWaveNodeParameters() {
+            interactionActive = false;
+            document.getElementById("scoreDisplayLabel").innerText = arcadeScore;
+            document.getElementById("missionLevelTitle").innerText = `${waveIndex + 1} / 10`;
+
+            const data = waveDatabase[waveIndex];
+            document.getElementById("nodeIcon").innerText = data.icon;
+            document.getElementById("nodeName").innerText = data.name;
+
+            // Reset CSS animation paths dynamically to guarantee fresh iteration tracks
+            const element = document.getElementById("activeFallingNode");
+            element.style.animation = 'none';
+            element.offsetHeight; 
+            element.style.animation = 'itemSlideDown 4.5s cubic-bezier(0.1, 0.8, 0.3, 1) infinite';
+        }
+
+        function evaluateActiveLanding() {
+            if (interactionActive) return;
+            interactionActive = true;
+
+            const data = waveDatabase[waveIndex];
+            const shroud = document.getElementById("feedbackPopupShroud");
+            
+            const pIcon = document.getElementById("popIcon");
+            const pTitle = document.getElementById("popTitle");
+            const pBody = document.getElementById("popBody");
+
+            pBody.innerText = data.hint;
+
+            if (selectedBucketType === data.cat) {
+                arcadeScore += 100;
+                document.getElementById("scoreDisplayLabel").innerText = arcadeScore;
+                
+                pIcon.innerText = "⭐";
+                pTitle.innerText = "Command Synchronized!";
+                pTitle.style.color = "#107c41";
+                
+                triggerAudioNode("audioCorrect");
+                confetti({ particleCount: 30, spread: 50, origin: { y: 0.7 } });
+            } else {
+                pIcon.innerText = "💥";
+                pTitle.innerText = "Toolbar Placement Clash!";
+                pTitle.style.color = "#ff6680";
+                
+                triggerAudioNode("audioWrong");
+            }
+
+            shroud.classList.add("active");
+        }
+
+        function dismissArcadeModal() {
+            document.getElementById("feedbackPopupShroud").classList.remove("active");
+            
+            waveIndex++;
+            if (waveIndex < waveDatabase.length) {
+                loadWaveNodeParameters();
+            } else {
+                // Trigger endgame summary interface cleanly
+                document.getElementById("gameViewPanel").classList.add("hidden");
+                document.getElementById("evaluationReportCard").classList.remove("hidden");
+                triggerAudioNode("audioClap");
+                document.getElementById("finalPerformanceReportSummary").innerHTML = 
+                    `Arcade Processing Finished! You routed all 10 word operations successfully.<br><br><strong>Final Score: ${arcadeScore} / 1000 Terminal Points</strong>`;
+            }
+        }
+
+        function restartCampaignSession() {
+            document.getElementById("evaluationReportCard").classList.add("hidden");
+            document.getElementById("gameViewPanel").classList.remove("hidden");
+            waveIndex = 0;
+            arcadeScore = 0;
+            loadWaveNodeParameters();
+        }
+    </script>
+</body>
+</html>

@@ -418,4 +418,116 @@
 
         function playAudioTrack(id) {
             const node = document.getElementById(id);
-            if(node) { node.currentTime = 0; node.play().catch(e => console.log(e));
+            if(node) { node.currentTime = 0; node.play().catch(e => console.log(e)); }
+        }
+
+        function launchMatrixModule() {
+            playAudioTrack("audioCorrect");
+            document.getElementById("introView").classList.add("hidden");
+            document.getElementById("gameViewPanel").classList.remove("hidden");
+            buildInteractiveHardwareKeys();
+            loadSectorObjective();
+        }
+
+        function buildInteractiveHardwareKeys() {
+            const box = document.getElementById("keyboardGridMatrixBox");
+            box.innerHTML = "";
+            const shuffledKeys = [...primaryKeyBank].sort(() => Math.random() - 0.5);
+            shuffledKeys.forEach(keyText => {
+                const btn = document.createElement("button");
+                btn.className = "matrix-key-btn";
+                btn.innerText = keyText;
+                btn.onclick = () => dispatchKeyValidation(keyText);
+                box.appendChild(btn);
+            });
+        }
+
+        function loadSectorObjective() {
+            matrixSystemLocked = false;
+            document.getElementById("scoreDisplayLabel").innerText = runningMatrixScore;
+            document.getElementById("sectorDisplayLabel").innerText = `${sectorIndex + 1} / 10`;
+
+            const sectorData = sectorDatabase[sectorIndex];
+            document.getElementById("objectiveTextString").innerText = sectorData.objective;
+            document.getElementById("pageCanvasContentBlock").innerText = sectorData.canvasText;
+
+            positionHighlightIndicator(sectorData.highlightTarget);
+        }
+
+        function positionHighlightIndicator(targetId) {
+            const indicator = document.getElementById("activeHighlightPointerIndicator");
+            const targetNode = document.getElementById(targetId);
+            const parentWindow = document.getElementById("simulationContainerWindow");
+
+            if(targetNode && parentWindow) {
+                setTimeout(() => {
+                    indicator.style.display = "block";
+                    // Compute accurate values independent of sub-nested alignment models
+                    const topPos = targetNode.getBoundingClientRect().top - parentWindow.getBoundingClientRect().top;
+                    const leftPos = targetNode.getBoundingClientRect().left - parentWindow.getBoundingClientRect().left;
+                    
+                    indicator.style.top = `${topPos - 4}px`;
+                    indicator.style.left = `${leftPos - 4}px`;
+                    indicator.style.width = `${targetNode.offsetWidth + 8}px`;
+                    indicator.style.height = `${targetNode.offsetHeight + 8}px`;
+                }, 60);
+            } else {
+                indicator.style.display = "none";
+            }
+        }
+
+        function dispatchKeyValidation(clickedKeyName) {
+            if (matrixSystemLocked) return;
+            matrixSystemLocked = true;
+
+            const sectorData = sectorDatabase[sectorIndex];
+            const modalShroud = document.getElementById("interactiveGlobalModalShroud");
+            const mIcon = document.getElementById("modalIconEmblem");
+            const mTitle = document.getElementById("modalHeaderTitle");
+            const mBody = document.getElementById("modalBodyTextString");
+
+            mBody.innerText = sectorData.hint;
+
+            if (clickedKeyName === sectorData.targetKey) {
+                runningMatrixScore += 100;
+                document.getElementById("scoreDisplayLabel").innerText = runningMatrixScore;
+                mIcon.innerText = "🔑🔒";
+                mTitle.innerText = "Sector Override Success!";
+                mTitle.style.color = "#2ecc71";
+                playAudioTrack("audioCorrect");
+                confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
+            } else {
+                mIcon.innerText = "⚠️💥";
+                mTitle.innerText = "Matrix Validation Fault!";
+                mTitle.style.color = "#ff6680";
+                mBody.innerText = `Incorrect sequence module injected. Correct Action: [${sectorData.targetKey}].`;
+                playAudioTrack("audioWrong");
+            }
+            modalShroud.classList.add("active");
+        }
+
+        function dismissMatrixModal() {
+            document.getElementById("interactiveGlobalModalShroud").classList.remove("active");
+            sectorIndex++;
+            if(sectorIndex < sectorDatabase.length) {
+                loadSectorObjective();
+            } else {
+                document.getElementById("gameViewPanel").classList.add("hidden");
+                document.getElementById("evaluationReportCard").classList.remove("hidden");
+                playAudioTrack("audioClap");
+                document.getElementById("finalPerformanceReportSummary").innerHTML = 
+                    `Excellent System Processing! Final Score: <strong>${runningMatrixScore} / 1000 Protocol Points</strong>`;
+            }
+        }
+
+        function restartCampaignSession() {
+            document.getElementById("evaluationReportCard").classList.add("hidden");
+            document.getElementById("gameViewPanel").classList.remove("hidden");
+            sectorIndex = 0;
+            runningMatrixScore = 0;
+            buildInteractiveHardwareKeys();
+            loadSectorObjective();
+        }
+    </script>
+</body>
+</html>

@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Innovine Universal - MS Word-3 Memory Maze</title>
+    <title>Innovine Universal - Ribbon Ranger Rescue</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
         :root {
-            --bg-dark: #0a0d14;
-            --card-dark: #121824;
+            --bg-dark: #07090e;
+            --card-dark: #0f1420;
             --accent-cyan: #00e5ff;
             --accent-blue: #2979ff;
             --word-blue: #165cc0;
             --text-light: #ffffff;
-            --text-muted: #78889b;
+            --text-muted: #6c7d93;
             --error-red: #ff5252;
             --success-green: #00e676;
         }
@@ -37,7 +37,7 @@
         }
 
         /* ==========================================================================
-           1. SPLASH SCREEN (DESIGN MATCHED TO USER LAYOUT)
+           1. SPLASH SCREEN (INNOVINE ORIGINAL LANDING)
            ========================================================================== */
         #splashScreen {
             position: fixed;
@@ -45,7 +45,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, #162238 0%, var(--bg-dark) 100%);
+            background: radial-gradient(circle at center, #131d2f 0%, var(--bg-dark) 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -150,11 +150,11 @@
         }
 
         /* ==========================================================================
-           2. MAIN APP INTERFACE
+           2. PLAYFUL WORKSPACE WINDOW
            ========================================================================== */
         .app-window {
             width: 95vw;
-            max-width: 1150px;
+            max-width: 1180px;
             height: 85vh;
             background: var(--card-dark);
             border-radius: 24px;
@@ -173,7 +173,7 @@
         }
 
         .game-header {
-            background: #0d121c;
+            background: #090d16;
             padding: 15px 30px;
             border-bottom: 1px solid rgba(255,255,255,0.08);
             display: flex;
@@ -181,178 +181,160 @@
             align-items: center;
         }
 
-        .split-maze-grid {
+        /* Side Scrolling Map Layout & Control Blocks Split */
+        .workspace-layout-split {
             display: grid;
-            grid-template-columns: 1fr 400px;
+            grid-template-columns: 350px 1fr;
             height: 100%;
             min-height: 0;
         }
 
-        .maze-matrix-panel {
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            background: #0f1522;
-        }
-
-        .instruction-banner {
-            background: rgba(0, 229, 255, 0.06);
-            border-left: 4px solid var(--accent-cyan);
-            padding: 12px 18px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        .instruction-banner strong {
-            color: #ffffff;
-        }
-
-        .grid-matrix-container {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            flex-grow: 1;
-            perspective: 1000px;
-        }
-
-        .memory-card {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-            transform-style: preserve-3d;
-            transition: transform 0.5s ease;
-        }
-
-        .memory-card.flipped {
-            transform: rotateY(180deg);
-        }
-
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 12px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 10px;
-            text-align: center;
-            font-weight: 600;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-
-        .card-front {
-            background: linear-gradient(135deg, #1c263d, #121929);
-            border: 2px solid #2d3b5c;
-            color: var(--accent-cyan);
-            font-size: 1.5rem;
-        }
-
-        .card-back {
-            background: #1e2942;
-            border: 2px solid var(--accent-blue);
-            color: #ffffff;
-            transform: rotateY(180deg);
-        }
-
-        .memory-card.matched .card-back {
-            border-color: var(--success-green);
-            background: rgba(0, 230, 118, 0.1);
-            color: var(--success-green);
-        }
-
-        .crossword-side-panel {
-            background: #141b2b;
-            border-left: 1px solid rgba(255,255,255,0.06);
+        /* Left Side: Controls & Tool Chest */
+        .control-ranger-deck {
+            background: #0c111c;
+            border-right: 1px solid rgba(255,255,255,0.06);
             padding: 25px;
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
 
-        .crossword-title-box h4 {
-            color: var(--accent-cyan);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-        }
-
-        .word-box-container {
-            background: rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.05);
+        .badge-instruction-card {
+            background: rgba(41, 121, 255, 0.08);
+            border: 1px solid rgba(41, 121, 255, 0.2);
+            padding: 15px;
             border-radius: 12px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
         }
 
-        .crossword-row {
-            display: flex;
-            gap: 6px;
-        }
-
-        .crossword-cell {
-            width: 40px;
-            height: 40px;
-            background: #1c2536;
-            border: 2px solid #2c3a54;
-            border-radius: 6px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-weight: 800;
-            font-size: 1.1rem;
-            color: #ffffff;
-            text-transform: uppercase;
-            transition: all 0.3s ease;
-        }
-
-        .crossword-cell.revealed {
-            background: var(--word-blue);
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
-            animation: popIn 0.3s ease;
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0.8); }
-            100% { transform: scale(1); }
-        }
-
-        .clues-list-box {
-            font-size: 0.85rem;
-            line-height: 1.5;
-            color: var(--text-muted);
-            display: flex;
-            flex-direction: column;
+        .action-tool-buttons-grid {
+            display: grid;
+            grid-template-columns: 1fr;
             gap: 10px;
         }
 
-        .clue-item {
+        .tool-action-btn {
+            background: #151c2c;
+            border: 1px solid #25334d;
+            border-radius: 12px;
+            padding: 14px 18px;
+            color: #ffffff;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
             display: flex;
-            gap: 8px;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
         }
 
-        .clue-item span {
-            color: var(--accent-cyan);
+        .tool-action-btn:hover {
+            border-color: var(--accent-cyan);
+            background: #1b253b;
+            transform: scale(1.02);
+        }
+
+        .btn-emblem-sphere {
+            width: 32px;
+            height: 32px;
+            background: rgba(255,255,255,0.04);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.1rem;
+        }
+
+        /* Right Side: Virtual Game Map / Processing Sheet Viewport */
+        .map-canvas-viewport {
+            background: #111726;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .interactive-board-strip {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 720px;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .board-step-node {
+            flex-grow: 1;
+            height: 70px;
+            background: #1b2438;
+            border: 2px solid #2d3c5e;
+            border-radius: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-weight: bold;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .board-step-node.active {
+            border-color: var(--accent-cyan);
+            background: var(--word-blue);
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.4);
+        }
+
+        .board-step-node.done {
+            border-color: var(--success-green);
+            background: rgba(0, 230, 118, 0.15);
+            color: var(--success-green);
+        }
+
+        /* Simulated Word Document Challenge Layout Card */
+        .live-challenge-paper-sheet {
+            width: 100%;
+            max-width: 600px;
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px;
+            color: #2b303a;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .error-squiggle {
+            text-decoration: underline wavy var(--error-red);
+            font-weight: 600;
+        }
+
+        .shape-box-placeholder {
+            border: 2px dashed #a0aec0;
+            background: #edf2f7;
+            padding: 15px;
+            text-align: center;
+            border-radius: 8px;
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .success-badge-rendered {
+            background: #e6fffa;
+            border: 1px solid #b2f5ea;
+            color: #234e52;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
         }
 
         .hidden { display: none !important; }
-
-        .end-game-card {
-            text-align: center;
-            padding: 50px;
-            margin: auto;
-        }
     </style>
 </head>
 <body>
@@ -364,7 +346,7 @@
     <div id="splashScreen">
         <div class="logo-container">
             <div class="logo-glow-ring"></div>
-            <img id="brandLogoImg" class="brand-logo-badge" src="assets/innovine_logo.png" alt="Innovine" onerror="handleFallbackLogo()">
+            <img src="assets/innovine_logo.png" alt="Innovine" onerror="handleFallbackLogo()">
         </div>
         <div class="brand-title-group">
             <h1 class="brand-main-title">Innovine</h1>
@@ -375,57 +357,58 @@
             <div id="loadingProgress" class="loading-bar-progress"></div>
         </div>
 
-        <button id="btnLetsStart" class="btn-lets-start" onclick="enterGameInterface()">LETS START</button>
+        <button id="btnLetsStart" class="btn-lets-start" onclick="launchRangerRescueInterface()">LETS START</button>
     </div>
 
     <div class="app-window hidden" id="appInterfaceShell">
         
         <div class="game-header">
             <div>
-                <h3 style="font-size: 1.1rem;">MS Word-3 Proofing Maze</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted);">Memory Pairing & Crossword Puzzle Suite (Pages 50-56)</p>
+                <h3 style="font-size: 1.1rem; letter-spacing: 0.5px;">Ribbon Ranger Word Rescue</h3>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Interactive Board Game Journey (Pages 50-56)</p>
             </div>
-            <div style="background: rgba(255,255,255,0.03); padding: 6px 16px; border-radius: 20px; font-size: 0.9rem;">
-                Matches: <strong id="matchCounterLabel" style="color: var(--accent-cyan);">0 / 6</strong>
+            <div style="background: rgba(255,255,255,0.03); padding: 6px 18px; border-radius: 20px; font-size: 0.9rem;">
+                Score Tally: <strong id="scoreDisplayBadge" style="color: var(--accent-cyan);">0 XP</strong>
             </div>
         </div>
 
-        <div class="split-maze-grid" id="mainGameplaySplitArea">
+        <div class="workspace-layout-split" id="mainGameplaySplitArea">
             
-            <div class="maze-matrix-panel">
-                <div class="instruction-banner">
-                    💡 <strong>How to Play:</strong> Select and flip cards to connect matching Word Processing concepts from Pages 50-56. Every perfect pair solves a letter cell in the code matrix on the right!
+            <div class="control-ranger-deck">
+                <div class="badge-instruction-card">
+                    <h4 style="color: var(--accent-cyan); font-size: 0.85rem; text-transform: uppercase; margin-bottom: 5px;">Ranger Task Clue</h4>
+                    <p id="rangerTaskClueText" style="font-size: 0.88rem; line-height: 1.4; color: #a0aec0;">Analyzing mission parameters...</p>
                 </div>
-                <div class="grid-matrix-container" id="cardGridMatrix"></div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <p style="font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; font-weight: bold; letter-spacing: 0.5px;">Select Correction Tool</p>
+                    <div class="action-tool-buttons-grid" id="toolSelectionGridBox">
+                        </div>
+                </div>
             </div>
 
-            <div class="crossword-side-panel">
-                <div class="crossword-title-box">
-                    <h4>Secret Keyword Matrix</h4>
-                    <p style="font-size: 0.75rem; color: var(--text-muted);">Solve pairs on the left to reveal the secret textbook word clue!</p>
+            <div class="map-canvas-viewport">
+                
+                <div class="interactive-board-strip" id="gameBoardProgressStrip">
+                    <div class="board-step-node active" id="nodeStep0">1</div>
+                    <div class="board-step-node" id="nodeStep1">2</div>
+                    <div class="board-step-node" id="nodeStep2">3</div>
+                    <div class="board-step-node" id="nodeStep3">4</div>
+                    <div class="board-step-node" id="nodeStep4">5</div>
                 </div>
 
-                <div class="word-box-container">
-                    <div class="crossword-row" id="crosswordTargetRow"></div>
-                </div>
+                <div class="live-challenge-paper-sheet" id="liveDocumentPaperSheet">
+                    </div>
 
-                <div class="clues-list-box">
-                    <p style="font-weight: 600; color: #ffffff;">Proofing Clues Covered (Pages 50-56):</p>
-                    <div class="clue-item"><span>•</span> <p>Finding & correcting grammar dictionary anomalies.</p></div>
-                    <div class="clue-item"><span>•</span> <p>Searching alternative synonyms & context metrics.</p></div>
-                    <div class="clue-item"><span>•</span> <p>Inserting picture files, clipart, and design vector shapes.</p></div>
-                </div>
             </div>
 
         </div>
 
-        <div id="endEvaluationBlock" class="end-game-card hidden">
-            <div style="font-size: 5rem; margin-bottom: 20px;">🏆</div>
-            <h2 style="color: var(--success-green); font-size: 2rem; font-weight: 800;">Word-3 Maze Solved!</h2>
-            <p style="color: var(--text-muted); margin: 15px auto 30px auto; max-width: 500px; font-size: 1.05rem;">
-                Fantastic pairing insight! You linked all editing utilities, proofing modules, and shape descriptors across <strong>Pages 50 to 56</strong> perfectly, uncovering the secret keyword: <strong style="color: var(--accent-cyan);">REVIEW</strong>.
-            </p>
-            <button class="btn-lets-start ready" style="padding: 12px 40px; font-size: 1rem;" onclick="location.reload()">Restart Maze</button>
+        <div id="endEvaluationBlock" class="hidden" style="text-align: center; margin: auto; padding: 50px;">
+            <div style="font-size: 5rem; margin-bottom: 15px;">🚀✨</div>
+            <h2 style="color: var(--success-green); font-size: 2.2rem; font-weight: 800;">Mission Accomplished!</h2>
+            <p style="color: var(--text-muted); margin: 15px auto 30px auto; max-width: 550px; font-size: 1.05rem;" id="finalSummaryParagraphText"></p>
+            <button class="btn-lets-start ready" style="padding: 14px 45px; font-size: 1rem;" onclick="location.reload()">Re-Run Rescue Mission</button>
         </div>
 
     </div>
@@ -439,7 +422,7 @@
                 fb.style.display = "flex"; fb.style.justifyContent = "center"; fb.style.alignItems = "center";
                 fb.style.background = "linear-gradient(135deg, #165cc0, #00e5ff)";
                 fb.style.color = "white"; fb.style.fontSize = "2rem"; fb.style.fontWeight = "bold";
-                fb.innerText = "WM";
+                fb.innerText = "RR";
                 img.parentNode.replaceChild(fb, img);
             }
         }
@@ -450,165 +433,169 @@
             let progress = 0;
 
             const timer = setInterval(() => {
-                progress += 4;
+                progress += 5;
                 if (bar) bar.style.width = progress + "%";
                 if (progress >= 100) {
                     clearInterval(timer);
                     if (btn) btn.classList.add("ready");
                 }
-            }, 30);
+            }, 35);
         });
 
-        function enterGameInterface() {
+        function launchRangerRescueInterface() {
             document.getElementById("splashScreen").style.opacity = "0";
             setTimeout(() => {
                 document.getElementById("splashScreen").style.display = "none";
                 const shell = document.getElementById("appInterfaceShell");
                 shell.classList.remove("hidden");
                 shell.classList.add("visible");
-                generateMemoryMazeLayout();
+                initializeRangerGameEngineLoop();
             }, 400);
         }
 
-        const puzzleDatabasePairs = [
-            { id: 1, val: "Spelling Check", matchingId: 101 },
-            { id: 101, val: "Fixes 'computr' Error", matchingId: 1 },
-            
-            { id: 2, val: "Thesaurus Tool", matchingId: 102 },
-            { id: 102, val: "Finds Word Synonyms", matchingId: 2 },
-            
-            { id: 3, val: "Find & Replace", matchingId: 103 },
-            { id: 103, val: "Swaps text globally", matchingId: 3 },
-            
-            { id: 4, val: "Insert Shape", matchingId: 104 },
-            { id: 104, val: "Adds circles & squares", matchingId: 4 },
-            
-            { id: 5, val: "Insert Picture", matchingId: 105 },
-            { id: 105, val: "Injects photos & graphics", matchingId: 5 },
-            
-            { id: 6, val: "Word Count Info", matchingId: 106 },
-            { id: 106, val: "Audits pages & strings", matchingId: 6 }
+        // ==========================================================================
+        // DYNAMIC WORKSPACE DATABASE & LEVEL MAP ENGINE (PAGES 50-56)
+        // ==========================================================================
+        const levelDatabaseJourney = [
+            {
+                clue: "Oh no! The word 'application' is missing a vowel and reads 'applicatin'. Choose the appropriate ribbon module to scan and correct it.",
+                correctTool: "Spelling & Grammar Check",
+                icon: "🔍",
+                docHtml: `<p style="font-size:1.1rem; line-height:1.6;">Welcome to our office. Please fill out this word processing <span class="error-squiggle">applicatin</span> form completely before submission.</p>`,
+                solvedHtml: `<p style="font-size:1.1rem; color:#2b6cb0;">✔ <strong>Corrected:</strong> Welcome to our office. Please fill out this word processing <strong>application</strong> form completely before submission.</p>`
+            },
+            {
+                clue: "This paragraph says 'good' too many times. Use the lookup utility to scan synonyms and replace it with 'sensational'.",
+                correctTool: "Thesaurus Dictionary",
+                icon: "📚",
+                docHtml: `<p style="font-size:1.1rem; line-height:1.6;">Our team achieved a very good milestone last quarter, setting records across the industry.</p>`,
+                solvedHtml: `<p style="font-size:1.1rem; color:#2b6cb0;">✔ <strong>Synonym Exchanged:</strong> Our team achieved a very <strong>sensational</strong> milestone last quarter, setting records across the industry.</p>`
+            },
+            {
+                clue: "The legacy text has outdated records marked 'System V2'. Use the global utility to find and replace it with 'Innovine Engine'.",
+                correctTool: "Find & Replace Action",
+                icon: "🔄",
+                docHtml: `<p style="font-size:1.1rem; line-height:1.6;">All operations are running smoothly under the framework parameters managed by <strong>System V2</strong>.</p>`,
+                solvedHtml: `<p style="font-size:1.1rem; color:#2b6cb0;">✔ <strong>Replaced Globally:</strong> All operations are running smoothly under the framework parameters managed by <strong>Innovine Engine</strong>.</p>`
+            },
+            {
+                clue: "We need a neat structural boundary marker here. Pick the option that allows adding shapes like circles or rectangles directly into text.",
+                correctTool: "Insert Shapes Feature",
+                icon: "⬡",
+                docHtml: `<p style="margin-bottom:10px;">Diagram Blueprint Area:</p><div class="shape-box-placeholder">[ Missing Shape Vector Placement Window ]</div>`,
+                solvedHtml: `<div style="background:#3182ce; color:white; padding:12px; border-radius:6px; font-weight:bold; text-align:center; max-width:200px; margin:auto;">Shape: Rectangle Inserted</div>`
+            },
+            {
+                clue: "This promotional page layout needs an external company file or branding photo asset inserted right between the lines.",
+                correctTool: "Insert Picture Command",
+                icon: "🖼️",
+                docHtml: `<p style="margin-bottom:10px;">Marketing Brochure Header:</p><div class="shape-box-placeholder">[ Photo File Placeholder Area ]</div>`,
+                solvedHtml: `<div style="text-align:center;"><span style="font-size:3rem;">🖼️</span><br><p style="font-size:0.85rem; color:#4a5568;">[ Innovine Logo Image Connected ]</p></div>`
+            }
         ];
 
-        const crosswordSecretKeyword = ["R", "E", "V", "I", "E", "W"]; 
+        const secondaryFillerTools = [
+            "Page Border Styling", "Header & Footer Edit", "Table Construction", "Margin Alignment Setup"
+        ];
 
-        let selectedCardsTrackingArray = [];
-        let completedPairsCount = 0;
-        let lockGridSelection = false;
+        let levelIndex = 0;
+        let runningScoreXP = 0;
 
-        function triggerSoundFeedback(elementId) {
+        function triggerSoundEffect(elementId) {
             try {
-                const s = document.getElementById(elementId);
-                if (s) { 
-                    s.currentTime = 0; 
-                    s.play().catch(e => console.log("Audio playback deferred until interaction:", e)); 
+                const sound = document.getElementById(elementId);
+                if (sound) { sound.currentTime = 0; sound.play().catch(e => {}); }
+            } catch(err) {}
+        }
+
+        function initializeRangerGameEngineLoop() {
+            levelIndex = 0;
+            runningScoreXP = 0;
+            renderCurrentRangerLevelState();
+        }
+
+        function renderCurrentRangerLevelState() {
+            document.getElementById("scoreDisplayBadge").innerText = runningScoreXP + " XP";
+            
+            // Adjust linear board map node styling tags
+            for (let i = 0; i < 5; i++) {
+                const node = document.getElementById(`nodeStep${i}`);
+                if (node) {
+                    node.className = "board-step-node";
+                    if (i < levelIndex) node.classList.add("done");
+                    if (i === levelIndex) node.classList.add("active");
                 }
-            } catch(err) {
-                console.error("Audio trigger setup failed:", err);
             }
-        }
 
-        function generateMemoryMazeLayout() {
-            const crossRow = document.getElementById("crosswordTargetRow");
-            crossRow.innerHTML = "";
-            crosswordSecretKeyword.forEach(() => {
-                const box = document.createElement("div");
-                box.className = "crossword-cell";
-                box.innerText = "?";
-                crossRow.appendChild(box);
-            });
+            const currentData = levelDatabaseJourney[levelIndex];
+            document.getElementById("rangerTaskClueText").innerText = currentData.clue;
+            document.getElementById("liveDocumentPaperSheet").innerHTML = currentData.docHtml;
 
-            const shuffledDeck = [...puzzleDatabasePairs].sort(() => Math.random() - 0.5);
-            const container = document.getElementById("cardGridMatrix");
-            container.innerHTML = "";
+            // Generate action tool array choice selections
+            const toolGrid = document.getElementById("toolSelectionGridBox");
+            toolGrid.innerHTML = "";
 
-            shuffledDeck.forEach(data => {
-                const card = document.createElement("div");
-                card.className = "memory-card";
-                card.dataset.id = data.id;
-                card.dataset.matchingId = data.matchingId;
+            let selectionsList = secondaryFillerTools.sort(() => Math.random() - 0.5).slice(0, 2);
+            selectionsList.push(currentData.correctTool);
+            selectionsList.sort(() => Math.random() - 0.5);
 
-                card.innerHTML = `
-                    <div class="card-front">?</div>
-                    <div class="card-back">${data.val}</div>
-                `;
+            selectionsList.forEach(toolTitle => {
+                const matchesLevelData = levelDatabaseJourney.find(l => l.correctTool === toolTitle);
+                const explicitIcon = matchesLevelData ? matchesLevelData.icon : "🛠️";
 
-                card.onclick = () => executeCardFlipLogic(card);
-                container.appendChild(card);
+                const btn = document.createElement("button");
+                btn.className = "tool-action-btn";
+                btn.innerHTML = `<div class="btn-emblem-sphere">${explicitIcon}</div> <span>${toolTitle}</span>`;
+                btn.onclick = () => evaluateRangerSelectionAction(toolTitle, currentData.correctTool);
+                toolGrid.appendChild(btn);
             });
         }
 
-        function executeCardFlipLogic(cardElement) {
-            if (lockGridSelection || cardElement.classList.contains("flipped") || cardElement.classList.contains("matched")) {
-                return;
-            }
-
-            cardElement.classList.add("flipped");
-            selectedCardsTrackingArray.push(cardElement);
-
-            if (selectedCardsTrackingArray.length === 2) {
-                lockGridSelection = true;
-                evaluateSelectedCardsPair();
-            }
-        }
-
-        function evaluateSelectedCardsPair() {
-            const [card1, card2] = selectedCardsTrackingArray;
-            const id1 = parseInt(card1.dataset.id);
-            const matchId1 = parseInt(card1.dataset.matchingId);
-            const id2 = parseInt(card2.dataset.id);
-
-            if (matchId1 === id2) {
-                card1.classList.add("matched");
-                card2.classList.add("matched");
-                completedPairsCount++;
+        function evaluateRangerSelectionAction(chosenToolName, absoluteCorrectAnswer) {
+            const currentLevelData = levelDatabaseJourney[levelIndex];
+            
+            if (chosenToolName === absoluteCorrectAnswer) {
+                runningScoreXP += 200;
+                triggerSoundEffect("audioCorrect");
                 
-                document.getElementById("matchCounterLabel").innerText = `${completedPairsCount} / 6`;
-                
-                // Plays precise audio from folder: correct.mp3
-                triggerSoundFeedback("audioCorrect");
-
-                revealCrosswordLetterCell(completedPairsCount - 1);
-
                 if (typeof confetti !== 'undefined') {
-                    confetti({ particleCount: 15, spread: 35, origin: { y: 0.8 } });
+                    confetti({ particleCount: 20, spread: 45, origin: { y: 0.75 } });
                 }
 
-                selectedCardsTrackingArray = [];
-                lockGridSelection = false;
-
-                if (completedPairsCount === 6) {
-                    setTimeout(() => triggerFinalVictorySequence(), 800);
-                }
-            } else {
-                // Plays precise audio from folder: wrong.mp3
-                triggerSoundFeedback("audioWrong");
+                document.getElementById("liveDocumentPaperSheet").innerHTML = currentLevelData.solvedHtml;
+                
+                // Advance journey track state smoothly after animation window gap closes
                 setTimeout(() => {
-                    card1.classList.remove("flipped");
-                    card2.classList.remove("flipped");
-                    selectedCardsTrackingArray = [];
-                    lockGridSelection = false;
-                }, 1000);
+                    levelIndex++;
+                    if (levelIndex < levelDatabaseJourney.length) {
+                        renderCurrentRangerLevelState();
+                    } else {
+                        triggerFinalRescueVictoryEndGame();
+                    }
+                }, 1600);
+
+            } else {
+                triggerSoundEffect("audioWrong");
+                // Brief visual bounce or indication can occur here
+                const boardPaper = document.getElementById("liveDocumentPaperSheet");
+                boardPaper.style.transform = "translateX(5px)";
+                setTimeout(() => boardPaper.style.transform = "translateX(0)", 100);
             }
         }
 
-        function revealCrosswordLetterCell(indexValue) {
-            const targetRowCells = document.getElementById("crosswordTargetRow").children;
-            if (targetRowCells[indexValue]) {
-                targetRowCells[indexValue].innerText = crosswordSecretKeyword[indexValue];
-                targetRowCells[indexValue].classList.add("revealed");
-            }
-        }
-
-        function triggerFinalVictorySequence() {
+        function triggerFinalRescueVictoryEndGame() {
             document.getElementById("mainGameplaySplitArea").classList.add("hidden");
+            document.getElementById("scoreDisplayBadge").innerText = runningScoreXP + " XP";
+            
+            triggerSoundEffect("audioClap");
+            
+            const summary = document.getElementById("finalSummaryParagraphText");
+            summary.innerHTML = `Sensational execution! You completed all 5 core documentation levels from <strong>Pages 50 to 56</strong>. You successfully deployed spelling controls, thesaurus synonym mappings, replacements, picture objects, and shape nodes.<br><br>Final Evaluation Score: <strong>${runningScoreXP} / 1000 Total XP</strong>`;
+            
             document.getElementById("endEvaluationBlock").classList.remove("hidden");
             
-            // Plays precise audio from folder: clap.mp3
-            triggerSoundFeedback("audioClap");
-            
             if (typeof confetti !== 'undefined') {
-                confetti({ particleCount: 80, spread: 80 });
+                confetti({ particleCount: 100, spread: 90 });
             }
         }
     </script>

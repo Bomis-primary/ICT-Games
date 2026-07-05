@@ -48,7 +48,7 @@
         }
 
         header {
-            display: none; /* Initially hidden, displayed via JS after 5s */
+            display: none; /* Controlled dynamically post-intro */
             justify-content: space-between;
             align-items: center;
             border-bottom: 3px solid var(--primary-light);
@@ -89,7 +89,7 @@
             line-height: 1.5;
         }
 
-        /* Strict Screen Display Management */
+        /* Screen Controller Configurations */
         .screen {
             display: none;
             width: 100%;
@@ -103,7 +103,7 @@
             display: flex;
         }
 
-        /* Logo Intro Screen Layout */
+        /* Strict Intro Layout: Exclusively Center Logo */
         #screen-intro {
             background-color: #ffffff;
             display: flex;
@@ -120,18 +120,9 @@
             justify-content: center;
             align-items: center;
             min-height: 150px;
-            margin-bottom: 20px;
         }
 
-        .intro-text {
-            color: #888; 
-            font-weight: bold; 
-            letter-spacing: 2px; 
-            font-size: 1rem;
-            margin-top: 15px;
-        }
-
-        /* Buttons and Interactive Elements */
+        /* Interactive Dynamic Asset Styling */
         .btn {
             background: var(--secondary);
             color: white;
@@ -248,7 +239,7 @@
         <canvas id="confetti-canvas"></canvas>
 
         <header id="game-header">
-            <img src="assets/innovine-logo.png" alt="Innovine Logo" class="logo" onerror="this.style.display='none';">
+            <img src="assets/image_479de3.png" alt="Innovine Logo" class="logo" onerror="this.style.display='none';">
             <div class="stats-bar">
                 <div class="stat-box">Score: <span id="score-val">0</span></div>
                 <div class="stat-box">Quest: <span id="q-progress">1</span>/12</div>
@@ -257,21 +248,20 @@
 
         <div id="screen-intro" class="screen active">
             <div class="intro-logo-box">
-                <img src="assets/image_479de3.png" alt="Innovine Logo" style="max-width: 320px; width: 100%; height: auto;" onerror="this.src='https://svgshare.com/i/15Y4.svg'">
+                <img src="assets/innovine-logo.png" alt="Innovine Logo" style="max-width: 320px; width: 100%; height: auto;" onerror="this.src='https://svgshare.com/i/15Y4.svg'">
             </div>
-            <p class="intro-text">INNOVINE UNIVERSAL SOLUTIONS</p>
         </div>
 
         <div id="screen-start" class="screen">
             <h1>Files and Folders Explorer Quest! 🚀</h1>
-            <p class="instructions">Welcome, Explorer! Let's test your computer knowledge about handling files, default file extensions, validation rules, and system actions.</p>
+            <p class="instructions">Welcome, Explorer! Let's test your computer knowledge about handling files, default file extensions, validation rules, and system folder management actions.</p>
             <div style="font-size: 4.5rem; margin-bottom: 20px;">📁✨📄</div>
             <button class="btn" onclick="startGame()">Start Quest</button>
         </div>
 
         <div id="screen-gameplay" class="screen">
             <h1 id="gameplay-title">Level Question</h1>
-            <p class="instructions" id="gameplay-instructions">Instructions layout placeholder.</p>
+            <p class="instructions" id="gameplay-instructions">Dynamic instructions context box.</p>
             
             <div id="dynamic-context-box" style="width:100%;"></div>
 
@@ -282,7 +272,7 @@
 
         <div id="screen-gameover" class="screen">
             <h1>Quest Complete! 🎉🏆</h1>
-            <p class="instructions">Outstanding job! You have safely explored the directory management mechanics.</p>
+            <p class="instructions">Outstanding job! You have safely explored and completed the directory management mechanics challenge.</p>
             <div style="font-size: 2.2rem; margin: 20px 0; color: var(--primary); font-weight: bold;">
                 Your Total Score: <span id="final-score">0</span> / 120
             </div>
@@ -292,7 +282,7 @@
     </div>
 
     <script>
-        // System Parameters Setup
+        // Game State Variables
         let score = 0;
         let globalQuestionIndex = 0;
         const totalQuestionsCount = 12;
@@ -301,12 +291,12 @@
         const sndClap = document.getElementById('sound-clap');
         const sndWrong = document.getElementById('sound-wrong');
 
-        // Linear Textbook Sourced Core Dataset Pool (12 Unique Content Items)
+        // Linear Question Array Framework (12 Sourced Items, No Repetition, No Loops)
         const questDatabase = [
             {
                 type: 'sort',
                 title: 'Level 1: Extension Matcher 📄',
-                instruction: 'Look at the file extension! Choose the correct folder to safely organize it.',
+                instruction: 'Look at the file extension! Choose the correct folder to organize it.',
                 item: 'story.txt',
                 answer: 'text',
                 options: [
@@ -317,7 +307,7 @@
             {
                 type: 'sort',
                 title: 'Level 1: Extension Matcher 📄',
-                instruction: 'Look at the file extension! Choose the correct folder to safely organize it.',
+                instruction: 'Look at the file extension! Choose the correct folder to organize it.',
                 item: 'bird.png',
                 answer: 'image',
                 options: [
@@ -328,7 +318,7 @@
             {
                 type: 'sort',
                 title: 'Level 1: Extension Matcher 📄',
-                instruction: 'Look at the file extension! Choose the correct folder to safely organize it.',
+                instruction: 'Look at the file extension! Choose the correct folder to organize it.',
                 item: 'fish.bmp',
                 answer: 'image',
                 options: [
@@ -339,7 +329,7 @@
             {
                 type: 'sort',
                 title: 'Level 1: Extension Matcher 📄',
-                instruction: 'Look at the file extension! Choose the correct folder to safely organize it.',
+                instruction: 'Look at the file extension! Choose the correct folder to organize it.',
                 item: 'alphabets.txt',
                 answer: 'text',
                 options: [
@@ -350,7 +340,7 @@
             {
                 type: 'sort',
                 title: 'Level 1: Extension Matcher 📄',
-                instruction: 'Look at the file extension! Choose the correct folder to safely organize it.',
+                instruction: 'Look at the file extension! Choose the correct folder to organize it.',
                 item: 'home.jpg',
                 answer: 'image',
                 options: [
@@ -426,10 +416,10 @@
             }
         ];
 
-        // Strict 5-Second Isolation Timeout Sequence
+        // Handles strict 5-second exclusive branding timeline setup
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                // Reveal global layout elements post-intro and launch menu cleanly
+                // Once elapsed, activate layout structure & instructions panel safely
                 document.getElementById('game-header').style.display = 'flex';
                 showScreen('screen-start');
             }, 5000); 
@@ -460,6 +450,7 @@
         function loadQuestionPipeline() {
             showScreen('screen-gameplay');
             
+            // Clean conditional ceiling break to terminate runtime loops cleanly
             if (globalQuestionIndex >= questDatabase.length) {
                 executeGameOver();
                 return;
@@ -515,6 +506,7 @@
         function verifyUserAnswer(isCorrectResult) {
             const feedbackField = document.getElementById('gameplay-feedback');
             
+            // Temporary interaction lock during answer feedback sequence
             document.querySelectorAll('.folder-target, .choice-card').forEach(elem => {
                 elem.style.pointerEvents = 'none';
             });
@@ -524,12 +516,12 @@
                 feedbackField.className = "feedback text-success";
                 feedbackField.innerText = "Correct! ✨ Smart Answer! 👏";
                 
-                // Simultaneous play execution for split assets
+                // Triggers separate sound files simultaneously
                 sndCorrect.currentTime = 0;
-                sndCorrect.play().catch(err => console.log("Waiting for gesture."));
+                sndCorrect.play().catch(err => console.log("Audio awaiting gesture context."));
                 
                 sndClap.currentTime = 0;
-                sndClap.play().catch(err => console.log("Waiting for gesture."));
+                sndClap.play().catch(err => console.log("Audio awaiting gesture context."));
                 
                 triggerConfettiEffect();
             } else {
@@ -537,7 +529,7 @@
                 feedbackField.innerText = "Oops! Review your computer chapter files rules.";
                 
                 sndWrong.currentTime = 0;
-                sndWrong.play().catch(err => console.log("Audio asset error."));
+                sndWrong.play().catch(err => console.log("Audio asset blocked or missing."));
             }
 
             globalQuestionIndex++;
@@ -550,7 +542,7 @@
             document.getElementById('final-score').innerText = score;
         }
 
-        // Particle System Canvas Framework
+        // Particle Rendering Canvas Logic
         const canvas = document.getElementById('confetti-canvas');
         const ctx = canvas.getContext('2d');
         let particlesPool = [];

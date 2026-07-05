@@ -224,13 +224,13 @@
             justify-content: space-between;
         }
 
-        /* Vector Highlight Indicator Layout Node */
+        /* Fixed Highlight Element Indicator Layout Node */
         #activeHighlightPointerIndicator {
             position: absolute;
             border: 3.5px solid var(--scratch-orange);
             background: rgba(255, 171, 25, 0.12);
             border-radius: 8px;
-            pointer-events: none;
+            pointer-events: none !important; /* Forces transparency to any mouse registration bugs */
             transition: all 0.25s ease-out;
             display: none;
             z-index: 50;
@@ -379,15 +379,17 @@
     </div>
 
     <script>
-        // Splash page exclusive launch timing loops
+        // Splash screen handler loop
         setTimeout(() => {
             const splashNode = document.getElementById("splashScreen");
-            splashNode.style.opacity = "0";
-            setTimeout(() => {
-                splashNode.style.setProperty("display", "none", "important");
-                document.body.classList.add("game-active");
-                document.getElementById("appInterfaceShell").classList.remove("hidden");
-            }, 600);
+            if(splashNode) {
+                splashNode.style.opacity = "0";
+                setTimeout(() => {
+                    splashNode.style.setProperty("display", "none", "important");
+                    document.body.classList.add("game-active");
+                    document.getElementById("appInterfaceShell").classList.remove("hidden");
+                }, 600);
+            }
         }, 5000);
 
         const sectorDatabase = [
@@ -494,7 +496,6 @@
                 mTitle.style.color = "#2ecc71";
                 playAudioTrack("audioCorrect");
                 
-                // Offline-safe confetti launcher check
                 if (typeof confetti !== 'undefined') {
                     confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
                 }
@@ -506,7 +507,6 @@
                 playAudioTrack("audioWrong");
             }
             
-            // This line is now guaranteed to run safely under any internet conditions!
             modalShroud.classList.add("active");
         }
 

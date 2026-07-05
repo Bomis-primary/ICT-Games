@@ -3,6 +3,633 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Innovine Universal - Ribbon Laser Space Ranger</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #060913;
+            --card-dark: #0e1322;
+            --accent-cyan: #00e5ff;
+            --accent-blue: #2979ff;
+            --word-blue: #165cc0;
+            --text-light: #ffffff;
+            --text-muted: #64758d;
+            --error-red: #ff5252;
+            --success-green: #00e676;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* ==========================================================================
+           1. SCREEN 1: BRAND LOGO ONLY WINDOW (STRICTLY FOR 5 SECONDS)
+           ========================================================================== */
+        #brandSplashWindow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .brand-logo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 40px;
+        }
+
+        .innovine-icon-emblem {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #0f52ba, #00d4ff);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 8px 20px rgba(15, 82, 186, 0.15);
+        }
+
+        .innovine-icon-emblem::before {
+            content: '';
+            position: absolute;
+            width: 105px;
+            height: 14px;
+            background: #ffffff;
+            transform: rotate(-45deg);
+        }
+
+        .innovine-icon-emblem::after {
+            content: '';
+            position: absolute;
+            width: 34px;
+            height: 34px;
+            background: #ffffff;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .innovine-text-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .innovine-text-main {
+            font-size: 4.4rem;
+            font-weight: 800;
+            line-height: 0.85;
+            color: #0b1c3f;
+            letter-spacing: -2px;
+        }
+
+        .innovine-text-sub {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #00bdf2;
+            letter-spacing: 9.5px;
+            text-transform: uppercase;
+            margin-top: 6px;
+            padding-left: 4px;
+        }
+
+        .timer-track-wrapper {
+            width: 300px;
+            height: 6px;
+            background: #edf2f7;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .timer-track-progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #0f52ba, #00d4ff);
+        }
+
+        /* ==========================================================================
+           2. SCREEN 2: POST-SPLASH INSTRUCTIONS PANEL
+           ========================================================================== */
+        #instructionalOverlayWindow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #101726 0%, #05080f 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9998;
+            transition: opacity 0.4s ease;
+            padding: 20px;
+        }
+
+        .instruction-card-body {
+            background: #0e1424;
+            border: 1px solid rgba(255,255,255,0.08);
+            width: 100%;
+            max-width: 580px;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+
+        .card-header-emblem {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .instruction-rules-list {
+            text-align: left;
+            margin: 25px 0;
+            background: rgba(255,255,255,0.02);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+
+        .instruction-rules-list p {
+            font-size: 0.95rem;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.4;
+        }
+
+        .instruction-rules-list p strong {
+            color: var(--accent-cyan);
+        }
+
+        .btn-action-trigger {
+            background: linear-gradient(135deg, #2979ff, #00b0ff);
+            color: #ffffff;
+            border: none;
+            padding: 14px 45px;
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(41, 121, 255, 0.3);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .btn-action-trigger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(41, 121, 255, 0.4);
+        }
+
+        /* ==========================================================================
+           3. MAIN PLAYFIELD ARCADE COCKPIT
+           ========================================================================== */
+        .app-window {
+            width: 95vw;
+            max-width: 1100px;
+            height: 85vh;
+            background: var(--card-dark);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.08);
+            display: grid;
+            grid-template-rows: auto 1fr;
+            overflow: hidden;
+            opacity: 0;
+            transform: scale(0.97);
+            transition: all 0.5s ease;
+        }
+
+        .app-window.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .game-header {
+            background: #080c16;
+            padding: 15px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .arcade-container {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            height: 100%;
+        }
+
+        .space-canvas-viewport {
+            background: #050810;
+            position: relative;
+            overflow: hidden;
+            border-right: 1px solid rgba(255,255,255,0.06);
+        }
+
+        #spaceRangerShip {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 45px;
+            background: linear-gradient(to top, var(--word-blue), var(--accent-cyan));
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            filter: drop-shadow(0 0 10px var(--accent-cyan));
+            transition: left 0.1s ease-out;
+        }
+
+        .invader-target {
+            position: absolute;
+            background: #162238;
+            border: 1px solid var(--accent-blue);
+            color: #ffffff;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .invader-target.broken {
+            border-color: var(--error-red);
+            color: var(--error-red);
+            background: rgba(255,82,82,0.05);
+        }
+
+        .laser-beam {
+            position: absolute;
+            width: 4px;
+            height: 18px;
+            background: var(--accent-cyan);
+            box-shadow: 0 0 8px var(--accent-cyan);
+            border-radius: 2px;
+        }
+
+        .hud-control-deck {
+            background: #0a0e1a;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .weapon-pill-box {
+            background: #121829;
+            border: 1px solid #1f2a45;
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .ammo-selection-btn {
+            background: #1a233a;
+            border: 1px solid #2d3c63;
+            color: #71829e;
+            padding: 10px 14px;
+            border-radius: 8px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .ammo-selection-btn.active {
+            background: var(--word-blue);
+            border-color: var(--accent-cyan);
+            color: #ffffff;
+            box-shadow: 0 0 10px rgba(0,229,255,0.2);
+        }
+
+        .direction-arrow-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: auto;
+        }
+
+        .control-pad-btn {
+            background: #141c30;
+            border: 1px solid #273554;
+            color: #ffffff;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .control-pad-btn:active {
+            background: var(--accent-blue);
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <audio id="audioCorrect" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="audioClap" src="assets/clap.mp3" preload="auto"></audio>
+
+    <div id="brandSplashWindow">
+        <div class="brand-logo-wrapper">
+            <div class="innovine-icon-emblem"></div>
+            <div class="innovine-text-block">
+                <span class="innovine-text-main">innovine</span>
+                <span class="innovine-text-sub">universal</span>
+            </div>
+        </div>
+        <div class="timer-track-wrapper">
+            <div id="brandSplashProgress" class="timer-track-progress"></div>
+        </div>
+    </div>
+
+    <div id="instructionalOverlayWindow" class="hidden">
+        <div class="instruction-card-body">
+            <div class="card-header-emblem">🛸</div>
+            <h2 style="color: #ffffff; font-size: 1.6rem; margin-bottom: 5px;">Ribbon Ranger Space Arena</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">MS Word-3 Proofing & Objects (Pages 50-56)</p>
+            
+            <div class="instruction-rules-list">
+                <p>🔹 Use <strong>◀ Left</strong> and <strong>Right ▶</strong> UI controls or keyboard arrows to align your ship.</p>
+                <p>🔹 Match weapons to targets: Shoot typos with the <strong>Spelling Laser</strong> and layout spaces with the <strong>Illustration Ray</strong>.</p>
+                <p>🔹 Incorrect alignments decrease your final operational score output.</p>
+            </div>
+
+            <button class="btn-action-trigger" onclick="closeInstructionsAndLaunchGame()">START MISSION</button>
+        </div>
+    </div>
+
+    <div class="app-window hidden" id="appInterfaceShell">
+        
+        <div class="game-header">
+            <div>
+                <h3 style="font-size: 1.05rem;">Ribbon Laser Space Ranger</h3>
+                <p style="font-size: 0.72rem; color: var(--text-muted);">Shoot & Correct Document Elements (Pages 50-56)</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.03); padding: 5px 15px; border-radius: 20px; font-size: 0.85rem;">
+                Score: <strong id="scoreCounterText" style="color: var(--accent-cyan);">0 XP</strong>
+            </div>
+        </div>
+
+        <div class="arcade-container" id="mainGameplaySplitArea">
+            
+            <div class="space-canvas-viewport" id="spaceCanvasField">
+                <div id="spaceRangerShip"></div>
+            </div>
+
+            <div class="hud-control-deck">
+                <div class="weapon-pill-box">
+                    <p style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">1. Choose Laser Weapon Type</p>
+                    <button class="ammo-selection-btn active" id="laserSpelling" onclick="switchLaserAmmo('SPELL')">🔍 Spelling Laser</button>
+                    <button class="ammo-selection-btn" id="laserIllustration" onclick="switchLaserAmmo('IMAGE')">🖼️ Illustration Ray</button>
+                </div>
+
+                <div class="direction-arrow-pad">
+                    <button class="control-pad-btn" onclick="shiftSpaceshipLocation(-40)">◀</button>
+                    <button class="control-pad-btn" style="background: var(--accent-blue);" onclick="fireSpaceshipLaser()">⚡ FIRE</button>
+                    <button class="control-pad-btn" onclick="shiftSpaceshipLocation(40)">▶</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="endEvaluationBlock" class="hidden" style="text-align: center; margin: auto; padding: 50px;">
+            <div style="font-size: 4.5rem; margin-bottom: 15px;">🌌🛸</div>
+            <h2 style="color: var(--success-green); font-size: 2rem; font-weight: 800;">Deep Space Cleaned!</h2>
+            <p style="color: var(--text-muted); margin: 15px auto 30px auto; max-width: 520px; font-size: 1rem;">
+                Excellent precision alignment! You successfully cleared all typographic errors and layout boxes matching <strong>Pages 50 to 56</strong> using your text control weapons.
+            </p>
+            <button class="btn-action-trigger" onclick="location.reload()">Re-Launch Mission</button>
+        </div>
+
+    </div>
+
+    <script>
+        // Execution Cycle: Auto run 5-second Isolated Branding Progress Sequence
+        window.addEventListener('DOMContentLoaded', () => {
+            const progressBar = document.getElementById("brandSplashProgress");
+            let timeElapsed = 0;
+            const targetTime = 5000; // Exactly 5 Seconds
+            const intervalStep = 50;
+
+            const brandingInterval = setInterval(() => {
+                timeElapsed += intervalStep;
+                let currentPct = (timeElapsed / targetTime) * 100;
+                if (progressBar) progressBar.style.width = Math.min(currentPct, 100) + "%";
+
+                if (timeElapsed >= targetTime) {
+                    clearInterval(brandingInterval);
+                    // Dismiss Branding Screen, launch Phase 2 Instructions View
+                    const splash = document.getElementById("brandSplashWindow");
+                    splash.style.opacity = "0";
+                    splash.style.transform = "scale(1.05)";
+                    setTimeout(() => {
+                        splash.style.display = "none";
+                        document.getElementById("instructionalOverlayWindow").classList.remove("hidden");
+                    }, 500);
+                }
+            }, intervalStep);
+        });
+
+        function closeInstructionsAndLaunchGame() {
+            document.getElementById("instructionalOverlayWindow").style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById("instructionalOverlayWindow").style.display = "none";
+                const shell = document.getElementById("appInterfaceShell");
+                shell.classList.remove("hidden");
+                shell.classList.add("visible");
+                startSpaceInvadersEngine();
+            }, 400);
+        }
+
+        // ==========================================================================
+        // ARCADE ENGINE CORE MATH & PROCESSES
+        // ==========================================================================
+        let gameScoreXP = 0;
+        let selectedAmmoType = "SPELL"; 
+        let spaceshipLeftPixels = 250; 
+        let invaderMoveLoop = null;
+
+        const targetsDataset = [
+            { text: "computr (Error)", type: "SPELL", broken: true },
+            { text: "[Empty Picture Box]", type: "IMAGE", broken: true },
+            { text: "thesaurus", type: "SPELL", broken: false },
+            { text: "prosessing (Error)", type: "SPELL", broken: true },
+            { text: "[Missing Shape Slot]", type: "IMAGE", broken: true },
+            { text: "Microsoft Word", type: "SPELL", broken: false }
+        ];
+
+        function playAssetSound(elementId) {
+            try {
+                const snd = document.getElementById(elementId);
+                if (snd) { snd.currentTime = 0; snd.play().catch(e => {}); }
+            } catch(e) {}
+        }
+
+        function switchLaserAmmo(type) {
+            selectedAmmoType = type;
+            document.getElementById("laserSpelling").classList.toggle("active", type === "SPELL");
+            document.getElementById("laserIllustration").classList.toggle("active", type === "IMAGE");
+        }
+
+        function shiftSpaceshipLocation(offset) {
+            const field = document.getElementById("spaceCanvasField");
+            spaceshipLeftPixels += offset;
+            spaceshipLeftPixels = Math.max(30, Math.min(field.clientWidth - 30, spaceshipLeftPixels));
+            document.getElementById("spaceRangerShip").style.left = spaceshipLeftPixels + "px";
+        }
+
+        function startSpaceInvadersEngine() {
+            window.addEventListener('keydown', (e) => {
+                if (e.key === "ArrowLeft") shiftSpaceshipLocation(-25);
+                if (e.key === "ArrowRight") shiftSpaceshipLocation(25);
+                if (e.key === " " || e.key === "Control") fireSpaceshipLaser();
+            });
+
+            spawnInvaderRowTargets();
+            let timerTick = 0;
+
+            invaderMoveLoop = setInterval(() => {
+                timerTick++;
+                advanceInvaderDownwardPhysics();
+
+                if (timerTick % 40 === 0) {
+                    spawnInvaderRowTargets();
+                }
+
+                if (timerTick >= 350) {
+                    clearInterval(invaderMoveLoop);
+                    triggerVictorySequenceEnd();
+                }
+            }, 50);
+        }
+
+        function spawnInvaderRowTargets() {
+            const field = document.getElementById("spaceCanvasField");
+            const data = targetsDataset[Math.floor(Math.random() * targetsDataset.length)];
+
+            const node = document.createElement("div");
+            node.className = "invader-target";
+            if (data.broken) node.classList.add("broken");
+            node.innerText = data.text;
+            node.dataset.type = data.type;
+            node.dataset.broken = data.broken;
+
+            node.style.left = Math.random() * (field.clientWidth - 140) + "px";
+            node.style.top = "-30px";
+
+            field.appendChild(node);
+        }
+
+        function advanceInvaderDownwardPhysics() {
+            const targets = document.querySelectorAll(".invader-target");
+            targets.forEach(target => {
+                let top = parseFloat(target.style.top || 0);
+                top += 2.5; 
+                target.style.top = top + "px";
+                if (top > 450) target.remove(); 
+            });
+
+            const lasers = document.querySelectorAll(".laser-beam");
+            lasers.forEach(laser => {
+                let bottom = parseFloat(laser.style.bottom || 0);
+                bottom += 14;
+                laser.style.bottom = bottom + "px";
+
+                const laserRect = laser.getBoundingClientRect();
+                targets.forEach(tgt => {
+                    const tgtRect = tgt.getBoundingClientRect();
+                    const hit = !(
+                        laserRect.right < tgtRect.left ||
+                        laserRect.left > tgtRect.right ||
+                        laserRect.bottom < tgtRect.top ||
+                        laserRect.top > tgtRect.bottom
+                    );
+
+                    if (hit) {
+                        laser.remove();
+                        if (tgt.dataset.type === selectedAmmoType && tgt.dataset.broken === "true") {
+                            gameScoreXP += 100;
+                            playAssetSound("audioCorrect");
+                            tgt.style.background = "var(--success-green)";
+                            tgt.style.color = "#000000";
+                            tgt.innerText = "FIXED! ✨";
+                            setTimeout(() => tgt.remove(), 250);
+                        } else {
+                            gameScoreXP = Math.max(0, gameScoreXP - 50);
+                            playAssetSound("audioWrong");
+                            tgt.remove();
+                        }
+                        document.getElementById("scoreCounterText").innerText = gameScoreXP + " XP";
+                    }
+                });
+
+                if (bottom > 600) laser.remove();
+            });
+        }
+
+        function fireSpaceshipLaser() {
+            const field = document.getElementById("spaceCanvasField");
+            const laser = document.createElement("div");
+            laser.className = "laser-beam";
+            
+            if (selectedAmmoType === "IMAGE") {
+                laser.style.background = "var(--success-green)";
+                laser.style.boxShadow = "0 0 8px var(--success-green)";
+            }
+
+            laser.style.left = (spaceshipLeftPixels) + "px";
+            laser.style.bottom = "65px";
+            field.appendChild(laser);
+        }
+
+        function triggerVictorySequenceEnd() {
+            document.getElementById("mainGameplaySplitArea").classList.add("hidden");
+            document.getElementById("endEvaluationBlock").classList.remove("hidden");
+            playAssetSound("audioClap");
+            
+            if (typeof confetti !== 'undefined') {
+                confetti({ particleCount: 85, spread: 75 });
+            }
+        }
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Innovine Universal - Ribbon Space Ranger</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>

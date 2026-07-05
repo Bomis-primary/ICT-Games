@@ -42,14 +42,14 @@
             text-align: center;
             position: relative;
             overflow: hidden;
-            min-height: 530px;
+            min-height: 540px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
         header {
-            display: flex;
+            display: none; /* Controlled dynamically post-intro */
             justify-content: space-between;
             align-items: center;
             border-bottom: 3px solid var(--primary-light);
@@ -58,7 +58,7 @@
         }
 
         .logo {
-            height: 60px;
+            height: 50px;
             object-fit: contain;
         }
 
@@ -78,21 +78,21 @@
 
         h1 {
             color: var(--primary);
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             font-size: 1.8rem;
         }
 
         p.instructions {
             font-size: 1.1rem;
-            color: #666;
+            color: #555;
             margin-bottom: 25px;
+            line-height: 1.5;
         }
 
-        /* Screen Toggle Controllers */
+        /* Screen Controller Configurations */
         .screen {
             display: none;
             width: 100%;
-            height: 100%;
             flex-direction: column;
             justify-content: center;
             align-items: center;
@@ -103,17 +103,28 @@
             display: flex;
         }
 
-        /* Intro Screen Specifics */
+        /* Pure Intro Layout */
         #screen-intro {
             background-color: #ffffff;
+            min-height: 400px;
         }
-        .intro-logo {
-            max-width: 320px;
-            height: auto;
-            animation: pulseIntro 2s infinite ease-in-out;
+        
+        .intro-logo-box {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
         }
 
-        /* Interactive Buttons */
+        .intro-text {
+            margin-top: 30px; 
+            color: #888; 
+            font-weight: bold; 
+            letter-spacing: 2px; 
+            font-size: 0.9rem;
+        }
+
+        /* Dynamic Interactive Asset Layouts */
         .btn {
             background: var(--secondary);
             color: white;
@@ -125,7 +136,7 @@
             cursor: pointer;
             transition: transform 0.2s, background 0.2s;
             box-shadow: 0 5px 15px rgba(255, 153, 0, 0.4);
-            margin-top: 20px;
+            margin-top: 15px;
         }
 
         .btn:hover {
@@ -133,11 +144,10 @@
             background: #e08800;
         }
 
-        /* Sorting Flex Layouts */
         .sorting-area {
             display: flex;
             justify-content: space-around;
-            margin-top: 30px;
+            margin-top: 15px;
             gap: 20px;
             width: 100%;
         }
@@ -145,21 +155,20 @@
         .file-card {
             background: #fff;
             border: 3px dashed var(--primary);
-            padding: 20px;
+            padding: 15px 30px;
             border-radius: 15px;
             font-size: 1.4rem;
             font-weight: bold;
             display: inline-block;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            animation: pulse 2s infinite;
         }
 
         .folder-target {
             background: var(--primary-light);
             border: 3px solid var(--primary);
             border-radius: 15px;
-            padding: 25px;
+            padding: 20px;
             width: 45%;
             cursor: pointer;
             transition: all 0.2s;
@@ -167,32 +176,34 @@
 
         .folder-target:hover {
             background: #d0e6e6;
-            transform: translateY(-5px);
+            transform: translateY(-3px);
         }
 
         .folder-icon {
-            font-size: 4rem;
-            margin-bottom: 10px;
+            font-size: 3.5rem;
+            margin-bottom: 5px;
         }
 
-        /* Grid Layout for Option Cards */
         .choices-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-top: 20px;
+            gap: 15px;
+            margin-top: 15px;
             width: 100%;
         }
 
         .choice-card {
             background: white;
             border: 2px solid #ddd;
-            padding: 20px;
+            padding: 18px;
             border-radius: 12px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .choice-card:hover {
@@ -200,18 +211,14 @@
             background-color: var(--primary-light);
         }
 
-        /* Animations */
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.03); }
-            100% { transform: scale(1); }
+        .feedback {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-top: 20px;
+            height: 30px;
         }
-
-        @keyframes pulseIntro {
-            0% { transform: scale(0.95); opacity: 0.8; }
-            50% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(0.95); opacity: 0.8; }
-        }
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
 
         canvas#confetti-canvas {
             position: absolute;
@@ -222,356 +229,366 @@
             pointer-events: none;
             z-index: 100;
         }
-
-        .feedback {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-top: 20px;
-            height: 35px;
-        }
-        .text-success { color: var(--success); }
-        .text-danger { color: var(--danger); }
     </style>
 </head>
 <body>
 
     <audio id="sound-correct" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="sound-correct" src="assets/clap.mp3" preload="auto"></audio>
+    <audio id="sound-clap" src="assets/clap.mp3" preload="auto"></audio>
     <audio id="sound-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <div class="game-container">
         <canvas id="confetti-canvas"></canvas>
 
-        <header id="game-header" style="display: none;">
-            <img src="assets/innovine_logo.png" alt="Innovine Logo" class="logo" onerror="this.src='https://via.placeholder.com/150x60?text=Innovine'">
+        <header id="game-header">
+            <img src="assets/innovine_logo.png" alt="Innovine Logo" class="logo" onerror="this.src='https://svgshare.com/i/15Y4.svg'">
             <div class="stats-bar">
                 <div class="stat-box">Score: <span id="score-val">0</span></div>
-                <div class="stat-box">Level: <span id="level-val">1</span>/3</div>
+                <div class="stat-box">Quest: <span id="q-progress">1</span>/12</div>
             </div>
         </header>
 
         <div id="screen-intro" class="screen active">
-            <img src="assets/innovine_logo.png" alt="Innovine Logo" class="intro-logo" onerror="this.src='https://via.placeholder.com/300x120?text=Innovine+Universal'">
-            <p style="margin-top: 25px; color:#777; font-weight: bold; letter-spacing: 1.5px; font-size: 0.9rem;">LOADING QUEST...</p>
+            <div class="intro-logo-box">
+                <img src="assets/innovine_logo.png" alt="Innovine Universal Solutions" style="max-width: 280px; width: 100%; height: auto;" onerror="this.src='https://svgshare.com/i/15Y4.svg'">
+            </div>
+            
         </div>
 
         <div id="screen-start" class="screen">
             <h1>Files and Folders Explorer Quest! 🚀</h1>
-            <p class="instructions">Welcome, Explorer! Let's test your computer knowledge about handling files, creating folders, and using the Recycle Bin.</p>
-            <div style="font-size: 5rem; margin: 20px 0;">📁✨📄</div>
+            <p class="instructions">Welcome, Explorer! Let's test your computer knowledge about handling files, default file extensions, validation rules, and system actions.</p>
+            <div style="font-size: 4.5rem; margin-bottom: 20px;">📁✨📄</div>
             <button class="btn" onclick="startGame()">Start Quest</button>
         </div>
 
-        <div id="screen-lvl1" class="screen">
-            <h1>Level 1: Extension Matcher 📄📁</h1>
-            <p class="instructions">Look at the file extension! Choose the correct folder to safely organize it.</p>
+        <div id="screen-gameplay" class="screen">
+            <h1 id="gameplay-title">Level Question</h1>
+            <p class="instructions" id="gameplay-instructions">Level instructions go here.</p>
             
-            <div id="lvl1-item-container">
-                <div class="file-card" id="lvl1-filename">story.txt</div>
-            </div>
+            <div id="dynamic-context-box" style="width:100%;"></div>
 
-            <div class="sorting-area">
-                <div class="folder-target" onclick="checkLvl1Answer('text')">
-                    <div class="folder-icon">📝</div>
-                    <h3>Text Folder</h3>
-                    <p>(Holds .txt files)</p>
-                </div>
-                <div class="folder-target" onclick="checkLvl1Answer('image')">
-                    <div class="folder-icon">🎨</div>
-                    <h3>Paint / Image Folder</h3>
-                    <p>(Holds .bmp, .png, .jpg files)</p>
-                </div>
-            </div>
-            <div id="feedback-lvl1" class="feedback"></div>
-        </div>
-
-        <div id="screen-lvl2" class="screen">
-            <h1>Level 2: Naming Rule Inspector 🕵️‍♂️</h1>
-            <p class="instructions">Remember, folder names cannot use special symbols like <b>/ \ : * ? " &lt; &gt; |</b>. Pick the folder with a VALID name!</p>
+            <div id="dynamic-interaction-box" style="width:100%;"></div>
             
-            <div class="choices-grid" id="lvl2-choices"></div>
-            <div id="feedback-lvl2" class="feedback"></div>
-        </div>
-
-        <div id="screen-lvl3" class="screen">
-            <h1>Level 3: Computer Actions Challenge 🖥️🗑️</h1>
-            <p class="instructions">Test your advanced system workflow knowledge about files and folders!</p>
-            
-            <div id="lvl3-question-box" style="font-size: 1.3rem; font-weight: bold; margin-bottom: 20px; background: #f9f9f9; padding: 15px; border-radius: 10px; width: 100%;"></div>
-            <div class="choices-grid" id="lvl3-choices"></div>
-            <div id="feedback-lvl3" class="feedback"></div>
+            <div id="gameplay-feedback" class="feedback"></div>
         </div>
 
         <div id="screen-gameover" class="screen">
             <h1>Quest Complete! 🎉🏆</h1>
-            <p class="instructions">Outstanding job! You are officially a master of Computer Files and Folders.</p>
-            <div style="font-size: 2.5rem; margin: 20px 0; color: var(--primary);">
+            <p class="instructions">Outstanding job! You have safely explored the directory management mechanics.</p>
+            <div style="font-size: 2.2rem; margin: 20px 0; color: var(--primary); font-weight: bold;">
                 Your Total Score: <span id="final-score">0</span> / 120
             </div>
-            <button class="btn" onclick="restartGame()">Play Again</button>
+            <button class="btn" onclick="restartToMenu()">Play Again</button>
         </div>
 
     </div>
 
     <script>
-        // Game Matrix Configuration
+        // Execution Controls
         let score = 0;
-        let currentLevel = 1;
-        let lvl1Index = 0;
-        let lvl2Index = 0;
-        let lvl3Index = 0;
+        let globalQuestionIndex = 0;
+        const totalQuestionsCount = 12;
 
-        // Sound Engine Linkages
         const sndCorrect = document.getElementById('sound-correct');
+        const sndClap = document.getElementById('sound-clap');
         const sndWrong = document.getElementById('sound-wrong');
 
-        // Textbook Chapter 2 Datasets
-        const level1Data = [
-            { file: 'story.txt', type: 'text' },
-            { file: 'bird.png', type: 'image' },
-            { file: 'fish.bmp', type: 'image' },
-            { file: 'alphabets.txt', type: 'text' },
-            { file: 'home.jpg', type: 'image' }
-        ];
-
-        const level2Data = [
-            { choices: [{name: 'Science Folder', valid: true}, {name: 'Science <Physics>', valid: false}], text: 'Pick the valid folder name:' },
-            { choices: [{name: '*Math Folder', valid: false}, {name: 'Math Homework', valid: true}], text: 'Which folder name is accepted by the computer?' },
-            { choices: [{name: 'English/Poems', valid: false}, {name: 'English Notes', valid: true}], text: 'Find the name without forbidden characters:' },
-            { choices: [{name: 'MyPictures', valid: true}, {name: 'What?Photo', valid: false}], text: 'Which folder name is perfect?' }
-        ];
-
-        const level3Data = [
+        // Linear Comprehensive Question Pool (Exactly 12 Unique Questions)
+        const questDatabase = [
+            // Stage 1: File Extensions Extension Matcher Rules
             {
-                q: "What keys should you press to delete a file permanently without sending it to the Recycle Bin?",
+                type: 'sort',
+                title: 'Level 1: Extension Matcher 📄',
+                instruction: 'Look at the file extension! Choose the correct folder to safely organize it.',
+                item: 'story.txt',
+                answer: 'text',
                 options: [
-                    {text: "Shift + Delete", correct: true},
-                    {text: "Ctrl + Alt + Delete", correct: false},
-                    {text: "Backspace", correct: false}
+                    { label: '📝 Text Folder (Holds .txt files)', value: 'text' },
+                    { label: '🎨 Image Folder (Holds .bmp, .png, .jpg files)', value: 'image' }
                 ]
             },
             {
-                q: "If a file is open on your screen, what happens when you try to rename or delete it?",
+                type: 'sort',
+                title: 'Level 1: Extension Matcher 📄',
+                instruction: 'Look at the file extension! Choose the correct folder to safely organize it.',
+                item: 'bird.png',
+                answer: 'image',
                 options: [
-                    {text: "The computer throws an 'In Use' error and blocks it.", correct: true},
-                    {text: "It deletes instantly anyway.", correct: false},
-                    {text: "It transforms into a brand new folder.", correct: false}
+                    { label: '📝 Text Folder (Holds .txt files)', value: 'text' },
+                    { label: '🎨 Image Folder (Holds .bmp, .png, .jpg files)', value: 'image' }
                 ]
             },
             {
-                q: "What does 'Restoring' a file from the Recycle Bin mean?",
+                type: 'sort',
+                title: 'Level 1: Extension Matcher 📄',
+                instruction: 'Look at the file extension! Choose the correct folder to safely organize it.',
+                item: 'fish.bmp',
+                answer: 'image',
                 options: [
-                    {text: "It completely removes it from the computer.", correct: false},
-                    {text: "It brings the file back to its original location.", correct: true},
-                    {text: "It makes a new copy on the desktop.", correct: false}
+                    { label: '📝 Text Folder (Holds .txt files)', value: 'text' },
+                    { label: '🎨 Image Folder (Holds .bmp, .png, .jpg files)', value: 'image' }
+                ]
+            },
+            {
+                type: 'sort',
+                title: 'Level 1: Extension Matcher 📄',
+                instruction: 'Look at the file extension! Choose the correct folder to safely organize it.',
+                item: 'alphabets.txt',
+                answer: 'text',
+                options: [
+                    { label: '📝 Text Folder (Holds .txt files)', value: 'text' },
+                    { label: '🎨 Image Folder (Holds .bmp, .png, .jpg files)', value: 'image' }
+                ]
+            },
+            {
+                type: 'sort',
+                title: 'Level 1: Extension Matcher 📄',
+                instruction: 'Look at the file extension! Choose the correct folder to safely organize it.',
+                item: 'home.jpg',
+                answer: 'image',
+                options: [
+                    { label: '📝 Text Folder (Holds .txt files)', value: 'text' },
+                    { label: '🎨 Image Folder (Holds .bmp, .png, .jpg files)', value: 'image' }
+                ]
+            },
+            // Stage 2: Naming Rule Inspections
+            {
+                type: 'choice',
+                title: 'Level 2: Naming Rule Inspector 🕵️‍♂️',
+                instruction: 'Folder names cannot use special symbols like / \\ : * ? " < > |. Pick the VALID option:',
+                options: [
+                    { text: 'Science Folder', correct: true },
+                    { text: 'Science <Physics>', correct: false }
+                ]
+            },
+            {
+                type: 'choice',
+                title: 'Level 2: Naming Rule Inspector 🕵️‍♂️',
+                instruction: 'Which folder name is structurally accepted by the operating system framework?',
+                options: [
+                    { text: '*Math Folder', correct: false },
+                    { text: 'Math Homework', correct: true }
+                ]
+            },
+            {
+                type: 'choice',
+                title: 'Level 2: Naming Rule Inspector 🕵️‍♂️',
+                instruction: 'Find the folder configuration that completely avoids forbidden special characters:',
+                options: [
+                    { text: 'English/Poems', correct: false },
+                    { text: 'English Notes', correct: true }
+                ]
+            },
+            {
+                type: 'choice',
+                title: 'Level 2: Naming Rule Inspector 🕵️‍♂️',
+                instruction: 'Select the optimal folder name choice matching standard formatting conventions:',
+                options: [
+                    { text: 'MyPictures', correct: true },
+                    { text: 'What?Photo', correct: false }
+                ]
+            },
+            // Stage 3: Workflow Actions Challenge
+            {
+                type: 'choice',
+                title: 'Level 3: Computer Actions Challenge 🖥️',
+                instruction: 'What shortcut keys delete a file permanently without sending it to the Recycle Bin?',
+                options: [
+                    { text: 'Shift + Delete', correct: true },
+                    { text: 'Ctrl + Alt + Delete', correct: false },
+                    { text: 'Backspace', correct: false }
+                ]
+            },
+            {
+                type: 'choice',
+                title: 'Level 3: Computer Actions Challenge 🖥️',
+                instruction: 'If a targeted file remains actively open on your system monitor screen, what happens when you try to rename or delete it?',
+                options: [
+                    { text: "The computer throws a 'File In Use' error window and blocks the operation.", correct: true },
+                    { text: 'It completes execution immediately without warning.', correct: false },
+                    { text: 'The target item is automatically compressed into a sub-folder framework.', correct: false }
+                ]
+            },
+            {
+                type: 'choice',
+                title: 'Level 3: Computer Actions Challenge 🖥️',
+                instruction: "What does executing a 'Restore' action on a document inside the Recycle Bin accomplish?",
+                options: [
+                    { text: 'It removes it completely from the persistent storage drives.', correct: false },
+                    { text: 'It returns the targeted file cleanly to its original system location.', correct: true },
+                    { text: 'It duplicates a fresh copy directly onto the desktop environment.', correct: false }
                 ]
             }
         ];
 
-        // 5-Second Startup Screen Display Sequence
+        // 5-Second Isolation Sequence Event Handler
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
+                document.getElementById('screen-intro').classList.remove('active');
                 document.getElementById('game-header').style.display = 'flex';
                 showScreen('screen-start');
             }, 5000); 
         });
 
-        // Navigation Pipeline
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
         }
 
-        function updateStats() {
-            document.getElementById('score-val').innerText = score;
-            document.getElementById('level-val').innerText = currentLevel;
-        }
-
         function startGame() {
             score = 0;
-            currentLevel = 1;
-            lvl1Index = 0;
-            lvl2Index = 0;
-            lvl3Index = 0;
-            updateStats();
-            loadLevel1();
+            globalQuestionIndex = 0;
+            updateStatsBar();
+            loadQuestionPipeline();
         }
 
-        function restartGame() {
+        function restartToMenu() {
+            document.getElementById('game-header').style.display = 'flex';
             showScreen('screen-start');
         }
 
-        // Action Drivers for Answers
-        function playCorrectAction() {
-            sndCorrect.currentTime = 0;
-            sndCorrect.play().catch(e => console.log("Audio contexts require user triggers first."));
-            triggerConfettiParticles();
+        function updateStatsBar() {
+            document.getElementById('score-val').innerText = score;
+            document.getElementById('q-progress').innerText = Math.min(globalQuestionIndex + 1, totalQuestionsCount);
         }
 
-        function playWrongAction() {
-            sndWrong.currentTime = 0;
-            sndWrong.play().catch(e => console.log("Audio feedback error logs."));
-        }
-
-        // --- LEVEL 1 PIPELINE ---
-        function loadLevel1() {
-            showScreen('screen-lvl1');
-            if(lvl1Index >= level1Data.length) {
-                currentLevel = 2;
-                updateStats();
-                loadLevel2();
+        function loadQuestionPipeline() {
+            showScreen('screen-gameplay');
+            
+            if (globalQuestionIndex >= questDatabase.length) {
+                executeGameOver();
                 return;
             }
-            document.getElementById('lvl1-filename').innerText = level1Data[lvl1Index].file;
-            document.getElementById('feedback-lvl1').innerText = '';
+
+            updateStatsBar();
+            
+            const currentQuest = questDatabase[globalQuestionIndex];
+            document.getElementById('gameplay-title').innerText = currentQuest.title;
+            document.getElementById('gameplay-instructions').innerText = currentQuest.instruction;
+            document.getElementById('gameplay-feedback').innerText = '';
+
+            const contextBox = document.getElementById('dynamic-context-box');
+            const interactionBox = document.getElementById('dynamic-interaction-box');
+            
+            contextBox.innerHTML = '';
+            interactionBox.innerHTML = '';
+
+            if (currentQuest.type === 'sort') {
+                contextBox.innerHTML = `<div class="file-card">${currentQuest.item}</div>`;
+                
+                const sortingFlex = document.createElement('div');
+                sortingFlex.className = 'sorting-area';
+                
+                currentQuest.options.forEach(opt => {
+                    const targetFolder = document.createElement('div');
+                    targetFolder.className = 'folder-target';
+                    targetFolder.innerHTML = `
+                        <div class="folder-icon">${opt.value === 'text' ? '📝' : '🎨'}</div>
+                        <h3>${opt.label.split('(')[0]}</h3>
+                        <p>${opt.label.includes('(') ? '(' + opt.label.split('(')[1] : ''}</p>
+                    `;
+                    targetFolder.onclick = () => verifyUserAnswer(opt.value === currentQuest.answer);
+                    sortingFlex.appendChild(targetFolder);
+                });
+                interactionBox.appendChild(sortingFlex);
+            } 
+            else if (currentQuest.type === 'choice') {
+                const choiceGrid = document.createElement('div');
+                choiceGrid.className = 'choices-grid';
+                
+                currentQuest.options.forEach(opt => {
+                    const optionButton = document.createElement('div');
+                    optionButton.className = 'choice-card';
+                    optionButton.innerText = opt.text;
+                    optionButton.onclick = () => verifyUserAnswer(opt.correct);
+                    choiceGrid.appendChild(optionButton);
+                });
+                interactionBox.appendChild(choiceGrid);
+            }
         }
 
-        function checkLvl1Answer(chosenType) {
-            const currentItem = level1Data[lvl1Index];
-            const feedbackElem = document.getElementById('feedback-lvl1');
+        // Plays both split asset sounds simultaneously on successful clicks
+        function verifyUserAnswer(isCorrectResult) {
+            const feedbackField = document.getElementById('gameplay-feedback');
             
-            if(chosenType === currentItem.type) {
-                score += 10;
-                feedbackElem.className = "feedback text-success";
-                feedbackElem.innerText = "Correct! ✨ Smart sorting!";
-                playCorrectAction();
-            } else {
-                feedbackElem.className = "feedback text-danger";
-                feedbackElem.innerText = "Oops! Check the file extension again.";
-                playWrongAction();
-            }
-            
-            lvl1Index++;
-            updateStats();
-            setTimeout(loadLevel1, 1500);
-        }
-
-        // --- LEVEL 2 PIPELINE ---
-        function loadLevel2() {
-            showScreen('screen-lvl2');
-            if(lvl2Index >= level2Data.length) {
-                currentLevel = 3;
-                updateStats();
-                loadLevel3();
-                return;
-            }
-            
-            const currentQ = level2Data[lvl2Index];
-            const grid = document.getElementById('lvl2-choices');
-            grid.innerHTML = '';
-            document.getElementById('feedback-lvl2').innerText = '';
-
-            document.querySelector('#screen-lvl2 p.instructions').innerHTML = currentQ.text + "<br><small>Forbidden characters: / \\ : * ? \" &lt; &gt; |</small>";
-
-            currentQ.choices.forEach(choice => {
-                const card = document.createElement('div');
-                card.className = 'choice-card';
-                card.innerText = choice.name;
-                card.onclick = () => checkLvl2Answer(choice.valid);
-                grid.appendChild(card);
+            document.querySelectorAll('.folder-target, .choice-card').forEach(elem => {
+                elem.style.pointerEvents = 'none';
             });
-        }
 
-        function checkLvl2Answer(isValid) {
-            const feedbackElem = document.getElementById('feedback-lvl2');
-            if(isValid) {
+            if (isCorrectResult) {
                 score += 10;
-                feedbackElem.className = "feedback text-success";
-                feedbackElem.innerText = "Brilliant! Valid name rule verified! 👏";
-                playCorrectAction();
+                feedbackField.className = "feedback text-success";
+                feedbackField.innerText = "Correct! ✨ Smart Answer! 👏";
+                
+                // Play correct chime
+                sndCorrect.currentTime = 0;
+                sndCorrect.play().catch(err => console.log("Audio waiting for context initialization."));
+                
+                // Play clapping effect simultaneously
+                sndClap.currentTime = 0;
+                sndClap.play().catch(err => console.log("Audio waiting for context initialization."));
+                
+                triggerConfettiEffect();
             } else {
-                feedbackElem.className = "feedback text-danger";
-                feedbackElem.innerText = "Incorrect! Special symbols are forbidden.";
-                playWrongAction();
-            }
-            lvl2Index++;
-            updateStats();
-            setTimeout(loadLevel2, 1800);
-        }
-
-        // --- LEVEL 3 PIPELINE ---
-        function loadLevel3() {
-            showScreen('screen-lvl3');
-            if(lvl3Index >= level3Data.length) {
-                showScreen('screen-gameover');
-                document.getElementById('final-score').innerText = score;
-                return;
+                feedbackField.className = "feedback text-danger";
+                feedbackField.innerText = "Oops! Review your computer chapter files rules.";
+                
+                sndWrong.currentTime = 0;
+                sndWrong.play().catch(err => console.log("Audio error or missing file."));
             }
 
-            const currentQ = level3Data[lvl3Index];
-            document.getElementById('lvl3-question-box').innerText = currentQ.q;
-            document.getElementById('feedback-lvl3').innerText = '';
-            
-            const grid = document.getElementById('lvl3-choices');
-            grid.innerHTML = '';
-
-            currentQ.options.forEach(opt => {
-                const card = document.createElement('div');
-                card.className = 'choice-card';
-                card.innerText = opt.text;
-                card.onclick = () => checkLvl3Answer(opt.correct);
-                grid.appendChild(card);
-            });
+            globalQuestionIndex++;
+            setTimeout(loadQuestionPipeline, 1800);
         }
 
-        function checkLvl3Answer(isCorrect) {
-            const feedbackElem = document.getElementById('feedback-lvl3');
-            if(isCorrect) {
-                score += 10;
-                feedbackElem.className = "feedback text-success";
-                feedbackElem.innerText = "Excellent! Claps for your knowledge! 🏆🌟";
-                playCorrectAction();
-            } else {
-                feedbackElem.className = "feedback text-danger";
-                feedbackElem.innerText = "Not quite! Think about the proper computer rule.";
-                playWrongAction();
-            }
-            lvl3Index++;
-            updateStats();
-            setTimeout(loadLevel3, 2000);
+        function executeGameOver() {
+            document.getElementById('game-header').style.display = 'none';
+            showScreen('screen-gameover');
+            document.getElementById('final-score').innerText = score;
         }
 
-        // Particle Rendering Mechanics
+        // Particle Rendering Loop Mechanics
         const canvas = document.getElementById('confetti-canvas');
         const ctx = canvas.getContext('2d');
-        let confettiParticles = [];
+        let particlesPool = [];
 
-        function resizeCanvas() {
+        function configureCanvasSize() {
             canvas.width = canvas.parentElement.clientWidth;
             canvas.height = canvas.parentElement.clientHeight;
         }
-        window.addEventListener('resize', resizeCanvas);
+        window.addEventListener('resize', configureCanvasSize);
 
-        function triggerConfettiParticles() {
-            resizeCanvas();
-            confettiParticles = [];
-            for (let i = 0; i < 70; i++) {
-                confettiParticles.push({
+        function triggerConfettiEffect() {
+            configureCanvasSize();
+            particlesPool = [];
+            for (let i = 0; i < 60; i++) {
+                particlesPool.push({
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height - canvas.height,
-                    r: Math.random() * 6 + 4,
+                    r: Math.random() * 5 + 4,
                     d: Math.random() * canvas.height,
-                    color: `rgba(${Math.floor(Math.random()*255)}, ${Math.floor(Math.random()*255)}, ${Math.floor(Math.random()*255)}, 1)`,
+                    color: `rgba(${Math.floor(Math.random()*230)}, ${Math.floor(Math.random()*180)}, ${Math.floor(Math.random()*255)}, 1)`,
                     tilt: Math.random() * 10 - 5,
-                    tiltAngleIncremental: Math.random() * 0.07 + 0.02,
+                    tiltAngleIncremental: Math.random() * 0.06 + 0.02,
                     tiltAngle: 0
                 });
             }
-            drawConfettiLoop();
+            renderConfettiAnimationLoop();
         }
 
-        function drawConfettiLoop() {
+        function renderConfettiAnimationLoop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            let active = false;
+            let componentsActive = false;
             
-            confettiParticles.forEach((p, index) => {
+            particlesPool.forEach((p, idx) => {
                 p.tiltAngle += p.tiltAngleIncremental;
                 p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
                 p.x += Math.sin(p.tiltAngle);
-                p.tilt = Math.sin(p.tiltAngle - index / 3) * 15;
+                p.tilt = Math.sin(p.tiltAngle - idx / 3) * 12;
 
                 if (p.y <= canvas.height) {
-                    active = true;
+                    componentsActive = true;
                 }
 
                 ctx.beginPath();
@@ -582,8 +599,8 @@
                 ctx.stroke();
             });
 
-            if (active) {
-                requestAnimationFrame(drawConfettiLoop);
+            if (componentsActive) {
+                requestAnimationFrame(renderConfettiAnimationLoop);
             } else {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
             }

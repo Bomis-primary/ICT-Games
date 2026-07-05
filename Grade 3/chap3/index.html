@@ -38,7 +38,7 @@
             background: linear-gradient(135deg, #111827, var(--dark-terminal));
         }
 
-        /* 5-Second Exclusive Pure White Splash Screen */
+        /* 5-Second Pure White Splash Screen */
         #splashScreen {
             position: fixed;
             top: 0;
@@ -65,7 +65,7 @@
             50% { transform: scale(1.04); }
         }
 
-        /* App Main Shell Box */
+        /* App Main Shell */
         .app-window {
             width: 95vw;
             max-width: 1100px;
@@ -92,7 +92,6 @@
             font-weight: 800;
         }
 
-        /* Core Layout Split Grid */
         .matrix-layout {
             display: grid;
             grid-template-rows: auto 1fr;
@@ -119,7 +118,7 @@
             min-height: 0;
         }
 
-        /* Left Terminal Control Deck */
+        /* Left Controls Terminal */
         .terminal-deck {
             background: #1e293b;
             border: 2px solid #334155;
@@ -139,7 +138,6 @@
             margin-bottom: 15px;
         }
 
-        /* Grid Node Matrix Clustered Controls */
         .key-input-matrix {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -169,7 +167,7 @@
             background: #27354a;
         }
 
-        /* Right Window Simulator Framework */
+        /* Right Window MS Word Simulator Map */
         .document-simulator-window {
             background: var(--word-interface-gray);
             border: 3px solid #cbd5e1;
@@ -178,10 +176,9 @@
             flex-direction: column;
             overflow: hidden;
             box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            position: relative; /* Fixed reference anchor for highlight overlays */
+            position: relative;
         }
 
-        /* Layout Elements inside Simulator */
         .mock-word-header {
             background: var(--word-classic-blue);
             color: white;
@@ -227,19 +224,19 @@
             justify-content: space-between;
         }
 
-        /* Vector Highlight Overlay (Anchored on Parent) */
+        /* Vector Highlight Indicator Layout Node */
         #activeHighlightPointerIndicator {
             position: absolute;
             border: 3.5px solid var(--scratch-orange);
             background: rgba(255, 171, 25, 0.12);
             border-radius: 8px;
-            pointer-events: none; /* Prevents button blockage bugs */
+            pointer-events: none;
             transition: all 0.25s ease-out;
             display: none;
             z-index: 50;
         }
 
-        /* Global Modal Dialog Overlay */
+        /* Feedback Modals */
         .popup-modal-shroud {
             position: fixed;
             top: 0;
@@ -382,7 +379,7 @@
     </div>
 
     <script>
-        // Setup exclusive launch intervals
+        // Splash page exclusive launch timing loops
         setTimeout(() => {
             const splashNode = document.getElementById("splashScreen");
             splashNode.style.opacity = "0";
@@ -417,8 +414,10 @@
         let matrixSystemLocked = false;
 
         function playAudioTrack(id) {
-            const node = document.getElementById(id);
-            if(node) { node.currentTime = 0; node.play().catch(e => console.log(e)); }
+            try {
+                const node = document.getElementById(id);
+                if(node) { node.currentTime = 0; node.play().catch(e => console.log(e)); }
+            } catch(err) { console.log("Audio skipped:", err); }
         }
 
         function launchMatrixModule() {
@@ -462,7 +461,6 @@
             if(targetNode && parentWindow) {
                 setTimeout(() => {
                     indicator.style.display = "block";
-                    // Compute accurate values independent of sub-nested alignment models
                     const topPos = targetNode.getBoundingClientRect().top - parentWindow.getBoundingClientRect().top;
                     const leftPos = targetNode.getBoundingClientRect().left - parentWindow.getBoundingClientRect().left;
                     
@@ -495,7 +493,11 @@
                 mTitle.innerText = "Sector Override Success!";
                 mTitle.style.color = "#2ecc71";
                 playAudioTrack("audioCorrect");
-                confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
+                
+                // Offline-safe confetti launcher check
+                if (typeof confetti !== 'undefined') {
+                    confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
+                }
             } else {
                 mIcon.innerText = "⚠️💥";
                 mTitle.innerText = "Matrix Validation Fault!";
@@ -503,6 +505,8 @@
                 mBody.innerText = `Incorrect sequence module injected. Correct Action: [${sectorData.targetKey}].`;
                 playAudioTrack("audioWrong");
             }
+            
+            // This line is now guaranteed to run safely under any internet conditions!
             modalShroud.classList.add("active");
         }
 

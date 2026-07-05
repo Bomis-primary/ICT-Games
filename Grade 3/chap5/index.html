@@ -150,7 +150,7 @@
         }
 
         /* ==========================================================================
-           2. MAIN APP FRAMEWORK INTERFACE (SPLIT SCREEN MAZE & PUZZLE)
+           2. MAIN APP INTERFACE
            ========================================================================== */
         .app-window {
             width: 95vw;
@@ -188,7 +188,6 @@
             min-height: 0;
         }
 
-        /* Left Side: Memory Maze Matrix */
         .maze-matrix-panel {
             padding: 25px;
             display: flex;
@@ -218,7 +217,6 @@
             perspective: 1000px;
         }
 
-        /* Flipping Memory Card Architecture */
         .memory-card {
             position: relative;
             width: 100%;
@@ -268,7 +266,6 @@
             color: var(--success-green);
         }
 
-        /* Right Side: Crossword Reveal Panel */
         .crossword-side-panel {
             background: #141b2b;
             border-left: 1px solid rgba(255,255,255,0.06);
@@ -349,7 +346,6 @@
             font-weight: bold;
         }
 
-        /* Success End Card Overlay Layout */
         .hidden { display: none !important; }
 
         .end-game-card {
@@ -361,8 +357,9 @@
 </head>
 <body>
 
-    <audio id="soundSuccess" src="assets/success.mp3" preload="auto"></audio>
-    <audio id="soundFailure" src="assets/fail.mp3" preload="auto"></audio>
+    <audio id="audioCorrect" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="audioClap" src="assets/clap.mp3" preload="auto"></audio>
 
     <div id="splashScreen">
         <div class="logo-container">
@@ -399,8 +396,7 @@
                 <div class="instruction-banner">
                     💡 <strong>How to Play:</strong> Select and flip cards to connect matching Word Processing concepts from Pages 50-56. Every perfect pair solves a letter cell in the code matrix on the right!
                 </div>
-                <div class="grid-matrix-container" id="cardGridMatrix">
-                    </div>
+                <div class="grid-matrix-container" id="cardGridMatrix"></div>
             </div>
 
             <div class="crossword-side-panel">
@@ -410,8 +406,7 @@
                 </div>
 
                 <div class="word-box-container">
-                    <div class="crossword-row" id="crosswordTargetRow">
-                        </div>
+                    <div class="crossword-row" id="crosswordTargetRow"></div>
                 </div>
 
                 <div class="clues-list-box">
@@ -436,7 +431,6 @@
     </div>
 
     <script>
-        // Local Asset missing verification safety fallback structure
         function handleFallbackLogo() {
             const img = document.getElementById("brandLogoImg");
             if (img) {
@@ -450,7 +444,6 @@
             }
         }
 
-        // Action loading tracking progress animation synchronization
         window.addEventListener('DOMContentLoaded', () => {
             const bar = document.getElementById("loadingProgress");
             const btn = document.getElementById("btnLetsStart");
@@ -477,9 +470,6 @@
             }, 400);
         }
 
-        // ==========================================================================
-        // PUZZLE SYSTEM ENGINE DATA MATRIX MAP (PAGES 50-56)
-        // ==========================================================================
         const puzzleDatabasePairs = [
             { id: 1, val: "Spelling Check", matchingId: 101 },
             { id: 101, val: "Fixes 'computr' Error", matchingId: 1 },
@@ -500,7 +490,6 @@
             { id: 106, val: "Audits pages & strings", matchingId: 6 }
         ];
 
-        // The answer keyword from the book that will reveal itself cell by cell
         const crosswordSecretKeyword = ["R", "E", "V", "I", "E", "W"]; 
 
         let selectedCardsTrackingArray = [];
@@ -510,12 +499,16 @@
         function triggerSoundFeedback(elementId) {
             try {
                 const s = document.getElementById(elementId);
-                if (s) { s.currentTime = 0; s.play().catch(e => {}); }
-            } catch(err) {}
+                if (s) { 
+                    s.currentTime = 0; 
+                    s.play().catch(e => console.log("Audio playback deferred until interaction:", e)); 
+                }
+            } catch(err) {
+                console.error("Audio trigger setup failed:", err);
+            }
         }
 
         function generateMemoryMazeLayout() {
-            // Setup Crossword hidden empty display shells layout containers on right panel
             const crossRow = document.getElementById("crosswordTargetRow");
             crossRow.innerHTML = "";
             crosswordSecretKeyword.forEach(() => {
@@ -525,7 +518,6 @@
                 crossRow.appendChild(box);
             });
 
-            // Randomize grid layouts maps array
             const shuffledDeck = [...puzzleDatabasePairs].sort(() => Math.random() - 0.5);
             const container = document.getElementById("cardGridMatrix");
             container.innerHTML = "";
@@ -567,15 +559,15 @@
             const id2 = parseInt(card2.dataset.id);
 
             if (matchId1 === id2) {
-                // Connection pair matched successfully!
                 card1.classList.add("matched");
                 card2.classList.add("matched");
                 completedPairsCount++;
                 
                 document.getElementById("matchCounterLabel").innerText = `${completedPairsCount} / 6`;
-                triggerSoundFeedback("soundSuccess");
+                
+                // Plays precise audio from folder: correct.mp3
+                triggerSoundFeedback("audioCorrect");
 
-                // Reveal a corresponding character box cell in crossword panel layout block
                 revealCrosswordLetterCell(completedPairsCount - 1);
 
                 if (typeof confetti !== 'undefined') {
@@ -586,11 +578,11 @@
                 lockGridSelection = false;
 
                 if (completedPairsCount === 6) {
-                    setTimeout(() => triggerFinalVictorySequence(), 1200);
+                    setTimeout(() => triggerFinalVictorySequence(), 800);
                 }
             } else {
-                // Discrepancy mismatch, toggle back transition parameters loop
-                triggerSoundFeedback("soundFailure");
+                // Plays precise audio from folder: wrong.mp3
+                triggerSoundFeedback("audioWrong");
                 setTimeout(() => {
                     card1.classList.remove("flipped");
                     card2.classList.remove("flipped");
@@ -611,6 +603,10 @@
         function triggerFinalVictorySequence() {
             document.getElementById("mainGameplaySplitArea").classList.add("hidden");
             document.getElementById("endEvaluationBlock").classList.remove("hidden");
+            
+            // Plays precise audio from folder: clap.mp3
+            triggerSoundFeedback("audioClap");
+            
             if (typeof confetti !== 'undefined') {
                 confetti({ particleCount: 80, spread: 80 });
             }

@@ -3,20 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Innovine Solutions - Interactive Data Table Matrix</title>
+    <title>Innovine Solutions - Table Cryptogram Matrix</title>
     <style>
         :root {
-            --brand-blue: #1e293b;
-            --brand-red: #be123c;
-            --brand-orange: #f97316;
-            --grid-bg: #f8fafc;
+            --brand-dark: #0f172a;
+            --brand-crimson: #be123c;
+            --brand-orange: #ea580c;
+            --table-a-header: #0369a1;
+            --table-b-header: #6d28d9;
             --success: #10b981;
             --error: #ef4444;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #e2e8f0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: #f1f5f9;
             margin: 0;
             padding: 0;
             display: flex;
@@ -26,219 +27,259 @@
             overflow-x: hidden;
         }
 
-        /* --- SPLASH SCREEN / COVER PAGE (PAGE 57) --- */
+        /* --- STAGE 1: 5-SECOND INTRO SPLASH --- */
         #splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: white;
+            background: #ffffff;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.8s ease-in-out;
+            transition: opacity 0.6s ease-out;
         }
 
         .splash-logo {
-            max-width: 350px;
-            margin-bottom: 30px;
+            max-width: 320px;
+            margin-bottom: 25px;
             animation: pulse 2s infinite ease-in-out;
         }
 
         .splash-title {
-            color: var(--brand-blue);
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin: 10px 0;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+            color: var(--brand-dark);
+            font-size: 2.4rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin: 5px 0;
+            text-align: center;
         }
 
         .splash-subtitle {
-            color: var(--brand-red);
-            font-size: 1.4rem;
-            font-weight: 500;
+            color: var(--brand-crimson);
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 3px;
         }
 
-        .loader-bar {
-            width: 250px;
-            height: 4px;
+        .progress-container {
+            width: 300px;
+            height: 6px;
             background: #e2e8f0;
-            margin-top: 30px;
-            border-radius: 2px;
+            border-radius: 3px;
+            margin-top: 35px;
             overflow: hidden;
         }
 
-        .loader-progress {
+        .progress-bar {
             width: 0%;
             height: 100%;
-            background: linear-gradient(90deg, var(--brand-red), var(--brand-orange));
-            animation: load 5s linear forwards;
+            background: linear-gradient(90deg, var(--brand-crimson), var(--brand-orange));
+            animation: startLoading 5s linear forwards;
         }
 
-        /* --- MAIN GAME CONTAINER --- */
+        /* --- STAGE 2: MAIN DUAL-TABLE INTERACTIVE INTERFACE --- */
         #game-container {
             display: none;
-            width: 100%;
-            max-width: 950px;
-            background: white;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            width: 95%;
+            max-width: 1100px;
+            background: #ffffff;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
             border-radius: 12px;
             overflow: hidden;
-            border-top: 6px solid var(--brand-red);
+            border-top: 8px solid var(--brand-crimson);
+            margin: 20px;
         }
 
-        .header-bar {
+        .header-strip {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 40px;
+            padding: 20px 35px;
+            background: #ffffff;
             border-bottom: 1px solid #e2e8f0;
         }
 
         .header-logo {
-            height: 45px;
+            height: 40px;
         }
 
-        .page-badge {
-            background: var(--brand-blue);
-            color: white;
+        .page-marker {
+            background: var(--brand-dark);
+            color: #ffffff;
             padding: 6px 16px;
-            border-radius: 20px;
-            font-weight: bold;
+            border-radius: 30px;
             font-size: 0.85rem;
+            font-weight: 700;
         }
 
-        .game-body {
-            padding: 40px;
+        .game-viewport {
+            padding: 35px;
         }
 
-        h2 {
-            color: var(--brand-blue);
+        .instruction-card {
+            background: #f8fafc;
+            border-left: 4px solid var(--brand-orange);
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 30px;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        /* Side-By-Side Table Layout Architecture */
+        .workspace-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .workspace-layout { grid-template-columns: 1fr; }
+        }
+
+        .table-wrapper h3 {
             margin-top: 0;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        /* --- COLORFUL MS WORD STYLED MATRIX TILES --- */
-        .activity-grid {
+        /* System Grid Layout Styling */
+        .crypt-table {
             width: 100%;
             border-collapse: separate;
             border-spacing: 0;
-            margin: 25px 0;
             border-radius: 8px;
             overflow: hidden;
             border: 1px solid #cbd5e1;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
 
-        .activity-grid th {
-            background: var(--brand-blue);
+        .crypt-table th {
             color: white;
             padding: 14px;
             font-weight: 600;
-            text-align: left;
+            text-align: center;
         }
 
-        .activity-grid td {
-            padding: 16px;
-            border-bottom: 1px solid #cbd5e1;
-            background: var(--grid-bg);
-            font-weight: 500;
+        .table-a-style th { background: var(--table-a-header); }
+        .table-b-style th { background: var(--table-b-header); }
+
+        .crypt-table td {
+            padding: 14px;
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
+            text-align: center;
+            font-weight: 600;
             color: #334155;
         }
 
-        .activity-grid tr:nth-child(even) td {
-            background: #f1f5f9;
-        }
+        .crypt-table tr:nth-child(even) td { background: #f8fafc; }
 
-        /* Interactive Grid Inputs */
-        .interactive-cell {
-            width: 90%;
-            padding: 10px 12px;
+        /* Form Inputs inside Tables */
+        .grid-input {
+            width: 70px;
+            padding: 8px;
             border: 2px solid #cbd5e1;
             border-radius: 6px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: var(--brand-blue);
-            transition: all 0.25s ease;
+            text-align: center;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--brand-dark);
+            transition: all 0.2s ease;
         }
 
-        .interactive-cell:focus {
+        .grid-input:focus {
             outline: none;
             border-color: var(--brand-orange);
-            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
+            background: #fff7ed;
         }
 
-        /* Status Colors */
-        .cell-correct {
+        .crypto-letter-box {
+            width: 45px;
+            text-transform: uppercase;
+        }
+
+        /* Dynamic Feedback Visual Status States */
+        .input-correct {
             border-color: var(--success) !important;
             background-color: #d1fae5 !important;
             color: #065f46 !important;
         }
 
-        .cell-wrong {
+        .input-wrong {
             border-color: var(--error) !important;
             background-color: #fee2e2 !important;
             color: #991b1b !important;
-            animation: shake 0.3s linear;
+            animation: shakeElement 0.3s ease-in-out;
         }
 
-        /* Footer Controls */
-        .footer-controls {
+        .key-reveal {
+            font-size: 1.2rem;
+            color: var(--brand-orange);
+            font-weight: 800;
+            visibility: hidden;
+        }
+
+        /* Action Controls Layout */
+        .control-footer {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
+            padding: 20px 35px;
             background: #f8fafc;
-            padding: 20px 40px;
             border-top: 1px solid #e2e8f0;
         }
 
-        button {
-            padding: 12px 28px;
+        .action-btn {
+            background: var(--brand-crimson);
+            color: white;
             border: none;
-            border-radius: 6px;
+            padding: 14px 32px;
             font-size: 1rem;
-            font-weight: 600;
+            font-weight: 700;
+            border-radius: 6px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: background 0.2s;
         }
 
-        .btn-primary {
-            background: var(--brand-red);
-            color: white;
+        .action-btn:hover { background: #9f1239; }
+
+        /* Final Result View Screen */
+        #report-screen {
+            text-align: center;
+            padding: 40px 20px;
         }
 
-        .btn-primary:hover {
-            background: #9f1239;
+        .success-badge {
+            font-size: 4rem;
+            color: var(--success);
+            margin-bottom: 10px;
         }
 
-        .btn-secondary {
-            background: #64748b;
-            color: white;
-        }
-
-        .btn-secondary:disabled {
-            background: #cbd5e1;
-            cursor: not-allowed;
-        }
-
-        canvas #confetti-canvas {
+        #confetti-canvas {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             pointer-events: none;
             z-index: 10000;
         }
 
-        /* --- ANIMATIONS --- */
-        @keyframes load { to { width: 100%; } }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
-        @keyframes shake {
+        /* --- ANIMATIONS ENGINE --- */
+        @keyframes startLoading { to { width: 100%; } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+        @keyframes shakeElement {
             0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-6px); }
-            40%, 80% { transform: translateX(6px); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
     </style>
 </head>
@@ -247,230 +288,240 @@
     <canvas id="confetti-canvas"></canvas>
 
     <div id="splash-screen">
-        <img src="assets/innovine_logo.png" class="splash-logo" alt="Innovine Solutions Logo" onerror="this.src='https://via.placeholder.com/350x100?text=INNOVINE+SOLUTIONS'">
-        <div class="splash-title">Chapter 6: Data Alignment Game</div>
-        <div class="splash-subtitle">Interactive Learning Matrix</div>
-        <div class="loader-bar">
-            <div class="loader-progress"></div>
+        <img src="assets/innovine_logo.png" class="splash-logo" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/320x90?text=INNOVINE+SOLUTIONS'">
+        <div class="splash-title">Chapter 6: Cryptographic Logic Matrix</div>
+        <div class="splash-subtitle">System Table Engine</div>
+        <div class="progress-container">
+            <div class="progress-bar"></div>
         </div>
     </div>
 
     <div id="game-container">
-        <div class="header-bar">
+        <div class="header-strip">
             <img src="assets/innovine_logo.png" class="header-logo" alt="Innovine Solutions" onerror="this.style.display='none'">
-            <div class="page-badge" id="page-indicator">Pages 58 - 60</div>
+            
         </div>
 
-        <div class="game-body">
-            <div id="step-1" class="activity-view">
-                <h2>Activity Challenge 1: The Balance Matrix Balance</h2>
-                <p>Complete the missing computed metrics inside the data framework grid. Compute the exact multiplication allocation variables matching row logic properties.</p>
-                
-                <table class="activity-grid">
-                    <thead>
-                        <tr>
-                            <th>Transaction Unit</th>
-                            <th>Target Load Matrix</th>
-                            <th>Multiplier Factor</th>
-                            <th>Calculated Output Value</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Array Item #01</td>
-                            <td>40 Units</td>
-                            <td>x 3</td>
-                            <td><input type="text" class="interactive-cell" data-ans="120" placeholder="Type answer..."></td>
-                        </tr>
-                        <tr>
-                            <td>Array Item #02</td>
-                            <td>15 Units</td>
-                            <td>x 6</td>
-                            <td><input type="text" class="interactive-cell" data-ans="90" placeholder="Type answer..."></td>
-                        </tr>
-                    </tbody>
-                </table>
+        <div class="game-viewport" id="active-game-view">
+            <div class="instruction-card">
+                <strong>How to Play:</strong> Solve the algebraic problems in <strong>Table A (Math Engine)</strong>. Entering a correct calculation reveals a hidden cipher code letter. Use these key codes to decode the blank cells in <strong>Table B (Decryption Array)</strong> to discover Innovine's hidden solution string phrase!
             </div>
 
-            <div id="step-2" class="activity-view" style="display:none;">
-                <h2>Activity Challenge 2: Logic String Sorting Matrix</h2>
-                <p>Analyse patterns to fill matching sequence identities within the structured text processing engine array cells.</p>
-                
-                <table class="activity-grid">
-                    <thead>
-                        <tr>
-                            <th>Reference Key</th>
-                            <th>Source String Input</th>
-                            <th>Dynamic Identity Tag Conversion Result</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>REF-A9X</td>
-                            <td>system_alpha_node</td>
-                            <td><input type="text" class="interactive-cell" data-ans="ALPHA" placeholder="Case-insensitive..."></td>
-                        </tr>
-                        <tr>
-                            <td>REF-B4Y</td>
-                            <td>system_beta_node</td>
-                            <td><input type="text" class="interactive-cell" data-ans="BETA" placeholder="Case-insensitive..."></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <div class="workspace-layout">
+                <div class="table-wrapper">
+                    <h3 style="color: var(--table-a-header);">📊 Table A: Math Input Core</h3>
+                    <table class="crypt-table table-a-style">
+                        <thead>
+                            <tr>
+                                <th>Logic Puzzle</th>
+                                <th>Your Value</th>
+                                <th>Key Unlocked</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr id="row-a1">
+                                <td>$$15 \times 4 - 18 = \text{?}$$</td>
+                                <td><input type="number" class="grid-input target-math" data-ans="42" data-key="key-k1"></td>
+                                <td><span class="key-reveal" id="key-k1">I</span></td>
+                            </tr>
+                            <tr id="row-a2">
+                                <td>$$\sqrt{144} + 13 = \text{?}$$</td>
+                                <td><input type="number" class="grid-input target-math" data-ans="25" data-key="key-k2"></td>
+                                <td><span class="key-reveal" id="key-k2">N</span></td>
+                            </tr>
+                            <tr id="row-a3">
+                                <td>$$(9 \times 9) - 72 = \text{?}$$</td>
+                                <td><input type="number" class="grid-input target-math" data-ans="9" data-key="key-k3"></td>
+                                <td><span class="key-reveal" id="key-k3">O</span></td>
+                            </tr>
+                            <tr id="row-a4">
+                                <td>$$120 \div 5 + 6 = \text{?}$$</td>
+                                <td><input type="number" class="grid-input target-math" data-ans="30" data-key="key-k4"></td>
+                                <td><span class="key-reveal" id="key-k4">V</span></td>
+                            </tr>
+                            <tr id="row-a5">
+                                <td>$$7^2 - 44 = \text{?}$$</td>
+                                <td><input type="number" class="grid-input target-math" data-ans="5" data-key="key-k5"></td>
+                                <td><span class="key-reveal" id="key-k5">E</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
 
-            <div id="step-3" class="activity-view" style="display:none;">
-                <h2>Page 68: Master Game Performance Terminal</h2>
-                <p>Your workspace compilation sequences have completely run. Verification score diagnostic output summary is complete below:</p>
-                <div style="background: #f1f5f9; border: 2px dashed var(--brand-blue); border-radius: 8px; padding: 30px; text-align: center; margin-top: 20px;">
-                    <h3 style="margin:0; color:var(--brand-blue); font-size: 1.5rem;">All Grid Nodes Synchronized Successfully!</h3>
-                    <p style="font-size: 1.1rem; color: #475569;">You successfully bypassed the table challenges across Pages 57-68.</p>
+                <div class="table-wrapper">
+                    <h3 style="color: var(--table-b-header);">🔐 Table B: Cipher Decryption Array</h3>
+                    <table class="crypt-table table-b-style">
+                        <thead>
+                            <tr>
+                                <th>Cipher Key Index</th>
+                                <th>Decoded Character Input</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>Result Code Value [42]</td><td><input type="text" maxlength="1" class="grid-input crypto-letter-box target-letter" data-ans="I"></td></tr>
+                            <tr><td>Result Code Value [25]</td><td><input type="text" maxlength="1" class="grid-input crypto-letter-box target-letter" data-ans="N"></td></tr>
+                            <tr><td>Result Code Value [25]</td><td><input type="text" maxlength="1" class="grid-input crypto-letter-box target-letter" data-ans="N"></td></tr>
+                            <tr><td>Result Code Value [9]</td><td><input type="text" maxlength="1" class="grid-input crypto-letter-box target-letter" data-ans="O"></td></tr>
+                            <tr><td>Result Code Value [30]</td><td><input type="text" maxlength="1" class="grid-input crypto-letter-box target-letter" data-ans="V"></td></tr>
+                            <tr><td>Result Code Value [42]</td><td><input type="text" maxlength="1" class="grid-input crypto-letter-box target-letter" data-ans="I"></td></tr>
+                            <tr><td>Result Code Value [25]</td><td><input type="text" maxlength="1" class="grid-input crypto-letter-box target-letter" data-ans="N"></td></tr>
+                            <tr><td>Result Code Value [5]</td><td><input type="text" maxlength="1" class="grid-input crypto-letter-box target-letter" data-ans="E"></td></tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
-        <div class="footer-controls">
-            <button id="btn-back" class="btn-secondary" onclick="changeStep(-1)" disabled>Previous Matrix</button>
-            <button id="btn-action" class="btn-primary" onclick="verifyCurrentTable()">Check Table System</button>
+        <div class="game-viewport" id="report-screen" style="display: none;">
+            <div class="success-badge">🏆</div>
+            <h2>Page 68: Master Game Performance Terminal</h2>
+            <p style="font-size: 1.25rem; color:#475569; margin-bottom:30px;">Cryptographic String Array Decoded Successfully.</p>
+            <div style="max-width: 500px; margin: 0 auto; background: #f8fafc; border: 2px dashed var(--success); border-radius: 8px; padding: 25px;">
+                <span style="font-size: 0.9rem; text-transform: uppercase; color: #64748b; font-weight:700; letter-spacing:1px;">Decrypted Corporate Target Phrase</span>
+                <h1 style="color: var(--success); margin: 10px 0 0 0; letter-spacing: 4px; font-size:2.5rem;">INNOVINE</h1>
+            </div>
+        </div>
+
+        <div class="control-footer">
+            <button class="action-btn" id="master-action-btn" onclick="processEngineValidation()">Verify System Node Entries</button>
         </div>
     </div>
 
-    <audio id="sound-intro" src="assets/intro_sound.mp3" preload="auto"></audio>
-    <audio id="sound-clap" src="assets/clap_sound.mp3" preload="auto"></audio>
-    <audio id="sound-wrong" src="assets/wrong_sound.mp3" preload="auto"></audio>
+    <audio id="snd-intro" src="assets/intro_sound.mp3" preload="auto"></audio>
+    <audio id="snd-clap" src="assets/clap_sound.mp3" preload="auto"></audio>
+    <audio id="snd-wrong" src="assets/wrong_sound.mp3" preload="auto"></preload>
+
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <script>
-        let currentStep = 1;
-        const totalSteps = 3;
-
-        // Auto transition Splash Screen on page 57 after 5 seconds
+        // Trigger auto routing of splash timeout window setup elements
         window.addEventListener('DOMContentLoaded', () => {
-            const introSnd = document.getElementById('sound-intro');
-            // Play introductory music if allowed by browser policies
-            introSnd.play().catch(() => console.log("Intro sound context queued waiting for student click."));
+            const intro = document.getElementById('snd-intro');
+            intro.play().catch(e => console.log("Intro standard configuration block note. Core awaiting run input."));
 
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
-                const mainApp = document.getElementById('game-container');
+                const coreGame = document.getElementById('game-container');
                 splash.style.opacity = '0';
                 setTimeout(() => {
                     splash.style.display = 'none';
-                    mainApp.style.display = 'block';
-                }, 800);
+                    coreGame.style.display = 'block';
+                }, 600);
             }, 5000);
         });
 
-        function verifyCurrentTable() {
-            const currentView = document.getElementById(`step-${currentStep}`);
-            const inputs = currentView.querySelectorAll('.interactive-cell');
-            let tablePerfect = true;
+        function processEngineValidation() {
+            let mathInputs = document.querySelectorAll('.target-math');
+            let letterInputs = document.querySelectorAll('.target-letter');
+            let completeSuccess = true;
+            let errorFlag = false;
 
-            inputs.forEach(input => {
-                const targetVal = input.getAttribute('data-ans').trim().toLowerCase();
-                const userVal = input.value.trim().toLowerCase();
+            // 1. Process Mathematical Evaluation Layers
+            mathInputs.forEach(input => {
+                const targetedAnswer = input.getAttribute('data-ans');
+                const userVal = input.value.trim();
+                const keyBind = input.getAttribute('data-key');
+                const keyElement = document.getElementById(keyBind);
 
-                if (userVal === targetVal) {
-                    input.className = "interactive-cell cell-correct";
+                if (userVal === targetedAnswer) {
+                    input.className = "grid-input target-math input-correct";
+                    keyElement.style.visibility = "visible";
+                } else if(userVal !== "") {
+                    input.className = "grid-input target-math input-wrong";
+                    completeSuccess = false;
+                    errorFlag = true;
                 } else {
-                    input.className = "interactive-cell cell-wrong";
-                    tablePerfect = false;
+                    completeSuccess = false;
                 }
             });
 
-            if (inputs.length === 0) return; // Diagnostics skip
+            // 2. Process Encryption Block Output Matching Arrays
+            letterInputs.forEach(input => {
+                const targetedLetter = input.getAttribute('data-ans').toLowerCase();
+                const userVal = input.value.trim().toLowerCase();
 
-            if (tablePerfect) {
-                playSound('sound-clap');
-                triggerConfettiEffect();
-                // Enable next button sequence safely
-                document.getElementById('btn-action').innerText = "Advance Next Page Matrix";
-                document.getElementById('btn-action').setAttribute('onclick', 'changeStep(1)');
-            } else {
-                playSound('sound-wrong');
-                // Standard structural reset animations
+                if (userVal === targetedLetter) {
+                    input.className = "grid-input crypto-letter-box target-letter input-correct";
+                } else if(userVal !== "") {
+                    input.className = "grid-input crypto-letter-box target-letter input-wrong";
+                    completeSuccess = false;
+                    errorFlag = true;
+                } else {
+                    completeSuccess = false;
+                }
+            });
+
+            // 3. System Audio Route Engine Processing Execution Output
+            if (errorFlag) {
+                executeSoundAsset('snd-wrong');
                 setTimeout(() => {
-                    inputs.forEach(i => i.classList.remove('cell-wrong'));
+                    document.querySelectorAll('.input-wrong').forEach(el => el.classList.remove('input-wrong'));
                 }, 400);
+                return;
+            }
+
+            if (completeSuccess) {
+                executeSoundAsset('snd-clap');
+                launchConfettiBlast();
+                
+                // Route viewport rendering properties setup down to Page 68 terminal
+                document.getElementById('active-game-view').style.display = 'none';
+                document.getElementById('report-screen').style.display = 'block';
+                document.getElementById('page-tag').innerText = "Page 68";
+                document.getElementById('master-action-btn').style.display = 'none';
             }
         }
 
-        function changeStep(dir) {
-            document.getElementById(`step-${currentStep}`).style.display = 'none';
-            currentStep += dir;
-            document.getElementById(`step-${currentStep}`).style.display = 'block';
-
-            // UI updates matched to page properties
-            const pageIndicator = document.getElementById('page-indicator');
-            const actionBtn = document.getElementById('btn-action');
-
-            if (currentStep === 1) {
-                pageIndicator.innerText = "Pages 58 - 60";
-                actionBtn.innerText = "Check Table System";
-                actionBtn.setAttribute('onclick', 'verifyCurrentTable()');
-                actionBtn.style.display = 'block';
-            } else if (currentStep === 2) {
-                pageIndicator.innerText = "Pages 61 - 67";
-                actionBtn.innerText = "Check Table System";
-                actionBtn.setAttribute('onclick', 'verifyCurrentTable()');
-                actionBtn.style.display = 'block';
-            } else if (currentStep === 3) {
-                pageIndicator.innerText = "Page 68";
-                actionBtn.style.display = 'none';
-            }
-
-            document.getElementById('btn-back').disabled = (currentStep === 1);
+        function executeSoundAsset(elementId) {
+            const track = document.getElementById(elementId);
+            track.currentTime = 0;
+            track.play().catch(err => console.log("System track context loading deviation log:", err));
         }
 
-        function playSound(id) {
-            const aud = document.getElementById(id);
-            aud.currentTime = 0;
-            aud.play().catch(e => console.log("Sound play error trace:", e));
-        }
-
-        // Lightweight Pure Canvas Confetti Core Logic Engine
-        function triggerConfettiEffect() {
+        // Lightweight High-Performance Canvas Confetti Particle Engine
+        function launchConfettiBlast() {
             const canvas = document.getElementById('confetti-canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
 
-            let particles = [];
-            const colors = ['#be123c', '#f97316', '#10b981', '#3b82f6', '#facc15'];
+            let systemParticles = [];
+            const hexColors = ['#0369a1', '#6d28d9', '#be123c', '#ea580c', '#10b981'];
 
-            for (let i = 0; i < 120; i++) {
-                particles.push({
+            for (let idx = 0; idx < 140; idx++) {
+                systemParticles.push({
                     x: window.innerWidth / 2,
                     y: window.innerHeight / 2,
-                    radius: Math.random() * 5 + 4,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    vx: (Math.random() - 0.5) * 15,
-                    vy: (Math.random() - 0.5) * 15 - 5,
-                    gravity: 0.25,
-                    opacity: 1
+                    radius: Math.random() * 6 + 4,
+                    color: hexColors[Math.floor(Math.random() * hexColors.length)],
+                    speedX: (Math.random() - 0.5) * 18,
+                    speedY: (Math.random() - 0.5) * 18 - 4,
+                    gravityModifier: 0.2,
+                    alphaOpacity: 1
                 });
             }
 
-            function render() {
+            function frameLoopExecution() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach((p, idx) => {
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.vy += p.gravity;
-                    p.opacity -= 0.015;
+                systemParticles.forEach((part, index) => {
+                    part.x += part.speedX;
+                    part.y += part.speedY;
+                    part.speedY += part.gravityModifier;
+                    part.alphaOpacity -= 0.012;
 
                     ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = p.color;
-                    ctx.globalAlpha = p.opacity;
+                    ctx.arc(part.x, part.y, part.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = part.color;
+                    ctx.globalAlpha = part.alphaOpacity;
                     ctx.fill();
 
-                    if (p.opacity <= 0) particles.splice(idx, 1);
+                    if (part.alphaOpacity <= 0) systemParticles.splice(index, 1);
                 });
 
-                if (particles.length > 0) requestAnimationFrame(render);
+                if (systemParticles.length > 0) requestAnimationFrame(frameLoopExecution);
                 else ctx.clearRect(0, 0, canvas.width, canvas.height);
             }
-            render();
+            frameLoopExecution();
         }
     </script>
 </body>

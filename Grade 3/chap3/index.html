@@ -38,7 +38,7 @@
             background: linear-gradient(135deg, #111827, var(--dark-terminal));
         }
 
-        /* 5-Second Exclusive Pure White Splash Screen Layout */
+        /* 5-Second Exclusive Pure White Splash Screen */
         #splashScreen {
             position: fixed;
             top: 0;
@@ -65,7 +65,7 @@
             50% { transform: scale(1.04); }
         }
 
-        /* App Main Architecture Box */
+        /* App Main Shell Box */
         .app-window {
             width: 95vw;
             max-width: 1100px;
@@ -92,7 +92,7 @@
             font-weight: 800;
         }
 
-        /* Completely New Divided Grid Grid layout */
+        /* Core Layout Split Grid */
         .matrix-layout {
             display: grid;
             grid-template-rows: auto 1fr;
@@ -112,7 +112,6 @@
             font-weight: 700;
         }
 
-        /* Split Screen Split Core Panel Workspaces */
         .split-arena {
             display: grid;
             grid-template-columns: 1.1fr 0.9fr;
@@ -120,7 +119,7 @@
             min-height: 0;
         }
 
-        /* Left Control Panel Terminal Grid Shell */
+        /* Left Terminal Control Deck */
         .terminal-deck {
             background: #1e293b;
             border: 2px solid #334155;
@@ -140,7 +139,7 @@
             margin-bottom: 15px;
         }
 
-        /* Keyboard Command Grid Node Clusters */
+        /* Grid Node Matrix Clustered Controls */
         .key-input-matrix {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -152,9 +151,9 @@
             background: linear-gradient(180deg, #334155, #1e293b);
             border: 2px solid #475569;
             border-radius: 14px;
-            padding: 20px 10px;
+            padding: 18px 10px;
             color: white;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 800;
             cursor: pointer;
             text-align: center;
@@ -170,7 +169,7 @@
             background: #27354a;
         }
 
-        /* Right Window Simulator Map Frame Component */
+        /* Right Window Simulator Framework */
         .document-simulator-window {
             background: var(--word-interface-gray);
             border: 3px solid #cbd5e1;
@@ -179,13 +178,14 @@
             flex-direction: column;
             overflow: hidden;
             box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            position: relative; /* Fixed reference anchor for highlight overlays */
         }
 
-        /* Authentic Top Blue Header Bar Frame Mockup */
+        /* Layout Elements inside Simulator */
         .mock-word-header {
             background: var(--word-classic-blue);
             color: white;
-            padding: 10px 16px;
+            padding: 12px 16px;
             font-size: 0.85rem;
             font-weight: 700;
             display: flex;
@@ -199,7 +199,6 @@
             font-size: 1rem;
         }
 
-        /* Central Workspace Active Canvas Node */
         .mock-document-canvas {
             flex-grow: 1;
             background: white;
@@ -209,7 +208,6 @@
             padding: 25px;
             display: flex;
             flex-direction: column;
-            position: relative;
         }
 
         .blinking-cursor-block {
@@ -219,18 +217,29 @@
             line-height: 1.6;
         }
 
-        /* Bottom Word Layout Status Grid Panel */
         .mock-word-status-bar {
             background: var(--word-classic-blue);
             color: white;
-            padding: 6px 15px;
+            padding: 8px 15px;
             font-size: 0.8rem;
             font-weight: 600;
             display: flex;
             justify-content: space-between;
         }
 
-        /* Global Animated Modular Feedback Popup Panel Elements */
+        /* Vector Highlight Overlay (Anchored on Parent) */
+        #activeHighlightPointerIndicator {
+            position: absolute;
+            border: 3.5px solid var(--scratch-orange);
+            background: rgba(255, 171, 25, 0.12);
+            border-radius: 8px;
+            pointer-events: none; /* Prevents button blockage bugs */
+            transition: all 0.25s ease-out;
+            display: none;
+            z-index: 50;
+        }
+
+        /* Global Modal Dialog Overlay */
         .popup-modal-shroud {
             position: fixed;
             top: 0;
@@ -241,7 +250,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 500;
+            z-index: 999;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -311,63 +320,55 @@
         <div id="introView" class="welcome-card">
             <img src="assets/innovine-logo.png" alt="Logo" style="max-width:140px; margin-bottom:15px;" onerror="this.style.display='none'">
             <h1><span>MATRIX DEFUSER</span></h1>
-            <h2 style="color: #64748b; font-size: 1.1rem; margin-bottom: 24px;">Core Interface Arcade</h2>
+            <h2 style="color: #64748b; font-size: 1.1rem; margin-bottom: 24px;">Grade 3 Chapter 3 Core Interface Arcade</h2>
             <p style="text-align: left; line-height: 1.7; color: #475569; margin-bottom: 26px; background: #f1f5f9; padding: 20px; border-radius: 14px; font-size: 0.95rem;">
-                Forget dropping buckets! Welcome to the active MS Word Interface Matrix Terminal. Look at the missing component indicator or active file request on the right-hand layout simulator. Click the correct command puzzle module key on the left to fire macro circuits and lock down processing sectors!
+                Look at the highlighted zone or workspace request on the right-hand MS Word layout simulator. Click the correct command puzzle module key on the left to confirm your layout placement!
             </p>
             <button class="btn-primary" onclick="launchMatrixModule()">Initialize Matrix Link</button>
         </div>
 
         <div id="gameViewPanel" class="matrix-layout hidden">
             <div class="top-hud">
-                <div>🏆 Matrix Points: <span id="scoreDisplayLabel" style="color:var(--scratch-orange)">0</span></div>
-                <div style="font-size:1.1rem;">🔮 Target Sector: <span id="sectorDisplayLabel" style="color:#60a5fa">1 / 10</span></div>
+                <div>🏆 Matrix Points: <span id="scoreDisplayLabel">0</span></div>
+                <div style="font-size:1.1rem;">🔮 Target Sector: <span id="sectorDisplayLabel">1 / 10</span></div>
                 <div style="background:#2ecc71;" class="badge-level">Active Node</div>
             </div>
 
             <div class="split-arena">
-                
                 <div class="terminal-deck">
                     <div class="task-descriptor">
                         <h3 style="color:var(--scratch-orange); margin-bottom:6px; text-transform:uppercase; font-size:0.85rem; letter-spacing:1px;">Active Objective Manual</h3>
-                        <p id="objectiveTextString" style="font-size:1rem; font-weight:600; line-height:1.5; color:#cbd5e1;">Loading sector data...</p>
+                        <p id="objectiveTextString">Loading sector data...</p>
                     </div>
-
-                    <div class="key-input-matrix" id="keyboardGridMatrixBox">
-                        </div>
+                    <div class="key-input-matrix" id="keyboardGridMatrixBox"></div>
                 </div>
 
-                <div class="document-simulator-window">
+                <div class="document-simulator-window" id="simulationContainerWindow">
+                    <div id="activeHighlightPointerIndicator"></div>
                     
                     <div class="mock-word-header" id="wordHeaderTitleBar">
                         <div class="mock-word-quickaccess" id="quickAccessCluster">💾 ↩️ ↪️</div>
-                        <div id="centralDocumentTitleText" style="font-size:0.85rem; letter-spacing:0.5px;">Document1 - Microsoft Word</div>
+                        <div id="centralDocumentTitleText">Document1 - Microsoft Word</div>
                         <div>❌</div>
                     </div>
 
-                    <div class="mock-document-canvas">
-                        <div class="blinking-cursor-block" id="pageCanvasContentBlock">
-                            Click start to begin editing script tracking streams...
-                        </div>
-                        
-                        <div id="activeHighlightPointerIndicator" style="position:absolute; border:3px solid var(--scratch-orange); background:rgba(255, 171, 25, 0.15); border-radius:8px; pointer-events:none; transition:all 0.3s ease; display:none;"></div>
+                    <div class="mock-document-canvas" id="mockDocumentCanvasBox">
+                        <div class="blinking-cursor-block" id="pageCanvasContentBlock"></div>
                     </div>
 
                     <div class="mock-word-status-bar" id="wordStatusFooterBar">
                         <div id="statusLeftTally">Page 1 of 1 &nbsp;&nbsp; 0 Words</div>
                         <div>Print Layout &nbsp; 🔍 100%</div>
                     </div>
-
                 </div>
-
             </div>
         </div>
 
         <div class="popup-modal-shroud" id="interactiveGlobalModalShroud">
             <div class="popup-modal-card">
                 <div id="modalIconEmblem" style="font-size:4rem; margin-bottom:12px;">✨</div>
-                <h2 id="modalHeaderTitle" style="font-weight:800; margin-bottom:10px; color:#111827;">Evaluation Feedback</h2>
-                <p id="modalBodyTextString" style="color:#475569; font-weight:600; font-size:1rem; line-height:1.5; margin-bottom:15px;">Filing sector parameters...</p>
+                <h2 id="modalHeaderTitle" style="font-weight:800; margin-bottom:10px;">Evaluation Feedback</h2>
+                <p id="modalBodyTextString">Filing sector parameters...</p>
                 <button class="modal-action-btn" onclick="dismissMatrixModal()">Next Objective Matrix</button>
             </div>
         </div>
@@ -378,18 +379,43 @@
             <div style="font-size: 4.5rem; margin: 25px 0;">🖥️⚡⌨️🔑</div>
             <button class="btn-primary" onclick="restartCampaignSession()">Reset Matrix System</button>
         </div>
-
     </div>
 
     <script>
-        // Linear Database Matrix Checklist covering Grade 3: Word Processing Part 1
+        // Setup exclusive launch intervals
+        setTimeout(() => {
+            const splashNode = document.getElementById("splashScreen");
+            splashNode.style.opacity = "0";
+            setTimeout(() => {
+                splashNode.style.setProperty("display", "none", "important");
+                document.body.classList.add("game-active");
+                document.getElementById("appInterfaceShell").classList.remove("hidden");
+            }, 600);
+        }, 5000);
+
         const sectorDatabase = [
-            {
-                objective: "Identify the very top layout bar that tracks your active file name (e.g., 'Document1') and program window tags.",
-                targetKey: "Title Bar",
-                highlightTarget: "wordHeaderTitleBar",
-                hint: "Fantastic! The Title Bar commands the top boundary of MS Word, displaying the placeholder layout name 'Document1'.",
-                canvasText: "[Top Area Highlighted] System waiting for identification..."
-            },
-            {
-                objective: "Determine the native keyboard macro
+            { objective: "Identify the very top layout bar that tracks your active file name (e.g., 'Document1') and program window tags.", targetKey: "Title Bar", highlightTarget: "wordHeaderTitleBar", hint: "Fantastic! The Title Bar commands the top boundary of MS Word.", canvasText: "[Top Area Highlighted] System waiting for identification..." },
+            { objective: "Determine the native keyboard macro required to instantiate a brand-new blank document workspace.", targetKey: "Ctrl + N", highlightTarget: "mockDocumentCanvasBox", hint: "Correct! Triggering Ctrl + N initializes a clean document thread.", canvasText: "Creating a completely fresh blank document workspace..." },
+            { objective: "Locate the fast-action tool strip holding ready commands like Save, Undo, and Redo.", targetKey: "Quick Access", highlightTarget: "quickAccessCluster", hint: "Spot on! The Quick Access Toolbar keeps utility buttons anchored on the upper edge.", canvasText: "Looking for the shortcut buttons: Save 💾, Undo ↩️, Redo ↪️" },
+            { objective: "Select the permanent command key macro required to save your project's current text data blocks to disk storage.", targetKey: "Ctrl + S", highlightTarget: "mockDocumentCanvasBox", hint: "Brilliant execution! Ctrl + S saves your binary properties safely.", canvasText: "Writing data safely to computer storage." },
+            { objective: "Identify the popup prompt view field that triggers specifically during your first save event, asking for a custom title string.", targetKey: "Save As Box", highlightTarget: "mockDocumentCanvasBox", hint: "Excellent. The 'Save As' Dialog Box captures document filename registrations.", canvasText: "💾 File Name Prompt: Type your custom filename inside the input box..." },
+            { objective: "Isolate the bottom utility bar line element that tallies active document word counts and page indexes.", targetKey: "Status Bar", highlightTarget: "wordStatusFooterBar", hint: "Perfect! The Status Bar populates the bottom floor line tracking operational metrics.", canvasText: "[Bottom Strip Highlighted] Tracking page tallies and word counts..." },
+            { objective: "Identify the default formatting extension string that MS Word appends onto written files when saving.", targetKey: ".docx tag", highlightTarget: "centralDocumentTitleText", hint: "Correct! Word files save with the distinctive '.docx' filename suffix extensions.", canvasText: "System File saved as: Homework.docx" },
+            { objective: "Select the operational command macro code button used to load pre-existing project document paths into your current view.", targetKey: "Ctrl + O", highlightTarget: "mockDocumentCanvasBox", hint: "Success! Ctrl + O commands the software engine to Open legacy workspaces.", canvasText: "📂 Browsing files... Loading an old document into the workspace." },
+            { objective: "Which command button clears written layout segments sitting directly behind/to the left of your active blinking line pointer?", targetKey: "Backspace", highlightTarget: "mockDocumentCanvasBox", hint: "Amazing. Backspace step-erases strings backwards from the active cursor coordinates.", canvasText: "Typing error letters here| ⬅ Erasing left side strings instantly." },
+            { objective: "What is the automatic placeholder document name generated by Microsoft Word the moment you boot a clean template file?", targetKey: "Document1", highlightTarget: "centralDocumentTitleText", hint: "Incredible! Document1 stands as the universal temporary title before a save override occurs.", canvasText: "Blank template launched. Current Active Title: Document1" }
+        ];
+
+        const primaryKeyBank = [
+            "Title Bar", "Ctrl + N", "Quick Access", "Ctrl + S", "Save As Box",
+            "Status Bar", ".docx tag", "Ctrl + O", "Backspace", "Document1",
+            "Ribbon Menu", "Shift + Esc", "Ctrl + Alt + Del", "Scroll Bar", "Caps Lock"
+        ];
+
+        let sectorIndex = 0;
+        let runningMatrixScore = 0;
+        let matrixSystemLocked = false;
+
+        function playAudioTrack(id) {
+            const node = document.getElementById(id);
+            if(node) { node.currentTime = 0; node.play().catch(e => console.log(e));

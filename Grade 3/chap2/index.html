@@ -3,601 +3,693 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade 3: Files and Folders Explorer Quest</title>
+    <title>Innovine Files & Folders Master - Storage Explorer Edition</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
         :root {
-            --primary: #008080;
-            --primary-light: #e6f2f2;
-            --secondary: #ff9900;
-            --success: #2ecc71;
-            --danger: #e74c3c;
-            --dark: #2c3e50;
+            --scratch-orange: #ffab19;
+            --scratch-blue: #4c97ff;
+            --scratch-purple: #9966ff;
+            --scratch-green: #2ecc71;
+            --scratch-pink: #ff6680;
+            --dark-bg: #0f172a;
+            --panel-bg: #1e293b;
         }
 
         * {
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
         }
 
         body {
-            background-color: #f5f9f9;
-            color: var(--dark);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            background: #ffffff;
             min-height: 100vh;
-            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            transition: background 0.5s ease;
         }
 
-        .game-container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        body.game-active {
+            background: linear-gradient(135deg, #1e293b, var(--dark-bg));
+        }
+
+        /* 5-Second Pure White Splash Screen with Image Logo Layout */
+        #splashScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 800px;
-            padding: 30px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            min-height: 540px;
+            height: 100%;
+            background: #ffffff;
             display: flex;
             flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        header {
-            display: none; /* Controlled dynamically post-intro */
+        #splashScreen img {
+            width: 280px;
+            max-width: 80%;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        /* App Window Framework */
+        .app-window {
+            width: 95vw;
+            max-width: 1100px;
+            height: 88vh;
+            min-height: 600px;
+            z-index: 10;
+        }
+
+        .welcome-card {
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 32px;
+            padding: 42px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            max-width: 620px;
+            margin: 0 auto;
+        }
+
+        .welcome-card h1 span {
+            background: linear-gradient(135deg, var(--scratch-orange), var(--scratch-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        /* Redesigned Gameplay Cabinet Infrastructure Layout */
+        .game-layout {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            height: 100%;
+            gap: 15px;
+        }
+
+        .top-hud {
+            display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 3px solid var(--primary-light);
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-            width: 100%;
+            background: var(--panel-bg);
+            border: 2px solid #334155;
+            padding: 14px 25px;
+            border-radius: 16px;
+            color: white;
+            font-weight: 700;
         }
 
-        .logo {
-            height: 50px;
-            object-fit: contain;
+        .badge-level {
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
         }
+        .lvl-1 { background: var(--scratch-blue); }
+        .lvl-2 { background: var(--scratch-purple); }
+        .lvl-3 { background: var(--scratch-orange); }
 
-        .stats-bar {
-            display: flex;
+        .explorer-workbench {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
             gap: 20px;
-            font-size: 1.1rem;
-            font-weight: bold;
+            min-height: 0;
         }
 
-        .stat-box {
-            background: var(--primary-light);
-            padding: 8px 15px;
-            border-radius: 10px;
-            color: var(--primary);
+        /* Task File Clerk Desks */
+        .clerk-desk {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 24px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            color: white;
+            position: relative;
         }
 
-        h1 {
-            color: var(--primary);
-            margin-bottom: 15px;
+        .desk-header {
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #94a3b8;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #475569;
+            padding-bottom: 10px;
+        }
+
+        /* Central Floating Target File */
+        .manifest-card {
+            background: #0f172a;
+            border: 3px dashed var(--scratch-blue);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            margin: auto 0;
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .file-icon-emblem {
+            font-size: 4rem;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .file-title-string {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #ffffff;
+            background: #1e293b;
+            padding: 6px 16px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+        }
+
+        /* Interactive Drawer Grid */
+        .cabinet-rack {
+            background: rgba(255, 255, 255, 0.96);
+            border: 2px solid #cbd5e1;
+            border-radius: 24px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+        }
+        body.game-active .cabinet-rack {
+            background: #1e293b;
+            border-color: #334155;
+        }
+
+        .drawers-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .drawer-button {
+            background: #2d3748;
+            border: 2px solid #4a5568;
+            border-radius: 14px;
+            padding: 18px 24px;
+            color: white;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .drawer-button:hover {
+            background: #3a4659;
+            border-color: var(--scratch-blue);
+            transform: translateX(5px);
+        }
+
+        .drawer-button::after {
+            content: '➔';
+            position: absolute;
+            right: 24px;
+            opacity: 0.3;
+            transition: opacity 0.2s;
+        }
+        .drawer-button:hover::after {
+            opacity: 1;
+        }
+
+        .drawer-icon-frame {
             font-size: 1.8rem;
         }
 
-        p.instructions {
-            font-size: 1.1rem;
-            color: #555;
-            margin-bottom: 25px;
-            line-height: 1.5;
-        }
-
-        /* Screen Controller Configurations */
-        .screen {
-            display: none;
-            width: 100%;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            flex-grow: 1;
-        }
-
-        .screen.active {
-            display: flex;
-        }
-
-        /* Strict Intro Layout: Exclusively Center Logo */
-        #screen-intro {
-            background-color: #ffffff;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            width: 100%;
-            min-height: 450px;
-        }
-        
-        .intro-logo-box {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 150px;
-        }
-
-        /* Interactive Dynamic Asset Styling */
-        .btn {
-            background: var(--secondary);
-            color: white;
-            border: none;
-            padding: 15px 35px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: transform 0.2s, background 0.2s;
-            box-shadow: 0 5px 15px rgba(255, 153, 0, 0.4);
-            margin-top: 15px;
-        }
-
-        .btn:hover {
-            transform: scale(1.05);
-            background: #e08800;
-        }
-
-        .sorting-area {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 15px;
-            gap: 20px;
-            width: 100%;
-        }
-
-        .file-card {
-            background: #fff;
-            border: 3px dashed var(--primary);
-            padding: 15px 30px;
-            border-radius: 15px;
-            font-size: 1.4rem;
-            font-weight: bold;
-            display: inline-block;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-        }
-
-        .folder-target {
-            background: var(--primary-light);
-            border: 3px solid var(--primary);
-            border-radius: 15px;
-            padding: 20px;
-            width: 45%;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .folder-target:hover {
-            background: #d0e6e6;
-            transform: translateY(-3px);
-        }
-
-        .folder-icon {
-            font-size: 3.5rem;
-            margin-bottom: 5px;
-        }
-
-        .choices-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 15px;
-            width: 100%;
-        }
-
-        .choice-card {
-            background: white;
-            border: 2px solid #ddd;
-            padding: 18px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .choice-card:hover {
-            border-color: var(--primary);
-            background-color: var(--primary-light);
-        }
-
-        .feedback {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-top: 20px;
-            height: 30px;
-        }
-        .text-success { color: var(--success); }
-        .text-danger { color: var(--danger); }
-
-        canvas#confetti-canvas {
+        /* --- Custom Interactive Popup Engine Layout --- */
+        .overlay-popup {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(4px);
+            border-radius: 22px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
         }
+
+        .overlay-popup.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .popup-bubble {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 85%;
+            width: 420px;
+            text-align: center;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            color: #0f172a;
+        }
+
+        .overlay-popup.active .popup-bubble {
+            transform: scale(1);
+        }
+
+        .popup-icon {
+            font-size: 3.5rem;
+            margin-bottom: 12px;
+        }
+
+        .popup-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .popup-body {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #475569;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .popup-btn {
+            background: #0f172a;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .popup-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--scratch-blue), #2563eb);
+            color: white;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(76, 151, 255, 0.4);
+            transition: transform 0.2s;
+        }
+        .btn-primary:hover {
+            transform: scale(1.03);
+        }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <audio id="sound-correct" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="sound-clap" src="assets/clap.mp3" preload="auto"></audio>
-    <audio id="sound-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="audioCorrect" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="audioClap" src="assets/clap.mp3" preload="auto"></audio>
 
-    <div class="game-container">
-        <canvas id="confetti-canvas"></canvas>
+    <div id="splashScreen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/280x100?text=Innovine+Universal'">
+        <p style="margin-top:20px; font-weight:600; color:#64748b; letter-spacing: 1px;">Loading Chapter 3: Files and Folders...</p>
+    </div>
 
-        <header id="game-header">
-            <img src="assets/image_479de3.png" alt="Innovine Logo" class="logo" onerror="this.style.display='none';">
-            <div class="stats-bar">
-                <div class="stat-box">Score: <span id="score-val">0</span></div>
-                <div class="stat-box">Quest: <span id="q-progress">1</span>/12</div>
+    <div class="app-window hidden" id="appInterfaceShell">
+        
+        <div id="introView" class="welcome-card">
+            <img src="assets/innovine-logo.png" alt="Logo" style="max-width:140px; margin-bottom:15px;" onerror="this.style.display='none'">
+            <h1><span>EXPLORER QUEST</span></h1>
+            <h2 style="color: #64748b; font-size: 1.1rem; margin-bottom: 24px;">Grade 3 Chapter 3 Storage Clerk Simulator</h2>
+            <p style="text-align: left; line-height: 1.7; color: #475569; margin-bottom: 26px; background: #f1f5f9; padding: 20px; border-radius: 14px; font-size: 0.95rem;">
+                Greetings, Directory Clerk! Welcome to the file storage subsystem. Today you are evaluating standard filing tasks, verifying validation extensions, sorting components, and diagnosing permanent file operations. Secure the files by placing them into the correct console system drawer.
+            </p>
+            <button class="btn-primary" onclick="launchSimulator()">Boot Explorer Module</button>
+        </div>
+
+        <div id="gameViewPanel" class="game-layout hidden">
+            <div class="top-hud">
+                <div>🏆 Clerk Score: <span id="scoreDisplayLabel" style="color:var(--scratch-orange)">0</span></div>
+                <div style="font-size:1.1rem;">📁 Explorer Stage: <span id="missionLevelTitle" style="color:#60a5fa">Level 1</span></div>
+                <div id="difficultyBadge" class="badge-level lvl-1">Level 1</div>
             </div>
-        </header>
 
-        <div id="screen-intro" class="screen active">
-            <div class="intro-logo-box">
-                <img src="assets/innovine-logo.png" alt="Innovine Logo" style="max-width: 320px; width: 100%; height: auto;" onerror="this.src='https://svgshare.com/i/15Y4.svg'">
+            <div class="explorer-workbench">
+                
+                <div class="clerk-desk">
+                    <div class="desk-header">Active Filing Registry</div>
+                    <p id="levelInstructionsText" style="font-size:0.9rem; color:#cbd5e1; line-height:1.4;"></p>
+                    
+                    <div class="manifest-card">
+                        <div class="file-icon-emblem" id="manifestIconBox">📄</div>
+                        <div class="file-title-string" id="manifestTitleBox">document.txt</div>
+                    </div>
+
+                    <div class="overlay-popup" id="interactivePopupPanel">
+                        <div class="popup-bubble">
+                            <div class="popup-icon" id="popIcon">✨</div>
+                            <div class="popup-title" id="popTitle">Feedback Alert</div>
+                            <div class="popup-body" id="popBody">Filing description text box logs go here.</div>
+                            <button class="popup-btn" onclick="dismissFeedbackPopup()">Continue</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cabinet-rack">
+                    <div class="desk-header">Target System Drawers (Select Correct Target)</div>
+                    <div class="drawers-grid" id="drawersTargetContainer"></div>
+                </div>
+
             </div>
         </div>
 
-        <div id="screen-start" class="screen">
-            <h1>Files and Folders Explorer Quest! 🚀</h1>
-            <p class="instructions">Welcome, Explorer! Let's test your computer knowledge about handling files, default file extensions, validation rules, and system folder management actions.</p>
-            <div style="font-size: 4.5rem; margin-bottom: 20px;">📁✨📄</div>
-            <button class="btn" onclick="startGame()">Start Quest</button>
-        </div>
-
-        <div id="screen-gameplay" class="screen">
-            <h1 id="gameplay-title">Level Question</h1>
-            <p class="instructions" id="gameplay-instructions">Dynamic instructions context box.</p>
-            
-            <div id="dynamic-context-box" style="width:100%;"></div>
-
-            <div id="dynamic-interaction-box" style="width:100%;"></div>
-            
-            <div id="gameplay-feedback" class="feedback"></div>
-        </div>
-
-        <div id="screen-gameover" class="screen">
-            <h1>Quest Complete! 🎉🏆</h1>
-            <p class="instructions">Outstanding job! You have safely explored and completed the directory management mechanics challenge.</p>
-            <div style="font-size: 2.2rem; margin: 20px 0; color: var(--primary); font-weight: bold;">
-                Your Total Score: <span id="final-score">0</span> / 120
-            </div>
-            <button class="btn" onclick="restartToMenu()">Play Again</button>
+        <div id="evaluationReportCard" class="welcome-card hidden">
+            <h1 style="color:var(--scratch-green)">🎉 Storage Administrator Certified!</h1>
+            <p style="margin-top:15px; font-size:1.15rem;" id="finalPerformanceReportSummary"></p>
+            <div style="font-size: 4.5rem; margin: 25px 0;">📁🗄️🖥️⭐</div>
+            <button class="btn-primary" onclick="restartCampaignSession()">Reset Filing Terminal</button>
         </div>
 
     </div>
 
     <script>
-        // Game State Variables
-        let score = 0;
-        let globalQuestionIndex = 0;
-        const totalQuestionsCount = 12;
-
-        const sndCorrect = document.getElementById('sound-correct');
-        const sndClap = document.getElementById('sound-clap');
-        const sndWrong = document.getElementById('sound-wrong');
-
-        // Linear Question Array Framework (12 Sourced Items, No Repetition, No Loops)
-        const questDatabase = [
-            {
-                type: 'sort',
-                title: 'Level 1: Extension Matcher 📄',
-                instruction: 'Look at the file extension! Choose the correct folder to organize it.',
-                item: 'story.txt',
-                answer: 'text',
-                options: [
-                    { label: '📝 Text Folder (Holds .txt files)', value: 'text' },
-                    { label: '🎨 Image Folder (Holds .bmp, .png, .jpg files)', value: 'image' }
-                ]
-            },
-            {
-                type: 'sort',
-                title: 'Level 1: Extension Matcher 📄',
-                instruction: 'Look at the file extension! Choose the correct folder to organize it.',
-                item: 'bird.png',
-                answer: 'image',
-                options: [
-                    { label: '📝 Text Folder (Holds .txt files)', value: 'text' },
-                    { label: '🎨 Image Folder (Holds .bmp, .png, .jpg files)', value: 'image' }
-                ]
-            },
-            {
-                type: 'sort',
-                title: 'Level 1: Extension Matcher 📄',
-                instruction: 'Look at the file extension! Choose the correct folder to organize it.',
-                item: 'fish.bmp',
-                answer: 'image',
-                options: [
-                    { label: '📝 Text Folder (Holds .txt files)', value: 'text' },
-                    { label: '🎨 Image Folder (Holds .bmp, .png, .jpg files)', value: 'image' }
-                ]
-            },
-            {
-                type: 'sort',
-                title: 'Level 1: Extension Matcher 📄',
-                instruction: 'Look at the file extension! Choose the correct folder to organize it.',
-                item: 'alphabets.txt',
-                answer: 'text',
-                options: [
-                    { label: '📝 Text Folder (Holds .txt files)', value: 'text' },
-                    { label: '🎨 Image Folder (Holds .bmp, .png, .jpg files)', value: 'image' }
-                ]
-            },
-            {
-                type: 'sort',
-                title: 'Level 1: Extension Matcher 📄',
-                instruction: 'Look at the file extension! Choose the correct folder to organize it.',
-                item: 'home.jpg',
-                answer: 'image',
-                options: [
-                    { label: '📝 Text Folder (Holds .txt files)', value: 'text' },
-                    { label: '🎨 Image Folder (Holds .bmp, .png, .jpg files)', value: 'image' }
-                ]
-            },
-            {
-                type: 'choice',
-                title: 'Level 2: Naming Rule Inspector 🕵️‍♂️',
-                instruction: 'Folder names cannot use special symbols like / \\ : * ? " < > |. Pick the VALID option:',
-                options: [
-                    { text: 'Science Folder', correct: true },
-                    { text: 'Science <Physics>', correct: false }
-                ]
-            },
-            {
-                type: 'choice',
-                title: 'Level 2: Naming Rule Inspector 🕵️‍♂️',
-                instruction: 'Which folder name is structurally accepted by the operating system framework?',
-                options: [
-                    { text: '*Math Folder', correct: false },
-                    { text: 'Math Homework', correct: true }
-                ]
-            },
-            {
-                type: 'choice',
-                title: 'Level 2: Naming Rule Inspector 🕵️‍♂️',
-                instruction: 'Find the folder configuration that completely avoids forbidden special characters:',
-                options: [
-                    { text: 'English/Poems', correct: false },
-                    { text: 'English Notes', correct: true }
-                ]
-            },
-            {
-                type: 'choice',
-                title: 'Level 2: Naming Rule Inspector 🕵️‍♂️',
-                instruction: 'Select the optimal folder name choice matching standard formatting conventions:',
-                options: [
-                    { text: 'MyPictures', correct: true },
-                    { text: 'What?Photo', correct: false }
-                ]
-            },
-            {
-                type: 'choice',
-                title: 'Level 3: Computer Actions Challenge 🖥️',
-                instruction: 'What shortcut keys delete a file permanently without sending it to the Recycle Bin?',
-                options: [
-                    { text: 'Shift + Delete', correct: true },
-                    { text: 'Ctrl + Alt + Delete', correct: false },
-                    { text: 'Backspace', correct: false }
-                ]
-            },
-            {
-                type: 'choice',
-                title: 'Level 3: Computer Actions Challenge 🖥️',
-                instruction: 'If a targeted file remains actively open on your system monitor screen, what happens when you try to rename or delete it?',
-                options: [
-                    { text: "The computer throws a 'File In Use' error window and blocks the operation.", correct: true },
-                    { text: 'It completes execution immediately without warning.', correct: false },
-                    { text: 'The target item is automatically compressed into a sub-folder framework.', correct: false }
-                ]
-            },
-            {
-                type: 'choice',
-                title: 'Level 3: Computer Actions Challenge 🖥️',
-                instruction: "What does executing a 'Restore' action on a document inside the Recycle Bin accomplish?",
-                options: [
-                    { text: 'It removes it completely from the persistent storage drives.', correct: false },
-                    { text: 'It returns the targeted file cleanly to its original system location.', correct: true },
-                    { text: 'It duplicates a fresh copy directly onto the desktop environment.', correct: false }
-                ]
-            }
-        ];
-
-        // Handles strict 5-second exclusive branding timeline setup
-        window.addEventListener('DOMContentLoaded', () => {
+        // Driver 5-Second Delay Timeout Block
+        setTimeout(() => {
+            const splashNode = document.getElementById("splashScreen");
+            splashNode.style.opacity = "0";
             setTimeout(() => {
-                // Once elapsed, activate layout structure & instructions panel safely
-                document.getElementById('game-header').style.display = 'flex';
-                showScreen('screen-start');
-            }, 5000); 
-        });
+                splashNode.style.setProperty("display", "none", "important");
+                document.body.classList.add("game-active");
+                document.getElementById("appInterfaceShell").classList.remove("hidden");
+            }, 600);
+        }, 5000);
 
-        function showScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
-
-        function startGame() {
-            score = 0;
-            globalQuestionIndex = 0;
-            updateStatsBar();
-            loadQuestionPipeline();
-        }
-
-        function restartToMenu() {
-            document.getElementById('game-header').style.display = 'flex';
-            showScreen('screen-start');
-        }
-
-        function updateStatsBar() {
-            document.getElementById('score-val').innerText = score;
-            document.getElementById('q-progress').innerText = Math.min(globalQuestionIndex + 1, totalQuestionsCount);
-        }
-
-        function loadQuestionPipeline() {
-            showScreen('screen-gameplay');
-            
-            // Clean conditional ceiling break to terminate runtime loops cleanly
-            if (globalQuestionIndex >= questDatabase.length) {
-                executeGameOver();
-                return;
+        // Core Textbook Dataset Matrix (12 Items, Linear Sequence)
+        const storageCampaignDatabase = {
+            1: {
+                title: "Level 1: Text Sorting",
+                difficulty: "Extensions",
+                badgeClass: "lvl-1",
+                instructions: "Review the target file extension string extension format. Determine the correct directory file system match.",
+                itemName: "story.txt",
+                itemIcon: "📝",
+                options: [
+                    { text: "Text Folder (Holds raw document characters)", choice: "correct", pop: "Excellent! The .txt extension defines standard structural Text files." },
+                    { text: "Image Folder (Stores graphic pixels)", choice: "wrong", pop: "Incorrect! .txt records alphabetic text characters, not graphical paint pixels." }
+                ]
+            },
+            2: {
+                title: "Level 1: Graphics Sorting",
+                difficulty: "Extensions",
+                badgeClass: "lvl-1",
+                instructions: "Review the system asset format tag extension and store it safely.",
+                itemName: "bird.png",
+                itemIcon: "🎨",
+                options: [
+                    { text: "Text Folder (Holds raw document characters)", choice: "wrong", pop: "Incorrect. .png denotes Portable Network Graphics vector textures." },
+                    { text: "Image Folder (Stores graphic pixels)", choice: "correct", pop: "Correct! .png files hold image asset properties smoothly." }
+                ]
+            },
+            3: {
+                title: "Level 1: Image Bitmap Matrix",
+                difficulty: "Extensions",
+                badgeClass: "lvl-1",
+                instructions: "Process the trailing system file extension string inside the terminal panel.",
+                itemName: "fish.bmp",
+                itemIcon: "🖼️",
+                options: [
+                    { text: "Image Folder (Stores graphic pixels)", choice: "correct", pop: "Spot on! .bmp corresponds to system Bitmap image structures." },
+                    { text: "Text Folder (Holds raw document characters)", choice: "wrong", pop: "Wrong drawer! .bmp maps to raw pixel paint arrays." }
+                ]
+            },
+            4: {
+                title: "Level 1: Document Batching",
+                difficulty: "Extensions",
+                badgeClass: "lvl-1",
+                instructions: "Organize the incoming structural ledger text item into the proper drawer.",
+                itemName: "alphabets.txt",
+                itemIcon: "📄",
+                options: [
+                    { text: "Text Folder (Holds raw document characters)", choice: "correct", pop: "Correct. Notepad reads and saves default text strings with the .txt tag extension." },
+                    { text: "Image Folder (Stores graphic pixels)", choice: "wrong", pop: "Incorrect. The text extension does not compress graphical raster paths." }
+                ]
+            },
+            5: {
+                title: "Level 1: Photo Archive",
+                difficulty: "Extensions",
+                badgeClass: "lvl-1",
+                instructions: "Trace the target photo media extension structure through the cabinet processor.",
+                itemName: "home.jpg",
+                itemIcon: "📸",
+                options: [
+                    { text: "Text Folder (Holds raw document characters)", choice: "wrong", pop: "Incorrect. .jpg is a standard compressed camera picture framework." },
+                    { text: "Image Folder (Stores graphic pixels)", choice: "correct", pop: "Excellent! .jpg is a universal layout for compressed photography files." }
+                ]
+            },
+            6: {
+                title: "Level 2: Special Validation Check",
+                difficulty: "Directory Rules",
+                badgeClass: "lvl-2",
+                instructions: "Operating networks prevent folder tags from using specific reserved glyph keys like / \\ : * ? \" < > |. Detect the VALID path label structure.",
+                itemName: "New Directory Tag",
+                itemIcon: "⚙️",
+                options: [
+                    { text: "Science Folder", choice: "correct", pop: "Correct! Standard character letters are valid for structural directory paths." },
+                    { text: "Science <Physics>", choice: "wrong", pop: "Validation Error! Left/Right angle brackets (< >) are illegal special system markers." }
+                ]
+            },
+            7: {
+                title: "Level 2: Operating Rules Registry",
+                difficulty: "Directory Rules",
+                badgeClass: "lvl-2",
+                instructions: "Isolate the valid folder construction format mapping rule from the available storage drawer listings.",
+                itemName: "Math Module Label",
+                itemIcon: "🧮",
+                options: [
+                    { text: "*Math Folder", choice: "wrong", pop: "Syntax Error! Asterisks (*) serve as system wildcard selectors and cannot start folder headers." },
+                    { text: "Math Homework", choice: "correct", pop: "Perfect! Plain textual labels with spaces conform to typical desktop architectures." }
+                ]
+            },
+            8: {
+                title: "Level 2: Reserved Characters Audit",
+                difficulty: "Directory Rules",
+                badgeClass: "lvl-2",
+                instructions: "Eliminate configurations utilizing restricted parameters.",
+                itemName: "English Notes Path",
+                itemIcon: "📚",
+                options: [
+                    { text: "English/Poems", choice: "wrong", pop: "Forbidden! The forward slash (/) character isolates active directory levels and is restricted inside path names." },
+                    { text: "English Notes", choice: "correct", pop: "Awesome! Avoiding functional symbols keeps your operational registry clean." }
+                ]
+            },
+            9: {
+                title: "Level 2: Namespace Integrity Evaluation",
+                difficulty: "Directory Rules",
+                badgeClass: "lvl-2",
+                instructions: "Verify the safe, functional folder string pattern free of parsing block traps.",
+                itemName: "Photo Storage Tag",
+                itemIcon: "🎞️",
+                options: [
+                    { text: "MyPictures", choice: "correct", pop: "Correct! Plain compound text is completely safe for cataloging elements." },
+                    { text: "What?Photo", choice: "wrong", pop: "Rejected! The question mark (?) is reserved for active system command queries." }
+                ]
+            },
+            10: {
+                title: "Level 3: Device Shortcut Protocols",
+                difficulty: "System Operations",
+                badgeClass: "lvl-3",
+                instructions: "Determine the exact input keys required to destroy a target file completely without routing it through the Recycle Bin loop.",
+                itemName: "Permanent Erase Sequence",
+                itemIcon: "💥",
+                options: [
+                    { text: "Shift + Delete keys", choice: "correct", pop: "Brilliant! Shift + Delete safely commands the operating system to clear disk blocks instantly." },
+                    { text: "Ctrl + Alt + Delete keys", choice: "wrong", pop: "Incorrect! Ctrl + Alt + Delete triggers the system security dialog panel." },
+                    { text: "Backspace key", choice: "wrong", pop: "Wrong! Backspace simply alters text strings or moves backward within workspace nodes." }
+                ]
+            },
+            11: {
+                title: "Level 3: Lockout States Management",
+                difficulty: "System Operations",
+                badgeClass: "lvl-3",
+                instructions: "Predict structural outcomes when mutating a file that remains actively open inside an operational background app interface.",
+                itemName: "File Locked Error Lock",
+                itemIcon: "🔒",
+                options: [
+                    { text: "The system throws a 'File In Use' alert box and blocks modification.", choice: "correct", pop: "Correct! Active memory file locks block secondary updates to protect active integrity." },
+                    { text: "It executes immediately without tracking conflicts.", choice: "wrong", pop: "Incorrect! The OS stops updates to avoid application crashes." },
+                    { text: "The document compresses itself automatically into a subfolder map.", choice: "wrong", pop: "Wrong! The OS does not pack structures automatically during conflict triggers." }
+                ]
+            },
+            12: {
+                title: "Level 3: Recycle Bin Subroutine",
+                difficulty: "System Operations",
+                badgeClass: "lvl-3",
+                instructions: "Define the operational role of running a 'Restore' action on a document located inside the Recycle Bin tracking frame.",
+                itemName: "Restore Parameter Rule",
+                itemIcon: "♻️",
+                options: [
+                    { text: "It purges files from storage arrays permanently.", choice: "wrong", pop: "Incorrect. Purging happens when clearing out the trash structure entirely." },
+                    { text: "It returns the file to its original system location path.", choice: "correct", pop: "Spot on! Restoring transfers the index back to its previous source directory." },
+                    { text: "It creates a duplicate mirror copy directly on the desktop.", choice: "wrong", pop: "Wrong drawer! It replaces the original file instead of duplicating new copies." }
+                ]
             }
+        };
 
-            updateStatsBar();
-            
-            const currentQuest = questDatabase[globalQuestionIndex];
-            document.getElementById('gameplay-title').innerText = currentQuest.title;
-            document.getElementById('gameplay-instructions').innerText = currentQuest.instruction;
-            document.getElementById('gameplay-feedback').innerText = '';
+        let currentActiveLevel = 1;
+        let systemAccumulatedScore = 0;
+        let interactionActiveLock = false;
 
-            const contextBox = document.getElementById('dynamic-context-box');
-            const interactionBox = document.getElementById('dynamic-interaction-box');
-            
-            contextBox.innerHTML = '';
-            interactionBox.innerHTML = '';
-
-            if (currentQuest.type === 'sort') {
-                contextBox.innerHTML = `<div class="file-card">${currentQuest.item}</div>`;
-                
-                const sortingFlex = document.createElement('div');
-                sortingFlex.className = 'sorting-area';
-                
-                currentQuest.options.forEach(opt => {
-                    const targetFolder = document.createElement('div');
-                    targetFolder.className = 'folder-target';
-                    targetFolder.innerHTML = `
-                        <div class="folder-icon">${opt.value === 'text' ? '📝' : '🎨'}</div>
-                        <h3>${opt.label.split('(')[0]}</h3>
-                        <p>${opt.label.includes('(') ? '(' + opt.label.split('(')[1] : ''}</p>
-                    `;
-                    targetFolder.onclick = () => verifyUserAnswer(opt.value === currentQuest.answer);
-                    sortingFlex.appendChild(targetFolder);
-                });
-                interactionBox.appendChild(sortingFlex);
-            } 
-            else if (currentQuest.type === 'choice') {
-                const choiceGrid = document.createElement('div');
-                choiceGrid.className = 'choices-grid';
-                
-                currentQuest.options.forEach(opt => {
-                    const optionButton = document.createElement('div');
-                    optionButton.className = 'choice-card';
-                    optionButton.innerText = opt.text;
-                    optionButton.onclick = () => verifyUserAnswer(opt.correct);
-                    choiceGrid.appendChild(optionButton);
-                });
-                interactionBox.appendChild(choiceGrid);
+        function triggerLocalAudioNode(elementId) {
+            const audioNode = document.getElementById(elementId);
+            if (audioNode) {
+                audioNode.currentTime = 0;
+                audioNode.play().catch(err => console.log("Audio node sync:", err));
             }
         }
 
-        function verifyUserAnswer(isCorrectResult) {
-            const feedbackField = document.getElementById('gameplay-feedback');
+        function fireConfettiCelebration() {
+            confetti({ particleCount: 50, angle: 60, spread: 60, origin: { x: 0, y: 0.8 } });
+            confetti({ particleCount: 50, angle: 120, spread: 60, origin: { x: 1, y: 0.8 } });
+        }
+
+        function launchSimulator() {
+            triggerLocalAudioNode("audioCorrect");
+            document.getElementById("introView").classList.add("hidden");
+            document.getElementById("gameViewPanel").classList.remove("hidden");
+            setupCurrentLevelParameters();
+        }
+
+        function setupCurrentLevelParameters() {
+            interactionActiveLock = false;
+            document.getElementById("scoreDisplayLabel").innerText = systemAccumulatedScore;
             
-            // Temporary interaction lock during answer feedback sequence
-            document.querySelectorAll('.folder-target, .choice-card').forEach(elem => {
-                elem.style.pointerEvents = 'none';
+            const levelMetadata = storageCampaignDatabase[currentActiveLevel];
+            
+            document.getElementById("missionLevelTitle").innerText = levelMetadata.title;
+            document.getElementById("levelInstructionsText").innerText = levelMetadata.instructions;
+            document.getElementById("manifestIconBox").innerText = levelMetadata.itemIcon;
+            document.getElementById("manifestTitleBox").innerText = levelMetadata.itemName;
+
+            const badge = document.getElementById("difficultyBadge");
+            badge.innerText = levelMetadata.difficulty;
+            badge.className = `badge-level ${levelMetadata.badgeClass}`;
+
+            const drawerBox = document.getElementById("drawersTargetContainer");
+            drawerBox.innerHTML = "";
+
+            levelMetadata.options.forEach(opt => {
+                const button = document.createElement("button");
+                button.className = "drawer-button";
+                button.innerHTML = `
+                    <div class="drawer-icon-frame">🗄️</div>
+                    <div style="text-align:left;">${opt.text}</div>
+                `;
+                button.onclick = () => evaluateUserFiling(opt);
+                drawerBox.appendChild(button);
             });
+        }
 
-            if (isCorrectResult) {
-                score += 10;
-                feedbackField.className = "feedback text-success";
-                feedbackField.innerText = "Correct! ✨ Smart Answer! 👏";
+        function evaluateUserFiling(optionObj) {
+            if (interactionActiveLock) return;
+            interactionActiveLock = true;
+
+            const popPanel = document.getElementById("interactivePopupPanel");
+            const iconFrame = document.getElementById("popIcon");
+            const titleFrame = document.getElementById("popTitle");
+            const bodyFrame = document.getElementById("popBody");
+
+            bodyFrame.innerText = optionObj.pop;
+
+            if (optionObj.choice === "correct") {
+                systemAccumulatedScore += 100;
+                document.getElementById("scoreDisplayLabel").innerText = systemAccumulatedScore;
                 
-                // Triggers separate sound files simultaneously
-                sndCorrect.currentTime = 0;
-                sndCorrect.play().catch(err => console.log("Audio awaiting gesture context."));
+                iconFrame.innerText = "🏆";
+                titleFrame.innerText = "Verification Successful!";
+                titleFrame.style.color = varColorString("--scratch-green");
                 
-                sndClap.currentTime = 0;
-                sndClap.play().catch(err => console.log("Audio awaiting gesture context."));
-                
-                triggerConfettiEffect();
+                triggerLocalAudioNode("audioCorrect");
+                fireConfettiCelebration();
             } else {
-                feedbackField.className = "feedback text-danger";
-                feedbackField.innerText = "Oops! Review your computer chapter files rules.";
+                iconFrame.innerText = "❌";
+                titleFrame.innerText = "Filing Discrepancy detected!";
+                titleFrame.style.color = varColorString("--scratch-pink");
                 
-                sndWrong.currentTime = 0;
-                sndWrong.play().catch(err => console.log("Audio asset blocked or missing."));
+                triggerLocalAudioNode("audioWrong");
             }
 
-            globalQuestionIndex++;
-            setTimeout(loadQuestionPipeline, 1800);
+            popPanel.classList.add("active");
         }
 
-        function executeGameOver() {
-            document.getElementById('game-header').style.display = 'none';
-            showScreen('screen-gameover');
-            document.getElementById('final-score').innerText = score;
+        function dismissFeedbackPopup() {
+            document.getElementById("interactivePopupPanel").classList.remove("active");
+            advancePlatformSequence();
         }
 
-        // Particle Rendering Canvas Logic
-        const canvas = document.getElementById('confetti-canvas');
-        const ctx = canvas.getContext('2d');
-        let particlesPool = [];
-
-        function configureCanvasSize() {
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight;
-        }
-        window.addEventListener('resize', configureCanvasSize);
-
-        function triggerConfettiEffect() {
-            configureCanvasSize();
-            particlesPool = [];
-            for (let i = 0; i < 60; i++) {
-                particlesPool.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height - canvas.height,
-                    r: Math.random() * 5 + 4,
-                    d: Math.random() * canvas.height,
-                    color: `rgba(${Math.floor(Math.random()*230)}, ${Math.floor(Math.random()*180)}, ${Math.floor(Math.random()*255)}, 1)`,
-                    tilt: Math.random() * 10 - 5,
-                    tiltAngleIncremental: Math.random() * 0.06 + 0.02,
-                    tiltAngle: 0
-                });
+        function advancePlatformSequence() {
+            currentActiveLevel++;
+            if (storageCampaignDatabase[currentActiveLevel]) {
+                setupCurrentLevelParameters();
+            } else {
+                document.getElementById("gameViewPanel").classList.add("hidden");
+                document.getElementById("evaluationReportCard").classList.remove("hidden");
+                
+                triggerLocalAudioNode("audioClap");
+                document.getElementById("finalPerformanceReportSummary").innerHTML = 
+                    `Fantastic Filing Logic! You successfully organized and audited all 12 directory levels.<br><br><strong>Final Score: ${systemAccumulatedScore} / 1200 Admin Points</strong>`;
             }
-            renderConfettiAnimationLoop();
         }
 
-        function renderConfettiAnimationLoop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            let componentsActive = false;
+        function restartCampaignSession() {
+            document.getElementById("evaluationReportCard").classList.add("hidden");
+            document.getElementById("gameViewPanel").classList.remove("hidden");
             
-            particlesPool.forEach((p, idx) => {
-                p.tiltAngle += p.tiltAngleIncremental;
-                p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
-                p.x += Math.sin(p.tiltAngle);
-                p.tilt = Math.sin(p.tiltAngle - idx / 3) * 12;
+            currentActiveLevel = 1;
+            systemAccumulatedScore = 0;
+            setupCurrentLevelParameters();
+        }
 
-                if (p.y <= canvas.height) {
-                    componentsActive = true;
-                }
-
-                ctx.beginPath();
-                ctx.lineWidth = p.r;
-                ctx.strokeStyle = p.color;
-                ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
-                ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
-                ctx.stroke();
-            });
-
-            if (componentsActive) {
-                requestAnimationFrame(renderConfettiAnimationLoop);
-            } else {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-            }
+        function varColorString(varName) {
+            return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
         }
     </script>
 </body>

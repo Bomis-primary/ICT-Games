@@ -1,1 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Innovine Interactive Table Quest</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --secondary: #3b82f6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --bg-light: #f3f4f6;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-light);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .workbook-container {
+            width: 100%;
+            max-width: 850px;
+            background: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 600px;
+        }
+
+        .workbook-header {
+            background-color: #ffffff;
+            border-bottom: 2px solid var(--primary);
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-placeholder {
+            height: 50px;
+            max-width: 150px;
+            object-fit: contain;
+        }
+
+        .page-indicator {
+            background-color: var(--primary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .workbook-content {
+            padding: 40px;
+            flex-grow: 1;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 { color: var(--primary); margin-top: 0; font-size: 2rem; }
+        p { color: #4b5563; line-height: 1.6; }
+
+        /* Custom Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--primary);
+            color: white;
+            padding: 12px;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #e5e7eb;
+            background-color: #f9fafb;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 90%;
+            padding: 8px 12px;
+            border: 2px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--secondary);
+            background-color: #eff6ff;
+        }
+
+        /* Interactive Feedback Classes */
+        .correct-cell { background-color: #d1fae5 !important; border-color: var(--success) !important; }
+        .wrong-cell { background-color: #fee2e2 !important; border-color: var(--danger) !important; }
+
+        .workbook-footer {
+            background-color: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        button {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover { background-color: #2563eb; }
+        button:disabled { background-color: #d1d5db; cursor: not-allowed; }
+        
+        .verify-btn { background-color: var(--primary); width: 100%; margin-top: 15px; }
+        .verify-btn:hover { background-color: #172554; }
+
+        .score-box {
+            background: #eff6ff;
+            border: 2px dashed var(--secondary);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="workbook-container">
+        <div class="workbook-header">
+            <img src="assets/innovine_logo.png" alt="Innovine Logo" class="logo-placeholder" onerror="this.style.display='none';">
+            <span class="page-indicator" id="pageNumber">Page 57</span>
+        </div>
+
+        <div class="workbook-content">
+            
+            <div class="page active" id="p57">
+                <h1>The Table Data Matrix</h1>
+                <p>Welcome, student! In this chapter, you won't just answer multiple-choice questions. You will get hands-on experience handling realistic tables across our corporate simulation matrix.</p>
+                <p><strong>Instructions:</strong> Progress through the notebook pages using the buttons below. Fill out the blank spaces inside each table. On each challenge tier, click "Verify Answers" to test your work. Correct and incorrect responses will play real-time sound feedback indicators.</p>
+            </div>
+
+            <div class="page" id="p58">
+                <h1>Level 1: The Inventory Repair Shop</h1>
+                <p>The accounting engine has dropped calculations for these rows. Manually compute the missing <strong>Total Cost</strong> (Quantity &times; Unit Price).</p>
+                <table>
+                    <thead>
+                        <tr><th>Item ID</th><th>Quantity</th><th>Unit Price</th><th>Total Cost ($)</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>#INV-001</td><td>5</td><td>$12</td><td><input type="number" id="ans1" data-correct="60"></td></tr>
+                        <tr><td>#INV-002</td><td>8</td><td>$15</td><td><input type="number" id="ans2" data-correct="120"></td></tr>
+                    </tbody>
+                </table>
+                <button class="verify-btn" onclick="checkAnswers(['ans1', 'ans2'])">Verify System Inputs</button>
+            </div>
+
+            <div class="page" id="p61">
+                <h1>Level 2: The Sorting Matrix</h1>
+                <p>Identify correct criteria matches according to logical categorization parameters.</p>
+                <table>
+                    <thead>
+                        <tr><th>Condition Set</th><th>Base Metric</th><th>Target Priority Code</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Alpha Tier</td><td>70 Max</td><td><input type="number" id="ans3" data-correct="35"></td></tr>
+                        <tr><td>Beta Sequence</td><td>Top Variant</td><td><input type="text" id="ans4" data-correct="product b"></td></tr>
+                    </tbody>
+                </table>
+                <button class="verify-btn" onclick="checkAnswers(['ans3', 'ans4'])">Verify System Inputs</button>
+            </div>
+
+            <div class="page" id="p65">
+                <h1>Level 3: The Cipher Encryption Crypt</h1>
+                <p>Extract the final brand key to bypass the logic lock.</p>
+                <table>
+                    <thead>
+                        <tr><th>Cipher Sector Key</th><th>Data Reference Target</th><th>Secret String Phrase</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>0x884-Crypt</td><td>Master System Platform Parent Group</td><td><input type="text" id="ans5" data-correct="innovine"></td></tr>
+                    </tbody>
+                </table>
+                <button class="verify-btn" onclick="checkAnswers(['ans5'])">Verify System Inputs</button>
+            </div>
+
+            <div class="page" id="p68">
+                <h1>Quest Terminal Completed</h1>
+                <p>You have systematically verified your input arrays across the chapter. Below is your compiled scorecard diagnostic output:</p>
+                <div class="score-box" id="scoreDisplay">
+                    Awaiting final game execution runs...
+                </div>
+            </div>
+
+        </div>
+
+        <div class="workbook-footer">
+            <button id="prevBtn" onclick="navigate(-1)" disabled>Previous Page</button>
+            <button id="nextBtn" onclick="navigate(1)">Next Page</button>
+        </div>
+    </div>
+
+    <audio id="sndClap" src="assets/clap_sound.mp3" preload="auto"></audio>
+    <audio id="sndWrong" src="assets/wrong_sound.mp3" preload="auto"></audio>
+
+    <script>
+        // Track logic mapped to corresponding structural document boundaries
+        const pageSequence = [57, 58, 61, 65, 68];
+        let currentIndex = 0;
+
+        function navigate(direction) {
+            // Hide current page block 
+            document.getElementById(`p${pageSequence[currentIndex]}`).classList.remove('active');
+            
+            // Adjust tracking pointer index
+            currentIndex += direction;
+            
+            // Show new active page block
+            document.getElementById(`p${pageSequence[currentIndex]}`).classList.add('active');
+            
+            // Handle page count text transitions 
+            let targetPage = pageSequence[currentIndex];
+            let pageText = "";
+            if(targetPage === 57 || targetPage === 68) {
+                pageText = "Page " + targetPage;
+            } else if (targetPage === 58) {
+                pageText = "Pages 58 - 60";
+            } else if (targetPage === 61) {
+                pageText = "Pages 61 - 64";
+            } else if (targetPage === 65) {
+                pageText = "Pages 65 - 67";
+            }
+            document.getElementById('pageNumber').innerText = pageText;
+
+            // Handle bottom control lock configurations
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').disabled = currentIndex === pageSequence.length - 1;
+
+            if(targetPage === 68) {
+                calculateGlobalScore();
+            }
+        }
+
+        function checkAnswers(inputIds) {
+            let allRight = true;
+            
+            inputIds.forEach(id => {
+                const element = document.getElementById(id);
+                const userVal = element.value.trim().toLowerCase();
+                const targetVal = element.getAttribute('data-correct').toLowerCase();
+
+                if(userVal === targetVal) {
+                    element.className = "correct-cell";
+                } else {
+                    element.className = "wrong-cell";
+                    allRight = false;
+                }
+            });
+
+            // Fire asset sound engines based on evaluation results
+            if(allRight) {
+                document.getElementById('sndClap').currentTime = 0;
+                document.getElementById('sndClap').play().catch(e => console.log("Audio play blocked by browser config."));
+            } else {
+                document.getElementById('sndWrong').currentTime = 0;
+                document.getElementById('sndWrong').play().catch(e => console.log("Audio play blocked by browser config."));
+            }
+        }
+
+        function calculateGlobalScore() {
+            const allElements = ['ans1', 'ans2', 'ans3', 'ans4', 'ans5'];
+            let correctCount = 0;
+
+            allElements.forEach(id => {
+                const el = document.getElementById(id);
+                if(el.value.trim().toLowerCase() === el.getAttribute('data-correct').toLowerCase()) {
+                    correctCount++;
+                }
+            });
+
+            document.getElementById('scoreDisplay').innerHTML = `Final Completion Diagnostic Score: <span style="color:var(--success); font-size:2rem;">${correctCount} / 5</span> Tasks Fixed Perfectly.`;
+        }
+    </script>
+</body>
+</html>

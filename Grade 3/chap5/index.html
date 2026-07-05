@@ -1,1 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Innovine Universal - MS Word-3 Proofing Deck</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #0f1319;
+            --card-dark: #171e29;
+            --accent-cyan: #00e5ff;
+            --accent-blue: #2979ff;
+            --word-blue: #1259a2;
+            --word-light-blue: #eef4fb;
+            --text-light: #ffffff;
+            --text-muted: #7e8f9f;
+            --error-red: #ff5252;
+            --success-green: #00e676;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* ==========================================================================
+           1. SPLASH SCREEN (DESIGN MATCHED TO USER REQUESTS)
+           ========================================================================== */
+        #splashScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #1b263b 0%, var(--bg-dark) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: all 0.5s ease;
+        }
+
+        .logo-container {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .logo-glow-ring {
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: rgba(0, 229, 255, 0.15);
+            box-shadow: 0 0 35px rgba(0, 229, 255, 0.3);
+            animation: pulseGlow 2s infinite ease-in-out;
+        }
+
+        .brand-logo-badge {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-cyan);
+            background-color: #ffffff;
+            object-fit: contain;
+            padding: 10px;
+        }
+
+        .brand-title-group {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .brand-main-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            background: linear-gradient(135deg, #ffffff, var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+
+        .brand-subtitle {
+            font-size: 1.1rem;
+            color: var(--accent-cyan);
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-top: 5px;
+        }
+
+        .loading-bar-wrapper {
+            width: 250px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            margin-bottom: 35px;
+            overflow: hidden;
+        }
+
+        .loading-bar-progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+            box-shadow: 0 0 10px var(--accent-cyan);
+        }
+
+        .btn-lets-start {
+            background: linear-gradient(135deg, var(--accent-blue), #00b0ff);
+            color: white;
+            border: none;
+            padding: 15px 45px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            border-radius: 50px;
+            cursor: pointer;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.4s ease;
+            pointer-events: none;
+        }
+
+        .btn-lets-start.ready {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.08); opacity: 1; }
+        }
+
+        /* ==========================================================================
+           2. INTERACTIVE GAMEPLAY LAYOUT (PROOFS & INSERTS CLINIC)
+           ========================================================================== */
+        .app-window {
+            width: 95vw;
+            max-width: 1200px;
+            height: 85vh;
+            background: var(--card-dark);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+            display: grid;
+            grid-template-rows: auto 1fr;
+            overflow: hidden;
+            opacity: 0;
+            transform: scale(0.97);
+            transition: all 0.5s ease;
+        }
+
+        .app-window.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .game-header-hud {
+            background: #111720;
+            padding: 15px 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .metrics-cluster {
+            display: flex;
+            gap: 15px;
+        }
+
+        .metric-badge {
+            background: rgba(255,255,255,0.04);
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .metric-badge strong { color: var(--accent-cyan); }
+
+        .split-arena-grid {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            height: 100%;
+        }
+
+        /* Left Control Panel */
+        .control-hub-panel {
+            background: #141b25;
+            border-right: 1px solid rgba(255,255,255,0.06);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .instruction-box {
+            background: rgba(41, 121, 255, 0.08);
+            border-left: 4px solid var(--accent-blue);
+            padding: 15px;
+            border-radius: 4px;
+        }
+
+        .instruction-box h4 {
+            color: var(--accent-cyan);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        /* Tool Palette Grid */
+        .live-tool-options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .tool-choice-card {
+            background: #1c2635;
+            border: 1px solid #2e3d54;
+            padding: 14px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .tool-choice-card:hover {
+            border-color: var(--accent-cyan);
+            background: #233044;
+            transform: translateX(3px);
+        }
+
+        .tool-icon-frame {
+            background: rgba(255,255,255,0.05);
+            width: 28px;
+            height: 28px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 6px;
+        }
+
+        /* Right Word Document Canvas Viewport */
+        .live-simulator-viewport {
+            background: #e9ecef;
+            padding: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mock-word-window {
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-rows: auto auto 1fr auto;
+            overflow: hidden;
+            color: #333;
+        }
+
+        .word-top-ribbon {
+            background: var(--word-blue);
+            color: white;
+            padding: 8px 15px;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .word-tabs-strip {
+            background: #f3f2f1;
+            padding: 4px 15px;
+            display: flex;
+            gap: 15px;
+            font-size: 0.8rem;
+            border-bottom: 1px solid #e1dfdd;
+            color: #201f1e;
+            font-weight: 600;
+        }
+
+        .word-tabs-strip span.active {
+            border-bottom: 2px solid var(--word-blue);
+            color: var(--word-blue);
+        }
+
+        .word-paper-canvas {
+            background: #f3f2f1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .actual-document-sheet {
+            background: white;
+            width: 100%;
+            max-width: 580px;
+            min-height: 100%;
+            padding: 35px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        /* Special UI elements for errors and shapes matching pages 50-56 */
+        .error-wave {
+            text-decoration: underline wavy var(--error-red);
+            background-color: rgba(255, 82, 82, 0.08);
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+
+        .placeholder-box {
+            border: 2px dashed #b0bec5;
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #78909c;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+
+        .inserted-shape {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: white;
+            width: 120px;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            border-radius: 4px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            margin: 10px auto;
+        }
+
+        .word-footer-strip {
+            background: #f3f2f1;
+            border-top: 1px solid #e1dfdd;
+            padding: 4px 15px;
+            font-size: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            color: #605e5c;
+        }
+
+        /* Feedback Modals */
+        .modal-shroud {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 14, 20, 0.85);
+            backdrop-filter: blur(3px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-shroud.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-card {
+            background: var(--card-dark);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            padding: 30px;
+            width: 420px;
+            text-align: center;
+        }
+
+        .btn-modal-action {
+            background: linear-gradient(135deg, var(--accent-blue), #00b0ff);
+            color: white;
+            border: none;
+            padding: 10px 30px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <audio id="soundSuccess" src="assets/success.mp3" preload="auto"></audio>
+    <audio id="soundFailure" src="assets/fail.mp3" preload="auto"></audio>
+
+    <div id="splashScreen">
+        <div class="logo-container">
+            <div class="logo-glow-ring"></div>
+            <img id="brandLogoImg" class="brand-logo-badge" src="assets/innovine_logo.png" alt="Innovine" onerror="handleFallbackLogo()">
+        </div>
+        <div class="brand-title-group">
+            <h1 class="brand-main-title">Innovine</h1>
+            <div class="brand-subtitle">Universal</div>
+        </div>
+        
+        <div class="loading-bar-wrapper">
+            <div id="loadingProgress" class="loading-bar-progress"></div>
+        </div>
+
+        <button id="btnLetsStart" class="btn-lets-start" onclick="initiateMainAppInterface()">LETS START</button>
+    </div>
+
+    <div class="app-window id-holder" id="appInterfaceShell">
+        
+        <div class="game-header-hud">
+            <div>
+                <h3 style="font-size: 1.1rem; letter-spacing: 0.5px;">MS Word-3 Proofing Console</h3>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Interactive Operations Workspace (Pages 50-56)</p>
+            </div>
+            <div class="metrics-cluster">
+                <div class="metric-badge">Tally: <strong id="scoreLabel">0 XP</strong></div>
+                <div class="metric-badge">Section: <strong id="sectorLabel">1/6</strong></div>
+            </div>
+        </div>
+
+        <div class="split-arena-grid" id="mainGameplaySplitArea">
+            
+            <div class="control-hub-panel">
+                <div class="instruction-box">
+                    <h4>Review & Document Goal</h4>
+                    <p id="taskObjectiveText">Analyzing layout structures...</p>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 8px;">
+                    <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Available Actions Menu</p>
+                    <div class="live-tool-options-grid" id="toolOptionsGridBox">
+                        </div>
+                </div>
+            </div>
+
+            <div class="live-simulator-viewport">
+                <div class="mock-word-window">
+                    <div class="word-top-ribbon">
+                        <div>📝 Document1.docx - Word Editor</div>
+                        <div>🗕 🗖 🗙</div>
+                    </div>
+                    <div class="word-tabs-strip">
+                        <span>Home</span>
+                        <span>Insert</span>
+                        <span class="active">Review</span>
+                        <span>View</span>
+                    </div>
+
+                    <div class="word-paper-canvas">
+                        <div class="actual-document-sheet" id="documentWorkspaceSheet">
+                            </div>
+                    </div>
+
+                    <div class="word-footer-strip">
+                        <div>Page 1 of 1 &nbsp;&nbsp;&nbsp;&nbsp; Errors Identified</div>
+                        <div>Corrective Status Mode</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="endEvaluationBlock" class="hidden" style="text-align: center; padding: 50px;">
+            <div style="font-size: 4.5rem; margin-bottom: 20px;">🎉</div>
+            <h2 style="color: var(--success-green); font-size: 2rem;">Proofing Session Accomplished!</h2>
+            <p style="color: var(--text-muted); margin: 15px auto 30px auto; max-width: 450px;" id="finalSummaryParagraph"></p>
+            <button class="btn-modal-action" onclick="location.reload()">Re-verify Document</button>
+        </div>
+
+    </div>
+
+    <div class="modal-shroud" id="globalFeedbackModal">
+        <div class="modal-card">
+            <div id="modalEmblemIcon" style="font-size: 3rem; margin-bottom: 10px;">✨</div>
+            <h3 id="modalAlertHeader" style="margin-bottom: 10px;">Result</h3>
+            <p id="modalAlertDescription" style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.4;"></p>
+            <button class="btn-modal-action" onclick="advanceToNextChallengeSector()">Next Action</button>
+        </div>
+    </div>
+
+    <script>
+        // Automatic image fallback validation if path doesn't pull down local asset cleanly
+        function handleFallbackLogo() {
+            const img = document.getElementById("brandLogoImg");
+            if (img) {
+                const parent = img.parentNode;
+                const fb = document.createElement("div");
+                fb.className = "brand-logo-badge";
+                fb.style.display = "flex"; fb.style.justifyContent = "center"; fb.style.alignItems = "center";
+                fb.style.background = "linear-gradient(135deg, #1259a2, #00e5ff)";
+                fb.style.color = "white"; fb.style.fontSize = "2rem"; fb.style.fontWeight = "bold";
+                fb.innerText = "W3";
+                parent.replaceChild(fb, img);
+            }
+        }
+
+        // Automatic simulated tracking load bar matching setup requirements
+        window.addEventListener('DOMContentLoaded', () => {
+            const bar = document.getElementById("loadingProgress");
+            const btn = document.getElementById("btnLetsStart");
+            let pct = 0;
+
+            const timer = setInterval(() => {
+                pct += 4;
+                if (bar) bar.style.width = pct + "%";
+                if (pct >= 100) {
+                    clearInterval(timer);
+                    if (btn) btn.classList.add("ready");
+                }
+            }, 30);
+        });
+
+        function initiateMainAppInterface() {
+            document.getElementById("splashScreen").style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById("splashScreen").style.display = "none";
+                const shell = document.getElementById("appInterfaceShell");
+                shell.classList.remove("hidden");
+                shell.classList.add("visible");
+                launchProofingGameEngine();
+            }, 400);
+        }
+
+        // ==========================================================================
+        // LEVEL STRUCTURE ARCHITECTURE & EXERCISE LOGIC (PAGES 50 - 56)
+        // ==========================================================================
+        const levelsDatabase = [
+            {
+                objective: "The text contains a clear spelling issue ('computr'). Use the tool specialized in checking spelling mistakes to correct it.",
+                toolName: "Spelling & Grammar Check",
+                icon: "🔍",
+                textLayout: `<h3>System Report</h3><p>Our company uses an advanced <span class="error-wave">computr</span> network to route workflow traffic instantly to servers.</p>`,
+                healedLayout: `<h3>System Report</h3><p>Our company uses an advanced <strong>computer</strong> network to route workflow traffic instantly to servers.</p>`,
+                notes: "Excellent! The Spelling & Grammar tool fixes syntax and dictionary mismatches instantly."
+            },
+            {
+                objective: "The word 'huge' is used twice in a row. Use the dictionary search option to find a beautiful synonym like 'colossal'.",
+                toolName: "Thesaurus Lookup",
+                icon: "📖",
+                textLayout: `<h3>Project Scalability</h3><p>Building this infrastructure requires a huge, huge investment of technical and logistical resources.</p>`,
+                healedLayout: `<h3>Project Scalability</h3><p>Building this infrastructure requires a <strong>colossal</strong>, huge investment of technical and logistical resources.</p>`,
+                notes: "Superb! The Thesaurus provides contextually accurate words and alternative phrases."
+            },
+            {
+                objective: "This draft file uses an old placeholder name 'Project Alpha'. Use the instant master utility to search and swap it with 'Project Innovine'.",
+                toolName: "Find & Replace Action",
+                icon: "🔄",
+                textLayout: `<h3>Operational Directives</h3><p>All technicians assigned to <strong>Project Alpha</strong> must submit their weekly log sheets before Friday night.</p>`,
+                healedLayout: `<h3>Operational Directives</h3><p>All technicians assigned to <strong>Project Innovine</strong> must submit their weekly log sheets before Friday night.</p>`,
+                notes: "Spot on! Find & Replace saves enormous manual proofing time across entire documents."
+            },
+            {
+                objective: "We need a visual divider here. Insert a standard rectangular vector block graphic straight onto the document layout lines.",
+                toolName: "Insert Shape Tool",
+                icon: "⬡",
+                textLayout: `<h3>Design Hierarchy</h3><p>Review the blueprint spacing flow below:</p><div class="placeholder-box">[ Shape Placeholder Needed Here ]</div>`,
+                healedLayout: `<h3>Design Hierarchy</h3><p>Review the blueprint spacing flow below:</p><div class="inserted-shape">Shape Block</div>`,
+                notes: "Brilliant! Shapes allow you to inject clean banners, lines, and custom geometric dividers."
+            },
+            {
+                objective: "Inject an external photographic image resource asset straight from local disk paths directly into the layout center coordinates.",
+                toolName: "Insert Picture Feature",
+                icon: "🖼️",
+                textLayout: `<h3>Corporate Branding</h3><p>The cover page requires our authentic emblem asset visible here.</p><div class="placeholder-box">[ Image Frame Required ]</div>`,
+                healedLayout: `<h3>Corporate Branding</h3><p>The cover page requires our authentic emblem asset visible here.</p><div style="text-align:center;"><img src="assets/innovine_logo.png" style="width:70px;" onerror="this.style.display='none'"></div>`,
+                notes: "Correct! The 'Insert Picture' dialog maps images smoothly right into line paragraphs."
+            },
+            {
+                objective: "Count and audit how many words are inside this paragraph block container to meet structural compliance guides.",
+                toolName: "Word Count Audit",
+                icon: "📊",
+                textLayout: `<h3>Final Compliance Check</h3><p>Verify this brief confirmation statement right now before compiling final document packages.</p>`,
+                healedLayout: `<h3>Final Compliance Check</h3><p>Verify this brief confirmation statement right now before compiling final document packages.</p><p style="color:#2e7d32; font-size:0.85rem; font-weight:bold;">[ Audit: 11 Words Registered ]</p>`,
+                notes: "Sensational! The Word Count tool quickly summarizes characters, pages, and counts."
+            }
+        ];
+
+        const fillerToolBank = [
+            "Hyperlink Connector", "Insert Table Rows", "Page Orientation Shift", 
+            "Header & Footer Editor", "Watermark Overlay", "Margin Calibration"
+        ];
+
+        let playIndex = 0;
+        let scoreXP = 0;
+
+        function playAudio(elementId) {
+            try {
+                const audio = document.getElementById(elementId);
+                if (audio) { audio.currentTime = 0; audio.play().catch(e => console.log(e)); }
+            } catch(err) { console.log("Audio target error", err); }
+        }
+
+        function launchProofingGameEngine() {
+            playIndex = 0;
+            scoreXP = 0;
+            renderCurrentChallengeState();
+        }
+
+        function renderCurrentChallengeState() {
+            document.getElementById("scoreLabel").innerText = scoreXP + " XP";
+            document.getElementById("sectorLabel").innerText = `${playIndex + 1} / ${levelsDatabase.length}`;
+
+            const currentData = levelsDatabase[playIndex];
+            document.getElementById("taskObjectiveText").innerText = currentData.objective;
+            document.getElementById("documentWorkspaceSheet").innerHTML = currentData.textLayout;
+
+            // Generate tool selection menu lists
+            const grid = document.getElementById("toolOptionsGridBox");
+            grid.innerHTML = "";
+
+            let choices = fillerToolBank.sort(() => Math.random() - 0.5).slice(0, 3);
+            choices.push(currentData.toolName);
+            choices.sort(() => Math.random() - 0.5);
+
+            choices.forEach(toolText => {
+                const matchedObj = levelsDatabase.find(l => l.toolName === toolText);
+                const currentIcon = matchedObj ? matchedObj.icon : "🛠️";
+
+                const card = document.createElement("div");
+                card.className = "tool-choice-card";
+                card.innerHTML = `<div class="tool-icon-frame">${currentIcon}</div> <span>${toolText}</span>`;
+                card.onclick = () => evaluateChoice(toolText, currentData.toolName);
+                grid.appendChild(card);
+            });
+        }
+
+        function evaluateChoice(selected, realAnswer) {
+            const currentData = levelsDatabase[playIndex];
+            const modal = document.getElementById("globalFeedbackModal");
+            const emblem = document.getElementById("modalEmblemIcon");
+            const header = document.getElementById("modalAlertHeader");
+            const desc = document.getElementById("modalAlertDescription");
+
+            if (selected === realAnswer) {
+                scoreXP += 150;
+                playAudio("soundSuccess");
+                emblem.innerText = "🎯✨";
+                header.innerText = "Action Executed Correctly!";
+                header.style.color = "var(--success-green)";
+                desc.innerText = currentData.notes;
+
+                // Dynamically transform the internal document template view live!
+                document.getElementById("documentWorkspaceSheet").innerHTML = currentData.healedLayout;
+
+                if (typeof confetti !== 'undefined') {
+                    confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } });
+                }
+            } else {
+                playAudio("soundFailure");
+                emblem.innerText = "❌";
+                header.innerText = "Incorrect Ribbon Command";
+                header.style.color = "var(--error-red)";
+                desc.innerText = `That tool is not suited for this problem. Pages 50-56 solution dictates utilizing the [${realAnswer}] option instead.`;
+            }
+
+            modal.classList.add("active");
+        }
+
+        function advanceToNextChallengeSector() {
+            document.getElementById("globalFeedbackModal").classList.remove("active");
+            playIndex++;
+
+            if (playIndex < levelsDatabase.length) {
+                renderCurrentChallengeState();
+            } else {
+                document.getElementById("mainGameplaySplitArea").classList.add("hidden");
+                const finalCard = document.getElementById("endEvaluationBlock");
+                document.getElementById("finalSummaryParagraph").innerHTML = `You have reviewed, inspected, and successfully optimized all document blocks covering <strong>Pages 50 to 56</strong>.<br><br>Total Evaluation Tally: <strong>${scoreXP} / 900 XP</strong>`;
+                finalCard.classList.remove("hidden");
+            }
+        }
+    </script>
+</body>
+</html>

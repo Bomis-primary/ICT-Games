@@ -56,23 +56,21 @@
             transform: scale(0.9) translateY(50px);
         }
 
-        /* --- 1. BRANDING SPLASH SCREEN (STAYS FOR 5 SECONDS) --- */
+        /* --- 1. PROPER INNOVINE LOGO SPLASH SCREEN (STAYS FOR 5 SECONDS) --- */
         #splash-screen {
             background-color: #1E272C;
             z-index: 10;
         }
-        .logo-box {
-            font-family: 'Fredoka One', cursive;
-            font-size: 4.2rem;
-            color: #00CEC9;
-            letter-spacing: 5px;
-            text-shadow: 0 8px #009794;
-            animation: bounce 0.8s infinite alternate;
+        .brand-logo-img {
+            max-width: 320px;
+            max-height: 180px;
+            object-fit: contain;
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite ease-in-out;
         }
         .logo-sub {
             font-size: 1.2rem;
             color: #DFE6E9;
-            margin-top: 15px;
             font-weight: bold;
             letter-spacing: 6px;
         }
@@ -191,9 +189,10 @@
             margin: 15px 0;
         }
 
-        @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-15px); }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
         @keyframes float {
             0% { transform: translateY(0px); }
@@ -204,10 +203,13 @@
 </head>
 <body>
 
+    <audio id="sound-clap" src="assets/clap.mp3" preload="auto"></audio>
+    <audio id="sound-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+
     <div class="game-frame">
         
         <div id="splash-screen" class="screen">
-            <div class="logo-box">INNOVINE</div>
+            <img class="brand-logo-img" src="assets/innovine_logo.png" alt="INNOVINE LOGO">
             <div class="logo-sub">UNIVERSAL SOLUTIONS</div>
         </div>
 
@@ -243,7 +245,7 @@
     </div>
 
     <script>
-        // Word Processing standard data mapped from your curriculum textbook parameters
+        // Word Processing standard data mapped from your curriculum textbook parameters [cite: 241, 289]
         const commandsDataset = [
             { task: "Cut selected text from its original spot", key: "Ctrl + X" },
             { task: "Copy selected text to temporary clipboard", key: "Ctrl + C" },
@@ -262,64 +264,24 @@
         let matchTimer;
         let timeRemaining = 10;
         let interfaceLocked = false;
-        
-        // Initialize browser native sound engine
-        let audioCtx = null;
 
-        function getAudioContext() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            return audioCtx;
-        }
+        // Plays actual mp3 audio files directly from your assets folder
+        function triggerAssetSound(isCorrect) {
+            const clapAudio = document.getElementById('sound-clap');
+            const wrongAudio = document.getElementById('sound-wrong');
+            
+            // Reset files to the beginning so rapid clicks don't cause delay cuts
+            clapAudio.currentTime = 0;
+            wrongAudio.currentTime = 0;
 
-        // Programmatic sound generation for accurate cross-browser response
-        function playSoundEffect(isCorrect) {
-            try {
-                const ctx = getAudioContext();
-                if (!ctx) return;
-
-                if (isCorrect) {
-                    // CLAP/CELEBRATION SOUND MECHANICS
-                    for (let i = 0; i < 4; i++) {
-                        setTimeout(() => {
-                            let osc = ctx.createOscillator();
-                            let gain = ctx.createGain();
-                            osc.type = 'triangle';
-                            osc.frequency.setValueAtTime(180 + (Math.random() * 60), ctx.currentTime);
-                            osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.1);
-                            
-                            gain.gain.setValueAtTime(0.3, ctx.currentTime);
-                            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
-                            
-                            osc.connect(gain);
-                            gain.connect(ctx.destination);
-                            osc.start();
-                            osc.stop(ctx.currentTime + 0.15);
-                        }, i * 60);
-                    }
-                } else {
-                    // WRONG ANSWER BUZZ SOUND MECHANICS
-                    let osc = ctx.createOscillator();
-                    let gain = ctx.createGain();
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(130, ctx.currentTime);
-                    osc.frequency.linearRampToValueAtTime(70, ctx.currentTime + 0.4);
-                    
-                    gain.gain.setValueAtTime(0.4, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-                    
-                    osc.connect(gain);
-                    gain.connect(ctx.destination);
-                    osc.start();
-                    osc.stop(ctx.currentTime + 0.4);
-                }
-            } catch (e) {
-                console.log("Audio play context deferred until interaction block setup", e);
+            if (isCorrect) {
+                clapAudio.play().catch(e => console.log("Clap sound error:", e));
+            } else {
+                wrongAudio.play().catch(e => console.log("Wrong sound error:", e));
             }
         }
 
-        // Rule Requirement: Splash screen visible for exactly 5000 milliseconds (5 seconds)
+        // Holds Splash screen visible for exactly 5 seconds (5000ms) before continuing
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 document.getElementById('splash-screen').classList.add('hidden');
@@ -328,13 +290,10 @@
         });
 
         function initiateGameplay() {
-            // Unlock audio context on initial player tap
-            getAudioContext();
-            
             document.getElementById('instruction-screen').classList.add('hidden');
             document.getElementById('game-screen').classList.remove('hidden');
             
-            // Generate non-repetitive fresh sequence deck
+            // Shuffle the dataset deck randomly without duplicate questions
             playStack = [...commandsDataset].sort(() => Math.random() - 0.5);
             scoreCounter = 0;
             activeIndex = 0;
@@ -356,7 +315,7 @@
             const liveMatch = playStack[activeIndex];
             document.getElementById('current-task').innerText = liveMatch.task;
 
-            // Generate temporary options list grid pool
+            // Generate temporary grid pool (1 correct shortcut + 5 randomized distractors)
             let keyboardOptions = [liveMatch.key];
             while (keyboardOptions.length < 6) {
                 let alternateKey = commandsDataset[Math.floor(Math.random() * commandsDataset.length)].key;
@@ -382,7 +341,7 @@
                 document.getElementById('countdown').innerText = timeRemaining;
                 if (timeRemaining <= 0) {
                     clearInterval(matchTimer);
-                    playSoundEffect(false); // Timeouts sound as an incorrect trigger
+                    triggerAssetSound(false); // Play asset wrong sound on timeout
                     stepNextChallenge();
                 }
             }, 1000);
@@ -397,12 +356,12 @@
 
             if (selectedKey === trueKey) {
                 clickedBtn.classList.add('hit-correct');
-                playSoundEffect(true); // Plays dynamic clapping sound sequence
+                triggerAssetSound(true); // Play assets/clap.mp3
                 scoreCounter += 10;
                 document.getElementById('points').innerText = scoreCounter;
             } else {
                 clickedBtn.classList.add('hit-wrong');
-                playSoundEffect(false); // Plays dynamic buzz sound sequence
+                triggerAssetSound(false); // Play assets/wrong.mp3
                 allKeys.forEach(btn => {
                     if (btn.innerText === trueKey) btn.classList.add('hit-correct');
                 });

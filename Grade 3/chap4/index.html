@@ -38,7 +38,7 @@
             background: linear-gradient(135deg, #111827, var(--dark-terminal));
         }
 
-        /* --- 1. BRANDING SCREEN: INNOVINE LOGO ONLY (STAYS FOR 5 SECONDS) --- */
+        /* --- BRANDING SPLASH SCREEN --- */
         #splashScreen {
             position: fixed;
             top: 0;
@@ -47,6 +47,7 @@
             height: 100%;
             background: #1E272C;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
@@ -57,6 +58,19 @@
             width: 350px;
             max-width: 85%;
             animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        /* Pure CSS beautiful backup banner if the image is missing */
+        .fallback-brand-logo {
+            color: #ffffff;
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            text-align: center;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        .fallback-brand-logo span {
+            color: #00CEC9;
         }
 
         @keyframes pulse {
@@ -306,7 +320,7 @@
     <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <div id="splashScreen">
-        <img src="assets/innovine_logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/350x120?text=Innovine+Universal'">
+        <img id="brandLogoImg" src="assets/innovine_logo.png" alt="Innovine Logo" onerror="handleImageError()">
     </div>
 
     <div class="app-window hidden" id="appInterfaceShell">
@@ -375,7 +389,18 @@
     </div>
 
     <script>
-        // Unique Curriculum Task Sequence Pool
+        // If image does not load or path is invalid, instantly swap it for clean text graphics to prevent glitches
+        function handleImageError() {
+            const imgElement = document.getElementById("brandLogoImg");
+            if (imgElement) {
+                const parent = imgElement.parentNode;
+                const txtFallback = document.createElement("div");
+                txtFallback.className = "fallback-brand-logo";
+                txtFallback.innerHTML = "INNOVINE<br><span>UNIVERSAL</span>";
+                parent.replaceChild(txtFallback, imgElement);
+            }
+        }
+
         const sectorDatabase = [
             { objective: "Isolate the editing operation that removes a selected paragraph layout entirely from its active position and updates the clipboard.", targetKey: "Ctrl + X", highlightTarget: "mockDocumentCanvasBox", hint: "Perfect! Ctrl + X removes data blocks safely into the clipboard buffer memory.", canvasText: "Removing selected sentences from current text string line..." },
             { objective: "Identify the action command used to duplicate chosen blocks of structural text content without altering the origin text position.", targetKey: "Ctrl + C", highlightTarget: "mockDocumentCanvasBox", hint: "Superb. Ctrl + C duplicates characters into the application buffer cache.", canvasText: "Duplicating highlighted layout lines to memory workspace..." },
@@ -405,7 +430,7 @@
             } catch(err) { console.log("Audio file initialization delayed:", err); }
         }
 
-        // Rule Requirement: Splash screen stays visible for exactly 5000 milliseconds (5 seconds)
+        // Timer Requirement: Splash screen stays visible for exactly 5000ms
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const splashNode = document.getElementById("splashScreen");
@@ -425,7 +450,7 @@
             document.getElementById("introView").classList.add("hidden");
             document.getElementById("gameViewPanel").classList.remove("hidden");
             
-            // Randomized presentation sequence stack generation (Prevents duplicate question sequences)
+            // Randomize questions deck (prevents repetitions)
             activeDeck = [...sectorDatabase].sort(() => Math.random() - 0.5);
             sectorIndex = 0;
             runningMatrixScore = 0;
@@ -505,7 +530,7 @@
                 mIcon.innerText = "🎉👍";
                 mTitle.innerText = "Sector Override Success!";
                 mTitle.style.color = "#2ecc71";
-                playAudioTrack("audioClap"); // Triggers assets/clap.mp3
+                playAudioTrack("audioClap"); // Right answer clap audio trigger
                 
                 if (typeof confetti !== 'undefined') {
                     confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
@@ -515,7 +540,7 @@
                 mTitle.innerText = "Matrix Validation Fault!";
                 mTitle.style.color = "#ff6680";
                 mBody.innerText = `Incorrect command module injected. Correct Action: [${sectorData.targetKey}].`;
-                playAudioTrack("audioWrong"); // Triggers assets/wrong.mp3
+                playAudioTrack("audioWrong"); // Wrong answer buzz audio trigger
             }
             
             modalShroud.classList.add("active");
@@ -529,7 +554,6 @@
             if(sectorIndex < activeDeck.length) {
                 loadSectorObjective();
             } else {
-                // Gameplay terminates cleanly upon exhausting deck array items (Prevents endless loop)
                 document.getElementById("gameViewPanel").classList.add("hidden");
                 document.getElementById("evaluationReportCard").classList.remove("hidden");
                 playAudioTrack("audioClap");

@@ -3,401 +3,543 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Innovine - Word Processing Keyboard Crusher</title>
+    <title>MS Word Part 2 - Shortcut Matrix Defuser</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap');
+        :root {
+            --word-dark-blue: #10316b;
+            --word-classic-blue: #2b579a;
+            --word-interface-gray: #f3f2f1;
+            --scratch-orange: #ffab19;
+            --scratch-green: #2ecc71;
+            --scratch-pink: #ff6680;
+            --dark-terminal: #0b0f19;
+        }
 
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Quicksand', sans-serif;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
         }
 
         body {
-            background: linear-gradient(135deg, #FFEAA7 0%, #81ECEC 100%);
-            height: 100vh;
+            background: #ffffff;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            transition: background 0.5s ease;
         }
 
-        .game-frame {
-            width: 750px;
-            height: 520px;
-            background: #FFFFFF;
-            border-radius: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            border: 8px solid #FF7675;
-            position: relative;
-            overflow: hidden;
+        body.game-active {
+            background: linear-gradient(135deg, #111827, var(--dark-terminal));
         }
 
-        .screen {
-            position: absolute;
+        /* --- 1. PROPER INNOVINE LOGO SPLASH SCREEN (STAYS FOR EXACTLY 5 SECONDS) --- */
+        #splashScreen {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            background: #1E272C;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 40px;
-            text-align: center;
-            background: #FFFFFF;
-            transition: all 0.4s ease;
+            z-index: 9999;
+            transition: opacity 0.6s ease;
         }
 
-        .hidden {
-            opacity: 0;
-            pointer-events: none;
-            transform: scale(0.9) translateY(50px);
-        }
-
-        /* --- 1. PROPER INNOVINE LOGO SPLASH SCREEN (STAYS FOR 5 SECONDS) --- */
-        #splash-screen {
-            background-color: #1E272C;
-            z-index: 10;
-        }
-        .brand-logo-img {
-            max-width: 320px;
-            max-height: 180px;
-            object-fit: contain;
-            margin-bottom: 20px;
+        #splashScreen img {
+            width: 320px;
+            max-width: 80%;
             animation: pulse 1.5s infinite ease-in-out;
-        }
-        .logo-sub {
-            font-size: 1.2rem;
-            color: #DFE6E9;
-            font-weight: bold;
-            letter-spacing: 6px;
-        }
-
-        /* --- 2. INSTRUCTIONS SCREEN --- */
-        h2 {
-            font-family: 'Fredoka One', cursive;
-            color: #6C5CE7;
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            text-shadow: 0 4px #E4E2F9;
-        }
-        .rules-text {
-            font-size: 1.25rem;
-            color: #2D3436;
-            margin-bottom: 35px;
-            line-height: 1.6;
-            max-width: 550px;
-        }
-        .btn {
-            background: #FF7675;
-            color: white;
-            border: none;
-            padding: 15px 45px;
-            font-size: 1.4rem;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 6px #D63031;
-            transition: transform 0.1s;
-        }
-        .btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px #D63031;
-        }
-
-        /* --- 3. ACTIVE GAMEPLAY SCREEN --- */
-        .top-ui {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: absolute;
-            top: 25px;
-            padding: 0 40px;
-        }
-        .scoreboard, .timer-box {
-            background: #F5F6FA;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 1.2rem;
-            color: #2D3436;
-            border: 3px solid #6C5CE7;
-        }
-        .target-function {
-            background: #FFEAA7;
-            border: 4px dashed #FF9F43;
-            padding: 20px;
-            border-radius: 20px;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #D35400;
-            margin-top: 50px;
-            margin-bottom: 30px;
-            width: 100%;
-            max-width: 540px;
-        }
-        .keyboard-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            width: 100%;
-            max-width: 600px;
-        }
-        .key-cap {
-            background: #DFE6E9;
-            border: 4px solid #B2BEC3;
-            border-radius: 15px;
-            padding: 18px;
-            font-family: 'Fredoka One', cursive;
-            font-size: 1.3rem;
-            color: #2D3436;
-            cursor: pointer;
-            box-shadow: 0 5px #636E72;
-            transition: all 0.1s ease;
-        }
-        .key-cap:active {
-            transform: translateY(4px);
-            box-shadow: 0 1px #636E72;
-        }
-        
-        .hit-correct {
-            background: #55E6C1 !important;
-            border-color: #58B19F !important;
-            color: white !important;
-            box-shadow: 0 5px #218F76 !important;
-        }
-        .hit-wrong {
-            background: #FF7675 !important;
-            border-color: #D63031 !important;
-            color: white !important;
-            box-shadow: 0 5px #7F1D1D !important;
-        }
-
-        /* --- 4. COMPLETION SCREEN --- */
-        .badge {
-            font-size: 5rem;
-            margin-bottom: 10px;
-            animation: float 2s ease-in-out infinite;
-        }
-        .final-score {
-            font-size: 3.5rem;
-            font-family: 'Fredoka One', cursive;
-            color: #10AC84;
-            margin: 15px 0;
         }
 
         @keyframes pulse {
-            0% { transform: scale(1); }
+            0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
         }
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+
+        .app-window {
+            width: 95vw;
+            max-width: 1100px;
+            height: 88vh;
+            min-height: 620px;
+            z-index: 10;
         }
+
+        .welcome-card {
+            background: rgba(255, 255, 255, 0.96);
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 32px;
+            padding: 42px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            max-width: 620px;
+            margin: 0 auto;
+        }
+
+        .welcome-card h1 span {
+            background: linear-gradient(135deg, var(--word-classic-blue), #4a90e2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 800;
+        }
+
+        .matrix-layout {
+            display: grid;
+            grid-template-rows: auto 1fr;
+            height: 100%;
+            gap: 15px;
+        }
+
+        .top-hud {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--word-dark-blue);
+            border: 2px solid #1e4287;
+            padding: 14px 25px;
+            border-radius: 16px;
+            color: white;
+            font-weight: 700;
+        }
+
+        .split-arena {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 20px;
+            min-height: 0;
+        }
+
+        .terminal-deck {
+            background: #1e293b;
+            border: 2px solid #334155;
+            border-radius: 24px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            color: white;
+        }
+
+        .task-descriptor {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 16px;
+            border-left: 5px solid var(--word-classic-blue);
+            margin-bottom: 15px;
+            min-height: 100px;
+        }
+
+        .key-input-matrix {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-top: auto;
+        }
+
+        .matrix-key-btn {
+            background: linear-gradient(180deg, #334155, #1e293b);
+            border: 2px solid #475569;
+            border-radius: 14px;
+            padding: 18px 10px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 0px #0f172a;
+            transition: all 0.1s ease;
+        }
+
+        .matrix-key-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0px transparent;
+        }
+
+        .matrix-key-btn:hover {
+            border-color: var(--word-classic-blue);
+            background: #27354a;
+        }
+
+        .document-simulator-window {
+            background: var(--word-interface-gray);
+            border: 3px solid #cbd5e1;
+            border-radius: 24px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .mock-word-header {
+            background: var(--word-classic-blue);
+            color: white;
+            padding: 12px 16px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mock-word-quickaccess {
+            display: flex;
+            gap: 10px;
+            font-size: 1rem;
+        }
+
+        .mock-document-canvas {
+            flex-grow: 1;
+            background: white;
+            margin: 15px;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .blinking-cursor-block {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #333333;
+            line-height: 1.6;
+        }
+
+        .mock-word-status-bar {
+            background: var(--word-classic-blue);
+            color: white;
+            padding: 8px 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #activeHighlightPointerIndicator {
+            position: absolute;
+            border: 3.5px solid var(--scratch-orange);
+            background: rgba(255, 171, 25, 0.12);
+            border-radius: 8px;
+            pointer-events: none !important;
+            transition: all 0.25s ease-out;
+            display: none;
+            z-index: 50;
+        }
+
+        .popup-modal-shroud {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 15, 25, 0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .popup-modal-shroud.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .popup-modal-card {
+            background: white;
+            border-radius: 24px;
+            padding: 35px;
+            width: 440px;
+            max-width: 90%;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+            transform: scale(0.85);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .popup-modal-shroud.active .popup-modal-card {
+            transform: scale(1);
+        }
+
+        .modal-action-btn {
+            background: var(--word-classic-blue);
+            color: white;
+            border: none;
+            padding: 12px 35px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1rem;
+            margin-top: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(43,87,154,0.3);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--word-classic-blue), #4a90e2);
+            color: white;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(43,87,154,0.4);
+            transition: transform 0.2s;
+        }
+
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <audio id="sound-clap" src="assets/clap.mp3" preload="auto"></audio>
-    <audio id="sound-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="audioCorrect" src="assets/clap.mp3" preload="auto"></audio>
+    <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="audioClap" src="assets/clap.mp3" preload="auto"></audio>
 
-    <div class="game-frame">
+    <div id="splashScreen">
+        <img src="assets/innovine_logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/320x120?text=Innovine+Universal'">
+        <p style="margin-top:25px; font-weight:600; color:#00CEC9; letter-spacing: 2px;">Loading Chapter: Word Processing in MS Word Part 2...</p>
+    </div>
+
+    <div class="app-window hidden" id="appInterfaceShell">
         
-        <div id="splash-screen" class="screen">
-            <img class="brand-logo-img" src="assets/innovine_logo.png" alt="INNOVINE LOGO">
-            <div class="logo-sub">UNIVERSAL SOLUTIONS</div>
-        </div>
-
-        <div id="instruction-screen" class="screen hidden">
-            <h2>Shortcut Key-Crush! ⌨️</h2>
-            <p class="rules-text">
-                MS Word functions are appearing on the board! Press the correct keyboard shortcut option button before your timer runs out. Ready to score high?
+        <div id="introView" class="welcome-card">
+            <img src="assets/innovine_logo.png" alt="Logo" style="max-width:180px; margin-bottom:15px;" onerror="this.style.display='none'">
+            <h1><span>MATRIX DEFUSER</span></h1>
+            <h2 style="color: #64748b; font-size: 1.1rem; margin-bottom: 24px;">Grade 3 Word Processing Part 2 Core Arcade</h2>
+            <p style="text-align: left; line-height: 1.7; color: #475569; margin-bottom: 26px; background: #f1f5f9; padding: 20px; border-radius: 14px; font-size: 0.95rem;">
+                Look at the highlighted workspace zones, simulator dialog operations, or editing requests displayed on the right. Press the correct function command module block button on the left to confirm your target sequence entry!
             </p>
-            <button class="btn" onclick="initiateGameplay()">START MISSION</button>
+            <button class="btn-primary" onclick="launchMatrixModule()">Initialize Matrix Link</button>
         </div>
 
-        <div id="game-screen" class="screen hidden">
-            <div class="top-ui">
-                <div class="scoreboard">Score: <span id="points">0</span></div>
-                <div class="timer-box">Timer: <span id="countdown">10</span>s</div>
+        <div id="gameViewPanel" class="matrix-layout hidden">
+            <div class="top-hud">
+                <div>🏆 Matrix Points: <span id="scoreDisplayLabel">0</span></div>
+                <div style="font-size:1.1rem;">🔮 Target Sector: <span id="sectorDisplayLabel">1 / 9</span></div>
+                <div style="background:#2ecc71; padding: 4px 10px; border-radius: 8px;" class="badge-level">Active Node</div>
             </div>
-            
-            <div class="target-function" id="current-task">Loading MS Word Task...</div>
-            
-            <div class="keyboard-grid" id="keyboard-dock">
+
+            <div class="split-arena">
+                <div class="terminal-deck">
+                    <div class="task-descriptor">
+                        <h3 style="color:var(--scratch-orange); margin-bottom:6px; text-transform:uppercase; font-size:0.85rem; letter-spacing:1px;">Active Objective Manual</h3>
+                        <p id="objectiveTextString">Loading sector data...</p>
+                    </div>
+                    <div class="key-input-matrix" id="keyboardGridMatrixBox"></div>
                 </div>
+
+                <div class="document-simulator-window" id="simulationContainerWindow">
+                    <div id="activeHighlightPointerIndicator"></div>
+                    
+                    <div class="mock-word-header" id="wordHeaderTitleBar">
+                        <div class="mock-word-quickaccess" id="quickAccessCluster">💾 ↩️ ↪️</div>
+                        <div id="centralDocumentTitleText">Document1 - Microsoft Word</div>
+                        <div>❌</div>
+                    </div>
+
+                    <div class="mock-document-canvas" id="mockDocumentCanvasBox">
+                        <div class="blinking-cursor-block" id="pageCanvasContentBlock"></div>
+                    </div>
+
+                    <div class="mock-word-status-bar" id="wordStatusFooterBar">
+                        <div id="statusLeftTally">Page 1 of 1 &nbsp;&nbsp; 12 Words</div>
+                        <div>Print Layout &nbsp; 🔍 100%</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div id="completion-screen" class="screen hidden">
-            <div class="badge">🏆</div>
-            <h2>Mission Completed!</h2>
-            <p style="font-size: 1.3rem; color: #57606F;">Your final computed score is:</p>
-            <div class="final-score"><span id="final-points">0</span> Points</div>
-            <p id="performance-feedback" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 25px;"></p>
-            <button class="btn" onclick="retryGame()">Play Again</button>
+        <div class="popup-modal-shroud" id="interactiveGlobalModalShroud">
+            <div class="popup-modal-card">
+                <div id="modalIconEmblem" style="font-size:4rem; margin-bottom:12px;">✨</div>
+                <h2 id="modalHeaderTitle" style="font-weight:800; margin-bottom:10px;">Evaluation Feedback</h2>
+                <p id="modalBodyTextString">Filing sector parameters...</p>
+                <button class="modal-action-btn" onclick="dismissMatrixModal()">Next Objective Matrix</button>
+            </div>
         </div>
 
+        <div id="evaluationReportCard" class="welcome-card hidden">
+            <h1 style="color:var(--scratch-green)">🏆 Word Matrix Fully Defused!</h1>
+            <p style="margin-top:15px; font-size:1.15rem;" id="finalPerformanceReportSummary"></p>
+            <div style="font-size: 4.5rem; margin: 25px 0;">🖥️⚡⌨️🔑</div>
+            <button class="btn-primary" onclick="restartCampaignSession()">Reset Matrix System</button>
+        </div>
     </div>
 
     <script>
-        // Word Processing standard data mapped from your curriculum textbook parameters [cite: 241, 289]
-        const commandsDataset = [
-            { task: "Cut selected text from its original spot", key: "Ctrl + X" },
-            { task: "Copy selected text to temporary clipboard", key: "Ctrl + C" },
-            { task: "Paste copied or cut items smoothly", key: "Ctrl + V" },
-            { task: "Undo your previous action completely", key: "Ctrl + Z" },
-            { task: "Redo or repeat your last typed action", key: "Ctrl + Y" },
-            { task: "Launch the automatic Spelling & Grammar Check tool", key: "F7" },
-            { task: "Open Find and Replace window panel", key: "Ctrl + H" },
-            { task: "Execute basic text Find filter operation", key: "Ctrl + F" },
-            { task: "Look up words inside the native Thesaurus dictionary", key: "Shift + F7" }
+        // Core dataset strictly compiled from curriculum pages 38-49 parameters
+        const sectorDatabase = [
+            { objective: "Isolate the editing operation that removes a selected paragraph layout entirely from its active position and updates the clipboard.", targetKey: "Ctrl + X", highlightTarget: "mockDocumentCanvasBox", hint: "Perfect! Ctrl + X removes data blocks safely into the clipboard buffer memory.", canvasText: "Removing selected sentences from current text string line..." },
+            { objective: "Identify the action command used to duplicate chosen blocks of structural text content without altering the origin text position.", targetKey: "Ctrl + C", highlightTarget: "mockDocumentCanvasBox", hint: "Superb. Ctrl + C duplicates characters into the application buffer cache.", canvasText: "Duplicating highlighted layout lines to memory workspace..." },
+            { objective: "Which processing operation inserts text segments stored in your clipboard buffer back onto the screen layout canvas at your active cursor location?", targetKey: "Ctrl + V", highlightTarget: "mockDocumentCanvasBox", hint: "Excellent! Ctrl + V inserts your stored copy segments cleanly onto the cursor coordinates.", canvasText: "Inserting copied elements straight back down on your page..." },
+            { objective: "Determine the native fast-action tool option sitting directly inside the upper Quick Access bar utilized to cancel out or roll back your last editing mistake.", targetKey: "Undo (↩️)", highlightTarget: "quickAccessCluster", hint: "Spot on! The Undo icon action rolls back application operations seamlessly step by step.", canvasText: "Quick Access Strip: Rolling back your previous sentence error entry..." },
+            { objective: "Determine the native fast-action quick tool option used to re-apply or reverse an Undo action to repeat your last text adjustment input.", targetKey: "Redo (↪️)", highlightTarget: "quickAccessCluster", hint: "Incredible speed! The Redo icon repeats your active command sequences.", canvasText: "Quick Access Strip: Re-applying the rolled-back sentence formatting structure back..." },
+            { objective: "Identify the dedicated function key macro used to initialize the interactive Spelling and Grammar dialog checker across your workspace pages.", targetKey: "F7", highlightTarget: "mockDocumentCanvasBox", hint: "Correct! F7 prompts the automated spelling audit dictionary scan engine.", canvasText: "🔍 Checking lines for typos and syntax red underlining faults..." },
+            { objective: "Which hotkey macro fires open the Find and Replace dialog window popup utility to search out specific keyword tokens throughout your project document?", targetKey: "Ctrl + H", highlightTarget: "mockDocumentCanvasBox", hint: "Excellent block override. Ctrl + H loads the dedicated Find and Replace parameters field.", canvasText: "Replacing old keywords with new word strings universally..." },
+            { objective: "Determine the tool action hotkey macro required to conduct a text search navigation look-up to filter matching strings over your active document page.", targetKey: "Ctrl + F", highlightTarget: "mockDocumentCanvasBox", hint: "Bingo! Ctrl + F launches the search navigation side filter column.", canvasText: "Searching document tracking matrices for exact phrase instances..." },
+            { objective: "Identify the function macro command variation code utilized to lookup suggestions, alternative meanings, and synonyms inside the native Thesaurus.", targetKey: "Shift + F7", highlightTarget: "mockDocumentCanvasBox", hint: "Brilliant! Shift + F7 queries the system Thesaurus definition look-up menu.", canvasText: "Opening side dictionary interface panel to browse alternative vocabulary parameters..." }
         ];
 
-        let playStack = [];
-        let scoreCounter = 0;
-        let activeIndex = 0;
-        let matchTimer;
-        let timeRemaining = 10;
-        let interfaceLocked = false;
+        const primaryKeyBank = [
+            "Ctrl + X", "Ctrl + C", "Ctrl + V", "Undo (↩️)", "Redo (↪️)", "F7", "Ctrl + H", "Ctrl + F", "Shift + F7",
+            "Ctrl + S", "Ctrl + P", "Ctrl + Z", "Backspace", "Delete", "Alt + F4"
+        ];
 
-        // Plays actual mp3 audio files directly from your assets folder
-        function triggerAssetSound(isCorrect) {
-            const clapAudio = document.getElementById('sound-clap');
-            const wrongAudio = document.getElementById('sound-wrong');
-            
-            // Reset files to the beginning so rapid clicks don't cause delay cuts
-            clapAudio.currentTime = 0;
-            wrongAudio.currentTime = 0;
+        let sectorIndex = 0;
+        let runningMatrixScore = 0;
+        let matrixSystemLocked = false;
 
-            if (isCorrect) {
-                clapAudio.play().catch(e => console.log("Clap sound error:", e));
-            } else {
-                wrongAudio.play().catch(e => console.log("Wrong sound error:", e));
-            }
+        function playAudioTrack(id) {
+            try {
+                const node = document.getElementById(id);
+                if(node) { node.currentTime = 0; node.play().catch(e => console.log(e)); }
+            } catch(err) { console.log("Audio skipped:", err); }
         }
 
-        // Holds Splash screen visible for exactly 5 seconds (5000ms) before continuing
+        // Timer requirement setup: Holds splash block visible for exactly 5 seconds
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                document.getElementById('splash-screen').classList.add('hidden');
-                document.getElementById('instruction-screen').classList.remove('hidden');
+                const splashNode = document.getElementById("splashScreen");
+                if(splashNode) {
+                    splashNode.style.opacity = "0";
+                    setTimeout(() => {
+                        splashNode.style.setProperty("display", "none", "important");
+                        document.body.classList.add("game-active");
+                        document.getElementById("appInterfaceShell").classList.remove("hidden");
+                    }, 600);
+                }
             }, 5000);
         });
 
-        function initiateGameplay() {
-            document.getElementById('instruction-screen').classList.add('hidden');
-            document.getElementById('game-screen').classList.remove('hidden');
-            
-            // Shuffle the dataset deck randomly without duplicate questions
-            playStack = [...commandsDataset].sort(() => Math.random() - 0.5);
-            scoreCounter = 0;
-            activeIndex = 0;
-            
-            document.getElementById('points').innerText = scoreCounter;
-            deployChallenge();
+        function launchMatrixModule() {
+            playAudioTrack("audioCorrect");
+            document.getElementById("introView").classList.add("hidden");
+            document.getElementById("gameViewPanel").classList.remove("hidden");
+            loadSectorObjective();
         }
 
-        function deployChallenge() {
-            if (activeIndex >= playStack.length) {
-                concludeGame();
-                return;
-            }
-
-            interfaceLocked = false;
-            timeRemaining = 10;
-            document.getElementById('countdown').innerText = timeRemaining;
+        function buildInteractiveHardwareKeys(correctKey) {
+            const box = document.getElementById("keyboardGridMatrixBox");
+            box.innerHTML = "";
             
-            const liveMatch = playStack[activeIndex];
-            document.getElementById('current-task').innerText = liveMatch.task;
+            let alternativeKeys = primaryKeyBank.filter(k => k !== correctKey);
+            alternativeKeys.sort(() => Math.random() - 0.5);
+            
+            let finalSelection = alternativeKeys.slice(0, 8);
+            finalSelection.push(correctKey);
+            finalSelection.sort(() => Math.random() - 0.5);
 
-            // Generate temporary grid pool (1 correct shortcut + 5 randomized distractors)
-            let keyboardOptions = [liveMatch.key];
-            while (keyboardOptions.length < 6) {
-                let alternateKey = commandsDataset[Math.floor(Math.random() * commandsDataset.length)].key;
-                if (!keyboardOptions.includes(alternateKey)) {
-                    keyboardOptions.push(alternateKey);
-                }
-            }
-            keyboardOptions.sort(() => Math.random() - 0.5);
-
-            const gridDock = document.getElementById('keyboard-dock');
-            gridDock.innerHTML = "";
-            keyboardOptions.forEach(keyCode => {
-                const button = document.createElement('button');
-                button.className = 'key-cap';
-                button.innerText = keyCode;
-                button.onclick = () => evaluationTrigger(button, keyCode, liveMatch.key);
-                gridDock.appendChild(button);
+            finalSelection.forEach(keyText => {
+                const btn = document.createElement("button");
+                btn.className = "matrix-key-btn";
+                btn.innerText = keyText;
+                btn.onclick = () => dispatchKeyValidation(keyText);
+                box.appendChild(btn);
             });
+        }
 
-            clearInterval(matchTimer);
-            matchTimer = setInterval(() => {
-                timeRemaining--;
-                document.getElementById('countdown').innerText = timeRemaining;
-                if (timeRemaining <= 0) {
-                    clearInterval(matchTimer);
-                    triggerAssetSound(false); // Play asset wrong sound on timeout
-                    stepNextChallenge();
+        function loadSectorObjective() {
+            matrixSystemLocked = false;
+            document.getElementById("scoreDisplayLabel").innerText = runningMatrixScore;
+            document.getElementById("sectorDisplayLabel").innerText = `${sectorIndex + 1} / ${sectorDatabase.length}`;
+
+            const sectorData = sectorDatabase[sectorIndex];
+            document.getElementById("objectiveTextString").innerText = sectorData.objective;
+            document.getElementById("pageCanvasContentBlock").innerText = sectorData.canvasText;
+
+            buildInteractiveHardwareKeys(sectorData.targetKey);
+            positionHighlightIndicator(sectorData.highlightTarget);
+        }
+
+        function positionHighlightIndicator(targetId) {
+            const indicator = document.getElementById("activeHighlightPointerIndicator");
+            const targetNode = document.getElementById(targetId);
+            const parentWindow = document.getElementById("simulationContainerWindow");
+
+            if(targetNode && parentWindow) {
+                setTimeout(() => {
+                    indicator.style.display = "block";
+                    const topPos = targetNode.getBoundingClientRect().top - parentWindow.getBoundingClientRect().top;
+                    const leftPos = targetNode.getBoundingClientRect().left - parentWindow.getBoundingClientRect().left;
+                    
+                    indicator.style.top = `${topPos - 4}px`;
+                    indicator.style.left = `${leftPos - 4}px`;
+                    indicator.style.width = `${targetNode.offsetWidth + 8}px`;
+                    indicator.style.height = `${targetNode.offsetHeight + 8}px`;
+                }, 60);
+            } else {
+                indicator.style.display = "none";
+            }
+        }
+
+        function dispatchKeyValidation(clickedKeyName) {
+            if (matrixSystemLocked) return;
+            matrixSystemLocked = true;
+
+            const sectorData = sectorDatabase[sectorIndex];
+            const modalShroud = document.getElementById("interactiveGlobalModalShroud");
+            const mIcon = document.getElementById("modalIconEmblem");
+            const mTitle = document.getElementById("modalHeaderTitle");
+            const mBody = document.getElementById("modalBodyTextString");
+
+            mBody.innerText = sectorData.hint;
+
+            if (clickedKeyName === sectorData.targetKey) {
+                runningMatrixScore += 100;
+                document.getElementById("scoreDisplayLabel").innerText = runningMatrixScore;
+                mIcon.innerText = "🔑🔒";
+                mTitle.innerText = "Sector Override Success!";
+                mTitle.style.color = "#2ecc71";
+                playAudioTrack("audioCorrect"); // Triggers assets/clap.mp3
+                
+                if (typeof confetti !== 'undefined') {
+                    confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
                 }
-            }, 1000);
-        }
-
-        function evaluationTrigger(clickedBtn, selectedKey, trueKey) {
-            if (interfaceLocked) return;
-            interfaceLocked = true;
-            clearInterval(matchTimer);
-
-            const allKeys = document.querySelectorAll('.key-cap');
-
-            if (selectedKey === trueKey) {
-                clickedBtn.classList.add('hit-correct');
-                triggerAssetSound(true); // Play assets/clap.mp3
-                scoreCounter += 10;
-                document.getElementById('points').innerText = scoreCounter;
             } else {
-                clickedBtn.classList.add('hit-wrong');
-                triggerAssetSound(false); // Play assets/wrong.mp3
-                allKeys.forEach(btn => {
-                    if (btn.innerText === trueKey) btn.classList.add('hit-correct');
-                });
+                mIcon.innerText = "⚠️💥";
+                mTitle.innerText = "Matrix Validation Fault!";
+                mTitle.style.color = "#ff6680";
+                mBody.innerText = `Incorrect command module injected. Correct Action: [${sectorData.targetKey}].`;
+                playAudioTrack("audioWrong"); // Triggers assets/wrong.mp3
             }
-
-            setTimeout(stepNextChallenge, 1200);
+            
+            modalShroud.classList.add("active");
         }
 
-        function stepNextChallenge() {
-            activeIndex++;
-            deployChallenge();
-        }
-
-        function concludeGame() {
-            clearInterval(matchTimer);
-            document.getElementById('game-screen').classList.add('hidden');
-            document.getElementById('completion-screen').classList.remove('hidden');
+        function dismissMatrixModal() {
+            document.getElementById("interactiveGlobalModalShroud").classList.remove("active");
+            matrixSystemLocked = false; 
             
-            document.getElementById('final-points').innerText = scoreCounter;
-            
-            const reviewBox = document.getElementById('performance-feedback');
-            if (scoreCounter >= 70) {
-                reviewBox.innerText = "Superb! You mastered MS Word commands like an absolute expert!";
-                reviewBox.style.color = "#10AC84";
-            } else if (scoreCounter >= 40) {
-                reviewBox.innerText = "Good attempt! Review chapter shortcuts to aim for a perfect run!";
-                reviewBox.style.color = "#2E86DE";
+            sectorIndex++;
+            if(sectorIndex < sectorDatabase.length) {
+                loadSectorObjective();
             } else {
-                reviewBox.innerText = "Keep practicing! Re-read chapter operations to build speed.";
-                reviewBox.style.color = "#FF7675";
+                document.getElementById("gameViewPanel").classList.add("hidden");
+                document.getElementById("evaluationReportCard").classList.remove("hidden");
+                playAudioTrack("audioClap");
+                document.getElementById("finalPerformanceReportSummary").innerHTML = 
+                    `Excellent System Processing! Final Score: <strong>${runningMatrixScore} / 900 Protocol Points</strong>`;
             }
         }
 
-        function retryGame() {
-            document.getElementById('completion-screen').classList.add('hidden');
-            initiateGameplay();
+        function restartCampaignSession() {
+            document.getElementById("evaluationReportCard").classList.add("hidden");
+            document.getElementById("gameViewPanel").classList.remove("hidden");
+            sectorIndex = 0;
+            runningMatrixScore = 0;
+            loadSectorObjective();
         }
     </script>
 </body>

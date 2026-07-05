@@ -3,320 +3,474 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Innovine Interactive Table Quest</title>
+    <title>Innovine Solutions - Interactive Data Table Matrix</title>
     <style>
         :root {
-            --primary: #1e3a8a;
-            --secondary: #3b82f6;
+            --brand-blue: #1e293b;
+            --brand-red: #be123c;
+            --brand-orange: #f97316;
+            --grid-bg: #f8fafc;
             --success: #10b981;
-            --danger: #ef4444;
-            --bg-light: #f3f4f6;
+            --error: #ef4444;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-light);
+            background: #e2e8f0;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        .workbook-container {
+        /* --- SPLASH SCREEN / COVER PAGE (PAGE 57) --- */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 850px;
+            height: 100%;
             background: white;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-            border-radius: 8px;
-            border: 1px solid #e5e7eb;
-            overflow: hidden;
             display: flex;
             flex-direction: column;
-            min-height: 600px;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease-in-out;
         }
 
-        .workbook-header {
-            background-color: #ffffff;
-            border-bottom: 2px solid var(--primary);
-            padding: 15px 25px;
+        .splash-logo {
+            max-width: 350px;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        .splash-title {
+            color: var(--brand-blue);
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin: 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .splash-subtitle {
+            color: var(--brand-red);
+            font-size: 1.4rem;
+            font-weight: 500;
+        }
+
+        .loader-bar {
+            width: 250px;
+            height: 4px;
+            background: #e2e8f0;
+            margin-top: 30px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loader-progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--brand-red), var(--brand-orange));
+            animation: load 5s linear forwards;
+        }
+
+        /* --- MAIN GAME CONTAINER --- */
+        #game-container {
+            display: none;
+            width: 100%;
+            max-width: 950px;
+            background: white;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            border-top: 6px solid var(--brand-red);
+        }
+
+        .header-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            padding: 20px 40px;
+            border-bottom: 1px solid #e2e8f0;
         }
 
-        .logo-placeholder {
-            height: 50px;
-            max-width: 150px;
-            object-fit: contain;
+        .header-logo {
+            height: 45px;
         }
 
-        .page-indicator {
-            background-color: var(--primary);
+        .page-badge {
+            background: var(--brand-blue);
             color: white;
-            padding: 5px 15px;
+            padding: 6px 16px;
             border-radius: 20px;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
-        .workbook-content {
+        .game-body {
             padding: 40px;
-            flex-grow: 1;
         }
 
-        .page {
-            display: none;
+        h2 {
+            color: var(--brand-blue);
+            margin-top: 0;
         }
 
-        .page.active {
-            display: block;
-            animation: fadeIn 0.4s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        h1 { color: var(--primary); margin-top: 0; font-size: 2rem; }
-        p { color: #4b5563; line-height: 1.6; }
-
-        /* Custom Table Styling */
-        table {
+        /* --- COLORFUL MS WORD STYLED MATRIX TILES --- */
+        .activity-grid {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
             margin: 25px 0;
-            font-size: 1rem;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+        }
+
+        .activity-grid th {
+            background: var(--brand-blue);
+            color: white;
+            padding: 14px;
+            font-weight: 600;
             text-align: left;
         }
 
-        th {
-            background-color: var(--primary);
-            color: white;
-            padding: 12px;
-            font-weight: 600;
+        .activity-grid td {
+            padding: 16px;
+            border-bottom: 1px solid #cbd5e1;
+            background: var(--grid-bg);
+            font-weight: 500;
+            color: #334155;
         }
 
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #e5e7eb;
-            background-color: #f9fafb;
+        .activity-grid tr:nth-child(even) td {
+            background: #f1f5f9;
         }
 
-        input[type="text"], input[type="number"] {
+        /* Interactive Grid Inputs */
+        .interactive-cell {
             width: 90%;
-            padding: 8px 12px;
-            border: 2px solid #d1d5db;
-            border-radius: 4px;
+            padding: 10px 12px;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
             font-size: 1rem;
-            transition: all 0.2s;
+            font-weight: bold;
+            color: var(--brand-blue);
+            transition: all 0.25s ease;
         }
 
-        input[type="text"]:focus {
+        .interactive-cell:focus {
             outline: none;
-            border-color: var(--secondary);
-            background-color: #eff6ff;
+            border-color: var(--brand-orange);
+            box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.2);
         }
 
-        /* Interactive Feedback Classes */
-        .correct-cell { background-color: #d1fae5 !important; border-color: var(--success) !important; }
-        .wrong-cell { background-color: #fee2e2 !important; border-color: var(--danger) !important; }
+        /* Status Colors */
+        .cell-correct {
+            border-color: var(--success) !important;
+            background-color: #d1fae5 !important;
+            color: #065f46 !important;
+        }
 
-        .workbook-footer {
-            background-color: #f9fafb;
-            border-top: 1px solid #e5e7eb;
-            padding: 15px 25px;
+        .cell-wrong {
+            border-color: var(--error) !important;
+            background-color: #fee2e2 !important;
+            color: #991b1b !important;
+            animation: shake 0.3s linear;
+        }
+
+        /* Footer Controls */
+        .footer-controls {
             display: flex;
             justify-content: space-between;
+            background: #f8fafc;
+            padding: 20px 40px;
+            border-top: 1px solid #e2e8f0;
         }
 
         button {
-            background-color: var(--secondary);
-            color: white;
+            padding: 12px 28px;
             border: none;
-            padding: 10px 20px;
+            border-radius: 6px;
             font-size: 1rem;
             font-weight: 600;
-            border-radius: 5px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s ease;
         }
 
-        button:hover { background-color: #2563eb; }
-        button:disabled { background-color: #d1d5db; cursor: not-allowed; }
-        
-        .verify-btn { background-color: var(--primary); width: 100%; margin-top: 15px; }
-        .verify-btn:hover { background-color: #172554; }
+        .btn-primary {
+            background: var(--brand-red);
+            color: white;
+        }
 
-        .score-box {
-            background: #eff6ff;
-            border: 2px dashed var(--secondary);
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: var(--primary);
+        .btn-primary:hover {
+            background: #9f1239;
+        }
+
+        .btn-secondary {
+            background: #64748b;
+            color: white;
+        }
+
+        .btn-secondary:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+        }
+
+        canvas #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10000;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes load { to { width: 100%; } }
+        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
         }
     </style>
 </head>
 <body>
 
-    <div class="workbook-container">
-        <div class="workbook-header">
-            <img src="assets/innovine_logo.png" alt="Innovine Logo" class="logo-placeholder" onerror="this.style.display='none';">
-            <span class="page-indicator" id="pageNumber">Page 57</span>
-        </div>
+    <canvas id="confetti-canvas"></canvas>
 
-        <div class="workbook-content">
-            
-            <div class="page active" id="p57">
-                <h1>The Table Data Matrix</h1>
-                <p>Welcome, student! In this chapter, you won't just answer multiple-choice questions. You will get hands-on experience handling realistic tables across our corporate simulation matrix.</p>
-                <p><strong>Instructions:</strong> Progress through the notebook pages using the buttons below. Fill out the blank spaces inside each table. On each challenge tier, click "Verify Answers" to test your work. Correct and incorrect responses will play real-time sound feedback indicators.</p>
-            </div>
-
-            <div class="page" id="p58">
-                <h1>Level 1: The Inventory Repair Shop</h1>
-                <p>The accounting engine has dropped calculations for these rows. Manually compute the missing <strong>Total Cost</strong> (Quantity &times; Unit Price).</p>
-                <table>
-                    <thead>
-                        <tr><th>Item ID</th><th>Quantity</th><th>Unit Price</th><th>Total Cost ($)</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>#INV-001</td><td>5</td><td>$12</td><td><input type="number" id="ans1" data-correct="60"></td></tr>
-                        <tr><td>#INV-002</td><td>8</td><td>$15</td><td><input type="number" id="ans2" data-correct="120"></td></tr>
-                    </tbody>
-                </table>
-                <button class="verify-btn" onclick="checkAnswers(['ans1', 'ans2'])">Verify System Inputs</button>
-            </div>
-
-            <div class="page" id="p61">
-                <h1>Level 2: The Sorting Matrix</h1>
-                <p>Identify correct criteria matches according to logical categorization parameters.</p>
-                <table>
-                    <thead>
-                        <tr><th>Condition Set</th><th>Base Metric</th><th>Target Priority Code</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Alpha Tier</td><td>70 Max</td><td><input type="number" id="ans3" data-correct="35"></td></tr>
-                        <tr><td>Beta Sequence</td><td>Top Variant</td><td><input type="text" id="ans4" data-correct="product b"></td></tr>
-                    </tbody>
-                </table>
-                <button class="verify-btn" onclick="checkAnswers(['ans3', 'ans4'])">Verify System Inputs</button>
-            </div>
-
-            <div class="page" id="p65">
-                <h1>Level 3: The Cipher Encryption Crypt</h1>
-                <p>Extract the final brand key to bypass the logic lock.</p>
-                <table>
-                    <thead>
-                        <tr><th>Cipher Sector Key</th><th>Data Reference Target</th><th>Secret String Phrase</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>0x884-Crypt</td><td>Master System Platform Parent Group</td><td><input type="text" id="ans5" data-correct="innovine"></td></tr>
-                    </tbody>
-                </table>
-                <button class="verify-btn" onclick="checkAnswers(['ans5'])">Verify System Inputs</button>
-            </div>
-
-            <div class="page" id="p68">
-                <h1>Quest Terminal Completed</h1>
-                <p>You have systematically verified your input arrays across the chapter. Below is your compiled scorecard diagnostic output:</p>
-                <div class="score-box" id="scoreDisplay">
-                    Awaiting final game execution runs...
-                </div>
-            </div>
-
-        </div>
-
-        <div class="workbook-footer">
-            <button id="prevBtn" onclick="navigate(-1)" disabled>Previous Page</button>
-            <button id="nextBtn" onclick="navigate(1)">Next Page</button>
+    <div id="splash-screen">
+        <img src="assets/innovine_logo.png" class="splash-logo" alt="Innovine Solutions Logo" onerror="this.src='https://via.placeholder.com/350x100?text=INNOVINE+SOLUTIONS'">
+        <div class="splash-title">Chapter 6: Data Alignment Game</div>
+        <div class="splash-subtitle">Interactive Learning Matrix</div>
+        <div class="loader-bar">
+            <div class="loader-progress"></div>
         </div>
     </div>
 
-    <audio id="sndClap" src="assets/clap_sound.mp3" preload="auto"></audio>
-    <audio id="sndWrong" src="assets/wrong_sound.mp3" preload="auto"></audio>
+    <div id="game-container">
+        <div class="header-bar">
+            <img src="assets/innovine_logo.png" class="header-logo" alt="Innovine Solutions" onerror="this.style.display='none'">
+            
+        </div>
+
+        <div class="game-body">
+            <div id="step-1" class="activity-view">
+                <h2>Activity Challenge 1: The Balance Matrix Balance</h2>
+                <p>Complete the missing computed metrics inside the data framework grid. Compute the exact multiplication allocation variables matching row logic properties.</p>
+                
+                <table class="activity-grid">
+                    <thead>
+                        <tr>
+                            <th>Transaction Unit</th>
+                            <th>Target Load Matrix</th>
+                            <th>Multiplier Factor</th>
+                            <th>Calculated Output Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Array Item #01</td>
+                            <td>40 Units</td>
+                            <td>x 3</td>
+                            <td><input type="text" class="interactive-cell" data-ans="120" placeholder="Type answer..."></td>
+                        </tr>
+                        <tr>
+                            <td>Array Item #02</td>
+                            <td>15 Units</td>
+                            <td>x 6</td>
+                            <td><input type="text" class="interactive-cell" data-ans="90" placeholder="Type answer..."></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="step-2" class="activity-view" style="display:none;">
+                <h2>Logic String Sorting Matrix</h2>
+                <p>Analyse patterns to fill matching sequence identities within the structured text processing engine array cells.</p>
+                
+                <table class="activity-grid">
+                    <thead>
+                        <tr>
+                            <th>Reference Key</th>
+                            <th>Source String Input</th>
+                            <th>Dynamic Identity Tag Conversion Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>REF-A9X</td>
+                            <td>system_alpha_node</td>
+                            <td><input type="text" class="interactive-cell" data-ans="ALPHA" placeholder="Case-insensitive..."></td>
+                        </tr>
+                        <tr>
+                            <td>REF-B4Y</td>
+                            <td>system_beta_node</td>
+                            <td><input type="text" class="interactive-cell" data-ans="BETA" placeholder="Case-insensitive..."></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="step-3" class="activity-view" style="display:none;">
+                
+                <p>Your workspace compilation sequences have completely run. Verification score diagnostic output summary is complete below:</p>
+                <div style="background: #f1f5f9; border: 2px dashed var(--brand-blue); border-radius: 8px; padding: 30px; text-align: center; margin-top: 20px;">
+                    <h3 style="margin:0; color:var(--brand-blue); font-size: 1.5rem;">All Grid Nodes Synchronized Successfully!</h3>
+                    <p style="font-size: 1.1rem; color: #475569;">You successfully bypassed the table challenges across Pages 57-68.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-controls">
+            <button id="btn-back" class="btn-secondary" onclick="changeStep(-1)" disabled>Previous Matrix</button>
+            <button id="btn-action" class="btn-primary" onclick="verifyCurrentTable()">Check Table System</button>
+        </div>
+    </div>
+
+    <audio id="sound-intro" src="assets/intro_sound.mp3" preload="auto"></audio>
+    <audio id="sound-clap" src="assets/clap_sound.mp3" preload="auto"></audio>
+    <audio id="sound-wrong" src="assets/wrong_sound.mp3" preload="auto"></audio>
 
     <script>
-        // Track logic mapped to corresponding structural document boundaries
-        const pageSequence = [57, 58, 61, 65, 68];
-        let currentIndex = 0;
+        let currentStep = 1;
+        const totalSteps = 3;
 
-        function navigate(direction) {
-            // Hide current page block 
-            document.getElementById(`p${pageSequence[currentIndex]}`).classList.remove('active');
-            
-            // Adjust tracking pointer index
-            currentIndex += direction;
-            
-            // Show new active page block
-            document.getElementById(`p${pageSequence[currentIndex]}`).classList.add('active');
-            
-            // Handle page count text transitions 
-            let targetPage = pageSequence[currentIndex];
-            let pageText = "";
-            if(targetPage === 57 || targetPage === 68) {
-                pageText = "Page " + targetPage;
-            } else if (targetPage === 58) {
-                pageText = "Pages 58 - 60";
-            } else if (targetPage === 61) {
-                pageText = "Pages 61 - 64";
-            } else if (targetPage === 65) {
-                pageText = "Pages 65 - 67";
-            }
-            document.getElementById('pageNumber').innerText = pageText;
+        // Auto transition Splash Screen on page 57 after 5 seconds
+        window.addEventListener('DOMContentLoaded', () => {
+            const introSnd = document.getElementById('sound-intro');
+            // Play introductory music if allowed by browser policies
+            introSnd.play().catch(() => console.log("Intro sound context queued waiting for student click."));
 
-            // Handle bottom control lock configurations
-            document.getElementById('prevBtn').disabled = currentIndex === 0;
-            document.getElementById('nextBtn').disabled = currentIndex === pageSequence.length - 1;
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                const mainApp = document.getElementById('game-container');
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    mainApp.style.display = 'block';
+                }, 800);
+            }, 5000);
+        });
 
-            if(targetPage === 68) {
-                calculateGlobalScore();
-            }
-        }
+        function verifyCurrentTable() {
+            const currentView = document.getElementById(`step-${currentStep}`);
+            const inputs = currentView.querySelectorAll('.interactive-cell');
+            let tablePerfect = true;
 
-        function checkAnswers(inputIds) {
-            let allRight = true;
-            
-            inputIds.forEach(id => {
-                const element = document.getElementById(id);
-                const userVal = element.value.trim().toLowerCase();
-                const targetVal = element.getAttribute('data-correct').toLowerCase();
+            inputs.forEach(input => {
+                const targetVal = input.getAttribute('data-ans').trim().toLowerCase();
+                const userVal = input.value.trim().toLowerCase();
 
-                if(userVal === targetVal) {
-                    element.className = "correct-cell";
+                if (userVal === targetVal) {
+                    input.className = "interactive-cell cell-correct";
                 } else {
-                    element.className = "wrong-cell";
-                    allRight = false;
+                    input.className = "interactive-cell cell-wrong";
+                    tablePerfect = false;
                 }
             });
 
-            // Fire asset sound engines based on evaluation results
-            if(allRight) {
-                document.getElementById('sndClap').currentTime = 0;
-                document.getElementById('sndClap').play().catch(e => console.log("Audio play blocked by browser config."));
+            if (inputs.length === 0) return; // Diagnostics skip
+
+            if (tablePerfect) {
+                playSound('sound-clap');
+                triggerConfettiEffect();
+                // Enable next button sequence safely
+                document.getElementById('btn-action').innerText = "Advance Next Page Matrix";
+                document.getElementById('btn-action').setAttribute('onclick', 'changeStep(1)');
             } else {
-                document.getElementById('sndWrong').currentTime = 0;
-                document.getElementById('sndWrong').play().catch(e => console.log("Audio play blocked by browser config."));
+                playSound('sound-wrong');
+                // Standard structural reset animations
+                setTimeout(() => {
+                    inputs.forEach(i => i.classList.remove('cell-wrong'));
+                }, 400);
             }
         }
 
-        function calculateGlobalScore() {
-            const allElements = ['ans1', 'ans2', 'ans3', 'ans4', 'ans5'];
-            let correctCount = 0;
+        function changeStep(dir) {
+            document.getElementById(`step-${currentStep}`).style.display = 'none';
+            currentStep += dir;
+            document.getElementById(`step-${currentStep}`).style.display = 'block';
 
-            allElements.forEach(id => {
-                const el = document.getElementById(id);
-                if(el.value.trim().toLowerCase() === el.getAttribute('data-correct').toLowerCase()) {
-                    correctCount++;
-                }
-            });
+            // UI updates matched to page properties
+            const pageIndicator = document.getElementById('page-indicator');
+            const actionBtn = document.getElementById('btn-action');
 
-            document.getElementById('scoreDisplay').innerHTML = `Final Completion Diagnostic Score: <span style="color:var(--success); font-size:2rem;">${correctCount} / 5</span> Tasks Fixed Perfectly.`;
+            if (currentStep === 1) {
+                pageIndicator.innerText = "Pages 58 - 60";
+                actionBtn.innerText = "Check Table System";
+                actionBtn.setAttribute('onclick', 'verifyCurrentTable()');
+                actionBtn.style.display = 'block';
+            } else if (currentStep === 2) {
+                pageIndicator.innerText = "Pages 61 - 67";
+                actionBtn.innerText = "Check Table System";
+                actionBtn.setAttribute('onclick', 'verifyCurrentTable()');
+                actionBtn.style.display = 'block';
+            } else if (currentStep === 3) {
+                pageIndicator.innerText = "Page 68";
+                actionBtn.style.display = 'none';
+            }
+
+            document.getElementById('btn-back').disabled = (currentStep === 1);
+        }
+
+        function playSound(id) {
+            const aud = document.getElementById(id);
+            aud.currentTime = 0;
+            aud.play().catch(e => console.log("Sound play error trace:", e));
+        }
+
+        // Lightweight Pure Canvas Confetti Core Logic Engine
+        function triggerConfettiEffect() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            let particles = [];
+            const colors = ['#be123c', '#f97316', '#10b981', '#3b82f6', '#facc15'];
+
+            for (let i = 0; i < 120; i++) {
+                particles.push({
+                    x: window.innerWidth / 2,
+                    y: window.innerHeight / 2,
+                    radius: Math.random() * 5 + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    vx: (Math.random() - 0.5) * 15,
+                    vy: (Math.random() - 0.5) * 15 - 5,
+                    gravity: 0.25,
+                    opacity: 1
+                });
+            }
+
+            function render() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((p, idx) => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += p.gravity;
+                    p.opacity -= 0.015;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.opacity;
+                    ctx.fill();
+
+                    if (p.opacity <= 0) particles.splice(idx, 1);
+                });
+
+                if (particles.length > 0) requestAnimationFrame(render);
+                else ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+            render();
         }
     </script>
 </body>

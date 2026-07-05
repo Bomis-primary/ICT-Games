@@ -1,1 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Innovine - Word Processing Keyboard Crusher</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@500;700&display=swap');
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #FFEAA7 0%, #81ECEC 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .game-frame {
+            width: 750px;
+            height: 520px;
+            background: #FFFFFF;
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            border: 8px solid #FF7675;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            text-align: center;
+            background: #FFFFFF;
+            transition: all 0.4s ease;
+        }
+
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.9) translateY(50px);
+        }
+
+        /* --- 1. BRANDING SPLASH SCREEN (STAYS FOR 5 SECONDS) --- */
+        #splash-screen {
+            background-color: #1E272C;
+            z-index: 10;
+        }
+        .logo-box {
+            font-family: 'Fredoka One', cursive;
+            font-size: 4.2rem;
+            color: #00CEC9;
+            letter-spacing: 5px;
+            text-shadow: 0 8px #009794;
+            animation: bounce 0.8s infinite alternate;
+        }
+        .logo-sub {
+            font-size: 1.2rem;
+            color: #DFE6E9;
+            margin-top: 15px;
+            font-weight: bold;
+            letter-spacing: 6px;
+        }
+
+        /* --- 2. INSTRUCTIONS SCREEN --- */
+        h2 {
+            font-family: 'Fredoka One', cursive;
+            color: #6C5CE7;
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            text-shadow: 0 4px #E4E2F9;
+        }
+        .rules-text {
+            font-size: 1.25rem;
+            color: #2D3436;
+            margin-bottom: 35px;
+            line-height: 1.6;
+            max-width: 550px;
+        }
+        .btn {
+            background: #FF7675;
+            color: white;
+            border: none;
+            padding: 15px 45px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px #D63031;
+            transition: transform 0.1s;
+        }
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px #D63031;
+        }
+
+        /* --- 3. ACTIVE GAMEPLAY SCREEN --- */
+        .top-ui {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: absolute;
+            top: 25px;
+            padding: 0 40px;
+        }
+        .scoreboard, .timer-box {
+            background: #F5F6FA;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: #2D3436;
+            border: 3px solid #6C5CE7;
+        }
+        .target-function {
+            background: #FFEAA7;
+            border: 4px dashed #FF9F43;
+            padding: 20px;
+            border-radius: 20px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #D35400;
+            margin-top: 50px;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 540px;
+        }
+        .keyboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            width: 100%;
+            max-width: 600px;
+        }
+        .key-cap {
+            background: #DFE6E9;
+            border: 4px solid #B2BEC3;
+            border-radius: 15px;
+            padding: 18px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 1.3rem;
+            color: #2D3436;
+            cursor: pointer;
+            box-shadow: 0 5px #636E72;
+            transition: all 0.1s ease;
+        }
+        .key-cap:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px #636E72;
+        }
+        
+        .hit-correct {
+            background: #55E6C1 !important;
+            border-color: #58B19F !important;
+            color: white !important;
+            box-shadow: 0 5px #218F76 !important;
+        }
+        .hit-wrong {
+            background: #FF7675 !important;
+            border-color: #D63031 !important;
+            color: white !important;
+            box-shadow: 0 5px #7F1D1D !important;
+        }
+
+        /* --- 4. COMPLETION SCREEN --- */
+        .badge {
+            font-size: 5rem;
+            margin-bottom: 10px;
+            animation: float 2s ease-in-out infinite;
+        }
+        .final-score {
+            font-size: 3.5rem;
+            font-family: 'Fredoka One', cursive;
+            color: #10AC84;
+            margin: 15px 0;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-15px); }
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-frame">
+        
+        <div id="splash-screen" class="screen">
+            <div class="logo-box">INNOVINE</div>
+            <div class="logo-sub">UNIVERSAL SOLUTIONS</div>
+        </div>
+
+        <div id="instruction-screen" class="screen hidden">
+            <h2>Shortcut Key-Crush! ⌨️</h2>
+            <p class="rules-text">
+                MS Word functions are appearing on the board! Press the correct keyboard shortcut option button before your timer runs out. Ready to score high?
+            </p>
+            <button class="btn" onclick="initiateGameplay()">START MISSION</button>
+        </div>
+
+        <div id="game-screen" class="screen hidden">
+            <div class="top-ui">
+                <div class="scoreboard">Score: <span id="points">0</span></div>
+                <div class="timer-box">Timer: <span id="countdown">10</span>s</div>
+            </div>
+            
+            <div class="target-function" id="current-task">Loading MS Word Task...</div>
+            
+            <div class="keyboard-grid" id="keyboard-dock">
+                </div>
+        </div>
+
+        <div id="completion-screen" class="screen hidden">
+            <div class="badge">🏆</div>
+            <h2>Mission Completed!</h2>
+            <p style="font-size: 1.3rem; color: #57606F;">Your final computed score is:</p>
+            <div class="final-score"><span id="final-points">0</span> Points</div>
+            <p id="performance-feedback" style="font-size: 1.2rem; font-weight: bold; margin-bottom: 25px;"></p>
+            <button class="btn" onclick="retryGame()">Play Again</button>
+        </div>
+
+    </div>
+
+    <script>
+        // Word Processing standard data mapped from your curriculum textbook parameters
+        const commandsDataset = [
+            { task: "Cut selected text from its original spot", key: "Ctrl + X" },
+            { task: "Copy selected text to temporary clipboard", key: "Ctrl + C" },
+            { task: "Paste copied or cut items smoothly", key: "Ctrl + V" },
+            { task: "Undo your previous action completely", key: "Ctrl + Z" },
+            { task: "Redo or repeat your last typed action", key: "Ctrl + Y" },
+            { task: "Launch the automatic Spelling & Grammar Check tool", key: "F7" },
+            { task: "Open Find and Replace window panel", key: "Ctrl + H" },
+            { task: "Execute basic text Find filter operation", key: "Ctrl + F" },
+            { task: "Look up words inside the native Thesaurus dictionary", key: "Shift + F7" }
+        ];
+
+        let playStack = [];
+        let scoreCounter = 0;
+        let activeIndex = 0;
+        let matchTimer;
+        let timeRemaining = 10;
+        let interfaceLocked = false;
+        
+        // Initialize browser native sound engine
+        let audioCtx = null;
+
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            return audioCtx;
+        }
+
+        // Programmatic sound generation for accurate cross-browser response
+        function playSoundEffect(isCorrect) {
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+
+                if (isCorrect) {
+                    // CLAP/CELEBRATION SOUND MECHANICS
+                    for (let i = 0; i < 4; i++) {
+                        setTimeout(() => {
+                            let osc = ctx.createOscillator();
+                            let gain = ctx.createGain();
+                            osc.type = 'triangle';
+                            osc.frequency.setValueAtTime(180 + (Math.random() * 60), ctx.currentTime);
+                            osc.frequency.exponentialRampToValueAtTime(600, ctx.currentTime + 0.1);
+                            
+                            gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                            
+                            osc.connect(gain);
+                            gain.connect(ctx.destination);
+                            osc.start();
+                            osc.stop(ctx.currentTime + 0.15);
+                        }, i * 60);
+                    }
+                } else {
+                    // WRONG ANSWER BUZZ SOUND MECHANICS
+                    let osc = ctx.createOscillator();
+                    let gain = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(130, ctx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(70, ctx.currentTime + 0.4);
+                    
+                    gain.gain.setValueAtTime(0.4, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+                    
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.4);
+                }
+            } catch (e) {
+                console.log("Audio play context deferred until interaction block setup", e);
+            }
+        }
+
+        // Rule Requirement: Splash screen visible for exactly 5000 milliseconds (5 seconds)
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                document.getElementById('splash-screen').classList.add('hidden');
+                document.getElementById('instruction-screen').classList.remove('hidden');
+            }, 5000);
+        });
+
+        function initiateGameplay() {
+            // Unlock audio context on initial player tap
+            getAudioContext();
+            
+            document.getElementById('instruction-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            
+            // Generate non-repetitive fresh sequence deck
+            playStack = [...commandsDataset].sort(() => Math.random() - 0.5);
+            scoreCounter = 0;
+            activeIndex = 0;
+            
+            document.getElementById('points').innerText = scoreCounter;
+            deployChallenge();
+        }
+
+        function deployChallenge() {
+            if (activeIndex >= playStack.length) {
+                concludeGame();
+                return;
+            }
+
+            interfaceLocked = false;
+            timeRemaining = 10;
+            document.getElementById('countdown').innerText = timeRemaining;
+            
+            const liveMatch = playStack[activeIndex];
+            document.getElementById('current-task').innerText = liveMatch.task;
+
+            // Generate temporary options list grid pool
+            let keyboardOptions = [liveMatch.key];
+            while (keyboardOptions.length < 6) {
+                let alternateKey = commandsDataset[Math.floor(Math.random() * commandsDataset.length)].key;
+                if (!keyboardOptions.includes(alternateKey)) {
+                    keyboardOptions.push(alternateKey);
+                }
+            }
+            keyboardOptions.sort(() => Math.random() - 0.5);
+
+            const gridDock = document.getElementById('keyboard-dock');
+            gridDock.innerHTML = "";
+            keyboardOptions.forEach(keyCode => {
+                const button = document.createElement('button');
+                button.className = 'key-cap';
+                button.innerText = keyCode;
+                button.onclick = () => evaluationTrigger(button, keyCode, liveMatch.key);
+                gridDock.appendChild(button);
+            });
+
+            clearInterval(matchTimer);
+            matchTimer = setInterval(() => {
+                timeRemaining--;
+                document.getElementById('countdown').innerText = timeRemaining;
+                if (timeRemaining <= 0) {
+                    clearInterval(matchTimer);
+                    playSoundEffect(false); // Timeouts sound as an incorrect trigger
+                    stepNextChallenge();
+                }
+            }, 1000);
+        }
+
+        function evaluationTrigger(clickedBtn, selectedKey, trueKey) {
+            if (interfaceLocked) return;
+            interfaceLocked = true;
+            clearInterval(matchTimer);
+
+            const allKeys = document.querySelectorAll('.key-cap');
+
+            if (selectedKey === trueKey) {
+                clickedBtn.classList.add('hit-correct');
+                playSoundEffect(true); // Plays dynamic clapping sound sequence
+                scoreCounter += 10;
+                document.getElementById('points').innerText = scoreCounter;
+            } else {
+                clickedBtn.classList.add('hit-wrong');
+                playSoundEffect(false); // Plays dynamic buzz sound sequence
+                allKeys.forEach(btn => {
+                    if (btn.innerText === trueKey) btn.classList.add('hit-correct');
+                });
+            }
+
+            setTimeout(stepNextChallenge, 1200);
+        }
+
+        function stepNextChallenge() {
+            activeIndex++;
+            deployChallenge();
+        }
+
+        function concludeGame() {
+            clearInterval(matchTimer);
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('completion-screen').classList.remove('hidden');
+            
+            document.getElementById('final-points').innerText = scoreCounter;
+            
+            const reviewBox = document.getElementById('performance-feedback');
+            if (scoreCounter >= 70) {
+                reviewBox.innerText = "Superb! You mastered MS Word commands like an absolute expert!";
+                reviewBox.style.color = "#10AC84";
+            } else if (scoreCounter >= 40) {
+                reviewBox.innerText = "Good attempt! Review chapter shortcuts to aim for a perfect run!";
+                reviewBox.style.color = "#2E86DE";
+            } else {
+                reviewBox.innerText = "Keep practicing! Re-read chapter operations to build speed.";
+                reviewBox.style.color = "#FF7675";
+            }
+        }
+
+        function retryGame() {
+            document.getElementById('completion-screen').classList.add('hidden');
+            initiateGameplay();
+        }
+    </script>
+</body>
+</html>

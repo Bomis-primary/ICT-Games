@@ -3,313 +3,519 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Text Formatting Matrix Defuser</title>
+    <title>Innovine Universal - Text Formatting Command Deck</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
         :root {
-            --word-dark-blue: #10316b;
-            --word-classic-blue: #2b579a;
-            --word-interface-gray: #f3f2f1;
-            --scratch-orange: #ffab19;
-            --scratch-green: #2ecc71;
-            --scratch-pink: #ff6680;
-            --dark-terminal: #0b0f19;
+            --bg-dark: #111622;
+            --card-dark: #1a2333;
+            --accent-cyan: #00e5ff;
+            --accent-blue: #2979ff;
+            --word-blue: #2b579a;
+            --text-light: #ffffff;
+            --text-muted: #8fa0bc;
+            --success-green: #00e676;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             user-select: none;
         }
 
         body {
-            background: #1E272C;
+            background-color: var(--bg-dark);
+            color: var(--text-light);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            transition: background 0.5s ease;
         }
 
-        body.game-active {
-            background: linear-gradient(135deg, #111827, var(--dark-terminal));
-        }
-
-        /* --- BRANDING SPLASH SCREEN --- */
+        /* ==========================================================================
+           1. FIRST PAGE: SPONTANEOUS LANDING SCREEN (MATCHING UPLOADED DESIGN SPEC)
+           ========================================================================== */
         #splashScreen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #1E272C;
+            background: radial-gradient(circle at center, #1a2639 0%, var(--bg-dark) 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.6s ease;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        #splashScreen img {
-            width: 350px;
-            max-width: 85%;
-            animation: pulse 1.5s infinite ease-in-out;
+        .logo-container {
+            position: relative;
+            margin-bottom: 25px;
         }
 
-        /* Pure CSS clean backup banner layout if local image file is missing */
-        .fallback-brand-logo {
-            color: #ffffff;
-            font-size: 2.2rem;
-            font-weight: 800;
-            letter-spacing: 4px;
+        .logo-glow-ring {
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: rgba(0, 229, 255, 0.15);
+            box-shadow: 0 0 40px rgba(0, 229, 255, 0.4);
+            animation: pulseGlow 2.5s infinite ease-in-out;
+        }
+
+        #splashScreen .brand-logo-badge {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--accent-cyan);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            background-color: #ffffff;
+        }
+
+        .brand-title-group {
             text-align: center;
-            animation: pulse 1.5s infinite ease-in-out;
-        }
-        .fallback-brand-logo span {
-            color: #00CEC9;
+            margin-bottom: 40px;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .app-window {
-            width: 95vw;
-            max-width: 1100px;
-            height: 88vh;
-            min-height: 620px;
-            z-index: 10;
-        }
-
-        .welcome-card {
-            background: rgba(255, 255, 255, 0.96);
-            border: 1px solid rgba(255,255,255,0.5);
-            border-radius: 32px;
-            padding: 42px;
-            text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            max-width: 620px;
-            margin: 0 auto;
-        }
-
-        .welcome-card h1 span {
-            background: linear-gradient(135deg, var(--word-classic-blue), #4a90e2);
+        .brand-main-title {
+            font-size: 2.6rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            background: linear-gradient(135deg, #ffffff 30%, var(--accent-cyan));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-weight: 800;
+            text-transform: uppercase;
         }
 
-        .matrix-layout {
+        .brand-subtitle {
+            font-size: 1.1rem;
+            color: var(--accent-cyan);
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+
+        /* Standard loading bar tracker animation */
+        .loading-bar-wrapper {
+            width: 260px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            margin-bottom: 35px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .loading-bar-progress {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+            box-shadow: 0 0 12px var(--accent-cyan);
+            border-radius: 10px;
+        }
+
+        .btn-lets-start {
+            background: linear-gradient(135deg, var(--accent-blue), #00b0ff);
+            color: white;
+            border: none;
+            padding: 16px 50px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 24px rgba(41, 121, 255, 0.4), inset 0 2px 2px rgba(255,255,255,0.2);
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            pointer-events: none;
+        }
+
+        .btn-lets-start.ready {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .btn-lets-start:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(41, 121, 255, 0.6);
+            filter: brightness(1.1);
+        }
+
+        .btn-lets-start:active {
+            transform: translateY(1px);
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 0.7; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+
+        /* ==========================================================================
+           2. BRAND NEW GAMEPLAY LAYOUT: THE MAIN COMMAND INTERFACE
+           ========================================================================== */
+        .app-window {
+            width: 95vw;
+            max-width: 1200px;
+            height: 88vh;
+            min-height: 650px;
+            background: var(--card-dark);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
             display: grid;
             grid-template-rows: auto 1fr;
-            height: 100%;
-            gap: 15px;
+            overflow: hidden;
+            opacity: 0;
+            transform: scale(0.95);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .top-hud {
+        .app-window.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Top HUD Bar */
+        .game-header-hud {
+            background: #141b29;
+            padding: 16px 30px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--word-dark-blue);
-            border: 2px solid #1e4287;
-            padding: 14px 25px;
-            border-radius: 16px;
-            color: white;
-            font-weight: 700;
         }
 
-        .split-arena {
+        .game-title-tag {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .game-title-tag h2 {
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+
+        .game-title-tag span {
+            background: rgba(0, 229, 255, 0.1);
+            color: var(--accent-cyan);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+        }
+
+        .metrics-cluster {
+            display: flex;
+            gap: 25px;
+        }
+
+        .metric-badge {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            padding: 8px 18px;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .metric-badge strong {
+            color: var(--accent-cyan);
+        }
+
+        /* Double Column Work Arena */
+        .split-arena-grid {
             display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 20px;
+            grid-template-columns: 420px 1fr;
+            height: 100%;
             min-height: 0;
         }
 
-        .terminal-deck {
-            background: #1e293b;
-            border: 2px solid #334155;
-            border-radius: 24px;
-            padding: 24px;
+        /* Left Side: Text Formatting Control Input Hub */
+        .control-hub-panel {
+            background: #161e2b;
+            border-right: 1px solid rgba(255,255,255,0.06);
+            padding: 25px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            color: white;
+            gap: 20px;
         }
 
-        .task-descriptor {
-            background: #0f172a;
-            padding: 20px;
-            border-radius: 16px;
-            border-left: 5px solid var(--word-classic-blue);
-            margin-bottom: 15px;
-            min-height: 100px;
+        .instruction-box {
+            background: rgba(41, 121, 255, 0.08);
+            border-left: 4px solid var(--accent-blue);
+            padding: 18px;
+            border-radius: 0 12px 12px 0;
         }
 
-        .key-input-matrix {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin-top: auto;
+        .instruction-box h4 {
+            color: var(--accent-cyan);
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
-        .matrix-key-btn {
-            background: linear-gradient(180deg, #334155, #1e293b);
-            border: 2px solid #475569;
-            border-radius: 14px;
-            padding: 18px 10px;
-            color: white;
+        .instruction-box p {
             font-size: 0.95rem;
-            font-weight: 800;
-            cursor: pointer;
+            line-height: 1.5;
+            color: var(--text-muted);
+        }
+
+        /* Interactive Dynamic Toolbar Box */
+        .formatting-interactive-deck {
+            background: rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 16px;
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .deck-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+
+        .live-tool-options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .tool-choice-card {
+            background: #1e293b;
+            border: 2px solid #334155;
+            padding: 16px 12px;
+            border-radius: 12px;
             text-align: center;
-            box-shadow: 0 4px 0px #0f172a;
-            transition: all 0.1s ease;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
 
-        .matrix-key-btn:active {
-            transform: translateY(4px);
-            box-shadow: 0 0px 0px transparent;
+        .tool-choice-card:hover {
+            border-color: var(--accent-cyan);
+            background: #243248;
+            transform: translateY(-2px);
         }
 
-        .matrix-key-btn:hover {
-            border-color: var(--word-classic-blue);
-            background: #27354a;
+        /* Right Side: MS Word Live Document Area */
+        .live-simulator-viewport {
+            background: #f3f4f6;
+            padding: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
-        .document-simulator-window {
-            background: var(--word-interface-gray);
-            border: 3px solid #cbd5e1;
-            border-radius: 24px;
+        .mock-word-window {
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            border: 1px solid #d1d5db;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            position: relative;
         }
 
-        .mock-word-header {
-            background: var(--word-classic-blue);
+        .word-top-ribbon {
+            background: var(--word-blue);
             color: white;
-            padding: 12px 16px;
+            padding: 12px 20px;
             font-size: 0.85rem;
-            font-weight: 700;
+            font-weight: 600;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .mock-word-quickaccess {
+        .word-ribbon-actions {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             font-size: 1rem;
         }
 
-        .mock-document-canvas {
-            flex-grow: 1;
+        /* Formatting Ribbon Segment Visual */
+        .word-format-toolbar-strip {
+            background: #f3f2f1;
+            border-bottom: 1px solid #e1dfdd;
+            padding: 8px 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            color: #323130;
+        }
+
+        .toolbar-group-sample {
+            display: flex;
+            gap: 6px;
             background: white;
-            margin: 15px;
-            border-radius: 12px;
-            border: 1px solid #e0e0e0;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #cdc9c5;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        /* Paper Canvas Section */
+        .word-paper-canvas {
+            flex-grow: 1;
+            background: #f3f2f1;
             padding: 25px;
             display: flex;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .actual-document-sheet {
+            background: white;
+            width: 100%;
+            max-width: 550px;
+            min-height: 100%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #e1dfdd;
+            padding: 40px;
+            display: flex;
             flex-direction: column;
+            gap: 20px;
+            transition: all 0.3s ease;
         }
 
-        .blinking-cursor-block {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #333333;
+        /* Target formatting node styles */
+        .interactive-text-paragraph {
+            font-size: 1.15rem;
             line-height: 1.6;
-            text-align: left;
+            color: #201f1e;
+            padding: 10px;
+            border: 2px dashed transparent;
+            border-radius: 6px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .mock-word-status-bar {
-            background: var(--word-classic-blue);
+        .interactive-text-paragraph.highlighted-zone {
+            border-color: #ffaa00;
+            background: rgba(255, 170, 0, 0.05);
+            animation: borderPulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes borderPulse {
+            0%, 100% { border-color: rgba(255, 170, 0, 0.4); }
+            50% { border-color: rgba(255, 170, 0, 1); }
+        }
+
+        /* Word Footer Status Strip */
+        .word-footer-strip {
+            background: var(--word-blue);
             color: white;
-            padding: 8px 15px;
+            padding: 6px 20px;
             font-size: 0.8rem;
-            font-weight: 600;
             display: flex;
             justify-content: space-between;
         }
 
-        #activeHighlightPointerIndicator {
-            position: absolute;
-            border: 3.5px solid var(--scratch-orange);
-            background: rgba(255, 171, 25, 0.12);
-            border-radius: 8px;
-            pointer-events: none !important;
-            transition: all 0.25s ease-out;
-            display: none;
-            z-index: 50;
-        }
-
-        .popup-modal-shroud {
+        /* ==========================================================================
+           3. OVERLAYS, NOTIFICATIONS, FEEDBACK MODULES
+           ========================================================================== */
+        .modal-shroud {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(11, 15, 25, 0.9);
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(4px);
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 999;
+            z-index: 10000;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.2s ease;
+            transition: opacity 0.3s ease;
         }
 
-        .popup-modal-shroud.active {
+        .modal-shroud.active {
             opacity: 1;
             pointer-events: auto;
         }
 
-        .popup-modal-card {
-            background: white;
+        .modal-card {
+            background: var(--card-dark);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 24px;
-            padding: 35px;
-            width: 440px;
-            max-width: 90%;
+            padding: 40px;
+            width: 460px;
             text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
-            transform: scale(0.85);
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 30px 70px rgba(0,0,0,0.6);
+            transform: scale(0.8);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .popup-modal-shroud.active .popup-modal-card {
+        .modal-shroud.active .modal-card {
             transform: scale(1);
         }
 
-        .modal-action-btn {
-            background: var(--word-classic-blue);
+        .modal-badge {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .modal-card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 12px;
+        }
+
+        .modal-card p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.5;
+            margin-bottom: 25px;
+        }
+
+        .btn-modal-action {
+            background: linear-gradient(135deg, var(--accent-blue), #00b0ff);
             color: white;
             border: none;
             padding: 12px 35px;
             border-radius: 50px;
-            font-weight: bold;
-            font-size: 1rem;
-            margin-top: 20px;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(43,87,154,0.3);
+            font-size: 1rem;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--word-classic-blue), #4a90e2);
-            color: white;
-            border: none;
-            padding: 14px 36px;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            cursor: pointer;
-            box-shadow: 0 6px 20px rgba(43,87,154,0.4);
-            transition: transform 0.2s;
+        /* Game Finished View Block */
+        .game-finished-card {
+            text-align: center;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
         }
 
         .hidden { display: none !important; }
@@ -317,255 +523,318 @@
 </head>
 <body>
 
-    <audio id="audioClap" src="assets/clap.mp3" preload="auto"></audio>
-    <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="soundSuccess" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="soundSuccess" src="assets/clap.mp3" preload="auto"></audio>
+    <audio id="soundFailure" src="assets/wrong.mp3" preload="auto"></audio>
 
     <div id="splashScreen">
-        <img id="brandLogoImg" src="assets/innovine_logo.png" alt="Innovine Logo" onerror="handleImageError()">
+        <div class="logo-container">
+            <div class="logo-glow-ring"></div>
+            <img id="brandLogoImg" class="brand-logo-badge" src="assets/innovine_logo.png" alt="Innovine Universal" onerror="handleLogoFallback()">
+        </div>
+        <div class="brand-title-group">
+            <h1 class="brand-main-title">Innovine</h1>
+            <div class="brand-subtitle">Universal</div>
+        </div>
+        
+        <div class="loading-bar-wrapper">
+            <div id="loadingProgress" class="loading-bar-progress"></div>
+        </div>
+
+        <button id="btnLetsStart" class="btn-lets-start" onclick="transitionToGameInterface()">LETS START</button>
     </div>
 
-    <div class="app-window hidden" id="appInterfaceShell">
+    <div class="app-window" id="appInterfaceShell">
         
-        <div id="introView" class="welcome-card">
-            <h1><span>TEXT FORMATTING MATRIX</span></h1>
-            <h2 style="color: #64748b; font-size: 1.1rem; margin-bottom: 24px; margin-top: 8px;">Grade 3 ICT - Chapter 4 Core Toolkit</h2>
-            <p style="text-align: left; line-height: 1.7; color: #475569; margin-bottom: 26px; background: #f1f5f9; padding: 20px; border-radius: 14px; font-size: 0.95rem;">
-                Welcome to Chapter 4 editing mode! Review the formatting objective on the screen canvas, then click on the correct command shortcut module from the control bank on the left to successfully process the text.
-            </p>
-            <button class="btn-primary" onclick="launchMatrixModule()">Initialize Matrix Link</button>
+        <div class="game-header-hud">
+            <div class="game-title-tag">
+                <h2>Text Formatting Master Code</h2>
+                <span>Chapter 4 Arcade (Pages 38-49)</span>
+            </div>
+            <div class="metrics-cluster">
+                <div class="metric-badge">Score: <strong id="scoreLabel">0XP</strong></div>
+                <div class="metric-badge">Challenge Node: <strong id="sectorLabel">1/9</strong></div>
+            </div>
         </div>
 
-        <div id="gameViewPanel" class="matrix-layout hidden">
-            <div class="top-hud">
-                <div>🏆 Matrix Points: <span id="scoreDisplayLabel">0</span></div>
-                <div style="font-size:1.1rem;">🔮 Target Sector: <span id="sectorDisplayLabel">1 / 9</span></div>
-                <div style="background:#2ecc71; padding: 4px 10px; border-radius: 8px;" class="badge-level">Active Node</div>
-            </div>
-
-            <div class="split-arena">
-                <div class="terminal-deck">
-                    <div class="task-descriptor">
-                        <h3 style="color:var(--scratch-orange); margin-bottom:6px; text-transform:uppercase; font-size:0.85rem; letter-spacing:1px;">Active Objective Manual</h3>
-                        <p id="objectiveTextString">Loading sector data...</p>
-                    </div>
-                    <div class="key-input-matrix" id="keyboardGridMatrixBox"></div>
+        <div class="split-arena-grid">
+            
+            <div class="control-hub-panel">
+                <div class="instruction-box">
+                    <h4>Current Formatting Task</h4>
+                    <p id="taskObjectiveText">Loading system challenge matrix parameters...</p>
                 </div>
 
-                <div class="document-simulator-window" id="simulationContainerWindow">
-                    <div id="activeHighlightPointerIndicator"></div>
+                <div class="formatting-interactive-deck">
+                    <div class="deck-label">Select Action Sequence Module</div>
+                    <div class="live-tool-options-grid" id="toolOptionsGridBox">
+                        </div>
+                </div>
+            </div>
+
+            <div class="live-simulator-viewport">
+                <div class="mock-word-window">
+                    <div class="word-top-ribbon">
+                        <div class="word-ribbon-actions">💾 ↩️ ↪️</div>
+                        <div>Chapter4_Workbook_Ex.docx - Microsoft Word</div>
+                        <div>➖ 🗖 ❌</div>
+                    </div>
                     
-                    <div class="mock-word-header" id="wordHeaderTitleBar">
-                        <div class="mock-word-quickaccess" id="quickAccessCluster">💾 ↩️ ↪️</div>
-                        <div id="centralDocumentTitleText">Chapter 4 Exercises - Word</div>
-                        <div>❌</div>
+                    <div class="word-format-toolbar-strip">
+                        <div class="toolbar-group-sample">Calibri (Body) ▼</div>
+                        <div class="toolbar-group-sample">11 ▼</div>
+                        <div class="toolbar-group-sample" style="letter-spacing: 5px;">B I U 📝 🎨</div>
+                        <div class="toolbar-group-sample" style="letter-spacing: 3px;">条 条 条 条</div>
                     </div>
 
-                    <div class="mock-document-canvas" id="mockDocumentCanvasBox">
-                        <div class="blinking-cursor-block" id="pageCanvasContentBlock"></div>
+                    <div class="word-paper-canvas">
+                        <div class="actual-document-sheet" id="documentSheetPaper">
+                            <h2 id="docHeadingNode" class="interactive-text-paragraph">Chapter 4: Document Layout</h2>
+                            <p id="docParagraphNode" class="interactive-text-paragraph">Microsoft Word provides dynamic tool options to format character properties, alter sizing styles, and customize text orientations across document boundaries.</p>
+                            <p id="docFooterNode" class="interactive-text-paragraph" style="font-size: 0.9rem; color:#64748b;">Class Assignment Exercise Tracker - Grade 3.</p>
+                        </div>
                     </div>
 
-                    <div class="mock-word-status-bar" id="wordStatusFooterBar">
-                        <div id="statusLeftTally">Page 38 of 49 &nbsp;&nbsp; Chapter 4</div>
-                        <div>Print Layout &nbsp; 🔍 100%</div>
+                    <div class="word-footer-strip">
+                        <div>Page 38 of 49 &nbsp;&nbsp;&nbsp;&nbsp; Words: 24</div>
+                        <div>English (United States) &nbsp;&nbsp;&nbsp;&nbsp; 🔍 100%</div>
                     </div>
                 </div>
             </div>
+
         </div>
 
-        <div class="popup-modal-shroud" id="interactiveGlobalModalShroud">
-            <div class="popup-modal-card">
-                <div id="modalIconEmblem" style="font-size:4rem; margin-bottom:12px;">✨</div>
-                <h2 id="modalHeaderTitle" style="font-weight:800; margin-bottom:10px;">Evaluation Feedback</h2>
-                <p id="modalBodyTextString">Filing sector parameters...</p>
-                <button class="modal-action-btn" onclick="dismissMatrixModal()">Next Objective Matrix</button>
+        <div class="modal-shroud" id="globalFeedbackModal">
+            <div class="modal-card">
+                <div id="modalEmblemIcon" class="modal-badge">✨</div>
+                <h3 id="modalAlertHeader">Verification Module</h3>
+                <p id="modalAlertDescription">Processing current parameters block...</p>
+                <button class="btn-modal-action" onclick="advanceToNextChallenge()">Proceed</button>
             </div>
         </div>
 
-        <div id="evaluationReportCard" class="welcome-card hidden">
-            <h1 style="color:var(--scratch-green)">🏆 Chapter 4 Complete!</h1>
-            <p style="margin-top:15px; font-size:1.15rem;" id="finalPerformanceReportSummary"></p>
-            <div style="font-size: 4.5rem; margin: 25px 0;">📝⚡⌨️🎨</div>
-            <button class="btn-primary" onclick="restartCampaignSession()">Reset Matrix System</button>
+        <div id="endEvaluationBlock" class="game-finished-card hidden">
+            <div style="font-size: 5rem; margin-bottom: 15px;">🏆</div>
+            <h1 style="color: var(--success-green); font-size: 2.2rem; font-weight: 800;">Chapter 4 Mastered!</h1>
+            <p style="color: var(--text-muted); margin: 15px 0 30px 0; font-size: 1.1rem; max-width: 500px;" id="finalPerformanceSummaryText"></p>
+            <button class="btn-modal-action" style="padding: 16px 45px; font-size: 1.1rem;" onclick="resetArcadeSession()">Restart Command Deck</button>
         </div>
+
     </div>
 
     <script>
-        // Smooth local resource recovery logic to hide the raw broken link frame
-        function handleImageError() {
-            const imgElement = document.getElementById("brandLogoImg");
-            if (imgElement) {
-                const parent = imgElement.parentNode;
-                const txtFallback = document.createElement("div");
-                txtFallback.className = "fallback-brand-logo";
-                txtFallback.innerHTML = "INNOVINE<br><span>UNIVERSAL</span>";
-                parent.replaceChild(txtFallback, imgElement);
+        // Automatic image missing correction helper (Replaces with clean visual matching background emblem if local path misses)
+        function handleLogoFallback() {
+            const logoImg = document.getElementById("brandLogoImg");
+            if (logoImg) {
+                const fallbackContainer = document.createElement("div");
+                fallbackContainer.className = "brand-logo-badge";
+                fallbackContainer.style.display = "flex";
+                fallbackContainer.style.justifyContent = "center";
+                fallbackContainer.style.alignItems = "center";
+                fallbackContainer.style.background = "linear-gradient(135deg, #2979ff, #00e5ff)";
+                fallbackContainer.style.color = "#ffffff";
+                fallbackContainer.style.fontSize = "2.5rem";
+                fallbackContainer.style.fontWeight = "900";
+                fallbackContainer.innerText = "IU";
+                logoImg.parentNode.replaceChild(fallbackContainer, logoImg);
             }
         }
 
-        // Chapter 4 (Page 38-49) aligned curriculum database mapping 
-        const sectorDatabase = [
-            { objective: "Which keyboard shortcut key sequence applies a thick 'Bold' look to make chosen text characters darker and heavier?", targetKey: "Ctrl + B", highlightTarget: "mockDocumentCanvasBox", hint: "Excellent! Ctrl + B changes plain text weight into bold emphasis style.", canvasText: "Making text look strong and thick..." },
-            { objective: "Identify the action command required to instantly skew or slant character letters into 'Italics' format styling.", targetKey: "Ctrl + I", highlightTarget: "mockDocumentCanvasBox", hint: "Correct choice. Ctrl + I slants your selected text words nicely.", canvasText: "Slanting words for creative headings..." },
-            { objective: "Which hotkey macro configuration adds a clean horizontal underline line decoration beneath a targeted sentence block?", targetKey: "Ctrl + U", highlightTarget: "mockDocumentCanvasBox", hint: "Perfect score! Ctrl + U underlines structural terms instantly.", canvasText: "Adding line decorations underneath sentences..." },
-            { objective: "Which action structure aligns your active sentence rows uniformly against the far Left Margin line?", targetKey: "Ctrl + L", highlightTarget: "mockDocumentCanvasBox", hint: "Incredible response speed! Ctrl + L assigns Left Alignment orientation parameters.", canvasText: "Aligning text lines leftward..." },
-            { objective: "Identify the hotkey macro sequence utilized to perfectly center text content between the left and right margins.", targetKey: "Ctrl + E", highlightTarget: "mockDocumentCanvasBox", hint: "Spot on! Ctrl + E configures Center Text alignment metrics perfectly.", canvasText: "Centering main document titles beautifully..." },
-            { objective: "Which command option pushes your formatting sentence structures perfectly flush right against the Right Margin boundaries?", targetKey: "Ctrl + R", highlightTarget: "mockDocumentCanvasBox", hint: "Brilliant execution! Ctrl + R handles native Right Text Alignment configurations.", canvasText: "Pushing paragraph sections rightward..." },
-            { objective: "To modify or transform any text font block, you must first highlight it. What shortcut key combination selects all page content?", targetKey: "Ctrl + A", highlightTarget: "mockDocumentCanvasBox", hint: "Awesome! Ctrl + A grabs everything inside the canvas bounds safely.", canvasText: "Selecting all structural characters globally..." },
-            { objective: "Identify the tool hotkey sequence utilized to step-up or increase font point size metrics higher and larger.", targetKey: "Ctrl + Shift + >", highlightTarget: "mockDocumentCanvasBox", hint: "Spectacular! Scaling sizes upward opens higher title legibility options.", canvasText: "Growing structural font sizes bigger..." },
-            { objective: "Which hotkey sequence triggers the tool utility used to down-scale or decrease text character sizes?", targetKey: "Ctrl + Shift + <", highlightTarget: "mockDocumentCanvasBox", hint: "Great validation score! Decreasing text size helps pack body elements together nicely.", canvasText: "Shrinking content font sizing smaller..." }
-        ];
-
-        const primaryKeyBank = [
-            "Ctrl + B", "Ctrl + I", "Ctrl + U", "Ctrl + L", "Ctrl + E", "Ctrl + R", "Ctrl + A", "Ctrl + Shift + >", "Ctrl + Shift + <",
-            "Ctrl + S", "Ctrl + N", "Backspace", "Tab Key", "Alt + F4", "Enter Key"
-        ];
-
-        let activeDeck = [];
-        let sectorIndex = 0;
-        let runningMatrixScore = 0;
-        let matrixSystemLocked = false;
-
-        function playAudioTrack(id) {
-            try {
-                const node = document.getElementById(id);
-                if(node) { node.currentTime = 0; node.play().catch(e => console.log(e)); }
-            } catch(err) { console.log("Audio file initialization delayed:", err); }
-        }
-
-        // Keep Splash visible for 5000 milliseconds
+        // Simulates progress bar synchronization on landing page
         window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                const splashNode = document.getElementById("splashScreen");
-                if(splashNode) {
-                    splashNode.style.opacity = "0";
-                    setTimeout(() => {
-                        splashNode.style.setProperty("display", "none", "important");
-                        document.body.style.background = "#ffffff";
-                        document.getElementById("appInterfaceShell").classList.remove("hidden");
-                    }, 600);
+            const progressBar = document.getElementById("loadingProgress");
+            const actionBtn = document.getElementById("btnLetsStart");
+            let progressWidth = 0;
+
+            const trackingInterval = setInterval(() => {
+                progressWidth += 2;
+                if(progressBar) progressBar.style.width = progressWidth + "%";
+
+                if(progressWidth >= 100) {
+                    clearInterval(trackingInterval);
+                    if(actionBtn) actionBtn.classList.add("ready");
                 }
-            }, 5000);
+            }, 40);
         });
 
-        function launchMatrixModule() {
-            document.body.classList.add("game-active");
-            document.getElementById("introView").classList.add("hidden");
-            document.getElementById("gameViewPanel").classList.remove("hidden");
-            
-            activeDeck = [...sectorDatabase].sort(() => Math.random() - 0.5);
-            sectorIndex = 0;
-            runningMatrixScore = 0;
-            
-            loadSectorObjective();
+        function transitionToGameInterface() {
+            const splash = document.getElementById("splashScreen");
+            const mainAppShell = document.getElementById("appInterfaceShell");
+
+            if(splash) {
+                splash.style.opacity = "0";
+                splash.style.transform = "translateY(-30px)";
+                setTimeout(() => {
+                    splash.style.display = "none";
+                    if(mainAppShell) {
+                        mainAppShell.classList.remove("hidden");
+                        setTimeout(() => mainAppShell.classList.add("visible"), 50);
+                    }
+                    launchTextGameEngine();
+                }, 500);
+            }
         }
 
-        function buildInteractiveHardwareKeys(correctKey) {
-            const box = document.getElementById("keyboardGridMatrixBox");
-            box.innerHTML = "";
-            
-            let alternativeKeys = primaryKeyBank.filter(k => k !== correctKey);
-            alternativeKeys.sort(() => Math.random() - 0.5);
-            
-            let finalSelection = alternativeKeys.slice(0, 8);
-            finalSelection.push(correctKey);
-            finalSelection.sort(() => Math.random() - 0.5);
+        // ==========================================================================
+        // DYNAMIC CORE CORE ROADMAP ARCADE GAME LOGIC ENGINE
+        // ==========================================================================
+        
+        // Curriculum Questions Roadmap Map Array Data (Pages 38 - 49)
+        const chapter4QuestionsDatabase = [
+            { question: "Apply the 'Bold text' modification tool utility to make the active Document Title characters appear significantly darker and heavier.", correctModule: "Bold Option (Ctrl+B)", targetElementId: "docHeadingNode", styleMutation: (el) => el.style.fontWeight = "900", feedbackText: "Awesome! Bold styling increases line density weights cleanly." },
+            { question: "Skew or slant the document description body paragraph into 'Italics' format styling.", correctModule: "Italics Option (Ctrl+I)", targetElementId: "docParagraphNode", styleMutation: (el) => el.style.fontStyle = "italic", feedbackText: "Spot on! Italics add stylish emphases slant accents over text spans." },
+            { question: "Add a crisp Underline line structural horizontal decoration underneath your document assignment footer label text string.", correctModule: "Underline Option (Ctrl+U)", targetElementId: "docFooterNode", styleMutation: (el) => el.style.textDecoration = "underline", feedbackText: "Perfect selection! Underlines cleanly accent and draw eye priority attention fields." },
+            { question: "Move the selected document layout Title paragraph so that it sits perfectly balanced inside the absolute Horizontal Center of the paper sheet.", correctModule: "Center Align (Ctrl+E)", targetElementId: "docHeadingNode", styleMutation: (el) => el.style.textAlign = "center", feedbackText: "Superb alignment skill! Center-aligned typography forms optimal page cover visual headers." },
+            { question: "Align the active main body summary text parameters uniformly flush against the Left Margin boundary strip lines.", correctModule: "Left Align (Ctrl+L)", targetElementId: "docParagraphNode", styleMutation: (el) => el.style.textAlign = "left", feedbackText: "Brilliant! Left Alignment configuration holds the base layout profile read format standard." },
+            { question: "Push the assignment tracker data labels to align completely flush rightward against the right paragraph column bounds.", correctModule: "Right Align (Ctrl+R)", targetElementId: "docFooterNode", styleMutation: (el) => el.style.textAlign = "right", feedbackText: "Correct! Right text styling shifts auxiliary data tokens seamlessly to standard citation layout margins." },
+            { question: "Increase the main heading element structure point sizing scales higher to establish proper structural layout priority reading.", correctModule: "Grow Font (Ctrl+Shift+>)", targetElementId: "docHeadingNode", styleMutation: (el) => el.style.fontSize = "2.2rem", feedbackText: "Incredible response rate! Scaling point sizes upward triggers optimized title headers layout readability metrics." },
+            { question: "Highlight and select the entire set of layout paragraphs inside the simulator frame globally using the select-all master option command template.", correctModule: "Select All (Ctrl+A)", targetElementId: "documentSheetPaper", styleMutation: (el) => el.style.backgroundColor = "rgba(41, 121, 255, 0.15)", feedbackText: "Spectacular! Highlighting the entire page array provides universal block modification control." },
+            { question: "Reset all character blocks back into a sleek, clean modern styling configuration framework using the alternative Font Style dropdown tool.", correctModule: "Change Font Family", targetElementId: "documentSheetPaper", styleMutation: (el) => el.style.fontFamily = "Courier New, monospace", feedbackText: "Great job! Switching font families dynamically transforms style presentation profiles." }
+        ];
 
-            finalSelection.forEach(keyText => {
-                const btn = document.createElement("button");
-                btn.className = "matrix-key-btn";
-                btn.innerText = keyText;
-                btn.onclick = () => dispatchKeyValidation(keyText);
-                box.appendChild(btn);
+        const fallbackMasterCommandBank = [
+            "Bold Option (Ctrl+B)", "Italics Option (Ctrl+I)", "Underline Option (Ctrl+U)", 
+            "Center Align (Ctrl+E)", "Left Align (Ctrl+L)", "Right Align (Ctrl+R)", 
+            "Grow Font (Ctrl+Shift+>)", "Select All (Ctrl+A)", "Change Font Family",
+            "Double Space Lines", "Insert Page Number", "Toggle Bullet Points", "Open Print Layout"
+        ];
+
+        let playDeck = [];
+        let currentSectorIndex = 0;
+        let cumulativeScoreXP = 0;
+        let controlLockoutState = false;
+
+        function triggerAudioFeedback(elementId) {
+            try {
+                const audioNode = document.getElementById(elementId);
+                if(audioNode) { audioNode.currentTime = 0; audioNode.play().catch(err => console.log(err)); }
+            } catch(e) { console.log("Audio pipeline busy:", e); }
+        }
+
+        function launchTextGameEngine() {
+            playDeck = [...chapter4QuestionsDatabase].sort(() => Math.random() - 0.5);
+            currentSectorIndex = 0;
+            cumulativeScoreXP = 0;
+            controlLockoutState = false;
+            
+            // Revert live styles elements on reset
+            const h = document.getElementById("docHeadingNode");
+            const p = document.getElementById("docParagraphNode");
+            const f = document.getElementById("docFooterNode");
+            const s = document.getElementById("documentSheetPaper");
+            
+            if(h) { h.removeAttribute("style"); h.className = "interactive-text-paragraph"; }
+            if(p) { p.removeAttribute("style"); p.className = "interactive-text-paragraph"; }
+            if(f) { f.removeAttribute("style"); f.className = "interactive-text-paragraph"; }
+            if(s) { s.removeAttribute("style"); s.className = "actual-document-sheet"; }
+
+            loadNextGameplaySector();
+        }
+
+        function loadNextGameplaySector() {
+            controlLockoutState = false;
+            document.getElementById("scoreLabel").innerText = cumulativeScoreXP + "XP";
+            document.getElementById("sectorLabel").innerText = `${currentSectorIndex + 1} / ${playDeck.length}`;
+
+            // Clean down highlight boxes
+            document.querySelectorAll(".interactive-text-paragraph").forEach(node => node.classList.remove("highlighted-zone"));
+            document.getElementById("documentSheetPaper").classList.remove("highlighted-zone");
+
+            const activeTask = playDeck[currentSectorIndex];
+            document.getElementById("taskObjectiveText").innerText = activeTask.question;
+
+            // Paint highlight ring directly inside simulated target workspace node element
+            const targetVisualNode = document.getElementById(activeTask.targetElementId);
+            if(targetVisualNode) targetVisualNode.classList.add("highlighted-zone");
+
+            renderInteractiveChoicesGrid(activeTask.correctModule);
+        }
+
+        function renderInteractiveChoicesGrid(correctKeyString) {
+            const containerGrid = document.getElementById("toolOptionsGridBox");
+            containerGrid.innerHTML = "";
+
+            let dummyPool = fallbackMasterCommandBank.filter(val => val !== correctKeyString);
+            dummyPool.sort(() => Math.random() - 0.5);
+
+            let selectionMix = dummyPool.slice(0, 3);
+            selectionMix.push(correctKeyString);
+            selectionMix.sort(() => Math.random() - 0.5);
+
+            selectionMix.forEach(optionText => {
+                const choiceCard = document.createElement("div");
+                choiceCard.className = "tool-choice-card";
+                choiceCard.innerText = optionText;
+                choiceCard.onclick = () => validateInjectedCommandSequence(optionText, correctKeyString);
+                containerGrid.appendChild(choiceCard);
             });
         }
 
-        function loadSectorObjective() {
-            matrixSystemLocked = false;
-            document.getElementById("scoreDisplayLabel").innerText = runningMatrixScore;
-            document.getElementById("sectorDisplayLabel").innerText = `${sectorIndex + 1} / ${activeDeck.length}`;
+        function validateInjectedCommandSequence(clickedString, targetAnswerString) {
+            if(controlLockoutState) return;
+            controlLockoutState = true;
 
-            const sectorData = activeDeck[sectorIndex];
-            document.getElementById("objectiveTextString").innerText = sectorData.objective;
-            document.getElementById("pageCanvasContentBlock").innerText = sectorData.canvasText;
+            const activeChallengeConfig = playDeck[currentSectorIndex];
+            const feedbackShroud = document.getElementById("globalFeedbackModal");
+            const iconNode = document.getElementById("modalEmblemIcon");
+            const headerNode = document.getElementById("modalAlertHeader");
+            const descriptionNode = document.getElementById("modalAlertDescription");
 
-            buildInteractiveHardwareKeys(sectorData.targetKey);
-            positionHighlightIndicator(sectorData.highlightTarget);
-        }
-
-        function positionHighlightIndicator(targetId) {
-            const indicator = document.getElementById("activeHighlightPointerIndicator");
-            const targetNode = document.getElementById(targetId);
-            const parentWindow = document.getElementById("simulationContainerWindow");
-
-            if(targetNode && parentWindow) {
-                setTimeout(() => {
-                    indicator.style.display = "block";
-                    const topPos = targetNode.getBoundingClientRect().top - parentWindow.getBoundingClientRect().top;
-                    const leftPos = targetNode.getBoundingClientRect().left - parentWindow.getBoundingClientRect().left;
-                    
-                    indicator.style.top = `${topPos - 4}px`;
-                    indicator.style.left = `${leftPos - 4}px`;
-                    indicator.style.width = `${targetNode.offsetWidth + 8}px`;
-                    indicator.style.height = `${targetNode.offsetHeight + 8}px`;
-                }, 60);
-            } else {
-                indicator.style.display = "none";
-            }
-        }
-
-        function dispatchKeyValidation(clickedKeyName) {
-            if (matrixSystemLocked) return;
-            matrixSystemLocked = true;
-
-            const sectorData = activeDeck[sectorIndex];
-            const modalShroud = document.getElementById("interactiveGlobalModalShroud");
-            const mIcon = document.getElementById("modalIconEmblem");
-            const mTitle = document.getElementById("modalHeaderTitle");
-            const mBody = document.getElementById("modalBodyTextString");
-
-            mBody.innerText = sectorData.hint;
-
-            if (clickedKeyName === sectorData.targetKey) {
-                runningMatrixScore += 100;
-                document.getElementById("scoreDisplayLabel").innerText = runningMatrixScore;
-                mIcon.innerText = "🎨👍";
-                mTitle.innerText = "Formatting Applied Successfully!";
-                mTitle.style.color = "#2ecc71";
-                playAudioTrack("audioClap");
+            if(clickedString === targetAnswerString) {
+                cumulativeScoreXP += 100;
+                document.getElementById("scoreLabel").innerText = cumulativeScoreXP + "XP";
                 
-                if (typeof confetti !== 'undefined') {
-                    confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
+                iconNode.innerText = "⚡🎯";
+                headerNode.innerText = "Command Match Success!";
+                headerNode.style.color = "var(--success-green)";
+                descriptionNode.innerText = activeChallengeConfig.feedbackText;
+                triggerAudioFeedback("soundSuccess");
+
+                // Execute the style mutation inside the simulated document sheet live view!
+                const targetedDomNode = document.getElementById(activeChallengeConfig.targetElementId);
+                if(targetedDomNode && activeChallengeConfig.styleMutation) {
+                    activeChallengeConfig.styleMutation(targetedDomNode);
+                }
+
+                if(typeof confetti !== 'undefined') {
+                    confetti({ particleCount: 35, spread: 50, origin: { y: 0.75 } });
                 }
             } else {
-                mIcon.innerText = "⚠️💡";
-                mTitle.innerText = "Matrix Validation Fault!";
-                mTitle.style.color = "#ff6680";
-                mBody.innerText = `Incorrect command module. Correct Chapter 4 Action: [${sectorData.targetKey}].`;
-                playAudioTrack("audioWrong");
+                iconNode.innerText = "❌💡";
+                headerNode.innerText = "Command Discrepancy!";
+                headerNode.style.color = "var(--scratch-pink)";
+                descriptionNode.innerText = `Incorrect modifier module selection injection. Chapter 4 Formatting Solution: [${targetAnswerString}].`;
+                triggerAudioFeedback("soundFailure");
             }
-            
-            modalShroud.classList.add("active");
+
+            feedbackShroud.classList.add("active");
         }
 
-        function dismissMatrixModal() {
-            document.getElementById("interactiveGlobalModalShroud").classList.remove("active");
-            matrixSystemLocked = false; 
+        function advanceToNextChallenge() {
+            document.getElementById("globalFeedbackModal").classList.remove("active");
             
-            sectorIndex++;
-            if(sectorIndex < activeDeck.length) {
-                loadSectorObjective();
+            currentSectorIndex++;
+            if(currentSectorIndex < playDeck.length) {
+                loadNextGameplaySector();
             } else {
-                document.getElementById("gameViewPanel").classList.add("hidden");
-                document.getElementById("evaluationReportCard").classList.remove("hidden");
-                playAudioTrack("audioClap");
-                document.getElementById("finalPerformanceReportSummary").innerHTML = 
-                    `Excellent System Processing! Final Score: <strong>${runningMatrixScore} / 900 Protocol Points</strong>`;
+                // Clear active window columns elements display to showcase the final report card module cleanly
+                document.getElementById("taskObjectiveText").parentElement.classList.add("hidden");
+                document.getElementById("toolOptionsGridBox").parentElement.classList.add("hidden");
+                document.querySelector(".split-arena-grid").style.display = "block";
+                document.querySelector(".live-simulator-viewport").classList.add("hidden");
+                
+                const reportSummaryText = document.getElementById("finalPerformanceSummaryText");
+                const finishedCardNode = document.getElementById("endEvaluationBlock");
+
+                reportSummaryText.innerHTML = `You have successfully cracked and authorized all formatting configuration sets from <strong>Pages 38 to 49</strong>. <br><br>Final Core Run Score Matrix tally: <strong>${cumulativeScoreXP} / 900 Points</strong>`;
+                finishedCardNode.classList.remove("hidden");
+                triggerAudioFeedback("soundSuccess");
             }
         }
 
-        function restartCampaignSession() {
-            document.getElementById("evaluationReportCard").classList.add("hidden");
-            launchMatrixModule();
+        function resetArcadeSession() {
+            location.reload();
         }
     </script>
 </body>

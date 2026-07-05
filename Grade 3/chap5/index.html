@@ -3,18 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Innovine Universal - MS Word-3 Proofing Deck</title>
+    <title>Innovine Universal - Word Processing Arcade Arena</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
         :root {
-            --bg-dark: #0f1319;
-            --card-dark: #171e29;
+            --bg-dark: #0a0d14;
+            --card-dark: #121824;
             --accent-cyan: #00e5ff;
             --accent-blue: #2979ff;
-            --word-blue: #1259a2;
-            --word-light-blue: #eef4fb;
+            --word-blue: #165cc0;
             --text-light: #ffffff;
-            --text-muted: #7e8f9f;
+            --text-muted: #78889b;
             --error-red: #ff5252;
             --success-green: #00e676;
         }
@@ -38,7 +37,7 @@
         }
 
         /* ==========================================================================
-           1. SPLASH SCREEN (DESIGN MATCHED TO USER REQUESTS)
+           1. SPLASH SCREEN (DESIGN MATCHED TO USER LAYOUT)
            ========================================================================== */
         #splashScreen {
             position: fixed;
@@ -46,13 +45,13 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at center, #1b263b 0%, var(--bg-dark) 100%);
+            background: radial-gradient(circle at center, #162238 0%, var(--bg-dark) 100%);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: all 0.5s ease;
+            transition: opacity 0.5s ease;
         }
 
         .logo-container {
@@ -68,7 +67,7 @@
             height: 170px;
             border-radius: 50%;
             background: rgba(0, 229, 255, 0.15);
-            box-shadow: 0 0 35px rgba(0, 229, 255, 0.3);
+            box-shadow: 0 0 35px rgba(0, 229, 255, 0.4);
             animation: pulseGlow 2s infinite ease-in-out;
         }
 
@@ -89,9 +88,9 @@
         }
 
         .brand-main-title {
-            font-size: 2.5rem;
+            font-size: 2.6rem;
             font-weight: 800;
-            letter-spacing: 4px;
+            letter-spacing: 5px;
             background: linear-gradient(135deg, #ffffff, var(--accent-cyan));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -101,13 +100,13 @@
         .brand-subtitle {
             font-size: 1.1rem;
             color: var(--accent-cyan);
-            letter-spacing: 5px;
+            letter-spacing: 6px;
             text-transform: uppercase;
             margin-top: 5px;
         }
 
         .loading-bar-wrapper {
-            width: 250px;
+            width: 260px;
             height: 6px;
             background: rgba(255, 255, 255, 0.08);
             border-radius: 10px;
@@ -126,8 +125,8 @@
             background: linear-gradient(135deg, var(--accent-blue), #00b0ff);
             color: white;
             border: none;
-            padding: 15px 45px;
-            font-size: 1.1rem;
+            padding: 16px 50px;
+            font-size: 1.2rem;
             font-weight: 700;
             letter-spacing: 2px;
             border-radius: 50px;
@@ -136,6 +135,7 @@
             transform: translateY(15px);
             transition: all 0.4s ease;
             pointer-events: none;
+            box-shadow: 0 6px 20px rgba(41, 121, 255, 0.3);
         }
 
         .btn-lets-start.ready {
@@ -146,21 +146,21 @@
 
         @keyframes pulseGlow {
             0%, 100% { transform: scale(1); opacity: 0.6; }
-            50% { transform: scale(1.08); opacity: 1; }
+            50% { transform: scale(1.06); opacity: 1; }
         }
 
         /* ==========================================================================
-           2. INTERACTIVE GAMEPLAY LAYOUT (PROOFS & INSERTS CLINIC)
+           2. SELECTION SCREEN & APP CONTAINER
            ========================================================================== */
         .app-window {
             width: 95vw;
-            max-width: 1200px;
+            max-width: 1100px;
             height: 85vh;
             background: var(--card-dark);
-            border-radius: 20px;
+            border-radius: 24px;
             border: 1px solid rgba(255,255,255,0.08);
-            display: grid;
-            grid-template-rows: auto 1fr;
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
             opacity: 0;
             transform: scale(0.97);
@@ -172,217 +172,146 @@
             transform: scale(1);
         }
 
-        .game-header-hud {
-            background: #111720;
-            padding: 15px 25px;
+        .game-header {
+            background: #0d121c;
+            padding: 15px 30px;
             border-bottom: 1px solid rgba(255,255,255,0.08);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .metrics-cluster {
-            display: flex;
-            gap: 15px;
-        }
-
-        .metric-badge {
-            background: rgba(255,255,255,0.04);
-            padding: 6px 16px;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-
-        .metric-badge strong { color: var(--accent-cyan); }
-
-        .split-arena-grid {
-            display: grid;
-            grid-template-columns: 380px 1fr;
-            height: 100%;
-        }
-
-        /* Left Control Panel */
-        .control-hub-panel {
-            background: #141b25;
-            border-right: 1px solid rgba(255,255,255,0.06);
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .instruction-box {
-            background: rgba(41, 121, 255, 0.08);
-            border-left: 4px solid var(--accent-blue);
-            padding: 15px;
-            border-radius: 4px;
-        }
-
-        .instruction-box h4 {
-            color: var(--accent-cyan);
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            margin-bottom: 5px;
-        }
-
-        /* Tool Palette Grid */
-        .live-tool-options-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-        }
-
-        .tool-choice-card {
-            background: #1c2635;
-            border: 1px solid #2e3d54;
-            padding: 14px 16px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            transition: all 0.2s ease;
-        }
-
-        .tool-choice-card:hover {
-            border-color: var(--accent-cyan);
-            background: #233044;
-            transform: translateX(3px);
-        }
-
-        .tool-icon-frame {
-            background: rgba(255,255,255,0.05);
-            width: 28px;
-            height: 28px;
+        .menu-selection-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            border-radius: 6px;
+            gap: 40px;
+            flex-grow: 1;
+            padding: 40px;
         }
 
-        /* Right Word Document Canvas Viewport */
-        .live-simulator-viewport {
-            background: #e9ecef;
-            padding: 25px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .mock-word-window {
-            width: 100%;
-            height: 100%;
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            display: grid;
-            grid-template-rows: auto auto 1fr auto;
-            overflow: hidden;
-            color: #333;
-        }
-
-        .word-top-ribbon {
-            background: var(--word-blue);
-            color: white;
-            padding: 8px 15px;
-            font-size: 0.8rem;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .word-tabs-strip {
-            background: #f3f2f1;
-            padding: 4px 15px;
-            display: flex;
-            gap: 15px;
-            font-size: 0.8rem;
-            border-bottom: 1px solid #e1dfdd;
-            color: #201f1e;
-            font-weight: 600;
-        }
-
-        .word-tabs-strip span.active {
-            border-bottom: 2px solid var(--word-blue);
-            color: var(--word-blue);
-        }
-
-        .word-paper-canvas {
-            background: #f3f2f1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            justify-content: center;
-        }
-
-        .actual-document-sheet {
-            background: white;
-            width: 100%;
-            max-width: 580px;
-            min-height: 100%;
+        .game-mode-card {
+            background: #182030;
+            border: 2px solid #25334a;
+            border-radius: 20px;
             padding: 35px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-
-        /* Special UI elements for errors and shapes matching pages 50-56 */
-        .error-wave {
-            text-decoration: underline wavy var(--error-red);
-            background-color: rgba(255, 82, 82, 0.08);
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-
-        .placeholder-box {
-            border: 2px dashed #b0bec5;
-            background: #f8f9fa;
-            padding: 20px;
+            width: 320px;
             text-align: center;
-            color: #78909c;
-            font-size: 0.9rem;
-            border-radius: 6px;
-            margin: 10px 0;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
-        .inserted-shape {
-            background: linear-gradient(135deg, #4caf50, #2e7d32);
+        .game-mode-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 10px 25px rgba(0, 229, 255, 0.15);
+        }
+
+        .mode-icon {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+        }
+
+        /* ==========================================================================
+           3. ARCADE INTERACTIVE CANVAS WRAPPER
+           ========================================================================== */
+        .arcade-stage-viewport {
+            flex-grow: 1;
+            position: relative;
+            background: #101520;
+            overflow: hidden;
+        }
+
+        /* Bubble Game Elements */
+        .bubble {
+            position: absolute;
+            background: radial-gradient(circle at 30% 30%, rgba(0, 229, 255, 0.4), rgba(41, 121, 255, 0.1));
+            border: 2px solid var(--accent-cyan);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             color: white;
-            width: 120px;
-            height: 45px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,229,255,0.2), inset 0 2px 8px rgba(255,255,255,0.3);
+            transition: transform 0.1s ease;
+            padding: 10px;
+            text-align: center;
+        }
+
+        /* Falling Catching Objects */
+        .falling-object {
+            position: absolute;
+            font-size: 2.5rem;
+            cursor: default;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+        }
+
+        #wordBasket {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--word-blue), #1e73e6);
+            border: 2px solid white;
+            border-radius: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-weight: bold;
-            border-radius: 4px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-            margin: 10px auto;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            color: white;
+            font-size: 0.85rem;
         }
 
-        .word-footer-strip {
-            background: #f3f2f1;
-            border-top: 1px solid #e1dfdd;
-            padding: 4px 15px;
-            font-size: 0.75rem;
+        /* HUD & Controls inside Arcade */
+        .arcade-hud {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
             display: flex;
             justify-content: space-between;
-            color: #605e5c;
+            z-index: 10;
+            pointer-events: none;
         }
 
-        /* Feedback Modals */
+        .hud-pill {
+            background: rgba(13, 18, 28, 0.85);
+            backdrop-filter: blur(5px);
+            padding: 8px 18px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.08);
+            font-weight: 600;
+        }
+
+        .hud-pill span {
+            color: var(--accent-cyan);
+        }
+
+        .btn-exit {
+            background: rgba(255, 82, 82, 0.15);
+            color: var(--error-red);
+            border: 1px solid rgba(255, 82, 82, 0.3);
+            padding: 6px 15px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            pointer-events: auto;
+        }
+
+        /* Global Modal Shroud */
         .modal-shroud {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 14, 20, 0.85);
-            backdrop-filter: blur(3px);
+            background: rgba(5, 8, 13, 0.9);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -400,21 +329,21 @@
         .modal-card {
             background: var(--card-dark);
             border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 16px;
-            padding: 30px;
-            width: 420px;
+            border-radius: 20px;
+            padding: 40px;
+            width: 440px;
             text-align: center;
         }
 
-        .btn-modal-action {
+        .btn-action {
             background: linear-gradient(135deg, var(--accent-blue), #00b0ff);
             color: white;
             border: none;
-            padding: 10px 30px;
-            border-radius: 20px;
-            font-weight: 600;
+            padding: 12px 35px;
+            border-radius: 50px;
+            font-weight: bold;
             cursor: pointer;
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         .hidden { display: none !important; }
@@ -439,271 +368,314 @@
             <div id="loadingProgress" class="loading-bar-progress"></div>
         </div>
 
-        <button id="btnLetsStart" class="btn-lets-start" onclick="initiateMainAppInterface()">LETS START</button>
+        <button id="btnLetsStart" class="btn-lets-start" onclick="enterGameHubShell()">LETS START</button>
     </div>
 
-    <div class="app-window id-holder" id="appInterfaceShell">
+    <div class="app-window hidden" id="appInterfaceShell">
         
-        <div class="game-header-hud">
+        <div class="game-header">
             <div>
-                <h3 style="font-size: 1.1rem; letter-spacing: 0.5px;">MS Word-3 Proofing Console</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted);">Interactive Operations Workspace (Pages 50-56)</p>
+                <h3 style="font-size: 1.1rem;">MS Word-3 Arcade Room</h3>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Interactive Learning Ecosystem (Pages 50-56)</p>
             </div>
-            <div class="metrics-cluster">
-                <div class="metric-badge">Tally: <strong id="scoreLabel">0 XP</strong></div>
-                <div class="metric-badge">Section: <strong id="sectorLabel">1/6</strong></div>
+            <div id="hubStatusPill" class="hud-pill">Select Game Mode</div>
+        </div>
+
+        <div class="menu-selection-container" id="modeMenuSection">
+            <div class="game-mode-card" onclick="initiateBubbleArcadeGame()">
+                <div class="mode-icon">🫧</div>
+                <h3>Proofing Bubble Pop</h3>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 10px;">Pop misspelled words & review utilities cleanly before they escape to the top! (Pages 50-52)</p>
+            </div>
+
+            <div class="game-mode-card" onclick="initiateCatchingArcadeGame()">
+                <div class="mode-icon">📥</div>
+                <h3>Visual Element Catch</h3>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 10px;">Move the MS Word Document basket with your cursor to harvest falling shapes & layouts! (Pages 53-56)</p>
             </div>
         </div>
 
-        <div class="split-arena-grid" id="mainGameplaySplitArea">
-            
-            <div class="control-hub-panel">
-                <div class="instruction-box">
-                    <h4>Review & Document Goal</h4>
-                    <p id="taskObjectiveText">Analyzing layout structures...</p>
-                </div>
-
-                <div style="display: flex; flex-direction: column; gap: 8px;">
-                    <p style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Available Actions Menu</p>
-                    <div class="live-tool-options-grid" id="toolOptionsGridBox">
-                        </div>
-                </div>
+        <div class="arcade-stage-viewport hidden" id="gameplayStageArea">
+            <div class="arcade-hud">
+                <div class="hud-pill">Score: <span id="arcadeScoreLabel">0</span></div>
+                <div class="hud-pill" id="arcadeObjectiveLabel">Objective: Loading...</div>
+                <button class="btn-exit" onclick="abortSessionAndReturnToHub()">Exit Game</button>
             </div>
 
-            <div class="live-simulator-viewport">
-                <div class="mock-word-window">
-                    <div class="word-top-ribbon">
-                        <div>📝 Document1.docx - Word Editor</div>
-                        <div>🗕 🗖 🗙</div>
-                    </div>
-                    <div class="word-tabs-strip">
-                        <span>Home</span>
-                        <span>Insert</span>
-                        <span class="active">Review</span>
-                        <span>View</span>
-                    </div>
-
-                    <div class="word-paper-canvas">
-                        <div class="actual-document-sheet" id="documentWorkspaceSheet">
-                            </div>
-                    </div>
-
-                    <div class="word-footer-strip">
-                        <div>Page 1 of 1 &nbsp;&nbsp;&nbsp;&nbsp; Errors Identified</div>
-                        <div>Corrective Status Mode</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="endEvaluationBlock" class="hidden" style="text-align: center; padding: 50px;">
-            <div style="font-size: 4.5rem; margin-bottom: 20px;">🎉</div>
-            <h2 style="color: var(--success-green); font-size: 2rem;">Proofing Session Accomplished!</h2>
-            <p style="color: var(--text-muted); margin: 15px auto 30px auto; max-width: 450px;" id="finalSummaryParagraph"></p>
-            <button class="btn-modal-action" onclick="location.reload()">Re-verify Document</button>
+            <div id="wordBasket" class="hidden">📄 MS WORD DOC</div>
         </div>
 
     </div>
 
     <div class="modal-shroud" id="globalFeedbackModal">
         <div class="modal-card">
-            <div id="modalEmblemIcon" style="font-size: 3rem; margin-bottom: 10px;">✨</div>
-            <h3 id="modalAlertHeader" style="margin-bottom: 10px;">Result</h3>
-            <p id="modalAlertDescription" style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.4;"></p>
-            <button class="btn-modal-action" onclick="advanceToNextChallengeSector()">Next Action</button>
+            <div style="font-size: 3.5rem; margin-bottom: 15px;">🏆</div>
+            <h3 id="modalHeaderTitle">Arcade Round Complete</h3>
+            <p id="modalDescriptionBody" style="color: var(--text-muted); font-size: 0.95rem; margin-top: 10px;"></p>
+            <button class="btn-action" onclick="closeFeedbackAndResetHub()">Return to Main Menu</button>
         </div>
     </div>
 
     <script>
-        // Automatic image fallback validation if path doesn't pull down local asset cleanly
         function handleFallbackLogo() {
             const img = document.getElementById("brandLogoImg");
             if (img) {
-                const parent = img.parentNode;
                 const fb = document.createElement("div");
                 fb.className = "brand-logo-badge";
                 fb.style.display = "flex"; fb.style.justifyContent = "center"; fb.style.alignItems = "center";
-                fb.style.background = "linear-gradient(135deg, #1259a2, #00e5ff)";
+                fb.style.background = "linear-gradient(135deg, #165cc0, #00e5ff)";
                 fb.style.color = "white"; fb.style.fontSize = "2rem"; fb.style.fontWeight = "bold";
-                fb.innerText = "W3";
-                parent.replaceChild(fb, img);
+                fb.innerText = "IV";
+                img.parentNode.replaceChild(fb, img);
             }
         }
 
-        // Automatic simulated tracking load bar matching setup requirements
+        // Standard timing load bar loader simulator tracking
         window.addEventListener('DOMContentLoaded', () => {
             const bar = document.getElementById("loadingProgress");
             const btn = document.getElementById("btnLetsStart");
-            let pct = 0;
+            let progress = 0;
 
-            const timer = setInterval(() => {
-                pct += 4;
-                if (bar) bar.style.width = pct + "%";
-                if (pct >= 100) {
-                    clearInterval(timer);
+            const tracking = setInterval(() => {
+                progress += 5;
+                if (bar) bar.style.width = progress + "%";
+                if (progress >= 100) {
+                    clearInterval(tracking);
                     if (btn) btn.classList.add("ready");
                 }
-            }, 30);
+            }, 40);
         });
 
-        function initiateMainAppInterface() {
+        function enterGameHubShell() {
             document.getElementById("splashScreen").style.opacity = "0";
             setTimeout(() => {
                 document.getElementById("splashScreen").style.display = "none";
                 const shell = document.getElementById("appInterfaceShell");
                 shell.classList.remove("hidden");
                 shell.classList.add("visible");
-                launchProofingGameEngine();
             }, 400);
         }
 
         // ==========================================================================
-        // LEVEL STRUCTURE ARCHITECTURE & EXERCISE LOGIC (PAGES 50 - 56)
+        // DYNAMIC GAME 1 ENGINE: PROOFING BUBBLE POP (PAGES 50-52)
         // ==========================================================================
-        const levelsDatabase = [
-            {
-                objective: "The text contains a clear spelling issue ('computr'). Use the tool specialized in checking spelling mistakes to correct it.",
-                toolName: "Spelling & Grammar Check",
-                icon: "🔍",
-                textLayout: `<h3>System Report</h3><p>Our company uses an advanced <span class="error-wave">computr</span> network to route workflow traffic instantly to servers.</p>`,
-                healedLayout: `<h3>System Report</h3><p>Our company uses an advanced <strong>computer</strong> network to route workflow traffic instantly to servers.</p>`,
-                notes: "Excellent! The Spelling & Grammar tool fixes syntax and dictionary mismatches instantly."
-            },
-            {
-                objective: "The word 'huge' is used twice in a row. Use the dictionary search option to find a beautiful synonym like 'colossal'.",
-                toolName: "Thesaurus Lookup",
-                icon: "📖",
-                textLayout: `<h3>Project Scalability</h3><p>Building this infrastructure requires a huge, huge investment of technical and logistical resources.</p>`,
-                healedLayout: `<h3>Project Scalability</h3><p>Building this infrastructure requires a <strong>colossal</strong>, huge investment of technical and logistical resources.</p>`,
-                notes: "Superb! The Thesaurus provides contextually accurate words and alternative phrases."
-            },
-            {
-                objective: "This draft file uses an old placeholder name 'Project Alpha'. Use the instant master utility to search and swap it with 'Project Innovine'.",
-                toolName: "Find & Replace Action",
-                icon: "🔄",
-                textLayout: `<h3>Operational Directives</h3><p>All technicians assigned to <strong>Project Alpha</strong> must submit their weekly log sheets before Friday night.</p>`,
-                healedLayout: `<h3>Operational Directives</h3><p>All technicians assigned to <strong>Project Innovine</strong> must submit their weekly log sheets before Friday night.</p>`,
-                notes: "Spot on! Find & Replace saves enormous manual proofing time across entire documents."
-            },
-            {
-                objective: "We need a visual divider here. Insert a standard rectangular vector block graphic straight onto the document layout lines.",
-                toolName: "Insert Shape Tool",
-                icon: "⬡",
-                textLayout: `<h3>Design Hierarchy</h3><p>Review the blueprint spacing flow below:</p><div class="placeholder-box">[ Shape Placeholder Needed Here ]</div>`,
-                healedLayout: `<h3>Design Hierarchy</h3><p>Review the blueprint spacing flow below:</p><div class="inserted-shape">Shape Block</div>`,
-                notes: "Brilliant! Shapes allow you to inject clean banners, lines, and custom geometric dividers."
-            },
-            {
-                objective: "Inject an external photographic image resource asset straight from local disk paths directly into the layout center coordinates.",
-                toolName: "Insert Picture Feature",
-                icon: "🖼️",
-                textLayout: `<h3>Corporate Branding</h3><p>The cover page requires our authentic emblem asset visible here.</p><div class="placeholder-box">[ Image Frame Required ]</div>`,
-                healedLayout: `<h3>Corporate Branding</h3><p>The cover page requires our authentic emblem asset visible here.</p><div style="text-align:center;"><img src="assets/innovine_logo.png" style="width:70px;" onerror="this.style.display='none'"></div>`,
-                notes: "Correct! The 'Insert Picture' dialog maps images smoothly right into line paragraphs."
-            },
-            {
-                objective: "Count and audit how many words are inside this paragraph block container to meet structural compliance guides.",
-                toolName: "Word Count Audit",
-                icon: "📊",
-                textLayout: `<h3>Final Compliance Check</h3><p>Verify this brief confirmation statement right now before compiling final document packages.</p>`,
-                healedLayout: `<h3>Final Compliance Check</h3><p>Verify this brief confirmation statement right now before compiling final document packages.</p><p style="color:#2e7d32; font-size:0.85rem; font-weight:bold;">[ Audit: 11 Words Registered ]</p>`,
-                notes: "Sensational! The Word Count tool quickly summarizes characters, pages, and counts."
-            }
+        let gameTickerLoop = null;
+        let gameScore = 0;
+        let currentModeActive = ""; // "BUBBLE" or "CATCH"
+        
+        const bubbleDataset = [
+            { text: "computr", valid: true }, // Correct choice to pop (misspelled)
+            { text: "document", valid: false },
+            { text: "Thesaurus", valid: true }, // Correct choice (proofing utility)
+            { text: "prosessing", valid: true }, // Misspelled
+            { text: "Spelling Check", valid: true }, // Proofing tool
+            { text: "Microsoft", valid: false },
+            { text: "windw", valid: true }, // Misspelled
+            { text: "Find & Replace", valid: true } // Correction utility
         ];
 
-        const fillerToolBank = [
-            "Hyperlink Connector", "Insert Table Rows", "Page Orientation Shift", 
-            "Header & Footer Editor", "Watermark Overlay", "Margin Calibration"
-        ];
+        function initiateBubbleArcadeGame() {
+            currentModeActive = "BUBBLE";
+            gameScore = 0;
+            document.getElementById("modeMenuSection").classList.add("hidden");
+            document.getElementById("gameplayStageArea").classList.remove("hidden");
+            document.getElementById("hubStatusPill").innerText = "Arcade Mode: Bubble Proofing";
+            document.getElementById("arcadeObjectiveLabel").innerText = "Pop Misspelled Words & Proofing Tools!";
+            document.getElementById("arcadeScoreLabel").innerText = gameScore;
 
-        let playIndex = 0;
-        let scoreXP = 0;
-
-        function playAudio(elementId) {
-            try {
-                const audio = document.getElementById(elementId);
-                if (audio) { audio.currentTime = 0; audio.play().catch(e => console.log(e)); }
-            } catch(err) { console.log("Audio target error", err); }
+            let tickCounter = 0;
+            gameTickerLoop = setInterval(() => {
+                tickCounter++;
+                if (tickCounter % 15 === 0) {
+                    spawnProofingBubble();
+                }
+                updateBubblesPosition();
+                
+                if (tickCounter >= 350) { // Round ends safely after roughly ~25 seconds
+                    finishArcadeSession("Bubble Proofing Mastered!", `Incredible attention to detail. You identified syntax blocks and proofing commands perfectly across Pages 50-52.`);
+                }
+            }, 50);
         }
 
-        function launchProofingGameEngine() {
-            playIndex = 0;
-            scoreXP = 0;
-            renderCurrentChallengeState();
+        function spawnProofingBubble() {
+            const viewport = document.getElementById("gameplayStageArea");
+            const data = bubbleDataset[Math.floor(Math.random() * bubbleDataset.length)];
+            
+            const b = document.createElement("div");
+            b.className = "bubble";
+            b.innerText = data.text;
+            b.dataset.valid = data.valid;
+            
+            const size = Math.max(90, data.text.length * 11);
+            b.style.width = size + "px";
+            b.style.height = size + "px";
+            b.style.left = Math.random() * (viewport.clientWidth - size) + "px";
+            b.style.top = viewport.clientHeight + "px";
+
+            b.onclick = (e) => {
+                e.stopPropagation();
+                if (b.dataset.valid === "true") {
+                    gameScore += 50;
+                    triggerSound("soundSuccess");
+                    if (typeof confetti !== 'undefined') confetti({ particleCount: 15, spread: 40 });
+                } else {
+                    gameScore = Math.max(0, gameScore - 30);
+                    triggerSound("soundFailure");
+                }
+                document.getElementById("arcadeScoreLabel").innerText = gameScore;
+                b.remove();
+            };
+
+            viewport.appendChild(b);
         }
 
-        function renderCurrentChallengeState() {
-            document.getElementById("scoreLabel").innerText = scoreXP + " XP";
-            document.getElementById("sectorLabel").innerText = `${playIndex + 1} / ${levelsDatabase.length}`;
+        function updateBubblesPosition() {
+            const bubbles = document.querySelectorAll(".bubble");
+            bubbles.forEach(b => {
+                let currentTop = parseFloat(b.style.top);
+                currentTop -= 3.5; // Bubble speed ascending
+                b.style.top = currentTop + "px";
 
-            const currentData = levelsDatabase[playIndex];
-            document.getElementById("taskObjectiveText").innerText = currentData.objective;
-            document.getElementById("documentWorkspaceSheet").innerHTML = currentData.textLayout;
-
-            // Generate tool selection menu lists
-            const grid = document.getElementById("toolOptionsGridBox");
-            grid.innerHTML = "";
-
-            let choices = fillerToolBank.sort(() => Math.random() - 0.5).slice(0, 3);
-            choices.push(currentData.toolName);
-            choices.sort(() => Math.random() - 0.5);
-
-            choices.forEach(toolText => {
-                const matchedObj = levelsDatabase.find(l => l.toolName === toolText);
-                const currentIcon = matchedObj ? matchedObj.icon : "🛠️";
-
-                const card = document.createElement("div");
-                card.className = "tool-choice-card";
-                card.innerHTML = `<div class="tool-icon-frame">${currentIcon}</div> <span>${toolText}</span>`;
-                card.onclick = () => evaluateChoice(toolText, currentData.toolName);
-                grid.appendChild(card);
+                if (currentTop < -100) {
+                    b.remove();
+                }
             });
         }
 
-        function evaluateChoice(selected, realAnswer) {
-            const currentData = levelsDatabase[playIndex];
-            const modal = document.getElementById("globalFeedbackModal");
-            const emblem = document.getElementById("modalEmblemIcon");
-            const header = document.getElementById("modalAlertHeader");
-            const desc = document.getElementById("modalAlertDescription");
+        // ==========================================================================
+        // DYNAMIC GAME 2 ENGINE: VISUAL ELEMENT CATCHING FALL (PAGES 53-56)
+        // ==========================================================================
+        const catchingDataset = [
+            { symbol: "🟩", type: "Shape Block (Pg 54)" },
+            { symbol: "🖼️", type: "Picture File (Pg 53)" },
+            { symbol: "🔵", type: "Oval Graphic (Pg 54)" },
+            { symbol: "📊", type: "SmartArt/Chart (Pg 55)" },
+            { symbol: "⭐", type: "Star Vector (Pg 54)" }
+        ];
 
-            if (selected === realAnswer) {
-                scoreXP += 150;
-                playAudio("soundSuccess");
-                emblem.innerText = "🎯✨";
-                header.innerText = "Action Executed Correctly!";
-                header.style.color = "var(--success-green)";
-                desc.innerText = currentData.notes;
+        let basketX = 50; // Percentage value across the board
 
-                // Dynamically transform the internal document template view live!
-                document.getElementById("documentWorkspaceSheet").innerHTML = currentData.healedLayout;
+        function initiateCatchingArcadeGame() {
+            currentModeActive = "CATCH";
+            gameScore = 0;
+            document.getElementById("modeMenuSection").classList.add("hidden");
+            document.getElementById("gameplayStageArea").classList.remove("hidden");
+            document.getElementById("wordBasket").classList.remove("hidden");
+            document.getElementById("hubStatusPill").innerText = "Arcade Mode: Object Catcher";
+            document.getElementById("arcadeObjectiveLabel").innerText = "Move Mouse to Catch Page Insertion Objects!";
+            document.getElementById("arcadeScoreLabel").innerText = gameScore;
 
-                if (typeof confetti !== 'undefined') {
-                    confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } });
+            // Track mouse/pointer coordinate metrics across stage arena space
+            const stage = document.getElementById("gameplayStageArea");
+            stage.onmousemove = (e) => {
+                const rect = stage.getBoundingClientRect();
+                const relativeX = e.clientX - rect.left;
+                let pct = (relativeX / rect.width) * 100;
+                pct = Math.max(10, Math.min(90, pct)); // Boundary lock bounds
+                const basket = document.getElementById("wordBasket");
+                basket.style.left = pct + "%";
+            };
+
+            let tick = 0;
+            gameTickerLoop = setInterval(() => {
+                tick++;
+                if (tick % 20 === 0) {
+                    spawnFallingVisualAsset();
                 }
-            } else {
-                playAudio("soundFailure");
-                emblem.innerText = "❌";
-                header.innerText = "Incorrect Ribbon Command";
-                header.style.color = "var(--error-red)";
-                desc.innerText = `That tool is not suited for this problem. Pages 50-56 solution dictates utilizing the [${realAnswer}] option instead.`;
-            }
+                updateFallingObjectsPhysics();
 
-            modal.classList.add("active");
+                if (tick >= 400) {
+                    finishArcadeSession("Layout Insertion Mastered!", `Fabulous synchronization reflexes! You successfully collected geometric shapes, pictures, and diagram insertions matching Pages 53-56.`);
+                }
+            }, 40);
         }
 
-        function advanceToNextChallengeSector() {
-            document.getElementById("globalFeedbackModal").classList.remove("active");
-            playIndex++;
+        function spawnFallingVisualAsset() {
+            const stage = document.getElementById("gameplayStageArea");
+            const item = catchingDataset[Math.floor(Math.random() * catchingDataset.length)];
+            
+            const obj = document.createElement("div");
+            obj.className = "falling-object";
+            obj.innerText = item.symbol;
+            obj.dataset.label = item.type;
+            
+            obj.style.left = Math.random() * (stage.clientWidth - 50) + "px";
+            obj.style.top = "-50px";
 
-            if (playIndex < levelsDatabase.length) {
-                renderCurrentChallengeState();
-            } else {
-                document.getElementById("mainGameplaySplitArea").classList.add("hidden");
-                const finalCard = document.getElementById("endEvaluationBlock");
-                document.getElementById("finalSummaryParagraph").innerHTML = `You have reviewed, inspected, and successfully optimized all document blocks covering <strong>Pages 50 to 56</strong>.<br><br>Total Evaluation Tally: <strong>${scoreXP} / 900 XP</strong>`;
-                finalCard.classList.remove("hidden");
-            }
+            stage.appendChild(obj);
+        }
+
+        function updateFallingObjectsPhysics() {
+            const stage = document.getElementById("gameplayStageArea");
+            const basket = document.getElementById("wordBasket");
+            const objects = document.querySelectorAll(".falling-object");
+
+            const basketRect = basket.getBoundingClientRect();
+
+            objects.forEach(obj => {
+                let currentTop = parseFloat(obj.style.top);
+                currentTop += 5; // Velocity acceleration metric
+                obj.style.top = currentTop + "px";
+
+                // Accurate bounding box collision test matrix matching basket coordinates
+                const objRect = obj.getBoundingClientRect();
+
+                const collisionMatch = !(
+                    objRect.right < basketRect.left ||
+                    objRect.left > basketRect.right ||
+                    objRect.bottom < basketRect.top ||
+                    objRect.top > basketRect.bottom
+                );
+
+                if (collisionMatch) {
+                    gameScore += 60;
+                    document.getElementById("arcadeScoreLabel").innerText = gameScore;
+                    triggerSound("soundSuccess");
+                    
+                    // Light pop indicator message directly above basket layout workspace
+                    document.getElementById("arcadeObjectiveLabel").innerText = `Caught: ${obj.dataset.label}!`;
+                    obj.remove();
+                } else if (currentTop > stage.clientHeight) {
+                    obj.remove();
+                }
+            });
+        }
+
+        // ==========================================================================
+        // SYSTEM CONTROLLERS AND HOOK INTERFACING PIPELINES
+        // ==========================================================================
+        function triggerSound(elementId) {
+            try {
+                const node = document.getElementById(elementId);
+                if (node) { node.currentTime = 0; node.play().catch(e => {}); }
+            } catch(err) {}
+        }
+
+        function finishArcadeSession(title, descriptions) {
+            clearInterval(gameTickerLoop);
+            document.getElementById("globalFeedbackModal").classList.add("active");
+            document.getElementById("modalHeaderTitle").innerText = title;
+            document.getElementById("modalDescriptionBody").innerHTML = `${descriptions} <br><br><strong>Final Combined Tally: ${gameScore} Core XP Points</strong>`;
+        }
+
+        function abortSessionAndReturnToHub() {
+            clearInterval(gameTickerLoop);
+            closeFeedbackAndResetHub();
+        }
+
+        function closeFeedbackAndResetHub() {
+            document.getElementById("globalFeedbackModal").classList.remove("active");
+            document.getElementById("gameplayStageArea").classList.add("hidden");
+            document.getElementById("wordBasket").classList.add("hidden");
+            document.getElementById("modeMenuSection").classList.remove("hidden");
+            document.getElementById("hubStatusPill").innerText = "Select Game Mode";
+
+            // Purge any lingering stray nodes left floating or active in DOM trees
+            document.querySelectorAll(".bubble").forEach(n => n.remove());
+            document.querySelectorAll(".falling-object").forEach(n => n.remove());
+            
+            const stage = document.getElementById("gameplayStageArea");
+            stage.onmousemove = null;
         }
     </script>
 </body>

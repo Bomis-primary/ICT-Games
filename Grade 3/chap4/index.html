@@ -25,7 +25,7 @@
         }
 
         body {
-            background: #ffffff;
+            background: #1E272C;
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -38,7 +38,7 @@
             background: linear-gradient(135deg, #111827, var(--dark-terminal));
         }
 
-        /* --- 1. PROPER INNOVINE LOGO SPLASH SCREEN (STAYS FOR EXACTLY 5 SECONDS) --- */
+        /* --- 1. BRANDING SCREEN: INNOVINE LOGO ONLY (STAYS FOR 5 SECONDS) --- */
         #splashScreen {
             position: fixed;
             top: 0;
@@ -47,7 +47,6 @@
             height: 100%;
             background: #1E272C;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
@@ -55,8 +54,8 @@
         }
 
         #splashScreen img {
-            width: 320px;
-            max-width: 80%;
+            width: 350px;
+            max-width: 85%;
             animation: pulse 1.5s infinite ease-in-out;
         }
 
@@ -303,23 +302,20 @@
 </head>
 <body>
 
-    <audio id="audioCorrect" src="assets/clap.mp3" preload="auto"></audio>
-    <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
     <audio id="audioClap" src="assets/clap.mp3" preload="auto"></audio>
+    <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <div id="splashScreen">
-        <img src="assets/innovine_logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/320x120?text=Innovine+Universal'">
-        <p style="margin-top:25px; font-weight:600; color:#00CEC9; letter-spacing: 2px;">Loading Chapter: Word Processing in MS Word Part 2...</p>
+        <img src="assets/innovine_logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/350x120?text=Innovine+Universal'">
     </div>
 
     <div class="app-window hidden" id="appInterfaceShell">
         
         <div id="introView" class="welcome-card">
-            <img src="assets/innovine_logo.png" alt="Logo" style="max-width:180px; margin-bottom:15px;" onerror="this.style.display='none'">
             <h1><span>MATRIX DEFUSER</span></h1>
-            <h2 style="color: #64748b; font-size: 1.1rem; margin-bottom: 24px;">Grade 3 Word Processing Part 2 Core Arcade</h2>
+            <h2 style="color: #64748b; font-size: 1.1rem; margin-bottom: 24px; margin-top: 8px;">Grade 3 Word Processing Part 2 Core Arcade</h2>
             <p style="text-align: left; line-height: 1.7; color: #475569; margin-bottom: 26px; background: #f1f5f9; padding: 20px; border-radius: 14px; font-size: 0.95rem;">
-                Look at the highlighted workspace zones, simulator dialog operations, or editing requests displayed on the right. Press the correct function command module block button on the left to confirm your target sequence entry!
+                Look at the highlighted workspace zones, simulator dialog operations, or editing requests displayed on the right. Press the correct function command module block button on the left to confirm your target sequence entry! No questions repeat.
             </p>
             <button class="btn-primary" onclick="launchMatrixModule()">Initialize Matrix Link</button>
         </div>
@@ -379,7 +375,7 @@
     </div>
 
     <script>
-        // Core dataset strictly compiled from curriculum pages 38-49 parameters
+        // Unique Curriculum Task Sequence Pool
         const sectorDatabase = [
             { objective: "Isolate the editing operation that removes a selected paragraph layout entirely from its active position and updates the clipboard.", targetKey: "Ctrl + X", highlightTarget: "mockDocumentCanvasBox", hint: "Perfect! Ctrl + X removes data blocks safely into the clipboard buffer memory.", canvasText: "Removing selected sentences from current text string line..." },
             { objective: "Identify the action command used to duplicate chosen blocks of structural text content without altering the origin text position.", targetKey: "Ctrl + C", highlightTarget: "mockDocumentCanvasBox", hint: "Superb. Ctrl + C duplicates characters into the application buffer cache.", canvasText: "Duplicating highlighted layout lines to memory workspace..." },
@@ -397,6 +393,7 @@
             "Ctrl + S", "Ctrl + P", "Ctrl + Z", "Backspace", "Delete", "Alt + F4"
         ];
 
+        let activeDeck = [];
         let sectorIndex = 0;
         let runningMatrixScore = 0;
         let matrixSystemLocked = false;
@@ -405,10 +402,10 @@
             try {
                 const node = document.getElementById(id);
                 if(node) { node.currentTime = 0; node.play().catch(e => console.log(e)); }
-            } catch(err) { console.log("Audio skipped:", err); }
+            } catch(err) { console.log("Audio file initialization delayed:", err); }
         }
 
-        // Timer requirement setup: Holds splash block visible for exactly 5 seconds
+        // Rule Requirement: Splash screen stays visible for exactly 5000 milliseconds (5 seconds)
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const splashNode = document.getElementById("splashScreen");
@@ -416,7 +413,7 @@
                     splashNode.style.opacity = "0";
                     setTimeout(() => {
                         splashNode.style.setProperty("display", "none", "important");
-                        document.body.classList.add("game-active");
+                        document.body.style.background = "#ffffff";
                         document.getElementById("appInterfaceShell").classList.remove("hidden");
                     }, 600);
                 }
@@ -424,9 +421,15 @@
         });
 
         function launchMatrixModule() {
-            playAudioTrack("audioCorrect");
+            document.body.classList.add("game-active");
             document.getElementById("introView").classList.add("hidden");
             document.getElementById("gameViewPanel").classList.remove("hidden");
+            
+            // Randomized presentation sequence stack generation (Prevents duplicate question sequences)
+            activeDeck = [...sectorDatabase].sort(() => Math.random() - 0.5);
+            sectorIndex = 0;
+            runningMatrixScore = 0;
+            
             loadSectorObjective();
         }
 
@@ -453,9 +456,9 @@
         function loadSectorObjective() {
             matrixSystemLocked = false;
             document.getElementById("scoreDisplayLabel").innerText = runningMatrixScore;
-            document.getElementById("sectorDisplayLabel").innerText = `${sectorIndex + 1} / ${sectorDatabase.length}`;
+            document.getElementById("sectorDisplayLabel").innerText = `${sectorIndex + 1} / ${activeDeck.length}`;
 
-            const sectorData = sectorDatabase[sectorIndex];
+            const sectorData = activeDeck[sectorIndex];
             document.getElementById("objectiveTextString").innerText = sectorData.objective;
             document.getElementById("pageCanvasContentBlock").innerText = sectorData.canvasText;
 
@@ -488,7 +491,7 @@
             if (matrixSystemLocked) return;
             matrixSystemLocked = true;
 
-            const sectorData = sectorDatabase[sectorIndex];
+            const sectorData = activeDeck[sectorIndex];
             const modalShroud = document.getElementById("interactiveGlobalModalShroud");
             const mIcon = document.getElementById("modalIconEmblem");
             const mTitle = document.getElementById("modalHeaderTitle");
@@ -499,10 +502,10 @@
             if (clickedKeyName === sectorData.targetKey) {
                 runningMatrixScore += 100;
                 document.getElementById("scoreDisplayLabel").innerText = runningMatrixScore;
-                mIcon.innerText = "🔑🔒";
+                mIcon.innerText = "🎉👍";
                 mTitle.innerText = "Sector Override Success!";
                 mTitle.style.color = "#2ecc71";
-                playAudioTrack("audioCorrect"); // Triggers assets/clap.mp3
+                playAudioTrack("audioClap"); // Triggers assets/clap.mp3
                 
                 if (typeof confetti !== 'undefined') {
                     confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
@@ -523,9 +526,10 @@
             matrixSystemLocked = false; 
             
             sectorIndex++;
-            if(sectorIndex < sectorDatabase.length) {
+            if(sectorIndex < activeDeck.length) {
                 loadSectorObjective();
             } else {
+                // Gameplay terminates cleanly upon exhausting deck array items (Prevents endless loop)
                 document.getElementById("gameViewPanel").classList.add("hidden");
                 document.getElementById("evaluationReportCard").classList.remove("hidden");
                 playAudioTrack("audioClap");
@@ -536,10 +540,7 @@
 
         function restartCampaignSession() {
             document.getElementById("evaluationReportCard").classList.add("hidden");
-            document.getElementById("gameViewPanel").classList.remove("hidden");
-            sectorIndex = 0;
-            runningMatrixScore = 0;
-            loadSectorObjective();
+            launchMatrixModule();
         }
     </script>
 </body>

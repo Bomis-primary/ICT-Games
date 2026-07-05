@@ -38,7 +38,6 @@
             background: linear-gradient(135deg, #111827, var(--dark-terminal));
         }
 
-        /* 5-Second Pure White Splash Screen */
         #splashScreen {
             position: fixed;
             top: 0;
@@ -51,7 +50,7 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 0.6s ease;
         }
 
         #splashScreen img {
@@ -65,7 +64,6 @@
             50% { transform: scale(1.04); }
         }
 
-        /* App Main Shell */
         .app-window {
             width: 95vw;
             max-width: 1100px;
@@ -118,7 +116,6 @@
             min-height: 0;
         }
 
-        /* Left Controls Terminal */
         .terminal-deck {
             background: #1e293b;
             border: 2px solid #334155;
@@ -136,6 +133,7 @@
             border-radius: 16px;
             border-left: 5px solid var(--word-classic-blue);
             margin-bottom: 15px;
+            min-height: 100px;
         }
 
         .key-input-matrix {
@@ -158,16 +156,17 @@
             box-shadow: 0 4px 0px #0f172a;
             transition: all 0.1s ease;
         }
+
         .matrix-key-btn:active {
             transform: translateY(4px);
             box-shadow: 0 0px 0px transparent;
         }
+
         .matrix-key-btn:hover {
             border-color: var(--word-classic-blue);
             background: #27354a;
         }
 
-        /* Right Window MS Word Simulator Map */
         .document-simulator-window {
             background: var(--word-interface-gray);
             border: 3px solid #cbd5e1;
@@ -224,19 +223,17 @@
             justify-content: space-between;
         }
 
-        /* Fixed Highlight Element Indicator Layout Node */
         #activeHighlightPointerIndicator {
             position: absolute;
             border: 3.5px solid var(--scratch-orange);
             background: rgba(255, 171, 25, 0.12);
             border-radius: 8px;
-            pointer-events: none !important; /* Forces transparency to any mouse registration bugs */
+            pointer-events: none !important;
             transition: all 0.25s ease-out;
             display: none;
             z-index: 50;
         }
 
-        /* Feedback Modals */
         .popup-modal-shroud {
             position: fixed;
             top: 0;
@@ -250,8 +247,9 @@
             z-index: 999;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: opacity 0.2s ease;
         }
+
         .popup-modal-shroud.active {
             opacity: 1;
             pointer-events: auto;
@@ -268,6 +266,7 @@
             transform: scale(0.85);
             transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
+
         .popup-modal-shroud.active .popup-modal-card {
             transform: scale(1);
         }
@@ -319,7 +318,7 @@
             <h1><span>MATRIX DEFUSER</span></h1>
             <h2 style="color: #64748b; font-size: 1.1rem; margin-bottom: 24px;">Grade 3 Chapter 3 Core Interface Arcade</h2>
             <p style="text-align: left; line-height: 1.7; color: #475569; margin-bottom: 26px; background: #f1f5f9; padding: 20px; border-radius: 14px; font-size: 0.95rem;">
-                Look at the highlighted zone or workspace request on the right-hand MS Word layout simulator. Click the correct command puzzle module key on the left to confirm your layout placement!
+                Look at the highlighted zone or workspace request on the right-hand MS Word layout simulator. Click the correct command module key on the left to confirm your choice!
             </p>
             <button class="btn-primary" onclick="launchMatrixModule()">Initialize Matrix Link</button>
         </div>
@@ -328,7 +327,7 @@
             <div class="top-hud">
                 <div>🏆 Matrix Points: <span id="scoreDisplayLabel">0</span></div>
                 <div style="font-size:1.1rem;">🔮 Target Sector: <span id="sectorDisplayLabel">1 / 10</span></div>
-                <div style="background:#2ecc71;" class="badge-level">Active Node</div>
+                <div style="background:#2ecc71; padding: 4px 10px; border-radius: 8px;" class="badge-level">Active Node</div>
             </div>
 
             <div class="split-arena">
@@ -379,7 +378,7 @@
     </div>
 
     <script>
-        // Splash screen handler loop
+        // Splash Screen trigger
         setTimeout(() => {
             const splashNode = document.getElementById("splashScreen");
             if(splashNode) {
@@ -390,7 +389,7 @@
                     document.getElementById("appInterfaceShell").classList.remove("hidden");
                 }, 600);
             }
-        }, 5000);
+        }, 3000); // Reduced to 3 seconds for faster development testing
 
         const sectorDatabase = [
             { objective: "Identify the very top layout bar that tracks your active file name (e.g., 'Document1') and program window tags.", targetKey: "Title Bar", highlightTarget: "wordHeaderTitleBar", hint: "Fantastic! The Title Bar commands the top boundary of MS Word.", canvasText: "[Top Area Highlighted] System waiting for identification..." },
@@ -426,15 +425,23 @@
             playAudioTrack("audioCorrect");
             document.getElementById("introView").classList.add("hidden");
             document.getElementById("gameViewPanel").classList.remove("hidden");
-            buildInteractiveHardwareKeys();
             loadSectorObjective();
         }
 
-        function buildInteractiveHardwareKeys() {
+        function buildInteractiveHardwareKeys(correctKey) {
             const box = document.getElementById("keyboardGridMatrixBox");
             box.innerHTML = "";
-            const shuffledKeys = [...primaryKeyBank].sort(() => Math.random() - 0.5);
-            shuffledKeys.forEach(keyText => {
+            
+            // Re-fill pool safely ensuring the target key is always forced inside the grid
+            let alternativeKeys = primaryKeyBank.filter(k => k !== correctKey);
+            alternativeKeys.sort(() => Math.random() - 0.5);
+            
+            // Build final display pool containing 8 random wrong keys + 1 guaranteed right key
+            let finalSelection = alternativeKeys.slice(0, 8);
+            finalSelection.push(correctKey);
+            finalSelection.sort(() => Math.random() - 0.5);
+
+            finalSelection.forEach(keyText => {
                 const btn = document.createElement("button");
                 btn.className = "matrix-key-btn";
                 btn.innerText = keyText;
@@ -444,7 +451,7 @@
         }
 
         function loadSectorObjective() {
-            matrixSystemLocked = false;
+            matrixSystemLocked = false; // Reset lock at start of stage
             document.getElementById("scoreDisplayLabel").innerText = runningMatrixScore;
             document.getElementById("sectorDisplayLabel").innerText = `${sectorIndex + 1} / 10`;
 
@@ -452,6 +459,7 @@
             document.getElementById("objectiveTextString").innerText = sectorData.objective;
             document.getElementById("pageCanvasContentBlock").innerText = sectorData.canvasText;
 
+            buildInteractiveHardwareKeys(sectorData.targetKey);
             positionHighlightIndicator(sectorData.highlightTarget);
         }
 
@@ -512,6 +520,10 @@
 
         function dismissMatrixModal() {
             document.getElementById("interactiveGlobalModalShroud").classList.remove("active");
+            
+            // Release the game state completely right here
+            matrixSystemLocked = false; 
+            
             sectorIndex++;
             if(sectorIndex < sectorDatabase.length) {
                 loadSectorObjective();
@@ -529,7 +541,6 @@
             document.getElementById("gameViewPanel").classList.remove("hidden");
             sectorIndex = 0;
             runningMatrixScore = 0;
-            buildInteractiveHardwareKeys();
             loadSectorObjective();
         }
     </script>

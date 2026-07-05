@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Innovine Universal - Word Processing Arcade Arena</title>
+    <title>Innovine Universal - MS Word-3 Memory Maze</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
         :root {
@@ -150,17 +150,17 @@
         }
 
         /* ==========================================================================
-           2. SELECTION SCREEN & APP CONTAINER
+           2. MAIN APP FRAMEWORK INTERFACE (SPLIT SCREEN MAZE & PUZZLE)
            ========================================================================== */
         .app-window {
             width: 95vw;
-            max-width: 1100px;
+            max-width: 1150px;
             height: 85vh;
             background: var(--card-dark);
             border-radius: 24px;
             border: 1px solid rgba(255,255,255,0.08);
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-rows: auto 1fr;
             overflow: hidden;
             opacity: 0;
             transform: scale(0.97);
@@ -181,172 +181,182 @@
             align-items: center;
         }
 
-        .menu-selection-container {
+        .split-maze-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            height: 100%;
+            min-height: 0;
+        }
+
+        /* Left Side: Memory Maze Matrix */
+        .maze-matrix-panel {
+            padding: 25px;
             display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 40px;
-            flex-grow: 1;
-            padding: 40px;
+            flex-direction: column;
+            gap: 15px;
+            background: #0f1522;
         }
 
-        .game-mode-card {
-            background: #182030;
-            border: 2px solid #25334a;
-            border-radius: 20px;
-            padding: 35px;
-            width: 320px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .game-mode-card:hover {
-            transform: translateY(-8px);
-            border-color: var(--accent-cyan);
-            box-shadow: 0 10px 25px rgba(0, 229, 255, 0.15);
-        }
-
-        .mode-icon {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-        }
-
-        /* ==========================================================================
-           3. ARCADE INTERACTIVE CANVAS WRAPPER
-           ========================================================================== */
-        .arcade-stage-viewport {
-            flex-grow: 1;
-            position: relative;
-            background: #101520;
-            overflow: hidden;
-        }
-
-        /* Bubble Game Elements */
-        .bubble {
-            position: absolute;
-            background: radial-gradient(circle at 30% 30%, rgba(0, 229, 255, 0.4), rgba(41, 121, 255, 0.1));
-            border: 2px solid var(--accent-cyan);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: bold;
+        .instruction-banner {
+            background: rgba(0, 229, 255, 0.06);
+            border-left: 4px solid var(--accent-cyan);
+            padding: 12px 18px;
+            border-radius: 4px;
             font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .instruction-banner strong {
+            color: #ffffff;
+        }
+
+        .grid-matrix-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            flex-grow: 1;
+            perspective: 1000px;
+        }
+
+        /* Flipping Memory Card Architecture */
+        .memory-card {
+            position: relative;
+            width: 100%;
+            height: 100%;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,229,255,0.2), inset 0 2px 8px rgba(255,255,255,0.3);
-            transition: transform 0.1s ease;
-            padding: 10px;
-            text-align: center;
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
         }
 
-        /* Falling Catching Objects */
-        .falling-object {
-            position: absolute;
-            font-size: 2.5rem;
-            cursor: default;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+        .memory-card.flipped {
+            transform: rotateY(180deg);
         }
 
-        #wordBasket {
+        .card-front, .card-back {
             position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 140px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--word-blue), #1e73e6);
-            border: 2px solid white;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
             border-radius: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-weight: bold;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-            color: white;
-            font-size: 0.85rem;
-        }
-
-        /* HUD & Controls inside Arcade */
-        .arcade-hud {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            right: 15px;
-            display: flex;
-            justify-content: space-between;
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        .hud-pill {
-            background: rgba(13, 18, 28, 0.85);
-            backdrop-filter: blur(5px);
-            padding: 8px 18px;
-            border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.08);
+            padding: 10px;
+            text-align: center;
             font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
 
-        .hud-pill span {
+        .card-front {
+            background: linear-gradient(135deg, #1c263d, #121929);
+            border: 2px solid #2d3b5c;
             color: var(--accent-cyan);
+            font-size: 1.5rem;
         }
 
-        .btn-exit {
-            background: rgba(255, 82, 82, 0.15);
-            color: var(--error-red);
-            border: 1px solid rgba(255, 82, 82, 0.3);
-            padding: 6px 15px;
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-            pointer-events: auto;
+        .card-back {
+            background: #1e2942;
+            border: 2px solid var(--accent-blue);
+            color: #ffffff;
+            transform: rotateY(180deg);
         }
 
-        /* Global Modal Shroud */
-        .modal-shroud {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(5, 8, 13, 0.9);
+        .memory-card.matched .card-back {
+            border-color: var(--success-green);
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--success-green);
+        }
+
+        /* Right Side: Crossword Reveal Panel */
+        .crossword-side-panel {
+            background: #141b2b;
+            border-left: 1px solid rgba(255,255,255,0.06);
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .crossword-title-box h4 {
+            color: var(--accent-cyan);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .word-box-container {
+            background: rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .crossword-row {
+            display: flex;
+            gap: 6px;
+        }
+
+        .crossword-cell {
+            width: 40px;
+            height: 40px;
+            background: #1c2536;
+            border: 2px solid #2c3a54;
+            border-radius: 6px;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 10000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: #ffffff;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
         }
 
-        .modal-shroud.active {
-            opacity: 1;
-            pointer-events: auto;
+        .crossword-cell.revealed {
+            background: var(--word-blue);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+            animation: popIn 0.3s ease;
         }
 
-        .modal-card {
-            background: var(--card-dark);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            padding: 40px;
-            width: 440px;
-            text-align: center;
+        @keyframes popIn {
+            0% { transform: scale(0.8); }
+            100% { transform: scale(1); }
         }
 
-        .btn-action {
-            background: linear-gradient(135deg, var(--accent-blue), #00b0ff);
-            color: white;
-            border: none;
-            padding: 12px 35px;
-            border-radius: 50px;
+        .clues-list-box {
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .clue-item {
+            display: flex;
+            gap: 8px;
+        }
+
+        .clue-item span {
+            color: var(--accent-cyan);
             font-weight: bold;
-            cursor: pointer;
-            margin-top: 20px;
         }
 
+        /* Success End Card Overlay Layout */
         .hidden { display: none !important; }
+
+        .end-game-card {
+            text-align: center;
+            padding: 50px;
+            margin: auto;
+        }
     </style>
 </head>
 <body>
@@ -368,55 +378,65 @@
             <div id="loadingProgress" class="loading-bar-progress"></div>
         </div>
 
-        <button id="btnLetsStart" class="btn-lets-start" onclick="enterGameHubShell()">LETS START</button>
+        <button id="btnLetsStart" class="btn-lets-start" onclick="enterGameInterface()">LETS START</button>
     </div>
 
     <div class="app-window hidden" id="appInterfaceShell">
         
         <div class="game-header">
             <div>
-                <h3 style="font-size: 1.1rem;">MS Word-3 Arcade Room</h3>
-                <p style="font-size: 0.75rem; color: var(--text-muted);">Interactive Learning Ecosystem (Pages 50-56)</p>
+                <h3 style="font-size: 1.1rem;">MS Word-3 Proofing Maze</h3>
+                <p style="font-size: 0.75rem; color: var(--text-muted);">Memory Pairing & Crossword Puzzle Suite (Pages 50-56)</p>
             </div>
-            <div id="hubStatusPill" class="hud-pill">Select Game Mode</div>
-        </div>
-
-        <div class="menu-selection-container" id="modeMenuSection">
-            <div class="game-mode-card" onclick="initiateBubbleArcadeGame()">
-                <div class="mode-icon">🫧</div>
-                <h3>Proofing Bubble Pop</h3>
-                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 10px;">Pop misspelled words & review utilities cleanly before they escape to the top! (Pages 50-52)</p>
-            </div>
-
-            <div class="game-mode-card" onclick="initiateCatchingArcadeGame()">
-                <div class="mode-icon">📥</div>
-                <h3>Visual Element Catch</h3>
-                <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 10px;">Move the MS Word Document basket with your cursor to harvest falling shapes & layouts! (Pages 53-56)</p>
+            <div style="background: rgba(255,255,255,0.03); padding: 6px 16px; border-radius: 20px; font-size: 0.9rem;">
+                Matches: <strong id="matchCounterLabel" style="color: var(--accent-cyan);">0 / 6</strong>
             </div>
         </div>
 
-        <div class="arcade-stage-viewport hidden" id="gameplayStageArea">
-            <div class="arcade-hud">
-                <div class="hud-pill">Score: <span id="arcadeScoreLabel">0</span></div>
-                <div class="hud-pill" id="arcadeObjectiveLabel">Objective: Loading...</div>
-                <button class="btn-exit" onclick="abortSessionAndReturnToHub()">Exit Game</button>
+        <div class="split-maze-grid" id="mainGameplaySplitArea">
+            
+            <div class="maze-matrix-panel">
+                <div class="instruction-banner">
+                    💡 <strong>How to Play:</strong> Select and flip cards to connect matching Word Processing concepts from Pages 50-56. Every perfect pair solves a letter cell in the code matrix on the right!
+                </div>
+                <div class="grid-matrix-container" id="cardGridMatrix">
+                    </div>
             </div>
 
-            <div id="wordBasket" class="hidden">📄 MS WORD DOC</div>
+            <div class="crossword-side-panel">
+                <div class="crossword-title-box">
+                    <h4>Secret Keyword Matrix</h4>
+                    <p style="font-size: 0.75rem; color: var(--text-muted);">Solve pairs on the left to reveal the secret textbook word clue!</p>
+                </div>
+
+                <div class="word-box-container">
+                    <div class="crossword-row" id="crosswordTargetRow">
+                        </div>
+                </div>
+
+                <div class="clues-list-box">
+                    <p style="font-weight: 600; color: #ffffff;">Proofing Clues Covered (Pages 50-56):</p>
+                    <div class="clue-item"><span>•</span> <p>Finding & correcting grammar dictionary anomalies.</p></div>
+                    <div class="clue-item"><span>•</span> <p>Searching alternative synonyms & context metrics.</p></div>
+                    <div class="clue-item"><span>•</span> <p>Inserting picture files, clipart, and design vector shapes.</p></div>
+                </div>
+            </div>
+
         </div>
 
-    </div>
-
-    <div class="modal-shroud" id="globalFeedbackModal">
-        <div class="modal-card">
-            <div style="font-size: 3.5rem; margin-bottom: 15px;">🏆</div>
-            <h3 id="modalHeaderTitle">Arcade Round Complete</h3>
-            <p id="modalDescriptionBody" style="color: var(--text-muted); font-size: 0.95rem; margin-top: 10px;"></p>
-            <button class="btn-action" onclick="closeFeedbackAndResetHub()">Return to Main Menu</button>
+        <div id="endEvaluationBlock" class="end-game-card hidden">
+            <div style="font-size: 5rem; margin-bottom: 20px;">🏆</div>
+            <h2 style="color: var(--success-green); font-size: 2rem; font-weight: 800;">Word-3 Maze Solved!</h2>
+            <p style="color: var(--text-muted); margin: 15px auto 30px auto; max-width: 500px; font-size: 1.05rem;">
+                Fantastic pairing insight! You linked all editing utilities, proofing modules, and shape descriptors across <strong>Pages 50 to 56</strong> perfectly, uncovering the secret keyword: <strong style="color: var(--accent-cyan);">REVIEW</strong>.
+            </p>
+            <button class="btn-lets-start ready" style="padding: 12px 40px; font-size: 1rem;" onclick="location.reload()">Restart Maze</button>
         </div>
+
     </div>
 
     <script>
+        // Local Asset missing verification safety fallback structure
         function handleFallbackLogo() {
             const img = document.getElementById("brandLogoImg");
             if (img) {
@@ -425,257 +445,175 @@
                 fb.style.display = "flex"; fb.style.justifyContent = "center"; fb.style.alignItems = "center";
                 fb.style.background = "linear-gradient(135deg, #165cc0, #00e5ff)";
                 fb.style.color = "white"; fb.style.fontSize = "2rem"; fb.style.fontWeight = "bold";
-                fb.innerText = "IV";
+                fb.innerText = "WM";
                 img.parentNode.replaceChild(fb, img);
             }
         }
 
-        // Standard timing load bar loader simulator tracking
+        // Action loading tracking progress animation synchronization
         window.addEventListener('DOMContentLoaded', () => {
             const bar = document.getElementById("loadingProgress");
             const btn = document.getElementById("btnLetsStart");
             let progress = 0;
 
-            const tracking = setInterval(() => {
-                progress += 5;
+            const timer = setInterval(() => {
+                progress += 4;
                 if (bar) bar.style.width = progress + "%";
                 if (progress >= 100) {
-                    clearInterval(tracking);
+                    clearInterval(timer);
                     if (btn) btn.classList.add("ready");
                 }
-            }, 40);
+            }, 30);
         });
 
-        function enterGameHubShell() {
+        function enterGameInterface() {
             document.getElementById("splashScreen").style.opacity = "0";
             setTimeout(() => {
                 document.getElementById("splashScreen").style.display = "none";
                 const shell = document.getElementById("appInterfaceShell");
                 shell.classList.remove("hidden");
                 shell.classList.add("visible");
+                generateMemoryMazeLayout();
             }, 400);
         }
 
         // ==========================================================================
-        // DYNAMIC GAME 1 ENGINE: PROOFING BUBBLE POP (PAGES 50-52)
+        // PUZZLE SYSTEM ENGINE DATA MATRIX MAP (PAGES 50-56)
         // ==========================================================================
-        let gameTickerLoop = null;
-        let gameScore = 0;
-        let currentModeActive = ""; // "BUBBLE" or "CATCH"
-        
-        const bubbleDataset = [
-            { text: "computr", valid: true }, // Correct choice to pop (misspelled)
-            { text: "document", valid: false },
-            { text: "Thesaurus", valid: true }, // Correct choice (proofing utility)
-            { text: "prosessing", valid: true }, // Misspelled
-            { text: "Spelling Check", valid: true }, // Proofing tool
-            { text: "Microsoft", valid: false },
-            { text: "windw", valid: true }, // Misspelled
-            { text: "Find & Replace", valid: true } // Correction utility
+        const puzzleDatabasePairs = [
+            { id: 1, val: "Spelling Check", matchingId: 101 },
+            { id: 101, val: "Fixes 'computr' Error", matchingId: 1 },
+            
+            { id: 2, val: "Thesaurus Tool", matchingId: 102 },
+            { id: 102, val: "Finds Word Synonyms", matchingId: 2 },
+            
+            { id: 3, val: "Find & Replace", matchingId: 103 },
+            { id: 103, val: "Swaps text globally", matchingId: 3 },
+            
+            { id: 4, val: "Insert Shape", matchingId: 104 },
+            { id: 104, val: "Adds circles & squares", matchingId: 4 },
+            
+            { id: 5, val: "Insert Picture", matchingId: 105 },
+            { id: 105, val: "Injects photos & graphics", matchingId: 5 },
+            
+            { id: 6, val: "Word Count Info", matchingId: 106 },
+            { id: 106, val: "Audits pages & strings", matchingId: 6 }
         ];
 
-        function initiateBubbleArcadeGame() {
-            currentModeActive = "BUBBLE";
-            gameScore = 0;
-            document.getElementById("modeMenuSection").classList.add("hidden");
-            document.getElementById("gameplayStageArea").classList.remove("hidden");
-            document.getElementById("hubStatusPill").innerText = "Arcade Mode: Bubble Proofing";
-            document.getElementById("arcadeObjectiveLabel").innerText = "Pop Misspelled Words & Proofing Tools!";
-            document.getElementById("arcadeScoreLabel").innerText = gameScore;
+        // The answer keyword from the book that will reveal itself cell by cell
+        const crosswordSecretKeyword = ["R", "E", "V", "I", "E", "W"]; 
 
-            let tickCounter = 0;
-            gameTickerLoop = setInterval(() => {
-                tickCounter++;
-                if (tickCounter % 15 === 0) {
-                    spawnProofingBubble();
-                }
-                updateBubblesPosition();
-                
-                if (tickCounter >= 350) { // Round ends safely after roughly ~25 seconds
-                    finishArcadeSession("Bubble Proofing Mastered!", `Incredible attention to detail. You identified syntax blocks and proofing commands perfectly across Pages 50-52.`);
-                }
-            }, 50);
-        }
+        let selectedCardsTrackingArray = [];
+        let completedPairsCount = 0;
+        let lockGridSelection = false;
 
-        function spawnProofingBubble() {
-            const viewport = document.getElementById("gameplayStageArea");
-            const data = bubbleDataset[Math.floor(Math.random() * bubbleDataset.length)];
-            
-            const b = document.createElement("div");
-            b.className = "bubble";
-            b.innerText = data.text;
-            b.dataset.valid = data.valid;
-            
-            const size = Math.max(90, data.text.length * 11);
-            b.style.width = size + "px";
-            b.style.height = size + "px";
-            b.style.left = Math.random() * (viewport.clientWidth - size) + "px";
-            b.style.top = viewport.clientHeight + "px";
-
-            b.onclick = (e) => {
-                e.stopPropagation();
-                if (b.dataset.valid === "true") {
-                    gameScore += 50;
-                    triggerSound("soundSuccess");
-                    if (typeof confetti !== 'undefined') confetti({ particleCount: 15, spread: 40 });
-                } else {
-                    gameScore = Math.max(0, gameScore - 30);
-                    triggerSound("soundFailure");
-                }
-                document.getElementById("arcadeScoreLabel").innerText = gameScore;
-                b.remove();
-            };
-
-            viewport.appendChild(b);
-        }
-
-        function updateBubblesPosition() {
-            const bubbles = document.querySelectorAll(".bubble");
-            bubbles.forEach(b => {
-                let currentTop = parseFloat(b.style.top);
-                currentTop -= 3.5; // Bubble speed ascending
-                b.style.top = currentTop + "px";
-
-                if (currentTop < -100) {
-                    b.remove();
-                }
-            });
-        }
-
-        // ==========================================================================
-        // DYNAMIC GAME 2 ENGINE: VISUAL ELEMENT CATCHING FALL (PAGES 53-56)
-        // ==========================================================================
-        const catchingDataset = [
-            { symbol: "🟩", type: "Shape Block (Pg 54)" },
-            { symbol: "🖼️", type: "Picture File (Pg 53)" },
-            { symbol: "🔵", type: "Oval Graphic (Pg 54)" },
-            { symbol: "📊", type: "SmartArt/Chart (Pg 55)" },
-            { symbol: "⭐", type: "Star Vector (Pg 54)" }
-        ];
-
-        let basketX = 50; // Percentage value across the board
-
-        function initiateCatchingArcadeGame() {
-            currentModeActive = "CATCH";
-            gameScore = 0;
-            document.getElementById("modeMenuSection").classList.add("hidden");
-            document.getElementById("gameplayStageArea").classList.remove("hidden");
-            document.getElementById("wordBasket").classList.remove("hidden");
-            document.getElementById("hubStatusPill").innerText = "Arcade Mode: Object Catcher";
-            document.getElementById("arcadeObjectiveLabel").innerText = "Move Mouse to Catch Page Insertion Objects!";
-            document.getElementById("arcadeScoreLabel").innerText = gameScore;
-
-            // Track mouse/pointer coordinate metrics across stage arena space
-            const stage = document.getElementById("gameplayStageArea");
-            stage.onmousemove = (e) => {
-                const rect = stage.getBoundingClientRect();
-                const relativeX = e.clientX - rect.left;
-                let pct = (relativeX / rect.width) * 100;
-                pct = Math.max(10, Math.min(90, pct)); // Boundary lock bounds
-                const basket = document.getElementById("wordBasket");
-                basket.style.left = pct + "%";
-            };
-
-            let tick = 0;
-            gameTickerLoop = setInterval(() => {
-                tick++;
-                if (tick % 20 === 0) {
-                    spawnFallingVisualAsset();
-                }
-                updateFallingObjectsPhysics();
-
-                if (tick >= 400) {
-                    finishArcadeSession("Layout Insertion Mastered!", `Fabulous synchronization reflexes! You successfully collected geometric shapes, pictures, and diagram insertions matching Pages 53-56.`);
-                }
-            }, 40);
-        }
-
-        function spawnFallingVisualAsset() {
-            const stage = document.getElementById("gameplayStageArea");
-            const item = catchingDataset[Math.floor(Math.random() * catchingDataset.length)];
-            
-            const obj = document.createElement("div");
-            obj.className = "falling-object";
-            obj.innerText = item.symbol;
-            obj.dataset.label = item.type;
-            
-            obj.style.left = Math.random() * (stage.clientWidth - 50) + "px";
-            obj.style.top = "-50px";
-
-            stage.appendChild(obj);
-        }
-
-        function updateFallingObjectsPhysics() {
-            const stage = document.getElementById("gameplayStageArea");
-            const basket = document.getElementById("wordBasket");
-            const objects = document.querySelectorAll(".falling-object");
-
-            const basketRect = basket.getBoundingClientRect();
-
-            objects.forEach(obj => {
-                let currentTop = parseFloat(obj.style.top);
-                currentTop += 5; // Velocity acceleration metric
-                obj.style.top = currentTop + "px";
-
-                // Accurate bounding box collision test matrix matching basket coordinates
-                const objRect = obj.getBoundingClientRect();
-
-                const collisionMatch = !(
-                    objRect.right < basketRect.left ||
-                    objRect.left > basketRect.right ||
-                    objRect.bottom < basketRect.top ||
-                    objRect.top > basketRect.bottom
-                );
-
-                if (collisionMatch) {
-                    gameScore += 60;
-                    document.getElementById("arcadeScoreLabel").innerText = gameScore;
-                    triggerSound("soundSuccess");
-                    
-                    // Light pop indicator message directly above basket layout workspace
-                    document.getElementById("arcadeObjectiveLabel").innerText = `Caught: ${obj.dataset.label}!`;
-                    obj.remove();
-                } else if (currentTop > stage.clientHeight) {
-                    obj.remove();
-                }
-            });
-        }
-
-        // ==========================================================================
-        // SYSTEM CONTROLLERS AND HOOK INTERFACING PIPELINES
-        // ==========================================================================
-        function triggerSound(elementId) {
+        function triggerSoundFeedback(elementId) {
             try {
-                const node = document.getElementById(elementId);
-                if (node) { node.currentTime = 0; node.play().catch(e => {}); }
+                const s = document.getElementById(elementId);
+                if (s) { s.currentTime = 0; s.play().catch(e => {}); }
             } catch(err) {}
         }
 
-        function finishArcadeSession(title, descriptions) {
-            clearInterval(gameTickerLoop);
-            document.getElementById("globalFeedbackModal").classList.add("active");
-            document.getElementById("modalHeaderTitle").innerText = title;
-            document.getElementById("modalDescriptionBody").innerHTML = `${descriptions} <br><br><strong>Final Combined Tally: ${gameScore} Core XP Points</strong>`;
+        function generateMemoryMazeLayout() {
+            // Setup Crossword hidden empty display shells layout containers on right panel
+            const crossRow = document.getElementById("crosswordTargetRow");
+            crossRow.innerHTML = "";
+            crosswordSecretKeyword.forEach(() => {
+                const box = document.createElement("div");
+                box.className = "crossword-cell";
+                box.innerText = "?";
+                crossRow.appendChild(box);
+            });
+
+            // Randomize grid layouts maps array
+            const shuffledDeck = [...puzzleDatabasePairs].sort(() => Math.random() - 0.5);
+            const container = document.getElementById("cardGridMatrix");
+            container.innerHTML = "";
+
+            shuffledDeck.forEach(data => {
+                const card = document.createElement("div");
+                card.className = "memory-card";
+                card.dataset.id = data.id;
+                card.dataset.matchingId = data.matchingId;
+
+                card.innerHTML = `
+                    <div class="card-front">?</div>
+                    <div class="card-back">${data.val}</div>
+                `;
+
+                card.onclick = () => executeCardFlipLogic(card);
+                container.appendChild(card);
+            });
         }
 
-        function abortSessionAndReturnToHub() {
-            clearInterval(gameTickerLoop);
-            closeFeedbackAndResetHub();
+        function executeCardFlipLogic(cardElement) {
+            if (lockGridSelection || cardElement.classList.contains("flipped") || cardElement.classList.contains("matched")) {
+                return;
+            }
+
+            cardElement.classList.add("flipped");
+            selectedCardsTrackingArray.push(cardElement);
+
+            if (selectedCardsTrackingArray.length === 2) {
+                lockGridSelection = true;
+                evaluateSelectedCardsPair();
+            }
         }
 
-        function closeFeedbackAndResetHub() {
-            document.getElementById("globalFeedbackModal").classList.remove("active");
-            document.getElementById("gameplayStageArea").classList.add("hidden");
-            document.getElementById("wordBasket").classList.add("hidden");
-            document.getElementById("modeMenuSection").classList.remove("hidden");
-            document.getElementById("hubStatusPill").innerText = "Select Game Mode";
+        function evaluateSelectedCardsPair() {
+            const [card1, card2] = selectedCardsTrackingArray;
+            const id1 = parseInt(card1.dataset.id);
+            const matchId1 = parseInt(card1.dataset.matchingId);
+            const id2 = parseInt(card2.dataset.id);
 
-            // Purge any lingering stray nodes left floating or active in DOM trees
-            document.querySelectorAll(".bubble").forEach(n => n.remove());
-            document.querySelectorAll(".falling-object").forEach(n => n.remove());
-            
-            const stage = document.getElementById("gameplayStageArea");
-            stage.onmousemove = null;
+            if (matchId1 === id2) {
+                // Connection pair matched successfully!
+                card1.classList.add("matched");
+                card2.classList.add("matched");
+                completedPairsCount++;
+                
+                document.getElementById("matchCounterLabel").innerText = `${completedPairsCount} / 6`;
+                triggerSoundFeedback("soundSuccess");
+
+                // Reveal a corresponding character box cell in crossword panel layout block
+                revealCrosswordLetterCell(completedPairsCount - 1);
+
+                if (typeof confetti !== 'undefined') {
+                    confetti({ particleCount: 15, spread: 35, origin: { y: 0.8 } });
+                }
+
+                selectedCardsTrackingArray = [];
+                lockGridSelection = false;
+
+                if (completedPairsCount === 6) {
+                    setTimeout(() => triggerFinalVictorySequence(), 1200);
+                }
+            } else {
+                // Discrepancy mismatch, toggle back transition parameters loop
+                triggerSoundFeedback("soundFailure");
+                setTimeout(() => {
+                    card1.classList.remove("flipped");
+                    card2.classList.remove("flipped");
+                    selectedCardsTrackingArray = [];
+                    lockGridSelection = false;
+                }, 1000);
+            }
+        }
+
+        function revealCrosswordLetterCell(indexValue) {
+            const targetRowCells = document.getElementById("crosswordTargetRow").children;
+            if (targetRowCells[indexValue]) {
+                targetRowCells[indexValue].innerText = crosswordSecretKeyword[indexValue];
+                targetRowCells[indexValue].classList.add("revealed");
+            }
+        }
+
+        function triggerFinalVictorySequence() {
+            document.getElementById("mainGameplaySplitArea").classList.add("hidden");
+            document.getElementById("endEvaluationBlock").classList.remove("hidden");
+            if (typeof confetti !== 'undefined') {
+                confetti({ particleCount: 80, spread: 80 });
+            }
         }
     </script>
 </body>

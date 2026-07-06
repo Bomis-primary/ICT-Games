@@ -46,7 +46,6 @@
         .splash-logo {
             max-width: 320px;
             margin-bottom: 25px;
-            animation: pulse 2s infinite ease-in-out;
         }
 
         .splash-title {
@@ -64,9 +63,23 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 3px;
+            margin-bottom: 20px;
+        }
+
+        .start-gate-btn {
+            background: var(--brand-crimson);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(190, 18, 60, 0.3);
         }
 
         .progress-container {
+            display: none;
             width: 300px;
             height: 6px;
             background: #e2e8f0;
@@ -79,10 +92,11 @@
             width: 0%;
             height: 100%;
             background: linear-gradient(90deg, var(--brand-crimson), var(--brand-orange));
-            animation: startLoading 5s linear forwards;
         }
 
-        /* --- STAGE 2: MAIN DUAL-TABLE INTERACTIVE INTERFACE --- */
+        @keyframes startLoading { to { width: 100%; } }
+
+        /* --- STAGE 2: MAIN INTERFACE --- */
         #game-container {
             display: none;
             width: 95%;
@@ -131,7 +145,6 @@
             line-height: 1.6;
         }
 
-        /* Side-By-Side Table Layout Architecture */
         .workspace-layout {
             display: grid;
             grid-template-columns: 1.2fr 1fr;
@@ -143,15 +156,6 @@
             .workspace-layout { grid-template-columns: 1fr; }
         }
 
-        .table-wrapper h3 {
-            margin-top: 0;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* System Grid Layout Styling */
         .crypt-table {
             width: 100%;
             border-collapse: separate;
@@ -159,14 +163,12 @@
             border-radius: 8px;
             overflow: hidden;
             border: 1px solid #cbd5e1;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
 
         .crypt-table th {
             color: white;
             padding: 14px;
             font-weight: 600;
-            text-align: center;
         }
 
         .table-a-style th { background: var(--table-a-header); }
@@ -178,12 +180,8 @@
             border-bottom: 1px solid #e2e8f0;
             text-align: center;
             font-weight: 600;
-            color: #334155;
         }
 
-        .crypt-table tr:nth-child(even) td { background: #f8fafc; }
-
-        /* Form Inputs inside Tables */
         .grid-input {
             width: 70px;
             padding: 8px;
@@ -192,22 +190,8 @@
             text-align: center;
             font-size: 1.1rem;
             font-weight: 700;
-            color: var(--brand-dark);
-            transition: all 0.2s ease;
         }
 
-        .grid-input:focus {
-            outline: none;
-            border-color: var(--brand-orange);
-            background: #fff7ed;
-        }
-
-        .crypto-letter-box {
-            width: 45px;
-            text-transform: uppercase;
-        }
-
-        /* Dynamic Feedback Visual Status States */
         .input-correct {
             border-color: var(--success) !important;
             background-color: #d1fae5 !important;
@@ -218,7 +202,6 @@
             border-color: var(--error) !important;
             background-color: #fee2e2 !important;
             color: #991b1b !important;
-            animation: shakeElement 0.3s ease-in-out;
         }
 
         .key-reveal {
@@ -228,7 +211,6 @@
             visibility: hidden;
         }
 
-        /* Action Controls Layout */
         .control-footer {
             display: flex;
             justify-content: flex-end;
@@ -246,21 +228,11 @@
             font-weight: 700;
             border-radius: 6px;
             cursor: pointer;
-            transition: background 0.2s;
         }
 
-        .action-btn:hover { background: #9f1239; }
-
-        /* Final Result View Screen */
         #report-screen {
             text-align: center;
             padding: 40px 20px;
-        }
-
-        .success-badge {
-            font-size: 4rem;
-            color: var(--success);
-            margin-bottom: 10px;
         }
 
         #confetti-canvas {
@@ -272,15 +244,6 @@
             pointer-events: none;
             z-index: 10000;
         }
-
-        /* --- ANIMATIONS ENGINE --- */
-        @keyframes startLoading { to { width: 100%; } }
-        @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
-        @keyframes shakeElement {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
     </style>
 </head>
 <body>
@@ -288,23 +251,24 @@
     <canvas id="confetti-canvas"></canvas>
 
     <div id="splash-screen">
-        <img src="assets/innovine_logo.png" class="splash-logo" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/320x90?text=INNOVINE+SOLUTIONS'">
-        <div class="splash-title">Chapter 6: Cryptographic Logic Matrix</div>
+        <img src="assets/innovine_logo.png" class="splash-logo" alt="Innovine Logo" onerror="this.src='https://i.ibb.co/6wXGZ0W/image-611301.png'">
         <div class="splash-subtitle">System Table Engine</div>
-        <div class="progress-container">
-            <div class="progress-bar"></div>
+        
+        <button id="start-gate" class="start-gate-btn" onclick="engageGameEngine()">Start Game Engine</button>
+        
+        <div class="progress-container" id="loader-box">
+            <div class="progress-bar" id="loader-fill"></div>
         </div>
     </div>
 
     <div id="game-container">
         <div class="header-strip">
-            <img src="assets/innovine_logo.png" class="header-logo" alt="Innovine Solutions" onerror="this.style.display='none'">
-            
-        </div>
+            <img src="assets/innovine_logo.png" class="header-logo" alt="Innovine" onerror="this.src='https://i.ibb.co/6wXGZ0W/image-611301.png'">
+                </div>
 
         <div class="game-viewport" id="active-game-view">
             <div class="instruction-card">
-                <strong>How to Play:</strong> Solve the algebraic problems in <strong>Table A (Math Engine)</strong>. Entering a correct calculation reveals a hidden cipher code letter. Use these key codes to decode the blank cells in <strong>Table B (Decryption Array)</strong> to discover Innovine's hidden solution string phrase!
+                <strong>How to Play:</strong> Solve the mathematical formulas in <strong>Table A</strong>. Entering a correct value instantly unlocks a cipher letter. Type those matching letters into <strong>Table B</strong> to crack the message!
             </div>
 
             <div class="workspace-layout">
@@ -312,38 +276,14 @@
                     <h3 style="color: var(--table-a-header);">📊 Table A: Math Input Core</h3>
                     <table class="crypt-table table-a-style">
                         <thead>
-                            <tr>
-                                <th>Logic Puzzle</th>
-                                <th>Your Value</th>
-                                <th>Key Unlocked</th>
-                            </tr>
+                            <tr><th>Logic Puzzle</th><th>Your Value</th><th>Key Unlocked</th></tr>
                         </thead>
                         <tbody>
-                            <tr id="row-a1">
-                                <td>$$15 \times 4 - 18 = \text{?}$$</td>
-                                <td><input type="number" class="grid-input target-math" data-ans="42" data-key="key-k1"></td>
-                                <td><span class="key-reveal" id="key-k1">I</span></td>
-                            </tr>
-                            <tr id="row-a2">
-                                <td>$$\sqrt{144} + 13 = \text{?}$$</td>
-                                <td><input type="number" class="grid-input target-math" data-ans="25" data-key="key-k2"></td>
-                                <td><span class="key-reveal" id="key-k2">N</span></td>
-                            </tr>
-                            <tr id="row-a3">
-                                <td>$$(9 \times 9) - 72 = \text{?}$$</td>
-                                <td><input type="number" class="grid-input target-math" data-ans="9" data-key="key-k3"></td>
-                                <td><span class="key-reveal" id="key-k3">O</span></td>
-                            </tr>
-                            <tr id="row-a4">
-                                <td>$$120 \div 5 + 6 = \text{?}$$</td>
-                                <td><input type="number" class="grid-input target-math" data-ans="30" data-key="key-k4"></td>
-                                <td><span class="key-reveal" id="key-k4">V</span></td>
-                            </tr>
-                            <tr id="row-a5">
-                                <td>$$7^2 - 44 = \text{?}$$</td>
-                                <td><input type="number" class="grid-input target-math" data-ans="5" data-key="key-k5"></td>
-                                <td><span class="key-reveal" id="key-k5">E</span></td>
-                            </tr>
+                            <tr><td>15 × 4 - 18 = ?</td><td><input type="number" class="grid-input target-math" data-ans="42" data-key="key-k1"></td><td><span class="key-reveal" id="key-k1">I</span></td></tr>
+                            <tr><td>√144 + 13 = ?</td><td><input type="number" class="grid-input target-math" data-ans="25" data-key="key-k2"></td><td><span class="key-reveal" id="key-k2">N</span></td></tr>
+                            <tr><td>(9 × 9) - 72 = ?</td><td><input type="number" class="grid-input target-math" data-ans="9" data-key="key-k3"></td><td><span class="key-reveal" id="key-k3">O</span></td></tr>
+                            <tr><td>120 ÷ 5 + 6 = ?</td><td><input type="number" class="grid-input target-math" data-ans="30" data-key="key-k4"></td><td><span class="key-reveal" id="key-k4">V</span></td></tr>
+                            <tr><td>7² - 44 = ?</td><td><input type="number" class="grid-input target-math" data-ans="5" data-key="key-k5"></td><td><span class="key-reveal" id="key-k5">E</span></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -352,20 +292,17 @@
                     <h3 style="color: var(--table-b-header);">🔐 Table B: Cipher Decryption Array</h3>
                     <table class="crypt-table table-b-style">
                         <thead>
-                            <tr>
-                                <th>Cipher Key Index</th>
-                                <th>Decoded Character Input</th>
-                            </tr>
+                            <tr><th>Cipher Key Value</th><th>Decoded Character Input</th></tr>
                         </thead>
                         <tbody>
-                            <tr><td>Result Code Value [42]</td><td><input type="text" maxlength="1" class="grid-input crypto-letter-box target-letter" data-ans="I"></td></tr>
-                            <tr><td>Result Code Value [25]</td><td><input type="text" maxlength="1" class="grid-input crypto-letter-box target-letter" data-ans="N"></td></tr>
-                            <tr><td>Result Code Value [25]</td><td><input type="text" maxlength="1" class="grid-input crypto-letter-box target-letter" data-ans="N"></td></tr>
-                            <tr><td>Result Code Value [9]</td><td><input type="text" maxlength="1" class="grid-input crypto-letter-box target-letter" data-ans="O"></td></tr>
-                            <tr><td>Result Code Value [30]</td><td><input type="text" maxlength="1" class="grid-input crypto-letter-box target-letter" data-ans="V"></td></tr>
-                            <tr><td>Result Code Value [42]</td><td><input type="text" maxlength="1" class="grid-input crypto-letter-box target-letter" data-ans="I"></td></tr>
-                            <tr><td>Result Code Value [25]</td><td><input type="text" maxlength="1" class="grid-input crypto-letter-box target-letter" data-ans="N"></td></tr>
-                            <tr><td>Result Code Value [5]</td><td><input type="text" maxlength="1" class="grid-input crypto-letter-box target-letter" data-ans="E"></td></tr>
+                            <tr><td>Result [42]</td><td><input type="text" maxlength="1" class="grid-input target-letter" data-ans="I"></td></tr>
+                            <tr><td>Result [25]</td><td><input type="text" maxlength="1" class="grid-input target-letter" data-ans="N"></td></tr>
+                            <tr><td>Result [25]</td><td><input type="text" maxlength="1" class="grid-input target-letter" data-ans="N"></td></tr>
+                            <tr><td>Result [9]</td><td><input type="text" maxlength="1" class="grid-input target-letter" data-ans="O"></td></tr>
+                            <tr><td>Result [30]</td><td><input type="text" maxlength="1" class="grid-input target-letter" data-ans="V"></td></tr>
+                            <tr><td>Result [42]</td><td><input type="text" maxlength="1" class="grid-input target-letter" data-ans="I"></td></tr>
+                            <tr><td>Result [25]</td><td><input type="text" maxlength="1" class="grid-input target-letter" data-ans="N"></td></tr>
+                            <tr><td>Result [5]</td><td><input type="text" maxlength="1" class="grid-input target-letter" data-ans="E"></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -373,32 +310,29 @@
         </div>
 
         <div class="game-viewport" id="report-screen" style="display: none;">
-            <div class="success-badge">🏆</div>
-            <h2>Page 68: Master Game Performance Terminal</h2>
-            <p style="font-size: 1.25rem; color:#475569; margin-bottom:30px;">Cryptographic String Array Decoded Successfully.</p>
-            <div style="max-width: 500px; margin: 0 auto; background: #f8fafc; border: 2px dashed var(--success); border-radius: 8px; padding: 25px;">
-                <span style="font-size: 0.9rem; text-transform: uppercase; color: #64748b; font-weight:700; letter-spacing:1px;">Decrypted Corporate Target Phrase</span>
-                <h1 style="color: var(--success); margin: 10px 0 0 0; letter-spacing: 4px; font-size:2.5rem;">INNOVINE</h1>
-            </div>
+            <h1 style="color: var(--success); font-size: 3rem;">🏆 Congratulations!</h1>
         </div>
 
         <div class="control-footer">
-            <button class="action-btn" id="master-action-btn" onclick="processEngineValidation()">Verify System Node Entries</button>
+            <button class="action-btn" id="master-action-btn" onclick="processEngineValidation()">Verify System Entries</button>
         </div>
     </div>
 
     <audio id="snd-intro" src="assets/intro_sound.mp3" preload="auto"></audio>
     <audio id="snd-clap" src="assets/clap_sound.mp3" preload="auto"></audio>
-    <audio id="snd-wrong" src="assets/wrong_sound.mp3" preload="auto"></preload>
-
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <audio id="snd-wrong" src="assets/wrong_sound.mp3" preload="auto"></audio>
 
     <script>
-        // Trigger auto routing of splash timeout window setup elements
-        window.addEventListener('DOMContentLoaded', () => {
-            const intro = document.getElementById('snd-intro');
-            intro.play().catch(e => console.log("Intro standard configuration block note. Core awaiting run input."));
+        function engageGameEngine() {
+            // Hide the click gate, reveal loading process bar
+            document.getElementById('start-gate').style.display = 'none';
+            document.getElementById('loader-box').style.display = 'block';
+            document.getElementById('loader-fill').style.animation = 'startLoading 5s linear forwards';
+            
+            // Force play audio tracking immediately upon click acceptance parameters
+            executeSoundAsset('snd-intro');
 
+            // Countdown sequence timeout to trigger active viewport
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
                 const coreGame = document.getElementById('game-container');
@@ -408,7 +342,7 @@
                     coreGame.style.display = 'block';
                 }, 600);
             }, 5000);
-        });
+        }
 
         function processEngineValidation() {
             let mathInputs = document.querySelectorAll('.target-math');
@@ -416,7 +350,6 @@
             let completeSuccess = true;
             let errorFlag = false;
 
-            // 1. Process Mathematical Evaluation Layers
             mathInputs.forEach(input => {
                 const targetedAnswer = input.getAttribute('data-ans');
                 const userVal = input.value.trim();
@@ -430,41 +363,30 @@
                     input.className = "grid-input target-math input-wrong";
                     completeSuccess = false;
                     errorFlag = true;
-                } else {
-                    completeSuccess = false;
-                }
+                } else { completeSuccess = false; }
             });
 
-            // 2. Process Encryption Block Output Matching Arrays
             letterInputs.forEach(input => {
                 const targetedLetter = input.getAttribute('data-ans').toLowerCase();
                 const userVal = input.value.trim().toLowerCase();
 
                 if (userVal === targetedLetter) {
-                    input.className = "grid-input crypto-letter-box target-letter input-correct";
+                    input.className = "grid-input input-correct";
                 } else if(userVal !== "") {
-                    input.className = "grid-input crypto-letter-box target-letter input-wrong";
+                    input.className = "grid-input input-wrong";
                     completeSuccess = false;
                     errorFlag = true;
-                } else {
-                    completeSuccess = false;
-                }
+                } else { completeSuccess = false; }
             });
 
-            // 3. System Audio Route Engine Processing Execution Output
             if (errorFlag) {
                 executeSoundAsset('snd-wrong');
-                setTimeout(() => {
-                    document.querySelectorAll('.input-wrong').forEach(el => el.classList.remove('input-wrong'));
-                }, 400);
                 return;
             }
 
             if (completeSuccess) {
                 executeSoundAsset('snd-clap');
                 launchConfettiBlast();
-                
-                // Route viewport rendering properties setup down to Page 68 terminal
                 document.getElementById('active-game-view').style.display = 'none';
                 document.getElementById('report-screen').style.display = 'block';
                 document.getElementById('page-tag').innerText = "Page 68";
@@ -475,51 +397,33 @@
         function executeSoundAsset(elementId) {
             const track = document.getElementById(elementId);
             track.currentTime = 0;
-            track.play().catch(err => console.log("System track context loading deviation log:", err));
+            track.play().catch(err => console.log("Audio skipped due to browser safety rules:", err));
         }
 
-        // Lightweight High-Performance Canvas Confetti Particle Engine
         function launchConfettiBlast() {
             const canvas = document.getElementById('confetti-canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-
             let systemParticles = [];
-            const hexColors = ['#0369a1', '#6d28d9', '#be123c', '#ea580c', '#10b981'];
-
-            for (let idx = 0; idx < 140; idx++) {
+            for (let idx = 0; idx < 100; idx++) {
                 systemParticles.push({
-                    x: window.innerWidth / 2,
-                    y: window.innerHeight / 2,
+                    x: window.innerWidth / 2, y: window.innerHeight / 2,
                     radius: Math.random() * 6 + 4,
-                    color: hexColors[Math.floor(Math.random() * hexColors.length)],
-                    speedX: (Math.random() - 0.5) * 18,
-                    speedY: (Math.random() - 0.5) * 18 - 4,
-                    gravityModifier: 0.2,
+                    color: ['#0369a1', '#6d28d9', '#be123c'][Math.floor(Math.random() * 3)],
+                    speedX: (Math.random() - 0.5) * 15, speedY: (Math.random() - 0.5) * 15 - 3,
                     alphaOpacity: 1
                 });
             }
-
             function frameLoopExecution() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 systemParticles.forEach((part, index) => {
-                    part.x += part.speedX;
-                    part.y += part.speedY;
-                    part.speedY += part.gravityModifier;
-                    part.alphaOpacity -= 0.012;
-
-                    ctx.beginPath();
-                    ctx.arc(part.x, part.y, part.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = part.color;
-                    ctx.globalAlpha = part.alphaOpacity;
-                    ctx.fill();
-
+                    part.x += part.speedX; part.y += part.speedY; part.speedY += 0.2; part.alphaOpacity -= 0.015;
+                    ctx.beginPath(); ctx.arc(part.x, part.y, part.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = part.color; ctx.globalAlpha = part.alphaOpacity; ctx.fill();
                     if (part.alphaOpacity <= 0) systemParticles.splice(index, 1);
                 });
-
                 if (systemParticles.length > 0) requestAnimationFrame(frameLoopExecution);
-                else ctx.clearRect(0, 0, canvas.width, canvas.height);
             }
             frameLoopExecution();
         }

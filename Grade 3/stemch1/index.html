@@ -1,1 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Circuit Explorers! ⚡</title>
+    <style>
+        /* --- General Styles & Playful Theme --- */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            background: #e0f7fa;
+            color: #2c3e50;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
 
+        #game-container {
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            background: #ffffff;
+            border: 8px solid #ffca28;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Screen 1: Splash Intro Logo --- */
+        #splash-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            transition: opacity 0.5s ease-out;
+        }
+
+        #splash-screen img {
+            max-width: 60%;
+            max-height: 60%;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        /* --- Screen 2: Game Board --- */
+        #game-screen {
+            width: 100%;
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* --- UI Elements --- */
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff9800;
+        }
+
+        .question-box {
+            background: #fff3e0;
+            border: 4px dashed #ffb74d;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 30px 0;
+            font-size: 26px;
+            text-align: center;
+            width: 85%;
+            font-weight: bold;
+        }
+
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 85%;
+        }
+
+        .btn-option {
+            background: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 22px;
+            font-family: inherit;
+            cursor: pointer;
+            box-shadow: 0 6px #388e3c;
+            transition: all 0.1s ease;
+        }
+
+        .btn-option:active {
+            box-shadow: 0 2px #388e3c;
+            transform: translateY(4px);
+        }
+
+        /* Different colors for choices to keep it energetic */
+        .btn-option:nth-child(2) { background: #2196f3; box-shadow: 0 6px #1976d2; }
+        .btn-option:nth-child(2):active { box-shadow: 0 2px #1976d2; }
+        .btn-option:nth-child(3) { background: #9c27b0; box-shadow: 0 6px #7b1fa2; }
+        .btn-option:nth-child(3):active { box-shadow: 0 2px #7b1fa2; }
+        .btn-option:nth-child(4) { background: #ff5722; box-shadow: 0 6px #e64a19; }
+        .btn-option:nth-child(4):active { box-shadow: 0 2px #e64a19; }
+
+        /* --- Feedback Overlays --- */
+        #feedback {
+            font-size: 40px;
+            font-weight: bold;
+            margin-top: 20px;
+            height: 50px;
+            text-align: center;
+        }
+
+        .correct-text { color: #4caf50; animation: pop 0.3s ease; }
+        .wrong-text { color: #f44336; animation: shake 0.3s ease; }
+
+        /* --- Animations --- */
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.08); }
+        }
+        @keyframes pop {
+            0% { transform: scale(0.5); }
+            100% { transform: scale(1.2); }
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        
+        <div id="splash-screen">
+            <img src="asset/innovine.png" alt="Innovine Logo" id="logo">
+        </div>
+
+        <div id="game-screen">
+            <div class="header">
+                <div>⚡ Circuit Explorers!</div>
+                <div id="score-board">Score: 0</div>
+            </div>
+
+            <div class="question-box" id="question-text">
+                Loading fun challenge...
+            </div>
+
+            <div class="options-container" id="options-box">
+                </div>
+
+            <div id="feedback"></div>
+        </div>
+
+    </div>
+
+    <audio id="sound-correct-clap" src="asset/clap.mp3"></audio>
+    <audio id="sound-correct-ding" src="asset/correct.mp3"></audio>
+    <audio id="sound-wrong" src="asset/wrong.mp3"></audio>
+
+    <script>
+        // --- Game Database tailored for Grade 3 SBL Electronic Circuits ---
+        const gameQuestions = [
+            {
+                question: "What powers our circuit and pushes electricity through it?",
+                options: ["A Battery", "A Rubber Band", "A Wooden Stick", "A Leaf"],
+                answer: "A Battery"
+            },
+            {
+                question: "To turn a light bulb ON, the circuit loop must be...",
+                options: ["Closed (Connected)", "Open (Broken)", "Cut in half", "Asleep"],
+                answer: "Closed (Connected)"
+            },
+            {
+                question: "Which of these materials lets electricity flow easily? (Conductor)",
+                options: ["A Metal Paperclip", "A Plastic Toy", "A Fuzzy Sock", "An Eraser"],
+                answer: "A Metal Paperclip"
+            },
+            {
+                question: "What is the job of a switch in a circuit?",
+                options: ["To turn it ON and OFF", "To change the colors", "To make it heavy", "To sing a song"],
+                answer: "To turn it ON and OFF"
+            },
+            {
+                question: "What happens if you break a wire in a closed circuit?",
+                options: ["The electricity stops flowing!", "The bulb gets brighter!", "Nothing changes.", "It turns into water."],
+                answer: "The electricity stops flowing!"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        // Elements
+        const splashScreen = document.getElementById('splash-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const questionText = document.getElementById('question-text');
+        const optionsBox = document.getElementById('options-box');
+        const scoreBoard = document.getElementById('score-board');
+        const feedbackDiv = document.getElementById('feedback');
+
+        // Audio Elements
+        const soundClap = document.getElementById('sound-correct-clap');
+        const soundCorrect = document.getElementById('sound-correct-ding');
+        const soundWrong = document.getElementById('sound-wrong');
+
+        // --- 5-Second Splash Screen Delay ---
+        setTimeout(() => {
+            splashScreen.style.opacity = 0;
+            setTimeout(() => {
+                splashScreen.style.display = 'none';
+                gameScreen.style.display = 'flex';
+                loadQuestion();
+            }, 500); // Small delay to let fade animation finish
+        }, 5000); // 5000ms = 5 Seconds
+
+        // --- Load Question Function ---
+        function loadQuestion() {
+            feedbackDiv.innerHTML = "";
+            feedbackDiv.className = "";
+            
+            if (currentQuestionIndex >= gameQuestions.length) {
+                // Game Over screen
+                questionText.innerHTML = ` 🎉 High Five! You finished the game!`;
+                optionsBox.innerHTML = "";
+                feedbackDiv.innerHTML = `Final Score: ${score} / ${gameQuestions.length}`;
+                feedbackDiv.className = "correct-text";
+                return;
+            }
+
+            let currentQ = gameQuestions[currentQuestionIndex];
+            questionText.innerText = currentQ.question;
+            optionsBox.innerHTML = "";
+
+            // Create buttons
+            currentQ.options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'btn-option';
+                button.innerText = option;
+                button.onclick = () => checkAnswer(option, currentQ.answer);
+                optionsBox.appendChild(button);
+            });
+        }
+
+        // --- Check Answer Function ---
+        function checkAnswer(selected, correct) {
+            // Disable buttons temporarily to prevent double clicking
+            const buttons = document.querySelectorAll('.btn-option');
+            buttons.forEach(btn => btn.disabled = true);
+
+            if (selected === correct) {
+                score++;
+                scoreBoard.innerText = `Score: ${score}`;
+                feedbackDiv.innerText = "Awesome! Correct! 👏";
+                feedbackDiv.className = "correct-text";
+                
+                // Play clap and correct chime sounds
+                playSound(soundCorrect);
+                playSound(soundClap);
+            } else {
+                feedbackDiv.innerText = "Oops! Try again! ⚡";
+                feedbackDiv.className = "wrong-text";
+                
+                // Play wrong buzzer sound
+                playSound(soundWrong);
+            }
+
+            // Move to next question after 2.5 seconds
+            setTimeout(() => {
+                currentQuestionIndex++;
+                loadQuestion();
+            }, 2500);
+        }
+
+        // Safe sound player helper
+        function playSound(audioElement) {
+            audioElement.currentTime = 0;
+            audioElement.play().catch(error => {
+                console.log("Audio couldn't play automatically because of browser security. Click on the game screen first!");
+            });
+        }
+    </script>
+</body>
+</html>

@@ -3,43 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Innovine Universal - Ribbon Laser Space Ranger</title>
+    <title>Word Doctor: Ribbon Surgery Matrix</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
         :root {
-            --bg-dark: #060913;
-            --card-dark: #0e1322;
-            --accent-cyan: #00e5ff;
-            --accent-blue: #2979ff;
-            --word-blue: #165cc0;
-            --text-light: #ffffff;
-            --text-muted: #64758d;
-            --error-red: #ff5252;
-            --success-green: #00e676;
+            --bg-safari: #1e3a8a; /* Deep corporate blueprint blue */
+            --panel-sun: #bae6fd; /* Soft sky blue highlights */
+            --wood-dark: #0f172a;
+            --word-blue: #2b579a; /* Genuine MS Word theme blue */
+            --success-green: #10b981;
+            --danger-pink: #ef4444;
+            --text-dark: #1e293b;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             user-select: none;
         }
 
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-light);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            background: var(--bg-safari);
             overflow: hidden;
+            padding: 15px;
         }
 
         /* ==========================================================================
-           1. FIXED BRAND SPLASH PAGE (EXACT LOGO LAYOUT FOR 5 SECONDS ONLY)
+           1. BRAND SPLASH LAYER (ISOLATED PURE WHITE 5 SECONDS)
            ========================================================================== */
-        #brandSplashWindow {
+        #splash {
             position: fixed;
             top: 0;
             left: 0;
@@ -51,8 +49,6 @@
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            border: none;
-            outline: none;
             transition: opacity 0.5s ease, transform 0.5s ease;
         }
 
@@ -61,12 +57,9 @@
             align-items: center;
             justify-content: center;
             gap: 20px;
-            margin-bottom: 50px;
-            width: auto;
-            max-width: 90%;
+            margin-bottom: 40px;
         }
 
-        /* Corporate circle slash gradient icon */
         .innovine-icon-emblem {
             position: relative;
             width: 95px;
@@ -79,7 +72,6 @@
             flex-shrink: 0;
         }
 
-        /* White diagonal slice cutting through the circle layout */
         .innovine-icon-emblem::before {
             content: '';
             position: absolute;
@@ -89,7 +81,6 @@
             transform: rotate(-45deg);
         }
 
-        /* Inner core white circular layer */
         .innovine-icon-emblem::after {
             content: '';
             position: absolute;
@@ -103,7 +94,6 @@
         .innovine-text-block {
             display: flex;
             flex-direction: column;
-            justify-content: center;
             white-space: nowrap;
         }
 
@@ -140,238 +130,215 @@
         }
 
         /* ==========================================================================
-           2. SCREEN 2: POST-SPLASH INSTRUCTIONS PANEL
+           2. APP STRUCTURAL CONTAINER
            ========================================================================== */
-        #instructionalOverlayWindow {
-            position: fixed;
-            top: 0;
-            left: 0;
+        .container {
             width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, #101726 0%, #05080f 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9998;
-            transition: opacity 0.4s ease;
-            padding: 20px;
-        }
-
-        .instruction-card-body {
-            background: #0e1424;
-            border: 1px solid rgba(255,255,255,0.08);
-            width: 100%;
-            max-width: 580px;
-            border-radius: 20px;
-            padding: 35px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
-            text-align: center;
-        }
-
-        .card-header-emblem {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-        }
-
-        .instruction-rules-list {
-            text-align: left;
-            margin: 25px 0;
-            background: rgba(255,255,255,0.02);
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid rgba(255,255,255,0.04);
-        }
-
-        .instruction-rules-list p {
-            font-size: 0.95rem;
-            color: #cbd5e1;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: flex-start;
-            gap: 10px;
-            line-height: 1.4;
-        }
-
-        .instruction-rules-list p strong {
-            color: var(--accent-cyan);
-        }
-
-        .btn-action-trigger {
-            background: linear-gradient(135deg, #2979ff, #00b0ff);
-            color: #ffffff;
-            border: none;
-            padding: 14px 45px;
-            font-size: 1rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(41, 121, 255, 0.3);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .btn-action-trigger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(41, 121, 255, 0.4);
-        }
-
-        /* ==========================================================================
-           3. MAIN PLAYFIELD ARCADE COCKPIT
-           ========================================================================== */
-        .app-window {
-            width: 95vw;
-            max-width: 1100px;
-            height: 85vh;
-            background: var(--card-dark);
+            max-width: 900px;
+            background: #ffffff;
             border-radius: 24px;
-            border: 1px solid rgba(255,255,255,0.08);
-            display: grid;
-            grid-template-rows: auto 1fr;
-            overflow: hidden;
-            opacity: 0;
-            transform: scale(0.97);
-            transition: all 0.5s ease;
-        }
-
-        .app-window.visible {
-            opacity: 1;
-            transform: scale(1);
-        }
-
-        .game-header {
-            background: #080c16;
-            padding: 15px 30px;
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .arcade-container {
-            display: grid;
-            grid-template-columns: 1fr 300px;
-            height: 100%;
-        }
-
-        .space-canvas-viewport {
-            background: #050810;
+            padding: 30px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             position: relative;
-            overflow: hidden;
-            border-right: 1px solid rgba(255,255,255,0.06);
-        }
-
-        #spaceRangerShip {
-            position: absolute;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 45px;
-            background: linear-gradient(to top, var(--word-blue), var(--accent-cyan));
-            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-            filter: drop-shadow(0 0 10px var(--accent-cyan));
-            transition: left 0.1s ease-out;
-        }
-
-        .invader-target {
-            position: absolute;
-            background: #162238;
-            border: 1px solid var(--accent-blue);
-            color: #ffffff;
-            padding: 8px 15px;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            white-space: nowrap;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-        }
-
-        .invader-target.broken {
-            border-color: var(--error-red);
-            color: var(--error-red);
-            background: rgba(255,82,82,0.05);
-        }
-
-        .laser-beam {
-            position: absolute;
-            width: 4px;
-            height: 18px;
-            background: var(--accent-cyan);
-            box-shadow: 0 0 8px var(--accent-cyan);
-            border-radius: 2px;
-        }
-
-        .hud-control-deck {
-            background: #0a0e1a;
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .weapon-pill-box {
-            background: #121829;
-            border: 1px solid #1f2a45;
-            border-radius: 12px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .ammo-selection-btn {
-            background: #1a233a;
-            border: 1px solid #2d3c63;
-            color: #71829e;
-            padding: 10px 14px;
-            border-radius: 8px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .ammo-selection-btn.active {
-            background: var(--word-blue);
-            border-color: var(--accent-cyan);
-            color: #ffffff;
-            box-shadow: 0 0 10px rgba(0,229,255,0.2);
-        }
-
-        .direction-arrow-pad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-top: auto;
-        }
-
-        .control-pad-btn {
-            background: #141c30;
-            border: 1px solid #273554;
-            color: #ffffff;
-            padding: 15px;
-            border-radius: 10px;
-            font-weight: bold;
-            font-size: 1.2rem;
-            cursor: pointer;
-            text-align: center;
-        }
-
-        .control-pad-btn:active {
-            background: var(--accent-blue);
+            z-index: 10;
+            border: 5px solid var(--panel-sun);
         }
 
         .hidden { display: none !important; }
+
+        /* Welcome Screen Panel */
+        .intro-panel { text-align: center; }
+        .intro-panel h1 { font-size: 2.5rem; color: var(--word-blue); margin-bottom: 10px; font-weight: 800; }
+        
+        .mode-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: var(--panel-sun);
+            color: #0369a1;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
+
+        .briefing {
+            background: #f0f9ff;
+            padding: 22px;
+            border-radius: 16px;
+            border-left: 6px solid var(--word-blue);
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .briefing ol { margin-left: 20px; line-height: 1.8; color: #334155; }
+
+        button.act-btn {
+            padding: 16px 45px;
+            background: linear-gradient(135deg, #2b579a, #1e3a8a);
+            color: white;
+            font-size: 1.15rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(43, 87, 154, 0.3);
+        }
+
+        button.act-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(43, 87, 154, 0.5);
+        }
+
+        /* HUD layout */
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+
+        .hud-card {
+            background: var(--wood-dark);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1rem;
+            flex: 1;
+            text-align: center;
+        }
+
+        /* Simulated Document Canvas Sheet Viewport */
+        .document-viewport {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: inset 0 4px 8px rgba(0,0,0,0.02);
+            position: relative;
+        }
+
+        .doc-page-header {
+            position: absolute;
+            top: 8px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .case-issue-text {
+            font-size: 1.45rem;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        /* Ribbon Toolbar Buttons Tray Grid */
+        .ribbon-tray-headline {
+            text-align: left;
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+
+        .ribbon-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .tool-card {
+            background: #f1f5f9;
+            border: 2px solid #cbd5e1;
+            padding: 16px;
+            border-radius: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.2s ease;
+            text-align: left;
+        }
+
+        .tool-card:hover {
+            background: #e2e8f0;
+            border-color: var(--word-blue);
+            transform: translateY(-2px);
+        }
+
+        .tool-icon {
+            font-size: 2rem;
+            background: white;
+            padding: 8px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .tool-meta h4 { font-size: 1.05rem; color: #1e293b; font-weight: 800; }
+        .tool-meta p { font-size: 0.8rem; color: #64748b; font-weight: 500; }
+
+        /* Feedback Ticker System */
+        .ticker-feedback {
+            padding: 16px;
+            border-radius: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.95rem;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            background: #f8fafc;
+            border-left: 5px solid #cbd5e1;
+            color: #475569;
+        }
+
+        .ticker-feedback.good {
+            background: #ecfdf5;
+            border-left-color: var(--success-green);
+            color: #065f46;
+        }
+
+        .ticker-feedback.bad {
+            background: #fef2f2;
+            border-left-color: var(--danger-pink);
+            color: #991b1b;
+        }
+
+        /* Results Screen */
+        .rank-shell {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: var(--word-blue);
+            color: white;
+            font-size: 2.2rem;
+            font-weight: 800;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+            box-shadow: 0 10px 20px rgba(43,87,154,0.3);
+        }
     </style>
 </head>
 <body>
 
-    <audio id="audioCorrect" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
-    <audio id="audioClap" src="assets/clap.mp3" preload="auto"></audio>
-
-    <div id="brandSplashWindow">
+    <div id="splash">
         <div class="brand-logo-wrapper">
             <div class="innovine-icon-emblem"></div>
             <div class="innovine-text-block">
@@ -384,69 +351,90 @@
         </div>
     </div>
 
-    <div id="instructionalOverlayWindow" class="hidden">
-        <div class="instruction-card-body">
-            <div class="card-header-emblem">🛸</div>
-            <h2 style="color: #ffffff; font-size: 1.6rem; margin-bottom: 5px;">Ribbon Ranger Space Arena</h2>
-            <p style="color: var(--text-muted); font-size: 0.85rem;">MS Word-3 Proofing & Objects (Pages 50-56)</p>
-            
-            <div class="instruction-rules-list">
-                <p>🔹 Use <strong>◀ Left</strong> and <strong>Right ▶</strong> UI controls or keyboard arrows to align your ship.</p>
-                <p>🔹 Match weapons to targets: Shoot typos with the <strong>Spelling Laser</strong> and layout spaces with the <strong>Illustration Ray</strong>.</p>
-                <p>🔹 Incorrect alignments decrease your final operational score output.</p>
-            </div>
-
-            <button class="btn-action-trigger" onclick="closeInstructionsAndLaunchGame()">START MISSION</button>
-        </div>
-    </div>
-
-    <div class="app-window hidden" id="appInterfaceShell">
+    <div class="container hidden" id="appMainframe">
         
-        <div class="game-header">
-            <div>
-                <h3 style="font-size: 1.05rem;">Ribbon Laser Space Ranger</h3>
-                <p style="font-size: 0.72rem; color: var(--text-muted);">Shoot & Correct Document Elements (Pages 50-56)</p>
+        <div id="menuPanel" class="intro-panel">
+            <h1>The MS Word Document Doctor</h1>
+            <div class="mode-badge">Review & Insert Ribbon Labs • Grade 3</div>
+                    
+            <div class="briefing">
+                <p style="font-weight:800; margin-bottom:10px; color:var(--text-dark); font-size:1.1rem;">Your Mission Briefing:</p>
+                <ol>
+                    <li>Examine the corrupted document fragment loaded onto the sterile white clipboard worksheet section.</li>
+                    <li>Read the highlighted errors or missing object tags mapping back to <strong>Pages 50 to 56</strong>.</li>
+                    <li>Select the correct tool from the Word Ribbon Box below to run immediate digital document surgery.</li>
+                    <li>Complete all 7 anomalies cleanly to become a certified Senior Layout Consultant!</li>
+                </ol>
             </div>
-            <div style="background: rgba(255,255,255,0.03); padding: 5px 15px; border-radius: 20px; font-size: 0.85rem;">
-                Score: <strong id="scoreCounterText" style="color: var(--accent-cyan);">0 XP</strong>
-            </div>
+            <button class="act-btn" onclick="startWordSurgeryGame()">Enter Word Lab Clinic ➜</button>
         </div>
 
-        <div class="arcade-container" id="mainGameplaySplitArea">
+        <div id="gamePanel" class="hidden">
+            <div class="hud">
+                <div class="hud-card" style="background: #3b82f6;">📄 Case File: <span id="countHUD">1</span> / 7</div>
+                <div class="hud-card" style="background: #10b981;">✨ Accuracy Score: <span id="scoreHUD">0</span> XP</div>
+            </div>
+
+            <div class="document-viewport">
+                <div class="doc-page-header">📝 Live Working Clipboard Sheet</div>
+                <div class="case-issue-text" id="documentProblemDisplay">Loading patient files...</div>
+            </div>
+
+            <div class="ribbon-tray-headline">Select tool from Ribbon Tabs:</div>
             
-            <div class="space-canvas-viewport" id="spaceCanvasField">
-                <div id="spaceRangerShip"></div>
-            </div>
-
-            <div class="hud-control-deck">
-                <div class="weapon-pill-box">
-                    <p style="font-size: 0.72rem; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">1. Choose Laser Weapon Type</p>
-                    <button class="ammo-selection-btn active" id="laserSpelling" onclick="switchLaserAmmo('SPELL')">🔍 Spelling Laser</button>
-                    <button class="ammo-selection-btn" id="laserIllustration" onclick="switchLaserAmmo('IMAGE')">🖼️ Illustration Ray</button>
+            <div class="ribbon-grid">
+                <div class="tool-card" onclick="diagnoseAndApplyTool('SPELL')">
+                    <div class="tool-icon" style="color: #ef4444;">🔤</div>
+                    <div class="tool-meta">
+                        <h4>Spelling & Grammar</h4>
+                        <p>Fixes wavy lines & typos (Pg 50)</p>
+                    </div>
                 </div>
 
-                <div class="direction-arrow-pad">
-                    <button class="control-pad-btn" onclick="shiftSpaceshipLocation(-40)">◀</button>
-                    <button class="control-pad-btn" style="background: var(--accent-blue);" onclick="fireSpaceshipLaser()">⚡ FIRE</button>
-                    <button class="control-pad-btn" onclick="shiftSpaceshipLocation(40)">▶</button>
+                <div class="tool-card" onclick="diagnoseAndApplyTool('THESAURUS')">
+                    <div class="tool-icon" style="color: #3b82f6;">📖</div>
+                    <div class="tool-meta">
+                        <h4>Thesaurus Lookup</h4>
+                        <p>Finds smart synonyms (Pg 52)</p>
+                    </div>
+                </div>
+
+                <div class="tool-card" onclick="diagnoseAndApplyTool('SHAPES')">
+                    <div class="tool-icon" style="color: #eab308;">⭐</div>
+                    <div class="tool-meta">
+                        <h4>Insert Shapes</h4>
+                        <p>Adds Stars, Banners & Lines (Pg 54)</p>
+                    </div>
+                </div>
+
+                <div class="tool-card" onclick="diagnoseAndApplyTool('WORDART')">
+                    <div class="tool-icon" style="color: #a855f7;">🎨</div>
+                    <div class="tool-meta">
+                        <h4>WordArt Styles</h4>
+                        <p>Decorative colorful text (Pg 56)</p>
+                    </div>
                 </div>
             </div>
 
+            <div class="ticker-feedback" id="tickerBox">Read the case file layout text above to identify which ribbon feature is requested!</div>
         </div>
 
-        <div id="endEvaluationBlock" class="hidden" style="text-align: center; margin: auto; padding: 50px;">
-            <div style="font-size: 4.5rem; margin-bottom: 15px;">🌌🛸</div>
-            <h2 style="color: var(--success-green); font-size: 2rem; font-weight: 800;">Deep Space Cleaned!</h2>
-            <p style="color: var(--text-muted); margin: 15px auto 30px auto; max-width: 520px; font-size: 1rem;">
-                Excellent precision alignment! You successfully cleared all typographic errors and layout boxes matching <strong>Pages 50 to 56</strong> using your text control weapons.
-            </p>
-            <button class="btn-action-trigger" onclick="location.reload()">Re-Launch Mission</button>
+        <div id="reportPanel" class="hidden" style="text-align: center;">
+            <h1 style="color: var(--word-blue); font-size:2.3rem;">📋 Clinical Audit Log</h1>
+            <div class="rank-shell"><span id="finalScore">0</span></div>
+            <h2 id="finalRank" style="font-weight:800; color:#0f172a; margin-bottom:12px;">Evaluating...</h2>
+            <p id="finalSummary" style="color:#475569; margin-bottom:30px; line-height:1.7; max-width:620px; margin-left:auto; margin-right:auto;"></p>
+            <button class="act-btn" onclick="location.reload()">Audit Fresh Document Case 🔄</button>
         </div>
 
     </div>
+
+    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
 
     <script>
-        // Exact 5-Second Automated Loading Matrix
+        // Automatic 5-Second Splash Matrix Control
         window.addEventListener('DOMContentLoaded', () => {
             const progressBar = document.getElementById("brandSplashProgress");
             let timeElapsed = 0;
@@ -460,177 +448,114 @@
 
                 if (timeElapsed >= targetTime) {
                     clearInterval(brandingInterval);
-                    const splash = document.getElementById("brandSplashWindow");
+                    const splash = document.getElementById("splash");
                     splash.style.opacity = "0";
                     splash.style.transform = "scale(1.02)";
                     setTimeout(() => {
                         splash.style.display = "none";
-                        document.getElementById("instructionalOverlayWindow").classList.remove("hidden");
+                        document.getElementById("appMainframe").classList.remove("hidden");
                     }, 500);
                 }
             }, intervalStep);
         });
 
-        function closeInstructionsAndLaunchGame() {
-            document.getElementById("instructionalOverlayWindow").style.opacity = "0";
-            setTimeout(() => {
-                document.getElementById("instructionalOverlayWindow").style.display = "none";
-                const shell = document.getElementById("appInterfaceShell");
-                shell.classList.remove("hidden");
-                shell.classList.add("visible");
-                startSpaceInvadersEngine();
-            }, 400);
-        }
-
-        // ==========================================================================
-        // RUNTIME ARCADE PHYSICS LOOPS
-        // ==========================================================================
-        let gameScoreXP = 0;
-        let selectedAmmoType = "SPELL"; 
-        let spaceshipLeftPixels = 250; 
-        let invaderMoveLoop = null;
-
-        const targetsDataset = [
-            { text: "computr (Error)", type: "SPELL", broken: true },
-            { text: "[Empty Picture Box]", type: "IMAGE", broken: true },
-            { text: "thesaurus", type: "SPELL", broken: false },
-            { text: "prosessing (Error)", type: "SPELL", broken: true },
-            { text: "[Missing Shape Slot]", type: "IMAGE", broken: true },
-            { text: "Microsoft Word", type: "SPELL", broken: false }
+        // Pages 50-56 Comprehensive Document Problem Matrix Set
+        const clinicalCasesDataset = [
+            { issueText: "The student typed: \"Computr systems are absolute magic.\"", expected: "SPELL", resolution: "Correct! Spelling & Grammar detects typos like 'Computr' and marks them with a red squiggly underline." },
+            { issueText: "Need to replace the boring repeated word \"Happy\" with \"Joyful\" or \"Cheerful\".", expected: "THESAURUS", resolution: "Excellent! The Thesaurus tool provides alternative vocabulary choices called synonyms to make text interesting." },
+            { issueText: "The document requires an interactive 5-Point Star graphic layout slotted into the bottom margin.", expected: "SHAPES", resolution: "Superb! The Shapes drop-down option allows you to select preset circles, banners, rectangles, and lines." },
+            { issueText: "We need to construct a highly decorative, glowing 3D title headline saying \"ANNUAL FAIR\".", expected: "WORDART", resolution: "Perfect choice! WordArt inserts decorative, stylized text frames equipped with creative coloring gradients." },
+            { issueText: "The system flagged a green wavy line beneath: \"They is going to the computer lab.\"", expected: "SPELL", resolution: "Spot on! The grammar module scans sentence rules and underlines issues like incorrect subject-verb matches." },
+            { issueText: "Looking up an opposite or similar expression for the phrase \"Huge complex mainframe\".", expected: "THESAURUS", resolution: "Fantastic! The built-in dictionary panel lookup matches context parameters quickly." },
+            { issueText: "Want to draw a straight vector pointer arrow connecting Diagram A directly to TextBox B.", expected: "SHAPES", resolution: "Correct! Arrows and basic banners reside directly inside the geometric Shapes gallery list." }
         ];
 
-        function playAssetSound(elementId) {
-            try {
-                const snd = document.getElementById(elementId);
-                if (snd) { snd.currentTime = 0; snd.play().catch(e => {}); }
-            } catch(e) {}
+        let activeDeck = [];
+        let indexPointer = 0;
+        let scoreXpTotal = 0;
+        let inputActive = false;
+
+        function startWordSurgeryGame() {
+            activeDeck = [...clinicalCasesDataset].sort(() => Math.random() - 0.5);
+            indexPointer = 0;
+            scoreXpTotal = 0;
+            inputActive = true;
+
+            document.getElementById("menuPanel").className = "intro-panel hidden";
+            document.getElementById("gamePanel").classList.remove("hidden");
+            presentCurrentCase();
         }
 
-        function switchLaserAmmo(type) {
-            selectedAmmoType = type;
-            document.getElementById("laserSpelling").classList.toggle("active", type === "SPELL");
-            document.getElementById("laserIllustration").classList.toggle("active", type === "IMAGE");
-        }
-
-        function shiftSpaceshipLocation(offset) {
-            const field = document.getElementById("spaceCanvasField");
-            spaceshipLeftPixels += offset;
-            spaceshipLeftPixels = Math.max(30, Math.min(field.clientWidth - 30, spaceshipLeftPixels));
-            document.getElementById("spaceRangerShip").style.left = spaceshipLeftPixels + "px";
-        }
-
-        function startSpaceInvadersEngine() {
-            window.addEventListener('keydown', (e) => {
-                if (e.key === "ArrowLeft") shiftSpaceshipLocation(-25);
-                if (e.key === "ArrowRight") shiftSpaceshipLocation(25);
-                if (e.key === " " || e.key === "Control") fireSpaceshipLaser();
-            });
-
-            spawnInvaderRowTargets();
-            let timerTick = 0;
-
-            invaderMoveLoop = setInterval(() => {
-                timerTick++;
-                advanceInvaderDownwardPhysics();
-
-                if (timerTick % 40 === 0) {
-                    spawnInvaderRowTargets();
-                }
-
-                if (timerTick >= 350) {
-                    clearInterval(invaderMoveLoop);
-                    triggerVictorySequenceEnd();
-                }
-            }, 50);
-        }
-
-        function spawnInvaderRowTargets() {
-            const field = document.getElementById("spaceCanvasField");
-            const data = targetsDataset[Math.floor(Math.random() * targetsDataset.length)];
-
-            const node = document.createElement("div");
-            node.className = "invader-target";
-            if (data.broken) node.classList.add("broken");
-            node.innerText = data.text;
-            node.dataset.type = data.type;
-            node.dataset.broken = data.broken;
-
-            node.style.left = Math.random() * (field.clientWidth - 140) + "px";
-            node.style.top = "-30px";
-
-            field.appendChild(node);
-        }
-
-        function advanceInvaderDownwardPhysics() {
-            const targets = document.querySelectorAll(".invader-target");
-            targets.forEach(target => {
-                let top = parseFloat(target.style.top || 0);
-                top += 2.5; 
-                target.style.top = top + "px";
-                if (top > 450) target.remove(); 
-            });
-
-            const lasers = document.querySelectorAll(".laser-beam");
-            lasers.forEach(laser => {
-                let bottom = parseFloat(laser.style.bottom || 0);
-                bottom += 14;
-                laser.style.bottom = bottom + "px";
-
-                const laserRect = laser.getBoundingClientRect();
-                targets.forEach(tgt => {
-                    const tgtRect = tgt.getBoundingClientRect();
-                    const hit = !(
-                        laserRect.right < tgtRect.left ||
-                        laserRect.left > tgtRect.right ||
-                        laserRect.bottom < tgtRect.top ||
-                        laserRect.top > tgtRect.bottom
-                    );
-
-                    if (hit) {
-                        laser.remove();
-                        if (tgt.dataset.type === selectedAmmoType && tgt.dataset.broken === "true") {
-                            gameScoreXP += 100;
-                            playAssetSound("audioCorrect");
-                            tgt.style.background = "var(--success-green)";
-                            tgt.style.color = "#000000";
-                            tgt.innerText = "FIXED! ✨";
-                            setTimeout(() => tgt.remove(), 250);
-                        } else {
-                            gameScoreXP = Math.max(0, gameScoreXP - 50);
-                            playAssetSound("audioWrong");
-                            tgt.remove();
-                        }
-                        document.getElementById("scoreCounterText").innerText = gameScoreXP + " XP";
-                    }
-                });
-
-                if (bottom > 600) laser.remove();
-            });
-        }
-
-        function fireSpaceshipLaser() {
-            const field = document.getElementById("spaceCanvasField");
-            const laser = document.createElement("div");
-            laser.className = "laser-beam";
+        function presentCurrentCase() {
+            const activeCase = activeDeck[indexPointer];
+            document.getElementById("documentProblemDisplay").innerText = activeCase.issueText;
+            document.getElementById("countHUD").innerText = (indexPointer + 1);
             
-            if (selectedAmmoType === "IMAGE") {
-                laser.style.background = "var(--success-green)";
-                laser.style.boxShadow = "0 0 8px var(--success-green)";
+            const feedbackBox = document.getElementById("tickerBox");
+            feedbackBox.className = "ticker-feedback";
+            feedbackBox.innerHTML = "Read the clipboard data summary. Pick the matching item tool action layer tab keys!";
+            inputActive = true;
+        }
+
+        function diagnoseAndApplyTool(selectedTool) {
+            if (!inputActive) return;
+            inputActive = false;
+
+            const targetCase = activeDeck[indexPointer];
+            const answerMatches = (selectedTool === targetCase.expected);
+            const feedbackBox = document.getElementById("tickerBox");
+
+            if (answerMatches) {
+                scoreXpTotal += 100;
+                try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
+                feedbackBox.className = "ticker-feedback good";
+                feedbackBox.innerHTML = `<strong>✨ SURGERY SUCCESSFUL!</strong> ${targetCase.resolution}`;
+                
+                if (typeof confetti !== 'undefined') {
+                    confetti({ particleCount: 30, spread: 50, origin: { y: 0.6 } });
+                }
+            } else {
+                scoreXpTotal = Math.max(0, scoreXpTotal - 50);
+                try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
+                feedbackBox.className = "ticker-feedback bad";
+                feedbackBox.innerHTML = `<strong>❌ MISALIGNMENT WARNING!</strong> Incorrect layout application. Remember: ${targetCase.resolution}`;
             }
 
-            laser.style.left = (spaceshipLeftPixels) + "px";
-            laser.style.bottom = "65px";
-            field.appendChild(laser);
+            document.getElementById("scoreHUD").innerText = scoreXpTotal;
+            indexPointer++;
+
+            setTimeout(() => {
+                if (indexPointer < activeDeck.length) {
+                    presentCurrentCase();
+                } else {
+                    terminateClinicAudit();
+                }
+            }, 3000);
         }
 
-        function triggerVictorySequenceEnd() {
-            document.getElementById("mainGameplaySplitArea").classList.add("hidden");
-            document.getElementById("endEvaluationBlock").classList.remove("hidden");
-            playAssetSound("audioClap");
-            
-            if (typeof confetti !== 'undefined') {
-                confetti({ particleCount: 85, spread: 75 });
+        function terminateClinicAudit() {
+            document.getElementById("gamePanel").className = "hidden";
+            document.getElementById("reportPanel").classList.remove("hidden");
+            document.getElementById("finalScore").innerText = scoreXpTotal + " XP";
+            try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+
+            let performanceRank = "";
+            let evaluationNote = "";
+            const coefficient = scoreXpTotal / 700;
+
+            if (coefficient >= 0.85) {
+                performanceRank = "👑 Master Document Typographer";
+                evaluationNote = "Perfect operation execution! You resolved grammar wavy underlines, tracked down vocabulary variations with the Thesaurus tool, and nested shape vectors flawlessy mapping back to Pages 50-56.";
+            } else if (coefficient >= 0.55) {
+                performanceRank = "🖋️ Certified Layout Editor";
+                evaluationNote = "Solid clerical proofing! You identified most ribbon system options easily. Re-read the page limits covering custom WordArt creation to secure the highest rank title.";
+            } else {
+                performanceRank = "📁 Copy Intern Assistant";
+                evaluationNote = "Several files suffered configuration mismatch alignment faults! Re-verify the clear operational bounds separating document correction utilities from vector shape creation tasks, then boot a new simulation.";
             }
+
+            document.getElementById("finalRank").innerText = performanceRank;
+            document.getElementById("finalSummary").innerText = evaluationNote;
         }
     </script>
 </body>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Innovine Solutions - Introduction to Scratch </title>
+    <title>Innovine Solutions - Introduction to Scratch</title>
     <style>
         :root {
             --bg-canvas: #faf5ff;
@@ -11,6 +11,7 @@
             --scratch-blue: #4d97ff; 
             --scratch-purple: #9966ff;
             --scratch-green: #5cb85c;
+            --scratch-yellow: #ffd000;
             --slate-dark: #1e293b;
             --success: #10b981;
             --error: #ef4444;
@@ -33,7 +34,7 @@
             user-select: none;
         }
 
-        /* --- STAGE 1: EXCLUSIVE 5-SECOND LOGO SPLASH SCREEN --- */
+        /* --- STAGE 1: EXCLUSIVE LOGO SPLASH SCREEN --- */
         #splash {
             position: fixed;
             top: 0;
@@ -61,7 +62,7 @@
         /* --- STAGE 2: MAIN WORKBOOK CONTAINER FRAME --- */
         .container {
             width: 100%;
-            max-width: 900px;
+            max-width: 950px;
             background: #ffffff;
             border-radius: 20px;
             padding: 25px;
@@ -91,7 +92,7 @@
             border-radius: 20px;
             font-weight: 700;
             font-size: 0.9rem;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             text-transform: uppercase;
             letter-spacing: 1px;
             border: 1px solid #ffedd5;
@@ -110,6 +111,46 @@
             line-height: 1.6;
             color: #334155;
             font-size: 1.1rem;
+        }
+
+        /* Mission Cards Layout */
+        .mission-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .mission-card {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+        }
+
+        .mission-card:hover {
+            border-color: var(--scratch-orange);
+            transform: translateY(-2px);
+            background: #fffaf5;
+        }
+
+        .mission-card.selected {
+            border-color: var(--scratch-orange);
+            background: #fff7ed;
+            box-shadow: 0 4px 12px rgba(245, 130, 32, 0.15);
+        }
+
+        .mission-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: var(--slate-dark);
+        }
+
+        .mission-card p {
+            font-size: 0.9rem;
+            color: #64748b;
         }
 
         button.act-btn {
@@ -147,7 +188,7 @@
 
         .stage-area {
             width: 100%;
-            height: 180px;
+            height: 220px;
             background: #ffffff;
             border: 3px solid #cbd5e1;
             border-radius: 12px;
@@ -155,16 +196,17 @@
             overflow: hidden;
             background-image: linear-gradient(#e2e8f0 1px, transparent 1px), linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
             background-size: 20px 20px;
+            transition: background 0.5s ease;
         }
 
         .sprite-actor {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             position: absolute;
             bottom: 30px;
             left: 20px;
-            transition: left 0.8s ease, transform 0.2s ease;
-            font-size: 3.5rem;
+            transition: left 0.8s ease, bottom 0.8s ease, transform 0.4s ease, filter 0.5s ease, opacity 0.5s ease;
+            font-size: 3.8rem;
             line-height: 1;
             display: flex;
             justify-content: center;
@@ -181,12 +223,13 @@
             font-weight: 700;
             color: var(--slate-dark);
             font-size: 0.95rem;
-            bottom: 100px;
+            bottom: 115px;
             left: 15px;
             opacity: 0;
-            transition: opacity 0.3s ease, left 0.8s ease;
+            transition: opacity 0.3s ease, left 0.8s ease, bottom 0.8s ease;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
             z-index: 10;
+            white-space: nowrap;
         }
 
         .blocks-palette {
@@ -198,6 +241,8 @@
             flex-direction: column;
             gap: 10px;
             text-align: left;
+            max-height: 320px;
+            overflow-y: auto;
         }
 
         /* SCRATCH CODE BLOCK ELEMENTS */
@@ -205,7 +250,7 @@
             padding: 12px 15px;
             color: white;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.95rem;
             border-radius: 4px 16px 16px 4px;
             cursor: pointer;
             box-shadow: 0 4px 0 rgba(0,0,0,0.15);
@@ -243,6 +288,9 @@
         .block-looks { background: var(--scratch-purple); }
         .block-looks::before, .block-looks::after { background: var(--scratch-purple); }
 
+        .block-control { background: var(--scratch-yellow); color: #334155; }
+        .block-control::before, .block-control::after { background: var(--scratch-yellow); }
+
         /* RIGHT COLUMN: SCRIPT EDITOR WORKSPACE */
         .script-workspace {
             background: #f8fafc;
@@ -253,7 +301,7 @@
             flex-direction: column;
             gap: 8px;
             align-items: flex-start;
-            min-height: 380px;
+            min-height: 430px;
         }
 
         .workspace-empty-hint {
@@ -293,66 +341,72 @@
             border: 4px solid #ffffff;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
+
+        /* Custom Loops Animation Keyframes */
+        @keyframes colorShift {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+        @keyframes ghostFade {
+            0%, 100% { opacity: 0.3; transform: scale(0.9) translateY(0px); }
+            50% { opacity: 0.8; transform: scale(1.1) translateY(-15px); }
+        }
     </style>
 </head>
 <body>
 
-    <!-- STAGE 1: EXCLUSIVE 5-SECOND LOGO SPLASH SCREEN -->
     <div id="splash">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/320x100?text=Innovine+Solutions'">
     </div>
 
-    <!-- STAGE 2: MAIN WORKBOOK CONTAINER FRAME -->
     <div class="container hidden" id="appMainframe">
         
-        <!-- INTRO PANEL -->
         <div id="menuPanel" class="intro-panel">
-            <h1>Scratch Code Builder!</h1>
-            <div class="mode-badge">Chapter 9: Intro to Scratch</div>
+            <h1>Scratch Logic Laboratory</h1>
+            <div class="mode-badge">Chapter 9: Costumes, Looks &amp; Loops</div>
             
             <div class="briefing">
                 <p>
-                    Help **Kit the Cat** move and tell a story! Click blocks from the **Blocks Palette** to build a script. Order them correctly so Kit can execute the program safely!
+                    Welcome Creator! Select an active learning adventure challenge. Arrange conditional triggers, motion vectors, and complex execution loops to write error-free computational scripts!
                 </p>
             </div>
+
+            <h2 style="color: var(--slate-dark); font-size: 1.2rem; text-align: left; margin-bottom: 10px;">Choose a Programming Track:</h2>
+            <div class="mission-selector">
+                <div class="mission-card selected" id="card_intro" onclick="selectMission('intro')">
+                    <h3>Activity 1: Baseline Logic</h3>
+                    <p>Help Kit the Cat move 100 steps across the layout grids, introduce himself, and spin around cleanly.</p>
+                </div>
+                <div class="mission-card" id="card_ocean" onclick="selectMission('ocean')">
+                    <h3>Activity 2: Deep Sea Glow Party</h3>
+                    <p>Program Fin the Jellyfish using <b>Looks effects</b> nestled inside a infinite <b>Forever Loop</b> to shift colors deep underwater.</p>
+                </div>
+                <div class="mission-card" id="card_haunted" onclick="selectMission('haunted')">
+                    <h3>Activity 3: Spooky Mansion</h3>
+                    <p>Combine a <b>Forever Loop</b> with visibility <b>Looks effects</b> to make a ghost vanish and float inside a dark castle corridor!</p>
+                </div>
+            </div>
+
             <button class="act-btn" onclick="startStoryEngine()">Open Code Workspace ➜</button>
         </div>
 
-        <!-- STORY GAME PANEL -->
         <div id="gamePanel" class="hidden">
-            <h2 style="color: var(--slate-dark); font-size: 1.3rem; margin-bottom: 10px;" id="missionObjective">
-                Mission: Make Kit walk 100 steps, say "Hello!", and then turn around!
+            <h2 style="color: var(--slate-dark); font-size: 1.2rem; margin-bottom: 15px;" id="missionObjective">
+                Mission Objective Loader...
             </h2>
 
             <div class="workspace-grid">
-                <!-- LEFT COLUMN -->
                 <div class="left-column">
-                    <!-- DISPLAY SCREEN AREA -->
-                    <div class="stage-area">
+                    <div class="stage-area" id="stageElement">
                         <div class="speech-bubble" id="spriteBubble">Hello!</div>
-                        <div class="sprite-actor" id="catSprite">🐱</div>
-                        <div style="position: absolute; bottom: 5px; right: 10px; font-size: 0.8rem; font-weight: bold; color: #94a3b8;">THE STAGE</div>
+                        <div class="sprite-actor" id="primarySprite">🐱</div>
+                        <div style="position: absolute; bottom: 5px; right: 10px; font-size: 0.8rem; font-weight: bold; color: #94a3b8; letter-spacing: 1px;">THE STAGE</div>
                     </div>
 
-                    <!-- BLOCKS PALETTE -->
-                    <div class="blocks-palette">
-                        <h4 style="color: #64748b; font-size: 0.9rem; text-transform: uppercase;">Blocks Palette</h4>
-                        <div class="scratch-block block-events" data-block="flag" onclick="addBlockToWorkspace('flag')">
-                            🏁 when green flag clicked
+                    <div class="blocks-palette" id="paletteContainer">
                         </div>
-                        <div class="scratch-block block-motion" data-block="move" onclick="addBlockToWorkspace('move')">
-                            ➡️ move 100 steps
-                        </div>
-                        <div class="scratch-block block-looks" data-block="say" onclick="addBlockToWorkspace('say')">
-                            💬 say "Hello!" for 2 seconds
-                        </div>
-                        <div class="scratch-block block-motion" data-block="turn" onclick="addBlockToWorkspace('turn')">
-                            🔄 turn 180 degrees
-                        </div>
-                    </div>
                 </div>
 
-                <!-- RIGHT COLUMN (WORKSPACE AREA) -->
                 <div>
                     <div class="script-workspace" id="workspace">
                         <div class="workspace-empty-hint" id="workspaceHint">Click blocks on the left to build your script here!</div>
@@ -361,21 +415,22 @@
                 </div>
             </div>
 
-            <button class="act-btn" style="background:#64748b; padding: 10px 20px; font-size: 0.95rem;" onclick="clearWorkspace()">Clear Workspace 📋</button>
+            <div style="display:flex; gap:10px; justify-content: space-between; align-items: center;">
+                <button class="act-btn" style="background:#64748b; padding: 10px 20px; font-size: 0.95rem;" onclick="clearWorkspace()">Clear Workspace 📋</button>
+                <button class="act-btn" style="background:#cc2929; padding: 10px 20px; font-size: 0.95rem;" onclick="exitToMenu()">Return to Missions 🏠</button>
+            </div>
             <div class="ticker-feedback" id="tickerBox">Assemble your programming blocks and click "Run Script"!</div>
         </div>
 
-        <!-- REPORT TERMINAL -->
         <div id="reportPanel" class="hidden">
-            <h1 style="color: var(--scratch-orange); font-size: 2.2rem;">📊 Code Simulation Complete!</h1>
+            <h1 style="color: var(--scratch-orange); font-size: 2.2rem;">📊 Simulation Run Complete!</h1>
             <div class="rank-shell"><span id="finalScore">100</span></div>
             <h2 id="finalRank" style="font-weight: 800; margin-bottom: 10px; color: var(--slate-dark);">Scratch Master Architect!</h2>
             <p id="finalSummary" style="color: #475569; margin-bottom: 30px; line-height: 1.7; max-width: 620px; margin-left: auto; margin-right: auto;"></p>
-            <button class="act-btn" onclick="location.reload()">Build a New Code Script 🔄</button>
+            <button class="act-btn" onclick="exitToMenu()">Choose Another Track 🔄</button>
         </div>
     </div>
 
-    <!-- AUDIO FILE HOOKS -->
     <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
     <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
@@ -385,18 +440,61 @@
         setTimeout(() => {
             document.getElementById("splash").style.display = "none";
             document.getElementById("appMainframe").classList.remove("hidden");
-            speakVoice("Welcome to the interactive Scratch workspace. Click blocks to make your script.");
-        }, 5000);
+            speakVoice("Welcome to the interactive Scratch workspace. Select a profile track to begin.");
+        }, 3000); // Optimized down to 3 seconds for active developer previewing comfort
 
+        let currentTrack = 'intro';
         let assembledBlocks = [];
-        const correctOrder = ["flag", "move", "say", "turn"];
         let isRunning = false;
+        let loopAnimationInterval = null;
 
-        const blockDetails = {
-            flag: { text: "🏁 when green flag clicked", className: "block-events" },
-            move: { text: "➡️ move 100 steps", className: "block-motion" },
-            say: { text: "💬 say \"Hello!\" for 2 seconds", className: "block-looks" },
-            turn: { text: "🔄 turn 180 degrees", className: "block-motion" }
+        // Tracks Engine Configuration Framework
+        const trackProfiles = {
+            intro: {
+                objective: 'Mission: Make Kit walk 100 steps, say "Hello!", and then turn around!',
+                sprite: '🐱',
+                bg: 'linear-gradient(#e2e8f0 1px, transparent 1px), linear-gradient(90deg, #e2e8f0 1px, transparent 1px)',
+                bgSize: '20px 20px',
+                bgColor: '#ffffff',
+                correctOrder: ["flag", "move", "say", "turn"],
+                blocks: {
+                    flag: { text: "🏁 when green flag clicked", className: "block-events" },
+                    move: { text: "➡️ move 100 steps", className: "block-motion" },
+                    say: { text: "💬 say \"Hello!\" for 2 seconds", className: "block-looks" },
+                    turn: { text: "🔄 turn 180 degrees", className: "block-motion" }
+                },
+                successMsg: "Fantastic! You simulated a core linear sequential intro block sequence. You know how events interact with look variables!"
+            },
+            ocean: {
+                objective: 'Mission: Program Fin the Jellyfish to start, dive down 50 steps, and switch color endlessly!',
+                sprite: '🪼',
+                bg: 'linear-gradient(#0c4a6e, #0284c7)',
+                bgSize: 'auto',
+                bgColor: '#0c4a6e',
+                correctOrder: ["flag", "dive", "forever", "color"],
+                blocks: {
+                    flag: { text: "🏁 when green flag clicked", className: "block-events" },
+                    dive: { text: "⬇️ change y by -50 (Dive Down)", className: "block-motion" },
+                    forever: { text: "🔄 forever [loop structure]", className: "block-control" },
+                    color: { text: "🌈 change color effect by 25", className: "block-looks" }
+                },
+                successMsg: "Incredible! You have mastered the Control loop logic block. The Forever Loop wraps around Looks commands to generate custom endless cycles!"
+            },
+            haunted: {
+                objective: 'Mission: Wake up the Ghost, initiate a looping behavior, and turn invisible to scare players!',
+                sprite: '👻',
+                bg: 'linear-gradient(#0f172a, #334155)',
+                bgSize: 'auto',
+                bgColor: '#0f172a',
+                correctOrder: ["flag", "forever", "hide", "show"],
+                blocks: {
+                    flag: { text: "🏁 when green flag clicked", className: "block-events" },
+                    forever: { text: "🔄 forever [loop structure]", className: "block-control" },
+                    hide: { text: "👻 hide (vanish)", className: "block-looks" },
+                    show: { text: "👁️ show (reappear)", className: "block-looks" }
+                },
+                successMsg: "Outstanding logic setup! You deployed high-tier algorithmic synchronization. Nesting show-and-hide visibility updates mimics complex state management!"
+            }
         };
 
         function speakVoice(text) {
@@ -408,69 +506,139 @@
             }
         }
 
+        function selectMission(trackId) {
+            currentTrack = trackId;
+            document.querySelectorAll('.mission-card').forEach(card => card.classList.remove('selected'));
+            document.getElementById(`card_${trackId}`).classList.add('selected');
+            speakVoice(`Selected Activity ${trackId === 'intro' ? 'one' : trackId === 'ocean' ? 'two' : 'three'}`);
+        }
+
+        function setupWorkspaceForTrack() {
+            const config = trackProfiles[currentTrack];
+            
+            // Render Stage configurations
+            document.getElementById("missionObjective").innerText = config.objective;
+            const stage = document.getElementById("stageElement");
+            stage.style.background = config.bg;
+            stage.style.backgroundSize = config.bgSize;
+            stage.style.backgroundColor = config.bgColor;
+
+            const sprite = document.getElementById("primarySprite");
+            sprite.innerText = config.sprite;
+            
+            // Clean sprite attributes
+            sprite.style.animation = "none";
+            sprite.style.filter = "none";
+            sprite.style.opacity = "1";
+            sprite.style.bottom = "30px";
+            sprite.style.left = "20px";
+            sprite.style.transform = "scaleX(1)";
+
+            // Render Palette Blocks dynamically
+            const palette = document.getElementById("paletteContainer");
+            palette.innerHTML = '<h4 style="color: #64748b; font-size: 0.9rem; text-transform: uppercase; margin-bottom:5px;">Blocks Palette</h4>';
+            
+            Object.keys(config.blocks).forEach(key => {
+                const blockItem = config.blocks[key];
+                const blockDiv = document.createElement("div");
+                blockDiv.className = `scratch-block ${blockItem.className}`;
+                blockDiv.setAttribute("data-block", key);
+                blockDiv.setAttribute("onclick", `addBlockToWorkspace('${key}')`);
+                blockDiv.innerHTML = blockItem.text;
+                palette.appendChild(blockDiv);
+            });
+
+            clearWorkspace();
+        }
+
         function startStoryEngine() {
             document.getElementById("menuPanel").classList.add("hidden");
             document.getElementById("gamePanel").classList.remove("hidden");
-            speakVoice("Let's build a script. Remember to start with a Hat block like the green flag!");
+            setupWorkspaceForTrack();
+            speakVoice("Let's build a script. Match the stack sequences chronologically.");
+        }
+
+        function exitToMenu() {
+            stopLoops();
+            document.getElementById("gamePanel").classList.add("hidden");
+            document.getElementById("reportPanel").classList.add("hidden");
+            document.getElementById("menuPanel").classList.remove("hidden");
+            speakVoice("Returned to main mission directory.");
         }
 
         function addBlockToWorkspace(blockId) {
             if (isRunning) return;
             if (assembledBlocks.includes(blockId)) {
-                speakVoice("This block is already in your script workspace!");
+                speakVoice("This block is already placed inside your script editor!");
                 return;
             }
 
+            const config = trackProfiles[currentTrack];
             assembledBlocks.push(blockId);
             document.getElementById("workspaceHint").classList.add("hidden");
 
-            // Render block visually inside script window
+            // Visual Append Node
             const workspace = document.getElementById("workspace");
             const newBlock = document.createElement("div");
-            newBlock.className = `scratch-block ${blockDetails[blockId].className}`;
-            newBlock.innerText = blockDetails[blockId].text;
-            newBlock.style.width = "90%";
+            newBlock.className = `scratch-block ${config.blocks[blockId].className}`;
+            newBlock.innerText = config.blocks[blockId].text;
+            newBlock.style.width = "95%";
             workspace.appendChild(newBlock);
 
-            speakVoice(`Added ${blockDetails[blockId].text}`);
+            speakVoice(`Added ${config.blocks[blockId].text}`);
         }
 
         function clearWorkspace() {
             if (isRunning) return;
+            stopLoops();
             assembledBlocks = [];
             const workspace = document.getElementById("workspace");
             workspace.innerHTML = '<div class="workspace-empty-hint" id="workspaceHint">Click blocks on the left to build your script here!</div>';
             
-            // Reset character positions
-            const cat = document.getElementById("catSprite");
+            const sprite = document.getElementById("primarySprite");
             const bubble = document.getElementById("spriteBubble");
-            cat.style.left = "20px";
-            cat.style.transform = "scaleX(1)";
+            
+            sprite.style.left = "20px";
+            sprite.style.bottom = "30px";
+            sprite.style.transform = "scaleX(1)";
+            sprite.style.animation = "none";
+            sprite.style.filter = "none";
+            sprite.style.opacity = "1";
+            
             bubble.style.opacity = "0";
             bubble.style.left = "15px";
+            bubble.style.bottom = "115px";
 
             document.getElementById("tickerBox").className = "ticker-feedback";
-            document.getElementById("tickerBox").innerText = "Workspace cleared! Choose your layout blocks.";
-            speakVoice("Workspace cleared.");
+            document.getElementById("tickerBox").innerText = "Workspace cleared! Select tracking variables.";
+        }
+
+        function stopLoops() {
+            if (loopAnimationInterval) {
+                clearInterval(loopAnimationInterval);
+                loopAnimationInterval = null;
+            }
         }
 
         function runAssembledScript() {
             if (isRunning) return;
+            const config = trackProfiles[currentTrack];
+
             if (assembledBlocks.length === 0) {
-                speakVoice("Your workspace is empty! Click blocks to create a script first.");
+                speakVoice("Your workspace viewport is empty!");
                 return;
             }
 
             isRunning = true;
             const feedbackBox = document.getElementById("tickerBox");
 
-            // Evaluate chronological correctness of code logic setup
+            // Compute alignment validation matrix
             let pathsValid = true;
-            if (assembledBlocks.length !== correctOrder.length) {
+            if (assembledBlocks.length !== config.correctOrder.length) {
                 pathsValid = false;
             } else {
-                for (let i = 0; i < correctOrder.length; i++) {
-                    if (assembledBlocks[i] !== correctOrder[i]) {
+                for (let i = 0; i < config.correctOrder.length; i++) {
+                    if (assembledBlocks[i] !== config.correctOrder[i]) {
                         pathsValid = false;
                         break;
                     }
@@ -480,51 +648,91 @@
             if (!pathsValid) {
                 try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
                 feedbackBox.className = "ticker-feedback bad";
-                feedbackBox.innerHTML = "💥 CODE ERROR! The logic sequence is scrambled. Remember: Start with the <b>Green Flag</b>, then <b>Move</b>, then <b>Say Hello</b>, then <b>Turn</b>!";
-                speakVoice("Oh no, code error. Look at the order of your programming blocks and try again.");
+                feedbackBox.innerHTML = `💥 EXECUTION FAULT! Scrambled logic array sequence. Order required: <br><b>${config.correctOrder.map(k => config.blocks[k].text.split('(')[0]).join(' ➜ ')}</b>`;
+                speakVoice("Compile sequence failure. Inspect the logic order parameters.");
                 isRunning = false;
                 return;
             }
 
-            // Execute Live Automation Story Animations Step-by-Step
+            // Success Track Router Runtime execution logic maps
             try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
             feedbackBox.className = "ticker-feedback good";
-            feedbackBox.innerHTML = "🚀 SUCCESS! Script executing step-by-step...";
+            feedbackBox.innerHTML = "🚀 RUNTIME STABLE! Compiling logical threads step-by-step...";
             
-            const cat = document.getElementById("catSprite");
+            const sprite = document.getElementById("primarySprite");
             const bubble = document.getElementById("spriteBubble");
 
-            // Step 1: Move forward
-            setTimeout(() => {
-                cat.style.left = "150px";
-                bubble.style.left = "145px";
-                speakVoice("Moving forward one-hundred steps!");
-            }, 500);
+            if (currentTrack === 'intro') {
+                // Track 1 Animation Sequence
+                setTimeout(() => {
+                    sprite.style.left = "150px";
+                    bubble.style.left = "145px";
+                    speakVoice("Moving forward one-hundred steps!");
+                }, 500);
 
-            // Step 2: Display Speech Text Window
-            setTimeout(() => {
-                bubble.innerText = "Hello!";
-                bubble.style.opacity = "1";
-                speakVoice("Hello!");
-            }, 1500);
+                setTimeout(() => {
+                    bubble.innerText = "Hello!";
+                    bubble.style.opacity = "1";
+                    speakVoice("Hello!");
+                }, 1500);
 
-            // Step 3: Turn Action Completed
-            setTimeout(() => {
-                bubble.style.opacity = "0";
-                cat.style.transform = "scaleX(-1)"; // Face alternative direction
-                speakVoice("Turning around 180 degrees.");
-            }, 3500);
+                setTimeout(() => {
+                    bubble.style.opacity = "0";
+                    sprite.style.transform = "scaleX(-1)";
+                    speakVoice("Spinning coordinate frame transformation 180 degrees.");
+                }, 3500);
 
-            // Step 4: Show Audit Screen Finish Window
-            setTimeout(() => {
-                try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
-                document.getElementById("gamePanel").classList.add("hidden");
-                document.getElementById("reportPanel").classList.remove("hidden");
-                
-                const summary = "Fantastic! You successfully simulated an introduction block sequence under Grade 3 guidelines. You understand how the events tab interacts with motion and look components!";
-                document.getElementById("finalSummary").innerText = summary;
-                speakVoice("Mission successful! You are an expert Scratch coder.");
-            }, 5000);
+                setTimeout(() => { showMetricsDashboard(config.successMsg); }, 5500);
+
+            } else if (currentTrack === 'ocean') {
+                // Track 2 Forever Animation Sequence
+                setTimeout(() => {
+                    sprite.style.bottom = "10px";
+                    bubble.style.bottom = "95px";
+                    speakVoice("Changing Y projection vector. Diving down!");
+                }, 600);
+
+                setTimeout(() => {
+                    speakVoice("Entering nested forever cycle loops. Initiating graphic rendering filter modifications.");
+                    feedbackBox.innerHTML = "🔄 FOREVER LOOP ACTIVE: Executing appearance parameters continuously!";
+                    sprite.style.animation = "colorShift 3s linear infinite";
+                }, 1800);
+
+                setTimeout(() => { showMetricsDashboard(config.successMsg); }, 6000);
+
+            } else if (currentTrack === 'haunted') {
+                // Track 3 Forever Structural Visibility Sequence
+                setTimeout(() => {
+                    speakVoice("Activating execution block frame. Initializing vanishing parameters inside loop.");
+                    feedbackBox.innerHTML = "🔄 FOREVER LOOP ACTIVE: Compiling binary state transformations.";
+                    
+                    let toggleState = true;
+                    loopAnimationInterval = setInterval(() => {
+                        if(toggleState) {
+                            sprite.style.opacity = "0.1";
+                            bubble.innerText = "Boo! Hiding...";
+                            bubble.style.opacity = "1";
+                        } else {
+                            sprite.style.opacity = "0.9";
+                            bubble.innerText = "Aha! Showing!";
+                            bubble.style.opacity = "1";
+                        }
+                        toggleState = !toggleState;
+                    }, 1200);
+                }, 800);
+
+                setTimeout(() => { showMetricsDashboard(config.successMsg); }, 6500);
+            }
+        }
+
+        function showMetricsDashboard(summaryText) {
+            stopLoops();
+            try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+            document.getElementById("gamePanel").classList.add("hidden");
+            document.getElementById("reportPanel").classList.remove("hidden");
+            document.getElementById("finalSummary").innerText = summaryText;
+            speakVoice("Mission complete! Exceptional engineering structure design.");
+            isRunning = false;
         }
     </script>
 </body>

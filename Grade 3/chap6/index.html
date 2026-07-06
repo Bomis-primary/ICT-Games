@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Innovine Solutions - Table Cryptogram Matrix</title>
+    <title>Innovine Solutions - Pixel Grid Matrix</title>
     <style>
         :root {
             --brand-dark: #0f172a;
             --brand-crimson: #be123c;
             --brand-orange: #ea580c;
-            --table-a-header: #0369a1;
-            --table-b-header: #6d28d9;
+            --grid-border: #cbd5e1;
             --success: #10b981;
             --error: #ef4444;
         }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #f1f5f9;
             margin: 0;
             padding: 0;
@@ -44,38 +43,42 @@
         }
 
         .splash-logo {
-            max-width: 320px;
+            max-width: 340px;
             margin-bottom: 25px;
         }
 
         .splash-title {
             color: var(--brand-dark);
-            font-size: 2.4rem;
+            font-size: 2.2rem;
             font-weight: 800;
-            letter-spacing: 1px;
             margin: 5px 0;
             text-align: center;
         }
 
         .splash-subtitle {
             color: var(--brand-crimson);
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 20px;
+            letter-spacing: 4px;
+            margin-bottom: 25px;
         }
 
         .start-gate-btn {
             background: var(--brand-crimson);
             color: white;
             border: none;
-            padding: 15px 40px;
+            padding: 16px 45px;
             font-size: 1.2rem;
             font-weight: bold;
             border-radius: 30px;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(190, 18, 60, 0.3);
+            box-shadow: 0 4px 12px rgba(190, 18, 60, 0.3);
+            transition: transform 0.2s;
+        }
+
+        .start-gate-btn:hover {
+            transform: scale(1.05);
         }
 
         .progress-container {
@@ -96,11 +99,11 @@
 
         @keyframes startLoading { to { width: 100%; } }
 
-        /* --- STAGE 2: MAIN INTERFACE --- */
+        /* --- STAGE 2: MAIN GAME CONTAINER --- */
         #game-container {
             display: none;
             width: 95%;
-            max-width: 1100px;
+            max-width: 1150px;
             background: #ffffff;
             box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
             border-radius: 12px;
@@ -114,12 +117,11 @@
             justify-content: space-between;
             align-items: center;
             padding: 20px 35px;
-            background: #ffffff;
             border-bottom: 1px solid #e2e8f0;
         }
 
         .header-logo {
-            height: 40px;
+            height: 42px;
         }
 
         .page-marker {
@@ -147,68 +149,112 @@
 
         .workspace-layout {
             display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 30px;
+            grid-template-columns: 1.1fr 1fr;
+            gap: 40px;
             align-items: start;
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 950px) {
             .workspace-layout { grid-template-columns: 1fr; }
         }
 
-        .crypt-table {
+        /* --- INTERACTIVE PIXEL GRID MATRIX (TABLE A) --- */
+        .pixel-table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 0;
+            border-spacing: 4px;
+        }
+
+        .pixel-table th {
+            background: #0284c7;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .rule-cell {
+            background: #f1f5f9;
+            padding: 10px;
+            font-weight: 600;
+            color: #334155;
+            border-radius: 6px;
+            text-align: left;
+            font-size: 0.95rem;
+        }
+
+        .pixel-node {
+            width: 45px;
+            height: 45px;
+            background: #e2e8f0;
+            border: 1px solid var(--grid-border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .pixel-node:hover {
+            background: #cbd5e1;
+            transform: scale(1.05);
+        }
+
+        /* Node Activated State */
+        .pixel-node.active {
+            background: var(--brand-dark);
+            border-color: var(--brand-dark);
+            box-shadow: inset 0 0 8px rgba(255,255,255,0.3);
+        }
+
+        /* --- CIPHER SEQUENCE SELECTOR (TABLE B) --- */
+        .cipher-table {
+            width: 100%;
+            border-collapse: collapse;
             border-radius: 8px;
             overflow: hidden;
             border: 1px solid #cbd5e1;
         }
 
-        .crypt-table th {
+        .cipher-table th {
+            background: #7c3aed;
             color: white;
             padding: 14px;
-            font-weight: 600;
         }
 
-        .table-a-style th { background: var(--table-a-header); }
-        .table-b-style th { background: var(--table-b-header); }
-
-        .crypt-table td {
-            padding: 14px;
-            background: #ffffff;
+        .cipher-table td {
+            padding: 15px;
             border-bottom: 1px solid #e2e8f0;
             text-align: center;
-            font-weight: 600;
         }
 
-        .grid-input {
-            width: 70px;
-            padding: 8px;
+        .select-input {
+            width: 85%;
+            padding: 10px;
             border: 2px solid #cbd5e1;
             border-radius: 6px;
-            text-align: center;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 700;
+            color: var(--brand-dark);
+            background: #ffffff;
+            cursor: pointer;
         }
 
-        .input-correct {
+        .select-input:focus {
+            border-color: var(--brand-orange);
+            outline: none;
+        }
+
+        /* Result validation states */
+        .status-correct {
             border-color: var(--success) !important;
             background-color: #d1fae5 !important;
             color: #065f46 !important;
         }
 
-        .input-wrong {
+        .status-wrong {
             border-color: var(--error) !important;
             background-color: #fee2e2 !important;
             color: #991b1b !important;
-        }
-
-        .key-reveal {
-            font-size: 1.2rem;
-            color: var(--brand-orange);
-            font-weight: 800;
-            visibility: hidden;
+            animation: bounceShake 0.3s ease-in-out;
         }
 
         .control-footer {
@@ -223,16 +269,18 @@
             background: var(--brand-crimson);
             color: white;
             border: none;
-            padding: 14px 32px;
+            padding: 14px 35px;
             font-size: 1rem;
             font-weight: 700;
             border-radius: 6px;
             cursor: pointer;
         }
 
+        .action-btn:hover { background: #9f1239; }
+
         #report-screen {
             text-align: center;
-            padding: 40px 20px;
+            padding: 50px 20px;
         }
 
         #confetti-canvas {
@@ -244,17 +292,23 @@
             pointer-events: none;
             z-index: 10000;
         }
+
+        @keyframes bounceShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
     </style>
 </head>
 <body>
 
-    <canvas id="confetti-canvas"></canvas>
 
     <div id="splash-screen">
-        <img src="assets/innovine_logo.png" class="splash-logo" alt="Innovine Logo" onerror="this.src='https://i.ibb.co/6wXGZ0W/image-611301.png'">
-        <div class="splash-subtitle">System Table Engine</div>
+        <img src="assets/innovine-logo.png" class="splash-logo" alt="Innovine Logo" onerror="this.src='https://i.ibb.co/6wXGZ0W/image-611301.png'">
+        <div class="splash-title">Chapter 6: Visual Pattern Decoder</div>
+        <div class="splash-subtitle">Matrix Learning Engine</div>
         
-        <button id="start-gate" class="start-gate-btn" onclick="engageGameEngine()">Start Game Engine</button>
+        <button id="start-gate" class="start-gate-btn" onclick="startIntroSequence()">Initialize Chapter 57</button>
         
         <div class="progress-container" id="loader-box">
             <div class="progress-bar" id="loader-fill"></div>
@@ -263,46 +317,83 @@
 
     <div id="game-container">
         <div class="header-strip">
-            <img src="assets/innovine_logo.png" class="header-logo" alt="Innovine" onerror="this.src='https://i.ibb.co/6wXGZ0W/image-611301.png'">
-                </div>
+            <img src="assets/innovine-logo.png" class="header-logo" alt="Innovine Solutions" onerror="this.src='https://i.ibb.co/6wXGZ0W/image-611301.png'">
+            
+        </div>
 
         <div class="game-viewport" id="active-game-view">
             <div class="instruction-card">
-                <strong>How to Play:</strong> Solve the mathematical formulas in <strong>Table A</strong>. Entering a correct value instantly unlocks a cipher letter. Type those matching letters into <strong>Table B</strong> to crack the message!
+                <strong>Activity Directions:</strong> Read the pattern requirements inside <strong>Table A</strong>. Click the empty grid nodes to turn them dark and map out the binary lines. Once Table A matches the logic rules perfectly, select the matching character identities inside <strong>Table B</strong> to compile your master response.
             </div>
 
             <div class="workspace-layout">
-                <div class="table-wrapper">
-                    <h3 style="color: var(--table-a-header);">📊 Table A: Math Input Core</h3>
-                    <table class="crypt-table table-a-style">
+                <div>
+                    <h3 style="color: #0284c7; margin-top: 0;">🎛️ Table A: Pattern Generation Matrix</h3>
+                    <table class="pixel-table">
                         <thead>
-                            <tr><th>Logic Puzzle</th><th>Your Value</th><th>Key Unlocked</th></tr>
+                            <tr>
+                                <th style="width: 45%;">Row Rules Logic</th>
+                                <th colspan="4">Binary Grid Array Cells</th>
+                            </tr>
                         </thead>
                         <tbody>
-                            <tr><td>15 × 4 - 18 = ?</td><td><input type="number" class="grid-input target-math" data-ans="42" data-key="key-k1"></td><td><span class="key-reveal" id="key-k1">I</span></td></tr>
-                            <tr><td>√144 + 13 = ?</td><td><input type="number" class="grid-input target-math" data-ans="25" data-key="key-k2"></td><td><span class="key-reveal" id="key-k2">N</span></td></tr>
-                            <tr><td>(9 × 9) - 72 = ?</td><td><input type="number" class="grid-input target-math" data-ans="9" data-key="key-k3"></td><td><span class="key-reveal" id="key-k3">O</span></td></tr>
-                            <tr><td>120 ÷ 5 + 6 = ?</td><td><input type="number" class="grid-input target-math" data-ans="30" data-key="key-k4"></td><td><span class="key-reveal" id="key-k4">V</span></td></tr>
-                            <tr><td>7² - 44 = ?</td><td><input type="number" class="grid-input target-math" data-ans="5" data-key="key-k5"></td><td><span class="key-reveal" id="key-k5">E</span></td></tr>
+                            <tr class="pixel-row" data-pattern="1,0,1,0">
+                                <td class="rule-cell">Activate Nodes 1 and 3</td>
+                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
+                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
+                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
+                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
+                            </tr>
+                            <tr class="pixel-row" data-pattern="0,1,1,0">
+                                <td class="rule-cell">Activate Middle Two Nodes</td>
+                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
+                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
+                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
+                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
+                            </tr>
+                            <tr class="pixel-row" data-pattern="1,1,1,1">
+                                <td class="rule-cell">Activate Entire Target Axis</td>
+                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
+                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
+                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
+                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
 
-                <div class="table-wrapper">
-                    <h3 style="color: var(--table-b-header);">🔐 Table B: Cipher Decryption Array</h3>
-                    <table class="crypt-table table-b-style">
+                <div>
+                    <h3 style="color: #7c3aed; margin-top: 0;">🔏 Table B: Key Identity Translation</h3>
+                    <table class="cipher-table">
                         <thead>
-                            <tr><th>Cipher Key Value</th><th>Decoded Character Input</th></tr>
+                            <tr>
+                                <th>Target Memory Index</th>
+                                <th>Assigned Matrix Character Selector</th>
+                            </tr>
                         </thead>
                         <tbody>
-                            <tr><td>Result [42]</td><td><input type="text" maxlength="1" class="grid-input target-letter" data-ans="I"></td></tr>
-                            <tr><td>Result [25]</td><td><input type="text" maxlength="1" class="grid-input target-letter" data-ans="N"></td></tr>
-                            <tr><td>Result [25]</td><td><input type="text" maxlength="1" class="grid-input target-letter" data-ans="N"></td></tr>
-                            <tr><td>Result [9]</td><td><input type="text" maxlength="1" class="grid-input target-letter" data-ans="O"></td></tr>
-                            <tr><td>Result [30]</td><td><input type="text" maxlength="1" class="grid-input target-letter" data-ans="V"></td></tr>
-                            <tr><td>Result [42]</td><td><input type="text" maxlength="1" class="grid-input target-letter" data-ans="I"></td></tr>
-                            <tr><td>Result [25]</td><td><input type="text" maxlength="1" class="grid-input target-letter" data-ans="N"></td></tr>
-                            <tr><td>Result [5]</td><td><input type="text" maxlength="1" class="grid-input target-letter" data-ans="E"></td></tr>
+                            <tr>
+                                <td>Node Stream Element #01</td>
+                                <td>
+                                    <select class="select-input verification-target" data-ans="I">
+                                        <option value="">-- Choose Key --</option>
+                                        <option value="A">Alpha [A]</option>
+                                        <option value="I">Innovine Core [I]</option>
+                                        <option value="X">Matrix Element [X]</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Node Stream Element #02</td>
+                                <td>
+                                    <select class="select-input verification-target" data-ans="N">
+                                        <option value="">-- Choose Key --</option>
+                                        <option value="N">Network Node [N]</option>
+                                        <option value="Z">Zero Field [Z]</option>
+                                        <option value="M">Metric Block [M]</option>
+                                    </select>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -310,122 +401,154 @@
         </div>
 
         <div class="game-viewport" id="report-screen" style="display: none;">
-            <h1 style="color: var(--success); font-size: 3rem;">🏆 Congratulations!</h1>
+            <div style="font-size: 4.5rem; color: var(--success); margin-bottom: 15px;">🏆</div>
+            <h2>Page 68: Master Performance Ledger</h2>
+            <p style="font-size: 1.2rem; color: #4b5563;">Activity Arrays Successfully Synchronized. Your validation sequence matches all criteria blocks perfectly.</p>
+            <div style="margin-top: 35px; display: inline-block; background: #f8fafc; border: 2px dashed var(--success); padding: 20px 50px; border-radius: 8px;">
+                <span style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 2px;">Identity Clearance Verified By</span>
+                <h2 style="color: var(--brand-dark); margin: 5px 0 0 0; letter-spacing: 1px;">INNOVINE SOLUTIONS</h2>
+            </div>
         </div>
 
         <div class="control-footer">
-            <button class="action-btn" id="master-action-btn" onclick="processEngineValidation()">Verify System Entries</button>
+            <button class="action-btn" id="master-action-btn" onclick="validateMatrixState()">Run Verification Sequence</button>
         </div>
     </div>
 
-    <audio id="snd-intro" src="assets/intro_sound.mp3" preload="auto"></audio>
-    <audio id="snd-clap" src="assets/clap_sound.mp3" preload="auto"></audio>
-    <audio id="snd-wrong" src="assets/wrong_sound.mp3" preload="auto"></audio>
+    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audio-clap" src="assets/clap.mp3" preload="auto"></audio>
+    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <script>
-        function engageGameEngine() {
-            // Hide the click gate, reveal loading process bar
+        function startIntroSequence() {
+            // Activate screen loading progression layouts
             document.getElementById('start-gate').style.display = 'none';
             document.getElementById('loader-box').style.display = 'block';
             document.getElementById('loader-fill').style.animation = 'startLoading 5s linear forwards';
             
-            // Force play audio tracking immediately upon click acceptance parameters
-            executeSoundAsset('snd-intro');
+            // Fire welcome validation ding if available
+            playTrackAsset('audio-correct');
 
-            // Countdown sequence timeout to trigger active viewport
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
-                const coreGame = document.getElementById('game-container');
+                const appMain = document.getElementById('game-container');
                 splash.style.opacity = '0';
                 setTimeout(() => {
                     splash.style.display = 'none';
-                    coreGame.style.display = 'block';
+                    appMain.style.display = 'block';
                 }, 600);
             }, 5000);
         }
 
-        function processEngineValidation() {
-            let mathInputs = document.querySelectorAll('.target-math');
-            let letterInputs = document.querySelectorAll('.target-letter');
-            let completeSuccess = true;
-            let errorFlag = false;
+        function toggleNode(nodeElement) {
+            nodeElement.classList.toggle('active');
+        }
 
-            mathInputs.forEach(input => {
-                const targetedAnswer = input.getAttribute('data-ans');
-                const userVal = input.value.trim();
-                const keyBind = input.getAttribute('data-key');
-                const keyElement = document.getElementById(keyBind);
+        function validateMatrixState() {
+            let matchesAllCriteria = true;
+            let playedErrorThisTurn = false;
 
-                if (userVal === targetedAnswer) {
-                    input.className = "grid-input target-math input-correct";
-                    keyElement.style.visibility = "visible";
-                } else if(userVal !== "") {
-                    input.className = "grid-input target-math input-wrong";
-                    completeSuccess = false;
-                    errorFlag = true;
-                } else { completeSuccess = false; }
+            // 1. Evaluate Table A Pixel Grid States
+            const structuralRows = document.querySelectorAll('.pixel-row');
+            structuralRows.forEach(row => {
+                const expectedPattern = row.getAttribute('data-pattern').split(',');
+                const individualNodes = row.querySelectorAll('.pixel-node');
+                
+                individualNodes.forEach((node, index) => {
+                    const shouldBeActive = expectedPattern[index] === "1";
+                    const currentlyActive = node.classList.contains('active');
+
+                    if (shouldBeActive !== currentlyActive) {
+                        matchesAllCriteria = false;
+                        node.style.borderColor = "var(--error)";
+                        setTimeout(() => node.style.borderColor = "var(--grid-border)", 1000);
+                    }
+                });
             });
 
-            letterInputs.forEach(input => {
-                const targetedLetter = input.getAttribute('data-ans').toLowerCase();
-                const userVal = input.value.trim().toLowerCase();
+            // 2. Evaluate Table B Dropdown Select Elements
+            const selectors = document.querySelectorAll('.verification-target');
+            selectors.forEach(select => {
+                const targetedAnswer = select.getAttribute('data-ans');
+                const selectedValue = select.value;
 
-                if (userVal === targetedLetter) {
-                    input.className = "grid-input input-correct";
-                } else if(userVal !== "") {
-                    input.className = "grid-input input-wrong";
-                    completeSuccess = false;
-                    errorFlag = true;
-                } else { completeSuccess = false; }
+                if (selectedValue === targetedAnswer) {
+                    select.className = "select-input verification-target status-correct";
+                } else {
+                    select.className = "select-input verification-target status-wrong";
+                    matchesAllCriteria = false;
+                    playedErrorThisTurn = true;
+                }
             });
 
-            if (errorFlag) {
-                executeSoundAsset('snd-wrong');
+            // 3. Audio Router Resolution Processing Loops
+            if (!matchesAllCriteria) {
+                playTrackAsset('audio-wrong');
+                setTimeout(() => {
+                    document.querySelectorAll('.status-wrong').forEach(el => el.classList.remove('status-wrong'));
+                }, 400);
                 return;
             }
 
-            if (completeSuccess) {
-                executeSoundAsset('snd-clap');
-                launchConfettiBlast();
-                document.getElementById('active-game-view').style.display = 'none';
-                document.getElementById('report-screen').style.display = 'block';
-                document.getElementById('page-tag').innerText = "Page 68";
-                document.getElementById('master-action-btn').style.display = 'none';
-            }
+            // If completely right, trigger dual sound affirmation layer + confetti
+            playTrackAsset('audio-correct');
+            setTimeout(() => { playTrackAsset('audio-clap'); }, 400);
+            generateConfettiVfx();
+
+            // Swap standard visual layouts down to page 68 final terminal view
+            document.getElementById('active-game-view').style.display = 'none';
+            document.getElementById('report-screen').style.display = 'block';
+            document.getElementById('page-tag').innerText = "Page 68";
+            document.getElementById('master-action-btn').style.display = 'none';
         }
 
-        function executeSoundAsset(elementId) {
+        function playTrackAsset(elementId) {
             const track = document.getElementById(elementId);
             track.currentTime = 0;
-            track.play().catch(err => console.log("Audio skipped due to browser safety rules:", err));
+            track.play().catch(e => console.log("Audio track dynamic execution deferred:", e));
         }
 
-        function launchConfettiBlast() {
+        function generateConfettiVfx() {
             const canvas = document.getElementById('confetti-canvas');
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            let systemParticles = [];
-            for (let idx = 0; idx < 100; idx++) {
-                systemParticles.push({
-                    x: window.innerWidth / 2, y: window.innerHeight / 2,
-                    radius: Math.random() * 6 + 4,
-                    color: ['#0369a1', '#6d28d9', '#be123c'][Math.floor(Math.random() * 3)],
-                    speedX: (Math.random() - 0.5) * 15, speedY: (Math.random() - 0.5) * 15 - 3,
-                    alphaOpacity: 1
+
+            let particles = [];
+            const palette = ['#be123c', '#ea580c', '#10b981', '#0284c7', '#7c3aed'];
+
+            for (let i = 0; i < 120; i++) {
+                particles.push({
+                    x: window.innerWidth / 2,
+                    y: window.innerHeight / 2,
+                    radius: Math.random() * 5 + 4,
+                    color: palette[Math.floor(Math.random() * palette.length)],
+                    vx: (Math.random() - 0.5) * 16,
+                    vy: (Math.random() - 0.5) * 16 - 3,
+                    opacity: 1
                 });
             }
-            function frameLoopExecution() {
+
+            function loop() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
-                systemParticles.forEach((part, index) => {
-                    part.x += part.speedX; part.y += part.speedY; part.speedY += 0.2; part.alphaOpacity -= 0.015;
-                    ctx.beginPath(); ctx.arc(part.x, part.y, part.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = part.color; ctx.globalAlpha = part.alphaOpacity; ctx.fill();
-                    if (part.alphaOpacity <= 0) systemParticles.splice(index, 1);
+                particles.forEach((p, index) => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.2; // simulated light gravity axis pull
+                    p.opacity -= 0.012;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = p.color;
+                    ctx.globalAlpha = p.opacity;
+                    ctx.fill();
+
+                    if (p.opacity <= 0) particles.splice(index, 1);
                 });
-                if (systemParticles.length > 0) requestAnimationFrame(frameLoopExecution);
+
+                if (particles.length > 0) requestAnimationFrame(loop);
             }
-            frameLoopExecution();
+            loop();
         }
     </script>
 </body>

@@ -256,7 +256,7 @@
         
         <div id="menuPanel" class="intro-panel">
             <h1>MS Word: Table Architect</h1>
-            <div class="mode-badge">ICT Game Module MS Tables</div>
+            <div class="mode-badge">ICT Game Module • Grade 3 Tables</div>
             
             <div class="briefing">
                 <p style="font-weight: 800; margin-bottom: 12px; color: var(--slate-dark); font-size: 1.1rem;">How to Construct Tables:</p>
@@ -264,7 +264,7 @@
                     <li>Analyze the specific <strong>Target Table Blueprint</strong> requirements presented on screen.</li>
                     <li>Hover and select cells inside the Insertion Matrix to set your <strong>Rows</strong> and <strong>Columns</strong>.</li>
                     <li>Remember: <strong>Rows</strong> run horizontally (left to right) ↔️, and <strong>Columns</strong> stand vertically (top to bottom) ↕️.</li>
-                    <li>Successfully compile all 5 table assignments perfectly to earn your certified Architect Rank Badge!</li>
+                    <li>Successfully compile all 10 table assignments perfectly to earn your certified Architect Rank Badge!</li>
                 </ol>
             </div>
             <button class="act-btn" onclick="startTableArchitect()">Initialize Workbench ➜</button>
@@ -272,7 +272,7 @@
 
         <div id="gamePanel" class="hidden">
             <div class="hud">
-                <div class="hud-card">📋 Table Level: <span id="countHUD">1</span> / 5</div>
+                <div class="hud-card">📋 Table Level: <span id="countHUD">1</span> / 10</div>
                 <div class="hud-card" style="background: #edf2f7; color: var(--word-blue);">⭐ System Score: <span id="scoreHUD">0</span></div>
             </div>
 
@@ -305,19 +305,24 @@
     <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
 
     <script>
-        /* Precision core thread timer mapping - Clears splash exactly at 5000ms */
+        /* Core timer mapping - Clears splash exactly at 5000ms */
         setTimeout(() => {
             document.getElementById("splash").style.display = "none";
             document.getElementById("appMainframe").classList.remove("hidden");
         }, 5000);
 
-        /* Complete Grade 3 Dataset Array mapping row/column alignment principles */
+        /* Expanded Grade 3 Dataset Array mapping expanded to 10 distinct level items */
         const blueprintDatabase = [
             { label: "Create a Table with 2 Rows and 3 Columns", rows: 2, cols: 3, help: "Rows are horizontal lines ↔️, Columns are vertical structures ↕️." },
             { label: "Create a Table with 4 Rows and 2 Columns", rows: 4, cols: 2, help: "Columns stand tall up and down like pillars." },
             { label: "Insert a Square Grid with 3 Rows and 3 Columns", rows: 3, cols: 3, help: "An equal number of rows and columns creates a uniform grid map." },
             { label: "Insert a Single Column List: 5 Rows and 1 Column", rows: 5, cols: 1, help: "A single column setup builds a perfectly uniform vertical list layout." },
-            { label: "Construct a Wide Layout: 1 Row and 4 Columns", rows: 1, cols: 4, help: "One single horizontal row containing multiple cell subdivisions across." }
+            { label: "Construct a Wide Layout: 1 Row and 4 Columns", rows: 1, cols: 4, help: "One single horizontal row containing multiple cell subdivisions across." },
+            { label: "Build a Grid Layout with 2 Rows and 5 Columns", rows: 2, cols: 5, help: "Stretch your selection all the way to the 5th cell column horizontally." },
+            { label: "Create a Tall Grid with 5 Rows and 2 Columns", rows: 5, cols: 2, help: "Fill all 5 vertical rows down but only span 2 columns across." },
+            { label: "Design an Attendance Sheet: 4 Rows and 4 Columns", rows: 4, cols: 4, help: "Build a solid balance matrix layout using equal row and column dimensions." },
+            { label: "Construct a Minimal Header Form: 2 Rows and 2 Columns", rows: 2, cols: 2, help: "A compact grid consisting of simple side-by-side balanced content compartments." },
+            { label: "Insert a Massive 5 Rows and 5 Columns Master Grid", rows: 5, cols: 5, help: "Select the entire box grid array block from corner to corner!" }
         ];
 
         let dynamicTaskDeck = [];
@@ -326,6 +331,7 @@
         let interactiveLock = false;
 
         function startTableArchitect() {
+            // Randomize array to offer fresh layout order sequences across game loops
             dynamicTaskDeck = [...blueprintDatabase].sort(() => Math.random() - 0.5);
             currentLevelIndex = 0;
             cumulativeScore = 0;
@@ -407,7 +413,7 @@
             });
 
             if (isCorrectMatch) {
-                cumulativeScore += 200;
+                cumulativeScore += 100; // 100 points awarded per task target hit
                 try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
                 try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
                 
@@ -450,17 +456,17 @@
 
             let performanceRank = "";
             let evaluationSummaryText = "";
-            const scoringRatio = cumulativeScore / 1000;
+            const scoringRatio = cumulativeScore / 1000; // Perfect score across 10 levels is 1000
 
             if (scoringRatio >= 0.85) {
                 performanceRank = "🥇 Master Document Layout Architect";
-                evaluationSummaryText = "Incredible spatial recognition scores! You seamlessly parsed structural rows and vertical data columns without a single orientation alignment failure. You have completely mastered formatting tables in MS Word!";
+                evaluationSummaryText = "Incredible spatial recognition scores! You seamlessly parsed structural rows and vertical data columns across all 10 custom tasks without orientation alignment failures. You have completely mastered formatting tables in MS Word!";
             } else if (scoringRatio >= 0.55) {
                 performanceRank = "🥈 Senior Project Data Typist";
-                evaluationSummaryText = "Solid structural design run. Most data tables were successfully initialized. Just make sure to read row indicators and boundary paths carefully next time to secure an optimal score!";
+                evaluationSummaryText = "Solid structural design run across the expanded levels. Most data tables were successfully initialized. Just make sure to read row indicators and boundary paths carefully next time to secure an optimal score!";
             } else {
                 performanceRank = "🌱 Assistant Formatting Clerk";
-                evaluationSummaryText = "The MS Word workspace encountered layout anomalies! Remember that rows stretch from side to side ↔️, while columns stretch from top to bottom ↕️. Let's practice with another blank document layout project.";
+                evaluationSummaryText = "The MS Word workspace encountered table grid anomalies! Remember that rows stretch from side to side ↔️, while columns stretch from top to bottom ↕️. Let's practice with another blank document layout project.";
             }
 
             document.getElementById("finalRank").innerText = performanceRank;

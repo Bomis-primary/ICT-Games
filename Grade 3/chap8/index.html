@@ -165,15 +165,16 @@
         }
 
         .visual-display {
-            font-size: 2rem;
+            font-size: 1.5rem;
             margin: 15px 0;
-            letter-spacing: 4px;
+            letter-spacing: 2px;
             background: #ffffff;
             display: inline-block;
             padding: 10px 25px;
             border-radius: 8px;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
             border: 1px solid #e2e8f0;
+            white-space: pre-line;
         }
 
         /* --- INTERACTIVE OPTIONS LAYOUT --- */
@@ -189,7 +190,7 @@
             border: 2px solid #cbd5e1;
             padding: 18px;
             border-radius: 12px;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 600;
             color: var(--slate-dark);
             cursor: pointer;
@@ -198,6 +199,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            text-align: center;
         }
 
         .option-card:hover {
@@ -258,16 +260,20 @@
             border: 4px solid #ffffff;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
+
+        @media (max-width: 600px) {
+            .options-container {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- --- STAGE 1: EXCLUSIVE 5-SECOND LOGO SPLASH SCREEN --- -->
     <div id="splash">
         <img src="assets/innovine-logo.png" alt="Innovine Logo">
     </div>
 
-    <!-- --- STAGE 2: MAIN CONTAINER FRAME --- -->
     <div class="container hidden" id="appMainframe">
         
         <div id="menuPanel" class="intro-panel">
@@ -278,7 +284,7 @@
                 <p style="font-weight: 800; margin-bottom: 12px; color: var(--slate-dark); font-size: 1.1rem;">Quest Regulations:</p>
                 <ol>
                     <li>Read each **Logical Thinking Blueprint** question carefully.</li>
-                    <li>Analyze patterns, sequences, and clever relationships.</li>
+                    <li>Analyze patterns, sequences, and systematic algorithmic steps.</li>
                     <li>Click on the best matching answer card from the options below.</li>
                     <li>Achieve high scores to earn your master **Logic Explorer Badge**!</li>
                 </ol>
@@ -288,14 +294,14 @@
 
         <div id="gamePanel" class="hidden">
             <div class="hud">
-                <div class="hud-card">🧩 Puzzle: <span id="countHUD">1</span> / 6</div>
+                <div class="hud-card">🧩 Puzzle: <span id="countHUD">1</span> / <span id="totalHUD">10</span></div>
                 <div class="hud-card" style="background: #f5f3ff; color: var(--logic-purple);">⭐ Logic Score: <span id="scoreHUD">0</span></div>
             </div>
 
             <div class="target-blueprint-zone">
                 <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 1px; margin-bottom: 5px;">Brain Blueprint:</div>
                 <div class="blueprint-title" id="blueprintText">Loading logical scenario vectors...</div>
-                <div class="visual-display id="visualContainer" id="visualContent"></div>
+                <div class="visual-display" id="visualContent"></div>
             </div>
             
             <div class="options-container" id="choicesGrid"></div>
@@ -312,7 +318,6 @@
         </div>
     </div>
 
-    <!-- Audio channels mapped directly to asset directory definitions -->
     <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
     <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
@@ -324,7 +329,7 @@
             document.getElementById("appMainframe").classList.remove("hidden");
         }, 5000);
 
-        /* Grade 3 Logical Thinking Database Array Mapping */
+        /* Grade 3 Logical Thinking & Algorithmic Database Array Mapping */
         const logicDatabase = [
             {
                 question: "Look at the pattern. Which item comes next in this loop?",
@@ -361,6 +366,36 @@
                 visual: "☀️ 🌳 🌙 ?",
                 options: ["To the left", "To the right", "Nowhere (It disappears)", "Underneath"],
                 answer: "Nowhere (It disappears)"
+            },
+            /* --- NEW ALGORITHMIC & STEP-BASED LOGICAL QUESTIONS --- */
+            {
+                question: "Arrange the algorithmic steps to make a bowl of cereal in the correct logical order:",
+                visual: "A. Pour milk into the bowl\nB. Get a bowl, spoon, cereal, and milk\nC. Eat and enjoy\nD. Pour cereal into the bowl",
+                options: ["B → D → A → C", "A → B → D → C", "B → A → C → D", "D → A → B → C"],
+                answer: "B → D → A → C"
+            },
+            {
+                question: "A robot needs to plant a seed. Help sort its code instructions into the right sequence:",
+                visual: "1. Drop the seed inside\n2. Dig a small hole in the dirt\n3. Cover the hole with soil\n4. Water the soil",
+                options: ["2 → 1 → 3 → 4", "1 → 2 → 3 → 4", "2 → 3 → 1 → 4", "4 → 2 → 1 → 3"],
+                answer: "2 → 1 → 3 → 4"
+            },
+            {
+                question: "If a secret code turns 'CAT' into 'DBU' by moving each letter forward by 1 step, what does 'DOG' turn into?",
+                visual: "C (+1) -> D | A (+1) -> B | T (+1) -> U\nDOG -> ?",
+                options: ["EPH", "EOF", "CNF", "FPH"],
+                answer: "EPH"
+            },
+            {
+                question: "Which conditional rule statement accurately matches the light switch scenario below?",
+                visual: "When room is DARK ➜ Flip switch ON ➜ Light turns ON\nWhen room is BRIGHT ➜ Do nothing",
+                options: [
+                    "IF room is dark, THEN turn switch ON", 
+                    "IF room is bright, THEN turn switch ON", 
+                    "IF light turns ON, THEN room is bright", 
+                    "ALWAYS turn switch ON"
+                ],
+                answer: "IF room is dark, THEN turn switch ON"
             }
         ];
 
@@ -375,6 +410,7 @@
             cumulativeScore = 0;
             controlLock = false;
 
+            document.getElementById("totalHUD").innerText = challengeDeck.length;
             document.getElementById("menuPanel").classList.add("hidden");
             document.getElementById("gamePanel").classList.remove("hidden");
             
@@ -388,11 +424,9 @@
             document.getElementById("countHUD").innerText = currentIndex + 1;
             document.getElementById("blueprintText").innerText = currentItem.question;
             
-            // Render visual representations helper container
-            const displayBox = document.querySelector(".visual-display");
+            const displayBox = document.getElementById("visualContent");
             displayBox.innerText = currentItem.visual;
 
-            // Render choice option cards array
             const choiceGrid = document.getElementById("choicesGrid");
             choiceGrid.innerHTML = "";
             
@@ -428,7 +462,6 @@
                 
                 try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
                 
-                // Highlight real correct option visually for learning feedback
                 const cards = document.querySelectorAll(".option-card");
                 cards.forEach(c => {
                     if(c.innerText === currentItem.answer) c.classList.add("selected-correct");
@@ -458,17 +491,18 @@
 
             let performanceBadge = "";
             let summaryInsight = "";
-            const computationRatio = cumulativeScore / 600; // 600 is absolute maximum score
+            const maxPossibleScore = challengeDeck.length * 100;
+            const computationRatio = cumulativeScore / maxPossibleScore;
 
             if (computationRatio >= 0.80) {
                 performanceBadge = "🥇 Grandmaster Logic Sage";
-                summaryInsight = "Outstanding spatial and algorithmic reasoning vectors! You successfully analyzed patterns, conditional relations, and oddities perfectly. Your cognitive framework operates at an advanced tier.";
+                summaryInsight = "Outstanding spatial and algorithmic reasoning vectors! You successfully analyzed code steps, conditional relations, patterns, and logic flows perfectly.";
             } else if (computationRatio >= 0.50) {
                 performanceBadge = "🥈 Analytical Mind Investigator";
-                summaryInsight = "Great computational performance metrics! Most relational connections were successfully identified. Continued pattern observation will cement master status.";
+                summaryInsight = "Great computational performance metrics! Most sequential step structures and relational connections were successfully identified.";
             } else {
                 performanceBadge = "🌱 Aspiring Logic Cadet";
-                summaryInsight = "Cognitive paths encountered some logical deadlocks. Remember to step through your deduction blocks one variable at a time! Let's rerun the framework to build up your speed.";
+                summaryInsight = "Cognitive paths encountered some logical deadlocks. Breaking problems down step-by-step will optimize your performance loops. Let's practice again!";
             }
 
             document.getElementById("finalRank").innerText = performanceBadge;

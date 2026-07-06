@@ -3,31 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Innovine Solutions - Pixel Grid Matrix</title>
+    <title>Innovine Solutions - MS Word Table Architect</title>
     <style>
         :root {
-            --brand-dark: #0f172a;
-            --brand-crimson: #be123c;
-            --brand-orange: #ea580c;
-            --grid-border: #cbd5e1;
+            --bg-canvas: #f8fafc;
+            --word-blue: #2b579a; /* Microsoft Word Corporate Blue */
+            --accent-gold: #f59e0b;
+            --slate-dark: #1e293b;
             --success: #10b981;
             --error: #ef4444;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f1f5f9;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            overflow-x: hidden;
+            background: var(--bg-canvas);
+            padding: 15px;
+            user-select: none;
         }
 
-        /* --- STAGE 1: 5-SECOND INTRO SPLASH --- */
-        #splash-screen {
+        /* --- STAGE 1: EXCLUSIVE 5-SECOND LOGO SPLASH SCREEN --- */
+        #splash {
             position: fixed;
             top: 0;
             left: 0;
@@ -35,520 +40,431 @@
             height: 100%;
             background: #ffffff;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.6s ease-out;
         }
 
-        .splash-logo {
-            max-width: 340px;
-            margin-bottom: 25px;
+        #splash img {
+            width: 320px;
+            max-width: 85%;
+            animation: elegantPulse 2.5s infinite ease-in-out;
         }
 
-        .splash-title {
-            color: var(--brand-dark);
-            font-size: 2.2rem;
-            font-weight: 800;
-            margin: 5px 0;
-            text-align: center;
+        @keyframes elegantPulse {
+            0%, 100% { transform: scale(1); opacity: 0.95; }
+            50% { transform: scale(1.04); opacity: 1; }
         }
 
-        .splash-subtitle {
-            color: var(--brand-crimson);
-            font-size: 1.2rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            margin-bottom: 25px;
-        }
-
-        .start-gate-btn {
-            background: var(--brand-crimson);
-            color: white;
-            border: none;
-            padding: 16px 45px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 30px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(190, 18, 60, 0.3);
-            transition: transform 0.2s;
-        }
-
-        .start-gate-btn:hover {
-            transform: scale(1.05);
-        }
-
-        .progress-container {
-            display: none;
-            width: 300px;
-            height: 6px;
-            background: #e2e8f0;
-            border-radius: 3px;
-            margin-top: 35px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            width: 0%;
-            height: 100%;
-            background: linear-gradient(90deg, var(--brand-crimson), var(--brand-orange));
-        }
-
-        @keyframes startLoading { to { width: 100%; } }
-
-        /* --- STAGE 2: MAIN GAME CONTAINER --- */
-        #game-container {
-            display: none;
-            width: 95%;
-            max-width: 1150px;
+        /* --- STAGE 2: MAIN WORKBOOK CONTAINER FRAME --- */
+        .container {
+            width: 100%;
+            max-width: 900px;
             background: #ffffff;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.15);
-            border-radius: 12px;
-            overflow: hidden;
-            border-top: 8px solid var(--brand-crimson);
-            margin: 20px;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            border-top: 10px solid var(--word-blue);
         }
 
-        .header-strip {
+        .hidden {
+            display: none !important;
+        }
+
+        /* Instructions Screen Panel Styling */
+        .intro-panel h1 {
+            font-size: 2.2rem;
+            color: var(--slate-dark);
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .mode-badge {
+            display: inline-block;
+            padding: 6px 18px;
+            background: #edf2f7;
+            color: var(--word-blue);
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .briefing {
+            background: #f0f7ff;
+            padding: 25px;
+            border-radius: 14px;
+            border-left: 6px solid var(--word-blue);
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .briefing ol {
+            margin-left: 20px;
+            line-height: 1.8;
+            color: #334155;
+            font-size: 1rem;
+        }
+
+        .briefing li {
+            margin-bottom: 8px;
+        }
+
+        button.act-btn {
+            padding: 16px 45px;
+            background: var(--word-blue);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        button.act-btn:hover {
+            background: #1e3d70;
+            transform: translateY(-2px);
+        }
+
+        /* Live HUD Data Array Strip */
+        .hud {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 20px 35px;
-            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 25px;
+            gap: 15px;
         }
 
-        .header-logo {
-            height: 42px;
-        }
-
-        .page-marker {
-            background: var(--brand-dark);
-            color: #ffffff;
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 0.85rem;
-            font-weight: 700;
-        }
-
-        .game-viewport {
-            padding: 35px;
-        }
-
-        .instruction-card {
-            background: #f8fafc;
-            border-left: 4px solid var(--brand-orange);
-            padding: 20px;
-            border-radius: 0 8px 8px 0;
-            margin-bottom: 30px;
-            color: #475569;
-            line-height: 1.6;
-        }
-
-        .workspace-layout {
-            display: grid;
-            grid-template-columns: 1.1fr 1fr;
-            gap: 40px;
-            align-items: start;
-        }
-
-        @media (max-width: 950px) {
-            .workspace-layout { grid-template-columns: 1fr; }
-        }
-
-        /* --- INTERACTIVE PIXEL GRID MATRIX (TABLE A) --- */
-        .pixel-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 4px;
-        }
-
-        .pixel-table th {
-            background: #0284c7;
+        .hud-card {
+            background: var(--slate-dark);
             color: white;
-            padding: 10px;
-            border-radius: 4px;
-            font-size: 0.9rem;
-        }
-
-        .rule-cell {
-            background: #f1f5f9;
-            padding: 10px;
-            font-weight: 600;
-            color: #334155;
-            border-radius: 6px;
-            text-align: left;
-            font-size: 0.95rem;
-        }
-
-        .pixel-node {
-            width: 45px;
-            height: 45px;
-            background: #e2e8f0;
-            border: 1px solid var(--grid-border);
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .pixel-node:hover {
-            background: #cbd5e1;
-            transform: scale(1.05);
-        }
-
-        /* Node Activated State */
-        .pixel-node.active {
-            background: var(--brand-dark);
-            border-color: var(--brand-dark);
-            box-shadow: inset 0 0 8px rgba(255,255,255,0.3);
-        }
-
-        /* --- CIPHER SEQUENCE SELECTOR (TABLE B) --- */
-        .cipher-table {
-            width: 100%;
-            border-collapse: collapse;
+            padding: 12px 25px;
             border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid #cbd5e1;
+            font-weight: 700;
+            font-size: 1rem;
         }
 
-        .cipher-table th {
-            background: #7c3aed;
-            color: white;
-            padding: 14px;
+        /* Live Level Target Definition Box */
+        .target-blueprint-zone {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
         }
 
-        .cipher-table td {
-            padding: 15px;
-            border-bottom: 1px solid #e2e8f0;
-            text-align: center;
+        .blueprint-title {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--word-blue);
+            margin-bottom: 5px;
         }
 
-        .select-input {
-            width: 85%;
-            padding: 10px;
+        /* Matrix Insertion Core Grid Styles */
+        .insertion-matrix-wrapper {
+            display: flex;
+            justify-content: center;
+            margin: 25px 0;
+        }
+
+        .grid-matrix {
+            display: grid;
+            grid-template-columns: repeat(5, 55px);
+            gap: 6px;
+            background: #f1f5f9;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .matrix-cell {
+            width: 55px;
+            height: 55px;
+            background: #ffffff;
             border: 2px solid #cbd5e1;
             border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 700;
-            color: var(--brand-dark);
-            background: #ffffff;
             cursor: pointer;
+            transition: all 0.1s ease;
         }
 
-        .select-input:focus {
-            border-color: var(--brand-orange);
-            outline: none;
+        /* Highlight classes for real-time dimension parsing simulation */
+        .matrix-cell.highlighted {
+            background: #d9e2ec;
+            border-color: #829ab1;
         }
 
-        /* Result validation states */
-        .status-correct {
-            border-color: var(--success) !important;
-            background-color: #d1fae5 !important;
-            color: #065f46 !important;
+        .matrix-cell.selected-build {
+            background: var(--word-blue) !important;
+            border-color: #1e3d70 !important;
         }
 
-        .status-wrong {
-            border-color: var(--error) !important;
-            background-color: #fee2e2 !important;
-            color: #991b1b !important;
-            animation: bounceShake 0.3s ease-in-out;
+        /* Real-time Validation Action Row */
+        .ticker-feedback {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 1rem;
+            min-height: 55px;
+            background: #f1f5f9;
+            border-left: 6px solid #cbd5e1;
         }
 
-        .control-footer {
-            display: flex;
-            justify-content: flex-end;
-            padding: 20px 35px;
-            background: #f8fafc;
-            border-top: 1px solid #e2e8f0;
+        .ticker-feedback.good {
+            background: #ecfdf5;
+            border-left-color: var(--success);
+            color: #065f46;
         }
 
-        .action-btn {
-            background: var(--brand-crimson);
+        .ticker-feedback.bad {
+            background: #fef2f2;
+            border-left-color: var(--error);
+            color: #991b1b;
+        }
+
+        /* End Game Performance Terminal Score Screen Styling */
+        .rank-shell {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--word-blue);
             color: white;
-            border: none;
-            padding: 14px 35px;
-            font-size: 1rem;
-            font-weight: 700;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .action-btn:hover { background: #9f1239; }
-
-        #report-screen {
-            text-align: center;
-            padding: 50px 20px;
-        }
-
-        #confetti-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 10000;
-        }
-
-        @keyframes bounceShake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-4px); }
-            75% { transform: translateX(4px); }
+            font-size: 2.2rem;
+            font-weight: 800;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+            border: 4px solid #ffffff;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
     </style>
 </head>
 <body>
 
-
-    <div id="splash-screen">
-        <img src="assets/innovine-logo.png" class="splash-logo" alt="Innovine Logo" onerror="this.src='https://i.ibb.co/6wXGZ0W/image-611301.png'">
-        <div class="splash-title">Chapter 6: Visual Pattern Decoder</div>
-        <div class="splash-subtitle">Matrix Learning Engine</div>
-        
-        <button id="start-gate" class="start-gate-btn" onclick="startIntroSequence()">Initialize Chapter 57</button>
-        
-        <div class="progress-container" id="loader-box">
-            <div class="progress-bar" id="loader-fill"></div>
-        </div>
+    <div id="splash">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo">
     </div>
 
-    <div id="game-container">
-        <div class="header-strip">
-            <img src="assets/innovine-logo.png" class="header-logo" alt="Innovine Solutions" onerror="this.src='https://i.ibb.co/6wXGZ0W/image-611301.png'">
+    <div class="container hidden" id="appMainframe">
+        
+        <div id="menuPanel" class="intro-panel">
+            <h1>MS Word: Table Architect</h1>
+            <div class="mode-badge">ICT Game Module MS Tables</div>
             
+            <div class="briefing">
+                <p style="font-weight: 800; margin-bottom: 12px; color: var(--slate-dark); font-size: 1.1rem;">How to Construct Tables:</p>
+                <ol>
+                    <li>Analyze the specific <strong>Target Table Blueprint</strong> requirements presented on screen.</li>
+                    <li>Hover and select cells inside the Insertion Matrix to set your <strong>Rows</strong> and <strong>Columns</strong>.</li>
+                    <li>Remember: <strong>Rows</strong> run horizontally (left to right) ↔️, and <strong>Columns</strong> stand vertically (top to bottom) ↕️.</li>
+                    <li>Successfully compile all 5 table assignments perfectly to earn your certified Architect Rank Badge!</li>
+                </ol>
+            </div>
+            <button class="act-btn" onclick="startTableArchitect()">Initialize Workbench ➜</button>
         </div>
 
-        <div class="game-viewport" id="active-game-view">
-            <div class="instruction-card">
-                <strong>Activity Directions:</strong> Read the pattern requirements inside <strong>Table A</strong>. Click the empty grid nodes to turn them dark and map out the binary lines. Once Table A matches the logic rules perfectly, select the matching character identities inside <strong>Table B</strong> to compile your master response.
+        <div id="gamePanel" class="hidden">
+            <div class="hud">
+                <div class="hud-card">📋 Table Level: <span id="countHUD">1</span> / 5</div>
+                <div class="hud-card" style="background: #edf2f7; color: var(--word-blue);">⭐ System Score: <span id="scoreHUD">0</span></div>
             </div>
 
-            <div class="workspace-layout">
-                <div>
-                    <h3 style="color: #0284c7; margin-top: 0;">🎛️ Table A: Pattern Generation Matrix</h3>
-                    <table class="pixel-table">
-                        <thead>
-                            <tr>
-                                <th style="width: 45%;">Row Rules Logic</th>
-                                <th colspan="4">Binary Grid Array Cells</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="pixel-row" data-pattern="1,0,1,0">
-                                <td class="rule-cell">Activate Nodes 1 and 3</td>
-                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
-                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
-                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
-                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
-                            </tr>
-                            <tr class="pixel-row" data-pattern="0,1,1,0">
-                                <td class="rule-cell">Activate Middle Two Nodes</td>
-                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
-                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
-                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
-                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
-                            </tr>
-                            <tr class="pixel-row" data-pattern="1,1,1,1">
-                                <td class="rule-cell">Activate Entire Target Axis</td>
-                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
-                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
-                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
-                                <td><div class="pixel-node" onclick="toggleNode(this)"></div></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <div>
-                    <h3 style="color: #7c3aed; margin-top: 0;">🔏 Table B: Key Identity Translation</h3>
-                    <table class="cipher-table">
-                        <thead>
-                            <tr>
-                                <th>Target Memory Index</th>
-                                <th>Assigned Matrix Character Selector</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Node Stream Element #01</td>
-                                <td>
-                                    <select class="select-input verification-target" data-ans="I">
-                                        <option value="">-- Choose Key --</option>
-                                        <option value="A">Alpha [A]</option>
-                                        <option value="I">Innovine Core [I]</option>
-                                        <option value="X">Matrix Element [X]</option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Node Stream Element #02</td>
-                                <td>
-                                    <select class="select-input verification-target" data-ans="N">
-                                        <option value="">-- Choose Key --</option>
-                                        <option value="N">Network Node [N]</option>
-                                        <option value="Z">Zero Field [Z]</option>
-                                        <option value="M">Metric Block [M]</option>
-                                    </select>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="target-blueprint-zone">
+                <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 1px;">Insert Objective Design:</div>
+                <div class="blueprint-title" id="blueprintText">Loading Table Specification...</div>
             </div>
+
+            <div style="font-weight: 700; color: #475569; font-size: 0.95rem;">Move your pointer over the grid matrix below to size your layout:</div>
+            
+            <div class="insertion-matrix-wrapper">
+                <div class="grid-matrix" id="insertionGrid" onmouseleave="clearMatrixHighlight()">
+                    </div>
+            </div>
+
+            <div class="ticker-feedback" id="tickerBox">Hover over and select the dimensional box array nodes above to insert your table structure.</div>
         </div>
 
-        <div class="game-viewport" id="report-screen" style="display: none;">
-            <div style="font-size: 4.5rem; color: var(--success); margin-bottom: 15px;">🏆</div>
-            <h2>Page 68: Master Performance Ledger</h2>
-            <p style="font-size: 1.2rem; color: #4b5563;">Activity Arrays Successfully Synchronized. Your validation sequence matches all criteria blocks perfectly.</p>
-            <div style="margin-top: 35px; display: inline-block; background: #f8fafc; border: 2px dashed var(--success); padding: 20px 50px; border-radius: 8px;">
-                <span style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 2px;">Identity Clearance Verified By</span>
-                <h2 style="color: var(--brand-dark); margin: 5px 0 0 0; letter-spacing: 1px;">INNOVINE SOLUTIONS</h2>
-            </div>
-        </div>
-
-        <div class="control-footer">
-            <button class="action-btn" id="master-action-btn" onclick="validateMatrixState()">Run Verification Sequence</button>
+        <div id="reportPanel" class="hidden">
+            <h1 style="color: var(--word-blue); font-size: 2.2rem;">📊 Structural Audit Log</h1>
+            <div class="rank-shell"><span id="finalScore">0</span></div>
+            <h2 id="finalRank" style="font-weight: 800; margin-bottom: 10px; color: var(--slate-dark);">Evaluating Layouts...</h2>
+            <p id="finalSummary" style="color: #475569; margin-bottom: 30px; line-height: 1.7; max-width: 620px; margin-left: auto; margin-right: auto;"></p>
+            <button class="act-btn" onclick="location.reload()">Reboot Project Studio 🔄</button>
         </div>
     </div>
 
-    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="audio-clap" src="assets/clap.mp3" preload="auto"></audio>
-    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
 
     <script>
-        function startIntroSequence() {
-            // Activate screen loading progression layouts
-            document.getElementById('start-gate').style.display = 'none';
-            document.getElementById('loader-box').style.display = 'block';
-            document.getElementById('loader-fill').style.animation = 'startLoading 5s linear forwards';
+        /* Precision core thread timer mapping - Clears splash exactly at 5000ms */
+        setTimeout(() => {
+            document.getElementById("splash").style.display = "none";
+            document.getElementById("appMainframe").classList.remove("hidden");
+        }, 5000);
+
+        /* Complete Grade 3 Dataset Array mapping row/column alignment principles */
+        const blueprintDatabase = [
+            { label: "Create a Table with 2 Rows and 3 Columns", rows: 2, cols: 3, help: "Rows are horizontal lines ↔️, Columns are vertical structures ↕️." },
+            { label: "Create a Table with 4 Rows and 2 Columns", rows: 4, cols: 2, help: "Columns stand tall up and down like pillars." },
+            { label: "Insert a Square Grid with 3 Rows and 3 Columns", rows: 3, cols: 3, help: "An equal number of rows and columns creates a uniform grid map." },
+            { label: "Insert a Single Column List: 5 Rows and 1 Column", rows: 5, cols: 1, help: "A single column setup builds a perfectly uniform vertical list layout." },
+            { label: "Construct a Wide Layout: 1 Row and 4 Columns", rows: 1, cols: 4, help: "One single horizontal row containing multiple cell subdivisions across." }
+        ];
+
+        let dynamicTaskDeck = [];
+        let currentLevelIndex = 0;
+        let cumulativeScore = 0;
+        let interactiveLock = false;
+
+        function startTableArchitect() {
+            dynamicTaskDeck = [...blueprintDatabase].sort(() => Math.random() - 0.5);
+            currentLevelIndex = 0;
+            cumulativeScore = 0;
+            interactiveLock = false;
+
+            document.getElementById("menuPanel").classList.add("hidden");
+            document.getElementById("gamePanel").classList.remove("hidden");
             
-            // Fire welcome validation ding if available
-            playTrackAsset('audio-correct');
-
-            setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                const appMain = document.getElementById('game-container');
-                splash.style.opacity = '0';
-                setTimeout(() => {
-                    splash.style.display = 'none';
-                    appMain.style.display = 'block';
-                }, 600);
-            }, 5000);
+            buildInteractiveMatrixUI();
+            loadCurrentBlueprintChallenge();
         }
 
-        function toggleNode(nodeElement) {
-            nodeElement.classList.toggle('active');
+        function buildInteractiveMatrixUI() {
+            const gridContainer = document.getElementById("insertionGrid");
+            gridContainer.innerHTML = "";
+
+            // Generates a 5x5 dynamic responsive matrix field map grid 
+            for (let rowIdx = 1; rowIdx <= 5; rowIdx++) {
+                for (let colIdx = 1; colIdx <= 5; colIdx++) {
+                    const cellNode = document.createElement("div");
+                    cellNode.className = "matrix-cell";
+                    cellNode.setAttribute("data-row", rowIdx);
+                    cellNode.setAttribute("data-col", colIdx);
+                    
+                    // Attach operational input loop listener logic
+                    cellNode.setAttribute("onmouseover", `handleMatrixHover(${rowIdx}, ${colIdx})`);
+                    cellNode.setAttribute("onclick", `executeTableCommit(${rowIdx}, ${colIdx})`);
+                    
+                    gridContainer.appendChild(cellNode);
+                }
+            }
         }
 
-        function validateMatrixState() {
-            let matchesAllCriteria = true;
-            let playedErrorThisTurn = false;
-
-            // 1. Evaluate Table A Pixel Grid States
-            const structuralRows = document.querySelectorAll('.pixel-row');
-            structuralRows.forEach(row => {
-                const expectedPattern = row.getAttribute('data-pattern').split(',');
-                const individualNodes = row.querySelectorAll('.pixel-node');
+        function handleMatrixHover(targetRow, targetCol) {
+            if (interactiveLock) return;
+            
+            const allCells = document.querySelectorAll(".matrix-cell");
+            allCells.forEach(cell => {
+                const cRow = parseInt(cell.getAttribute("data-row"));
+                const cCol = parseInt(cell.getAttribute("data-col"));
                 
-                individualNodes.forEach((node, index) => {
-                    const shouldBeActive = expectedPattern[index] === "1";
-                    const currentlyActive = node.classList.contains('active');
-
-                    if (shouldBeActive !== currentlyActive) {
-                        matchesAllCriteria = false;
-                        node.style.borderColor = "var(--error)";
-                        setTimeout(() => node.style.borderColor = "var(--grid-border)", 1000);
-                    }
-                });
-            });
-
-            // 2. Evaluate Table B Dropdown Select Elements
-            const selectors = document.querySelectorAll('.verification-target');
-            selectors.forEach(select => {
-                const targetedAnswer = select.getAttribute('data-ans');
-                const selectedValue = select.value;
-
-                if (selectedValue === targetedAnswer) {
-                    select.className = "select-input verification-target status-correct";
+                if (cRow <= targetRow && cCol <= targetCol) {
+                    cell.classList.add("highlighted");
                 } else {
-                    select.className = "select-input verification-target status-wrong";
-                    matchesAllCriteria = false;
-                    playedErrorThisTurn = true;
+                    cell.classList.remove("highlighted");
                 }
             });
 
-            // 3. Audio Router Resolution Processing Loops
-            if (!matchesAllCriteria) {
-                playTrackAsset('audio-wrong');
-                setTimeout(() => {
-                    document.querySelectorAll('.status-wrong').forEach(el => el.classList.remove('status-wrong'));
-                }, 400);
-                return;
-            }
-
-            // If completely right, trigger dual sound affirmation layer + confetti
-            playTrackAsset('audio-correct');
-            setTimeout(() => { playTrackAsset('audio-clap'); }, 400);
-            generateConfettiVfx();
-
-            // Swap standard visual layouts down to page 68 final terminal view
-            document.getElementById('active-game-view').style.display = 'none';
-            document.getElementById('report-screen').style.display = 'block';
-            document.getElementById('page-tag').innerText = "Page 68";
-            document.getElementById('master-action-btn').style.display = 'none';
+            document.getElementById("tickerBox").className = "ticker-feedback";
+            document.getElementById("tickerBox").innerHTML = `Selection Preview Size Layout: <strong>${targetRow} Row(s) × ${targetCol} Column(s)</strong>`;
         }
 
-        function playTrackAsset(elementId) {
-            const track = document.getElementById(elementId);
-            track.currentTime = 0;
-            track.play().catch(e => console.log("Audio track dynamic execution deferred:", e));
+        function clearMatrixHighlight() {
+            if (interactiveLock) return;
+            document.querySelectorAll(".matrix-cell").forEach(cell => cell.classList.remove("highlighted"));
         }
 
-        function generateConfettiVfx() {
-            const canvas = document.getElementById('confetti-canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        function loadCurrentBlueprintChallenge() {
+            const currentChallenge = dynamicTaskDeck[currentLevelIndex];
+            document.getElementById("blueprintText").innerText = currentChallenge.label;
+            document.getElementById("countHUD").innerText = currentLevelIndex + 1;
+        }
 
-            let particles = [];
-            const palette = ['#be123c', '#ea580c', '#10b981', '#0284c7', '#7c3aed'];
+        function executeTableCommit(selectedRow, selectedCol) {
+            if (interactiveLock) return;
+            interactiveLock = true;
 
-            for (let i = 0; i < 120; i++) {
-                particles.push({
-                    x: window.innerWidth / 2,
-                    y: window.innerHeight / 2,
-                    radius: Math.random() * 5 + 4,
-                    color: palette[Math.floor(Math.random() * palette.length)],
-                    vx: (Math.random() - 0.5) * 16,
-                    vy: (Math.random() - 0.5) * 16 - 3,
-                    opacity: 1
-                });
+            const challengeData = dynamicTaskDeck[currentLevelIndex];
+            const isCorrectMatch = (selectedRow === challengeData.rows && selectedCol === challengeData.cols);
+            const systemFeedbackBox = document.getElementById("tickerBox");
+
+            // Lock selected dimensions visually on-screen
+            document.querySelectorAll(".matrix-cell").forEach(cell => {
+                const cRow = parseInt(cell.getAttribute("data-row"));
+                const cCol = parseInt(cell.getAttribute("data-col"));
+                if (cRow <= selectedRow && cCol <= selectedCol) {
+                    cell.classList.add("selected-build");
+                }
+            });
+
+            if (isCorrectMatch) {
+                cumulativeScore += 200;
+                try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
+                try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+                
+                systemFeedbackBox.className = "ticker-feedback good";
+                systemFeedbackBox.innerHTML = `<strong>🎉 STRUCTURAL PATTERN CORRECT!</strong> Successfully stitched a ${selectedRow}×${selectedCol} grid block into MS Word.`;
+            } else {
+                cumulativeScore = Math.max(0, cumulativeScore - 50);
+                try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
+                
+                systemFeedbackBox.className = "ticker-feedback bad";
+                systemFeedbackBox.innerHTML = `<strong>💥 COMPILATION FAULT:</strong> Inside MS Word, your dimensions produced an incorrect size array. Rules: ${challengeData.help}`;
             }
 
-            function loop() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                particles.forEach((p, index) => {
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.vy += 0.2; // simulated light gravity axis pull
-                    p.opacity -= 0.012;
+            document.getElementById("scoreHUD").innerText = cumulativeScore;
+            currentLevelIndex++;
 
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                    ctx.fillStyle = p.color;
-                    ctx.globalAlpha = p.opacity;
-                    ctx.fill();
-
-                    if (p.opacity <= 0) particles.splice(index, 1);
+            // Wait 2.5 seconds before transitioning tasks to allow audio/feedback to complete
+            setTimeout(() => {
+                document.querySelectorAll(".matrix-cell").forEach(cell => {
+                    cell.classList.remove("highlighted", "selected-build");
                 });
+                interactiveLock = false;
 
-                if (particles.length > 0) requestAnimationFrame(loop);
+                if (currentLevelIndex < dynamicTaskDeck.length) {
+                    loadCurrentBlueprintChallenge();
+                    systemFeedbackBox.className = "ticker-feedback";
+                    systemFeedbackBox.innerHTML = "Awaiting dimension coordinates input properties inside the construction matrix.";
+                } else {
+                    renderFinalSummaryAudit();
+                }
+            }, 2500);
+        }
+
+        function renderFinalSummaryAudit() {
+            document.getElementById("gamePanel").classList.add("hidden");
+            document.getElementById("reportPanel").classList.remove("hidden");
+            document.getElementById("finalScore").innerText = cumulativeScore;
+            
+            try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+
+            let performanceRank = "";
+            let evaluationSummaryText = "";
+            const scoringRatio = cumulativeScore / 1000;
+
+            if (scoringRatio >= 0.85) {
+                performanceRank = "🥇 Master Document Layout Architect";
+                evaluationSummaryText = "Incredible spatial recognition scores! You seamlessly parsed structural rows and vertical data columns without a single orientation alignment failure. You have completely mastered formatting tables in MS Word!";
+            } else if (scoringRatio >= 0.55) {
+                performanceRank = "🥈 Senior Project Data Typist";
+                evaluationSummaryText = "Solid structural design run. Most data tables were successfully initialized. Just make sure to read row indicators and boundary paths carefully next time to secure an optimal score!";
+            } else {
+                performanceRank = "🌱 Assistant Formatting Clerk";
+                evaluationSummaryText = "The MS Word workspace encountered layout anomalies! Remember that rows stretch from side to side ↔️, while columns stretch from top to bottom ↕️. Let's practice with another blank document layout project.";
             }
-            loop();
+
+            document.getElementById("finalRank").innerText = performanceRank;
+            document.getElementById("finalSummary").innerText = evaluationSummaryText;
         }
     </script>
 </body>

@@ -1,1 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Internet Speed Racers</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --track-gray: #334155;
+            --player-blue: #38bdf8;
+            --rival-red: #ef4444;
+            --text-light: #f8fafc;
+            --accent-yellow: #f59e0b;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-color);
+            color: var(--text-light);
+            padding: 15px;
+        }
+
+        /* --- 5-SECOND SPLASH SCREEN --- */
+        #splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #splash h2 {
+            color: #1e3a8a;
+            font-size: 2rem;
+            margin-top: 15px;
+        }
+
+        #splash img {
+            width: 220px;
+            animation: drive 2s infinite ease-in-out;
+        }
+
+        @keyframes drive {
+            0%, 100% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+        }
+
+        /* --- MAIN CONTAINER --- */
+        .game-container {
+            width: 100%;
+            max-width: 755px;
+            background: #1e293b;
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            border: 5px solid var(--accent-yellow);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            color: var(--accent-yellow);
+            text-shadow: 2px 2px 0px #000;
+            margin-bottom: 10px;
+        }
+
+        .intro-box {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: left;
+            margin: 20px 0;
+            border-left: 5px solid var(--player-blue);
+            line-height: 1.6;
+        }
+
+        .start-btn {
+            padding: 15px 45px;
+            background: var(--accent-yellow);
+            color: #000;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #b45309;
+            transition: all 0.1s;
+        }
+
+        .start-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #b45309;
+        }
+
+        /* --- VISUAL RACING TRACK --- */
+        .race-track {
+            background: var(--track-gray);
+            padding: 15px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 4px dashed #64748b;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lane {
+            display: flex;
+            align-items: center;
+            height: 50px;
+            position: relative;
+            border-bottom: 2px dashed #475569;
+        }
+
+        .lane:last-child {
+            border-bottom: none;
+        }
+
+        .car {
+            font-size: 2rem;
+            position: absolute;
+            left: 0%;
+            transition: left 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-left: 10px;
+        }
+
+        .finish-line {
+            position: absolute;
+            right: 40px;
+            top: 0;
+            bottom: 0;
+            width: 15px;
+            background: repeating-linear-gradient(
+                0deg,
+                #fff,
+                #fff 10px,
+                #000 10px,
+                #000 20px
+            );
+        }
+
+        /* --- QUIZ ELEMENT DESIGN --- */
+        .quiz-box {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #cbd5e1;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .option-btn {
+            background: #334155;
+            color: white;
+            border: 3px solid #475569;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .option-btn:hover {
+            background: #475569;
+            border-color: var(--accent-yellow);
+            transform: scale(1.02);
+        }
+
+        .option-btn.correct {
+            background: #10b981 !important;
+            border-color: #059669 !important;
+        }
+
+        .option-btn.wrong {
+            background: #ef4444 !important;
+            border-color: #dc2626 !important;
+        }
+
+        .feedback-bar {
+            margin-top: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            min-height: 30px;
+        }
+
+        /* --- RESULTS --- */
+        .trophy {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            animation: bounce 1s infinite alternate;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-10px); }
+        }
+
+        @media (max-width: 550px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- --- STAGE 1: EXCLUSIVE 5-SECOND LOGO SPLASH SCREEN --- -->
+    <div id="splash">
+        <img src="assets/innovine-logo.png" alt="🏎️" onerror="this.src='https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=150'">
+        <h2>Loading Internet Speed Racers...</h2>
+    </div>
+
+    <!-- --- STAGE 2: MAIN GAME CARD --- -->
+    <div class="game-container hidden" id="mainframe">
+        
+        <!-- INTRO SCREEN -->
+        <div id="introPanel">
+            <h1>🌐 Internet Speed Racers</h1>
+            <p style="font-size: 1.2rem; color: #94a3b8;">Learn about the Internet and win the grand race!</p>
+            
+            <div class="intro-box">
+                <p><strong>🏁 Race Directions:</strong></p>
+                <p>• You are the <strong>Blue Car (🚙)</strong>. The rival computer is the <strong>Red Car (🚗)</strong>.</p>
+                <p>• Answer questions about how the Internet works to fuel your engine and move forward.</p>
+                <p>• Get the answers right to reach the finish line first and win the Championship!</p>
+            </div>
+            <button class="start-btn" onclick="startRaceGame()">Start Engine ➜</button>
+        </div>
+
+        <!-- PLAYING FIELD SCREEN -->
+        <div id="playPanel" class="hidden">
+            
+            <!-- LIVE ANIMATED TRACK -->
+            <div class="race-track">
+                <div class="finish-line"></div>
+                
+                <div class="lane">
+                    <span style="position:absolute; left:5px; color:#94a3b8; font-size:0.8rem;">YOU</span>
+                    <div class="car" id="playerCar">🚙</div>
+                </div>
+                <div class="lane">
+                    <span style="position:absolute; left:5px; color:#94a3b8; font-size:0.8rem;">RIVAL</span>
+                    <div class="car" id="rivalCar">🚗</div>
+                </div>
+            </div>
+
+            <!-- QUEST ZONE -->
+            <div class="quiz-box">
+                <div class="question-text" id="questionField">Loading challenge text...</div>
+                <div class="options-grid" id="choicesField"></div>
+            </div>
+            
+            <div class="feedback-bar" id="feedbackText">Ready... Set... Go!</div>
+        </div>
+
+        <!-- PODIUM REPORT SCREEN -->
+        <div id="reportPanel" class="hidden">
+            <div class="trophy" id="resultEmoji">🏆</div>
+            <h1 id="resultTitle">You Won!</h1>
+            <p id="resultDesc" style="font-size: 1.2rem; color: #cbd5e1; margin-bottom: 30px; line-height: 1.6;"></p>
+            <button class="start-btn" onclick="location.reload()">Race Again 🔄</button>
+        </div>
+    </div>
+
+    <!-- AUDIO FILES MAPPED EXACTLY TO GUIDELINES -->
+    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
+
+    <script>
+        /* Keep logo screen running for exactly 5000ms */
+        setTimeout(() => {
+            document.getElementById("splash").style.display = "none";
+            document.getElementById("mainframe").classList.remove("hidden");
+        }, 5000);
+
+        /* Grade 3: Introduction to Internet Question Database */
+        const internetQuizDeck = [
+            {
+                question: "What is the Internet?",
+                options: ["A network connecting computers worldwide", "A type of video game console", "A special computer screen", "A machine that cleans rooms"],
+                answer: "A network connecting computers worldwide"
+            },
+            {
+                question: "Which tool do you open to visit web pages like Google?",
+                options: ["A Web Browser (like Chrome)", "A Calculator", "MS Paint", "The Power Button"],
+                answer: "A Web Browser (like Chrome)"
+            },
+            {
+                question: "What does 'Wi-Fi' do?",
+                options: ["Connects devices to the internet without wires", "Cleans up computer dust", "Makes games load instantly without electricity", "Saves battery power"],
+                answer: "Connects devices to the internet without wires"
+            },
+            {
+                question: "What should you do if an unknown link pops up while browsing?",
+                options: ["Ask a parent or teacher first", "Click it immediately to see what it is", "Send it to all your friends", "Type your home address into it"],
+                answer: "Ask a parent or teacher first"
+            },
+            {
+                question: "What does 'WWW' stand for in a website address?",
+                options: ["World Wide Web", "World Wide Windows", "Word Wave Website", "Working Web Wire"],
+                answer: "World Wide Web"
+            }
+        ];
+
+        let questions = [];
+        let itemIndex = 0;
+        let playerProgress = 0; // percentage position 0-80
+        let rivalProgress = 0;
+        let turnLocked = false;
+
+        function startRaceGame() {
+            questions = [...internetQuizDeck].sort(() => Math.random() - 0.5);
+            itemIndex = 0;
+            playerProgress = 0;
+            rivalProgress = 0;
+            turnLocked = false;
+
+            document.getElementById("introPanel").classList.add("hidden");
+            document.getElementById("playPanel").classList.remove("hidden");
+            
+            updateCarPositions();
+            loadNextTrackQuestion();
+        }
+
+        function loadNextTrackQuestion() {
+            turnLocked = false;
+            const currentItem = questions[itemIndex];
+            
+            document.getElementById("questionField").innerText = currentItem.question;
+            document.getElementById("feedbackText").style.color = "var(--text-light)";
+            document.getElementById("feedbackText").innerText = "Keep focus! Fuel your racing car.";
+
+            const grid = document.getElementById("choicesField");
+            grid.innerHTML = "";
+
+            currentItem.options.forEach(opt => {
+                const btn = document.createElement("button");
+                btn.className = "option-btn";
+                btn.innerText = opt;
+                btn.onclick = () => submitRaceChoice(opt, btn);
+                grid.appendChild(btn);
+            });
+        }
+
+        function submitRaceChoice(pickedValue, buttonNode) {
+            if (turnLocked) return;
+            turnLocked = true;
+
+            const currentItem = questions[itemIndex];
+            const infoText = document.getElementById("feedbackText");
+
+            if (pickedValue === currentItem.answer) {
+                // Player goes forward by 16% increments
+                playerProgress += 17;
+                buttonNode.classList.add("correct");
+                infoText.style.color = "#10b981";
+                infoText.innerText = "🚀 Great Answer! Nitro Boost activated!";
+                
+                try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
+            } else {
+                // Rival moves forward instead
+                rivalProgress += 17;
+                buttonNode.classList.add("wrong");
+                infoText.style.color = "var(--rival-red)";
+                infoText.innerHTML = `❌ Wrong choice! Rival gained ground.`;
+                
+                try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
+
+                // Highlight correct option instantly
+                const btns = document.querySelectorAll(".option-btn");
+                btns.forEach(b => {
+                    if (b.innerText === currentItem.answer) b.classList.add("correct");
+                });
+            }
+
+            updateCarPositions();
+            itemIndex++;
+
+            setTimeout(() => {
+                if (itemIndex < questions.length && playerProgress < 80 && rivalProgress < 80) {
+                    loadNextTrackQuestion();
+                } else {
+                    finishChampionshipRace();
+                }
+            }, 3000);
+        }
+
+        function updateCarPositions() {
+            document.getElementById("playerCar").style.left = playerProgress + "%";
+            document.getElementById("rivalCar").style.left = rivalProgress + "%";
+        }
+
+        function finishChampionshipRace() {
+            document.getElementById("playPanel").classList.add("hidden");
+            document.getElementById("reportPanel").classList.remove("hidden");
+
+            const title = document.getElementById("resultTitle");
+            const desc = document.getElementById("resultDesc");
+            const emoji = document.getElementById("resultEmoji");
+
+            if (playerProgress >= rivalProgress) {
+                title.innerText = "🥇 Champion Finish!";
+                emoji.innerText = "🏆";
+                desc.innerText = "Fantastic driving! You mastered basic internet networks, safety laws, and browsers to sweep the gold cup!";
+                try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+            } else {
+                title.innerText = "🥈 Second Place Finish!";
+                emoji.innerText = "🏁";
+                desc.innerText = "The rival car crossed the finish line first this time! Refresh your online web facts and hit the gas pedal again.";
+            }
+        }
+    </script>
+</body>
+</html>

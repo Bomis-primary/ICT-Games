@@ -55,7 +55,7 @@
 
         /* --- Main Game Layout --- */
         #game-screen {
-            display: none; /* Controlled by JS */
+            display: none; 
             width: 100%;
             height: 100%;
             flex-direction: column;
@@ -83,7 +83,7 @@
             font-weight: bold;
         }
 
-        /* --- The Interactive Circuit Canvas --- */
+        /* --- Interactive Circuit Board --- */
         .circuit-board {
             width: 90%;
             height: 280px;
@@ -94,7 +94,6 @@
             margin-bottom: 20px;
         }
 
-        /* Circuit Components Visuals */
         .component {
             position: absolute;
             display: flex;
@@ -127,14 +126,12 @@
             transition: background 0.3s ease;
         }
 
-        /* Animated Glow when circuit works */
         .bulb-lit {
             background: #ffeb3b !important;
             box-shadow: 0 0 40px #ffeb3b, 0 0 70px #ffeb3b;
             border-color: #fbc02d !important;
         }
 
-        /* Toggle Switch Component */
         .switch-component {
             left: 340px;
             bottom: 20px;
@@ -149,14 +146,13 @@
         }
         .switch-component:active { transform: scale(0.95); }
 
-        /* Wires drawn with simple DIV lines */
         .wire {
             position: absolute;
             background: #37474f;
             z-index: 1;
         }
 
-        /* --- Drag and Drop Objects Deck --- */
+        /* --- Drag and Drop Objects --- */
         .item-deck {
             display: flex;
             gap: 15px;
@@ -177,9 +173,7 @@
             box-shadow: 0 4px #1976d2;
             font-weight: bold;
         }
-        .draggable-item:active { cursor: grabbing; }
 
-        /* Drop Target Space in Circuit Loop */
         .circuit-gap {
             left: 330px;
             top: 90px;
@@ -201,7 +195,7 @@
             border-color: #009688;
         }
 
-        /* --- Feedback Section --- */
+        /* --- Feedback Notifications --- */
         #status-message {
             font-size: 32px;
             font-weight: bold;
@@ -212,7 +206,6 @@
         .success-text { color: #4caf50; animation: pop 0.4s ease; }
         .fail-text { color: #f44336; animation: shake 0.3s ease; }
 
-        /* --- Animations --- */
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
             50% { transform: scale(1.05); }
@@ -232,17 +225,28 @@
 
     <div id="game-container">
         
+        <!-- 1. SPLASH INTRO LOGO (First 5 Seconds) -->
         <div id="splash-screen">
             <img src="asset/innovine-logo.png" alt="Innovine Logo">
         </div>
 
+        <!-- 2. GAME SCREEN -->
         <div id="game-screen">
             <div class="game-title">⚡ SBL Circuit Lab Challenge! 💡</div>
             <div class="instructions" id="instruction-text">Mission 1: Click the switch to CLOSE the loop and turn on the light!</div>
 
             <div class="circuit-board">
-                <div class="wire" style="left: 140px; top: 125px; width: 190px; height: 6px;"></div> <div class="wire" style="left: 460px; top: 125px; width: 260px; height: 6px;"></div> <div class="wire" style="left: 720px; top: 130px; width: 6px; height: 110px;"></div> <div class="wire" style="left: 440px; top: 235px; width: 286px; height: 6px;"></div> <div class="wire" style="left: 95px; top: 160px; width: 6px; height: 81px;"></div>   <div class="wire" style="left: 95px; top: 235px; width: 245px; height: 6px;"></div>  <div class="component battery">🔋 Battery</div>
+                <!-- Connective Wire Schematics -->
+                <div class="wire" style="left: 140px; top: 125px; width: 190px; height: 6px;"></div> 
+                <div class="wire" style="left: 460px; top: 125px; width: 260px; height: 6px;"></div> 
+                <div class="wire" style="left: 720px; top: 130px; width: 6px; height: 110px;"></div> 
+                <div class="wire" style="left: 440px; top: 235px; width: 286px; height: 6px;"></div> 
+                <div class="wire" style="left: 95px; top: 160px; width: 6px; height: 81px;"></div>   
+                <div class="wire" style="left: 95px; top: 235px; width: 245px; height: 6px;"></div>  
 
+                <div class="component battery">🔋 Battery</div>
+
+                <!-- Drop Slot Area -->
                 <div class="component circuit-gap" id="drop-zone" style="display: none;">
                     Drop item here!
                 </div>
@@ -251,11 +255,13 @@
                     <div style="margin-top: 32px; font-size: 14px;">💡 BULB</div>
                 </div>
 
+                <!-- Open/Close Switch Link -->
                 <div class="component switch-component" id="circuit-switch" onclick="toggleSwitch()">
                     OFF<br>❌ (Open)
                 </div>
             </div>
 
+            <!-- Material Deck selection -->
             <div class="item-deck" id="item-deck" style="visibility: hidden;">
                 <div class="draggable-item" draggable="true" id="item-metal" data-conductor="true">🔑 Iron Key</div>
                 <div class="draggable-item" draggable="true" id="item-plastic" data-conductor="false">🧸 Plastic Toy</div>
@@ -268,16 +274,15 @@
 
     </div>
 
-    <audio id="audio-clap" src="asset/clap.mp3"></audio>
-    <audio id="audio-correct" src="asset/correct.mp3"></audio>
-    <audio id="audio-wrong" src="asset/wrong.mp3"></audio>
+    <!-- AUDIO CORE DIRECTIVES FROM ASSETS -->
+    <audio id="audio-clap" src="asset/clap.mp3" preload="auto"></audio>
+    <audio id="audio-correct" src="asset/correct.mp3" preload="auto"></audio>
+    <audio id="audio-wrong" src="asset/wrong.mp3" preload="auto"></audio>
 
     <script>
-        // Game state engine
         let currentMission = 1; 
         let switchStateClosed = false;
 
-        // Elements mapping
         const splashScreen = document.getElementById('splash-screen');
         const gameScreen = document.getElementById('game-screen');
         const instructionText = document.getElementById('instruction-text');
@@ -287,12 +292,12 @@
         const itemDeck = document.getElementById('item-deck');
         const statusMsg = document.getElementById('status-message');
 
-        // Audio Elements
+        // Audio Hooks
         const audioClap = document.getElementById('audio-clap');
         const audioCorrect = document.getElementById('audio-correct');
         const audioWrong = document.getElementById('audio-wrong');
 
-        // 1. Force Splash Visibility exactly for 5 seconds
+        // 5-Second Splash Screen Timeout
         setTimeout(() => {
             splashScreen.style.opacity = 0;
             setTimeout(() => {
@@ -302,13 +307,13 @@
             }, 600); 
         }, 5000);
 
-        // --- Mission 1 Logic: The Interactive Switch ---
         function setupMission1() {
             currentMission = 1;
             circuitSwitch.style.display = "block";
             dropZone.style.display = "none";
         }
 
+        // Toggle Switch Mechanics (Level 1)
         function toggleSwitch() {
             if (currentMission !== 1) return;
 
@@ -319,13 +324,15 @@
                 circuitSwitch.style.background = "#81c784";
                 lightBulb.classList.add('bulb-lit');
                 
-                // Play winning sequences
                 statusMsg.innerText = "Fantastic! The loop is Closed! 👏";
                 statusMsg.className = "success-text";
-                audioCorrect.currentTime = 0; audioCorrect.play().catch(()=>{});
-                audioClap.currentTime = 0; audioClap.play().catch(()=>{});
 
-                // Advance to Level 2 after 3 seconds
+                // --- Trigger Right Answer Audio Mix ---
+                audioCorrect.currentTime = 0;
+                audioCorrect.play().catch(e => console.log("Audio play blocked until user clicks frame"));
+                audioClap.currentTime = 0;
+                audioClap.play().catch(e => {});
+
                 setTimeout(() => {
                     setupMission2();
                 }, 3500);
@@ -338,21 +345,18 @@
             }
         }
 
-        // --- Mission 2 Logic: Conductors vs Insulators (Drag & Drop) ---
+        // Drag and Drop Conductivity (Level 2)
         function setupMission2() {
             currentMission = 2;
             lightBulb.classList.remove('bulb-lit');
             statusMsg.innerText = "";
             statusMsg.className = "";
             
-            // Transform the board interface dynamically
             circuitSwitch.style.display = "none"; 
             dropZone.style.display = "flex";      
             itemDeck.style.visibility = "visible"; 
             
-            // Close the hidden bottom loop path so object entry completes the loop
             instructionText.innerText = "Mission 2: Drag a Conductor (Metal) into the gap to light the bulb!";
-            
             initializeDragAndDrop();
         }
 
@@ -378,33 +382,36 @@
                 e.preventDefault();
                 dropZone.classList.remove('gap-hover');
                 
-                const id = e.dataTransfer.setData ? e.dataTransfer.getData('text/plain') : null || e.target.id;
                 const draggedElement = document.getElementById(e.dataTransfer.getData('text/plain'));
-                
                 if (!draggedElement) return;
 
                 const isConductor = draggedElement.getAttribute('data-conductor') === "true";
 
                 if (isConductor) {
-                    // Success Scenario
+                    // RIGHT ANSWER ACTION
                     dropZone.style.background = "#ffe082";
                     dropZone.innerText = draggedElement.innerText;
                     lightBulb.classList.add('bulb-lit');
                     
-                    statusMsg.innerText = "Correct! Metal let's electricity flow! 🪙⚡";
+                    statusMsg.innerText = "Correct! Metal lets electricity flow! 🪙⚡";
                     statusMsg.className = "success-text";
                     
-                    audioCorrect.currentTime = 0; audioCorrect.play().catch(()=>{});
-                    audioClap.currentTime = 0; audioClap.play().catch(()=>{});
+                    // --- Trigger Right Answer Audio Mix ---
+                    audioCorrect.currentTime = 0;
+                    audioCorrect.play().catch(e => {});
+                    audioClap.currentTime = 0;
+                    audioClap.play().catch(e => {});
                     
-                    draggedElement.style.visibility = "hidden"; // Remove it from deck
+                    draggedElement.style.visibility = "hidden"; 
                 } else {
-                    // Fail Scenario
+                    // WRONG ANSWER ACTION
                     lightBulb.classList.remove('bulb-lit');
                     statusMsg.innerText = "Oops! Insulators block electricity! ❌";
                     statusMsg.className = "fail-text";
                     
-                    audioWrong.currentTime = 0; audioWrong.play().catch(()=>{});
+                    // --- Trigger Wrong Answer Audio ---
+                    audioWrong.currentTime = 0;
+                    audioWrong.play().catch(e => {});
                 }
             });
         }

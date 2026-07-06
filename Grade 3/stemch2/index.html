@@ -3,815 +3,609 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Innovine Solutions - Controlling the Flow of Electricity</title>
+    <title>Innovine STEM Lab - Controlling Electricity</title>
     <style>
         :root {
-            --bg-canvas: #faf5ff;
-            --scratch-orange: #f58220; 
-            --scratch-blue: #4d97ff; 
-            --scratch-purple: #9966ff;
-            --scratch-pink: #ff6680;
-            --scratch-green: #5cb85c;
-            --scratch-yellow: #ffd000;
-            --slate-dark: #1e293b;
-            --success: #10b981;
-            --error: #ef4444;
+            --primary-orange: #f58220;
+            --electric-yellow: #ffd000;
+            --wire-blue: #4d97ff;
+            --grass-green: #5cb85c;
+            --dark-space: #1e1e2f;
+            --paper-white: #ffffff;
+            --error-red: #ef4444;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Comic Sans MS', 'Segoe UI', cursive, sans-serif;
         }
 
         body {
+            background: #f0f7ff;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: var(--bg-canvas);
             padding: 15px;
             user-select: none;
         }
 
-        /* --- STAGE 1: EXCLUSIVE LOGO SPLASH SCREEN --- */
-        #splash {
+        /* --- STAGE 1: INVOVINE SPLASH SCREEN --- */
+        #splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #ffffff;
+            background: var(--paper-white);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
         }
 
-        #splash img {
-            width: 320px;
-            max-width: 85%;
-            animation: elegantPulse 2.5s infinite ease-in-out;
+        #splash-screen img {
+            width: 280px;
+            max-width: 80%;
+            animation: bounceLogo 2s infinite ease-in-out;
         }
 
-        @keyframes elegantPulse {
-            0%, 100% { transform: scale(1); opacity: 0.95; }
-            50% { transform: scale(1.04); opacity: 1; }
+        @keyframes bounceLogo {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.03); }
         }
 
-        /* --- STAGE 2: MAIN WORKBOOK CONTAINER FRAME --- */
-        .container {
-            width: 100%;
-            max-width: 950px;
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 25px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+        .loading-bar {
+            width: 200px;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            margin-top: 20px;
+            overflow: hidden;
             position: relative;
-            z-index: 10;
+        }
+
+        .loading-progress {
+            width: 100%;
+            height: 100%;
+            background: var(--primary-orange);
+            transform: translateX(-100%);
+            animation: loadGame 2.5s forwards ease-in-out;
+        }
+
+        @keyframes loadGame {
+            100% { transform: translateX(0%); }
+        }
+
+        /* --- STAGE 2: MAIN WORKSPACE CONTAINER --- */
+        .game-card {
+            width: 100%;
+            max-width: 850px;
+            background: var(--paper-white);
+            border-radius: 24px;
+            padding: 25px;
+            box-shadow: 0 16px 35px rgba(0,0,0,0.1);
+            border: 6px solid var(--wire-blue);
             text-align: center;
-            border-top: 10px solid var(--scratch-orange);
+            position: relative;
         }
 
         .hidden {
             display: none !important;
         }
 
-        .intro-panel h1 {
-            font-size: 2.3rem;
-            color: var(--scratch-orange);
-            margin-bottom: 10px;
-            font-weight: 800;
-        }
-
-        .mode-badge {
-            display: inline-block;
-            padding: 6px 18px;
-            background: #fff7ed;
-            color: var(--scratch-orange);
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border: 1px solid #ffedd5;
-        }
-
-        .briefing {
-            background: #f0f7ff;
-            padding: 20px;
-            border-radius: 14px;
-            border-left: 6px solid var(--scratch-blue);
-            text-align: left;
-            margin-bottom: 25px;
-        }
-
-        .briefing p {
-            line-height: 1.6;
-            color: #334155;
-            font-size: 1.1rem;
-        }
-
-        /* Mission Cards Layout */
-        .mission-selector {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
-
-        .mission-card {
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 15px;
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.2s ease;
-        }
-
-        .mission-card:hover {
-            border-color: var(--scratch-orange);
-            transform: translateY(-2px);
-            background: #fffaf5;
-        }
-
-        .mission-card.selected {
-            border-color: var(--scratch-orange);
-            background: #fff7ed;
-            box-shadow: 0 4px 12px rgba(245, 130, 32, 0.15);
-        }
-
-        .mission-card h3 {
-            font-size: 1.05rem;
+        /* HEADER ELEMENTS */
+        .header h1 {
+            color: var(--primary-orange);
+            font-size: 2.2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
             margin-bottom: 5px;
-            color: var(--slate-dark);
         }
 
-        .mission-card p {
-            font-size: 0.85rem;
-            color: #64748b;
+        .subtitle-badge {
+            display: inline-block;
+            background: #fff7ed;
+            color: var(--primary-orange);
+            border: 2px dashed var(--primary-orange);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
         }
 
-        button.act-btn {
-            padding: 16px 45px;
-            background: var(--scratch-orange);
-            color: white;
-            font-size: 1.2rem;
-            font-weight: 700;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(245, 130, 32, 0.3);
-            transition: all 0.2s;
-        }
-
-        button.act-btn:hover {
-            background: #e07216;
-            transform: translateY(-2px);
-        }
-
-        /* --- THE INTERACTIVE SCRATCH INTERFACE --- */
-        .workspace-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin: 20px 0;
-        }
-
-        /* LEFT COLUMN: THE STAGE & BLOCKS PALETTE */
-        .left-column {
+        /* PROGRESS TRACKER */
+        .progress-map {
             display: flex;
-            flex-direction: column;
-            gap: 15px;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        .stage-area {
-            width: 100%;
-            height: 220px;
-            background: #ffffff;
-            border: 3px solid #cbd5e1;
-            border-radius: 12px;
-            position: relative;
-            overflow: hidden;
-            background-image: linear-gradient(#e2e8f0 1px, transparent 1px), linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
-            background-size: 20px 20px;
-            transition: background 0.5s ease;
-        }
-
-        .sprite-actor {
-            width: 70px;
-            height: 70px;
-            position: absolute;
-            bottom: 30px;
-            left: 20px;
-            transition: left 0.8s ease, bottom 0.8s ease, transform 0.4s ease, filter 0.5s ease, opacity 0.5s ease;
-            font-size: 3.8rem;
-            line-height: 1;
+        .map-dot {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: #cbd5e1;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 5;
+            font-weight: bold;
+            color: white;
+            transition: all 0.3s;
         }
 
-        .speech-bubble {
+        .map-dot.active {
+            background: var(--wire-blue);
+            transform: scale(1.15);
+            box-shadow: 0 0 10px rgba(77, 151, 255, 0.5);
+        }
+
+        .map-dot.passed {
+            background: var(--grass-green);
+        }
+
+        /* LAB CIRCUIT DISPLAY STAGE */
+        .circuit-sandbox {
+            background: var(--dark-space);
+            border-radius: 16px;
+            height: 200px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            border: 4px solid #334155;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .lab-item {
+            font-size: 3.5rem;
+            transition: all 0.3s;
+            position: relative;
+            filter: grayscale(0.8);
+        }
+
+        .lab-item span {
             position: absolute;
-            background: #ffffff;
-            border: 2px solid var(--scratch-blue);
-            border-radius: 10px;
-            padding: 6px 12px;
-            font-weight: 700;
-            color: var(--slate-dark);
-            font-size: 0.95rem;
-            bottom: 115px;
-            left: 15px;
-            opacity: 0;
-            transition: opacity 0.3s ease, left 0.8s ease, bottom 0.8s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            z-index: 10;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: #94a3b8;
+            font-family: sans-serif;
+            font-weight: bold;
             white-space: nowrap;
         }
 
-        .blocks-palette {
-            background: #f1f5f9;
-            border: 2px solid #cbd5e1;
-            border-radius: 12px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            text-align: left;
-            max-height: 320px;
-            overflow-y: auto;
+        .lab-item.powered {
+            filter: grayscale(0) drop-shadow(0 0 15px var(--electric-yellow));
         }
 
-        /* SCRATCH CODE BLOCK ELEMENTS */
-        .scratch-block {
-            padding: 12px 15px;
-            color: white;
-            font-weight: 700;
-            font-size: 0.95rem;
-            border-radius: 4px 16px 16px 4px;
-            cursor: pointer;
-            box-shadow: 0 4px 0 rgba(0,0,0,0.15);
+        /* CIRCUIT PATH LINES */
+        .wire-connection {
+            flex-grow: 1;
+            height: 8px;
+            background: #475569;
             position: relative;
+            border-radius: 4px;
+        }
+
+        .wire-connection.active-flow {
+            background: var(--electric-yellow);
+            box-shadow: 0 0 12px var(--electric-yellow);
+            animation: flowSparkle 0.6s infinite linear;
+        }
+
+        @keyframes flowSparkle {
+            0% { background-position: 0% 50%; }
+            50% { background-color: #ffffff; }
+            100% { background-position: 100% 50%; }
+        }
+
+        /* BULB SPECIFIC EFFECTS */
+        @keyframes glowingAnimation {
+            0%, 100% { filter: drop-shadow(0 0 8px #ffd000) brightness(1); }
+            50% { filter: drop-shadow(0 0 35px #ffea00) brightness(1.6); }
+        }
+
+        .lit-up {
+            animation: glowingAnimation 0.8s infinite ease-in-out !important;
+            filter: grayscale(0) !important;
+        }
+
+        /* PROMPT INTERACTIVE QUESTION BOX */
+        .instruction-bubble {
+            background: #f0fdf4;
+            border: 3px solid var(--grass-green);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 20px;
+            min-height: 75px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            border: 1px solid rgba(0,0,0,0.1);
-        }
-        .scratch-block::before {
-            content: '';
-            position: absolute;
-            top: -6px;
-            left: 20px;
-            width: 16px;
-            height: 6px;
-            border-radius: 4px 4px 0 0;
-        }
-        .scratch-block::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 20px;
-            width: 16px;
-            height: 6px;
-            border-radius: 0 0 4px 4px;
+            justify-content: center;
         }
 
-        .block-events { background: var(--scratch-orange); }
-        .block-events::before, .block-events::after { background: var(--scratch-orange); }
-        
-        .block-motion { background: var(--scratch-blue); }
-        .block-motion::before, .block-motion::after { background: var(--scratch-blue); }
-
-        .block-looks { background: var(--scratch-purple); }
-        .block-looks::before, .block-looks::after { background: var(--scratch-purple); }
-
-        .block-control { background: var(--scratch-yellow); color: #334155; }
-        .block-control::before, .block-control::after { background: var(--scratch-yellow); }
-
-        .block-sound { background: var(--scratch-pink); }
-        .block-sound::before, .block-sound::after { background: var(--scratch-pink); }
-
-        /* RIGHT COLUMN: SCRIPT EDITOR WORKSPACE */
-        .script-workspace {
-            background: #f8fafc;
-            border: 3px dashed #cbd5e1;
-            border-radius: 12px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            align-items: flex-start;
-            min-height: 430px;
+        .instruction-bubble p {
+            font-size: 1.2rem;
+            color: #166534;
+            font-weight: bold;
         }
 
-        .workspace-empty-hint {
-            color: #94a3b8;
-            font-weight: 600;
-            margin: auto;
+        /* BLOCKS & OPTIONS SELECTION BOXES */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .option-button {
+            background: var(--paper-white);
+            border: 3px solid #cbd5e1;
+            padding: 18px;
+            border-radius: 14px;
             font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 0 #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
+        .option-button:hover {
+            border-color: var(--wire-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0 var(--wire-blue);
+            background: #f8fafc;
+        }
+
+        .option-button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 var(--wire-blue);
+        }
+
+        /* BOTTOM TICKER FEEDBACK BAR */
         .ticker-feedback {
             padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: 700;
+            border-radius: 12px;
+            font-weight: bold;
             font-size: 1.1rem;
-            min-height: 55px;
             background: #f1f5f9;
             border-left: 6px solid #cbd5e1;
-            margin-top: 10px;
+            margin-bottom: 15px;
+            min-height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .ticker-feedback.good { background: #ecfdf5; border-left-color: var(--success); color: #065f46; }
-        .ticker-feedback.bad { background: #fef2f2; border-left-color: var(--error); color: #991b1b; }
+        .ticker-feedback.correct { background: #ecfdf5; border-left-color: var(--grass-green); color: #065f46; }
+        .ticker-feedback.incorrect { background: #fef2f2; border-left-color: var(--error-red); color: #991b1b; }
 
-        .rank-shell {
-            width: 120px;
-            height: 120px;
+        /* RESULTS OVERLAY TERMINAL */
+        .rank-badge {
+            width: 130px;
+            height: 130px;
             border-radius: 50%;
-            background: var(--scratch-orange);
+            background: var(--primary-orange);
             color: white;
-            font-size: 2.2rem;
-            font-weight: 800;
+            font-size: 4rem;
             display: flex;
             justify-content: center;
             align-items: center;
             margin: 20px auto;
-            border: 4px solid #ffffff;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border: 6px solid #fff;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
         }
 
-        /* Custom Loops Animation Keyframes */
-        @keyframes colorShift {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
+        .action-btn {
+            background: var(--primary-orange);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #c26112;
+            transition: all 0.1s;
         }
-        @keyframes beatDance {
-            0%, 100% { transform: scale(1) rotate(0deg); }
-            25% { transform: scale(1.2) rotate(-10deg); }
-            75% { transform: scale(1.2) rotate(10deg); }
+
+        .action-btn:hover {
+            background: #e07216;
+        }
+
+        .action-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #c26112;
         }
     </style>
 </head>
 <body>
 
-    <!-- STAGE 1: EXCLUSIVE LOGO SPLASH SCREEN -->
-    <div id="splash">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/320x100?text=Innovine+Solutions'">
+    <!-- STAGE 1: EXCLUSIVE INOVVINE LOGO SPLASH SCREEN -->
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/300x90?text=Innovine+STEM+Lab'">
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
+        </div>
+        <p style="margin-top: 10px; font-weight: bold; color: #64748b;">Assembling Circuit Workspaces...</p>
     </div>
 
-    <!-- STAGE 2: MAIN WORKBOOK CONTAINER FRAME -->
-    <div class="container hidden" id="appMainframe">
+    <!-- STAGE 2: ELECTRICAL GAME WORKBOARD -->
+    <div class="game-card hidden" id="gameFrame">
         
-        <!-- INTRO PANEL -->
-        <div id="menuPanel" class="intro-panel">
-            <h1>Scratch Logic Laboratory</h1>
-            <div class="mode-badge">Chapter 9: Costumes, Loops &amp; Audio Scripts</div>
+        <!-- HEADER LABELS -->
+        <div class="header">
+            <h1>Electricity Control Lab ⚡</h1>
+            <div class="subtitle-badge">STEM Grade 3 - Chapter 2</div>
+        </div>
+
+        <!-- STAGE MAP STEP NODES -->
+        <div class="progress-map" id="mapTracker">
+            <div class="map-dot active">1</div>
+            <div class="map-dot">2</div>
+            <div class="map-dot">3</div>
+            <div class="map-dot">4</div>
+            <div class="map-dot">5</div>
+        </div>
+
+        <!-- DYNAMIC VISUAL SANDBOX STAGE -->
+        <div class="circuit-sandbox">
+            <!-- Battery Cell Source -->
+            <div class="lab-item powered" id="labBattery">
+                🔋
+                <span>1. Power Source</span>
+            </div>
             
-            <div class="briefing">
-                <p>
-                    Welcome Creator! Select an active learning adventure challenge. Arrange conditional triggers, motion vectors, sound systems, and complex execution loops to write error-free computational scripts!
-                </p>
+            <!-- Path Wire Segment A -->
+            <div class="wire-connection" id="wireA"></div>
+            
+            <!-- Control Toggle Switch Mechanism -->
+            <div class="lab-item" id="labSwitch" style="filter: grayscale(0.8);">
+                🎛️
+                <span id="switchLabel">2. Open Switch</span>
             </div>
-
-            <h2 style="color: var(--slate-dark); font-size: 1.2rem; text-align: left; margin-bottom: 10px;">Choose a Programming Track:</h2>
-            <div class="mission-selector">
-                <div class="mission-card selected" id="card_intro" onclick="selectMission('intro')">
-                    <h3>Activity 1: Baseline Logic</h3>
-                    <p>Help Kit the Cat move 100 steps across grids, introduce himself, and spin cleanly.</p>
-                </div>
-                <div class="mission-card" id="card_ocean" onclick="selectMission('ocean')">
-                    <h3>Activity 2: Deep Sea Glow</h3>
-                    <p>Program Fin the Jellyfish using <b>Looks effects</b> inside a <b>Forever Loop</b> to shift colors.</p>
-                </div>
-                <div class="mission-card" id="card_haunted" onclick="selectMission('haunted')">
-                    <h3>Activity 3: Spooky Mansion</h3>
-                    <p>Combine a <b>Forever Loop</b> with visibility blocks to make a ghost vanish and float!</p>
-                </div>
-                <div class="mission-card" id="card_dance" onclick="selectMission('dance')">
-                    <h3>Activity 4: Sound &amp; Music Dance</h3>
-                    <p>Help Groove DJ Monkey trigger an audio tune and dance around inside a <b>Forever loop</b>!</p>
-                </div>
+            
+            <!-- Path Wire Segment B -->
+            <div class="wire-connection" id="wireB"></div>
+            
+            <!-- End Output Target Device (Lightbulb) -->
+            <div class="lab-item" id="labBulb">
+                💡
+                <span>3. Output Device</span>
             </div>
-
-            <button class="act-btn" onclick="startStoryEngine()">Open Code Workspace ➜</button>
         </div>
 
-        <!-- STORY GAME PANEL -->
-        <div id="gamePanel" class="hidden">
-            <h2 style="color: var(--slate-dark); font-size: 1.2rem; margin-bottom: 15px;" id="missionObjective">
-                Mission Objective Loader...
-            </h2>
-
-            <div class="workspace-grid">
-                <!-- LEFT COLUMN -->
-                <div class="left-column">
-                    <!-- DISPLAY SCREEN AREA -->
-                    <div class="stage-area" id="stageElement">
-                        <div class="speech-bubble" id="spriteBubble">Hello!</div>
-                        <div class="sprite-actor" id="primarySprite">🐱</div>
-                        <div style="position: absolute; bottom: 5px; right: 10px; font-size: 0.8rem; font-weight: bold; color: #94a3b8; letter-spacing: 1px;">THE STAGE</div>
-                    </div>
-
-                    <!-- BLOCKS PALETTE -->
-                    <div class="blocks-palette" id="paletteContainer">
-                        <!-- Dynamic Injection Layout based on selected track profile -->
-                    </div>
-                </div>
-
-                <!-- RIGHT COLUMN (WORKSPACE AREA) -->
-                <div>
-                    <div class="script-workspace" id="workspace">
-                        <div class="workspace-empty-hint" id="workspaceHint">Click blocks on the left to build your script here!</div>
-                    </div>
-                    <button class="act-btn" style="width:100%; margin-top:10px; background: var(--scratch-green);" onclick="runAssembledScript()">▶ Run Script</button>
-                </div>
-            </div>
-
-            <div style="display:flex; gap:10px; justify-content: space-between; align-items: center;">
-                <button class="act-btn" style="background:#64748b; padding: 10px 20px; font-size: 0.95rem;" onclick="clearWorkspace()">Clear Workspace 📋</button>
-                <button class="act-btn" style="background:#cc2929; padding: 10px 20px; font-size: 0.95rem;" onclick="exitToMenu()">Return to Missions 🏠</button>
-            </div>
-            <div class="ticker-feedback" id="tickerBox">Assemble your programming blocks and click "Run Script"!</div>
+        <!-- OBJECTIVE DESCRIPTION BUBBLE -->
+        <div class="instruction-bubble">
+            <p id="questionPrompt">Loading challenge parameters...</p>
         </div>
 
-        <!-- REPORT TERMINAL -->
-        <div id="reportPanel" class="hidden">
-            <h1 style="color: var(--scratch-orange); font-size: 2.2rem;">📊 Simulation Run Complete!</h1>
-            <div class="rank-shell"><span id="finalScore">100</span></div>
-            <h2 id="finalRank" style="font-weight: 800; margin-bottom: 10px; color: var(--slate-dark);">Scratch Master Architect!</h2>
-            <p id="finalSummary" style="color: #475569; margin-bottom: 30px; line-height: 1.7; max-width: 620px; margin-left: auto; margin-right: auto;"></p>
-            <button class="act-btn" onclick="exitToMenu()">Choose Another Track 🔄</button>
+        <!-- ANSWER SELECTION ACTIONS GRID -->
+        <div class="options-grid" id="choicesGrid">
+            <!-- Dynamic Choice Buttons Injected Here By Engine -->
+        </div>
+
+        <!-- REALTIME TICKER DISPLAY COMPONENT -->
+        <div class="ticker-feedback" id="tickerBox">Select an answer block below to clear the path challenge!</div>
+
+        <!-- CONTROL BUTTON BAR FOR REPLAYS -->
+        <div id="controlBar" class="hidden" style="margin-top: 15px;">
+            <button class="action-btn" onclick="resetElectricGame()">Play Lab Game Again 🔄</button>
+        </div>
+
+        <!-- SUCCESS REPORT FRAME VIEWPORT -->
+        <div id="victoryWrapper" class="hidden" style="margin-top: 10px; border-top: 4px dashed #cbd5e1; padding-top: 20px;">
+            <div class="rank-badge">🏆</div>
+            <h2 style="color: var(--grass-green); font-size: 1.8rem; margin-bottom: 10px;">Certified Circuit Engineer!</h2>
+            <p style="color: #475569; font-size: 1.1rem; line-height: 1.6; max-width: 600px; margin: 0 auto 15px;">
+                Amazing job! You safely completed all challenge levels from Page 117+ of your STEM book. You know exactly how switches control loops and paths to run electricity cleanly!
+            </p>
         </div>
     </div>
 
-    <!-- AUDIO FILE HOOKS FROM ASSETS DIRECTORY -->
-    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
-    <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
+    <!-- AUDIO HARDWARE EMBED NODES FROM LOCAL DIRECTORIES -->
+    <audio id="soundCorrect" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="soundWrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="soundClap" src="assets/clap.mp3" preload="auto"></audio>
 
     <script>
-        // 3-Second Splash Screen Control for enhanced user feedback flow
+        // Automatic Transition away from Innovine Splash Screen after loading animation loops
         setTimeout(() => {
-            document.getElementById("splash").style.display = "none";
-            document.getElementById("appMainframe").classList.remove("hidden");
-            speakVoice("Welcome to the interactive Scratch workspace. Select a profile track to begin.");
-        }, 3000);
+            document.getElementById("splash-screen").style.display = "none";
+            document.getElementById("gameFrame").classList.remove("hidden");
+            initializeLevelEngine();
+        }, 2500);
 
-        let currentTrack = 'intro';
-        let assembledBlocks = [];
-        let isRunning = false;
-        let loopAnimationInterval = null;
-        let audioContextInstance = null; // System generated synth beat fallback for Track 4 simulation
-
-        // Audio synthesizer tool to play a playful melody loop if external assets don't override
-        function playSynthesizedBeat() {
-            try {
-                if(!audioContextInstance) {
-                    audioContextInstance = new (window.AudioContext || window.webkitAudioContext)();
-                }
-                let osc = audioContextInstance.createOscillator();
-                let gain = audioContextInstance.createGain();
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(330, audioContextInstance.currentTime); // Mi Note
-                osc.frequency.setValueAtTime(440, audioContextInstance.currentTime + 0.15); // La Note
-                gain.gain.setValueAtTime(0.2, audioContextInstance.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, audioContextInstance.currentTime + 0.3);
-                osc.connect(gain);
-                gain.connect(audioContextInstance.destination);
-                osc.start();
-                osc.stop(audioContextInstance.currentTime + 0.3);
-            } catch(e) {}
-        }
-
-        // Tracks Engine Configuration Framework
-        const trackProfiles = {
-            intro: {
-                objective: 'Mission: Make Kit walk 100 steps, say "Hello!", and then turn around!',
-                sprite: '🐱',
-                bg: 'linear-gradient(#e2e8f0 1px, transparent 1px), linear-gradient(90deg, #e2e8f0 1px, transparent 1px)',
-                bgSize: '20px 20px',
-                bgColor: '#ffffff',
-                correctOrder: ["flag", "move", "say", "turn"],
-                blocks: {
-                    flag: { text: "🏁 when green flag clicked", className: "block-events" },
-                    move: { text: "➡️ move 100 steps", className: "block-motion" },
-                    say: { text: "💬 say \"Hello!\" for 2 seconds", className: "block-looks" },
-                    turn: { text: "🔄 turn 180 degrees", className: "block-motion" }
-                },
-                successMsg: "Fantastic! You simulated a core linear sequential intro block sequence. You know how events interact with look variables!"
+        // Grade 3 STEM Chapter 2 Conceptual Database Array (Page 117 onwards reference values)
+        const electricalMissions = [
+            {
+                prompt: "Level 1: Electricity needs a complete, unbroken loop to travel. What do we call this path?",
+                options: [
+                    { text: "A Circuit ⚡", correct: true },
+                    { text: "A Highway 🚗", correct: false },
+                    { text: "A Pipeline 🚰", correct: false },
+                    { text: "A Wire Frame 🕸️", correct: false }
+                ],
+                successHint: "Correct! An electrical circuit is a complete loop that lets electricity flow smoothly.",
+                actionEffect: "connect-path"
             },
-            ocean: {
-                objective: 'Mission: Program Fin the Jellyfish to start, dive down 50 steps, and switch color endlessly!',
-                sprite: '🪼',
-                bg: 'linear-gradient(#0c4a6e, #0284c7)',
-                bgSize: 'auto',
-                bgColor: '#0c4a6e',
-                correctOrder: ["flag", "dive", "forever", "color"],
-                blocks: {
-                    flag: { text: "🏁 when green flag clicked", className: "block-events" },
-                    dive: { text: "⬇️ change y by -50 (Dive Down)", className: "block-motion" },
-                    forever: { text: "🔄 forever [loop structure]", className: "block-control" },
-                    color: { text: "🌈 change color effect by 25", className: "block-looks" }
-                },
-                successMsg: "Incredible! You have mastered the Control loop logic block. The Forever Loop wraps around Looks commands to generate custom endless cycles!"
+            {
+                prompt: "Level 2: What happens to the electrical currents when a switch is turned 'OFF' (Open Switch)?",
+                options: [
+                    { text: "Electricity travels faster 🚀", correct: false },
+                    { text: "The path breaks and flow stops 🛑", correct: true },
+                    { text: "The battery charges up 🔋", correct: false },
+                    { text: "It creates a massive spark ✨", correct: false }
+                ],
+                successHint: "Spot on! An 'Open Switch' breaks the circuit path, meaning electricity cannot cross over.",
+                actionEffect: "open-switch"
             },
-            haunted: {
-                objective: 'Mission: Wake up the Ghost, initiate a looping behavior, and turn invisible to scare players!',
-                sprite: '👻',
-                bg: 'linear-gradient(#0f172a, #334155)',
-                bgSize: 'auto',
-                bgColor: '#0f172a',
-                correctOrder: ["flag", "forever", "hide", "show"],
-                blocks: {
-                    flag: { text: "🏁 when green flag clicked", className: "block-events" },
-                    forever: { text: "🔄 forever [loop structure]", className: "block-control" },
-                    hide: { text: "👻 hide (vanish)", className: "block-looks" },
-                    show: { text: "👁️ show (reappear)", className: "block-looks" }
-                },
-                successMsg: "Outstanding logic setup! You deployed high-tier algorithmic synchronization. Nesting show-and-hide visibility updates mimics complex state management!"
+            {
+                prompt: "Level 3: To safely make our lightbulb shine bright, how must the circuit switch be positioned?",
+                options: [
+                    { text: "Left entirely unscrewed 🔩", correct: false },
+                    { text: "Cut in half with scissors ✂️", correct: false },
+                    { text: "Closed (Turned ON) 🔌", correct: true },
+                    { text: "Left Open (Turned OFF) ❌", correct: false }
+                ],
+                successHint: "Excellent! A Closed switch joins the wire pieces together so the electricity flows non-stop.",
+                actionEffect: "close-switch"
             },
-            dance: {
-                objective: 'Mission: Help DJ Monkey trigger his introductory phrase, play a sound effect, and loop a dance routine forever!',
-                sprite: '🐵',
-                bg: 'linear-gradient(#701a75, #4a044e)',
-                bgSize: 'auto',
-                bgColor: '#701a75',
-                correctOrder: ["flag", "say_dance", "forever", "play_sound"],
-                blocks: {
-                    flag: { text: "🏁 when green flag clicked", className: "block-events" },
-                    say_dance: { text: "💬 say \"Let's Party!\" for 2 seconds", className: "block-looks" },
-                    forever: { text: "🔄 forever [loop structure]", className: "block-control" },
-                    play_sound: { text: "🎵 play sound \"Dance Beat\" until done", className: "block-sound" }
-                },
-                successMsg: "Rockstar Coder status achieved! You successfully chained Looks, Sounds, and Forever Loops. Sounds synced within loops provide immersive audio-visual loops for animations!"
+            {
+                prompt: "Level 4: Materials that let electricity flow through them easily are called what?",
+                options: [
+                    { text: "Insulators (like Rubber) 🪵", correct: false },
+                    { text: "Conductors (like Copper) 🪙", correct: true },
+                    { text: "Blockers (like Plastic) 📦", correct: false },
+                    { text: "Sponges (like Foam) 🧽", correct: false }
+                ],
+                successHint: "Super answer! Metals like copper are great conductors. They make perfect paths for current flow.",
+                actionEffect: "power-wires"
+            },
+            {
+                prompt: "Level 5: Why are electric wires coated in colorful plastic or rubber sleeves?",
+                options: [
+                    { text: "To keep the wires cozy and warm 🔥", correct: false },
+                    { text: "To stop electricity from escaping safely (Insulator) 🛡️", correct: true },
+                    { text: "To make the wires look pretty 🎨", correct: false },
+                    { text: "To make the wires weigh less 🎈", correct: false }
+                ],
+                successHint: "Perfect! Plastic is an insulator—it stops electricity from flowing into our hands!",
+                actionEffect: "glow-bulb"
             }
-        };
+        ];
 
-        function speakVoice(text) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate = 1.0;
-                window.speechSynthesis.speak(utterance);
+        let activeIndex = 0;
+
+        function initializeLevelEngine() {
+            if (activeIndex >= electricalMissions.length) {
+                triggerVictorySequence();
+                return;
             }
-        }
 
-        function selectMission(trackId) {
-            currentTrack = trackId;
-            document.querySelectorAll('.mission-card').forEach(card => card.classList.remove('selected'));
-            document.getElementById(`card_${trackId}`).classList.add('selected');
-            speakVoice(`Selected Activity Track ${trackId}`);
-        }
-
-        function setupWorkspaceForTrack() {
-            const config = trackProfiles[currentTrack];
-            
-            // Render Stage configurations
-            document.getElementById("missionObjective").innerText = config.objective;
-            const stage = document.getElementById("stageElement");
-            stage.style.background = config.bg;
-            stage.style.backgroundSize = config.bgSize;
-            stage.style.backgroundColor = config.bgColor;
-
-            const sprite = document.getElementById("primarySprite");
-            sprite.innerText = config.sprite;
-            
-            // Clean sprite attributes
-            sprite.style.animation = "none";
-            sprite.style.filter = "none";
-            sprite.style.opacity = "1";
-            sprite.style.bottom = "30px";
-            sprite.style.left = "20px";
-            sprite.style.transform = "scaleX(1)";
-
-            // Render Palette Blocks dynamically
-            const palette = document.getElementById("paletteContainer");
-            palette.innerHTML = '<h4 style="color: #64748b; font-size: 0.9rem; text-transform: uppercase; margin-bottom:5px;">Blocks Palette</h4>';
-            
-            Object.keys(config.blocks).forEach(key => {
-                const blockItem = config.blocks[key];
-                const blockDiv = document.createElement("div");
-                blockDiv.className = `scratch-block ${blockItem.className}`;
-                blockDiv.setAttribute("data-block", key);
-                blockDiv.setAttribute("onclick", `addBlockToWorkspace('${key}')`);
-                blockDiv.innerHTML = blockItem.text;
-                palette.appendChild(blockDiv);
+            // Sync visual status dots
+            const dots = document.querySelectorAll('.map-dot');
+            dots.forEach((dot, dIdx) => {
+                dot.className = "map-dot";
+                if (dIdx < activeIndex) dot.classList.add("passed");
+                if (dIdx === activeIndex) dot.classList.add("active");
+                if (dIdx < activeIndex) dot.innerText = "✓";
             });
 
-            clearWorkspace();
-        }
+            // Load values from dataset 
+            const currentData = electricalMissions[activeIndex];
+            document.getElementById("questionPrompt").innerText = currentData.prompt;
 
-        function startStoryEngine() {
-            document.getElementById("menuPanel").classList.add("hidden");
-            document.getElementById("gamePanel").classList.remove("hidden");
-            setupWorkspaceForTrack();
-            speakVoice("Let's build a script. Match the stack sequences chronologically.");
-        }
-
-        function exitToMenu() {
-            stopLoops();
-            document.getElementById("gamePanel").classList.add("hidden");
-            document.getElementById("reportPanel").classList.add("hidden");
-            document.getElementById("menuPanel").classList.remove("hidden");
-            speakVoice("Returned to main mission directory.");
-        }
-
-        function addBlockToWorkspace(blockId) {
-            if (isRunning) return;
-            if (assembledBlocks.includes(blockId)) {
-                speakVoice("This block is already placed inside your script editor!");
-                return;
-            }
-
-            const config = trackProfiles[currentTrack];
-            assembledBlocks.push(blockId);
-            document.getElementById("workspaceHint").classList.add("hidden");
-
-            // Visual Append Node
-            const workspace = document.getElementById("workspace");
-            const newBlock = document.createElement("div");
-            newBlock.className = `scratch-block ${config.blocks[blockId].className}`;
-            newBlock.innerText = config.blocks[blockId].text;
-            newBlock.style.width = "95%";
-            workspace.appendChild(newBlock);
-
-            speakVoice(`Added ${config.blocks[blockId].text}`);
-        }
-
-        function clearWorkspace() {
-            if (isRunning) return;
-            stopLoops();
-            assembledBlocks = [];
-            const workspace = document.getElementById("workspace");
-            workspace.innerHTML = '<div class="workspace-empty-hint" id="workspaceHint">Click blocks on the left to build your script here!</div>';
+            // Load dynamic structural components inside grid layout
+            const grid = document.getElementById("choicesGrid");
+            grid.innerHTML = "";
             
-            const sprite = document.getElementById("primarySprite");
-            const bubble = document.getElementById("spriteBubble");
-            
-            sprite.style.left = "20px";
-            sprite.style.bottom = "30px";
-            sprite.style.transform = "scaleX(1)";
-            sprite.style.animation = "none";
-            sprite.style.filter = "none";
-            sprite.style.opacity = "1";
-            
-            bubble.style.opacity = "0";
-            bubble.style.left = "15px";
-            bubble.style.bottom = "115px";
-
-            document.getElementById("tickerBox").className = "ticker-feedback";
-            document.getElementById("tickerBox").innerText = "Workspace cleared! Select tracking variables.";
+            currentData.options.forEach(opt => {
+                const optBtn = document.createElement("button");
+                optBtn.className = "option-button";
+                optBtn.innerHTML = opt.text;
+                optBtn.onclick = () => validateStudentSelection(opt.correct, currentData.successHint, currentData.actionEffect);
+                grid.appendChild(optBtn);
+            });
         }
 
-        function stopLoops() {
-            if (loopAnimationInterval) {
-                clearInterval(loopAnimationInterval);
-                loopAnimationInterval = null;
-            }
-        }
-
-        function runAssembledScript() {
-            if (isRunning) return;
-            const config = trackProfiles[currentTrack];
-
-            if (assembledBlocks.length === 0) {
-                speakVoice("Your workspace viewport is empty!");
-                return;
-            }
-
-            isRunning = true;
-            const feedbackBox = document.getElementById("tickerBox");
-
-            // Compute alignment validation matrix
-            let pathsValid = true;
-            if (assembledBlocks.length !== config.correctOrder.length) {
-                pathsValid = false;
-            } else {
-                for (let i = 0; i < config.correctOrder.length; i++) {
-                    if (assembledBlocks[i] !== config.correctOrder[i]) {
-                        pathsValid = false;
-                        break;
-                    }
-                }
-            }
-
-            if (!pathsValid) {
-                // Play error alert sound asset path
-                try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
-                feedbackBox.className = "ticker-feedback bad";
-                feedbackBox.innerHTML = `💥 EXECUTION FAULT! Scrambled logic sequence. Order required: <br><b>${config.correctOrder.map(k => config.blocks[k].text.split('(')[0]).join(' ➜ ')}</b>`;
-                speakVoice("Compile sequence failure. Inspect the logic order parameters.");
-                isRunning = false;
-                return;
-            }
-
-            // Play correct alert sound asset path
-            try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
-            feedbackBox.className = "ticker-feedback good";
-            feedbackBox.innerHTML = "🚀 RUNTIME STABLE! Compiling logical threads step-by-step...";
+        function validateStudentSelection(isCorrect, textFeed, effect) {
+            const ticker = document.getElementById("tickerBox");
             
-            const sprite = document.getElementById("primarySprite");
-            const bubble = document.getElementById("spriteBubble");
-
-            if (currentTrack === 'intro') {
-                // Track 1 Animation Sequence
-                setTimeout(() => {
-                    sprite.style.left = "150px";
-                    bubble.style.left = "145px";
-                    speakVoice("Moving forward one-hundred steps!");
-                }, 500);
-
-                setTimeout(() => {
-                    bubble.innerText = "Hello!";
-                    bubble.style.opacity = "1";
-                    speakVoice("Hello!");
-                }, 1500);
-
-                setTimeout(() => {
-                    bubble.style.opacity = "0";
-                    sprite.style.transform = "scaleX(-1)";
-                    speakVoice("Spinning coordinate frame transformation 180 degrees.");
-                }, 3500);
-
-                setTimeout(() => { showMetricsDashboard(config.successMsg); }, 5500);
-
-            } else if (currentTrack === 'ocean') {
-                // Track 2 Forever Animation Sequence
-                setTimeout(() => {
-                    sprite.style.bottom = "10px";
-                    bubble.style.bottom = "95px";
-                    speakVoice("Changing Y projection vector. Diving down!");
-                }, 600);
-
-                setTimeout(() => {
-                    speakVoice("Entering nested forever cycle loops. Initiating graphic rendering filter modifications.");
-                    feedbackBox.innerHTML = "🔄 FOREVER LOOP ACTIVE: Executing appearance parameters continuously!";
-                    sprite.style.animation = "colorShift 3s linear infinite";
-                }, 1800);
-
-                setTimeout(() => { showMetricsDashboard(config.successMsg); }, 6000);
-
-            } else if (currentTrack === 'haunted') {
-                // Track 3 Forever Structural Visibility Sequence
-                setTimeout(() => {
-                    speakVoice("Activating execution block frame. Initializing vanishing parameters inside loop.");
-                    feedbackBox.innerHTML = "🔄 FOREVER LOOP ACTIVE: Compiling binary state transformations.";
-                    
-                    let toggleState = true;
-                    loopAnimationInterval = setInterval(() => {
-                        if(toggleState) {
-                            sprite.style.opacity = "0.1";
-                            bubble.innerText = "Boo! Hiding...";
-                            bubble.style.opacity = "1";
-                        } else {
-                            sprite.style.opacity = "0.9";
-                            bubble.innerText = "Aha! Showing!";
-                            bubble.style.opacity = "1";
-                        }
-                        toggleState = !toggleState;
-                    }, 1200);
-                }, 800);
-
-                setTimeout(() => { showMetricsDashboard(config.successMsg); }, 6500);
+            if (isCorrect) {
+                // Play assets audio right feedback loop
+                try { document.getElementById("soundCorrect").play().catch(()=>{}); } catch(e){}
+                ticker.className = "ticker-feedback correct";
+                ticker.innerText = "🌟 " + textFeed;
                 
-            } else if (currentTrack === 'dance') {
-                // Track 4 Sound Beat Party Loop Sequence
+                applyCircuitSandboxVisualEffects(effect);
+                
+                // Pause slightly before loading the next game level context
+                activeIndex++;
                 setTimeout(() => {
-                    bubble.innerText = "Let's Party! 🎵";
-                    bubble.style.opacity = "1";
-                    speakVoice("Let's Party!");
-                }, 500);
-
-                setTimeout(() => {
-                    bubble.style.opacity = "0";
-                    feedbackBox.innerHTML = "🔄 FOREVER LOOP ACTIVE: Syncing rhythmic layout and play sound nodes!";
-                    sprite.style.animation = "beatDance 0.6s infinite ease-in-out";
-                    
-                    // Loop execution triggering synth notes natively alongside background assets
-                    loopAnimationInterval = setInterval(() => {
-                        playSynthesizedBeat();
-                    }, 600);
-                }, 2200);
-
-                setTimeout(() => { showMetricsDashboard(config.successMsg); }, 7500);
+                    ticker.className = "ticker-feedback";
+                    ticker.innerText = "Loading next module block...";
+                    initializeLevelEngine();
+                }, 3000);
+            } else {
+                // Play assets audio wrong feedback loop
+                try { document.getElementById("soundWrong").play().catch(()=>{}); } catch(e){}
+                ticker.className = "ticker-feedback incorrect";
+                ticker.innerText = "❌ Uh oh! The flow stopped. Try that logic step again!";
             }
         }
 
-        function showMetricsDashboard(summaryText) {
-            stopLoops();
-            // Trigger applause congratulatory tracker
-            try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
-            document.getElementById("gamePanel").classList.add("hidden");
-            document.getElementById("reportPanel").classList.remove("hidden");
-            document.getElementById("finalSummary").innerText = summaryText;
-            speakVoice("Mission complete! Exceptional engineering structure design.");
-            isRunning = false;
+        function applyCircuitSandboxVisualEffects(effectName) {
+            const wireA = document.getElementById("wireA");
+            const wireB = document.getElementById("wireB");
+            const swItem = document.getElementById("labSwitch");
+            const swLabel = document.getElementById("switchLabel");
+            const bulb = document.getElementById("labBulb");
+
+            if (effectName === "connect-path") {
+                wireA.classList.add("active-flow");
+            } 
+            else if (effectName === "open-switch") {
+                swItem.style.filter = "grayscale(0)";
+                swItem.innerText = "📂";
+                swLabel.innerText = "2. Open Switch";
+            } 
+            else if (effectName === "close-switch") {
+                swItem.innerText = "🔌";
+                swLabel.innerText = "2. Closed Switch";
+                swItem.classList.add("powered");
+            } 
+            else if (effectName === "power-wires") {
+                wireB.classList.add("active-flow");
+            } 
+            else if (effectName === "glow-bulb") {
+                bulb.classList.add("lit-up");
+            }
+        }
+
+        function triggerVictorySequence() {
+            // Trigger applause tracking loop asset
+            try { document.getElementById("soundClap").play().catch(()=>{}); } catch(e){}
+            document.getElementById("choicesGrid").innerHTML = "";
+            document.getElementById("questionPrompt").innerText = "Lab Complete! Excellent Electrical Architecture Skill!";
+            document.getElementById("tickerBox").className = "ticker-feedback correct";
+            document.getElementById("tickerBox").innerText = "🎉 Circuit complete! Electrical energy flows beautifully!";
+            document.getElementById("victoryWrapper").classList.remove("hidden");
+            document.getElementById("controlBar").classList.remove("hidden");
+        }
+
+        function resetElectricGame() {
+            activeIndex = 0;
+            
+            // Revert DOM stage nodes back to uncharged states
+            document.getElementById("wireA").className = "wire-connection";
+            document.getElementById("wireB").className = "wire-connection";
+            
+            const swItem = document.getElementById("labSwitch");
+            swItem.className = "lab-item";
+            swItem.style.filter = "grayscale(0.8)";
+            swItem.innerText = "️";
+            document.getElementById("switchLabel").innerText = "2. Open Switch";
+            
+            document.getElementById("labBulb").className = "lab-item";
+            document.getElementById("victoryWrapper").classList.add("hidden");
+            document.getElementById("controlBar").classList.add("hidden");
+            
+            document.getElementById("tickerBox").className = "ticker-feedback";
+            document.getElementById("tickerBox").innerText = "Select an answer block below to clear the path challenge!";
+            
+            initializeLevelEngine();
         }
     </script>
 </body>

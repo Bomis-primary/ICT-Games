@@ -1,1 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Innovine Solutions - Comic Strip Creator</title>
+    <style>
+        :root {
+            --bg-canvas: #f8fafc;
+            --word-blue: #2b579a; /* Microsoft Corporate Blue styling base */
+            --comic-orange: #f97316; /* Playful dynamic Chapter 7 accent */
+            --slate-dark: #1e293b;
+            --success: #10b981;
+            --error: #ef4444;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-canvas);
+            padding: 15px;
+            user-select: none;
+        }
+
+        /* --- STAGE 1: EXCLUSIVE 5-SECOND LOGO SPLASH SCREEN --- */
+        #splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #splash img {
+            width: 320px;
+            max-width: 85%;
+            animation: elegantPulse 2.5s infinite ease-in-out;
+        }
+
+        @keyframes elegantPulse {
+            0%, 100% { transform: scale(1); opacity: 0.95; }
+            50% { transform: scale(1.04); opacity: 1; }
+        }
+
+        /* --- STAGE 2: MAIN WORKBOOK CONTAINER FRAME --- */
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            border-top: 10px solid var(--comic-orange);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Instructions Screen Panel Styling */
+        .intro-panel h1 {
+            font-size: 2.2rem;
+            color: var(--slate-dark);
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .mode-badge {
+            display: inline-block;
+            padding: 6px 18px;
+            background: #fff7ed;
+            color: var(--comic-orange);
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #ffedd5;
+        }
+
+        .briefing {
+            background: #fff7ed;
+            padding: 25px;
+            border-radius: 14px;
+            border-left: 6px solid var(--comic-orange);
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .briefing ol {
+            margin-left: 20px;
+            line-height: 1.8;
+            color: #334155;
+            font-size: 1rem;
+        }
+
+        .briefing li {
+            margin-bottom: 8px;
+        }
+
+        button.act-btn {
+            padding: 16px 45px;
+            background: var(--comic-orange);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        button.act-btn:hover {
+            background: #ea580c;
+            transform: translateY(-2px);
+        }
+
+        /* Live HUD Data Array Strip */
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            gap: 15px;
+        }
+
+        .hud-card {
+            background: var(--slate-dark);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        /* Live Level Target Definition Box */
+        .target-blueprint-zone {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .blueprint-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--slate-dark);
+            margin-bottom: 5px;
+        }
+
+        /* --- COMIC CREATOR WORKSPACE ARRAYS --- */
+        .comic-workspace {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        /* Elements pool containing mixed segments */
+        .elements-pool {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 12px;
+            min-height: 90px;
+            align-items: center;
+            border: 1px dashed #cbd5e1;
+        }
+
+        .story-chunk {
+            background: white;
+            border: 2px solid #cbd5e1;
+            padding: 12px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--slate-dark);
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+            max-width: 240px;
+            font-size: 0.95rem;
+        }
+
+        .story-chunk:hover {
+            transform: scale(1.03);
+            border-color: var(--comic-orange);
+            background: #fff7ed;
+        }
+
+        /* Strip Timeline Slots Layout Target zones */
+        .strip-timeline {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .timeline-slot {
+            background: #ffffff;
+            border: 3px dashed #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            min-height: 160px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            position: relative;
+            transition: background 0.2s;
+        }
+
+        .timeline-slot.filled {
+            border-style: solid;
+            border-color: var(--word-blue);
+            background: #f0f7ff;
+        }
+
+        .slot-badge {
+            position: absolute;
+            bottom: 8px;
+            right: 12px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        .slot-content-placeholder {
+            margin-top: auto;
+            margin-bottom: auto;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            font-weight: 500;
+            pointer-events: none;
+        }
+
+        /* Real-time Validation Action Row */
+        .ticker-feedback {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 1rem;
+            min-height: 55px;
+            background: #f1f5f9;
+            border-left: 6px solid #cbd5e1;
+        }
+
+        .ticker-feedback.good {
+            background: #ecfdf5;
+            border-left-color: var(--success);
+            color: #065f46;
+        }
+
+        .ticker-feedback.bad {
+            background: #fef2f2;
+            border-left-color: var(--error);
+            color: #991b1b;
+        }
+
+        /* End Game Performance Terminal Score Screen Styling */
+        .rank-shell {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--comic-orange);
+            color: white;
+            font-size: 2.2rem;
+            font-weight: 800;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+            border: 4px solid #ffffff;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="splash">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+    </div>
+
+    <div class="container hidden" id="appMainframe">
+        
+        <div id="menuPanel" class="intro-panel">
+            <h1>Comic Strip Creator</h1>
+            <div class="mode-badge">ICT Design Module</div>
+            
+            <div class="briefing">
+                <p style="font-weight: 800; margin-bottom: 12px; color: var(--slate-dark); font-size: 1.1rem;">How to Arrange Story Panels:</p>
+                <ol>
+                    <li>Analyze the funny **Story Objective Prompt** shown inside the blueprint zone.</li>
+                    <li>Click or tap on mixed story chunks in the selection pool to build your sequence.</li>
+                    <li>The selected panels will automatically fly into the **1st, 2nd, and 3rd sequence frames**.</li>
+                    <li>Arrange all story sequences in the correct order to prove your skills as a master Comic Strip Artist!</li>
+                </ol>
+            </div>
+            <button class="act-btn" onclick="startComicEngine()">Initialize Workshop Studio ➜</button>
+        </div>
+
+        <div id="gamePanel" class="hidden">
+            <div class="hud">
+                <div class="hud-card">🎨 Strip Deck: <span id="countHUD">1</span> / 6</div>
+                <div class="hud-card" style="background: #fff7ed; color: var(--comic-orange);">⭐ Script Score: <span id="scoreHUD">0</span></div>
+            </div>
+
+            <div class="target-blueprint-zone">
+                <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 1px;">Comic Story Concept:</div>
+                <div class="blueprint-title" id="blueprintText">Loading Plot Prompt Details...</div>
+            </div>
+
+            <div style="font-weight: 700; color: #475569; font-size: 0.95rem; margin-bottom: 10px;">Click the blocks below to load them into the empty sequence frames:</div>
+            
+            <div class="comic-workspace">
+                <div class="elements-pool" id="sourceChunksPool"></div>
+
+                <div class="strip-timeline">
+                    <div class="timeline-slot" id="slot1" onclick="clearLastSlot(1)">
+                        <span class="slot-content-placeholder">Empty 1st Panel</span>
+                        <span class="slot-badge">Panel 1</span>
+                    </div>
+                    <div class="timeline-slot" id="slot2" onclick="clearLastSlot(2)">
+                        <span class="slot-content-placeholder">Empty 2nd Panel</span>
+                        <span class="slot-badge">Panel 2</span>
+                    </div>
+                    <div class="timeline-slot" id="slot3" onclick="clearLastSlot(3)">
+                        <span class="slot-content-placeholder">Empty 3rd Panel</span>
+                        <span class="slot-badge">Panel 3</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ticker-feedback" id="tickerBox">Awaiting structural sequence alignment vectors from the source element pool array.</div>
+        </div>
+
+        <div id="reportPanel" class="hidden">
+            <h1 style="color: var(--comic-orange); font-size: 2.2rem;">📊 Creative Layout Audit</h1>
+            <div class="rank-shell"><span id="finalScore">0</span></div>
+            <h2 id="finalRank" style="font-weight: 800; margin-bottom: 10px; color: var(--slate-dark);">Evaluating Script Flow...</h2>
+            <p id="finalSummary" style="color: #475569; margin-bottom: 30px; line-height: 1.7; max-width: 620px; margin-left: auto; margin-right: auto;"></p>
+            <button class="act-btn" onclick="location.reload()">Reboot Project Studio 🔄</button>
+        </div>
+    </div>
+
+    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
+
+    <script>
+        /* Core timer mapping - Clears splash exactly at 5000ms */
+        setTimeout(() => {
+            document.getElementById("splash").style.display = "none";
+            document.getElementById("appMainframe").classList.remove("hidden");
+        }, 5000);
+
+        /* Comic Strip Sequences Dataset (Pages 69-77 structural mapping concepts) */
+        const storyDatabase = [
+            {
+                prompt: "The Broken Smart Robot Helper",
+                sequence: [
+                    "User inputs text command: 'Sweep the floor cleaner!'",
+                    "Robot spins wildly and sweeps everything out of the front window.",
+                    "Robot sits down declaring: 'The entire house is now empty and clean!'"
+                ]
+            },
+            {
+                prompt: "AI Cooking App Adventure",
+                sequence: [
+                    "Chef imports recipe data into the smart oven configuration file.",
+                    "System encounters an overflow and covers the kitchen in pink strawberry foam.",
+                    "Chef wipes eye glasses saying: 'Well, it tastes amazing anyway!'"
+                ]
+            },
+            {
+                prompt: "The Super Smart Homework Calculator",
+                sequence: [
+                    "Student presses 'Solve Equation' for easy basic addition.",
+                    "Machine starts overheating, sending smoke signals into the bedroom sky.",
+                    "Screen flashes final computation text display: 'Answer is Apple Sauce!'"
+                ]
+            },
+            {
+                prompt: "Flying Digital Drone Car Delivery",
+                sequence: [
+                    "Customer sets drop-off marker target directly onto the lawn grass.",
+                    "Drone arrives but drops the heavy pizza box inside the open birdcage.",
+                    "Happy birds tweet inside: 'Thanks for the extra cheese delivery!'"
+                ]
+            },
+            {
+                prompt: "The Smart Camera Pet Translator",
+                sequence: [
+                    "Dog wags tail happily and barks loudly at the camera sensor lens.",
+                    "The text processing engine translates sound to: 'Feed me premium steak right now!'",
+                    "Owner looks at dry kibble bowl while dog smirks silently."
+                ]
+            },
+            {
+                prompt: "The Virtual Reality Fitness Trap",
+                sequence: [
+                    "Player puts on futuristic VR goggles for a sunny jungle jogging routine.",
+                    "A giant animated pixel gorilla leaps out from behind a tree branch.",
+                    "Player runs so fast they slip right off the living room rug!"
+                ]
+            }
+        ];
+
+        let challengeDeck = [];
+        let currentChallengeIndex = 0;
+        let runningScore = 0;
+        let structuralLock = false;
+        let selectedStateChunks = [];
+
+        function startComicEngine() {
+            // Randomize questions for high replayability
+            challengeDeck = [...storyDatabase].sort(() => Math.random() - 0.5);
+            currentChallengeIndex = 0;
+            runningScore = 0;
+            structuralLock = false;
+
+            document.getElementById("menuPanel").classList.add("hidden");
+            document.getElementById("gamePanel").classList.remove("hidden");
+            
+            loadComicChallengeFrame();
+        }
+
+        function loadComicChallengeFrame() {
+            selectedStateChunks = [];
+            const activeData = challengeDeck[currentChallengeIndex];
+            
+            document.getElementById("countHUD").innerText = currentChallengeIndex + 1;
+            document.getElementById("blueprintText").innerText = activeData.prompt;
+            
+            // Flush layout panel structures back to initial state defaults
+            for(let i=1; i<=3; i++) {
+                const slot = document.getElementById(`slot${i}`);
+                slot.classList.remove("filled");
+                slot.innerHTML = `<span class="slot-content-placeholder">Empty Panel ${i}</span><span class="slot-badge">Panel ${i}</span>`;
+            }
+
+            // Create scrambled representation array structure
+            let scrambled = [...activeData.sequence].sort(() => Math.random() - 0.5);
+            
+            const poolContainer = document.getElementById("sourceChunksPool");
+            poolContainer.innerHTML = "";
+            
+            scrambled.forEach((text) => {
+                const node = document.createElement("div");
+                node.className = "story-chunk";
+                node.innerText = text;
+                node.onclick = () => handleChunkSelection(text, node);
+                poolContainer.appendChild(node);
+            });
+        }
+
+        function handleChunkSelection(textString, htmlElement) {
+            if (structuralLock || selectedStateChunks.includes(textString)) return;
+
+            selectedStateChunks.push(textString);
+            htmlElement.style.visibility = "hidden"; // Visually consume element out of selection pool
+
+            const activeSlotIndex = selectedStateChunks.length;
+            const targetedSlot = document.getElementById(`slot${activeSlotIndex}`);
+            
+            if (targetedSlot) {
+                targetedSlot.classList.add("filled");
+                targetedSlot.innerHTML = `<div class="story-chunk" style="cursor:default; max-width:100%; border-color:var(--word-blue);">${textString}</div><span class="slot-badge">Panel ${activeSlotIndex}</span>`;
+            }
+
+            document.getElementById("tickerBox").className = "ticker-feedback";
+            document.getElementById("tickerBox").innerHTML = `Assembled <strong>${activeSlotIndex} / 3</strong> panels onto the digital presentation document.`;
+
+            // Evaluate chronological consistency once layout blocks are fully populated
+            if (selectedStateChunks.length === 3) {
+                evaluateTimelineSequence();
+            }
+        }
+
+        function clearLastSlot(slotNum) {
+            // Allows players to clear out their current selection and retry if clicked mid-turn
+            if (structuralLock || selectedStateChunks.length === 0 || slotNum !== selectedStateChunks.length) return;
+            
+            const removedText = selectedStateChunks.pop();
+            const slot = document.getElementById(`slot${slotNum}`);
+            slot.classList.remove("filled");
+            slot.innerHTML = `<span class="slot-content-placeholder">Empty Panel ${slotNum}</span><span class="slot-badge">Panel ${slotNum}</span>`;
+            
+            // Restore visibility in selection pool
+            const poolItems = document.querySelectorAll("#sourceChunksPool .story-chunk");
+            poolItems.forEach(item => {
+                if(item.innerText === removedText) item.style.visibility = "visible";
+            });
+        }
+
+        function evaluateTimelineSequence() {
+            structuralLock = true;
+            const truthDefinition = challengeDeck[currentChallengeIndex].sequence;
+            
+            let elementsAreValid = true;
+            for (let idx = 0; idx < 3; idx++) {
+                if (selectedStateChunks[idx] !== truthDefinition[idx]) {
+                    elementsAreValid = false;
+                    break;
+                }
+            }
+
+            const feedbackNode = document.getElementById("tickerBox");
+
+            if (elementsAreValid) {
+                runningScore += 150; // Points scaling configuration
+                try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
+                try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+
+                feedbackNode.className = "ticker-feedback good";
+                feedbackNode.innerHTML = "<strong>🎉 SCRIPT SEQUENCE COMPILED PERFECTLY!</strong> Story elements flow in logical chronological order.";
+            } else {
+                runningScore = Math.max(0, runningScore - 50);
+                try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
+
+                feedbackNode.className = "ticker-feedback bad";
+                feedbackNode.innerHTML = "<strong>💥 STORY FLOW ANOMALY DETECTED:</strong> Chronology is scrambled! Re-indexing strip flow tracking matrices.";
+            }
+
+            document.getElementById("scoreHUD").innerText = runningScore;
+            currentChallengeIndex++;
+
+            setTimeout(() => {
+                structuralLock = false;
+                if (currentChallengeIndex < challengeDeck.length) {
+                    loadComicChallengeFrame();
+                    feedbackNode.className = "ticker-feedback";
+                    feedbackNode.innerHTML = "Awaiting structural sequence alignment vectors from the source element pool array.";
+                } else {
+                    displayFinalProjectAudit();
+                }
+            }, 3000);
+        }
+
+        function displayFinalProjectAudit() {
+            document.getElementById("gamePanel").classList.add("hidden");
+            document.getElementById("reportPanel").classList.remove("hidden");
+            document.getElementById("finalScore").innerText = runningScore;
+            
+            try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+
+            let rankText = "";
+            let summaryMessage = "";
+            const maximalMetric = runningScore / 900; // Perfect score across 6 sequences is 900
+
+            if (maximalMetric >= 0.80) {
+                rankText = "🥇 Director of Animated Media & Strip Arts";
+                summaryMessage = "Astounding narrative composition metrics! You arranged every single scene layout accurately, creating flawless multipanel workflows. Your formatting logic matches professional document processing standards!";
+            } else if (maximalMetric >= 0.50) {
+                rankText = "🥈 Layout Script Continuity Designer";
+                summaryMessage = "Solid structural performance across the workspace. Most narrative timeline sequences mapped correctly. Just keep practicing structural frame sequencing to reach perfection next time!";
+            } else {
+                rankText = "🌱 Assistant Storyboarding Apprentice";
+                summaryMessage = "The timeline tracks encountered structural arrangement logic faults. Remember to follow chronological flow rules ($1st \\rightarrow 2nd \\rightarrow 3rd$). Let's reboot the design workspace and practice again!";
+            }
+
+            document.getElementById("finalRank").innerText = rankText;
+            document.getElementById("finalSummary").innerText = summaryMessage;
+        }
+    </script>
+</body>
+</html>

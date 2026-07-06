@@ -1,1 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Innovine Solutions - Introduction to Scratch</title>
+    <style>
+        :root {
+            --bg-canvas: #faf5ff;
+            --scratch-orange: #f58220; 
+            --scratch-blue: #4d97ff; 
+            --slate-dark: #1e293b;
+            --success: #10b981;
+            --error: #ef4444;
+            --purple-dark: #7c3aed;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-canvas);
+            padding: 15px;
+            user-select: none;
+        }
+
+        /* --- STAGE 1: EXCLUSIVE 5-SECOND LOGO SPLASH SCREEN --- */
+        #splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #splash img {
+            width: 320px;
+            max-width: 85%;
+            animation: elegantPulse 2.5s infinite ease-in-out;
+        }
+
+        @keyframes elegantPulse {
+            0%, 100% { transform: scale(1); opacity: 0.95; }
+            50% { transform: scale(1.04); opacity: 1; }
+        }
+
+        /* --- STAGE 2: MAIN WORKBOOK CONTAINER FRAME --- */
+        .container {
+            width: 100%;
+            max-width: 850px;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            border-top: 10px solid var(--scratch-orange);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .intro-panel h1 {
+            font-size: 2.3rem;
+            color: var(--scratch-orange);
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .mode-badge {
+            display: inline-block;
+            padding: 6px 18px;
+            background: #fff7ed;
+            color: var(--scratch-orange);
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #ffedd5;
+        }
+
+        .briefing {
+            background: #f0f7ff;
+            padding: 25px;
+            border-radius: 14px;
+            border-left: 6px solid var(--scratch-blue);
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .briefing p {
+            line-height: 1.6;
+            color: #334155;
+            font-size: 1.1rem;
+        }
+
+        button.act-btn {
+            padding: 16px 45px;
+            background: var(--scratch-orange);
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(245, 130, 32, 0.3);
+            transition: all 0.2s;
+        }
+
+        button.act-btn:hover {
+            background: #e07216;
+            transform: translateY(-2px);
+        }
+
+        /* --- SPRITE ANIMATION THEATRE STAGE --- */
+        .stage-area {
+            width: 100%;
+            height: 220px;
+            background: #eef2f6;
+            border: 3px dashed #cbd5e1;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 25px;
+        }
+
+        .sprite-actor {
+            width: 80px;
+            height: 80px;
+            position: absolute;
+            bottom: 40px;
+            left: 50px;
+            transition: left 1.2s ease-in-out, transform 0.3s ease;
+            font-size: 4.5rem;
+            line-height: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Speech Bubble for Sprite */
+        .speech-bubble {
+            position: absolute;
+            background: #ffffff;
+            border: 3px solid var(--scratch-blue);
+            border-radius: 12px;
+            padding: 12px 18px;
+            font-weight: 700;
+            color: var(--slate-dark);
+            font-size: 1.1rem;
+            max-width: 280px;
+            bottom: 135px;
+            left: 40px;
+            transition: left 1.2s ease-in-out;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 30px;
+            border-width: 15px 15px 0;
+            border-style: solid;
+            border-color: #ffffff transparent;
+            display: block;
+            width: 0;
+        }
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -19px;
+            left: 28px;
+            border-width: 16px 16px 0;
+            border-style: solid;
+            border-color: var(--scratch-blue) transparent;
+            display: block;
+            width: 0;
+        }
+
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            gap: 15px;
+        }
+
+        .hud-card {
+            background: var(--slate-dark);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .options-pool {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+            align-items: center;
+        }
+
+        .option-button {
+            background: white;
+            border: 3px solid #e2e8f0;
+            padding: 16px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            color: var(--slate-dark);
+            width: 100%;
+            max-width: 550px;
+            font-size: 1.1rem;
+            text-align: left;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+
+        .option-button:hover {
+            border-color: var(--scratch-orange);
+            background: #fff7ed;
+            transform: scale(1.01);
+        }
+
+        .ticker-feedback {
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            min-height: 55px;
+            background: #f1f5f9;
+            border-left: 6px solid #cbd5e1;
+            margin-top: 15px;
+        }
+
+        .ticker-feedback.good {
+            background: #ecfdf5;
+            border-left-color: var(--success);
+            color: #065f46;
+        }
+
+        .ticker-feedback.bad {
+            background: #fef2f2;
+            border-left-color: var(--error);
+            color: #991b1b;
+        }
+
+        .rank-shell {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--scratch-orange);
+            color: white;
+            font-size: 2.2rem;
+            font-weight: 800;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+            border: 4px solid #ffffff;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="splash">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+    </div>
+
+    <div class="container hidden" id="appMainframe">
+        
+        <div id="menuPanel" class="intro-panel">
+            <h1>The Moving Sprite Story</h1>
+            <div class="mode-badge">Chapter 9: Intro to Scratch</div>
+            
+            <div class="briefing">
+                <p>
+                    Meet **Kit the Cat**! Kit will walk across the stage, talk to you, and tell a story about programming in Scratch. Listen closely and help Kit answer computational thinking challenges!
+                </p>
+            </div>
+            <button class="act-btn" onclick="startStoryEngine()">Start Story Adventures ➜</button>
+        </div>
+
+        <div id="gamePanel" class="hidden">
+            <div class="hud">
+                <div class="hud-card">🎬 Scene Level: <span id="countHUD">1</span> / 4</div>
+                <div class="hud-card" style="background: #fff7ed; color: var(--scratch-orange);">⭐ Coding Score: <span id="scoreHUD">0</span></div>
+            </div>
+
+            <div class="stage-area">
+                <div class="speech-bubble" id="spriteBubble">Hello there!</div>
+                <div class="sprite-actor" id="catSprite">🐱</div>
+            </div>
+
+            <div style="font-weight: 700; color: #475569; font-size: 1rem; margin-bottom: 10px;">Click the correct block option to help Kit finish the story panel:</div>
+            
+            <div class="options-pool" id="optionsContainer">
+                </div>
+
+            <div class="ticker-feedback" id="tickerBox">Awaiting structural input components.</div>
+        </div>
+
+        <div id="reportPanel" class="hidden">
+            <h1 style="color: var(--scratch-orange); font-size: 2.2rem;">📊 Coding Mission Report</h1>
+            <div class="rank-shell"><span id="finalScore">0</span></div>
+            <h2 id="finalRank" style="font-weight: 800; margin-bottom: 10px; color: var(--slate-dark);">Evaluating Performance...</h2>
+            <p id="finalSummary" style="color: #475569; margin-bottom: 30px; line-height: 1.7; max-width: 620px; margin-left: auto; margin-right: auto;"></p>
+            <button class="act-btn" onclick="location.reload()">Restart Sandbox Workspace 🔄</button>
+        </div>
+    </div>
+
+    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
+
+    <script>
+        // 5-Second Splash Screen Timeout
+        setTimeout(() => {
+            document.getElementById("splash").style.display = "none";
+            document.getElementById("appMainframe").classList.remove("hidden");
+            speakVoice("Welcome to the Scratch Story Game!");
+        }, 5000);
+
+        // Chapter 9 Grade 3 Syllabus Database Sequence
+        const storyTimeline = [
+            {
+                dialogue: "Hi! I am Kit the Sprite. In Scratch, any character that moves or performs an action on the screen is called a... what?",
+                questionText: "What is the character in Scratch called?",
+                choices: ["Sprite", "Script", "Stage"],
+                correct: "Sprite",
+                moveX: 120
+            },
+            {
+                dialogue: "Wow! Look at me slide! I love performing inside this white rectangular background window area. Do you know what this area is called?",
+                questionText: "What is the area where the Sprite performs its actions?",
+                choices: ["Blocks Palette", "The Stage", "Costume Tab"],
+                correct: "The Stage",
+                moveX: 280
+            },
+            {
+                dialogue: "Awesome! To make me walk and talk, you stack different color-coded puzzle pieces together. What do we call these pieces?",
+                questionText: "What are the colored puzzle pieces used to build programs?",
+                choices: ["Scratch Blocks", "Spites", "Backdrops"],
+                correct: "Scratch Blocks",
+                moveX: 440
+            },
+            {
+                dialogue: "We reached the end of my stroll! When we stack multiple blocks together to form a clear instruction list for me, we create a...?",
+                questionText: "What is a collection or stack of blocks called?",
+                choices: ["Toolbar", "Script", "Sprite Pool"],
+                correct: "Script",
+                moveX: 580
+            }
+        ];
+
+        let currentSceneIndex = 0;
+        let gameScore = 0;
+        let engineLock = false;
+
+        function speakVoice(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.95;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function startStoryEngine() {
+            document.getElementById("menuPanel").classList.add("hidden");
+            document.getElementById("gamePanel").classList.remove("hidden");
+            currentSceneIndex = 0;
+            gameScore = 0;
+            engineLock = false;
+            loadSceneFrame();
+        }
+
+        function loadSceneFrame() {
+            const currentData = storyTimeline[currentSceneIndex];
+            
+            document.getElementById("countHUD").innerText = currentSceneIndex + 1;
+            
+            // Move Sprite character and its speech bubble dynamically across the screen layout
+            const spriteNode = document.getElementById("catSprite");
+            const bubbleNode = document.getElementById("spriteBubble");
+            
+            spriteNode.style.left = currentData.moveX + "px";
+            bubbleNode.style.left = (currentData.moveX - 10) + "px";
+            bubbleNode.innerText = currentData.dialogue;
+
+            // Trigger hands-free audio narrator guidance automatically
+            setTimeout(() => {
+                speakVoice(currentData.dialogue);
+            }, 300);
+
+            // Populate multiple choice response fields
+            const optionsBox = document.getElementById("optionsContainer");
+            optionsBox.innerHTML = "";
+
+            currentData.choices.forEach(choice => {
+                const btn = document.createElement("button");
+                btn.className = "option-button";
+                btn.innerText = choice;
+                btn.onclick = () => evaluateUserChoice(choice, btn);
+                optionsBox.appendChild(btn);
+            });
+        }
+
+        function evaluateUserChoice(selectedText, elementNode) {
+            if (engineLock) return;
+            engineLock = true;
+
+            const sceneData = storyTimeline[currentSceneIndex];
+            const feedbackBox = document.getElementById("tickerBox");
+
+            if (selectedText === sceneData.correct) {
+                gameScore += 150;
+                elementNode.style.background = "#e6fbf1";
+                elementNode.style.borderColor = "var(--success)";
+                feedbackBox.className = "ticker-feedback good";
+                feedbackBox.innerHTML = "🎉 CORRECT! Kit leaps with joy!";
+                
+                // Play assets audio strings
+                try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
+                try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+                speakVoice("Correct answer! Great job.");
+                
+                // Jump action visual effect
+                document.getElementById("catSprite").style.transform = "translateY(-25px) scale(1.1)";
+                setTimeout(() => { document.getElementById("catSprite").style.transform = "translateY(0) scale(1)"; }, 400);
+            } else {
+                gameScore = Math.max(0, gameScore - 50);
+                elementNode.style.background = "#fdf2f2";
+                elementNode.style.borderColor = "var(--error)";
+                feedbackBox.className = "ticker-feedback bad";
+                feedbackBox.innerHTML = `💥 Incorrect. The answer was: ${sceneData.correct}`;
+                
+                try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
+                speakVoice(`Oops! That's not right. The answer is ${sceneData.correct}`);
+            }
+
+            document.getElementById("scoreHUD").innerText = gameScore;
+            currentSceneIndex++;
+
+            setTimeout(() => {
+                engineLock = false;
+                if (currentSceneIndex < storyTimeline.length) {
+                    feedbackBox.className = "ticker-feedback";
+                    feedbackBox.innerHTML = "Awaiting structural input components.";
+                    loadSceneFrame();
+                } else {
+                    renderFinalSummaryAudit();
+                }
+            }, 4000);
+        }
+
+        function renderFinalSummaryAudit() {
+            document.getElementById("gamePanel").classList.add("hidden");
+            document.getElementById("reportPanel").classList.remove("hidden");
+            document.getElementById("finalScore").innerText = gameScore;
+            
+            try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+
+            let performanceRank = "";
+            let explanationSummary = "";
+            const computedMetric = gameScore / 600;
+
+            if (computedMetric >= 0.80) {
+                performanceRank = "🥇 Scratch Programming Master";
+                explanationSummary = "Incredible computational mastery! You perfectly followed Kit's path and correctly answered all core introductory components of Chapter 9.";
+            } else if (computedMetric >= 0.50) {
+                performanceRank = "🥈 Junior Script Animator";
+                explanationSummary = "Solid structural performance. You understand most basic Scratch rules including Sprites, Blocks, and Scripts.";
+            } else {
+                performanceRank = "🌱 Sandbox Explorer";
+                explanationSummary = "Let's run through the sandbox space again! Review Chapter 9 basics about Sprites and the Blocks Palette to score perfectly.";
+            }
+
+            document.getElementById("finalRank").innerText = performanceRank;
+            document.getElementById("finalSummary").innerText = explanationSummary;
+            speakVoice(`Congratulations! Your final rank is ${performanceRank}. ${explanationSummary}`);
+        }
+    </script>
+</body>
+</html>

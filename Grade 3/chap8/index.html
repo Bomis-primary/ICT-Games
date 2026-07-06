@@ -1,1 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Innovine Solutions - Logical Thinking Quest</title>
+    <style>
+        :root {
+            --bg-canvas: #f8fafc;
+            --word-blue: #2b579a; 
+            --logic-purple: #8b5cf6; /* Vibrant playful purple for logical thinking */
+            --slate-dark: #1e293b;
+            --success: #10b981;
+            --error: #ef4444;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-canvas);
+            padding: 15px;
+            user-select: none;
+        }
+
+        /* --- STAGE 1: EXCLUSIVE 5-SECOND LOGO SPLASH SCREEN --- */
+        #splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #splash img {
+            width: 320px;
+            max-width: 85%;
+            animation: elegantPulse 2.5s infinite ease-in-out;
+        }
+
+        @keyframes elegantPulse {
+            0%, 100% { transform: scale(1); opacity: 0.95; }
+            50% { transform: scale(1.04); opacity: 1; }
+        }
+
+        /* --- STAGE 2: MAIN CONTAINER FRAME --- */
+        .container {
+            width: 100%;
+            max-width: 850px;
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            border-top: 10px solid var(--logic-purple);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .intro-panel h1 {
+            font-size: 2.2rem;
+            color: var(--slate-dark);
+            margin-bottom: 10px;
+            font-weight: 800;
+        }
+
+        .mode-badge {
+            display: inline-block;
+            padding: 6px 18px;
+            background: #f5f3ff;
+            color: var(--logic-purple);
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid #ddd6fe;
+        }
+
+        .briefing {
+            background: #f5f3ff;
+            padding: 25px;
+            border-radius: 14px;
+            border-left: 6px solid var(--logic-purple);
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .briefing ol {
+            margin-left: 20px;
+            line-height: 1.8;
+            color: #334155;
+            font-size: 1rem;
+        }
+
+        .briefing li {
+            margin-bottom: 8px;
+        }
+
+        button.act-btn {
+            padding: 16px 45px;
+            background: var(--logic-purple);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        button.act-btn:hover {
+            background: #7c3aed;
+            transform: translateY(-2px);
+        }
+
+        .hud {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            gap: 15px;
+        }
+
+        .hud-card {
+            background: var(--slate-dark);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .target-blueprint-zone {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .blueprint-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--slate-dark);
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .visual-display {
+            font-size: 2rem;
+            margin: 15px 0;
+            letter-spacing: 4px;
+            background: #ffffff;
+            display: inline-block;
+            padding: 10px 25px;
+            border-radius: 8px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        /* --- INTERACTIVE OPTIONS LAYOUT --- */
+        .options-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .option-card {
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--slate-dark);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .option-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--logic-purple);
+            background: #f5f3ff;
+            box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.1);
+        }
+
+        .option-card.selected-correct {
+            background: #ecfdf5 !important;
+            border-color: var(--success) !important;
+            color: #065f46 !important;
+        }
+
+        .option-card.selected-wrong {
+            background: #fef2f2 !important;
+            border-color: var(--error) !important;
+            color: #991b1b !important;
+        }
+
+        .ticker-feedback {
+            margin-top: 20px;
+            padding: 16px;
+            border-radius: 8px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 1rem;
+            min-height: 55px;
+            background: #f1f5f9;
+            border-left: 6px solid #cbd5e1;
+        }
+
+        .ticker-feedback.good {
+            background: #ecfdf5;
+            border-left-color: var(--success);
+            color: #065f46;
+        }
+
+        .ticker-feedback.bad {
+            background: #fef2f2;
+            border-left-color: var(--error);
+            color: #991b1b;
+        }
+
+        .rank-shell {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--logic-purple);
+            color: white;
+            font-size: 2.2rem;
+            font-weight: 800;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+            border: 4px solid #ffffff;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- --- STAGE 1: EXCLUSIVE 5-SECOND LOGO SPLASH SCREEN --- -->
+    <div id="splash">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+    </div>
+
+    <!-- --- STAGE 2: MAIN CONTAINER FRAME --- -->
+    <div class="container hidden" id="appMainframe">
+        
+        <div id="menuPanel" class="intro-panel">
+            <h1>Logical Thinking Quest</h1>
+            <div class="mode-badge">Grade 3 Brain Power Module</div>
+            
+            <div class="briefing">
+                <p style="font-weight: 800; margin-bottom: 12px; color: var(--slate-dark); font-size: 1.1rem;">Quest Regulations:</p>
+                <ol>
+                    <li>Read each **Logical Thinking Blueprint** question carefully.</li>
+                    <li>Analyze patterns, sequences, and clever relationships.</li>
+                    <li>Click on the best matching answer card from the options below.</li>
+                    <li>Achieve high scores to earn your master **Logic Explorer Badge**!</li>
+                </ol>
+            </div>
+            <button class="act-btn" onclick="startLogicQuest()">Launch Quest Engine ➜</button>
+        </div>
+
+        <div id="gamePanel" class="hidden">
+            <div class="hud">
+                <div class="hud-card">🧩 Puzzle: <span id="countHUD">1</span> / 6</div>
+                <div class="hud-card" style="background: #f5f3ff; color: var(--logic-purple);">⭐ Logic Score: <span id="scoreHUD">0</span></div>
+            </div>
+
+            <div class="target-blueprint-zone">
+                <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 1px; margin-bottom: 5px;">Brain Blueprint:</div>
+                <div class="blueprint-title" id="blueprintText">Loading logical scenario vectors...</div>
+                <div class="visual-display id="visualContainer" id="visualContent"></div>
+            </div>
+            
+            <div class="options-container" id="choicesGrid"></div>
+
+            <div class="ticker-feedback" id="tickerBox">Awaiting decision input arrays from selection nodes.</div>
+        </div>
+
+        <div id="reportPanel" class="hidden">
+            <h1 style="color: var(--logic-purple); font-size: 2.2rem;">📊 Brain Performance Matrix</h1>
+            <div class="rank-shell"><span id="finalScore">0</span></div>
+            <h2 id="finalRank" style="font-weight: 800; margin-bottom: 10px; color: var(--slate-dark);">Calculating Rank...</h2>
+            <p id="finalSummary" style="color: #475569; margin-bottom: 30px; line-height: 1.7; max-width: 620px; margin-left: auto; margin-right: auto;"></p>
+            <button class="act-btn" onclick="location.reload()">Reboot Quest Studio 🔄</button>
+        </div>
+    </div>
+
+    <!-- Audio channels mapped directly to asset directory definitions -->
+    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
+
+    <script>
+        /* Exclusive Splash Display Mapping Clocked at exactly 5000ms */
+        setTimeout(() => {
+            document.getElementById("splash").style.display = "none";
+            document.getElementById("appMainframe").classList.remove("hidden");
+        }, 5000);
+
+        /* Grade 3 Logical Thinking Database Array Mapping */
+        const logicDatabase = [
+            {
+                question: "Look at the pattern. Which item comes next in this loop?",
+                visual: "🍎 🍌 🍎 🍌 🍎",
+                options: ["🍌 Banana", "🍎 Apple", "🍇 Grapes", "🍊 Orange"],
+                answer: "🍌 Banana"
+            },
+            {
+                question: "Mary is older than Leo. Leo is older than Sam. Who is the oldest of them all?",
+                visual: "👤 Mary > 👤 Leo > 👤 Sam",
+                options: ["Sam", "Leo", "Mary", "They are equal"],
+                answer: "Mary"
+            },
+            {
+                question: "Find the odd one out that does NOT belong in this family group:",
+                visual: "🦅 🛸 🦉 🦆",
+                options: ["🦅 Eagle", "🛸 UFO", "🦉 Owl", "🦆 Duck"],
+                answer: "🛸 UFO"
+            },
+            {
+                question: "Complete the progressive numerical jump sequence:",
+                visual: "5, 10, 15, 20, ?",
+                options: ["21", "22", "25", "30"],
+                answer: "25"
+            },
+            {
+                question: "I have a face and hands, but I have no arms or legs. What am I?",
+                visual: "🕰️ ? ? ?",
+                options: ["A mirror", "A Clock", "A Teddy Bear", "A Chair"],
+                answer: "A Clock"
+            },
+            {
+                question: "If a shadow always follows a tree when the sun is out, where will the shadow be at midnight?",
+                visual: "☀️ 🌳 🌙 ?",
+                options: ["To the left", "To the right", "Nowhere (It disappears)", "Underneath"],
+                answer: "Nowhere (It disappears)"
+            }
+        ];
+
+        let challengeDeck = [];
+        let currentIndex = 0;
+        let cumulativeScore = 0;
+        let controlLock = false;
+
+        function startLogicQuest() {
+            challengeDeck = [...logicDatabase].sort(() => Math.random() - 0.5);
+            currentIndex = 0;
+            cumulativeScore = 0;
+            controlLock = false;
+
+            document.getElementById("menuPanel").classList.add("hidden");
+            document.getElementById("gamePanel").classList.remove("hidden");
+            
+            loadLogicChallenge();
+        }
+
+        function loadLogicChallenge() {
+            controlLock = false;
+            const currentItem = challengeDeck[currentIndex];
+            
+            document.getElementById("countHUD").innerText = currentIndex + 1;
+            document.getElementById("blueprintText").innerText = currentItem.question;
+            
+            // Render visual representations helper container
+            const displayBox = document.querySelector(".visual-display");
+            displayBox.innerText = currentItem.visual;
+
+            // Render choice option cards array
+            const choiceGrid = document.getElementById("choicesGrid");
+            choiceGrid.innerHTML = "";
+            
+            currentItem.options.forEach(optionText => {
+                const card = document.createElement("div");
+                card.className = "option-card";
+                card.innerText = optionText;
+                card.onclick = () => evaluateChoice(optionText, card);
+                choiceGrid.appendChild(card);
+            });
+        }
+
+        function evaluateChoice(selectedText, cardElement) {
+            if (controlLock) return;
+            controlLock = true;
+
+            const currentItem = challengeDeck[currentIndex];
+            const feedbackBox = document.getElementById("tickerBox");
+            
+            if (selectedText === currentItem.answer) {
+                cumulativeScore += 100;
+                cardElement.classList.add("selected-correct");
+                feedbackBox.className = "ticker-feedback good";
+                feedbackBox.innerHTML = "<strong>🎉 DEDUCTION VALIDATED!</strong> Your brain processed the variables flawlessly.";
+                
+                try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
+                try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+            } else {
+                cumulativeScore = Math.max(0, cumulativeScore - 50);
+                cardElement.classList.add("selected-wrong");
+                feedbackBox.className = "ticker-feedback bad";
+                feedbackBox.innerHTML = `<strong>💥 CONFIGURATION ERROR:</strong> Incorrect deduction pathway. Correct solution: <strong>${currentItem.answer}</strong>`;
+                
+                try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
+                
+                // Highlight real correct option visually for learning feedback
+                const cards = document.querySelectorAll(".option-card");
+                cards.forEach(c => {
+                    if(c.innerText === currentItem.answer) c.classList.add("selected-correct");
+                });
+            }
+
+            document.getElementById("scoreHUD").innerText = cumulativeScore;
+            currentIndex++;
+
+            setTimeout(() => {
+                if (currentIndex < challengeDeck.length) {
+                    loadLogicChallenge();
+                    feedbackBox.className = "ticker-feedback";
+                    feedbackBox.innerHTML = "Awaiting decision input arrays from selection nodes.";
+                } else {
+                    renderFinalEvaluationLog();
+                }
+            }, 3000);
+        }
+
+        function renderFinalEvaluationLog() {
+            document.getElementById("gamePanel").classList.add("hidden");
+            document.getElementById("reportPanel").classList.remove("hidden");
+            document.getElementById("finalScore").innerText = cumulativeScore;
+            
+            try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+
+            let performanceBadge = "";
+            let summaryInsight = "";
+            const computationRatio = cumulativeScore / 600; // 600 is absolute maximum score
+
+            if (computationRatio >= 0.80) {
+                performanceBadge = "🥇 Grandmaster Logic Sage";
+                summaryInsight = "Outstanding spatial and algorithmic reasoning vectors! You successfully analyzed patterns, conditional relations, and oddities perfectly. Your cognitive framework operates at an advanced tier.";
+            } else if (computationRatio >= 0.50) {
+                performanceBadge = "🥈 Analytical Mind Investigator";
+                summaryInsight = "Great computational performance metrics! Most relational connections were successfully identified. Continued pattern observation will cement master status.";
+            } else {
+                performanceBadge = "🌱 Aspiring Logic Cadet";
+                summaryInsight = "Cognitive paths encountered some logical deadlocks. Remember to step through your deduction blocks one variable at a time! Let's rerun the framework to build up your speed.";
+            }
+
+            document.getElementById("finalRank").innerText = performanceBadge;
+            document.getElementById("finalSummary").innerText = summaryInsight;
+        }
+    </script>
+</body>
+</html>

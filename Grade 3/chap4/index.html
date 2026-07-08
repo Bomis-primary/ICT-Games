@@ -50,6 +50,11 @@
         .drop-row { display: flex; align-items: center; justify-content: space-between; background: white; padding: 10px; border-radius: 8px; border: 2px solid #cbd5e1; }
         .drop-box { width: 130px; height: 45px; background: #e2e8f0; border: 2px dashed #94a3b8; border-radius: 6px; display: flex; justify-content: center; align-items: center; font-weight: 700; color: var(--word-blue); }
         
+        /* UNSCRAMBLE WORD DESIGN */
+        .scramble-box { font-size: 2rem; font-weight: 800; tracking-spacing: 4px; color: var(--accent-purple); background: white; padding: 15px; border-radius: 10px; border: 2px solid #cbd5e1; text-align: center; margin: 15px 0; text-transform: uppercase; letter-spacing: 5px; }
+        .word-input { width: 100%; padding: 15px; font-size: 1.2rem; font-weight: 700; border: 3px solid #cbd5e1; border-radius: 10px; text-transform: uppercase; text-align: center; margin-bottom: 15px; }
+        .word-input:focus { border-color: var(--word-blue); outline: none; }
+
         /* LAYOUT GUESSING GRAPHICS */
         .layout-graphic { width: 120px; height: 160px; background: white; border: 3px solid var(--slate-dark); margin: 20px auto; position: relative; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .layout-graphic.landscape { width: 160px; height: 120px; }
@@ -72,13 +77,13 @@
         <!-- START SCREEN -->
         <div id="menuPanel" class="intro-panel">
             <h1>Word Processing Wizard</h1>
-            <div class="mode-badge">MS WORD </div>
+            <div class="mode-badge">CBSE Grade 3 ICT Chapter 4</div>
             <div class="briefing">
-                <p style="font-weight: 800; margin-bottom: 12px; color: var(--slate-dark); font-size: 1.2rem;">Your Mission Instructions:</p>
+                <p style="font-weight: 800; margin-bottom: 12px; color: var(--slate-dark); font-size: 1.2rem;">🎯 Your High-Score Challenge Instructions:</p>
                 <ol>
-                    <li>Master **Cut, Copy, Paste, Orientation, Margins**, and **Spelling Check**!</li>
-                    <li>Solve interactive layout puzzles and drag the correct shortcut values.</li>
-                    <li>Score points to become an MS Word Grandmaster!</li>
+                    <li>Master **Cut, Copy, Paste, Page Orientation**, and **Spell Check**!</li>
+                    <li>Unscramble hidden words and match complex processing shortkeys.</li>
+                    <li><strong>Reach the Target Point Goal:</strong> You must score at least <strong>800 points</strong> to unlock the final rank!</li>
                 </ol>
             </div>
             <button class="act-btn" onclick="startGameEngine()">Launch Mission ➜</button>
@@ -87,7 +92,7 @@
         <!-- GAMEPLAY MATRIX -->
         <div id="gamePanel" class="hidden">
             <div class="hud">
-                <div class="hud-card">📝 Stage: <span id="countHUD">1</span> / 5</div>
+                <div class="hud-card">📝 Stage: <span id="countHUD">1</span> / 6</div>
                 <div class="hud-card" style="background: #eff6ff; color: var(--word-blue);">⭐ Score: <span id="scoreHUD">0</span></div>
             </div>
 
@@ -118,7 +123,7 @@
             document.getElementById("appMainframe").classList.remove("hidden");
         }, 5000);
 
-        // Core Lesson Data Sets Mapping Pages 38-49
+        // Core Lesson Data Sets Mapping Pages 38-49 + New Mechanics
         const gameStages = [
             {
                 type: "mcq",
@@ -132,6 +137,12 @@
                 layoutClass: "landscape",
                 options: ["Portrait Layout", "Landscape Layout", "Custom Margins", "Column Formatting"],
                 correct: "Landscape Layout"
+            },
+            {
+                type: "scramble",
+                title: "🔤 Unscramble the Word: Rearrange the letters to find the page edge setting!",
+                scrambled: "GIMRAN",
+                correct: "MARGIN"
             },
             {
                 type: "mcq",
@@ -149,10 +160,10 @@
                 ]
             },
             {
-                type: "mcq",
-                title: "Which tool helps to improve your vocabulary by providing a beautiful list of synonyms and antonyms?",
-                options: ["Find & Replace", "Thesaurus Tool", "Autocorrect Engine", "Page Setup Manager"],
-                correct: "Thesaurus Tool"
+                type: "scramble",
+                title: "🔤 Unscramble the Word: Rearrange the letters to find the book/tall page setting!",
+                scrambled: "TARTPROP",
+                correct: "PORTRAIT"
             }
         ];
 
@@ -211,6 +222,24 @@
                     grid.appendChild(btn);
                 });
                 card.appendChild(grid);
+            } else if (stage.type === "scramble") {
+                const sBox = document.createElement("div");
+                sBox.className = "scramble-box";
+                sBox.innerText = stage.scrambled;
+                card.appendChild(sBox);
+
+                const input = document.createElement("input");
+                input.type = "text";
+                input.className = "word-input";
+                input.placeholder = "Type your unscrambled word here...";
+                input.id = "scrambleInput";
+                card.appendChild(input);
+
+                const checkBtn = document.createElement("button");
+                checkBtn.className = "act-btn";
+                checkBtn.innerText = "Submit Answer ⚡";
+                checkBtn.onclick = () => evaluateScramble(input.value.trim().toUpperCase());
+                card.appendChild(checkBtn);
             } else if (stage.type === "drag") {
                 const dBox = document.createElement("div");
                 dBox.className = "drag-container";
@@ -222,7 +251,6 @@
                 const zones = document.createElement("div");
                 zones.className = "drop-zone-container";
 
-                // Scaffold structures
                 stage.matches.forEach(m => {
                     const item = document.createElement("div");
                     item.className = "drag-item";
@@ -252,7 +280,6 @@
                 dBox.appendChild(zones);
                 card.appendChild(dBox);
                 
-                // Active Validation Button for matching stage
                 const checkBtn = document.createElement("button");
                 checkBtn.className = "act-btn";
                 checkBtn.style.marginTop = "20px";
@@ -282,14 +309,33 @@
                 element.style.borderColor = "var(--error)";
                 playSound("wrongSound");
                 ticker.className = "ticker-feedback bad";
-                ticker.innerText = `💥 Oops! The correct layout answer was: ${stage.correct}`;
+                ticker.innerText = `💥 Oops! The correct answer was: ${stage.correct}`;
+            }
+            updateEngineState();
+        }
+
+        function evaluateScramble(userGuess) {
+            if (actionLocked) return;
+            actionLocked = true;
+            const stage = gameStages[currentStageIndex];
+            const ticker = document.getElementById("tickerBox");
+
+            if (userGuess === stage.correct) {
+                score += 200;
+                playSound("correctSound");
+                ticker.className = "ticker-feedback good";
+                ticker.innerText = `🎉 AMAZING! You successfully unscrambled: ${stage.correct}`;
+            } else {
+                playSound("wrongSound");
+                ticker.className = "ticker-feedback bad";
+                ticker.innerText = `💥 Incorrect! The hidden word was: ${stage.correct}`;
             }
             updateEngineState();
         }
 
         function handleBoxDrop(e, targetBox) {
             e.preventDefault();
-            const id = e.dataTransfer.setData ? e.dataTransfer.getData("text") : window.currentDraggedId;
+            const id = e.dataTransfer.getData("text");
             const elem = document.getElementById(id);
             if(elem) {
                 targetBox.innerText = elem.innerText;
@@ -337,26 +383,34 @@
         }
 
         function playSound(id) {
-            try { document.getElementById(id).play().catch(()=>{}); } catch(e){}
+            try { 
+                const snd = document.getElementById(id);
+                snd.currentTime = 0;
+                snd.play().catch(()=>{}); 
+            } catch(e){}
         }
 
         function displayFinalReport() {
             document.getElementById("gamePanel").classList.add("hidden");
             document.getElementById("reportPanel").classList.remove("hidden");
             document.getElementById("finalScore").innerText = score;
-            playSound("clapSound");
 
             let rank = "";
             let msg = "";
+            
+            // "Reach the Point" / Target Checkpoint Verification Logic
             if(score >= 800) {
-                rank = "🥇 Word Processing Grandmaster";
-                msg = "Flawless configuration control! You understand text transformations, layout modes, page settings, and shortcut actions perfectly.";
+                playSound("clapSound"); // Play big applause sound for reaching target point
+                rank = "🥇 Target Point Cleared: Grandmaster!";
+                msg = `Fantastic! You reached the target limit with ${score} points! You understand text transformations, layout modes, page settings, and shortkeys perfectly.`;
             } else if(score >= 400) {
-                rank = "🥈 Document Editor Pro";
-                msg = "Great effort! You clearly know how to structure files, fix typographical alignment errors, and shift layouts.";
+                playSound("correctSound");
+                rank = "🥈 Target Point Missed: Document Editor Pro";
+                msg = `Good try! You finished with ${score} points, but missed our 800-point master target line. Practice word configurations to reach the top level.`;
             } else {
+                playSound("wrongSound");
                 rank = "🌱 Text Layout Apprentice";
-                msg = "Keep practicing! Review Chapter 4 (pages 38 to 49) of your ICT textbook to master orientations and key controls.";
+                msg = `You completed the challenges with ${score} points. Review Chapter 4 of your ICT textbook to master orientations and processing keys!`;
             }
             document.getElementById("finalRank").innerText = rank;
             document.getElementById("finalSummary").innerText = msg;

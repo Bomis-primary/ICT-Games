@@ -2,22 +2,24 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Paint Jungle Safari</title>
     <style>
         * {
             box-sizing: border-box;
             font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
-        }
-        body {
             margin: 0;
             padding: 0;
-            background: linear-gradient(180deg, #a7f3d0 0%, #059669 100%); /* Lush Jungle Gradient */
+            touch-action: manipulation;
+        }
+        body {
+            background: linear-gradient(180deg, #a7f3d0 0%, #059669 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             overflow: hidden;
+            padding: 10px;
         }
 
         /* 1. BRANDING SPLASH SCREEN (Strict 5 Seconds) */
@@ -29,15 +31,38 @@
             height: 100vh;
             background-color: #ffffff;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            gap: 20px;
             z-index: 9999;
             transition: opacity 0.6s ease-out;
         }
         #splash-screen img {
-            max-width: 65%;
-            max-height: 70vh;
+            max-width: 75%;
+            max-height: 60vh;
             object-fit: contain;
+        }
+        .loading-track {
+            width: 50%;
+            max-width: 250px;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+        }
+        .loading-bar-fill {
+            width: 100%;
+            height: 100%;
+            background: #059669;
+            transform: translateX(-100%);
+            animation: loadProgress 4.5s forwards linear;
+        }
+
+        @keyframes loadProgress {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0%); }
         }
 
         /* Main Stage Frame */
@@ -46,17 +71,16 @@
             width: 100%;
             max-width: 720px;
             background: #fffbfa;
-            border: 6px solid #b45309; /* Wood finish border */
+            border: 6px solid #b45309;
             border-radius: 24px;
             box-shadow: 0 12px 36px rgba(0,0,0,0.3);
-            padding: 30px;
+            padding: 25px;
             text-align: center;
-            margin: 20px;
             position: relative;
         }
 
-        h1 { color: #047857; margin-top: 0; font-size: 32px; text-shadow: 1px 1px 2px #fef08a; }
-        p { color: #374151; font-size: 18px; line-height: 1.5; }
+        h1 { color: #047857; margin-top: 0; font-size: clamp(24px, 5vw, 32px); text-shadow: 1px 1px 2px #fef08a; }
+        p { color: #374151; font-size: clamp(16px, 3.5vw, 18px); line-height: 1.5; }
 
         /* Robot Mascot UI */
         .robot-speaker {
@@ -71,7 +95,7 @@
             text-align: left;
         }
         .robot-avatar {
-            font-size: 50px;
+            font-size: 45px;
             animation: bounce 2s infinite alternate;
         }
 
@@ -81,7 +105,7 @@
             border: 4px solid #d97706;
             border-radius: 16px;
             padding: 14px 35px;
-            font-size: 22px;
+            font-size: clamp(18px, 4vw, 22px);
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 6px 0 #b45309;
@@ -101,7 +125,7 @@
             padding: 10px 20px;
             border-radius: 12px;
             font-weight: bold;
-            font-size: 18px;
+            font-size: clamp(16px, 3.5vw, 18px);
             color: #78350f;
             margin-bottom: 20px;
         }
@@ -122,6 +146,7 @@
         }
         .jungle-viewbox img {
             max-height: 130px;
+            max-width: 100%;
             object-fit: contain;
             border-radius: 8px;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
@@ -137,8 +162,8 @@
             background: #ffffff;
             border: 3px solid #cbd5e1;
             border-radius: 14px;
-            padding: 15px;
-            font-size: 19px;
+            padding: 14px;
+            font-size: clamp(16px, 3.5vw, 19px);
             font-weight: bold;
             color: #1f2937;
             cursor: pointer;
@@ -152,14 +177,14 @@
         }
 
         /* Score & Badge Elements */
-        .score-banner { font-size: 64px; font-weight: 900; color: #10b981; margin: 15px 0; }
+        .score-banner { font-size: 56px; font-weight: 900; color: #10b981; margin: 15px 0; }
         .safari-badge {
-            width: 150px;
-            height: 150px;
+            width: 140px;
+            height: 140px;
             background: linear-gradient(135deg, #fbbf24, #f59e0b);
             border: 6px solid #fff;
             border-radius: 50%;
-            margin: 20px auto;
+            margin: 15px auto;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -177,13 +202,14 @@
 </head>
 <body>
 
-    <!-- 1. BRANDING SCREEN (Points to assets subfolder now) -->
-    <div id="screen-splash">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" class="splash-logo" onerror="this.src='https://via.placeholder.com/300x100?text=Innovine+Pedagogy'">
+    <!-- 1. BRANDING SCREEN WITH INNOVINE LOGO -->
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/300x100?text=Innovine+Pedagogy'">
         <div class="loading-track">
             <div class="loading-bar-fill"></div>
         </div>
     </div>
+
     <!-- 2. INTERACTIVE JUNGLE INSTRUCTIONS -->
     <div id="instructions-screen" class="safari-card">
         <h1>🌴 Paint Tool Jungle Safari 🌴</h1>
@@ -198,7 +224,7 @@
         <button class="btn-safari" onclick="enterJungle()">Enter Jungle! 🧭</button>
     </div>
 
-    <!-- 3. INTERACTIVE SAFARI MAP GAMEPLAY (6 Rounds total) -->
+    <!-- 3. INTERACTIVE SAFARI MAP GAMEPLAY -->
     <div id="game-play-screen" class="safari-card">
         <div class="safari-hud">
             <span id="hud-round">Sighting: 1 / 6</span>
@@ -206,9 +232,10 @@
         </div>
         <div class="jungle-viewbox">
             <div style="font-size: 32px; margin-bottom: 8px;" id="jungle-scenery-icon">🌿</div>
-            <img id="safari-target-img" src="" alt="Jungle Discovery">
+            <img id="safari-target-img" src="" alt="Jungle Discovery" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div style="display:none; font-size: 50px; margin: 10px 0;">🎨</div>
         </div>
-        <p id="safari-clue" style="font-weight: bold; margin-bottom: 20px; font-size: 20px; color: #065f46;"></p>
+        <p id="safari-clue" style="font-weight: bold; margin-bottom: 20px; font-size: 19px; color: #065f46;"></p>
         <div class="labels-grid" id="labels-box"></div>
     </div>
 
@@ -218,16 +245,15 @@
         <p>Pixel the Robot checked your digital tracking board! Your score:</p>
         <div class="score-banner" id="final-stars">0 ⭐</div>
         <div id="badge-display-zone"></div>
-        <p id="safari-feedback" style="font-size: 18px; font-weight: 600; margin: 20px 0;"></p>
+        <p id="safari-feedback" style="font-size: 18px; font-weight: 600; margin: 15px 0;"></p>
         <button class="btn-safari" onclick="restartSafari()">Explore Again 🔄</button>
     </div>
 
-    <!-- AUDIO RIG (Updated to look inside assets/ directory) -->
+    <!-- AUDIO RIG (Mapped to assets/correct.mp3 and assets/wrong.mp3) -->
     <audio id="sound-right" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="sound-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <script>
-        // Updated database to pull image assets seamlessly out of your assets/ directory
         const jungleDatabase = [
             {
                 clue: "Look inside the tall trees! A monkey drops a box containing Geometric shapes like Circles and Stars! Label it:",
@@ -278,21 +304,38 @@
         let playRoundsList = [];
         const absoluteRoundsCount = 6;
 
-        // 5-Second Splash Screen Engine Loop
+        // Strict 5-Second Splash Screen Engine
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
                 const instructions = document.getElementById('instructions-screen');
                 
-                splash.style.opacity = '0';
-                setTimeout(() => {
-                    splash.style.display = 'none';
-                    instructions.style.display = 'block'; 
-                }, 600);
+                if (splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => {
+                        splash.style.display = 'none';
+                        if (instructions) instructions.style.display = 'block'; 
+                    }, 600);
+                }
             }, 5000); 
         });
 
+        // Audio Execution Engine
+        function playAudio(elementId) {
+            const audio = document.getElementById(elementId);
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(err => console.log("Audio deferred until gesture", err));
+            }
+        }
+
         function enterJungle() {
+            // Unlock browser audio context on initial button press
+            const rightSnd = document.getElementById('sound-right');
+            const wrongSnd = document.getElementById('sound-wrong');
+            if (rightSnd) rightSnd.load();
+            if (wrongSnd) wrongSnd.load();
+
             document.getElementById('instructions-screen').style.display = 'none';
             document.getElementById('game-play-screen').style.display = 'block';
             
@@ -309,7 +352,11 @@
 
             const activeCase = playRoundsList[activeIndex];
             document.getElementById('safari-clue').innerText = activeCase.clue;
-            document.getElementById('safari-target-img').src = activeCase.image;
+            
+            const targetImg = document.getElementById('safari-target-img');
+            targetImg.style.display = 'block';
+            targetImg.src = activeCase.image;
+            
             document.getElementById('jungle-scenery-icon').innerText = activeCase.scenery;
 
             const labelContainer = document.getElementById('labels-box');
@@ -327,15 +374,15 @@
         function evaluateChoice(chosenIdx) {
             const rightIndex = playRoundsList[activeIndex].correct;
             
-            if(chosenIdx === rightIndex) {
+            if (chosenIdx === rightIndex) {
                 scoreStars += 10;
-                document.getElementById('sound-right').play().catch(() => {});
+                playAudio('sound-right');
             } else {
-                document.getElementById('sound-wrong').play().catch(() => {});
+                playAudio('sound-wrong');
             }
 
             activeIndex++;
-            if(activeIndex < absoluteRoundsCount) {
+            if (activeIndex < absoluteRoundsCount) {
                 setTimeout(displayJungleRound, 450);
             } else {
                 setTimeout(buildFinalScorecard, 450);
@@ -351,7 +398,7 @@
             const badgeZone = document.getElementById('badge-display-zone');
             const feedbackBox = document.getElementById('safari-feedback');
 
-            if(scoreStars === 60) {
+            if (scoreStars === 60) {
                 badgeZone.innerHTML = `
                     <div class="safari-badge">
                         <span style="font-size:42px;">👑</span>
@@ -359,7 +406,7 @@
                     </div>`;
                 feedbackBox.style.color = "#047857";
                 feedbackBox.innerText = "Phenomenal! You labeled every single tool correctly! Pixel the Robot crowns you King of the Paint Jungle!";
-            } else if(scoreStars >= 30) {
+            } else if (scoreStars >= 30) {
                 badgeZone.innerHTML = `
                     <div class="safari-badge" style="background: linear-gradient(135deg, #a1a1aa, #4b5563);">
                         <span style="font-size:42px;">🤠</span>
@@ -370,7 +417,7 @@
             } else {
                 badgeZone.innerHTML = `<div style="font-size: 60px; margin: 15px 0;">🎒</div>`;
                 feedbackBox.style.color = "#b45309";
-                feedbackBox.innerText = "Let's load up your digital compass, reread Chapter 7, and re-explore the layout lanes!";
+                feedbackBox.innerText = "Let's load up your digital compass and re-explore the layout lanes!";
             }
         }
 

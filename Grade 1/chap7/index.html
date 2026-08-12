@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Paint Jungle Safari</title>
+    <title>Paint Jungle Safari - Riddle & Puzzle Edition</title>
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -70,24 +72,24 @@
             to { transform: translateX(0%); }
         }
 
-        /* Main Stage Frame (Responsive Container) */
+        /* Main Stage Frame */
         .safari-card {
             display: none;
             width: 100%;
             max-width: 750px;
-            min-height: 500px;
+            min-height: 520px;
             background: #fffbfa;
             border: 6px solid #b45309;
             border-radius: 24px;
             box-shadow: 0 12px 36px rgba(0,0,0,0.3);
-            padding: clamp(15px, 4vw, 30px);
+            padding: clamp(15px, 4vw, 25px);
             text-align: center;
             position: relative;
             margin: auto;
         }
 
-        h1 { color: #047857; margin-top: 0; font-size: clamp(22px, 5vw, 32px); text-shadow: 1px 1px 2px #fef08a; }
-        p { color: #374151; font-size: clamp(15px, 3.5vw, 18px); line-height: 1.5; }
+        h1 { color: #047857; margin-top: 0; font-size: clamp(22px, 5vw, 30px); text-shadow: 1px 1px 2px #fef08a; }
+        p { color: #374151; font-size: clamp(14px, 3.5vw, 17px); line-height: 1.5; }
 
         /* Robot Mascot UI */
         .robot-speaker {
@@ -95,15 +97,44 @@
             border: 3px solid #0284c7;
             border-radius: 16px;
             padding: 12px 16px;
-            margin: 15px 0;
+            margin: 12px 0;
             display: flex;
             align-items: center;
             gap: 12px;
             text-align: left;
         }
         .robot-avatar {
-            font-size: clamp(35px, 8vw, 50px);
+            font-size: clamp(35px, 8vw, 48px);
             animation: bounce 2s infinite alternate;
+            flex-shrink: 0;
+        }
+
+        /* Instruction Box Styling */
+        .instructions-list {
+            background: #f0fdf4;
+            border: 3px dashed #10b981;
+            border-radius: 16px;
+            padding: 15px;
+            margin: 12px 0;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .instruction-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: clamp(13px, 3.2vw, 16px);
+            color: #065f46;
+            font-weight: bold;
+        }
+        .instruction-icon {
+            font-size: 24px;
+            background: #ffffff;
+            padding: 6px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             flex-shrink: 0;
         }
 
@@ -131,24 +162,39 @@
         .safari-hud {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             background: #fef08a;
             border: 3px solid #f59e0b;
             padding: 8px 16px;
             border-radius: 12px;
             font-weight: bold;
-            font-size: clamp(14px, 3.5vw, 18px);
+            font-size: clamp(14px, 3.5vw, 17px);
             color: #78350f;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
-        /* Jungle Sightings Viewbox */
+        /* Category Tag Badge */
+        .category-badge {
+            background: #0284c7;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        /* Jungle Sightings / Mystery Viewbox */
         .jungle-viewbox {
             background: #ecfdf5;
             border: 4px solid #10b981;
             border-radius: 16px;
             padding: 12px;
-            margin-bottom: 15px;
-            min-height: 160px;
+            margin-bottom: 12px;
+            min-height: 150px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -156,17 +202,30 @@
             position: relative;
         }
         .jungle-viewbox img {
-            max-height: clamp(90px, 20vh, 140px);
+            max-height: clamp(80px, 18vh, 130px);
             max-width: 100%;
             object-fit: contain;
             border-radius: 8px;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
         }
 
-        /* Responsive Grid Choices for Mobile & Laptop */
+        /* Riddle Text Box */
+        .riddle-card {
+            background: #fff;
+            border: 3px dashed #0284c7;
+            border-radius: 14px;
+            padding: 15px;
+            margin-bottom: 12px;
+            color: #0369a1;
+            font-weight: bold;
+            font-size: clamp(15px, 3.5vw, 18px);
+            line-height: 1.4;
+        }
+
+        /* Choices Grid */
         .labels-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 10px;
             width: 100%;
         }
@@ -175,7 +234,7 @@
             border: 3px solid #cbd5e1;
             border-radius: 14px;
             padding: 12px;
-            font-size: clamp(15px, 3.5vw, 18px);
+            font-size: clamp(14px, 3.2vw, 17px);
             font-weight: bold;
             color: #1f2937;
             cursor: pointer;
@@ -184,7 +243,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 50px;
+            min-height: 48px;
         }
         .btn-label:hover {
             background: #f0fdf4;
@@ -194,14 +253,14 @@
 
         /* Score & Badge Elements */
         .score-banner { 
-            font-size: clamp(40px, 10vw, 60px); 
+            font-size: clamp(38px, 9vw, 56px); 
             font-weight: 900; 
             color: #10b981; 
-            margin: 10px 0; 
+            margin: 8px 0; 
         }
         .safari-badge {
-            width: clamp(110px, 25vw, 150px);
-            height: clamp(110px, 25vw, 150px);
+            width: clamp(100px, 22vw, 140px);
+            height: clamp(100px, 22vw, 140px);
             background: linear-gradient(135deg, #fbbf24, #f59e0b);
             border: 5px solid #fff;
             border-radius: 50%;
@@ -223,7 +282,7 @@
 </head>
 <body>
 
-    <!-- 1. BRANDING SCREEN WITH INNOVINE LOGO -->
+    <!-- 1. BRANDING SPLASH SCREEN -->
     <div id="splash-screen">
         <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/300x100?text=Innovine+Pedagogy'">
         <div class="loading-track">
@@ -231,52 +290,78 @@
         </div>
     </div>
 
-    <!-- 2. INTERACTIVE JUNGLE INSTRUCTIONS -->
+    <!-- 2. INTERACTIVE INSTRUCTION & HOW-TO-PLAY SCREEN (Shows right after Innovine Splash) -->
     <div id="instructions-screen" class="safari-card">
-        <h1>🌴 Paint Tool Jungle Safari 🌴</h1>
+        <h1>🌴 Paint Safari: Instructions 🌴</h1>
+        
         <div class="robot-speaker">
             <div class="robot-avatar">🤖</div>
             <div>
                 <strong style="color: #0369a1;">Pixel the Robot says:</strong><br>
-                <span style="font-size: 15px;">"BEEP-BOOP! Welcome tracker! Wild monkeys took our MS Paint tools into the jungle! Help me spot and label them!"</span>
+                <span style="font-size: 14px;">"Welcome Explorer! Read the mission rules below before entering the jungle!"</span>
             </div>
         </div>
-        <p>Look at the jungle images closely, select the right Paint feature, and clear all 6 rounds to win your Explorer Badge!</p>
-        <button class="btn-safari" onclick="enterJungle()">Enter Jungle! 🧭</button>
+
+        <div class="instructions-list">
+            <div class="instruction-item">
+                <span class="instruction-icon">🔍</span>
+                <span><strong>Tool Sightings:</strong> Look closely at the jungle image and tap the correct MS Paint tool label.</span>
+            </div>
+            <div class="instruction-item">
+                <span class="instruction-icon">🧩</span>
+                <span><strong>Who Am I? Riddles:</strong> Read secret clues about tool features and identify the mystery tool.</span>
+            </div>
+            <div class="instruction-item">
+                <span class="instruction-icon">⭐</span>
+                <span><strong>Win Rewards:</strong> Earn 10 Stars for every correct answer to unlock the King Explorer Badge!</span>
+            </div>
+        </div>
+
+        <button class="btn-safari" onclick="enterJungle()">Start Adventure! 🧭</button>
     </div>
 
-    <!-- 3. INTERACTIVE SAFARI MAP GAMEPLAY -->
+    <!-- 3. INTERACTIVE GAMEPLAY SCREEN -->
     <div id="game-play-screen" class="safari-card">
         <div class="safari-hud">
-            <span id="hud-round">Sighting: 1 / 6</span>
+            <span id="hud-round">Round: 1 / 8</span>
             <span id="hud-score">Stars: 0 ⭐</span>
         </div>
-        <div class="jungle-viewbox">
-            <div style="font-size: 28px; margin-bottom: 4px;" id="jungle-scenery-icon">🌿</div>
+
+        <span class="category-badge" id="level-type-tag">TOOL SIGHTING</span>
+
+        <div class="jungle-viewbox" id="viewbox-container">
+            <div style="font-size: 26px; margin-bottom: 4px;" id="jungle-scenery-icon">🌿</div>
             <img id="safari-target-img" src="" alt="Jungle Discovery" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-            <div style="display:none; font-size: 45px; margin: 10px 0;">🎨</div>
+            <div style="display:none; font-size: 42px; margin: 5px 0;" id="fallback-icon">🎨</div>
         </div>
-        <p id="safari-clue" style="font-weight: bold; margin-bottom: 15px; font-size: clamp(15px, 3.5vw, 18px); color: #065f46;"></p>
+
+        <div class="riddle-card" id="riddle-box" style="display: none;">
+            <p id="riddle-text"></p>
+        </div>
+
+        <p id="safari-clue" style="font-weight: bold; margin-bottom: 12px; font-size: clamp(14px, 3.2vw, 17px); color: #065f46;"></p>
         <div class="labels-grid" id="labels-box"></div>
     </div>
 
-    <!-- 4. SAFARI SCORECARD & BADGE WINDOW -->
+    <!-- 4. SAFARI SCORECARD SCREEN -->
     <div id="scorecard-screen" class="safari-card">
-        <h1>Jungle Expedition Complete! 🏁</h1>
-        <p>Your digital tracking board score:</p>
+        <h1>Safari Expedition Complete! 🏁</h1>
+        <p>Pixel the Robot evaluated your tracking board:</p>
         <div class="score-banner" id="final-stars">0 ⭐</div>
         <div id="badge-display-zone"></div>
         <p id="safari-feedback" style="font-size: 16px; font-weight: 600; margin: 10px 0;"></p>
         <button class="btn-safari" onclick="restartSafari()">Explore Again 🔄</button>
     </div>
 
-    <!-- AUDIO RIG (Mapped to assets/correct.mp3 and assets/wrong.mp3) -->
+    <!-- AUDIO NODES -->
     <audio id="sound-right" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="sound-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <script>
+        // Level Database with Sightings and Surprise "Who Am I?" Riddles
         const jungleDatabase = [
             {
+                type: "sighting",
                 clue: "Look inside the tall trees! A monkey drops a box containing Geometric shapes like Circles and Stars! Label it:",
                 image: "assets/shapes.PNG",
                 scenery: "🐒🌲",
@@ -284,20 +369,23 @@
                 correct: 0
             },
             {
-                clue: "Hidden near the river! A magical box packed with an Eraser, a Pencil, and a Fill Bucket tool. Label this tool shelf:",
+                type: "sighting",
+                clue: "Hidden near the river! A magical box packed with an Eraser, Pencil, and Fill Bucket tool. Label this tool shelf:",
                 image: "assets/tools.PNG",
                 scenery: "🐊🌊",
                 options: ["Ribbon Title bar", "Tools Panel Layout", "Color Palette Strip"],
                 correct: 1
             },
             {
-                clue: "Look under the bright jungle rainbow! It's a grid showing multiple paint spots to swap our paint colors. Label it:",
+                type: "sighting",
+                clue: "Look under the bright jungle rainbow! It's a grid showing multiple paint spots to swap paint colors. Label it:",
                 image: "assets/colour.PNG",
                 scenery: "🦜🌈",
                 options: ["Drawing Area Window", "Shapes Picker", "Color Palette Strip"],
                 correct: 2
             },
             {
+                type: "sighting",
                 clue: "A sleepy panda is holding a dynamic tray containing Crayon, Oil Paint, and Watercolor brush strokes! Label it:",
                 image: "assets/brush.PNG",
                 scenery: "🐼🎋",
@@ -305,6 +393,7 @@
                 correct: 0
             },
             {
+                type: "sighting",
                 clue: "Look at this huge toolbar panel holding ALL controls, tabs, and shapes stretched across the sky. Label it:",
                 image: "assets/ribbon.PNG",
                 scenery: "🦁☀",
@@ -312,20 +401,34 @@
                 correct: 1
             },
             {
-                clue: "The parrot dropped a tool used specifically to cleanly wipe away lines or clear errors on your page! Label it:",
-                image: "assets/tools.PNG",
-                scenery: "🦜🍍",
-                options: ["Fill with Color Bucket", "Pencil Tool", "Eraser Tool Component"],
-                correct: 2
+                type: "riddle",
+                riddle: "❓ WHO AM I? <br>'I look like an ocean bucket. Tap me on any closed shape to pour color inside instantly! Who am I?'",
+                scenery: "❓🌊",
+                options: ["Fill with Color Bucket", "Pencil Tool", "Magnifier Glass"],
+                correct: 0
+            },
+            {
+                type: "riddle",
+                riddle: "❓ WHO AM I? <br>'I am soft and pink. When you make a mistake on canvas, rub me over it to make it disappear! Who am I?'",
+                scenery: "❓🧼",
+                options: ["Brush Tool", "Eraser Tool", "Color Picker"],
+                correct: 1
+            },
+            {
+                type: "riddle",
+                riddle: "❓ WHO AM I? <br>'I look like a capital letter A. Click me to type colorful words directly onto your drawing screen! Who am I?'",
+                scenery: "❓🔤",
+                options: ["Line Tool", "Text Tool (A)", "Pencil Tool"],
+                correct: 1
             }
         ];
 
         let activeIndex = 0;
         let scoreStars = 0;
         let playRoundsList = [];
-        const absoluteRoundsCount = 6;
+        const totalRoundsCount = 8;
 
-        // Strict 5-Second Splash Screen Engine
+        // Splash Screen Hold (5 Seconds)
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
@@ -341,17 +444,16 @@
             }, 5000); 
         });
 
-        // Safe Audio Engine
         function playAudio(elementId) {
             const audio = document.getElementById(elementId);
             if (audio) {
                 audio.currentTime = 0;
-                audio.play().catch(err => console.log("Audio deferred until gesture", err));
+                audio.play().catch(err => console.log("Audio play postponed:", err));
             }
         }
 
         function enterJungle() {
-            // Unlock audio permissions on tap/click
+            // Unlock audio context on user gesture
             const rightSnd = document.getElementById('sound-right');
             const wrongSnd = document.getElementById('sound-wrong');
             if (rightSnd) rightSnd.load();
@@ -360,6 +462,7 @@
             document.getElementById('instructions-screen').style.display = 'none';
             document.getElementById('game-play-screen').style.display = 'block';
             
+            // Randomize questions for replayability
             playRoundsList = [...jungleDatabase].sort(() => 0.5 - Math.random());
             
             activeIndex = 0;
@@ -368,17 +471,33 @@
         }
 
         function displayJungleRound() {
-            document.getElementById('hud-round').innerText = `Sighting: ${activeIndex + 1} / ${absoluteRoundsCount}`;
+            document.getElementById('hud-round').innerText = `Round: ${activeIndex + 1} / ${totalRoundsCount}`;
             document.getElementById('hud-score').innerText = `Stars: ${scoreStars} ⭐`;
 
             const activeCase = playRoundsList[activeIndex];
-            document.getElementById('safari-clue').innerText = activeCase.clue;
-            
+            const tagBadge = document.getElementById('level-type-tag');
+            const viewBox = document.getElementById('viewbox-container');
+            const riddleBox = document.getElementById('riddle-box');
             const targetImg = document.getElementById('safari-target-img');
-            targetImg.style.display = 'block';
-            targetImg.src = activeCase.image;
-            
+
             document.getElementById('jungle-scenery-icon').innerText = activeCase.scenery;
+
+            if (activeCase.type === "riddle") {
+                tagBadge.innerText = "🧩 SURPRISE RIDDLE!";
+                tagBadge.style.background = "#e11d48";
+                viewBox.style.display = "none";
+                riddleBox.style.display = "block";
+                document.getElementById('riddle-text').innerHTML = activeCase.riddle;
+                document.getElementById('safari-clue').innerText = "Read the clue above and identify the secret tool!";
+            } else {
+                tagBadge.innerText = "🔍 TOOL SIGHTING";
+                tagBadge.style.background = "#0284c7";
+                riddleBox.style.display = "none";
+                viewBox.style.display = "flex";
+                targetImg.style.display = 'block';
+                targetImg.src = activeCase.image;
+                document.getElementById('safari-clue').innerText = activeCase.clue;
+            }
 
             const labelContainer = document.getElementById('labels-box');
             labelContainer.innerHTML = '';
@@ -398,12 +517,13 @@
             if (chosenIdx === rightIndex) {
                 scoreStars += 10;
                 playAudio('sound-right');
+                confetti({ particleCount: 60, spread: 50, origin: { y: 0.7 } });
             } else {
                 playAudio('sound-wrong');
             }
 
             activeIndex++;
-            if (activeIndex < absoluteRoundsCount) {
+            if (activeIndex < totalRoundsCount) {
                 setTimeout(displayJungleRound, 450);
             } else {
                 setTimeout(buildFinalScorecard, 450);
@@ -414,31 +534,32 @@
             document.getElementById('game-play-screen').style.display = 'none';
             document.getElementById('scorecard-screen').style.display = 'block';
             
-            document.getElementById('final-stars').innerText = `${scoreStars} / 60 ⭐`;
+            document.getElementById('final-stars').innerText = `${scoreStars} / ${totalRoundsCount * 10} ⭐`;
             
             const badgeZone = document.getElementById('badge-display-zone');
             const feedbackBox = document.getElementById('safari-feedback');
 
-            if (scoreStars === 60) {
+            if (scoreStars === (totalRoundsCount * 10)) {
                 badgeZone.innerHTML = `
                     <div class="safari-badge">
                         <span style="font-size:36px;">👑</span>
-                        <span style="font-size:10px; letter-spacing:1px; text-transform:uppercase;">JUNGLE KING</span>
+                        <span style="font-size:10px; letter-spacing:1px; text-transform:uppercase;">PAINT KING</span>
                     </div>`;
                 feedbackBox.style.color = "#047857";
-                feedbackBox.innerText = "Phenomenal! You labeled every tool correctly! Pixel the Robot crowns you King of the Paint Jungle!";
-            } else if (scoreStars >= 30) {
+                feedbackBox.innerText = "Flawless score! You solved every tool sighting and 'Who Am I?' riddle!";
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 } });
+            } else if (scoreStars >= 50) {
                 badgeZone.innerHTML = `
                     <div class="safari-badge" style="background: linear-gradient(135deg, #a1a1aa, #4b5563);">
                         <span style="font-size:36px;">🤠</span>
                         <span style="font-size:10px; letter-spacing:1px; text-transform:uppercase;">SAFARI SCOUT</span>
                     </div>`;
                 feedbackBox.style.color = "#1e3a8a";
-                feedbackBox.innerText = "Terrific tracking work! You located multiple core tools inside the brush trees.";
+                feedbackBox.innerText = "Great job! You solved most riddles and recovered the jungle tools!";
             } else {
                 badgeZone.innerHTML = `<div style="font-size: 50px; margin: 10px 0;">🎒</div>`;
                 feedbackBox.style.color = "#b45309";
-                feedbackBox.innerText = "Let's load up your digital compass and re-explore the layout lanes!";
+                feedbackBox.innerText = "Keep practicing! Re-explore the jungle rounds to master all Paint tools!";
             }
         }
 

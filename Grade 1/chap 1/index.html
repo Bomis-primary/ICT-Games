@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>ICT Game - Smart Machine Ladder Journey</title>
+<title>Computer: A Smart Machine - Learning Journey</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
@@ -35,7 +35,7 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* 5-Second Splash Screen Overlay */
+/* Page 1: 5-Second Splash Screen */
 #splashScreen {
     position: fixed;
     top: 0;
@@ -93,62 +93,19 @@ body {
     to { width: 100%; }
 }
 
-/* Master Responsive Layout */
+/* Master Game Container */
 .game-wrapper {
     display: flex;
     width: 100%;
-    max-width: 1000px;
-    height: 85vh;
+    max-width: 900px;
+    height: 90vh;
     gap: 15px;
     align-items: stretch;
     opacity: 0;
     transition: opacity 0.5s ease;
 }
 
-/* Vertical Ladder Stack Board Component */
-.ladder-bar {
-    width: 140px;
-    background: rgba(245, 246, 250, 0.9);
-    border-radius: 20px;
-    border: 4px solid #74b9ff;
-    display: flex;
-    flex-direction: column-reverse; /* Climbs bottom to top */
-    justify-content: space-between;
-    padding: 10px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-}
-
-.ladder-rung {
-    flex: 1;
-    margin: 3px 0;
-    background: #ffeaa7;
-    border: 2px solid #fdcb6e;
-    border-radius: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 16px;
-    font-weight: bold;
-    color: #2d3436;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.ladder-rung.current {
-    background: #ff7675;
-    border-color: #d63031;
-    color: white;
-    transform: scale(1.05);
-    box-shadow: 0 0 10px rgba(214, 48, 49, 0.5);
-}
-
-.ladder-rung.passed {
-    background: #55efc4;
-    border-color: #00b894;
-    color: white;
-}
-
-/* Main Gameplay Area Card */
-.main-board {
+.main-card {
     flex: 1;
     background: #f5f6fa; 
     border-radius: 20px;
@@ -159,24 +116,127 @@ body {
     flex-direction: column;
     justify-content: space-between;
     position: relative;
+    overflow-y: auto;
 }
 
-/* Persistent Score Header Grid */
+/* Page Screens */
+.page-screen {
+    display: none;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+}
+
+.page-screen.active {
+    display: flex;
+}
+
+/* Page Title Headers */
+.page-header {
+    text-align: center;
+    background: #74b9ff;
+    color: white;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0 4px 0 #0984e3;
+    margin-bottom: 15px;
+}
+
+/* Page 2: Instructions View */
+.instruction-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 15px;
+    padding: 10px;
+}
+
+.instruction-list {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.instruction-list li {
+    background: #ffeaa7;
+    border: 2px solid #fdcb6e;
+    padding: 12px 18px;
+    border-radius: 14px;
+    font-size: 20px;
+    color: #2d3436;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: bold;
+}
+
+.start-btn, .action-btn {
+    padding: 14px 28px;
+    font-size: 22px;
+    font-weight: bold;
+    background: #00b894;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #00875a;
+    align-self: center;
+    transition: transform 0.1s;
+}
+
+.start-btn:active, .action-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #00875a;
+}
+
+/* Level Selection Menu */
+.level-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin: auto 0;
+}
+
+.level-card {
+    background: #ffeaa7;
+    border: 3px solid #fdcb6e;
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 5px 0 #e1b12c;
+    transition: all 0.2s;
+}
+
+.level-card:hover {
+    transform: scale(1.02);
+}
+
+.level-card:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #e1b12c;
+}
+
+.level-card .icon { font-size: 45px; margin-bottom: 8px; }
+.level-card .title { font-size: 20px; font-weight: bold; color: #2d3436; }
+.level-card .status { font-size: 14px; color: #00b894; margin-top: 5px; font-weight: bold; }
+
+/* Gameplay Area */
 .score-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     background: #dcdde1;
-    padding: 10px 15px;
+    padding: 8px 15px;
     border-radius: 12px;
     font-size: 18px;
     font-weight: bold;
     color: #2d3436;
 }
-
-.timer-tag { color: #e84118; }
-.score-tag { color: #0097e6; }
-.badge-tag { color: #e67e22; }
 
 .content-display {
     display: flex;
@@ -188,7 +248,7 @@ body {
 }
 
 .question-text {
-    font-size: 26px;
+    font-size: 24px;
     color: #2d3436;
     margin-bottom: 10px;
     text-align: center;
@@ -196,7 +256,7 @@ body {
 }
 
 .visual-emoji {
-    font-size: 90px;
+    font-size: 80px;
     margin-bottom: 10px;
     display: inline-block;
     animation: floating 2.5s infinite ease-in-out;
@@ -207,7 +267,6 @@ body {
     50% { transform: translateY(-8px); }
 }
 
-/* Balanced Interactive 2x2 Selection Grid */
 .options-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -218,16 +277,14 @@ body {
 .option-node {
     background: #ffeaa7;
     border: 3px solid #fdcb6e;
-    padding: 16px;
+    padding: 14px;
     border-radius: 16px;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: bold;
     color: #2d3436;
     cursor: pointer;
     text-align: center;
-    transition: transform 0.1s, background-color 0.2s;
     box-shadow: 0 4px 0 #e1b12c;
-    -webkit-tap-highlight-color: transparent;
 }
 
 .option-node:active {
@@ -236,111 +293,48 @@ body {
 }
 
 .status-feedback {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: bold;
-    height: 35px;
+    height: 30px;
     margin-top: 5px;
     text-align: center;
 }
 
-.action-row {
-    height: 45px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.control-btn {
-    padding: 8px 30px;
-    font-size: 20px;
-    font-weight: bold;
-    background: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    box-shadow: 0 4px 0 #388e3c;
-    display: none;
-}
-
-/* End-of-game Presentation Card */
+/* Completion Card */
 .completion-card {
-    display: none;
     text-align: center;
-    margin: auto;
+    margin: auto 0;
 }
 
-.completion-card h2 {
-    font-size: 38px;
-    color: #ff7675;
-    margin-bottom: 15px;
-}
+.completion-card h2 { font-size: 34px; color: #ff7675; margin-bottom: 15px; }
+.summary-stats { font-size: 22px; color: #2d3436; margin-bottom: 25px; line-height: 1.6; }
 
-.summary-stats {
-    font-size: 24px;
-    color: #2d3436;
-    margin-bottom: 25px;
-    line-height: 1.5;
-}
-
-.replay-btn {
-    padding: 12px 30px;
-    font-size: 22px;
-    font-weight: bold;
-    background: #2196f3;
-    color: white;
-    border: none;
-    border-radius: 14px;
-    cursor: pointer;
-    box-shadow: 0 4px 0 #1976d2;
-}
-
-/* Decorative Background Clouds */
-.cloud-particle {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.6);
-    width: 140px;
-    height: 45px;
-    border-radius: 40px;
-    animation: travelCloud 25s linear infinite;
-    z-index: 1;
-}
-.cloud-particle::before, .cloud-particle::after {
-    content: '';
-    position: absolute;
-    background: rgba(255, 255, 255, 0.6);
-    border-radius: 50%;
-}
-.cloud-particle::before { width: 65px; height: 65px; top: -30px; left: 20px; }
-.cloud-particle::after { width: 80px; height: 80px; top: -40px; right: 15px; }
-
-@keyframes travelCloud {
-    from { left: -180px; }
-    to { left: 100vw; }
-}
-
-/* Adaptive Mobile Breakdown Engine */
+/* Responsive Mobile Layout */
 @media (max-width: 600px) {
-    .game-wrapper { flex-direction: column-reverse; height: 95vh; gap: 8px; }
-    .ladder-bar { width: 100%; height: 45px; flex-direction: row; padding: 4px; border-radius: 10px; }
-    .ladder-rung { margin: 0 2px; font-size: 11px; border-radius: 6px; }
-    .main-board { padding: 12px; border-radius: 14px; }
-    .question-text { font-size: 19px; }
+    .game-wrapper { height: 95vh; }
+    .main-card { padding: 12px; }
+    .page-header { font-size: 20px; padding: 8px; }
+    .instruction-list li { font-size: 16px; padding: 10px; }
+    .start-btn, .action-btn { font-size: 18px; padding: 10px 20px; }
+    .level-grid { grid-template-columns: 1fr; gap: 10px; }
+    .level-card { padding: 12px; }
+    .question-text { font-size: 18px; }
     .visual-emoji { font-size: 60px; }
-    .option-node { font-size: 16px; padding: 12px; }
-    .score-header { font-size: 14px; padding: 6px 10px; }
+    .option-node { font-size: 16px; padding: 10px; }
 }
 </style>
 </head>
 <body>
 
-<div class="cloud-particle" style="top: 8%; animation-duration: 26s;"></div>
-<div class="cloud-particle" style="top: 30%; animation-delay: 5s; animation-duration: 32s;"></div>
+<!-- Audio Assets -->
+<audio id="soundChannelCorrect" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="soundChannelWrong" src="assets/wrong.mp3" preload="auto"></audio>
 
+<!-- Page 1: 5-Second Splash Screen -->
 <div id="splashScreen">
     <div class="logo-container">
         <img class="logo-img" src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block';">
-        <h1 id="logoFallback" style="display:none; font-size:45px;">💻</h1>
+        <h1 id="logoFallback" style="display:none; font-size:50px;">💻</h1>
     </div>
     <h2 style="color: #2d3436; margin-bottom: 20px; font-size: 22px;">Innovine Pedagogy</h2>
     <div class="loader-container">
@@ -349,18 +343,58 @@ body {
 </div>
 
 <div class="game-wrapper" id="gameFrame">
-    
-    <div class="ladder-bar" id="ladderSystemTrack"></div>
+    <div class="main-card">
 
-    <div class="main-board">
-        
-        <div class="score-header">
-            <span class="timer-tag">⏰ <span id="timeSpan">40</span>s</span>
-            <span class="score-tag">⭐ Score: <span id="scoreSpan">0</span></span>
-            <span class="badge-tag">🏅 Badges: <span id="badgeSpan">0</span></span>
+        <!-- Page 2: Instructions -->
+        <div class="page-screen" id="pageInstructions">
+            <div class="page-header"> Computer: A Smart Machine</div>
+            <div class="instruction-body">
+                <ul class="instruction-list">
+                    <li>🌟 Welcome Grade 1 Champions!</li>
+                    <li>🌳 Learn Natural vs Man-Made Things!</li>
+                    <li>🤖 Discover why Computer is a Smart Machine!</li>
+                    <li>🎯 Pick any level you like to play!</li>
+                    <li>⭐ Earn Badges and Stars for right answers!</li>
+                </ul>
+            </div>
+            <button class="start-btn" onclick="showScreen('pageLevelSelect')">Let's Play! 🚀</button>
         </div>
 
-        <div id="playground">
+        <!-- Page 3: Level Selection -->
+        <div class="page-screen" id="pageLevelSelect">
+            <div class="page-header">Select Your Game Level</div>
+            <div class="level-grid">
+                <div class="level-card" onclick="startLevel(0)">
+                    <div class="icon">🌿</div>
+                    <div class="title">Level 1: Natural Things</div>
+                    <div class="status" id="statusL1">Play Now ➔</div>
+                </div>
+                <div class="level-card" onclick="startLevel(1)">
+                    <div class="icon">🚌</div>
+                    <div class="title">Level 2: Man-Made Things</div>
+                    <div class="status" id="statusL2">Play Now ➔</div>
+                </div>
+                <div class="level-card" onclick="startLevel(2)">
+                    <div class="icon">🤖</div>
+                    <div class="title">Level 3: Smart Machine Features</div>
+                    <div class="status" id="statusL3">Play Now ➔</div>
+                </div>
+                <div class="level-card" onclick="startLevel(3)">
+                    <div class="icon">💻</div>
+                    <div class="title">Level 4: Types of Computers</div>
+                    <div class="status" id="statusL4">Play Now ➔</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gameplay Screen -->
+        <div class="page-screen" id="pageGameplay">
+            <div class="score-header">
+                <span style="color:#e84118;">⏰ <span id="timeSpan">30</span>s</span>
+                <span style="color:#0097e6;">⭐ Score: <span id="scoreSpan">0</span></span>
+                <span style="color:#e67e22;">🏅 Badges: <span id="badgeSpan">0</span></span>
+            </div>
+
             <div class="content-display">
                 <div class="question-text" id="targetQuestionText">...</div>
                 <div class="visual-emoji" id="targetGraphicNode">💻</div>
@@ -368,258 +402,218 @@ body {
 
             <div class="options-grid" id="selectionOptionsGrid"></div>
             <div class="status-feedback" id="feedbackPromptZone"></div>
-        </div>
 
-        <div class="completion-card" id="completionReportingScreen">
-            <h2>🎉 Journey Completed! 🎉</h2>
-            <div class="summary-stats">
-                🏆 Final Score Points: <strong><span id="endScoreDisplay">0</span> / 10</strong><br>
-                🏅 Total Earned Badges: <strong><span id="endBadgeDisplay">0</span></strong>
+            <div style="height: 45px; display: flex; justify-content: center; align-items: center; margin-top: 5px;">
+                <button class="action-btn" id="advanceStepBtn" style="display:none;" onclick="nextQuestion()">Next Question ➜</button>
             </div>
-            <button class="replay-btn" id="replayActionBtn">Play Journey Again</button>
         </div>
 
-        <div class="action-row">
-            <button class="control-btn" id="advanceStepBtn">Next Step ➜</button>
+        <!-- Completion Screen -->
+        <div class="page-screen" id="pageCompletion">
+            <div class="page-header">🎉 Fantastic Job! 🎉</div>
+            <div class="completion-card">
+                <div style="font-size: 80px; margin-bottom: 10px;">🏅</div>
+                <h2>Level Completed!</h2>
+                <div class="summary-stats">
+                    Total Score: <strong><span id="endScoreDisplay">0</span> Points</strong><br>
+                    Badges Earned: <strong><span id="endBadgeDisplay">0</span> 🎖️</strong>
+                </div>
+                <button class="start-btn" onclick="showScreen('pageLevelSelect')">Choose Another Level 🎮</button>
+            </div>
         </div>
 
     </div>
 </div>
 
-<audio id="soundChannelCorrect" src="assets/correct.mp3" preload="auto"></audio>
-<audio id="soundChannelWrong" src="assets/wrong.mp3" preload="auto"></audio>
-
 <script>
-const catalogDbSource = [
-    { type: "identify", question: "Who am I?", image: "💻", options: ["Computer", "Tree", "Bus", "Fish"], answer: "Computer" },
-    { type: "unscramble", question: "Unscramble the word", image: "🖥", options: ["TOPDESK", "DESKTOP", "DOPSKET", "DSETKOP"], answer: "DESKTOP" },
-    { type: "identify", question: "Which one is a Natural Thing?", image: "🌳", options: ["Tree", "Laptop", "Bus", "Table"], answer: "Tree" },
-    { type: "identify", question: "Which one is a Man-Made Thing?", image: "🚌", options: ["Bus", "Sun", "Fish", "Flower"], answer: "Bus" },
-    { type: "unscramble", question: "Unscramble the word", image: "💻", options: ["LTOPAP", "LAPTOP", "POTLAP", "TOPLPA"], answer: "LAPTOP" },
-    { type: "identify", question: "What does a computer use?", image: "⚡", options: ["Electricity", "Water", "Milk", "Chocolate"], answer: "Electricity" },
-    { type: "identify", question: "Which posture is correct?", image: "🙂", options: ["Sit Straight", "Sleep", "Jump", "Stand on chair"], answer: "Sit Straight" },
-    { type: "unscramble", question: "Unscramble the word", image: "📱", options: ["TABLET", "TBLAET", "TLABET", "BATLET"], answer: "TABLET" },
-    { type: "identify", question: "What can we do on a computer?", image: "🎨", options: ["Draw Pictures", "Cook Food", "Fly", "Swim"], answer: "Draw Pictures" },
-    { type: "identify", question: "A computer is a...", image: "🤖", options: ["Smart Machine", "Fruit", "Animal", "Flower"], answer: "Smart Machine" }
+// Grade 1 Chapter 1 Question Dataset
+const levelDatabase = [
+    {
+        name: "Natural Things",
+        questions: [
+            { question: "Guess the Natural Thing!", image: "🌳", options: ["Tree", "Laptop", "Car", "Chair"], answer: "Tree" },
+            { question: "Guess the Natural Thing!", image: "☀️", options: ["Sun", "Bus", "Pencil", "Table"], answer: "Sun" },
+            { question: "Guess the Natural Thing!", image: "🐟", options: ["Fish", "Television", "Clock", "Fan"], answer: "Fish" },
+            { question: "Guess the Natural Thing!", image: "🐱", options: ["Cat", "Computer", "Phone", "Book"], answer: "Cat" }
+        ]
+    },
+    {
+        name: "Man-Made Things",
+        questions: [
+            { question: "Guess the Man-Made Thing!", image: "🚌", options: ["Bus", "Flower", "Sun", "River"], answer: "Bus" },
+            { question: "Guess the Man-Made Thing!", image: "✏️", options: ["Pencil", "Tree", "Bird", "Fruit"], answer: "Pencil" },
+            { question: "Guess the Man-Made Thing!", image: "🏠", options: ["House", "Fish", "Cloud", "Moon"], answer: "House" },
+            { question: "Guess the Man-Made Thing!", image: "🍦", options: ["Ice Cream", "Cat", "Mountain", "Leaf"], answer: "Ice Cream" }
+        ]
+    },
+    {
+        name: "Smart Machine Features",
+        questions: [
+            { question: "What does a computer need to work?", image: "⚡", options: ["Electricity", "Water", "Milk", "Food"], answer: "Electricity" },
+            { question: "A computer is a...", image: "🤖", options: ["Smart Machine", "Animal", "Fruit", "Natural Thing"], answer: "Smart Machine" },
+            { question: "Does a computer make mistakes?", image: "❌", options: ["Never", "Always", "Sometimes", "Every day"], answer: "Never" },
+            { question: "Does a computer get tired?", image: "🏃", options: ["Never", "Yes", "Always", "Very Fast"], answer: "Never" }
+        ]
+    },
+    {
+        name: "Types of Computers",
+        questions: [
+            { question: "I stay fixed on a heavy desk. What am I?", image: "🖥️", options: ["Desktop", "Laptop", "Tablet", "Phone"], answer: "Desktop" },
+            { question: "I am portable and fit on your lap!", image: "💻", options: ["Laptop", "Desktop", "TV", "Refrigerator"], answer: "Laptop" },
+            { question: "I have a touch screen and no keyboard!", image: "📱", options: ["Tablet", "Desktop", "Bus", "Printer"], answer: "Tablet" },
+            { question: "Sit with back straight! Which posture is right?", image: "🙂", options: ["Sit Straight", "Sleep", "Jump", "Bend down"], answer: "Sit Straight" }
+        ]
+    }
 ];
 
-let sessionPlaylist = [];
-let operationalIndex = 0;
-let numericalScore = 0;
-let badgeAccumulation = 0;
-let internalClockTicker;
-let currentRemainingSeconds = 40;
+let currentLevelIndex = 0;
+let currentQuestionIndex = 0;
+let score = 0;
+let badges = 0;
+let timer;
+let remainingSeconds = 30;
 
-const appSplashLayer = document.getElementById('splashScreen');
-const mainApplicationContainerFrame = document.getElementById('gameFrame');
-const ladderGridStripTrack = document.getElementById('ladderSystemTrack');
-const questionLabelContainerField = document.getElementById('targetQuestionText');
-const assetGraphicEmojiFrame = document.getElementById('targetGraphicNode');
-const selectionsOptionFlexBoxGrid = document.getElementById('selectionOptionsGrid');
-const centerInteractivePanelPlayground = document.getElementById('playground');
-const feedbackPromptZone = document.getElementById('feedbackPromptZone');
-const multiStepAdvanceTriggerBtn = document.getElementById('advanceStepBtn');
-const finalReportingSummaryCard = document.getElementById('completionReportingScreen');
-const operationalReplayActionTrigger = document.getElementById('replayActionBtn');
+const soundCorrect = document.getElementById('soundChannelCorrect');
+const soundWrong = document.getElementById('soundChannelWrong');
 
-const soundAssetCorrect = document.getElementById('soundChannelCorrect');
-const soundAssetWrong = document.getElementById('soundChannelWrong');
-
-function executeAudioNotification(targetChannelSignal) {
-    if (targetChannelSignal === 'right') {
-        soundAssetCorrect.currentTime = 0;
-        soundAssetCorrect.play().catch(() => {});
+// Sound Playback
+function playAudio(type) {
+    if (type === 'right') {
+        soundCorrect.currentTime = 0;
+        soundCorrect.play().catch(() => {});
     } else {
-        soundAssetWrong.currentTime = 0;
-        soundAssetWrong.play().catch(() => {});
+        soundWrong.currentTime = 0;
+        soundWrong.play().catch(() => {});
     }
 }
 
-// Fixed 5-Second Splash Loader Sequence
+// 5-Second Splash Screen Sequence[cite: 2]
 window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
-        appSplashLayer.style.opacity = '0';
+        const splash = document.getElementById('splashScreen');
+        splash.style.opacity = '0';
         setTimeout(() => {
-            appSplashLayer.style.display = 'none';
-            mainApplicationContainerFrame.style.opacity = '1';
-            buildFreshSessionLifecycle();
+            splash.style.display = 'none';
+            document.getElementById('gameFrame').style.opacity = '1';
+            showScreen('pageInstructions');
         }, 500);
-    }, 5000); // 5000ms = 5 seconds explicit wait time
+    }, 5000); // Explicit 5 seconds splash display
 });
 
-function scrambleDataCollection(inputTargetArray) {
-    const duplicatedSet = [...inputTargetArray];
-    for (let currentTailIndex = duplicatedSet.length - 1; currentTailIndex > 0; currentTailIndex--) {
-        const randomTargetIndex = Math.floor(Math.random() * (currentTailIndex + 1));
-        [duplicatedSet[currentTailIndex], duplicatedSet[randomTargetIndex]] = [duplicatedSet[randomTargetIndex], duplicatedSet[currentTailIndex]];
-    }
-    return duplicatedSet;
+function showScreen(screenId) {
+    document.querySelectorAll('.page-screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
 }
 
-function structureProgressionMapElements() {
-    ladderGridStripTrack.innerHTML = '';
-    for (let indexPosition = 0; indexPosition < sessionPlaylist.length; indexPosition++) {
-        const individualRungNode = document.createElement('div');
-        individualRungNode.classList.add('ladder-rung');
-        individualRungNode.id = `ladder-step-node-${indexPosition}`;
-        individualRungNode.innerText = indexPosition + 1;
-        ladderGridStripTrack.appendChild(individualRungNode);
-    }
+function startLevel(lvlIdx) {
+    currentLevelIndex = lvlIdx;
+    currentQuestionIndex = 0;
+    showScreen('pageGameplay');
+    loadQuestion();
 }
 
-function synchronizeProgressionInterfaceTracking() {
-    for (let matrixWalkerIndex = 0; matrixWalkerIndex < sessionPlaylist.length; matrixWalkerIndex++) {
-        const currentSelectedRungNode = document.getElementById(`ladder-step-node-${matrixWalkerIndex}`);
-        if (!currentSelectedRungNode) continue;
-
-        if (matrixWalkerIndex < operationalIndex) {
-            currentSelectedRungNode.className = 'ladder-rung passed';
-            currentSelectedRungNode.innerText = '⭐';
-        } else if (matrixWalkerIndex === operationalIndex) {
-            currentSelectedRungNode.className = 'ladder-rung current';
-            currentSelectedRungNode.innerText = '🏃';
-        } else {
-            currentSelectedRungNode.className = 'ladder-rung';
-            currentSelectedRungNode.innerText = matrixWalkerIndex + 1;
-        }
-    }
+function scrambleArray(arr) {
+    return [...arr].sort(() => Math.random() - 0.5);
 }
 
-function buildFreshSessionLifecycle() {
-    numericalScore = 0;
-    badgeAccumulation = 0;
-    operationalIndex = 0;
-    
-    document.getElementById('scoreSpan').innerText = numericalScore;
-    document.getElementById('badgeSpan').innerText = badgeAccumulation;
-    
-    centerInteractivePanelPlayground.style.display = 'block';
-    finalReportingSummaryCard.style.display = 'none';
-    
-    sessionPlaylist = scrambleDataCollection(catalogDbSource);
-    structureProgressionMapElements();
-    processQuestionLifecycleStep();
-}
+function loadQuestion() {
+    clearInterval(timer);
+    remainingSeconds = 30;
+    document.getElementById('timeSpan').innerText = remainingSeconds;
+    document.getElementById('feedbackPromptZone').innerText = '';
+    document.getElementById('advanceStepBtn').style.display = 'none';
 
-function processQuestionLifecycleStep() {
-    clearInterval(internalClockTicker);
-    currentRemainingSeconds = 40;
-    document.getElementById('timeSpan').innerText = currentRemainingSeconds;
-    
-    synchronizeProgressionInterfaceTracking();
-    feedbackPromptZone.innerText = '';
-    multiStepAdvanceTriggerBtn.style.display = 'none';
-
-    internalClockTicker = setInterval(() => {
-        currentRemainingSeconds--;
-        document.getElementById('timeSpan').innerText = currentRemainingSeconds;
-        
-        if (currentRemainingSeconds <= 0) {
-            clearInterval(internalClockTicker);
-            feedbackPromptZone.innerText = "⏰ Time is Up!";
-            feedbackPromptZone.style.color = "#d63031";
-            executeAudioNotification('wrong');
-            
-            document.querySelectorAll('.option-node').forEach(itemNode => {
-                itemNode.style.pointerEvents = 'none';
-            });
-            multiStepAdvanceTriggerBtn.style.display = 'inline-block';
+    // Timer
+    timer = setInterval(() => {
+        remainingSeconds--;
+        document.getElementById('timeSpan').innerText = remainingSeconds;
+        if (remainingSeconds <= 0) {
+            clearInterval(timer);
+            document.getElementById('feedbackPromptZone').innerText = "⏰ Time's up!";
+            document.getElementById('feedbackPromptZone').style.color = "#d63031";
+            playAudio('wrong');
+            disableOptions();
+            document.getElementById('advanceStepBtn').style.display = 'inline-block';
         }
     }, 1000);
 
-    const ActiveQuestionItemObject = sessionPlaylist[operationalIndex];
-    questionLabelContainerField.innerText = ActiveQuestionItemObject.question;
-    assetGraphicEmojiFrame.innerText = ActiveQuestionItemObject.image;
-    selectionsOptionFlexBoxGrid.innerHTML = '';
+    const q = levelDatabase[currentLevelIndex].questions[currentQuestionIndex];
+    document.getElementById('targetQuestionText').innerText = q.question;
+    document.getElementById('targetGraphicNode').innerText = q.image;
 
-    const scrambledOptionSelections = scrambleDataCollection(ActiveQuestionItemObject.options);
-    scrambledOptionSelections.forEach(optionTextString => {
-        const structuralOptionNode = document.createElement('div');
-        structuralOptionNode.classList.add('option-node');
-        structuralOptionNode.innerText = optionTextString;
-        
-        structuralOptionNode.onclick = () => verifyUserResponseInput(optionTextString, ActiveQuestionItemObject.answer, structuralOptionNode);
-        selectionsOptionFlexBoxGrid.appendChild(structuralOptionNode);
+    const optionsGrid = document.getElementById('selectionOptionsGrid');
+    optionsGrid.innerHTML = '';
+
+    scrambleArray(q.options).forEach(opt => {
+        const node = document.createElement('div');
+        node.className = 'option-node';
+        node.innerText = opt;
+        node.onclick = () => checkAnswer(opt, q.answer, node);
+        optionsGrid.appendChild(node);
     });
 }
 
-function verifyUserResponseInput(selectedOptionTextString, correctMatchingAnswerString, elementNodeReference) {
-    clearInterval(internalClockTicker);
-    
-    document.querySelectorAll('.option-node').forEach(itemNode => {
-        itemNode.style.pointerEvents = 'none';
-    });
+function disableOptions() {
+    document.querySelectorAll('.option-node').forEach(n => n.style.pointerEvents = 'none');
+}
 
-    if (selectedOptionTextString === correctMatchingAnswerString) {
-        elementNodeReference.style.backgroundColor = '#55efc4';
-        elementNodeReference.style.borderColor = '#00b894';
-        elementNodeReference.style.color = '#fff';
-        
-        feedbackPromptZone.innerText = "👏 Super Job! Correct!";
-        feedbackPromptZone.style.color = "#00b894";
-        executeAudioNotification('right');
-        
-        numericalScore++;
-        badgeAccumulation++;
-        document.getElementById('scoreSpan').innerText = numericalScore;
-        document.getElementById('badgeSpan').innerText = badgeAccumulation;
+function checkAnswer(selected, correct, element) {
+    clearInterval(timer);
+    disableOptions();
 
-        confetti({
-            particleCount: 100,
-            spread: 70,
-            origin: { y: 0.65 }
-        });
+    const feedback = document.getElementById('feedbackPromptZone');
+
+    if (selected === correct) {
+        element.style.backgroundColor = '#55efc4';
+        element.style.borderColor = '#00b894';
+        element.style.color = '#fff';
+        feedback.innerText = "🎉 Yay! Correct Answer!";
+        feedback.style.color = "#00b894";
+        score += 10;
+        badges += 1;
+        playAudio('right');
+
+        confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
     } else {
-        elementNodeReference.style.backgroundColor = '#ff7675';
-        elementNodeReference.style.borderColor = '#d63031';
-        elementNodeReference.style.color = '#fff';
-        
-        feedbackPromptZone.innerText = " Let's try again next time!";
-        feedbackPromptZone.style.color = "#d63031";
-        executeAudioNotification('wrong');
-        
-        document.querySelectorAll('.option-node').forEach(itemNode => {
-            if (itemNode.innerText === correctMatchingAnswerString) {
-                itemNode.style.border = "3px solid #00b894";
-                itemNode.style.backgroundColor = "#ffeaa7";
-                itemNode.style.color = "#00b894";
+        element.style.backgroundColor = '#ff7675';
+        element.style.borderColor = '#d63031';
+        element.style.color = '#fff';
+        feedback.innerText = "❌ Oops! Try next time!";
+        feedback.style.color = "#d63031";
+        playAudio('wrong');
+
+        document.querySelectorAll('.option-node').forEach(n => {
+            if (n.innerText === correct) {
+                n.style.backgroundColor = '#55efc4';
+                n.style.borderColor = '#00b894';
+                n.style.color = '#fff';
             }
         });
     }
-    
-    multiStepAdvanceTriggerBtn.style.display = 'inline-block';
+
+    document.getElementById('scoreSpan').innerText = score;
+    document.getElementById('badgeSpan').innerText = badges;
+    document.getElementById('advanceStepBtn').style.display = 'inline-block';
 }
 
-multiStepAdvanceTriggerBtn.addEventListener('click', () => {
-    operationalIndex++;
-    if (operationalIndex < sessionPlaylist.length) {
-        processQuestionLifecycleStep();
+function nextQuestion() {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < levelDatabase[currentLevelIndex].questions.length) {
+        loadQuestion();
     } else {
-        showFinalCompletionTerminalScreen();
+        finishLevel();
     }
-});
-
-function showFinalCompletionTerminalScreen() {
-    clearInterval(internalClockTicker);
-    synchronizeProgressionInterfaceTracking();
-    
-    centerInteractivePanelPlayground.style.display = 'none';
-    multiStepAdvanceTriggerBtn.style.display = 'none';
-    finalReportingSummaryCard.style.display = 'block';
-
-    document.getElementById('endScoreDisplay').innerText = numericalScore;
-    document.getElementById('endBadgeDisplay').innerText = badgeAccumulation;
-
-    confetti({
-        particleCount: 200,
-        spread: 100,
-        origin: { y: 0.55 }
-    });
 }
 
-operationalReplayActionTrigger.addEventListener('click', () => {
-    buildFreshSessionLifecycle();
-});
+function finishLevel() {
+    clearInterval(timer);
+    document.getElementById('statusL' + (currentLevelIndex + 1)).innerText = "Completed ⭐";
+    document.getElementById('endScoreDisplay').innerText = score;
+    document.getElementById('endBadgeDisplay').innerText = badges;
+    showScreen('pageCompletion');
+
+    confetti({ particleCount: 150, spread: 90, origin: { y: 0.5 } });
+}
 </script>
 </body>
 </html>

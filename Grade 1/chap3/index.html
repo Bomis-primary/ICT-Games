@@ -3,625 +3,581 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Innovine ICT Grade 1 - Chapter 3 Quest</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <title>Chapter 3: Computer Power Dart - Cute Arcade Edition</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        :root {
-            --sky-blue: #E0F7FA;
-            --warm-orange: #FFF3E0;
-            --primary-blue: #0288D1;
-            --accent-orange: #FF6F00;
-            --dark-gray: #263238;
-            --white: #FFFFFF;
-            --success-green: #4CAF50;
-            --brick-red: #EF5350;
-            --purple-accent: #8E24AA;
-            --yellow-bright: #FFEB3B;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            user-select: none;
-            -webkit-user-select: none;
-            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap');
+        
         body {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #81D4FA, #FFE082);
-            color: var(--dark-gray);
-            overflow-x: hidden;
-            padding: 15px;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: radial-gradient(circle at top center, #1A1A2E 0%, #080810 100%);
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+        
+        h1, h2, h3, .arcade-font {
+            font-family: 'Fredoka', cursive;
         }
 
-        /* 1. First Page: Clean Full-Screen Splash Screen matching your image */
-        #splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: #FFFFFF;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 30px;
-            z-index: 9999;
-            transition: opacity 0.6s ease, visibility 0.6s ease;
+        .arcade-card {
+            background: rgba(30, 30, 50, 0.85);
+            border: 3px solid #6366F1;
+            box-shadow: 0 0 25px rgba(99, 102, 241, 0.4), inset 0 0 15px rgba(255, 255, 255, 0.05);
         }
 
-        #splash-screen img.logo {
-            max-width: 380px;
-            width: 80%;
-            height: auto;
-            object-fit: contain;
+        .quiz-modal-card {
+            background: #111122;
+            border: 4px solid #F43F5E;
+            box-shadow: 0 0 35px rgba(244, 63, 94, 0.5);
         }
 
-        .loading-track {
-            width: 320px;
-            max-width: 75%;
-            height: 14px;
-            background: #E8ECEF;
-            border-radius: 20px;
-            overflow: hidden;
-            border: 1px solid #D0D7DE;
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        .sleek-board {
+            background: radial-gradient(circle, #1E1E38 30%, #090911 100%);
+            box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.9), 0 0 0 2px rgba(255, 255, 255, 0.05);
         }
 
-        .loading-bar-fill {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, #FF6F00, #FF9800);
-            border-radius: 20px;
-            transform: translateX(-100%);
-            animation: startLoad 5s forwards linear;
+        .sleek-crosshair {
+            transition: left 0.6s cubic-bezier(0.25, 1, 0.5, 1), top 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* Container Layout */
-        .container {
-            display: none;
-            width: 100%;
-            max-width: 780px;
-            min-height: 85vh;
-            background: var(--white);
-            border: 8px solid var(--primary-blue);
-            border-radius: 36px;
-            padding: 25px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-            flex-direction: column;
-            justify-content: space-between;
+        @keyframes autoGlowHint {
+            0%, 100% { border-color: #10B981; box-shadow: 0 0 8px #10B981; transform: scale(1); }
+            50% { border-color: #34D399; box-shadow: 0 0 25px #34D399; transform: scale(1.02); }
+        }
+        .correct-answer-glow {
+            animation: autoGlowHint 1.2s infinite ease-in-out !important;
+            background: rgba(16, 185, 129, 0.15) !important;
+            border: 3px solid #10B981 !important;
         }
 
-        .container.active { display: flex; }
-
-        @keyframes popIn { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes startLoad { from { transform: translateX(-100%); } to { transform: translateX(0%); } }
-
-        /* Navigation Header */
-        .page-header-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: linear-gradient(90deg, var(--primary-blue), #03A9F4);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 22px;
-            box-shadow: 0 5px 0 #0277BD;
-            margin-bottom: 15px;
+        .arcade-pop-btn {
+            background: linear-gradient(135deg, #FF3366 0%, #CC0033 100%);
+            box-shadow: 0 8px 0 #880022, 0 12px 20px rgba(0,0,0,0.4);
+            transition: all 0.1s ease;
+        }
+        .arcade-pop-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 4px 0 #880022, 0 6px 10px rgba(0,0,0,0.4);
         }
 
-        .page-title {
-            font-size: 1.3rem;
-            font-weight: bold;
-            text-align: center;
-            flex-grow: 1;
+        @keyframes scaleIn {
+            0% { transform: scale(0.92); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-scale {
+            animation: scaleIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
 
-        .nav-back-btn {
-            background: var(--brick-red);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 14px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #C62828;
+        @keyframes balloonFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
         }
-
-        /* Instruction Cards */
-        .instruction-card {
-            background: var(--warm-orange);
-            border: 3px solid #FFE0B2;
-            padding: 15px;
-            border-radius: 18px;
-            font-size: 1.05rem;
-            color: var(--dark-gray);
-            font-weight: bold;
-            text-align: left;
-            margin-bottom: 12px;
-        }
-
-        .hint-box {
-            background: #E1F5FE;
-            border: 2px dashed var(--primary-blue);
-            border-radius: 14px;
-            padding: 10px 14px;
-            font-size: 0.95rem;
-            color: #01579B;
-            margin-top: 8px;
-        }
-
-        .btn-action {
-            background: linear-gradient(180deg, #FF9800, #F57C00);
-            color: var(--white);
-            border: none;
-            padding: 16px 36px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            border-radius: 24px;
-            cursor: pointer;
-            box-shadow: 0 6px 0 #E65100;
-            align-self: center;
-        }
-
-        .btn-action:active { transform: translateY(4px); box-shadow: 0 2px 0 #E65100; }
-
-        /* Level Cards Grid */
-        .level-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin: auto 0;
-        }
-
-        .level-card {
-            background: var(--warm-orange);
-            border: 4px solid var(--accent-orange);
-            border-radius: 22px;
-            padding: 16px;
-            text-align: center;
-            cursor: pointer;
-            box-shadow: 0 6px 0 #E65100;
-        }
-
-        .level-card img { width: 50px; height: 50px; object-fit: contain; margin-bottom: 6px; }
-
-        /* Gameplay Area */
-        .hud-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--sky-blue);
-            padding: 10px 20px;
-            border-radius: 18px;
-            border: 3px dashed var(--primary-blue);
-            font-weight: bold;
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-        }
-
-        .place-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-top: 15px;
-        }
-
-        .place-card {
-            background: var(--white);
-            border: 3px solid var(--primary-blue);
-            border-radius: 16px;
-            padding: 10px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 0 #0277BD;
-        }
-
-        .place-card img { width: 65px; height: 65px; object-fit: contain; }
-        .place-card span { font-weight: bold; font-size: 0.95rem; }
-
-        /* Level 4 Steps */
-        .power-path { display: flex; flex-direction: column; gap: 10px; max-width: 480px; margin: 0 auto; }
-        .path-step {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--sky-blue);
-            border: 3px solid var(--primary-blue);
-            border-radius: 16px;
-            padding: 12px 18px;
-            font-weight: bold;
-        }
-        .path-step.active { border-color: var(--accent-orange); background: var(--warm-orange); }
-        .path-step.completed { border-color: var(--success-green); background: #E8F5E9; }
-
-        .step-btn {
-            background: var(--primary-blue);
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 12px;
-            cursor: pointer;
-            box-shadow: 0 3px 0 #0277BD;
-            font-weight: bold;
+        .floating-balloon {
+            animation: balloonFloat 2.5s infinite ease-in-out;
         }
     </style>
 </head>
-<body>
+<body class="flex flex-col items-center justify-center p-4 m-0 select-none text-white min-h-screen">
 
-    <!-- Local Audio Elements -->
-    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="soundCorrect" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="soundWrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="soundClapping" src="assets/freesound_community-claps-44744.mp3" preload="auto"></audio>
 
-    <!-- 1. First Page: Clean Innovine Logo Splash Screen -->
-    <div id="splash-screen">
-        <img src="assets/innovine-logo.png" alt="Innovine Solutions Logo" class="logo" onerror="this.src='https://via.placeholder.com/380x150?text=INNOVINE+SOLUTIONS'">
-        <div class="loading-track">
-            <div class="loading-bar-fill"></div>
-        </div>
+    <canvas id="confettiCanvas" class="fixed inset-0 pointer-events-none z-50 hidden"></canvas>
+
+    <div id="splashScreen" class="fixed inset-0 bg-[#090911] flex flex-col items-center justify-center z-50 p-6 transition-opacity duration-500">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" class="w-full max-w-xs h-auto object-contain max-h-[70vh]" onerror="this.onerror=null; this.parentNode.innerHTML='<div class=\'w-24 h-24 bg-indigo-600/10 rounded-full flex items-center justify-center text-indigo-400 font-bold text-4xl border border-indigo-500/20\'>🎯</div>';">
     </div>
 
-    <!-- 2. Instruction Page with Dynamic Hint Questions -->
-    <div id="page-instructions" class="container">
-        <div class="page-header-bar">
-            <div class="page-title">Computer Power & Places</div>
-        </div>
-        <div>
-            <div class="instruction-card">
-                <div>⚡ How to Play Chapter 3 Quest:</div>
-                <div class="hint-box" id="dynamic-instruction-hint">💡 Hint Question: Do you know which button switches ON the CPU?</div>
+    <div class="w-full max-w-md flex flex-col h-[92vh] max-h-[680px] relative justify-center">
+        
+        <!-- TITLE VIEW -->
+        <div id="titleView" class="w-full arcade-card rounded-[36px] p-8 text-center space-y-6 animate-scale">
+            <div class="space-y-3">
+                <div class="inline-block text-6xl animate-bounce drop-shadow-[0_0_15px_rgba(255,51,102,0.5)]">
+                    🖥️
+                </div>
+                <h1 class="text-3xl font-bold tracking-wide text-white drop-shadow-md">
+                    Computer Power Dart
+                </h1>
+                <div class="bg-indigo-500/20 rounded-full py-1 px-4 inline-block border border-indigo-500/30">
+                    <span class="text-indigo-300 font-bold text-xs uppercase tracking-widest">⚡ Chapter 3 Quiz 🎈</span>
+                </div>
             </div>
-            <div class="instruction-card">
-                <div>🎯 Explore Places & Computer Rules:</div>
-                <div class="hint-box">💡 Hint Question: Where do doctors use computers to check patients?</div>
-            </div>
-        </div>
-        <button class="btn-action" onclick="showScreen('page-level-select')">Start Quest 🚀</button>
-    </div>
 
-    <!-- 3. Level Selection -->
-    <div id="page-level-select" class="container">
-        <div class="page-header-bar">
-            <button class="nav-back-btn" onclick="showScreen('page-instructions')">⬅ Back</button>
-            <div class="page-title">Select Level</div>
-        </div>
-        <div class="level-grid">
-            <div class="level-card" onclick="startLevel(1)">
-                <img src="assets/school.png" alt="School" onerror="this.src='https://via.placeholder.com/50'">
-                <div class="title">Level 1: Computer Places</div>
-                <div class="subtext">Match Uses</div>
+            <div class="bg-black/40 rounded-2xl p-4 border border-slate-800 text-left space-y-2">
+                <p class="text-amber-400 text-sm font-bold flex items-center">⭐ HOW TO PLAY:</p>
+                <ul class="text-slate-200 text-sm font-medium space-y-1.5 list-none pl-1">
+                    <li class="flex items-center space-x-2"><span>🚀</span> <span>Tap the button to target a mystery balloon!</span></li>
+                    <li class="flex items-center space-x-2"><span>🎈</span> <span>Pop the balloon to unlock a computer power question!</span></li>
+                    <li class="flex items-center space-x-2"><span>🧠</span> <span>Answer correctly to earn points & master starting/shutting down!</span></li>
+                </ul>
             </div>
-            <div class="level-card" onclick="startLevel(2)">
-                <img src="assets/learning.png" alt="Learning" onerror="this.src='https://via.placeholder.com/50'">
-                <div class="title">Level 2: Smart Hints</div>
-                <div class="subtext">Guess the Place</div>
-            </div>
-            <div class="level-card" onclick="startLevel(3)">
-                <img src="assets/playgame.png" alt="Play Game" onerror="this.src='https://via.placeholder.com/50'">
-                <div class="title">Level 3: Power Rules</div>
-                <div class="subtext">Quiz Quest</div>
-            </div>
-            <div class="level-card" onclick="startLevel(4)">
-                <img src="assets/office.png" alt="Office" onerror="this.src='https://via.placeholder.com/50'">
-                <div class="title">Level 4: Bunny Power-Up</div>
-                <div class="subtext">Step-by-Step</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 4. Gameplay Stage -->
-    <div id="page-gameplay" class="container">
-        <div class="page-header-bar">
-            <button class="nav-back-btn" onclick="showScreen('page-level-select')">⬅ Menu</button>
-            <div class="page-title" id="gameplay-level-title">Gameplay</div>
+            
+            <button onclick="startGame()" class="w-full arcade-pop-btn text-white font-bold text-lg py-4 rounded-2xl cursor-pointer tracking-wide uppercase arcade-font">
+                START GAME
+            </button>
         </div>
 
-        <div class="hud-bar">
-            <span id="hud-timer">⏳ 60s</span>
-            <span id="hud-score">🏆 Score: 0</span>
+        <!-- GAME VIEW -->
+        <div id="gameView" class="hidden w-full h-full flex flex-col justify-between space-y-4">
+            
+            <div class="w-full flex items-center justify-between px-2">
+                <div class="flex flex-col">
+                    <span class="text-[11px] text-slate-400 font-bold tracking-wider uppercase">My Score</span>
+                    <span class="text-2xl font-extrabold text-white arcade-font"><span id="scoreTextValue" class="text-amber-400">0</span><span class="text-xs text-slate-500 font-normal"> pts</span></span>
+                </div>
+                <div class="bg-slate-900/80 border border-slate-800 px-4 py-2 rounded-2xl text-xs font-bold text-slate-300">
+                    Balloons Popped: <span id="clearedCountValue" class="text-indigo-400 font-black">0/10</span>
+                </div>
+            </div>
+
+            <div id="dartboardContainer" class="flex-1 sleek-board rounded-[36px] relative overflow-hidden flex items-center justify-center p-4">
+                <div class="w-72 h-72 rounded-full border-4 border-dashed border-indigo-500/20 bg-[#121222] relative flex items-center justify-center shadow-2xl">
+                    <div class="w-52 h-52 rounded-full border-2 border-slate-800 absolute"></div>
+                    <div class="w-24 h-24 rounded-full border border-indigo-500/10 absolute"></div>
+                    <div class="w-10 h-10 rounded-full bg-rose-500 border-2 border-rose-300 z-10 shadow-[0_0_20px_rgba(244,63,94,0.6)] flex items-center justify-center">
+                        <div class="w-3 h-3 bg-white rounded-full"></div>
+                    </div>
+
+                    <div id="targetNode1" class="absolute top-4 left-4 text-6xl filter drop-shadow-[0_8px_10px_rgba(0,0,0,0.5)] transition-all duration-300 floating-balloon select-none">🎈</div>
+                    <div id="targetNode2" class="absolute top-4 right-4 text-6xl filter drop-shadow-[0_8px_10px_rgba(0,0,0,0.5)] transition-all duration-300 floating-balloon select-none" style="animation-delay: 0.5s;">🎈</div>
+                    <div id="targetNode3" class="absolute bottom-6 left-4 text-6xl filter drop-shadow-[0_8px_10px_rgba(0,0,0,0.5)] transition-all duration-300 floating-balloon select-none" style="animation-delay: 1s;">🎈</div>
+                    <div id="targetNode4" class="absolute bottom-6 right-4 text-6xl filter drop-shadow-[0_8px_10px_rgba(0,0,0,0.5)] transition-all duration-300 floating-balloon select-none" style="animation-delay: 1.5s;">🎈</div>
+                </div>
+
+                <div id="crosshairIndicator" class="absolute w-14 h-14 border-2 border-dashed border-indigo-400 rounded-full sleek-crosshair flex items-center justify-center z-20 pointer-events-none shadow-[0_0_15px_rgba(99,102,241,0.4)]">
+                    <div class="w-2 h-2 bg-indigo-400 rounded-full"></div>
+                </div>
+            </div>
+
+            <button id="throwBtn" onclick="simulateDartThrowAction()" class="w-full arcade-pop-btn text-white font-bold text-lg py-4 rounded-2xl cursor-pointer tracking-wider uppercase arcade-font">
+                🎯 THROW DART! 🎯
+            </button>
+
+            <!-- QUESTION MODAL -->
+            <div id="questionModalOverlay" class="hidden absolute inset-0 bg-black/90 z-40 flex items-center justify-center p-4 backdrop-blur-md">
+                <div class="w-full max-w-sm quiz-modal-card rounded-[32px] p-6 flex flex-col justify-between space-y-6 animate-scale">
+                    
+                    <div class="text-center">
+                        <span id="modalCategoryBadge" class="bg-rose-500/20 text-rose-300 px-4 py-1 rounded-full text-xs font-bold tracking-widest uppercase border border-rose-500/30 arcade-font">CHAPTER 3 QUIZ</span>
+                    </div>
+
+                    <div class="text-center py-2">
+                        <h2 id="questionDisplayLabel" class="text-xl font-bold text-white leading-snug px-1">
+                            What is the first step to switch on a computer?
+                        </h2>
+                    </div>
+
+                    <div id="answersGridSlot" class="flex flex-col space-y-3 w-full">
+                    </div>
+
+                    <div class="text-center pt-3 border-t border-slate-800">
+                        <p id="helperAlertLabel" class="text-sm font-bold text-slate-300 leading-normal min-h-[40px] flex items-center justify-center px-2">
+                            Choose the correct option above!
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <div id="gameplay-dynamic-area"></div>
+        <!-- SCORE VIEW -->
+        <div id="scoreView" class="hidden w-full arcade-card rounded-[36px] p-8 text-center space-y-6 animate-scale">
+            <div class="space-y-2">
+                <span class="text-6xl block">🏆</span>
+                <h2 class="text-3xl font-bold text-white arcade-font">You Finished!</h2>
+                <p class="text-sm text-slate-300 font-medium px-4">Awesome job! You are an expert at Starting and Shutting Down a Computer! ⭐</p>
+            </div>
 
-        <div style="margin-top: 15px;">
-            <button class="btn-action" id="next-step-btn" style="display:none;" onclick="nextChallenge()">Next Challenge ➔</button>
-        </div>
-    </div>
+            <div class="bg-black/50 p-4 rounded-2xl border border-slate-800 max-w-[160px] mx-auto">
+                <p class="text-[11px] font-bold tracking-wider uppercase text-slate-400 mb-0.5">Final Score</p>
+                <p class="text-2xl font-bold text-amber-400 arcade-font"><span id="finalScoreLabelField">0 / 100</span></p>
+            </div>
 
-    <!-- 5. Completion View -->
-    <div id="page-completion" class="container">
-        <div class="page-header-bar">
-            <button class="nav-back-btn" onclick="showScreen('page-level-select')">⬅ Menu</button>
-            <div class="page-title">Quest Completed!</div>
+            <button onclick="restartGame()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm py-4 rounded-xl cursor-pointer uppercase tracking-wider transition-all">
+                PLAY AGAIN 🔄
+            </button>
         </div>
-        <div style="border: 6px double var(--accent-orange); background: #FFFDF9; padding: 25px; border-radius: 24px;">
-            <img src="assets/innovine-logo.png" style="max-width: 180px; margin-bottom: 10px;" onerror="this.style.display='none'">
-            <h1 style="color: var(--primary-blue); font-size: 1.8rem;">Super Computer Scholar!</h1>
-            <p>You mastered Chapter 3 power sequences and computer places!</p>
-            <div id="final-score-display" style="font-size: 2rem; font-weight: bold; color: var(--success-green); margin: 15px 0;">Total Score: 0</div>
-        </div>
-        <button class="btn-action" onclick="showScreen('page-level-select')">Play Again 🎮</button>
+
     </div>
 
     <script>
-        function playCorrectSound() {
-            const audioCorrect = document.getElementById('audio-correct');
-            if (audioCorrect) {
-                audioCorrect.currentTime = 0;
-                audioCorrect.play().catch(() => synthCorrectSound());
+        // Chapter 3: Starting and Shutting Down a Computer Database
+        const dartChapterDatabase = [
+            { 
+                tag: "STARTING UP", 
+                q: "What is the very first step to switch on a computer?", 
+                options: ["Turn on the main power switch", "Press the monitor power button"], 
+                ans: "Turn on the main power switch", 
+                hint: "Hint: Electricity must flow into the system first!", 
+                explanation: "✨ Correct! Step 1 is always turning on the main power supply switch!" 
+            },
+            { 
+                tag: "STARTING UP", 
+                q: "After turning on main power, which button do you press on the CPU?", 
+                options: ["The CPU Power button", "The Restart button"], 
+                ans: "The CPU Power button", 
+                hint: "Hint: Press the power button located on the CPU cabinet!", 
+                explanation: "✨ Great job! Pressing the power button on the CPU cabinet starts the central processing unit." 
+            },
+            { 
+                tag: "DESKTOP", 
+                q: "What is the screen called that appears with small pictures after booting?", 
+                options: ["Desktop", "Taskbar"], 
+                ans: "Desktop", 
+                hint: "Hint: It is the main screen containing icons and the Start button!", 
+                explanation: "✨ Spot on! The screen that appears when the computer turns on is called the Desktop!" 
+            },
+            { 
+                tag: "DESKTOP", 
+                q: "What are the small labelled pictures seen on the desktop called?", 
+                options: ["Icons", "Folders"], 
+                ans: "Icons", 
+                hint: "Hint: They are tiny symbol pictures representing programs or links!", 
+                explanation: "✨ Excellent! Small pictures on the desktop screen are called icons!" 
+            },
+            { 
+                tag: "BOOTING", 
+                q: "What is the process called when the computer takes time to get ready after switching on?", 
+                options: ["Booting", "Shutting down"], 
+                ans: "Booting", 
+                hint: "Hint: It is the loading process that makes things ready for you to use!", 
+                explanation: "✨ Perfect! Booting is the time a computer takes to prepare everything for use." 
+            },
+            { 
+                tag: "SECURITY", 
+                q: "What is the secret key made of letters, numbers, or special symbols known only to you?", 
+                options: ["Password", "Username"], 
+                ans: "Password", 
+                hint: "Hint: It acts like a key to your username identity!", 
+                explanation: "✨ Correct! A password is a secret key that protects your user account!" 
+            },
+            { 
+                tag: "SHUT DOWN", 
+                q: "Which button do you click first to start shutting down the computer?", 
+                options: ["The Start button", "The Power switch"], 
+                ans: "The Start button", 
+                hint: "Hint: Look at the bottom left corner of the desktop screen!", 
+                explanation: "✨ Smart choice! You click the Start button, select Power, and then choose Shut down!" 
+            },
+            { 
+                tag: "SAFETY", 
+                q: "Why should you NEVER switch off the computer directly from the main power switch?", 
+                options: ["It can damage files in the computer", "It changes the wallpaper"], 
+                ans: "It can damage files in the computer", 
+                hint: "Hint: Direct power cut can lose or corrupt system files!", 
+                explanation: "✨ Right! Switching off directly without proper shutdown can damage computer files!" 
+            },
+            { 
+                tag: "HARDWARE", 
+                q: "Which device provides uninterrupted power supply during electricity cuts?", 
+                options: ["UPS", "CPU"], 
+                ans: "UPS", 
+                hint: "Hint: It serves as an alternative backup power source!", 
+                explanation: "✨ Awesome! A UPS keeps the computer running smoothly during power cuts." 
+            },
+            { 
+                tag: "COMPUTER USES", 
+                q: "Where are computers used to keep records of patients and diseases?", 
+                options: ["Hospitals", "Libraries"], 
+                ans: "Hospitals", 
+                hint: "Hint: Doctors use them to track patient health information!", 
+                explanation: "✨ Correct! Hospitals use computers to store patient records and medical details!" 
             }
-        }
-
-        function playWrongSound() {
-            const audioWrong = document.getElementById('audio-wrong');
-            if (audioWrong) {
-                audioWrong.currentTime = 0;
-                audioWrong.play().catch(() => synthWrongSound());
-            }
-        }
-
-        let audioCtx = null;
-        function getAudioContext() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            return audioCtx;
-        }
-
-        function synthCorrectSound() {
-            try {
-                const ctx = getAudioContext();
-                const now = ctx.currentTime;
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(523.25, now);
-                osc.frequency.setValueAtTime(659.25, now + 0.1);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start(now);
-                osc.stop(now + 0.3);
-            } catch(e) {}
-        }
-
-        function synthWrongSound() {
-            try {
-                const ctx = getAudioContext();
-                const now = ctx.currentTime;
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(200, now);
-                osc.frequency.linearRampToValueAtTime(120, now + 0.25);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start(now);
-                osc.stop(now + 0.25);
-            } catch(e) {}
-        }
-
-        let currentLevel = 1;
-        let currentStep = 0;
-        let scoreCounter = 0;
-        let timerInterval = null;
-        let timeRemaining = 60;
-
-        const hintQuestions = [
-            "💡 Hint Question: Do you know which button switches ON the CPU?",
-            "💡 Hint Question: Where do we use computers to check library books?",
-            "💡 Hint Question: What screen displays the computer desktop after booting?"
         ];
 
-        const placesData = [
-            { hint: "💡 Hint: Where do doctors use computers to store health records?", answer: "Hospital", img: "assets/hospital.png" },
-            { hint: "💡 Hint: Where do students learn computer lessons with teachers?", answer: "School", img: "assets/school.png" },
-            { hint: "💡 Hint: Where do we read and borrow books using computer catalogues?", answer: "Library", img: "assets/library.png" },
-            { hint: "💡 Hint: Where do people type documents and send work emails?", answer: "Office", img: "assets/office.png" },
-            { hint: "💡 Hint: Where do people keep money safe and use ATMs?", answer: "Bank", img: "assets/bank.png" }
-        ];
+        let databasePointerIdx = 0;
+        let internalScore = 0;
+        let incorrectAttemptsCount = 0;
+        let completedTargetsTrack = 0;
+        let dynamicAssistanceTimerNode = null;
+        let crosshairLoopInterval = null;
+        let activeTargetNodeIndex = 1;
 
-        const bunnyPowerSteps = [
-            { step: 1, label: "Turn ON Main Power Switch", icon: "🔌" },
-            { step: 2, label: "Turn ON the UPS Power", icon: "🔋" },
-            { step: 3, label: "Press CPU Power Button", icon: "🔴" },
-            { step: 4, label: "Turn ON Monitor Screen", icon: "🖥️" }
-        ];
-        let currentBunnyStep = 1;
+        const canvas = document.getElementById('confettiCanvas');
+        const ctx = canvas.getContext('2d');
+        let confettiParticles = [];
 
-        // 5-Second Splash Screen Timer matching clean image layout
-        window.addEventListener('load', () => {
-            document.getElementById('dynamic-instruction-hint').innerText = hintQuestions[Math.floor(Math.random() * hintQuestions.length)];
-
+        window.addEventListener('DOMContentLoaded', () => {
+            resizeCanvasWindow();
+            window.addEventListener('resize', resizeCanvasWindow);
+            
             setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
+                const splash = document.getElementById('splashScreen');
                 splash.style.opacity = '0';
-                splash.style.visibility = 'hidden';
-                showScreen('page-instructions');
+                setTimeout(() => splash.style.display = 'none', 400);
             }, 5000);
         });
 
-        function showScreen(screenId) {
-            clearInterval(timerInterval);
-            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
+        function resizeCanvasWindow() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
         }
 
-        function startLevel(lvl) {
-            currentLevel = lvl;
-            currentStep = 0;
-            showScreen('page-gameplay');
-            document.getElementById('gameplay-level-title').innerText = "Level " + lvl;
-            loadChallenge();
+        function launchConfettiBurst() {
+            canvas.classList.remove('hidden');
+            confettiParticles = [];
+            for (let i = 0; i < 45; i++) {
+                confettiParticles.push({
+                    x: window.innerWidth / 2,
+                    y: window.innerHeight / 2,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: (Math.random() - 0.5) * 10 - 4,
+                    size: Math.random() * 4 + 3,
+                    color: `hsl(${Math.random() * 360}, 90%, 65%)`,
+                    alpha: 1
+                });
+            }
+            requestAnimationFrame(updateConfettiEngine);
         }
 
-        function startTimer() {
-            clearInterval(timerInterval);
-            timeRemaining = 60;
-            document.getElementById('hud-timer').innerText = "⏳ 60s";
-            timerInterval = setInterval(() => {
-                timeRemaining--;
-                document.getElementById('hud-timer').innerText = `⏳ ${timeRemaining}s`;
-                if (timeRemaining <= 0) {
-                    clearInterval(timerInterval);
-                    playWrongSound();
-                    nextChallenge();
+        function updateConfettiEngine() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            let alive = false;
+            confettiParticles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.vy += 0.22;
+                p.alpha -= 0.025;
+                if (p.alpha > 0) {
+                    alive = true;
+                    ctx.save();
+                    ctx.globalAlpha = p.alpha;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
                 }
-            }, 1000);
-        }
-
-        function loadChallenge() {
-            document.getElementById('hud-score').innerText = `🏆 Score: ${scoreCounter}`;
-            document.getElementById('next-step-btn').style.display = 'none';
-            const dynamicArea = document.getElementById('gameplay-dynamic-area');
-            dynamicArea.innerHTML = '';
-            startTimer();
-
-            if (currentLevel === 1 || currentLevel === 2) renderPlacesQuest(dynamicArea);
-            else if (currentLevel === 3) renderQuizQuest(dynamicArea);
-            else if (currentLevel === 4) renderBunnyQuest(dynamicArea);
-        }
-
-        function renderPlacesQuest(container) {
-            const currentItem = placesData[currentStep % placesData.length];
-            container.innerHTML = `
-                <div class="hint-box" style="font-size: 1.1rem; margin-bottom: 15px;">${currentItem.hint}</div>
-                <div class="place-grid" id="places-grid"></div>
-            `;
-            const grid = document.getElementById('places-grid');
-            const shuffled = [...placesData].sort(() => Math.random() - 0.5);
-
-            shuffled.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'place-card';
-                card.innerHTML = `
-                    <img src="${item.img}" alt="${item.answer}" onerror="this.src='https://via.placeholder.com/65'">
-                    <span>${item.answer}</span>
-                `;
-                card.onclick = () => {
-                    if (item.answer === currentItem.answer) {
-                        playCorrectSound();
-                        scoreCounter += 10;
-                        card.style.borderColor = "var(--success-green)";
-                        card.style.background = "#E8F5E9";
-                        setTimeout(nextChallenge, 800);
-                    } else {
-                        playWrongSound();
-                        card.style.borderColor = "var(--brick-red)";
-                        card.style.background = "#FFEBEE";
-                    }
-                };
-                grid.appendChild(card);
             });
+            if (alive) requestAnimationFrame(updateConfettiEngine);
+            else canvas.classList.add('hidden');
         }
 
-        function renderQuizQuest(container) {
-            const questions = [
-                { q: "💡 Hint Question: What is the very first button to switch on when starting a computer?", opts: ["🔌 Main Power Switch", "🖥️ Monitor Button", "🖱️ Mouse Click"], correct: 0 },
-                { q: "💡 Hint Question: What is 'Booting' in Chapter 3?", opts: ["⏳ Computer starting up process", "🧹 Cleaning the CPU", "🎮 Playing games"], correct: 0 }
-            ];
-            const q = questions[currentStep % questions.length];
-
-            container.innerHTML = `
-                <div class="hint-box" style="font-size: 1.1rem; margin-bottom: 15px;">${q.q}</div>
-                <div style="display: flex; flex-direction: column; gap: 10px;">
-                    ${q.opts.map((opt, idx) => `
-                        <button class="choice-btn" style="padding:14px; font-weight:bold; border-radius:14px; border:2px solid var(--primary-blue);" onclick="checkQuizAnswer(${idx === q.correct})">${opt}</button>
-                    `).join('')}
-                </div>
-            `;
+        function startGame() {
+            document.getElementById('titleView').style.display = 'none';
+            document.getElementById('gameView').classList.remove('hidden');
+            internalScore = 0;
+            completedTargetsTrack = 0;
+            databasePointerIdx = 0;
+            
+            document.getElementById('scoreTextValue').innerText = 0;
+            document.getElementById('clearedCountValue').innerText = "0/10";
+            resetBalloonsOpacity();
+            startCrosshairAimingSequence();
         }
 
-        function checkQuizAnswer(isCorrect) {
-            if (isCorrect) {
-                playCorrectSound();
-                scoreCounter += 10;
-                setTimeout(nextChallenge, 800);
-            } else {
-                playWrongSound();
+        function resetBalloonsOpacity() {
+            for(let i=1; i<=4; i++) {
+                const node = document.getElementById(`targetNode${i}`);
+                if(node) {
+                    node.style.opacity = "1";
+                    node.style.transform = "scale(1)";
+                    node.style.display = "block";
+                }
             }
         }
 
-        function renderBunnyQuest(container) {
-            currentBunnyStep = 1;
-            container.innerHTML = `
-                <div class="hint-box" style="margin-bottom:15px;">💡 Hint Question: Can you help Bunny press power buttons in correct Chapter 3 order?</div>
-                <div class="power-path" id="power-path"></div>
-            `;
-            updateBunnyPath();
+        function startCrosshairAimingSequence() {
+            if (crosshairLoopInterval) clearInterval(crosshairLoopInterval);
+            
+            const crosshair = document.getElementById('crosshairIndicator');
+            const board = document.getElementById('dartboardContainer');
+
+            function updateAimPosition() {
+                let safetyCounter = 0;
+                while (document.getElementById(`targetNode${activeTargetNodeIndex}`).style.display === "none" && safetyCounter < 5) {
+                    activeTargetNodeIndex = (activeTargetNodeIndex % 4) + 1;
+                    safetyCounter++;
+                }
+
+                const targetBalloon = document.getElementById(`targetNode${activeTargetNodeIndex}`);
+                if (targetBalloon && board) {
+                    const targetRect = targetBalloon.getBoundingClientRect();
+                    const boardRect = board.getBoundingClientRect();
+
+                    const targetLeft = (targetRect.left - boardRect.left) + (targetRect.width / 2) - 28;
+                    const targetTop = (targetRect.top - boardRect.top) + (targetRect.height / 2) - 28;
+
+                    crosshair.style.left = `${targetLeft}px`;
+                    crosshair.style.top = `${targetTop}px`;
+                }
+                activeTargetNodeIndex = (activeTargetNodeIndex % 4) + 1;
+            }
+
+            updateAimPosition();
+            crosshairLoopInterval = setInterval(updateAimPosition, 900);
         }
 
-        function updateBunnyPath() {
-            const pathContainer = document.getElementById('power-path');
-            if (!pathContainer) return;
-            pathContainer.innerHTML = '';
+        function simulateDartThrowAction() {
+            if (databasePointerIdx >= dartChapterDatabase.length) return;
+            
+            clearInterval(crosshairLoopInterval);
+            document.getElementById('throwBtn').disabled = true;
 
-            bunnyPowerSteps.forEach(s => {
-                const stepDiv = document.createElement('div');
-                stepDiv.className = 'path-step';
+            let hitIndex = activeTargetNodeIndex - 1;
+            if (hitIndex === 0) hitIndex = 4;
 
-                if (s.step < currentBunnyStep) {
-                    stepDiv.classList.add('completed');
-                    stepDiv.innerHTML = `<span>Step ${s.step}: ${s.label}</span> <span>✅ Done</span>`;
-                } else if (s.step === currentBunnyStep) {
-                    stepDiv.classList.add('active');
-                    stepDiv.innerHTML = `<span>🐰 Step ${s.step}: ${s.label}</span>
-                                         <button class="step-btn" onclick="executeBunnyStep(${s.step})">Press ${s.icon}</button>`;
+            const targetElement = document.getElementById(`targetNode${hitIndex}`);
+            
+            if (targetElement && targetElement.style.display !== "none") {
+                targetElement.style.transform = "scale(0.2)";
+                targetElement.style.opacity = "0";
+                setTimeout(() => {
+                    targetElement.style.display = "none";
+                }, 300);
+            }
+
+            setTimeout(() => {
+                launchQuestionModalContext();
+            }, 400);
+        }
+
+        function launchQuestionModalContext() {
+            incorrectAttemptsCount = 0; 
+            if(dynamicAssistanceTimerNode) clearTimeout(dynamicAssistanceTimerNode);
+
+            document.getElementById('helperAlertLabel').innerText = "Choose the correct option above!";
+            document.getElementById('helperAlertLabel').className = "text-sm font-bold text-slate-300 leading-normal min-h-[40px] flex items-center justify-center px-2";
+            
+            const itemData = dartChapterDatabase[databasePointerIdx];
+            document.getElementById('modalCategoryBadge').innerText = `${itemData.tag}`;
+            document.getElementById('questionDisplayLabel').innerText = itemData.q;
+
+            const gridSlot = document.getElementById('answersGridSlot');
+            gridSlot.innerHTML = "";
+
+            itemData.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = "w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3.5 px-4 rounded-2xl border-2 border-slate-700 text-base text-center active:scale-[0.98] transition-all option-node-btn shadow-md cursor-pointer";
+                btn.onclick = () => verifySelectedAnswerOption(opt, btn, itemData);
+                btn.innerText = opt;
+                if(opt === itemData.ans) {
+                    btn.setAttribute('data-correct', 'true');
+                }
+                gridSlot.appendChild(btn);
+            });
+
+            document.getElementById('questionModalOverlay').classList.remove('hidden');
+
+            dynamicAssistanceTimerNode = setTimeout(() => {
+                activateCorrectOptionGlowHint();
+            }, 12000);
+        }
+
+        function activateCorrectOptionGlowHint() {
+            const correctBtn = document.querySelector('.option-node-btn[data-correct="true"]');
+            if (correctBtn && !correctBtn.disabled) {
+                correctBtn.classList.add('correct-answer-glow');
+                document.getElementById('helperAlertLabel').innerText = "💡 Need help? Look at the glowing option!";
+                document.getElementById('helperAlertLabel').className = "text-sm font-bold text-emerald-400 leading-normal min-h-[40px] flex items-center justify-center px-2";
+            }
+        }
+
+        function verifySelectedAnswerOption(pickedOption, elementNode, dataObj) {
+            if(dynamicAssistanceTimerNode) clearTimeout(dynamicAssistanceTimerNode);
+            const allOptionButtons = document.querySelectorAll('.option-node-btn');
+
+            if (pickedOption === dataObj.ans) {
+                allOptionButtons.forEach(b => b.disabled = true);
+                elementNode.className = "w-full bg-emerald-600 text-white font-bold py-3.5 px-4 rounded-2xl border-2 border-emerald-400 text-base text-center shadow-md animate-pulse";
+                
+                playSound('soundCorrect');
+                launchConfettiBurst();
+
+                document.getElementById('helperAlertLabel').innerText = dataObj.explanation;
+                document.getElementById('helperAlertLabel').className = "text-sm font-bold text-emerald-400 leading-normal min-h-[40px] flex items-center justify-center px-2";
+
+                if (incorrectAttemptsCount === 0) {
+                    internalScore += 10;
                 } else {
-                    stepDiv.innerHTML = `<span>Step ${s.step}: ${s.label}</span> <span>🔒 Locked</span>`;
+                    internalScore += 5;
                 }
+                
+                document.getElementById('scoreTextValue').innerText = internalScore;
+                completedTargetsTrack++;
+                document.getElementById('clearedCountValue').innerText = `${completedTargetsTrack}/10`;
 
-                pathContainer.appendChild(stepDiv);
-            });
-        }
+                setTimeout(() => {
+                    document.getElementById('questionModalOverlay').classList.add('hidden');
+                    databasePointerIdx++;
+                    document.getElementById('throwBtn').disabled = false;
+                    
+                    if ((databasePointerIdx % 4) === 0) resetBalloonsOpacity();
+                    
+                    startCrosshairAimingSequence();
+                    evaluateGameProgressEndState();
+                }, 3500);
 
-        function executeBunnyStep(step) {
-            if (step === currentBunnyStep) {
-                playCorrectSound();
-                scoreCounter += 10;
-                document.getElementById('hud-score').innerText = `🏆 Score: ${scoreCounter}`;
-                currentBunnyStep++;
-                updateBunnyPath();
-
-                if (currentBunnyStep > 4) {
-                    clearInterval(timerInterval);
-                    document.getElementById('next-step-btn').style.display = 'inline-block';
-                }
             } else {
-                playWrongSound();
+                playSound('soundWrong');
+                elementNode.className = "w-full bg-rose-950/40 text-rose-400 font-bold py-3.5 px-4 rounded-2xl border-2 border-rose-900 text-base text-center opacity-40 line-through cursor-not-allowed";
+                elementNode.disabled = true;
+                incorrectAttemptsCount++;
+
+                if (incorrectAttemptsCount === 1) {
+                    document.getElementById('helperAlertLabel').className = "text-sm font-bold text-rose-400 leading-normal min-h-[40px] flex items-center justify-center px-2";
+                    document.getElementById('helperAlertLabel').innerText = `❌ Oops! ${dataObj.hint}`;
+                    
+                    dynamicAssistanceTimerNode = setTimeout(() => {
+                        activateCorrectOptionGlowHint();
+                    }, 12000);
+
+                } else if (incorrectAttemptsCount >= 2) {
+                    activateCorrectOptionGlowHint();
+                    
+                    internalScore = Math.max(0, internalScore - 5);
+                    document.getElementById('scoreTextValue').innerText = internalScore;
+
+                    document.getElementById('helperAlertLabel').innerText = `💥 -5 Points! Let's learn: ${dataObj.explanation}`;
+                    document.getElementById('helperAlertLabel').className = "text-sm font-bold text-amber-400 leading-normal min-h-[40px] flex items-center justify-center px-2";
+                    allOptionButtons.forEach(b => b.disabled = true);
+                    
+                    completedTargetsTrack++;
+                    document.getElementById('clearedCountValue').innerText = `${completedTargetsTrack}/10`;
+
+                    setTimeout(() => {
+                        document.getElementById('questionModalOverlay').classList.add('hidden');
+                        databasePointerIdx++;
+                        document.getElementById('throwBtn').disabled = false;
+                        
+                        if ((databasePointerIdx % 4) === 0) resetBalloonsOpacity();
+                        
+                        startCrosshairAimingSequence();
+                        evaluateGameProgressEndState();
+                    }, 4500);
+                }
             }
         }
 
-        function nextChallenge() {
-            currentStep++;
-            if (currentStep < 2) {
-                loadChallenge();
-            } else {
-                clearInterval(timerInterval);
-                document.getElementById('final-score-display').innerText = `Total Score: ${scoreCounter} Points`;
-                showScreen('page-completion');
-                playCorrectSound();
-                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+        function evaluateGameProgressEndState() {
+            if (completedTargetsTrack >= 10) {
+                clearInterval(crosshairLoopInterval);
+                setTimeout(() => {
+                    playSound('soundClapping');
+                    document.getElementById('gameView').style.display = 'none';
+                    document.getElementById('finalScoreLabelField').innerText = `${internalScore} / 100`;
+                    document.getElementById('scoreView').classList.remove('hidden');
+                }, 300);
             }
+        }
+
+        function playSound(id) {
+            const trackElement = document.getElementById(id);
+            if (trackElement) {
+                trackElement.load();
+                const p = trackElement.play();
+                if (p !== undefined) {
+                    p.catch(err => console.log("Audio pipeline handling: ", err));
+                }
+            }
+        }
+
+        function restartGame() {
+            document.getElementById('scoreView').classList.add('hidden');
+            document.getElementById('gameView').style.display = 'flex';
+            document.getElementById('throwBtn').disabled = false;
+            startGame();
         }
     </script>
 </body>

@@ -4,9 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MS Paint Balloon Pop Adventure</title>
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --sky-blue: #e0f2fe;
+            --sky-blue: #bae6fd;
             --primary-teal: #0d9488;
             --primary-dark: #0f766e;
             --accent-wood: #b45309;
@@ -20,6 +22,7 @@
             padding: 0;
             user-select: none;
             -webkit-user-select: none;
+            touch-action: manipulation;
         }
 
         body {
@@ -28,8 +31,8 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 15px;
-            overflow: hidden;
+            padding: 10px;
+            overflow-x: hidden;
         }
 
         /* --- 1. BRANDING SPLASH SCREEN (Strict 5 Seconds) --- */
@@ -37,35 +40,61 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
+            width: 100vw;
             height: 100vh;
             background-color: #ffffff;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            gap: 20px;
             z-index: 10000;
             transition: opacity 0.5s ease;
+            padding: 20px;
         }
         #brand-splash img {
-            max-width: 65%;
-            max-height: 70vh;
+            width: 80%;
+            max-width: 320px;
+            max-height: 50vh;
             object-fit: contain;
+        }
+        .loading-track {
+            width: 60%;
+            max-width: 240px;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+        }
+        .loading-bar-fill {
+            width: 100%;
+            height: 100%;
+            background: #0d9488;
+            transform: translateX(-100%);
+            animation: loadProgress 4.5s forwards linear;
+        }
+
+        @keyframes loadProgress {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0%); }
         }
 
         /* --- STAGE LAYOUT CONFIGURATION --- */
         .game-card {
             display: none;
             width: 100%;
-            max-width: 800px;
+            max-width: 780px;
             background: rgba(255, 255, 255, 0.96);
-            border: 6px solid var(--primary-teal);
-            border-radius: 32px;
-            box-shadow: 0 20px 40px rgba(12, 74, 110, 0.3);
-            padding: 30px;
+            border: 5px solid var(--primary-teal);
+            border-radius: 28px;
+            box-shadow: 0 15px 35px rgba(12, 74, 110, 0.3);
+            padding: clamp(15px, 4vw, 25px);
             text-align: center;
             position: relative;
             backdrop-filter: blur(8px);
             animation: cardPopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin: auto;
         }
 
         @keyframes cardPopIn {
@@ -73,28 +102,61 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        h1 { color: var(--primary-dark); font-size: 34px; margin-bottom: 12px; text-shadow: 2px 2px 0px #ccfbf1; }
-        p { color: #475569; font-size: 19px; line-height: 1.4; margin-bottom: 15px; }
+        h1 { color: var(--primary-dark); font-size: clamp(22px, 5vw, 32px); margin-bottom: 10px; text-shadow: 2px 2px 0px #ccfbf1; }
+        p { color: #475569; font-size: clamp(14px, 3.5vw, 18px); line-height: 1.4; margin-bottom: 12px; }
 
         .btn-action {
             background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
             color: #78350f;
             border: 4px solid var(--accent-wood);
-            border-radius: 24px;
-            padding: 15px 40px;
-            font-size: 22px;
+            border-radius: 20px;
+            padding: 12px 32px;
+            font-size: clamp(18px, 4vw, 22px);
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 8px 0 var(--accent-wood);
+            box-shadow: 0 6px 0 var(--accent-wood);
             transition: transform 0.1s, box-shadow 0.1s;
             display: inline-flex;
             align-items: center;
-            gap: 10px;
-            margin-top: 15px;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 280px;
         }
         .btn-action:active {
-            transform: translateY(6px);
+            transform: translateY(4px);
             box-shadow: 0 2px 0 var(--accent-wood);
+        }
+
+        /* --- INSTRUCTIONS SHEET STYLING --- */
+        .instructions-box {
+            background: #f0fdfa;
+            border: 3px dashed var(--primary-teal);
+            border-radius: 18px;
+            padding: 15px;
+            margin: 15px auto;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 520px;
+        }
+        .instruction-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: clamp(14px, 3.2vw, 17px);
+            color: var(--text-dark);
+            font-weight: bold;
+        }
+        .step-icon {
+            font-size: 24px;
+            background: white;
+            padding: 6px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            flex-shrink: 0;
         }
 
         /* --- HEADERS HUD PANEL --- */
@@ -104,11 +166,11 @@
             align-items: center;
             background: #ccfbf1;
             border: 3px solid var(--primary-teal);
-            border-radius: 20px;
-            padding: 10px 22px;
-            margin-bottom: 18px;
+            border-radius: 16px;
+            padding: 8px 16px;
+            margin-bottom: 12px;
             font-weight: bold;
-            font-size: 20px;
+            font-size: clamp(14px, 3.5vw, 18px);
             color: var(--primary-dark);
         }
 
@@ -116,139 +178,175 @@
         .balloon-theater {
             position: relative;
             width: 100%;
-            height: 380px;
+            height: clamp(300px, 45vh, 380px);
             background: linear-gradient(180deg, #f0fdfa 0%, #ccfbf1 100%);
             border: 4px dashed var(--primary-teal);
-            border-radius: 24px;
+            border-radius: 20px;
             overflow: hidden;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         /* Container for the tool question image */
         .image-display-frame {
             position: absolute;
-            top: 15px;
+            top: 10px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
             background: white;
-            padding: 8px;
+            padding: 6px;
             border: 3px solid var(--primary-teal);
-            border-radius: 14px;
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
             max-width: 85%;
         }
 
         .tool-preview-embed {
-            max-height: 95px;
+            max-height: clamp(60px, 12vh, 90px);
             max-width: 100%;
             display: block;
             object-fit: contain;
         }
 
-        /* Floating Balloon Styles */
+        /* Floating Balloon Styles - Touch Optimized */
         .balloon {
             position: absolute;
-            bottom: -100px;
-            width: 130px;
-            height: 155px;
+            bottom: -110px;
+            width: clamp(95px, 26vw, 125px);
+            height: clamp(115px, 30vw, 145px);
             border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 12px;
+            padding: 8px;
             color: white;
             font-weight: bold;
-            font-size: 15px;
+            font-size: clamp(12px, 3vw, 15px);
             text-align: center;
-            box-shadow: inset -10px -15px 0px rgba(0,0,0,0.15), 0 10px 20px rgba(0,0,0,0.15);
-            animation: floatUp 6.5s linear infinite;
+            box-shadow: inset -8px -12px 0px rgba(0,0,0,0.15), 0 8px 16px rgba(0,0,0,0.15);
+            animation: floatUp 6s linear infinite;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.6);
             line-height: 1.2;
+            word-wrap: break-word;
         }
         
         /* Balloon String Tail */
         .balloon::after {
             content: "";
             position: absolute;
-            bottom: -12px;
+            bottom: -10px;
             left: 50%;
             width: 2px;
-            height: 14px;
+            height: 12px;
             background: rgba(0, 0, 0, 0.25);
             transform: translateX(-50%);
         }
 
         @keyframes floatUp {
             0% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateX(15px) rotate(4deg); }
-            100% { transform: translateY(-520px) rotate(-4deg); }
+            50% { transform: translateX(10px) rotate(3deg); }
+            100% { transform: translateY(-520px) rotate(-3deg); }
+        }
+
+        /* Educational Learning Feedback Box */
+        .learning-hint-box {
+            background: #fff3cd;
+            border: 2px solid #ffeba2;
+            border-radius: 12px;
+            padding: 8px 12px;
+            color: #856404;
+            font-weight: bold;
+            font-size: clamp(13px, 3vw, 15px);
+            margin-top: 5px;
+            min-height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* --- SCORECARD CERTIFICATE LAYER --- */
         .certificate-sheet {
             background: radial-gradient(circle, #fffbeb 0%, #fef3c7 100%);
-            border: 8px double var(--accent-wood);
-            border-radius: 28px;
-            padding: 25px 15px;
-            margin: 15px 0;
+            border: 6px double var(--accent-wood);
+            border-radius: 22px;
+            padding: 20px 12px;
+            margin: 12px 0;
             color: #78350f;
-            box-shadow: inset 0 0 25px rgba(180, 83, 9, 0.15);
+            box-shadow: inset 0 0 20px rgba(180, 83, 9, 0.15);
         }
-        .badge-medal { font-size: 85px; margin-bottom: 10px; animation: scaleGlow 2s infinite alternate; }
+        .badge-medal { font-size: clamp(50px, 12vw, 80px); margin-bottom: 5px; animation: scaleGlow 2s infinite alternate; }
         @keyframes scaleGlow {
             0% { transform: scale(1); }
             100% { transform: scale(1.08); }
         }
-        .score-stamp { font-size: 30px; font-weight: 900; color: var(--accent-wood); margin: 12px 0; }
+        .score-stamp { font-size: clamp(20px, 5vw, 28px); font-weight: 900; color: var(--accent-wood); margin: 10px 0; }
     </style>
 </head>
 <body>
 
     <!-- 1. BRANDING SPLASH LAYER -->
     <div id="brand-splash">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/320x100?text=Innovine+Pedagogy'">
+        <div class="loading-track">
+            <div class="loading-bar-fill"></div>
+        </div>
     </div>
 
     <!-- 2. WELCOME INITIAL WINDOW -->
     <div id="welcome-screen" class="game-card">
-        <div style="font-size: 80px; margin-bottom: 10px;">🎈</div>
+        <div style="font-size: clamp(50px, 12vw, 70px); margin-bottom: 5px;">🎈</div>
         <h1>Balloon Pop Paint Quiz!</h1>
-        <p>Pop the floating balloons containing the correct answers to complete the advanced tools quest!</p>
-        <button class="btn-action" onclick="showRulesWindow()">Start Quiz 🚀</button>
+        <p>Pop the correct floating balloons to complete the MS Paint Master Quest!</p>
+        <button class="btn-action" onclick="showInstructionsWindow()">Start Quiz 🚀</button>
     </div>
 
-    <!-- 3. RULES DIRECTIONS SHEET -->
-    <div id="rules-screen" class="game-card">
-        <h1>🧭 Balloon Tracker Guide</h1>
-        <div style="text-align: left; max-width: 480px; margin: 20px auto; font-size: 19px; line-height: 1.6; color: var(--text-dark);">
-            🎈 Read the MS Paint advanced question at the bottom.<br>
-            🎈 Watch the colorful balloons rise up into the sky.<br>
-            🎈 Tap or click the correct balloon to POP it!<br>
-            🎈 Be accurate—wrong choices pop with no stars added.
+    <!-- 3. INSTRUCTIONS SCREEN (Right after Innovine splash/Welcome) -->
+    <div id="instructions-screen" class="game-card">
+        <h1>🧭 How To Play</h1>
+        <div class="instructions-box">
+            <div class="instruction-step">
+                <span class="step-icon">👁️</span>
+                <span>Look at the MS Paint question and tool image at the top.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="step-icon">🎈</span>
+                <span>Watch the answer balloons float up into the sky.</span>
+            </div>
+            <div class="instruction-step">
+                <span class="step-icon">🎯</span>
+                <span>Tap or click the balloon with the CORRECT answer to pop it!</span>
+            </div>
+            <div class="instruction-step">
+                <span class="step-icon">⭐</span>
+                <span>Earn 10 Stars for every correct pop to reach 100 Stars!</span>
+            </div>
         </div>
-        <p style="font-weight: bold; color: var(--primary-dark);">Can you pop your way to a perfect score?</p>
         <button class="btn-action" onclick="launchArcadeEngine()">Let's Pop! 🏹</button>
     </div>
 
     <!-- 4. CORE INTERACTIVE BALLOON POP ARCADE ARENA -->
     <div id="play-screen" class="game-card">
         <div class="hud-panel">
-            <span id="hud-round-idx">Challenge: 1/6</span>
+            <span id="hud-round-idx">Challenge: 1/10</span>
             <span id="hud-stars-total">Stars: 0 ⭐</span>
         </div>
 
         <!-- Float Stage Arena Canvas -->
         <div class="balloon-theater" id="arena-surface">
             <div class="image-display-frame">
-                <img id="embedded-tool-graphic" class="tool-preview-embed" src="" alt="Paint Feature">
+                <img id="embedded-tool-graphic" class="tool-preview-embed" src="" alt="Paint Feature" onerror="this.style.display='none';">
             </div>
-            <!-- Balloons inject here dynamically -->
+            <!-- Balloons inject dynamically here -->
         </div>
 
         <!-- Task Prompts Clue Row -->
-        <p id="clue-caption-text" style="font-weight: bold; font-size: 20px; color: var(--primary-dark); min-height: 54px; margin: 10px 0;"></p>
+        <p id="clue-caption-text" style="font-weight: bold; font-size: clamp(15px, 3.5vw, 19px); color: var(--primary-dark); margin: 5px 0;"></p>
+        
+        <!-- Learning Hint Feedback Banner -->
+        <div class="learning-hint-box" id="hint-banner">
+            💡 Tap the floating balloon that answers the question!
+        </div>
     </div>
 
     <!-- 5. REWARD CERTIFICATE FINALE VIEWPORT -->
@@ -256,92 +354,140 @@
         <h1>Quiz Complete! 🏁</h1>
         <div class="certificate-sheet">
             <div class="badge-medal" id="final-medal-icon">🏆</div>
-            <h2 style="font-size: 28px; text-transform: uppercase;" id="final-rank-tag">Paint Champion</h2>
-            <p style="font-size: 18px; font-style: italic; max-width: 520px; margin: 10px auto;">This honors badge confirms that our Grade 1 Explorer successfully popped every advanced MS Paint tool challenge with absolute mastery!</p>
-            <div class="score-stamp" id="final-stars-tally">Total Score: 60 / 60 Stars</div>
+            <h2 style="font-size: clamp(20px, 5vw, 26px); text-transform: uppercase;" id="final-rank-tag">Paint Champion</h2>
+            <p style="font-size: clamp(13px, 3vw, 16px); font-style: italic; max-width: 500px; margin: 8px auto;">
+                This honors badge confirms that our Explorer successfully popped the MS Paint tool challenges with high skill!
+            </p>
+            <div class="score-stamp" id="final-stars-tally">Total Score: 100 / 100 Stars</div>
         </div>
         <button class="btn-action" onclick="restartQuizLoop()">Play Again 🔄</button>
     </div>
 
-    <!-- SOUND RIG EMBEDS -->
+    <!-- SOUND RIG EMBEDS (Mapped to assets/ folder) -->
     <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <script>
-        /* --- ALL FILENAMES MATCHING image_ea3b82.png EXACTLY (.PNG) --- */
+        // Expanded 10-Level Database with Educational Learning Prompts
         const quizDatabase = [
             {
-                prompt: "Look at this panel block! Which component option provides ready-to-use shapes like Stars and Rectangles?",
+                prompt: "Which component option provides ready-to-use shapes like Stars, Circles, and Rectangles?",
                 image: "assets/shapes.PNG",
                 options: ["Shapes Palette", "Brushes Set", "Text Workspace"],
-                correct: 0
+                correct: 0,
+                hint: "The Shapes Palette contains pre-drawn geometric figures!"
             },
             {
-                prompt: "Riya wants to swap her black stroke to a vibrant purple canvas border. Which section holds the color blocks?",
+                prompt: "Which panel section holds the color blocks to change your stroke or fill color?",
                 image: "assets/colour.PNG",
                 options: ["Tools Matrix", "Color Palette", "Ribbon Headings"],
-                correct: 1
+                correct: 1,
+                hint: "Color Palette allows you to select Color 1 and Color 2!"
             },
             {
-                prompt: "Identify this operational ribbon block! What toolbar group houses the Bucket Fill, Text (A), and Eraser icons?",
+                prompt: "Which toolbar group houses the Bucket Fill, Text (A), Pencil, and Eraser icons?",
                 image: "assets/tools.PNG",
-                options: ["Color Swatches", "Canvas Resize", "Tools Group Panel"],
-                correct: 2
+                options: ["Color Swatches", "Canvas Resize", "Tools Group"],
+                correct: 2,
+                hint: "The Tools Group holds all primary drawing instruments!"
             },
             {
-                prompt: "Kabir selected a custom brush stroke tray option. Which setting modifies the thickness weight of his line?",
+                prompt: "Which brush tray setting allows you to modify the thickness weight of your lines?",
                 image: "assets/brush.PNG",
                 options: ["Size Option Menu", "Eraser Block", "Background Fill"],
-                correct: 0
+                correct: 0,
+                hint: "The Size menu lets you pick thin, medium, or thick lines!"
             },
             {
-                prompt: "Look at the master window dashboard layout. What name refers to this full wide option tab ribbon spanning across the top?",
+                prompt: "What is the name of the full wide toolbar spanning across the top of MS Paint?",
                 image: "assets/ribbon.PNG",
+                scenery: "🖥️",
                 options: ["Color Bar", "MS Paint Ribbon", "Canvas Margins"],
-                correct: 1
+                correct: 1,
+                hint: "The Ribbon houses all tabs, groups, and command buttons!"
             },
             {
-                prompt: "You filled an entire shape item with green but noticed some accidental leakage. Which single item fixes mistakes?",
+                prompt: "Which tool is used specifically to erase unwanted lines or mistakes on the canvas?",
                 image: "assets/tools.PNG",
-                options: ["Text Utility (A)", "Pencil Tool", "Eraser Component"],
-                correct: 2
+                options: ["Text Tool (A)", "Pencil Tool", "Eraser Component"],
+                correct: 2,
+                hint: "The Eraser tool wipes away errors when you drag over them!"
+            },
+            {
+                prompt: "Which tool allows you to type letters and words directly onto your Paint canvas?",
+                image: "assets/tools.PNG",
+                options: ["Text Tool (A)", "Fill Bucket", "Magnifier"],
+                correct: 0,
+                hint: "The Text Tool is represented by the capital letter 'A'!"
+            },
+            {
+                prompt: "Which tool pours color inside a completely closed shape instantly?",
+                image: "assets/tools.PNG",
+                options: ["Pencil", "Fill with Color", "Color Picker"],
+                correct: 1,
+                hint: "The Fill with Color tool looks like a pouring paint bucket!"
+            },
+            {
+                prompt: "What offer varieties of artistic strokes like Crayon, Oil Paint, and Watercolor?",
+                image: "assets/brush.PNG",
+                options: ["Brushes Tool", "Shapes Tool", "Select Tool"],
+                correct: 0,
+                hint: "Brushes give you different artistic textures and line styles!"
+            },
+            {
+                prompt: "Which keyboard shortcut key combination undoes your last mistake in Paint?",
+                image: "assets/ribbon.PNG",
+                options: ["Ctrl + C", "Ctrl + Z", "Ctrl + P"],
+                correct: 1,
+                hint: "Ctrl + Z is the universal shortcut to Undo an action!"
             }
         ];
 
         let activeIndex = 0;
         let starPoints = 0;
-        const totalRoundsCount = 6;
+        const totalRoundsCount = quizDatabase.length;
         const balloonColors = ['#ef4444', '#3b82f6', '#10b981', '#a855f7', '#f59e0b'];
 
-        /* --- 5 SECONDS STRICT SPLASH RUNTIME LOOP --- */
+        // Strict 5-Second Splash Screen Engine
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const splash = document.getElementById('brand-splash');
                 const welcome = document.getElementById('welcome-screen');
-                splash.style.opacity = '0';
-                setTimeout(() => {
-                    splash.style.display = 'none';
-                    welcome.style.display = 'block';
-                }, 500);
+                if (splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => {
+                        splash.style.display = 'none';
+                        if (welcome) welcome.style.display = 'block';
+                    }, 500);
+                }
             }, 5000);
         });
 
-        function showRulesWindow() {
+        // Unlocks audio context across mobile devices
+        function unlockAudioPermission() {
+            const sndRight = document.getElementById('snd-correct');
+            const sndWrong = document.getElementById('snd-wrong');
+            if (sndRight) sndRight.load();
+            if (sndWrong) sndWrong.load();
+        }
+
+        function showInstructionsWindow() {
+            unlockAudioPermission();
             document.getElementById('welcome-screen').style.display = 'none';
-            document.getElementById('rules-screen').style.display = 'block';
+            document.getElementById('instructions-screen').style.display = 'block';
         }
 
         function launchArcadeEngine() {
-            document.getElementById('rules-screen').style.display = 'none';
+            unlockAudioPermission();
+            document.getElementById('instructions-screen').style.display = 'none';
             document.getElementById('play-screen').style.display = 'block';
             activeIndex = 0;
             starPoints = 0;
             loadQuizRound();
         }
 
-        /* --- DYNAMIC ROUND LOADER & STAGE CLEANER --- */
         function loadQuizRound() {
-            document.getElementById('hud-round-idx').innerText = `Challenge: ${activeIndex + 1} / ${totalRoundsCount}`;
+            document.getElementById('hud-round-idx').innerText = `Challenge: ${activeIndex + 1}/${totalRoundsCount}`;
             document.getElementById('hud-stars-total').innerText = `Stars: ${starPoints} ⭐`;
 
             if (activeIndex >= totalRoundsCount) {
@@ -351,53 +497,75 @@
 
             const activeRound = quizDatabase[activeIndex];
             document.getElementById('clue-caption-text').innerText = activeRound.prompt;
-            document.getElementById('embedded-tool-graphic').src = activeRound.image;
+            document.getElementById('hint-banner').innerText = "💡 Tap the floating balloon that answers the question!";
+
+            const imgElement = document.getElementById('embedded-tool-graphic');
+            if (activeRound.image) {
+                imgElement.style.display = 'block';
+                imgElement.src = activeRound.image;
+            } else {
+                imgElement.style.display = 'none';
+            }
 
             const surface = document.getElementById('arena-surface');
             const oldBalloons = surface.querySelectorAll('.balloon');
             oldBalloons.forEach(b => b.remove());
 
-            // Build rising arcade balloons with clean spatial spreads
+            // Build rising balloons with balanced horizontal positioning
             activeRound.options.forEach((optionText, idx) => {
                 const balloon = document.createElement('div');
                 balloon.className = 'balloon';
                 balloon.innerText = optionText;
                 
                 balloon.style.backgroundColor = balloonColors[idx % balloonColors.length];
-                // Distribute evenly horizontally across the arena box width
-                balloon.style.left = `${12 + (idx * 32) + (Math.random() * 5)}%`;
-                balloon.style.animationDelay = `${idx * 0.7}s`;
+                
+                // Distribute evenly horizontally (Mobile-optimized spread)
+                const horizontalPos = 6 + (idx * 31);
+                balloon.style.left = `${horizontalPos}%`;
+                balloon.style.animationDelay = `${idx * 0.6}s`;
 
-                balloon.onclick = () => processPopAction(idx, activeRound.correct, balloon);
+                balloon.onclick = () => processPopAction(idx, activeRound.correct, balloon, activeRound.hint);
                 surface.appendChild(balloon);
             });
         }
 
-        /* --- POP ACTION INTERACTIVE EVALUATION --- */
-        function processPopAction(selectedIdx, correctIdx, balloonElement) {
+        function processPopAction(selectedIdx, correctIdx, balloonElement, hintMessage) {
             if (selectedIdx === correctIdx) {
                 triggerAudioFeedback(true);
                 
-                // Fancy Pop Fade Out
+                // Confetti particle burst on correct choice
+                confetti({
+                    particleCount: 50,
+                    spread: 60,
+                    origin: { y: 0.7 }
+                });
+
+                // Pop animation
                 balloonElement.style.transform = "scale(1.4)";
                 balloonElement.style.opacity = "0";
                 balloonElement.style.transition = "transform 0.2s ease-out, opacity 0.2s ease-out";
                 balloonElement.style.pointerEvents = "none";
                 
                 starPoints += 10;
+                document.getElementById('hud-stars-total').innerText = `Stars: ${starPoints} ⭐`;
+                document.getElementById('hint-banner').innerText = "🎉 Great Job! Correct Pop!";
+
                 activeIndex++;
-                setTimeout(loadQuizRound, 400);
+                setTimeout(loadQuizRound, 500);
             } else {
                 triggerAudioFeedback(false);
                 balloonElement.style.animationPlayState = 'paused';
                 
-                // Shake effect for feedback
-                balloonElement.style.transform = "translateX(-10px)";
-                setTimeout(() => { balloonElement.style.transform = "translateX(10px)"; }, 100);
+                // Display learning hint
+                document.getElementById('hint-banner').innerText = `❌ Oops! Hint: ${hintMessage}`;
+
+                // Shake effect for negative feedback
+                balloonElement.style.transform = "translateX(-8px)";
+                setTimeout(() => { balloonElement.style.transform = "translateX(8px)"; }, 100);
                 setTimeout(() => { 
                     balloonElement.style.transform = "none"; 
                     balloonElement.style.animationPlayState = 'running';
-                }, 200);
+                }, 250);
             }
         }
 
@@ -405,7 +573,7 @@
             const soundNode = document.getElementById(isCorrect ? 'snd-correct' : 'snd-wrong');
             if (soundNode) {
                 soundNode.currentTime = 0;
-                soundNode.play().catch(() => {});
+                soundNode.play().catch(err => console.log("Audio play postponed:", err));
             }
         }
 
@@ -413,20 +581,24 @@
             document.getElementById('play-screen').style.display = 'none';
             document.getElementById('victory-screen').style.display = 'block';
 
-            let tierTag = "Paint Learner";
+            let tierTag = "Paint Apprentice";
             let medalArt = "🎒";
 
-            if (starPoints === 60) {
+            const maxPossible = totalRoundsCount * 10;
+
+            if (starPoints === maxPossible) {
                 tierTag = "Paint Champion";
                 medalArt = "👑";
-            } else if (starPoints >= 40) {
-                tierTag = "Paint Artist";
+                confetti({ particleCount: 200, spread: 100, origin: { y: 0.5 } });
+            } else if (starPoints >= maxPossible * 0.7) {
+                tierTag = "Paint Master";
                 medalArt = "🎨";
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
             }
 
             document.getElementById('final-medal-icon').innerText = medalArt;
             document.getElementById('final-rank-tag').innerText = tierTag;
-            document.getElementById('final-stars-tally').innerText = `Total Score: ${starPoints} / 60 Stars`;
+            document.getElementById('final-stars-tally').innerText = `Total Score: ${starPoints} / ${maxPossible} Stars`;
         }
 
         function restartQuizLoop() {

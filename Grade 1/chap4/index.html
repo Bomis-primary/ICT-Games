@@ -159,7 +159,6 @@
             border-radius: 12px;
         }
 
-        /* Modernized Choice Cards to replace the emoji mix-ups in image_55d485.png */
         .choice-btn {
             background: white;
             padding: 15px;
@@ -327,7 +326,7 @@
 <body>
 
     <!-- Native Audio Nodes -->
-    <audio id="correctSound" src="assets/correct-1.mp3" preload="auto"></audio>
+    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 
     <!-- 5-Second Brand Loader Splash Screen -->
@@ -396,25 +395,24 @@
             }, 5000);
         });
 
-        // Aligned layout using clean image tiles to completely overhaul generic hand representations
         const questions = [
             {
                 question: "Click the picture showing the LEFT CLICK action",
                 options: [
-                    { val: "assets/image_563a08.png", label: "Left Click", fallback: "👈🖱️" },
-                    { val: "assets/image_5639c5.png", label: "Right Click", fallback: "👉🖱️" },
+                    { val: "assets/left-click.PNG", label: "Left Click", fallback: "👈🖱️" },
+                    { val: "assets/right-click.PNG", label: "Right Click", fallback: "👉🖱️" },
                     { val: "assets/mouse finger.PNG", label: "Proper Hold", fallback: "☝️🖱️" }
                 ],
-                answer: "assets/image_563a08.png"
+                answer: "assets/left-click.PNG"
             },
             {
                 question: "Click the picture showing the RIGHT CLICK action",
                 options: [
-                    { val: "assets/image_5639c5.png", label: "Right Click", fallback: "👉🖱️" },
-                    { val: "assets/image_563a08.png", label: "Left Click", fallback: "👈🖱️" },
+                    { val: "assets/right-click.PNG", label: "Right Click", fallback: "👉🖱️" },
+                    { val: "assets/left-click.PNG", label: "Left Click", fallback: "👈🖱️" },
                     { val: "assets/drag-n-drop.PNG", label: "Drag & Drop", fallback: "📦🖱️" }
                 ],
-                answer: "assets/image_5639c5.png"
+                answer: "assets/right-click.PNG"
             },
             {
                 question: "Which action is used to move an item across the computer screen?",
@@ -434,15 +432,15 @@
                     { val: "False", label: "False", fallback: "❌ False" }
                 ],
                 answer: "True",
-                image: "assets/image_563a08.png",
+                image: "assets/left-click.PNG",
                 fallbackEmoji: "🖱️"
             },
             {
                 question: "Choose the picture layout that shows Drag and Drop movement",
                 options: [
                     { val: "assets/drag-n-drop.PNG", label: "Drag & Drop", fallback: "📦🖱️" },
-                    { val: "assets/image_5639c5.png", label: "Right Click", fallback: "👉🖱️" },
-                    { val: "assets/image_563a08.png", label: "Left Click", fallback: "👈🖱️" }
+                    { val: "assets/right-click.PNG", label: "Right Click", fallback: "👉🖱️" },
+                    { val: "assets/left-click.PNG", label: "Left Click", fallback: "👈🖱️" }
                 ],
                 answer: "assets/drag-n-drop.PNG"
             },
@@ -454,7 +452,7 @@
                     { val: "Scroll Wheel", label: "Scroll Wheel", fallback: "⚙️" }
                 ],
                 answer: "Left Click",
-                image: "assets/image_563a08.png",
+                image: "assets/left-click.PNG",
                 fallbackEmoji: "👈"
             },
             {
@@ -482,8 +480,8 @@
                 question: "Click the picture displaying correct finger placements on a mouse.",
                 options: [
                     { val: "assets/mouse finger.PNG", label: "Proper Hold", fallback: "☝️🖱️" },
-                    { val: "assets/image_5639c5.png", label: "Right Click", fallback: "👉🖱️" },
-                    { val: "assets/image_563a08.png", label: "Left Click", fallback: "👈🖱️" }
+                    { val: "assets/right-click.PNG", label: "Right Click", fallback: "👉🖱️" },
+                    { val: "assets/left-click.PNG", label: "Left Click", fallback: "👈🖱️" }
                 ],
                 answer: "assets/mouse finger.PNG"
             },
@@ -494,7 +492,7 @@
                     { val: "False", label: "False", fallback: "❌ False" }
                 ],
                 answer: "True",
-                image: "assets/image_5639c5.png",
+                image: "assets/right-click.PNG",
                 fallbackEmoji: "📋"
             }
         ];
@@ -512,6 +510,14 @@
         const imageAreaEl = document.getElementById('imageArea');
         const feedbackEl = document.getElementById('feedback');
         const nextBtnEl = document.getElementById('nextBtn');
+
+        function playAudio(elementId) {
+            const audio = document.getElementById(elementId);
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(() => {});
+            }
+        }
 
         function startGame() {
             studentName = document.getElementById('studentName').value.trim();
@@ -538,7 +544,7 @@
                     choiceControlLocked = true;
                     feedbackEl.innerHTML = "⏰ Time Up! Click next to keep going.";
                     feedbackEl.style.color = '#f59e0b';
-                    document.getElementById('wrongSound').play().catch(()=>{});
+                    playAudio('wrongSound');
                     nextBtnEl.style.display = 'inline-block';
                 }
             }, 1000);
@@ -626,7 +632,8 @@
             if (isCorrect) {
                 feedbackEl.innerHTML = "👏 Super Job! Correct.";
                 feedbackEl.style.color = '#00ff95';
-                document.getElementById('correctSound').play().catch(()=>{});
+                
+                playAudio('correctSound');
 
                 confetti({
                     particleCount: 150,
@@ -642,7 +649,8 @@
                 document.getElementById('main-content-card').classList.add('animate-shake');
                 feedbackEl.innerHTML = "❌ Let's try another one!";
                 feedbackEl.style.color = '#ef4444';
-                document.getElementById('wrongSound').play().catch(()=>{});
+                
+                playAudio('wrongSound');
 
                 setTimeout(() => {
                     document.getElementById('main-content-card').classList.remove('animate-shake');

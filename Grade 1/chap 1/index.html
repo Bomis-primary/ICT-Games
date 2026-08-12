@@ -35,7 +35,7 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* Page 1: Brand Splash Screen */
+/* Page 1: Brand Splash Screen (Exact Code Structure Requested) */
 #brand-splash {
     position: fixed;
     top: 0;
@@ -62,7 +62,7 @@ body {
     50% { transform: translateY(-8px) scale(1.03); }
 }
 
-/* Master Game Container */
+/* Master Game Wrapper */
 .game-wrapper {
     display: flex;
     width: 100%;
@@ -88,7 +88,7 @@ body {
     overflow-y: auto;
 }
 
-/* Page Screens */
+/* Page Navigation & Headers */
 .page-screen {
     display: none;
     flex-direction: column;
@@ -100,20 +100,43 @@ body {
     display: flex;
 }
 
-/* Page Header */
-.page-header {
-    text-align: center;
+.page-header-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     background: #74b9ff;
     color: white;
-    padding: 12px;
+    padding: 10px 15px;
     border-radius: 12px;
-    font-size: 24px;
-    font-weight: bold;
     box-shadow: 0 4px 0 #0984e3;
     margin-bottom: 10px;
 }
 
-/* Instructions Screen */
+.page-title {
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    flex-grow: 1;
+}
+
+.nav-back-btn {
+    background: #ff7675;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 3px 0 #d63031;
+}
+
+.nav-back-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #d63031;
+}
+
+/* Page 2: Instructions View */
 .instruction-body {
     flex-grow: 1;
     display: flex;
@@ -135,7 +158,7 @@ body {
     border: 2px solid #fdcb6e;
     padding: 12px 18px;
     border-radius: 14px;
-    font-size: 20px;
+    font-size: 18px;
     color: #2d3436;
     display: flex;
     align-items: center;
@@ -144,8 +167,8 @@ body {
 }
 
 .start-btn, .action-btn {
-    padding: 14px 28px;
-    font-size: 22px;
+    padding: 12px 26px;
+    font-size: 20px;
     font-weight: bold;
     background: #00b894;
     color: white;
@@ -162,7 +185,7 @@ body {
     box-shadow: 0 2px 0 #00875a;
 }
 
-/* Level Selection Menu */
+/* Page 3: Level Selection Menu */
 .level-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -174,27 +197,20 @@ body {
     background: #ffeaa7;
     border: 3px solid #fdcb6e;
     border-radius: 16px;
-    padding: 20px;
+    padding: 16px;
     text-align: center;
     cursor: pointer;
     box-shadow: 0 5px 0 #e1b12c;
     transition: all 0.2s;
 }
 
-.level-card:hover {
-    transform: scale(1.02);
-}
+.level-card:hover { transform: scale(1.02); }
+.level-card:active { transform: translateY(3px); box-shadow: 0 2px 0 #e1b12c; }
+.level-card .icon { font-size: 40px; margin-bottom: 5px; }
+.level-card .title { font-size: 18px; font-weight: bold; color: #2d3436; }
+.level-card .subtext { font-size: 13px; color: #d63031; font-weight: bold; margin-top: 3px; }
 
-.level-card:active {
-    transform: translateY(3px);
-    box-shadow: 0 2px 0 #e1b12c;
-}
-
-.level-card .icon { font-size: 45px; margin-bottom: 8px; }
-.level-card .title { font-size: 20px; font-weight: bold; color: #2d3436; }
-.level-card .status { font-size: 14px; color: #00b894; margin-top: 5px; font-weight: bold; }
-
-/* Gameplay Header & Scoreboard */
+/* Scoreboard Bar */
 .score-header {
     display: flex;
     justify-content: space-between;
@@ -202,73 +218,58 @@ body {
     background: #dcdde1;
     padding: 8px 15px;
     border-radius: 12px;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: bold;
     color: #2d3436;
+    margin-bottom: 10px;
 }
 
-.content-display {
+.game-content-area {
+    flex-grow: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    flex-grow: 1;
-    margin: 5px 0;
+    position: relative;
+    overflow: hidden;
 }
 
-.question-text {
-    font-size: 22px;
-    color: #2d3436;
-    margin-bottom: 5px;
-    text-align: center;
+.prompt-text {
+    font-size: 20px;
     font-weight: bold;
+    color: #2d3436;
+    text-align: center;
+    margin-bottom: 10px;
 }
 
-.visual-emoji {
-    font-size: 65px;
-    margin-bottom: 5px;
-    display: inline-block;
-    animation: floating 2.5s infinite ease-in-out;
-}
-
-@keyframes floating {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-8px); }
-}
-
-/* Interactive Drag and Drop Elements */
+/* Category 1: Drag & Drop Unscramble */
 .drop-slots-container, .letter-pool-container {
     display: flex;
     justify-content: center;
     gap: 8px;
     flex-wrap: wrap;
     margin: 10px 0;
-    width: 100%;
 }
 
 .drop-slot {
     width: 48px;
-    height: 54px;
+    height: 52px;
     border: 3px dashed #74b9ff;
     border-radius: 12px;
     background: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.drop-slot.hovered {
-    background: #eccc68;
-    border-color: #ffa502;
-}
+.drop-slot.hovered { background: #ffeaa7; }
 
 .letter-tile {
     width: 48px;
-    height: 52px;
+    height: 50px;
     background: #ff7675;
     color: white;
-    font-size: 26px;
+    font-size: 24px;
     font-weight: bold;
     border-radius: 10px;
     display: flex;
@@ -279,70 +280,120 @@ body {
     touch-action: none;
 }
 
-.letter-tile:active {
-    cursor: grabbing;
-    transform: scale(1.08);
+/* Category 2: Catch the Right Word Game Arena */
+.catch-arena {
+    width: 100%;
+    height: 260px;
+    background: #dfe6e9;
+    border-radius: 16px;
+    border: 3px dashed #b2bec3;
+    position: relative;
+    overflow: hidden;
 }
 
-.letter-tile.placed {
+.falling-word {
+    position: absolute;
     background: #0984e3;
-    box-shadow: 0 4px 0 #025089;
-}
-
-.unscramble-controls {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-top: 5px;
-}
-
-.reset-btn {
-    padding: 8px 16px;
-    font-size: 16px;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-size: 18px;
     font-weight: bold;
-    background: #ffbe76;
-    color: #2d3436;
-    border: 2px solid #f0932b;
-    border-radius: 10px;
     cursor: pointer;
+    box-shadow: 0 4px 0 #025089;
+    top: -50px;
 }
 
-.status-feedback {
-    font-size: 22px;
+/* Category 3: Bucket Sorting */
+.buckets-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.bucket-node {
+    width: 45%;
+    height: 120px;
+    border: 4px dashed #0984e3;
+    border-radius: 16px;
+    background: #eccc68;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
     font-weight: bold;
-    height: 30px;
+    color: #2d3436;
+}
+
+.draggable-item {
+    padding: 12px 20px;
+    background: #6c5ce7;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 12px;
+    cursor: grab;
+    box-shadow: 0 4px 0 #4834d4;
+    touch-action: none;
+}
+
+/* Category 4: Matching Grid */
+.matching-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 100%;
+}
+
+.matching-card {
+    background: #ffeaa7;
+    border: 3px solid #fdcb6e;
+    padding: 15px;
+    border-radius: 14px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #e1b12c;
+}
+
+/* Status Feedback Zone */
+.status-feedback {
+    font-size: 20px;
+    font-weight: bold;
+    height: 28px;
     margin-top: 5px;
     text-align: center;
 }
 
-/* Completion Screen */
+/* Completion Card */
 .completion-card {
     text-align: center;
     margin: auto 0;
 }
 
-.completion-card h2 { font-size: 34px; color: #ff7675; margin-bottom: 15px; }
-.summary-stats { font-size: 22px; color: #2d3436; margin-bottom: 25px; line-height: 1.6; }
+.completion-card h2 { font-size: 30px; color: #ff7675; margin-bottom: 15px; }
+.summary-stats { font-size: 20px; color: #2d3436; margin-bottom: 25px; line-height: 1.6; }
 
-/* Mobile Optimizations */
+/* Responsive Adjustments */
 @media (max-width: 600px) {
     .game-wrapper { height: 95vh; }
     .main-card { padding: 12px; }
-    .page-header { font-size: 18px; padding: 8px; }
-    .instruction-list li { font-size: 16px; padding: 10px; }
-    .start-btn, .action-btn { font-size: 18px; padding: 10px 20px; }
+    .page-title { font-size: 16px; }
+    .nav-back-btn { padding: 4px 10px; font-size: 14px; }
     .level-grid { grid-template-columns: 1fr; gap: 10px; }
-    .level-card { padding: 12px; }
-    .question-text { font-size: 16px; }
-    .visual-emoji { font-size: 50px; }
-    .drop-slot, .letter-tile { width: 38px; height: 44px; font-size: 20px; }
+    .level-card { padding: 10px; }
+    .drop-slot, .letter-tile { width: 38px; height: 44px; font-size: 18px; }
+    .bucket-node { height: 100px; font-size: 15px; }
     #brand-splash img { max-width: 240px; }
 }
 </style>
 </head>
 <body>
 
-<!-- Audio Elements -->
+<!-- Audio Assets -->
 <audio id="soundChannelCorrect" src="assets/correct.mp3" preload="auto"></audio>
 <audio id="soundChannelWrong" src="assets/wrong.mp3" preload="auto"></audio>
 
@@ -356,87 +407,89 @@ body {
 
         <!-- Page 2: Instructions -->
         <div class="page-screen" id="pageInstructions">
-            <div class="page-header">Chapter 1: Computer: A Smart Machine</div>
+            <div class="page-header-bar">
+                <div class="page-title">Chapter 1: Computer: A Smart Machine</div>
+            </div>
             <div class="instruction-body">
                 <ul class="instruction-list">
-                    <li>🌟 Welcome Grade 1 Champions!</li>
-                    <li>🧩 Unscramble & Drag-Drop the correct letters!</li>
-                    <li>🤖 Guess the word to learn Smart Machines!</li>
-                    <li>🎯 Pick any level you like to play!</li>
-                    <li>⭐ Earn Badges and Stars for right answers!</li>
+                    <li>🌟 Welcome Grade 1 ICT Champions!</li>
+                    <li>🧩 Level 1: Unscramble & Drag-Drop Words!</li>
+                    <li>🎈 Level 2: Catch the Right Falling Word!</li>
+                    <li>🧺 Level 3: Sort Natural vs Man-Made into Buckets!</li>
+                    <li>💻 Level 4: Match Uses & Types of Computers!</li>
                 </ul>
             </div>
-            <button class="start-btn" onclick="showScreen('pageLevelSelect')">Let's Play! 🚀</button>
+            <button class="start-btn" onclick="showScreen('pageLevelSelect')">Choose Level 🚀</button>
         </div>
 
-        <!-- Page 3: Level Selection -->
+        <!-- Page 3: Level Selection Menu -->
         <div class="page-screen" id="pageLevelSelect">
-            <div class="page-header">Select Your Game Level</div>
+            <div class="page-header-bar">
+                <button class="nav-back-btn" onclick="showScreen('pageInstructions')">⬅ Back</button>
+                <div class="page-title">Select Activity Level</div>
+            </div>
             <div class="level-grid">
-                <div class="level-card" onclick="startLevel(0)">
-                    <div class="icon">🌿</div>
-                    <div class="title">Level 1: Natural Things</div>
-                    <div class="status" id="statusL1">Play Now ➔</div>
-                </div>
                 <div class="level-card" onclick="startLevel(1)">
-                    <div class="icon">🚌</div>
-                    <div class="title">Level 2: Man-Made Things</div>
-                    <div class="status" id="statusL2">Play Now ➔</div>
+                    <div class="icon">🧩</div>
+                    <div class="title">Level 1: Unscramble Word</div>
+                    <div class="subtext">Drag & Drop Letters</div>
                 </div>
                 <div class="level-card" onclick="startLevel(2)">
-                    <div class="icon">🤖</div>
-                    <div class="title">Level 3: Smart Machine Features</div>
-                    <div class="status" id="statusL3">Play Now ➔</div>
+                    <div class="icon">🎈</div>
+                    <div class="title">Level 2: Catch Right Word</div>
+                    <div class="subtext">Tap Moving Targets</div>
                 </div>
                 <div class="level-card" onclick="startLevel(3)">
+                    <div class="icon">🧺</div>
+                    <div class="title">Level 3: Right Bucket</div>
+                    <div class="subtext">Sort Natural & Man-Made</div>
+                </div>
+                <div class="level-card" onclick="startLevel(4)">
                     <div class="icon">💻</div>
-                    <div class="title">Level 4: Types of Computers</div>
-                    <div class="status" id="statusL4">Play Now ➔</div>
+                    <div class="title">Level 4: Computer Uses</div>
+                    <div class="subtext">Match Uses & Devices</div>
                 </div>
             </div>
         </div>
 
         <!-- Gameplay Screen -->
         <div class="page-screen" id="pageGameplay">
+            <div class="page-header-bar">
+                <button class="nav-back-btn" onclick="exitToLevels()">⬅ Menu</button>
+                <div class="page-title" id="gameplayLevelTitle">Gameplay</div>
+            </div>
+
             <div class="score-header">
-                <span style="color:#e84118;">⏰ <span id="timeSpan">45</span>s</span>
+                <span style="color:#e84118;">⏰ <span id="timeSpan">30</span>s</span>
                 <span style="color:#0097e6;">⭐ Score: <span id="scoreSpan">0</span></span>
                 <span style="color:#e67e22;">🏅 Badges: <span id="badgeSpan">0</span></span>
             </div>
 
-            <div class="content-display">
-                <div class="question-text" id="targetQuestionText">Drag letters to unscramble the word!</div>
-                <div class="visual-emoji" id="targetGraphicNode">💻</div>
-                
-                <!-- Target Drop Slots -->
-                <div class="drop-slots-container" id="dropSlotsContainer"></div>
-
-                <!-- Scrambled Letter Tiles -->
-                <div class="letter-pool-container" id="letterPoolContainer"></div>
-
-                <div class="unscramble-controls">
-                    <button class="reset-btn" onclick="resetCurrentWord()">🔄 Reset Letters</button>
-                </div>
+            <div class="game-content-area" id="gameAreaDynamic">
+                <!-- Dynamically rendered per level category -->
             </div>
 
             <div class="status-feedback" id="feedbackPromptZone"></div>
 
             <div style="height: 45px; display: flex; justify-content: center; align-items: center; margin-top: 5px;">
-                <button class="action-btn" id="advanceStepBtn" style="display:none;" onclick="nextQuestion()">Next Word ➜</button>
+                <button class="action-btn" id="advanceStepBtn" style="display:none;" onclick="nextQuestion()">Next Challenge ➜</button>
             </div>
         </div>
 
         <!-- Completion Screen -->
         <div class="page-screen" id="pageCompletion">
-            <div class="page-header">🎉 Fantastic Job! 🎉</div>
+            <div class="page-header-bar">
+                <button class="nav-back-btn" onclick="showScreen('pageLevelSelect')">⬅ Menu</button>
+                <div class="page-title">Level Completed!</div>
+            </div>
             <div class="completion-card">
                 <div style="font-size: 80px; margin-bottom: 10px;">🏅</div>
-                <h2>Level Completed!</h2>
+                <h2>Fantastic Job! 🎉</h2>
                 <div class="summary-stats">
                     Total Score: <strong><span id="endScoreDisplay">0</span> Points</strong><br>
                     Badges Earned: <strong><span id="endBadgeDisplay">0</span> 🎖️</strong>
                 </div>
-                <button class="start-btn" onclick="showScreen('pageLevelSelect')">Choose Another Level 🎮</button>
+                <button class="start-btn" onclick="showScreen('pageLevelSelect')">Play Another Level 🎮</button>
             </div>
         </div>
 
@@ -444,51 +497,13 @@ body {
 </div>
 
 <script>
-const levelDatabase = [
-    {
-        name: "Natural Things",
-        questions: [
-            { hint: "Drag & Unscramble the Natural Thing!", image: "🌳", answer: "TREE", scrambled: "EETR" },
-            { hint: "Drag & Unscramble the Natural Thing!", image: "☀️", answer: "SUN", scrambled: "USN" },
-            { hint: "Drag & Unscramble the Natural Thing!", image: "🐟", answer: "FISH", scrambled: "HSIF" },
-            { hint: "Drag & Unscramble the Natural Thing!", image: "🐱", answer: "CAT", scrambled: "ATC" }
-        ]
-    },
-    {
-        name: "Man-Made Things",
-        questions: [
-            { hint: "Unscramble this Man-Made vehicle!", image: "🚌", answer: "BUS", scrambled: "SUB" },
-            { hint: "Unscramble what we write with!", image: "✏️", answer: "PENCIL", scrambled: "CLINEP" },
-            { hint: "Unscramble where we live!", image: "🏠", answer: "HOUSE", scrambled: "ESUOH" },
-            { hint: "Unscramble this tasty treat!", image: "🍦", answer: "ICECREAM", scrambled: "MAECCREI" }
-        ]
-    },
-    {
-        name: "Smart Machine Features",
-        questions: [
-            { hint: "Computers run on this power!", image: "⚡", answer: "ELECTRICITY", scrambled: "TRICITYELEC" },
-            { hint: "A computer is a smart...", image: "🤖", answer: "MACHINE", scrambled: "NECHIMA" },
-            { hint: "A computer works very...", image: "⚡", answer: "FAST", scrambled: "TSAF" },
-            { hint: "A computer saves your time &...", image: "💪", answer: "WORK", scrambled: "KROW" }
-        ]
-    },
-    {
-        name: "Types of Computers",
-        questions: [
-            { hint: "Sits fixed on a heavy desk!", image: "🖥️", answer: "DESKTOP", scrambled: "POKTDSE" },
-            { hint: "Fits easily right on your lap!", image: "💻", answer: "LAPTOP", scrambled: "POTPAL" },
-            { hint: "A touch screen smart device!", image: "📱", answer: "TABLET", scrambled: "TEBLAT" },
-            { hint: "A computer is a smart...", image: "💻", answer: "COMPUTER", scrambled: "RUTEMPOC" }
-        ]
-    }
-];
-
-let currentLevelIndex = 0;
-let currentQuestionIndex = 0;
+let currentLevel = 1;
+let currentStep = 0;
 let score = 0;
 let badges = 0;
 let timer;
-let remainingSeconds = 45;
+let remainingSeconds = 30;
+let catchAnimationTimer = null;
 let draggedTile = null;
 
 const soundCorrect = document.getElementById('soundChannelCorrect');
@@ -504,7 +519,7 @@ function playAudio(type) {
     }
 }
 
-// Splash Screen Timer
+// Page 1 Splash Screen Sequence
 window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         const splash = document.getElementById('brand-splash');
@@ -518,20 +533,55 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function showScreen(screenId) {
+    clearInterval(timer);
+    cancelAnimationFrame(catchAnimationTimer);
     document.querySelectorAll('.page-screen').forEach(s => s.classList.remove('active'));
     document.getElementById(screenId).classList.add('active');
 }
 
-function startLevel(lvlIdx) {
-    currentLevelIndex = lvlIdx;
-    currentQuestionIndex = 0;
-    showScreen('pageGameplay');
-    loadQuestion();
+function exitToLevels() {
+    clearInterval(timer);
+    cancelAnimationFrame(catchAnimationTimer);
+    showScreen('pageLevelSelect');
 }
 
-function loadQuestion() {
+/* Dataset for the 4 Distinct Level Categories */
+const levelData = {
+    1: [ // Drag & Drop Unscramble
+        { hint: "Unscramble: Sits on a desk!", image: "🖥️", answer: "DESKTOP", scrambled: "POKTDSE" },
+        { hint: "Unscramble: Fits in your lap!", image: "💻", answer: "LAPTOP", scrambled: "POTPAL" },
+        { hint: "Unscramble: Run on power!", image: "⚡", answer: "MACHINE", scrambled: "NECHIMA" }
+    ],
+    2: [ // Catch the Right Word
+        { prompt: "Catch the SMART MACHINE!", correct: "COMPUTER", distractors: ["TREE", "RIVER", "CAT"] },
+        { prompt: "Catch the NATURAL THING!", correct: "FLOWER", distractors: ["CAR", "BUS", "ROBOT"] },
+        { prompt: "Catch the PORTABLE DEVICE!", correct: "TABLET", distractors: ["DESKTOP", "HOUSE", "DESK"] }
+    ],
+    3: [ // Put in Right Bucket
+        { item: "🌲 TREE", correctBucket: "Natural" },
+        { item: "🚗 CAR", correctBucket: "Man-Made" },
+        { item: "🐱 CAT", correctBucket: "Natural" },
+        { item: "💻 COMPUTER", correctBucket: "Man-Made" }
+    ],
+    4: [ // Uses of Computers
+        { prompt: "What do we use a computer to DRAW on?", image: "🎨", answer: "Tux Paint", options: ["Tux Paint", "Washing Machine", "Car", "Clock"] },
+        { prompt: "Computers help us solve math...", image: "➕", answer: "Sums", options: ["Sums", "Cooking", "Sleeping", "Running"] },
+        { prompt: "Which machine never gets tired?", image: "🤖", answer: "Computer", options: ["Computer", "Human", "Dog", "Bird"] }
+    ]
+};
+
+function startLevel(lvl) {
+    currentLevel = lvl;
+    currentStep = 0;
+    showScreen('pageGameplay');
+    document.getElementById('gameplayLevelTitle').innerText = "Level " + lvl;
+    loadChallenge();
+}
+
+function loadChallenge() {
     clearInterval(timer);
-    remainingSeconds = 45;
+    cancelAnimationFrame(catchAnimationTimer);
+    remainingSeconds = 30;
     document.getElementById('timeSpan').innerText = remainingSeconds;
     document.getElementById('feedbackPromptZone').innerText = '';
     document.getElementById('advanceStepBtn').style.display = 'none';
@@ -548,169 +598,194 @@ function loadQuestion() {
         }
     }, 1000);
 
-    const q = levelDatabase[currentLevelIndex].questions[currentQuestionIndex];
-    document.getElementById('targetQuestionText').innerText = q.hint;
-    document.getElementById('targetGraphicNode').innerText = q.image;
+    const container = document.getElementById('gameAreaDynamic');
+    container.innerHTML = '';
 
-    setupDragAndDropGame(q.answer, q.scrambled);
+    // Route gameplay rendering by Category
+    if (currentLevel === 1) renderLevel1(container);
+    else if (currentLevel === 2) renderLevel2(container);
+    else if (currentLevel === 3) renderLevel3(container);
+    else if (currentLevel === 4) renderLevel4(container);
 }
 
-function setupDragAndDropGame(answerWord, scrambledWord) {
-    const slotsContainer = document.getElementById('dropSlotsContainer');
-    const poolContainer = document.getElementById('letterPoolContainer');
-    slotsContainer.innerHTML = '';
-    poolContainer.innerHTML = '';
+/* Category 1: Unscramble Word Game */
+function renderLevel1(container) {
+    const q = levelData[1][currentStep];
+    container.innerHTML = `
+        <div class="prompt-text">${q.hint}</div>
+        <div style="font-size: 50px; margin-bottom: 5px;">${q.image}</div>
+        <div class="drop-slots-container" id="dropSlots"></div>
+        <div class="letter-pool-container" id="letterPool"></div>
+    `;
 
-    for (let i = 0; i < answerWord.length; i++) {
+    const dropSlots = document.getElementById('dropSlots');
+    const letterPool = document.getElementById('letterPool');
+
+    for (let i = 0; i < q.answer.length; i++) {
         const slot = document.createElement('div');
         slot.className = 'drop-slot';
-        slot.dataset.index = i;
-
-        slot.addEventListener('dragover', handleDragOver);
-        slot.addEventListener('dragleave', handleDragLeave);
-        slot.addEventListener('drop', handleDrop);
-
-        slotsContainer.appendChild(slot);
+        slot.addEventListener('dragover', e => e.preventDefault());
+        slot.addEventListener('drop', handleSlotDrop);
+        dropSlots.appendChild(slot);
     }
 
-    const letters = scrambledWord.split('');
-    letters.forEach((char, idx) => {
+    q.scrambled.split('').forEach((char, idx) => {
         const tile = document.createElement('div');
         tile.className = 'letter-tile';
         tile.innerText = char;
         tile.draggable = true;
         tile.id = 'tile-' + idx;
-
-        tile.addEventListener('dragstart', handleDragStart);
-        tile.addEventListener('dragend', handleDragEnd);
-
-        tile.addEventListener('touchstart', handleTouchStart, {passive: false});
-        tile.addEventListener('touchmove', handleTouchMove, {passive: false});
-        tile.addEventListener('touchend', handleTouchEnd, {passive: false});
-
-        poolContainer.appendChild(tile);
+        tile.addEventListener('dragstart', e => { draggedTile = tile; });
+        letterPool.appendChild(tile);
     });
 }
 
-function handleDragStart(e) {
-    draggedTile = this;
-    e.dataTransfer.setData('text/plain', this.id);
-}
-
-function handleDragEnd() {
-    draggedTile = null;
-}
-
-function handleDragOver(e) {
-    e.preventDefault();
-    this.classList.add('hovered');
-}
-
-function handleDragLeave() {
-    this.classList.remove('hovered');
-}
-
-function handleDrop(e) {
-    e.preventDefault();
-    this.classList.remove('hovered');
-    
+function handleSlotDrop(e) {
     if (this.children.length === 0 && draggedTile) {
         this.appendChild(draggedTile);
-        draggedTile.classList.add('placed');
-        checkWordCompletion();
+        checkLevel1Completion();
     }
 }
 
-let touchClone = null;
-
-function handleTouchStart(e) {
-    e.preventDefault();
-    draggedTile = this;
-    
-    touchClone = this.cloneNode(true);
-    touchClone.style.position = 'fixed';
-    touchClone.style.opacity = '0.8';
-    touchClone.style.zIndex = '1000';
-    touchClone.style.pointerEvents = 'none';
-    
-    const touch = e.touches[0];
-    touchClone.style.left = (touch.clientX - 24) + 'px';
-    touchClone.style.top = (touch.clientY - 26) + 'px';
-    
-    document.body.appendChild(touchClone);
-}
-
-function handleTouchMove(e) {
-    e.preventDefault();
-    if (!touchClone) return;
-    const touch = e.touches[0];
-    touchClone.style.left = (touch.clientX - 24) + 'px';
-    touchClone.style.top = (touch.clientY - 26) + 'px';
-}
-
-function handleTouchEnd(e) {
-    if (!touchClone) return;
-    touchClone.remove();
-    touchClone = null;
-
-    const touch = e.changedTouches[0];
-    const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
-    
-    if (dropTarget && dropTarget.classList.contains('drop-slot') && dropTarget.children.length === 0) {
-        dropTarget.appendChild(draggedTile);
-        draggedTile.classList.add('placed');
-        checkWordCompletion();
-    }
-    draggedTile = null;
-}
-
-function resetCurrentWord() {
-    const q = levelDatabase[currentLevelIndex].questions[currentQuestionIndex];
-    setupDragAndDropGame(q.answer, q.scrambled);
-    document.getElementById('feedbackPromptZone').innerText = '';
-}
-
-function checkWordCompletion() {
-    const q = levelDatabase[currentLevelIndex].questions[currentQuestionIndex];
+function checkLevel1Completion() {
+    const q = levelData[1][currentStep];
     const slots = document.querySelectorAll('.drop-slot');
-    let constructedWord = '';
-    let filledSlotsCount = 0;
+    let constructed = '';
+    let count = 0;
 
     slots.forEach(slot => {
         if (slot.children.length > 0) {
-            constructedWord += slot.children[0].innerText;
-            filledSlotsCount++;
+            constructed += slot.children[0].innerText;
+            count++;
         }
     });
 
-    if (filledSlotsCount === q.answer.length) {
+    if (count === q.answer.length) {
         clearInterval(timer);
-        const feedback = document.getElementById('feedbackPromptZone');
-
-        if (constructedWord === q.answer) {
-            feedback.innerText = "🎉 Amazing! Correct Word!";
-            feedback.style.color = "#00b894";
-            score += 15;
-            badges += 1;
-            playAudio('right');
-
-            confetti({ particleCount: 90, spread: 70, origin: { y: 0.7 } });
-        } else {
-            feedback.innerText = "❌ Oops! Incorrect Word!";
-            feedback.style.color = "#d63031";
-            playAudio('wrong');
-        }
-
-        document.getElementById('scoreSpan').innerText = score;
-        document.getElementById('badgeSpan').innerText = badges;
-        document.getElementById('advanceStepBtn').style.display = 'inline-block';
+        if (constructed === q.answer) handleSuccess();
+        else handleFailure();
     }
 }
 
+/* Category 2: Catch the Right Word Game */
+function renderLevel2(container) {
+    const q = levelData[2][currentStep];
+    container.innerHTML = `
+        <div class="prompt-text">${q.prompt}</div>
+        <div class="catch-arena" id="catchArena"></div>
+    `;
+
+    const arena = document.getElementById('catchArena');
+    const words = [q.correct, ...q.distractors].sort(() => Math.random() - 0.5);
+
+    words.forEach((word, index) => {
+        const node = document.createElement('div');
+        node.className = 'falling-word';
+        node.innerText = word;
+        node.style.left = (15 + index * 22) + '%';
+        node.dataset.speed = (1.2 + Math.random() * 0.8);
+        node.dataset.top = -40 - (index * 30);
+        
+        node.onclick = () => {
+            clearInterval(timer);
+            cancelAnimationFrame(catchAnimationTimer);
+            if (word === q.correct) handleSuccess();
+            else handleFailure();
+        };
+
+        arena.appendChild(node);
+    });
+
+    function animateFalling() {
+        const elements = document.querySelectorAll('.falling-word');
+        elements.forEach(el => {
+            let top = parseFloat(el.dataset.top);
+            top += parseFloat(el.dataset.speed);
+            if (top > 220) top = -40;
+            el.dataset.top = top;
+            el.style.top = top + 'px';
+        });
+        catchAnimationTimer = requestAnimationFrame(animateFalling);
+    }
+    animateFalling();
+}
+
+/* Category 3: Put in Right Bucket */
+function renderLevel3(container) {
+    const q = levelData[3][currentStep];
+    container.innerHTML = `
+        <div class="prompt-text">Drag the item to the CORRECT Bucket!</div>
+        <div class="draggable-item" id="dragItem" draggable="true">${q.item}</div>
+        <div class="buckets-container">
+            <div class="bucket-node" id="bucketNatural">🌿 Natural</div>
+            <div class="bucket-node" id="bucketManMade">🚌 Man-Made</div>
+        </div>
+    `;
+
+    const dragItem = document.getElementById('dragItem');
+    dragItem.addEventListener('dragstart', () => { draggedTile = dragItem; });
+
+    ['bucketNatural', 'bucketManMade'].forEach(id => {
+        const b = document.getElementById(id);
+        b.addEventListener('dragover', e => e.preventDefault());
+        b.addEventListener('drop', () => {
+            clearInterval(timer);
+            const targetBucket = id === 'bucketNatural' ? 'Natural' : 'Man-Made';
+            if (q.correctBucket === targetBucket) handleSuccess();
+            else handleFailure();
+        });
+    });
+}
+
+/* Category 4: Computer Uses Quiz */
+function renderLevel4(container) {
+    const q = levelData[4][currentStep];
+    container.innerHTML = `
+        <div class="prompt-text">${q.prompt}</div>
+        <div style="font-size: 50px; margin-bottom: 10px;">${q.image}</div>
+        <div class="matching-grid" id="matchGrid"></div>
+    `;
+
+    const grid = document.getElementById('matchGrid');
+    q.options.forEach(opt => {
+        const btn = document.createElement('div');
+        btn.className = 'matching-card';
+        btn.innerText = opt;
+        btn.onclick = () => {
+            clearInterval(timer);
+            if (opt === q.answer) handleSuccess();
+            else handleFailure();
+        };
+        grid.appendChild(btn);
+    });
+}
+
+function handleSuccess() {
+    const feedback = document.getElementById('feedbackPromptZone');
+    feedback.innerText = "🎉 Excellent Job! Correct!";
+    feedback.style.color = "#00b894";
+    score += 10;
+    badges += 1;
+    playAudio('right');
+
+    document.getElementById('scoreSpan').innerText = score;
+    document.getElementById('badgeSpan').innerText = badges;
+    document.getElementById('advanceStepBtn').style.display = 'inline-block';
+    confetti({ particleCount: 70, spread: 60, origin: { y: 0.7 } });
+}
+
+function handleFailure() {
+    const feedback = document.getElementById('feedbackPromptZone');
+    feedback.innerText = "❌ Oops! Try the next one!";
+    feedback.style.color = "#d63031";
+    playAudio('wrong');
+    document.getElementById('advanceStepBtn').style.display = 'inline-block';
+}
+
 function nextQuestion() {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < levelDatabase[currentLevelIndex].questions.length) {
-        loadQuestion();
+    currentStep++;
+    if (currentStep < levelData[currentLevel].length) {
+        loadChallenge();
     } else {
         finishLevel();
     }
@@ -718,12 +793,11 @@ function nextQuestion() {
 
 function finishLevel() {
     clearInterval(timer);
-    document.getElementById('statusL' + (currentLevelIndex + 1)).innerText = "Completed ⭐";
+    cancelAnimationFrame(catchAnimationTimer);
     document.getElementById('endScoreDisplay').innerText = score;
     document.getElementById('endBadgeDisplay').innerText = badges;
     showScreen('pageCompletion');
-
-    confetti({ particleCount: 150, spread: 90, origin: { y: 0.5 } });
+    confetti({ particleCount: 140, spread: 80, origin: { y: 0.5 } });
 }
 </script>
 </body>

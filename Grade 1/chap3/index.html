@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Starting and Shutting down the computer</title>
+    <title>Innovine ICT Grade 1 - Chapter 3 Quest</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
@@ -39,44 +39,46 @@
             padding: 15px;
         }
 
-        /* 5-Second Innovine Splash Screen */
+        /* 1. First Page: Clean Full-Screen Splash Screen matching your image */
         #splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: var(--white);
+            background-color: #FFFFFF;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            gap: 20px;
+            gap: 30px;
             z-index: 9999;
-            transition: opacity 0.6s ease;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
         }
 
         #splash-screen img.logo {
-            max-width: 280px;
-            width: 70%;
+            max-width: 380px;
+            width: 80%;
             height: auto;
-            animation: pulseSoft 2s infinite ease-in-out;
+            object-fit: contain;
         }
 
         .loading-track {
-            width: 65%;
-            max-width: 260px;
-            height: 16px;
-            background: #E0E0E0;
-            border-radius: 10px;
+            width: 320px;
+            max-width: 75%;
+            height: 14px;
+            background: #E8ECEF;
+            border-radius: 20px;
             overflow: hidden;
-            border: 2px solid #BDBDBD;
+            border: 1px solid #D0D7DE;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .loading-bar-fill {
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, var(--accent-orange), var(--yellow-bright));
+            background: linear-gradient(90deg, #FF6F00, #FF9800);
+            border-radius: 20px;
             transform: translateX(-100%);
             animation: startLoad 5s forwards linear;
         }
@@ -102,7 +104,6 @@
         .container.active { display: flex; }
 
         @keyframes popIn { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-        @keyframes pulseSoft { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes startLoad { from { transform: translateX(-100%); } to { transform: translateX(0%); } }
 
         /* Navigation Header */
@@ -265,13 +266,12 @@
     <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
-    <!-- 1. Innovine Logo Splash Screen (First 5 Seconds) -->
+    <!-- 1. First Page: Clean Innovine Logo Splash Screen -->
     <div id="splash-screen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" class="logo" onerror="this.src='https://via.placeholder.com/280x120?text=Innovine+ICT'">
+        <img src="assets/innovine-logo.png" alt="Innovine Solutions Logo" class="logo" onerror="this.src='https://via.placeholder.com/380x150?text=INNOVINE+SOLUTIONS'">
         <div class="loading-track">
             <div class="loading-bar-fill"></div>
         </div>
-        <p style="font-weight: bold; color: var(--accent-orange);">Loading Grade 1 ICT Quest...</p>
     </div>
 
     <!-- 2. Instruction Page with Dynamic Hint Questions -->
@@ -357,7 +357,6 @@
     </div>
 
     <script>
-        // Trigger Correct Sound File (assets/correct.mp3)
         function playCorrectSound() {
             const audioCorrect = document.getElementById('audio-correct');
             if (audioCorrect) {
@@ -366,7 +365,6 @@
             }
         }
 
-        // Trigger Wrong Sound File (assets/wrong.mp3)
         function playWrongSound() {
             const audioWrong = document.getElementById('audio-wrong');
             if (audioWrong) {
@@ -375,7 +373,6 @@
             }
         }
 
-        // Fallback Web Audio Synthesizer if local MP3 is blocked by browser interaction policies
         let audioCtx = null;
         function getAudioContext() {
             if (!audioCtx) {
@@ -451,17 +448,15 @@
         ];
         let currentBunnyStep = 1;
 
-        // 5-Second Splash Screen Timer
+        // 5-Second Splash Screen Timer matching clean image layout
         window.addEventListener('load', () => {
             document.getElementById('dynamic-instruction-hint').innerText = hintQuestions[Math.floor(Math.random() * hintQuestions.length)];
 
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
                 splash.style.opacity = '0';
-                setTimeout(() => {
-                    splash.style.display = 'none';
-                    showScreen('page-instructions');
-                }, 600);
+                splash.style.visibility = 'hidden';
+                showScreen('page-instructions');
             }, 5000);
         });
 

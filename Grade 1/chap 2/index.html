@@ -125,13 +125,22 @@
             width: 100%;
             display: flex;
             justify-content: space-between;
+            align-items: center;
             background: white;
             padding: 12px 20px;
             border-radius: 16px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.04);
             font-weight: 800;
-            font-size: 18px;
+            font-size: 17px;
             flex-shrink: 0;
+        }
+
+        .timer-badge {
+            background: #fee2e2;
+            color: var(--brick-red);
+            padding: 4px 10px;
+            border-radius: 10px;
+            border: 2px solid #fca5a5;
         }
 
         /* Main Game Arena Adaptive Display Card */
@@ -300,6 +309,17 @@
             font-weight: bold;
         }
 
+        .score-board-box {
+            background: #22c55e;
+            padding: 15px 30px;
+            border-radius: 20px;
+            color: white;
+            font-size: 26px;
+            font-weight: 900;
+            box-shadow: 0 6px 0 #15803d;
+            margin: 10px 0;
+        }
+
         @keyframes moveConveyorLoop {
             0% { transform: translateX(0); }
             100% { transform: translateX(calc(-50% - 12px)); }
@@ -339,6 +359,7 @@
     <div id="screen-game" class="screen-layout">
         <div class="hud-row">
             <span id="hud-level-lbl">Level: 1/3</span>
+            <span id="hud-timer-lbl" class="timer-badge">⏳ 60s</span>
             <span id="hud-score-lbl">Points: 0</span>
         </div>
 
@@ -378,12 +399,12 @@
     <div id="screen-victory" class="screen-layout overlay-screen" style="background: #1e1b4b;">
         <div style="font-size: 90px; animation: floatMove 2.5s infinite ease-in-out;">🏆</div>
         <h1 style="color: #f59e0b; font-size: 32px; font-weight: 900;">Computer Genius!</h1>
+        <div id="final-score-display" class="score-board-box">Total Score: 0</div>
         <p style="font-size: 18px; max-width: 450px; color: #cbd5e1; font-weight: 600;">You identified parts of a computer and know how to safely maintain a smart computer lab!</p>
         <button class="btn-push" onclick="restartWholeApp()">Play Again 🔄</button>
     </div>
 
     <script>
-        // Automatic image path failure protection script setup
         let localImagePathsValid = true;
 
         const splashLogo = document.getElementById('splash-logo-img');
@@ -405,8 +426,11 @@
         let roundItem = null;
         let setList = [];
         let controlLock = false;
+        
+        // 60-Second Auto Question Rotation Timer Setup
+        let questionTimerInterval = null;
+        let timeRemaining = 60;
 
-        // Dataset updated to match exact image visuals and present clear "Do" vs "Don't" choices
         const contentDataMap = {
             level1: {
                 rounds: [
@@ -477,28 +501,28 @@
             level3: {
                 rounds: [
                     {
-                        prompt: "Look at the picture!\nIs sitting upright with proper posture a DO or a DON'T?",
+                        prompt: "Look at this picture!\nIs sitting straight with proper posture a DO or a DON'T?",
                         imgSrc: "assets/proper-posture.PNG",
                         emojiFallback: "🧘",
                         isSafe: true,
-                        hint: "Sitting upright with back support prevents neck strain! This is a DO! 👍"
+                        hint: "Sitting upright with proper back support prevents neck & back strain! This is a DO! 👍"
                     },
                     {
-                        prompt: "Look at the picture!\nIs sitting in your assigned seat in the computer lab a DO or a DON'T?",
+                        prompt: "Look at this picture!\nIs sitting neatly in your designated assigned seat a DO or a DON'T?",
                         imgSrc: "assets/assigned-seat.PNG",
                         emojiFallback: "🪑",
                         isSafe: true,
-                        hint: "Sitting in your assigned seat keeps the computer lab disciplined and orderly! This is a DO! 👍"
+                        hint: "Sitting in your assigned seat maintains discipline and safety in the computer lab! This is a DO! 👍"
                     },
                     {
-                        prompt: "Look at the picture!\nIs using the computer properly for learning and educational tasks a DO or a DON'T?",
+                        prompt: "Look at this picture!\nChildren are playing roughly / treating computer gear as a play toy. Is this a DO or a DON'T?",
                         imgSrc: "assets/play-pc.PNG",
                         emojiFallback: "🎮",
-                        isSafe: true,
-                        hint: "Working responsibly and following instructions at the computer is a DO! 👍"
+                        isSafe: false,
+                        hint: "Playing roughly or misusing computer hardware can damage sensitive parts! This is a DON'T! 👎"
                     }
                 ],
-                summary: "Maintain healthy lab habits! Maintain proper posture, follow assigned seating rules, and use computer time productively!"
+                summary: "Maintain healthy lab habits! Practice proper posture, sit at assigned seats, and treat computer equipment gently!"
             }
         };
 
@@ -544,6 +568,23 @@
             loadRoundData();
         }
 
+        function start60SecTimer() {
+            clearInterval(questionTimerInterval);
+            timeRemaining = 60;
+            document.getElementById('hud-timer-lbl').innerText = "⏳ 60s";
+
+            questionTimerInterval = setInterval(() => {
+                timeRemaining--;
+                document.getElementById('hud-timer-lbl').innerText = `⏳ ${timeRemaining}s`;
+
+                if (timeRemaining <= 0) {
+                    clearInterval(questionTimerInterval);
+                    playAudioClip('audio-wrong');
+                    advanceRoundIndex();
+                }
+            }, 1000);
+        }
+
         function loadRoundData() {
             controlLock = false;
             roundItem = setList[roundIndex];
@@ -557,14 +598,13 @@
             const emojiElement = document.getElementById('canvas-target-emoji');
             document.getElementById('canvas-prompt-msg').innerText = roundItem.prompt;
 
-            // Set up image link error verification rules
             if (roundItem.imgSrc !== "" && localImagePathsValid) {
                 imgElement.src = roundItem.imgSrc;
                 imgElement.style.display = "block";
                 emojiElement.style.display = "none";
                 
                 imgElement.onerror = function() {
-                    localImagePathsValid = false; // Flag error globally
+                    localImagePathsValid = false;
                     imgElement.style.display = "none";
                     emojiElement.innerText = roundItem.emojiFallback;
                     emojiElement.style.display = "block";
@@ -578,6 +618,9 @@
             if (activeLevel === 1 || activeLevel === 2) {
                 buildItemConveyorBelt();
             }
+
+            // Start 60 second timer for every question
+            start60SecTimer();
         }
 
         function buildItemConveyorBelt() {
@@ -612,6 +655,7 @@
         function processPlayerClick(e) {
             if (controlLock) return;
             controlLock = true;
+            clearInterval(questionTimerInterval);
 
             const btn = e.currentTarget;
             const isCorrect = btn.dataset.correct === "true";
@@ -638,6 +682,7 @@
         function evaluateStampInput(pressedSafeButton) {
             if (controlLock) return;
             controlLock = true;
+            clearInterval(questionTimerInterval);
 
             const targetIsSafe = roundItem.isSafe;
             const overlay = document.getElementById('stamp-alert-overlay');
@@ -673,6 +718,7 @@
         }
 
         function advanceRoundIndex() {
+            clearInterval(questionTimerInterval);
             roundIndex++;
             if (roundIndex < setList.length) {
                 loadRoundData();
@@ -700,6 +746,7 @@
                 changeScreen('screen-game');
             } else {
                 playAudioClip('audio-cheer');
+                document.getElementById('final-score-display').innerText = `Total Score: ${scoreCounter} Points`;
                 changeScreen('screen-victory');
             }
         }

@@ -233,7 +233,7 @@
             max-width: 280px;
         }
 
-        /* Level 3 Custom Safety Habit Buttons */
+        /* Level 3 Custom Safety Habit Buttons (Do's and Don'ts) */
         .stamp-row {
             display: none;
             width: 100%;
@@ -244,12 +244,16 @@
         .btn-stamp {
             border: none;
             padding: 20px 10px;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 900;
             color: white;
             border-radius: 24px;
             cursor: pointer;
             box-shadow: 0 7px 0 rgba(0,0,0,0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
         .btn-danger { background: var(--brick-red); box-shadow: 0 7px 0 #b91c1c; }
         .btn-safe { background: var(--grass-green); box-shadow: 0 7px 0 #15803d; }
@@ -352,8 +356,8 @@
         </div>
 
         <div id="wrapper-stamps" class="stamp-row">
-            <button class="btn-stamp btn-danger" onclick="evaluateStampInput(false)">❌ BAD HABIT</button>
-            <button class="btn-stamp btn-safe" onclick="evaluateStampInput(true)">💚 GOOD HABIT</button>
+            <button class="btn-stamp btn-danger" onclick="evaluateStampInput(false)">👎 DON'T</button>
+            <button class="btn-stamp btn-safe" onclick="evaluateStampInput(true)">👍 DO</button>
         </div>
     </div>
 
@@ -402,7 +406,7 @@
         let setList = [];
         let controlLock = false;
 
-        // Dataset matching exact available file names from the repository images
+        // Dataset updated to match exact image visuals and present clear "Do" vs "Don't" choices
         const contentDataMap = {
             level1: {
                 rounds: [
@@ -473,25 +477,25 @@
             level3: {
                 rounds: [
                     {
-                        prompt: "Look at this picture! Sitting straight with back support while operating a computer prevents back pain. Is this a GOOD HABIT or BAD HABIT?",
+                        prompt: "Look at the picture!\nIs sitting upright with proper posture a DO or a DON'T?",
                         imgSrc: "assets/proper-posture.PNG",
                         emojiFallback: "🧘",
                         isSafe: true,
-                        hint: "Sitting with proper posture protects your back and eyes! It is a GOOD HABIT! 💚"
+                        hint: "Sitting upright with back support prevents neck strain! This is a DO! 👍"
                     },
                     {
-                        prompt: "Look at this picture! Students sit quietly at their assigned desk numbers in the lab. Is this a GOOD HABIT or BAD HABIT?",
+                        prompt: "Look at the picture!\nIs sitting in your assigned seat in the computer lab a DO or a DON'T?",
                         imgSrc: "assets/assigned-seat.PNG",
                         emojiFallback: "🪑",
                         isSafe: true,
-                        hint: "Sitting in your assigned seat keeps the lab organized and safe! It is a GOOD HABIT! 💚"
+                        hint: "Sitting in your assigned seat keeps the computer lab disciplined and orderly! This is a DO! 👍"
                     },
                     {
-                        prompt: "Look at this picture! Playing learning games carefully on the computer under teacher guidance. Is this a GOOD HABIT or BAD HABIT?",
+                        prompt: "Look at the picture!\nIs using the computer properly for learning and educational tasks a DO or a DON'T?",
                         imgSrc: "assets/play-pc.PNG",
                         emojiFallback: "🎮",
                         isSafe: true,
-                        hint: "Using the computer responsibly for interactive learning is a GOOD HABIT! 💚"
+                        hint: "Working responsibly and following instructions at the computer is a DO! 👍"
                     }
                 ],
                 summary: "Maintain healthy lab habits! Maintain proper posture, follow assigned seating rules, and use computer time productively!"
@@ -645,11 +649,11 @@
                 playAudioClip('audio-right');
 
                 if (targetIsSafe) {
-                    overlay.innerText = "GOOD HABIT 💚";
+                    overlay.innerText = "DO 👍";
                     overlay.style.color = "var(--grass-green)";
                     overlay.style.border = "6px solid var(--grass-green)";
                 } else {
-                    overlay.innerText = "BAD HABIT ❌";
+                    overlay.innerText = "DON'T 👎";
                     overlay.style.color = "var(--brick-red)";
                     overlay.style.border = "6px solid var(--brick-red)";
                 }

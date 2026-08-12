@@ -325,7 +325,7 @@
 
 <body>
 
-    <!-- Native Audio Nodes -->
+    <!-- Native Audio Elements -->
     <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 
@@ -511,11 +511,20 @@
         const feedbackEl = document.getElementById('feedback');
         const nextBtnEl = document.getElementById('nextBtn');
 
+        // Robust sound player function handling user gesture unlock and DOM audio playback
         function playAudio(elementId) {
-            const audio = document.getElementById(elementId);
-            if (audio) {
-                audio.currentTime = 0;
-                audio.play().catch(() => {});
+            const audioElem = document.getElementById(elementId);
+            if (audioElem) {
+                audioElem.currentTime = 0;
+                const promise = audioElem.play();
+                if (promise !== undefined) {
+                    promise.catch(err => {
+                        console.log("Audio playback error handled:", err);
+                        // Dynamic audio fallback if pre-rendered element fails
+                        const dynamicAudio = new Audio(audioElem.src);
+                        dynamicAudio.play().catch(e => console.log("Fallback blocked:", e));
+                    });
+                }
             }
         }
 
@@ -525,6 +534,13 @@
                 alert("Please enter your name to begin!");
                 return;
             }
+
+            // Prime audio context on user interaction to bypass browser autoplay policies
+            const correctAudio = document.getElementById('correctSound');
+            const wrongAudio = document.getElementById('wrongSound');
+            if (correctAudio) { correctAudio.load(); }
+            if (wrongAudio) { wrongAudio.load(); }
+
             document.getElementById('startScreen').style.display = 'none';
             document.getElementById('gameScreen').style.display = 'block';
             showQuestion();

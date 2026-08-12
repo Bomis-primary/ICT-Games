@@ -7,18 +7,21 @@
     <style>
         * {
             box-sizing: border-box;
-            font-family: 'Comic Sans MS', 'Chalkboard SE', sans-serif;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
             margin: 0;
             padding: 0;
             touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
         }
+
         body {
             background: linear-gradient(180deg, #a7f3d0 0%, #059669 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden;
+            overflow-x: hidden;
             padding: 10px;
         }
 
@@ -27,7 +30,7 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
+            width: 100vw;
             height: 100vh;
             background-color: #ffffff;
             display: flex;
@@ -37,16 +40,18 @@
             gap: 20px;
             z-index: 9999;
             transition: opacity 0.6s ease-out;
+            padding: 20px;
         }
         #splash-screen img {
-            max-width: 75%;
-            max-height: 60vh;
+            width: 80%;
+            max-width: 320px;
+            max-height: 50vh;
             object-fit: contain;
         }
         .loading-track {
-            width: 50%;
+            width: 60%;
             max-width: 250px;
-            height: 10px;
+            height: 12px;
             background: #e2e8f0;
             border-radius: 10px;
             overflow: hidden;
@@ -65,38 +70,41 @@
             to { transform: translateX(0%); }
         }
 
-        /* Main Stage Frame */
+        /* Main Stage Frame (Responsive Container) */
         .safari-card {
             display: none;
             width: 100%;
-            max-width: 720px;
+            max-width: 750px;
+            min-height: 500px;
             background: #fffbfa;
             border: 6px solid #b45309;
             border-radius: 24px;
             box-shadow: 0 12px 36px rgba(0,0,0,0.3);
-            padding: 25px;
+            padding: clamp(15px, 4vw, 30px);
             text-align: center;
             position: relative;
+            margin: auto;
         }
 
-        h1 { color: #047857; margin-top: 0; font-size: clamp(24px, 5vw, 32px); text-shadow: 1px 1px 2px #fef08a; }
-        p { color: #374151; font-size: clamp(16px, 3.5vw, 18px); line-height: 1.5; }
+        h1 { color: #047857; margin-top: 0; font-size: clamp(22px, 5vw, 32px); text-shadow: 1px 1px 2px #fef08a; }
+        p { color: #374151; font-size: clamp(15px, 3.5vw, 18px); line-height: 1.5; }
 
         /* Robot Mascot UI */
         .robot-speaker {
             background: #e0f2fe;
             border: 3px solid #0284c7;
             border-radius: 16px;
-            padding: 15px;
-            margin: 20px 0;
+            padding: 12px 16px;
+            margin: 15px 0;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             text-align: left;
         }
         .robot-avatar {
-            font-size: 45px;
+            font-size: clamp(35px, 8vw, 50px);
             animation: bounce 2s infinite alternate;
+            flex-shrink: 0;
         }
 
         .btn-safari {
@@ -104,12 +112,15 @@
             color: white;
             border: 4px solid #d97706;
             border-radius: 16px;
-            padding: 14px 35px;
+            padding: 12px 30px;
             font-size: clamp(18px, 4vw, 22px);
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 6px 0 #b45309;
             transition: all 0.1s ease;
+            width: 100%;
+            max-width: 300px;
+            margin-top: 10px;
         }
         .btn-safari:active {
             transform: translateY(4px);
@@ -122,12 +133,12 @@
             justify-content: space-between;
             background: #fef08a;
             border: 3px solid #f59e0b;
-            padding: 10px 20px;
+            padding: 8px 16px;
             border-radius: 12px;
             font-weight: bold;
-            font-size: clamp(16px, 3.5vw, 18px);
+            font-size: clamp(14px, 3.5vw, 18px);
             color: #78350f;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         /* Jungle Sightings Viewbox */
@@ -135,9 +146,9 @@
             background: #ecfdf5;
             border: 4px solid #10b981;
             border-radius: 16px;
-            padding: 15px;
-            margin-bottom: 20px;
-            min-height: 180px;
+            padding: 12px;
+            margin-bottom: 15px;
+            min-height: 160px;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -145,30 +156,35 @@
             position: relative;
         }
         .jungle-viewbox img {
-            max-height: 130px;
+            max-height: clamp(90px, 20vh, 140px);
             max-width: 100%;
             object-fit: contain;
             border-radius: 8px;
             filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
         }
 
-        /* Interactive Choice Labels */
+        /* Responsive Grid Choices for Mobile & Laptop */
         .labels-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 10px;
+            width: 100%;
         }
         .btn-label {
             background: #ffffff;
             border: 3px solid #cbd5e1;
             border-radius: 14px;
-            padding: 14px;
-            font-size: clamp(16px, 3.5vw, 19px);
+            padding: 12px;
+            font-size: clamp(15px, 3.5vw, 18px);
             font-weight: bold;
             color: #1f2937;
             cursor: pointer;
             transition: all 0.2s;
             box-shadow: 0 4px 0 #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 50px;
         }
         .btn-label:hover {
             background: #f0fdf4;
@@ -177,14 +193,19 @@
         }
 
         /* Score & Badge Elements */
-        .score-banner { font-size: 56px; font-weight: 900; color: #10b981; margin: 15px 0; }
+        .score-banner { 
+            font-size: clamp(40px, 10vw, 60px); 
+            font-weight: 900; 
+            color: #10b981; 
+            margin: 10px 0; 
+        }
         .safari-badge {
-            width: 140px;
-            height: 140px;
+            width: clamp(110px, 25vw, 150px);
+            height: clamp(110px, 25vw, 150px);
             background: linear-gradient(135deg, #fbbf24, #f59e0b);
-            border: 6px solid #fff;
+            border: 5px solid #fff;
             border-radius: 50%;
-            margin: 15px auto;
+            margin: 10px auto;
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -196,7 +217,7 @@
 
         @keyframes bounce {
             0% { transform: translateY(0); }
-            100% { transform: translateY(-10px); }
+            100% { transform: translateY(-8px); }
         }
     </style>
 </head>
@@ -216,11 +237,11 @@
         <div class="robot-speaker">
             <div class="robot-avatar">🤖</div>
             <div>
-                <strong>Pixel the Robot says:</strong><br>
-                "BEEP-BOOP! Welcome tracker! The wild monkeys took our MS Paint tools and scattered them across the Paint Jungle! Can you spot the hidden equipment and help me label them correctly?"
+                <strong style="color: #0369a1;">Pixel the Robot says:</strong><br>
+                <span style="font-size: 15px;">"BEEP-BOOP! Welcome tracker! Wild monkeys took our MS Paint tools into the jungle! Help me spot and label them!"</span>
             </div>
         </div>
-        <p>Look at the hidden jungle images closely, identify the Paint feature, and clear all 6 mystery rounds to get your Explorer Badge!</p>
+        <p>Look at the jungle images closely, select the right Paint feature, and clear all 6 rounds to win your Explorer Badge!</p>
         <button class="btn-safari" onclick="enterJungle()">Enter Jungle! 🧭</button>
     </div>
 
@@ -231,21 +252,21 @@
             <span id="hud-score">Stars: 0 ⭐</span>
         </div>
         <div class="jungle-viewbox">
-            <div style="font-size: 32px; margin-bottom: 8px;" id="jungle-scenery-icon">🌿</div>
+            <div style="font-size: 28px; margin-bottom: 4px;" id="jungle-scenery-icon">🌿</div>
             <img id="safari-target-img" src="" alt="Jungle Discovery" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-            <div style="display:none; font-size: 50px; margin: 10px 0;">🎨</div>
+            <div style="display:none; font-size: 45px; margin: 10px 0;">🎨</div>
         </div>
-        <p id="safari-clue" style="font-weight: bold; margin-bottom: 20px; font-size: 19px; color: #065f46;"></p>
+        <p id="safari-clue" style="font-weight: bold; margin-bottom: 15px; font-size: clamp(15px, 3.5vw, 18px); color: #065f46;"></p>
         <div class="labels-grid" id="labels-box"></div>
     </div>
 
     <!-- 4. SAFARI SCORECARD & BADGE WINDOW -->
     <div id="scorecard-screen" class="safari-card">
         <h1>Jungle Expedition Complete! 🏁</h1>
-        <p>Pixel the Robot checked your digital tracking board! Your score:</p>
+        <p>Your digital tracking board score:</p>
         <div class="score-banner" id="final-stars">0 ⭐</div>
         <div id="badge-display-zone"></div>
-        <p id="safari-feedback" style="font-size: 18px; font-weight: 600; margin: 15px 0;"></p>
+        <p id="safari-feedback" style="font-size: 16px; font-weight: 600; margin: 10px 0;"></p>
         <button class="btn-safari" onclick="restartSafari()">Explore Again 🔄</button>
     </div>
 
@@ -320,7 +341,7 @@
             }, 5000); 
         });
 
-        // Audio Execution Engine
+        // Safe Audio Engine
         function playAudio(elementId) {
             const audio = document.getElementById(elementId);
             if (audio) {
@@ -330,7 +351,7 @@
         }
 
         function enterJungle() {
-            // Unlock browser audio context on initial button press
+            // Unlock audio permissions on tap/click
             const rightSnd = document.getElementById('sound-right');
             const wrongSnd = document.getElementById('sound-wrong');
             if (rightSnd) rightSnd.load();
@@ -401,21 +422,21 @@
             if (scoreStars === 60) {
                 badgeZone.innerHTML = `
                     <div class="safari-badge">
-                        <span style="font-size:42px;">👑</span>
-                        <span style="font-size:12px; letter-spacing:1px; text-transform:uppercase;">JUNGLE KING</span>
+                        <span style="font-size:36px;">👑</span>
+                        <span style="font-size:10px; letter-spacing:1px; text-transform:uppercase;">JUNGLE KING</span>
                     </div>`;
                 feedbackBox.style.color = "#047857";
-                feedbackBox.innerText = "Phenomenal! You labeled every single tool correctly! Pixel the Robot crowns you King of the Paint Jungle!";
+                feedbackBox.innerText = "Phenomenal! You labeled every tool correctly! Pixel the Robot crowns you King of the Paint Jungle!";
             } else if (scoreStars >= 30) {
                 badgeZone.innerHTML = `
                     <div class="safari-badge" style="background: linear-gradient(135deg, #a1a1aa, #4b5563);">
-                        <span style="font-size:42px;">🤠</span>
-                        <span style="font-size:12px; letter-spacing:1px; text-transform:uppercase;">SAFARI SCOUT</span>
+                        <span style="font-size:36px;">🤠</span>
+                        <span style="font-size:10px; letter-spacing:1px; text-transform:uppercase;">SAFARI SCOUT</span>
                     </div>`;
                 feedbackBox.style.color = "#1e3a8a";
                 feedbackBox.innerText = "Terrific tracking work! You located multiple core tools inside the brush trees.";
             } else {
-                badgeZone.innerHTML = `<div style="font-size: 60px; margin: 15px 0;">🎒</div>`;
+                badgeZone.innerHTML = `<div style="font-size: 50px; margin: 10px 0;">🎒</div>`;
                 feedbackBox.style.color = "#b45309";
                 feedbackBox.innerText = "Let's load up your digital compass and re-explore the layout lanes!";
             }

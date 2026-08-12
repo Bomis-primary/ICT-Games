@@ -35,62 +35,31 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* Page 1: 5-Second Splash Screen */
-#splashScreen {
+/* Page 1: Brand Splash Screen */
+#brand-splash {
     position: fixed;
     top: 0;
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: #f1f2f6;
+    background: #ffffff;
     z-index: 1000;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
     transition: opacity 0.5s ease;
 }
 
-.logo-container {
-    width: 300px;
-    height: 180px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.logo-img {
-    max-width: 100%;
-    max-height: 100%;
+#brand-splash img {
+    max-width: 320px;
+    max-height: 200px;
     object-fit: contain;
     animation: bounceLogo 2s infinite ease-in-out;
 }
 
 @keyframes bounceLogo {
     0%, 100% { transform: translateY(0) scale(1); }
-    50% { transform: translateY(-10px) scale(1.04); }
-}
-
-.loader-container {
-    width: 220px;
-    height: 12px;
-    background: #dcdde1;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.loader-progress {
-    width: 0%;
-    height: 100%;
-    background: linear-gradient(90deg, #ff7675, #ffea79);
-    border-radius: 10px;
-    animation: loadProgress 5s linear forwards;
-}
-
-@keyframes loadProgress {
-    to { width: 100%; }
+    50% { transform: translateY(-8px) scale(1.03); }
 }
 
 /* Master Game Container */
@@ -131,7 +100,7 @@ body {
     display: flex;
 }
 
-/* Page Title Headers */
+/* Page Header */
 .page-header {
     text-align: center;
     background: #74b9ff;
@@ -141,10 +110,10 @@ body {
     font-size: 24px;
     font-weight: bold;
     box-shadow: 0 4px 0 #0984e3;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
-/* Page 2: Instructions View */
+/* Instructions Screen */
 .instruction-body {
     flex-grow: 1;
     display: flex;
@@ -225,7 +194,7 @@ body {
 .level-card .title { font-size: 20px; font-weight: bold; color: #2d3436; }
 .level-card .status { font-size: 14px; color: #00b894; margin-top: 5px; font-weight: bold; }
 
-/* Gameplay Area */
+/* Gameplay Header & Scoreboard */
 .score-header {
     display: flex;
     justify-content: space-between;
@@ -244,20 +213,20 @@ body {
     align-items: center;
     justify-content: center;
     flex-grow: 1;
-    margin: 10px 0;
+    margin: 5px 0;
 }
 
 .question-text {
-    font-size: 24px;
+    font-size: 22px;
     color: #2d3436;
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     text-align: center;
     font-weight: bold;
 }
 
 .visual-emoji {
-    font-size: 80px;
-    margin-bottom: 10px;
+    font-size: 65px;
+    margin-bottom: 5px;
     display: inline-block;
     animation: floating 2.5s infinite ease-in-out;
 }
@@ -267,29 +236,75 @@ body {
     50% { transform: translateY(-8px); }
 }
 
-.options-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+/* Interactive Drag and Drop Elements */
+.drop-slots-container, .letter-pool-container {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 10px 0;
     width: 100%;
 }
 
-.option-node {
-    background: #ffeaa7;
-    border: 3px solid #fdcb6e;
-    padding: 14px;
-    border-radius: 16px;
-    font-size: 20px;
-    font-weight: bold;
-    color: #2d3436;
-    cursor: pointer;
-    text-align: center;
-    box-shadow: 0 4px 0 #e1b12c;
+.drop-slot {
+    width: 48px;
+    height: 54px;
+    border: 3px dashed #74b9ff;
+    border-radius: 12px;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.option-node:active {
-    transform: translateY(3px);
-    box-shadow: 0 1px 0 #e1b12c;
+.drop-slot.hovered {
+    background: #eccc68;
+    border-color: #ffa502;
+}
+
+.letter-tile {
+    width: 48px;
+    height: 52px;
+    background: #ff7675;
+    color: white;
+    font-size: 26px;
+    font-weight: bold;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 0 #d63031;
+    cursor: grab;
+    touch-action: none;
+}
+
+.letter-tile:active {
+    cursor: grabbing;
+    transform: scale(1.08);
+}
+
+.letter-tile.placed {
+    background: #0984e3;
+    box-shadow: 0 4px 0 #025089;
+}
+
+.unscramble-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 5px;
+}
+
+.reset-btn {
+    padding: 8px 16px;
+    font-size: 16px;
+    font-weight: bold;
+    background: #ffbe76;
+    color: #2d3436;
+    border: 2px solid #f0932b;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
 .status-feedback {
@@ -300,7 +315,7 @@ body {
     text-align: center;
 }
 
-/* Completion Card */
+/* Completion Screen */
 .completion-card {
     text-align: center;
     margin: auto 0;
@@ -309,43 +324,44 @@ body {
 .completion-card h2 { font-size: 34px; color: #ff7675; margin-bottom: 15px; }
 .summary-stats { font-size: 22px; color: #2d3436; margin-bottom: 25px; line-height: 1.6; }
 
-/* Responsive Mobile Layout */
+/* Mobile Optimizations */
 @media (max-width: 600px) {
     .game-wrapper { height: 95vh; }
     .main-card { padding: 12px; }
-    .page-header { font-size: 20px; padding: 8px; }
+    .page-header { font-size: 18px; padding: 8px; }
     .instruction-list li { font-size: 16px; padding: 10px; }
     .start-btn, .action-btn { font-size: 18px; padding: 10px 20px; }
     .level-grid { grid-template-columns: 1fr; gap: 10px; }
     .level-card { padding: 12px; }
-    .question-text { font-size: 18px; }
-    .visual-emoji { font-size: 60px; }
-    .option-node { font-size: 16px; padding: 10px; }
+    .question-text { font-size: 16px; }
+    .visual-emoji { font-size: 50px; }
+    .drop-slot, .letter-tile { width: 38px; height: 44px; font-size: 20px; }
+    #brand-splash img { max-width: 240px; }
 }
 </style>
 </head>
 <body>
 
-<!-- Audio Assets -->
+<!-- Audio Elements -->
 <audio id="soundChannelCorrect" src="assets/correct.mp3" preload="auto"></audio>
 <audio id="soundChannelWrong" src="assets/wrong.mp3" preload="auto"></audio>
 
-<!-- Page 1: 5-Second Splash Screen -->
+<!-- Page 1: Brand Splash Screen -->
 <div id="brand-splash">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo">
-    </div>
+    <img src="assets/innovine-logo.png" alt="Innovine Logo">
+</div>
 
 <div class="game-wrapper" id="gameFrame">
     <div class="main-card">
 
         <!-- Page 2: Instructions -->
         <div class="page-screen" id="pageInstructions">
-            <div class="page-header"> Computer: A Smart Machine</div>
+            <div class="page-header">Chapter 1: Computer: A Smart Machine</div>
             <div class="instruction-body">
                 <ul class="instruction-list">
                     <li>🌟 Welcome Grade 1 Champions!</li>
-                    <li>🌳 Learn Natural vs Man-Made Things!</li>
-                    <li>🤖 Discover why Computer is a Smart Machine!</li>
+                    <li>🧩 Unscramble & Drag-Drop the correct letters!</li>
+                    <li>🤖 Guess the word to learn Smart Machines!</li>
                     <li>🎯 Pick any level you like to play!</li>
                     <li>⭐ Earn Badges and Stars for right answers!</li>
                 </ul>
@@ -383,21 +399,30 @@ body {
         <!-- Gameplay Screen -->
         <div class="page-screen" id="pageGameplay">
             <div class="score-header">
-                <span style="color:#e84118;">⏰ <span id="timeSpan">30</span>s</span>
+                <span style="color:#e84118;">⏰ <span id="timeSpan">45</span>s</span>
                 <span style="color:#0097e6;">⭐ Score: <span id="scoreSpan">0</span></span>
                 <span style="color:#e67e22;">🏅 Badges: <span id="badgeSpan">0</span></span>
             </div>
 
             <div class="content-display">
-                <div class="question-text" id="targetQuestionText">...</div>
+                <div class="question-text" id="targetQuestionText">Drag letters to unscramble the word!</div>
                 <div class="visual-emoji" id="targetGraphicNode">💻</div>
+                
+                <!-- Target Drop Slots -->
+                <div class="drop-slots-container" id="dropSlotsContainer"></div>
+
+                <!-- Scrambled Letter Tiles -->
+                <div class="letter-pool-container" id="letterPoolContainer"></div>
+
+                <div class="unscramble-controls">
+                    <button class="reset-btn" onclick="resetCurrentWord()">🔄 Reset Letters</button>
+                </div>
             </div>
 
-            <div class="options-grid" id="selectionOptionsGrid"></div>
             <div class="status-feedback" id="feedbackPromptZone"></div>
 
             <div style="height: 45px; display: flex; justify-content: center; align-items: center; margin-top: 5px;">
-                <button class="action-btn" id="advanceStepBtn" style="display:none;" onclick="nextQuestion()">Next Question ➜</button>
+                <button class="action-btn" id="advanceStepBtn" style="display:none;" onclick="nextQuestion()">Next Word ➜</button>
             </div>
         </div>
 
@@ -419,42 +444,41 @@ body {
 </div>
 
 <script>
-// Grade 1 Chapter 1 Question Dataset
 const levelDatabase = [
     {
         name: "Natural Things",
         questions: [
-            { question: "Guess the Natural Thing!", image: "🌳", options: ["Tree", "Laptop", "Car", "Chair"], answer: "Tree" },
-            { question: "Guess the Natural Thing!", image: "☀️", options: ["Sun", "Bus", "Pencil", "Table"], answer: "Sun" },
-            { question: "Guess the Natural Thing!", image: "🐟", options: ["Fish", "Television", "Clock", "Fan"], answer: "Fish" },
-            { question: "Guess the Natural Thing!", image: "🐱", options: ["Cat", "Computer", "Phone", "Book"], answer: "Cat" }
+            { hint: "Drag & Unscramble the Natural Thing!", image: "🌳", answer: "TREE", scrambled: "EETR" },
+            { hint: "Drag & Unscramble the Natural Thing!", image: "☀️", answer: "SUN", scrambled: "USN" },
+            { hint: "Drag & Unscramble the Natural Thing!", image: "🐟", answer: "FISH", scrambled: "HSIF" },
+            { hint: "Drag & Unscramble the Natural Thing!", image: "🐱", answer: "CAT", scrambled: "ATC" }
         ]
     },
     {
         name: "Man-Made Things",
         questions: [
-            { question: "Guess the Man-Made Thing!", image: "🚌", options: ["Bus", "Flower", "Sun", "River"], answer: "Bus" },
-            { question: "Guess the Man-Made Thing!", image: "✏️", options: ["Pencil", "Tree", "Bird", "Fruit"], answer: "Pencil" },
-            { question: "Guess the Man-Made Thing!", image: "🏠", options: ["House", "Fish", "Cloud", "Moon"], answer: "House" },
-            { question: "Guess the Man-Made Thing!", image: "🍦", options: ["Ice Cream", "Cat", "Mountain", "Leaf"], answer: "Ice Cream" }
+            { hint: "Unscramble this Man-Made vehicle!", image: "🚌", answer: "BUS", scrambled: "SUB" },
+            { hint: "Unscramble what we write with!", image: "✏️", answer: "PENCIL", scrambled: "CLINEP" },
+            { hint: "Unscramble where we live!", image: "🏠", answer: "HOUSE", scrambled: "ESUOH" },
+            { hint: "Unscramble this tasty treat!", image: "🍦", answer: "ICECREAM", scrambled: "MAECCREI" }
         ]
     },
     {
         name: "Smart Machine Features",
         questions: [
-            { question: "What does a computer need to work?", image: "⚡", options: ["Electricity", "Water", "Milk", "Food"], answer: "Electricity" },
-            { question: "A computer is a...", image: "🤖", options: ["Smart Machine", "Animal", "Fruit", "Natural Thing"], answer: "Smart Machine" },
-            { question: "Does a computer make mistakes?", image: "❌", options: ["Never", "Always", "Sometimes", "Every day"], answer: "Never" },
-            { question: "Does a computer get tired?", image: "🏃", options: ["Never", "Yes", "Always", "Very Fast"], answer: "Never" }
+            { hint: "Computers run on this power!", image: "⚡", answer: "ELECTRICITY", scrambled: "TRICITYELEC" },
+            { hint: "A computer is a smart...", image: "🤖", answer: "MACHINE", scrambled: "NECHIMA" },
+            { hint: "A computer works very...", image: "⚡", answer: "FAST", scrambled: "TSAF" },
+            { hint: "A computer saves your time &...", image: "💪", answer: "WORK", scrambled: "KROW" }
         ]
     },
     {
         name: "Types of Computers",
         questions: [
-            { question: "I stay fixed on a heavy desk. What am I?", image: "🖥️", options: ["Desktop", "Laptop", "Tablet", "Phone"], answer: "Desktop" },
-            { question: "I am portable and fit on your lap!", image: "💻", options: ["Laptop", "Desktop", "TV", "Refrigerator"], answer: "Laptop" },
-            { question: "I have a touch screen and no keyboard!", image: "📱", options: ["Tablet", "Desktop", "Bus", "Printer"], answer: "Tablet" },
-            { question: "Sit with back straight! Which posture is right?", image: "🙂", options: ["Sit Straight", "Sleep", "Jump", "Bend down"], answer: "Sit Straight" }
+            { hint: "Sits fixed on a heavy desk!", image: "🖥️", answer: "DESKTOP", scrambled: "POKTDSE" },
+            { hint: "Fits easily right on your lap!", image: "💻", answer: "LAPTOP", scrambled: "POTPAL" },
+            { hint: "A touch screen smart device!", image: "📱", answer: "TABLET", scrambled: "TEBLAT" },
+            { hint: "A computer is a smart...", image: "💻", answer: "COMPUTER", scrambled: "RUTEMPOC" }
         ]
     }
 ];
@@ -464,12 +488,12 @@ let currentQuestionIndex = 0;
 let score = 0;
 let badges = 0;
 let timer;
-let remainingSeconds = 30;
+let remainingSeconds = 45;
+let draggedTile = null;
 
 const soundCorrect = document.getElementById('soundChannelCorrect');
 const soundWrong = document.getElementById('soundChannelWrong');
 
-// Sound Playback
 function playAudio(type) {
     if (type === 'right') {
         soundCorrect.currentTime = 0;
@@ -480,17 +504,17 @@ function playAudio(type) {
     }
 }
 
-// 5-Second Splash Screen Sequence[cite: 2]
+// Splash Screen Timer
 window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
-        const splash = document.getElementById('splashScreen');
+        const splash = document.getElementById('brand-splash');
         splash.style.opacity = '0';
         setTimeout(() => {
             splash.style.display = 'none';
             document.getElementById('gameFrame').style.opacity = '1';
             showScreen('pageInstructions');
         }, 500);
-    }, 5000); // Explicit 5 seconds splash display
+    }, 4000);
 });
 
 function showScreen(screenId) {
@@ -505,18 +529,13 @@ function startLevel(lvlIdx) {
     loadQuestion();
 }
 
-function scrambleArray(arr) {
-    return [...arr].sort(() => Math.random() - 0.5);
-}
-
 function loadQuestion() {
     clearInterval(timer);
-    remainingSeconds = 30;
+    remainingSeconds = 45;
     document.getElementById('timeSpan').innerText = remainingSeconds;
     document.getElementById('feedbackPromptZone').innerText = '';
     document.getElementById('advanceStepBtn').style.display = 'none';
 
-    // Timer
     timer = setInterval(() => {
         remainingSeconds--;
         document.getElementById('timeSpan').innerText = remainingSeconds;
@@ -525,68 +544,167 @@ function loadQuestion() {
             document.getElementById('feedbackPromptZone').innerText = "⏰ Time's up!";
             document.getElementById('feedbackPromptZone').style.color = "#d63031";
             playAudio('wrong');
-            disableOptions();
             document.getElementById('advanceStepBtn').style.display = 'inline-block';
         }
     }, 1000);
 
     const q = levelDatabase[currentLevelIndex].questions[currentQuestionIndex];
-    document.getElementById('targetQuestionText').innerText = q.question;
+    document.getElementById('targetQuestionText').innerText = q.hint;
     document.getElementById('targetGraphicNode').innerText = q.image;
 
-    const optionsGrid = document.getElementById('selectionOptionsGrid');
-    optionsGrid.innerHTML = '';
+    setupDragAndDropGame(q.answer, q.scrambled);
+}
 
-    scrambleArray(q.options).forEach(opt => {
-        const node = document.createElement('div');
-        node.className = 'option-node';
-        node.innerText = opt;
-        node.onclick = () => checkAnswer(opt, q.answer, node);
-        optionsGrid.appendChild(node);
+function setupDragAndDropGame(answerWord, scrambledWord) {
+    const slotsContainer = document.getElementById('dropSlotsContainer');
+    const poolContainer = document.getElementById('letterPoolContainer');
+    slotsContainer.innerHTML = '';
+    poolContainer.innerHTML = '';
+
+    for (let i = 0; i < answerWord.length; i++) {
+        const slot = document.createElement('div');
+        slot.className = 'drop-slot';
+        slot.dataset.index = i;
+
+        slot.addEventListener('dragover', handleDragOver);
+        slot.addEventListener('dragleave', handleDragLeave);
+        slot.addEventListener('drop', handleDrop);
+
+        slotsContainer.appendChild(slot);
+    }
+
+    const letters = scrambledWord.split('');
+    letters.forEach((char, idx) => {
+        const tile = document.createElement('div');
+        tile.className = 'letter-tile';
+        tile.innerText = char;
+        tile.draggable = true;
+        tile.id = 'tile-' + idx;
+
+        tile.addEventListener('dragstart', handleDragStart);
+        tile.addEventListener('dragend', handleDragEnd);
+
+        tile.addEventListener('touchstart', handleTouchStart, {passive: false});
+        tile.addEventListener('touchmove', handleTouchMove, {passive: false});
+        tile.addEventListener('touchend', handleTouchEnd, {passive: false});
+
+        poolContainer.appendChild(tile);
     });
 }
 
-function disableOptions() {
-    document.querySelectorAll('.option-node').forEach(n => n.style.pointerEvents = 'none');
+function handleDragStart(e) {
+    draggedTile = this;
+    e.dataTransfer.setData('text/plain', this.id);
 }
 
-function checkAnswer(selected, correct, element) {
-    clearInterval(timer);
-    disableOptions();
+function handleDragEnd() {
+    draggedTile = null;
+}
 
-    const feedback = document.getElementById('feedbackPromptZone');
+function handleDragOver(e) {
+    e.preventDefault();
+    this.classList.add('hovered');
+}
 
-    if (selected === correct) {
-        element.style.backgroundColor = '#55efc4';
-        element.style.borderColor = '#00b894';
-        element.style.color = '#fff';
-        feedback.innerText = "🎉 Yay! Correct Answer!";
-        feedback.style.color = "#00b894";
-        score += 10;
-        badges += 1;
-        playAudio('right');
+function handleDragLeave() {
+    this.classList.remove('hovered');
+}
 
-        confetti({ particleCount: 80, spread: 60, origin: { y: 0.7 } });
-    } else {
-        element.style.backgroundColor = '#ff7675';
-        element.style.borderColor = '#d63031';
-        element.style.color = '#fff';
-        feedback.innerText = "❌ Oops! Try next time!";
-        feedback.style.color = "#d63031";
-        playAudio('wrong');
-
-        document.querySelectorAll('.option-node').forEach(n => {
-            if (n.innerText === correct) {
-                n.style.backgroundColor = '#55efc4';
-                n.style.borderColor = '#00b894';
-                n.style.color = '#fff';
-            }
-        });
+function handleDrop(e) {
+    e.preventDefault();
+    this.classList.remove('hovered');
+    
+    if (this.children.length === 0 && draggedTile) {
+        this.appendChild(draggedTile);
+        draggedTile.classList.add('placed');
+        checkWordCompletion();
     }
+}
 
-    document.getElementById('scoreSpan').innerText = score;
-    document.getElementById('badgeSpan').innerText = badges;
-    document.getElementById('advanceStepBtn').style.display = 'inline-block';
+let touchClone = null;
+
+function handleTouchStart(e) {
+    e.preventDefault();
+    draggedTile = this;
+    
+    touchClone = this.cloneNode(true);
+    touchClone.style.position = 'fixed';
+    touchClone.style.opacity = '0.8';
+    touchClone.style.zIndex = '1000';
+    touchClone.style.pointerEvents = 'none';
+    
+    const touch = e.touches[0];
+    touchClone.style.left = (touch.clientX - 24) + 'px';
+    touchClone.style.top = (touch.clientY - 26) + 'px';
+    
+    document.body.appendChild(touchClone);
+}
+
+function handleTouchMove(e) {
+    e.preventDefault();
+    if (!touchClone) return;
+    const touch = e.touches[0];
+    touchClone.style.left = (touch.clientX - 24) + 'px';
+    touchClone.style.top = (touch.clientY - 26) + 'px';
+}
+
+function handleTouchEnd(e) {
+    if (!touchClone) return;
+    touchClone.remove();
+    touchClone = null;
+
+    const touch = e.changedTouches[0];
+    const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+    
+    if (dropTarget && dropTarget.classList.contains('drop-slot') && dropTarget.children.length === 0) {
+        dropTarget.appendChild(draggedTile);
+        draggedTile.classList.add('placed');
+        checkWordCompletion();
+    }
+    draggedTile = null;
+}
+
+function resetCurrentWord() {
+    const q = levelDatabase[currentLevelIndex].questions[currentQuestionIndex];
+    setupDragAndDropGame(q.answer, q.scrambled);
+    document.getElementById('feedbackPromptZone').innerText = '';
+}
+
+function checkWordCompletion() {
+    const q = levelDatabase[currentLevelIndex].questions[currentQuestionIndex];
+    const slots = document.querySelectorAll('.drop-slot');
+    let constructedWord = '';
+    let filledSlotsCount = 0;
+
+    slots.forEach(slot => {
+        if (slot.children.length > 0) {
+            constructedWord += slot.children[0].innerText;
+            filledSlotsCount++;
+        }
+    });
+
+    if (filledSlotsCount === q.answer.length) {
+        clearInterval(timer);
+        const feedback = document.getElementById('feedbackPromptZone');
+
+        if (constructedWord === q.answer) {
+            feedback.innerText = "🎉 Amazing! Correct Word!";
+            feedback.style.color = "#00b894";
+            score += 15;
+            badges += 1;
+            playAudio('right');
+
+            confetti({ particleCount: 90, spread: 70, origin: { y: 0.7 } });
+        } else {
+            feedback.innerText = "❌ Oops! Incorrect Word!";
+            feedback.style.color = "#d63031";
+            playAudio('wrong');
+        }
+
+        document.getElementById('scoreSpan').innerText = score;
+        document.getElementById('badgeSpan').innerText = badges;
+        document.getElementById('advanceStepBtn').style.display = 'inline-block';
+    }
 }
 
 function nextQuestion() {

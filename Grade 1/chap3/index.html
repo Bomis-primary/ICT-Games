@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>The Power Button Quest & Bunny's Power Route</title>
-    <!-- Canvas Confetti Library -->
+    <title>Innovine ICT Grade 1 - Chapter 3 Quest</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
@@ -26,7 +25,6 @@
             padding: 0;
             user-select: none;
             -webkit-user-select: none;
-            -webkit-tap-highlight-color: transparent;
             font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
         }
 
@@ -41,7 +39,7 @@
             padding: 15px;
         }
 
-        /* Splash Loader Screen */
+        /* 5-Second Innovine Splash Screen */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -55,7 +53,14 @@
             align-items: center;
             gap: 20px;
             z-index: 9999;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.6s ease;
+        }
+
+        #splash-screen img.logo {
+            max-width: 280px;
+            width: 70%;
+            height: auto;
+            animation: pulseSoft 2s infinite ease-in-out;
         }
 
         .loading-track {
@@ -73,10 +78,10 @@
             height: 100%;
             background: linear-gradient(90deg, var(--accent-orange), var(--yellow-bright));
             transform: translateX(-100%);
-            animation: startLoad 3s forwards linear;
+            animation: startLoad 5s forwards linear;
         }
 
-        /* Page Layout Containers */
+        /* Container Layout */
         .container {
             display: none;
             width: 100%;
@@ -96,14 +101,11 @@
 
         .container.active { display: flex; }
 
-        @keyframes popIn {
-            0% { transform: scale(0.85); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
+        @keyframes popIn { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        @keyframes pulseSoft { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
         @keyframes startLoad { from { transform: translateX(-100%); } to { transform: translateX(0%); } }
 
-        /* Header Navigation Bar */
+        /* Navigation Header */
         .page-header-bar {
             display: flex;
             align-items: center;
@@ -117,7 +119,7 @@
         }
 
         .page-title {
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: bold;
             text-align: center;
             flex-grow: 1;
@@ -135,27 +137,27 @@
             box-shadow: 0 4px 0 #C62828;
         }
 
-        /* Instructions Screen */
-        .instruction-list {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            text-align: left;
-            margin: 15px 0;
-        }
-
-        .instruction-list li {
+        /* Instruction Cards */
+        .instruction-card {
             background: var(--warm-orange);
             border: 3px solid #FFE0B2;
-            padding: 14px 18px;
+            padding: 15px;
             border-radius: 18px;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             color: var(--dark-gray);
             font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            text-align: left;
+            margin-bottom: 12px;
+        }
+
+        .hint-box {
+            background: #E1F5FE;
+            border: 2px dashed var(--primary-blue);
+            border-radius: 14px;
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            color: #01579B;
+            margin-top: 8px;
         }
 
         .btn-action {
@@ -171,12 +173,9 @@
             align-self: center;
         }
 
-        .btn-action:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #E65100;
-        }
+        .btn-action:active { transform: translateY(4px); box-shadow: 0 2px 0 #E65100; }
 
-        /* Level Selection Grid */
+        /* Level Cards Grid */
         .level-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -194,11 +193,9 @@
             box-shadow: 0 6px 0 #E65100;
         }
 
-        .level-card .icon { font-size: 2.3rem; margin-bottom: 5px; }
-        .level-card .title { font-size: 1.2rem; font-weight: bold; color: var(--dark-gray); }
-        .level-card .subtext { font-size: 0.95rem; color: #D84315; font-weight: bold; margin-top: 4px; }
+        .level-card img { width: 50px; height: 50px; object-fit: contain; margin-bottom: 6px; }
 
-        /* HUD Status Bar */
+        /* Gameplay Area */
         .hud-bar {
             display: flex;
             justify-content: space-between;
@@ -212,122 +209,31 @@
             margin-bottom: 15px;
         }
 
-        .timer-badge {
-            background: #FFEBEE;
-            color: var(--brick-red);
-            padding: 6px 14px;
-            border-radius: 12px;
-            border: 2px solid #FFCDD2;
-        }
-
-        /* Drag and Drop Elements */
-        .drag-instructions {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--primary-blue);
-            margin-bottom: 12px;
-        }
-
-        .drag-container {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 15px;
-        }
-
-        .drop-zone {
-            background: #F5F5F5;
-            border: 3px dashed var(--primary-blue);
-            border-radius: 18px;
-            padding: 12px 18px;
-            min-height: 58px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1.05rem;
-        }
-
-        .drag-pool {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            background: var(--sky-blue);
-            padding: 15px;
-            border-radius: 20px;
-            border: 2px solid var(--primary-blue);
-        }
-
-        .draggable-item {
-            background: var(--white);
-            border: 3px solid var(--accent-orange);
-            border-radius: 14px;
-            padding: 12px;
-            font-weight: bold;
-            font-size: 1rem;
-            cursor: grab;
-            box-shadow: 0 4px 0 #E65100;
-        }
-
-        /* Memory Card Styles */
-        .memory-grid {
+        .place-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
-            margin: auto 0;
+            margin-top: 15px;
         }
 
-        .memory-card {
-            height: 95px;
-            background: var(--primary-blue);
-            border: 4px solid #0277BD;
-            border-radius: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.3rem;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 5px 0 #01579B;
-        }
-
-        .memory-card.flipped { background: var(--warm-orange); border-color: var(--accent-orange); }
-        .memory-card.matched { background: #C8E6C9; border-color: var(--success-green); }
-
-        /* Quiz Styles */
-        .quiz-prompt {
-            background-color: var(--warm-orange);
-            padding: 18px;
-            border-radius: 20px;
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            border: 3px solid var(--accent-orange);
-        }
-
-        .choices-grid { display: flex; flex-direction: column; gap: 10px; }
-
-        .choice-btn {
-            background-color: var(--white);
-            color: var(--dark-gray);
-            border: 3px solid var(--sky-blue);
-            padding: 14px;
-            font-size: 1.1rem;
-            font-weight: bold;
+        .place-card {
+            background: var(--white);
+            border: 3px solid var(--primary-blue);
             border-radius: 16px;
+            padding: 10px;
             cursor: pointer;
-            text-align: left;
-        }
-
-        /* Level 4: Bunny Power Route (Chapter 3 Specific) */
-        .power-path {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            max-width: 480px;
-            margin: 10px auto;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 0 #0277BD;
         }
 
+        .place-card img { width: 65px; height: 65px; object-fit: contain; }
+        .place-card span { font-weight: bold; font-size: 0.95rem; }
+
+        /* Level 4 Steps */
+        .power-path { display: flex; flex-direction: column; gap: 10px; max-width: 480px; margin: 0 auto; }
         .path-step {
             display: flex;
             align-items: center;
@@ -336,122 +242,95 @@
             border: 3px solid var(--primary-blue);
             border-radius: 16px;
             padding: 12px 18px;
-            font-size: 1.1rem;
             font-weight: bold;
         }
-
-        .path-step.active {
-            border-color: var(--accent-orange);
-            background: var(--warm-orange);
-        }
-
-        .path-step.completed {
-            border-color: var(--success-green);
-            background: #E8F5E9;
-        }
+        .path-step.active { border-color: var(--accent-orange); background: var(--warm-orange); }
+        .path-step.completed { border-color: var(--success-green); background: #E8F5E9; }
 
         .step-btn {
             background: var(--primary-blue);
             color: white;
             border: none;
             padding: 8px 16px;
-            font-size: 1rem;
             border-radius: 12px;
             cursor: pointer;
             box-shadow: 0 3px 0 #0277BD;
             font-weight: bold;
         }
-
-        .step-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #0277BD; }
-
-        .certificate-box {
-            border: 6px double var(--accent-orange);
-            background: #FFFDF9;
-            padding: 25px;
-            border-radius: 24px;
-            margin: auto 0;
-        }
-
-        .score-callout {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--success-green);
-            margin: 15px 0;
-        }
     </style>
 </head>
 <body>
 
-    <!-- Audio Elements -->
-    <audio id="audio-correct" src="https://actions.google.com/sounds/v1/cartoon/clink_clank.ogg" preload="auto"></audio>
-    <audio id="audio-wrong" src="https://actions.google.com/sounds/v1/cartoon/boing.ogg" preload="auto"></audio>
-    <audio id="audio-clap" src="https://actions.google.com/sounds/v1/cheering/applause.ogg" preload="auto"></audio>
+    <!-- Local Audio Elements -->
+    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
-    <!-- Splash Loader Overlay -->
+    <!-- 1. Innovine Logo Splash Screen (First 5 Seconds) -->
     <div id="splash-screen">
-        <h1 style="color: var(--primary-blue); font-size: 2.2rem;">Computer Power Quest</h1>
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" class="logo" onerror="this.src='https://via.placeholder.com/280x120?text=Innovine+ICT'">
         <div class="loading-track">
             <div class="loading-bar-fill"></div>
         </div>
-        <p style="font-weight: bold; color: var(--accent-orange);">Loading Chapter 3 Concepts...</p>
+        <p style="font-weight: bold; color: var(--accent-orange);">Loading Grade 1 ICT Quest...</p>
     </div>
 
-    <!-- Instructions Screen -->
+    <!-- 2. Instruction Page with Dynamic Hint Questions -->
     <div id="page-instructions" class="container">
         <div class="page-header-bar">
-            <div class="page-title">Chapter 3: Starting & Shutting Down</div>
+            <div class="page-title">Chapter 3: Computer Power & Places</div>
         </div>
         <div>
-            <ul class="instruction-list">
-                <li>⚡ Welcome Grade 1 Explorers!</li>
-                <li>🧩 Level 1: Sequence the Startup & Shutdown steps!</li>
-                <li>🧠 Level 2: Memory Card Match for Computer Parts!</li>
-                <li>🎯 Level 3: Test your knowledge in Power Quiz!</li>
-                <li>🐰 Level 4: Help Bunny turn on the computer step-by-step to get the Carrot!</li>
-            </ul>
+            <div class="instruction-card">
+                <div>⚡ How to Play Chapter 3 Quest:</div>
+                <div class="hint-box" id="dynamic-instruction-hint">💡 Hint Question: Do you know which button switches ON the CPU?</div>
+            </div>
+            <div class="instruction-card">
+                <div>🎯 Explore Places & Computer Rules:</div>
+                <div class="hint-box">💡 Hint Question: Where do doctors use computers to check patients?</div>
+            </div>
         </div>
-        <button class="btn-action" onclick="showScreen('page-level-select')">Choose Level 🚀</button>
+        <button class="btn-action" onclick="showScreen('page-level-select')">Start Quest 🚀</button>
     </div>
 
-    <!-- Level Selection Menu -->
+    <!-- 3. Level Selection -->
     <div id="page-level-select" class="container">
         <div class="page-header-bar">
             <button class="nav-back-btn" onclick="showScreen('page-instructions')">⬅ Back</button>
-            <div class="page-title">Select Your Quest</div>
+            <div class="page-title">Select Level</div>
         </div>
         <div class="level-grid">
             <div class="level-card" onclick="startLevel(1)">
-                <div class="icon">🧩</div>
-                <div class="title">Level 1: Sequences</div>
-                <div class="subtext">Start & Shutdown</div>
+                <img src="assets/school.png" alt="School" onerror="this.src='https://via.placeholder.com/50'">
+                <div class="title">Level 1: Computer Places</div>
+                <div class="subtext">Match Uses</div>
             </div>
             <div class="level-card" onclick="startLevel(2)">
-                <div class="icon">🧠</div>
-                <div class="title">Level 2: Memory Maze</div>
-                <div class="subtext">Match Power Parts</div>
+                <img src="assets/learning.png" alt="Learning" onerror="this.src='https://via.placeholder.com/50'">
+                <div class="title">Level 2: Smart Hints</div>
+                <div class="subtext">Guess the Place</div>
             </div>
             <div class="level-card" onclick="startLevel(3)">
-                <div class="icon">🎯</div>
-                <div class="title">Level 3: Power Quiz</div>
-                <div class="subtext">Safe Operations</div>
+                <img src="assets/playgame.png" alt="Play Game" onerror="this.src='https://via.placeholder.com/50'">
+                <div class="title">Level 3: Power Rules</div>
+                <div class="subtext">Quiz Quest</div>
             </div>
             <div class="level-card" onclick="startLevel(4)">
-                <div class="icon">🐰</div>
-                <div class="title">Level 4: Bunny Power Up</div>
-                <div class="subtext">Start Computer Step-by-Step!</div>
+                <img src="assets/office.png" alt="Office" onerror="this.src='https://via.placeholder.com/50'">
+                <div class="title">Level 4: Bunny Power-Up</div>
+                <div class="subtext">Step-by-Step</div>
             </div>
         </div>
     </div>
 
-    <!-- Gameplay Stage Screen -->
+    <!-- 4. Gameplay Stage -->
     <div id="page-gameplay" class="container">
         <div class="page-header-bar">
-            <button class="nav-back-btn" onclick="exitToLevels()">⬅ Menu</button>
+            <button class="nav-back-btn" onclick="showScreen('page-level-select')">⬅ Menu</button>
             <div class="page-title" id="gameplay-level-title">Gameplay</div>
         </div>
 
         <div class="hud-bar">
-            <span id="hud-timer" class="timer-badge">⏳ 60s</span>
+            <span id="hud-timer">⏳ 60s</span>
             <span id="hud-score">🏆 Score: 0</span>
         </div>
 
@@ -462,30 +341,86 @@
         </div>
     </div>
 
-    <!-- Completion Screen -->
+    <!-- 5. Completion View -->
     <div id="page-completion" class="container">
         <div class="page-header-bar">
             <button class="nav-back-btn" onclick="showScreen('page-level-select')">⬅ Menu</button>
             <div class="page-title">Quest Completed!</div>
         </div>
-        
-        <div class="certificate-box">
-            <div style="font-size: 70px; margin-bottom: 10px;">🏆</div>
-            <h1 style="color: var(--primary-blue); font-size: 2rem;">Power Expert Master!</h1>
-            <p>You mastered Chapter 3: Starting & Shutting Down a Computer!</p>
-            <div id="final-score-display" class="score-callout">Total Score: 0 Points</div>
+        <div style="border: 6px double var(--accent-orange); background: #FFFDF9; padding: 25px; border-radius: 24px;">
+            <img src="assets/innovine-logo.png" style="max-width: 180px; margin-bottom: 10px;" onerror="this.style.display='none'">
+            <h1 style="color: var(--primary-blue); font-size: 1.8rem;">Super Computer Scholar!</h1>
+            <p>You mastered Chapter 3 power sequences and computer places!</p>
+            <div id="final-score-display" style="font-size: 2rem; font-weight: bold; color: var(--success-green); margin: 15px 0;">Total Score: 0</div>
         </div>
-
         <button class="btn-action" onclick="showScreen('page-level-select')">Play Again 🎮</button>
     </div>
 
     <script>
-        function playSound(id) {
-            const sound = document.getElementById(id);
-            if (sound) {
-                sound.currentTime = 0;
-                sound.play().catch(() => {});
+        // Trigger Correct Sound File (assets/correct.mp3)
+        function playCorrectSound() {
+            const audioCorrect = document.getElementById('audio-correct');
+            if (audioCorrect) {
+                audioCorrect.currentTime = 0;
+                audioCorrect.play().catch(() => synthCorrectSound());
             }
+        }
+
+        // Trigger Wrong Sound File (assets/wrong.mp3)
+        function playWrongSound() {
+            const audioWrong = document.getElementById('audio-wrong');
+            if (audioWrong) {
+                audioWrong.currentTime = 0;
+                audioWrong.play().catch(() => synthWrongSound());
+            }
+        }
+
+        // Fallback Web Audio Synthesizer if local MP3 is blocked by browser interaction policies
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            return audioCtx;
+        }
+
+        function synthCorrectSound() {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.setValueAtTime(659.25, now + 0.1);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            } catch(e) {}
+        }
+
+        function synthWrongSound() {
+            try {
+                const ctx = getAudioContext();
+                const now = ctx.currentTime;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, now);
+                osc.frequency.linearRampToValueAtTime(120, now + 0.25);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            } catch(e) {}
         }
 
         let currentLevel = 1;
@@ -494,94 +429,47 @@
         let timerInterval = null;
         let timeRemaining = 60;
 
-        // Level 1 Data (Chapter 3)
-        const level1Sequences = [
-            {
-                title: "Steps to Switch ON the Computer:",
-                steps: [
-                    { id: 1, label: "🔌 Step 1: Turn ON Main Power Switch" },
-                    { id: 2, label: "🔴 Step 2: Press CPU Cabinet Power Button" },
-                    { id: 3, label: "🖥️ Step 3: Turn ON Monitor Power Button" }
-                ]
-            },
-            {
-                title: "Steps to Shut Down the Computer:",
-                steps: [
-                    { id: 1, label: "💾 Step 1: Save & Close Open Files" },
-                    { id: 2, label: "🔲 Step 2: Click Start Menu -> Power -> Shut Down" },
-                    { id: 3, label: "🖥️ Step 3: Switch OFF Monitor & Main Power" }
-                ]
-            }
+        const hintQuestions = [
+            "💡 Hint Question: Do you know which button switches ON the CPU?",
+            "💡 Hint Question: Where do we use computers to check library books?",
+            "💡 Hint Question: What screen displays the computer desktop after booting?"
         ];
 
-        // Level 2 Data
-        const memoryMazeCards = [
-            { id: 1, symbol: "🔌", name: "Plug" },
-            { id: 2, symbol: "🔌", name: "Plug" },
-            { id: 3, symbol: "🖥️", name: "Monitor" },
-            { id: 4, symbol: "🖥️", name: "Monitor" },
-            { id: 5, symbol: "🔴", name: "Power Button" },
-            { id: 6, symbol: "🔴", name: "Power Button" }
+        const placesData = [
+            { hint: "💡 Hint: Where do doctors use computers to store health records?", answer: "Hospital", img: "assets/hospital.png" },
+            { hint: "💡 Hint: Where do students learn computer lessons with teachers?", answer: "School", img: "assets/school.png" },
+            { hint: "💡 Hint: Where do we read and borrow books using computer catalogues?", answer: "Library", img: "assets/library.png" },
+            { hint: "💡 Hint: Where do people type documents and send work emails?", answer: "Office", img: "assets/office.png" },
+            { hint: "💡 Hint: Where do people keep money safe and use ATMs?", answer: "Bank", img: "assets/bank.png" }
         ];
 
-        // Level 3 Data
-        const level3Quiz = [
-            {
-                question: "Which button on the CPU cabinet starts the computer?",
-                options: [
-                    { text: "🔴 The Power Button", correct: true },
-                    { text: "⌨️ The Spacebar Key", correct: false },
-                    { text: "🖱️ The Mouse Scroll Wheel", correct: false }
-                ]
-            },
-            {
-                question: "What is 'Booting' in a computer?",
-                options: [
-                    { text: "🥾 Wearing boots to school", correct: false },
-                    { text: "⏳ The time computer takes to become ready when switched on", correct: true },
-                    { text: "🧹 Cleaning the monitor screen", correct: false }
-                ]
-            },
-            {
-                question: "Why should we NOT switch off the main switch directly?",
-                options: [
-                    { text: "⚡ It might damage computer files", correct: true },
-                    { text: "🎵 It turns off music", correct: false },
-                    { text: "🖥️ It changes the monitor color", correct: false }
-                ]
-            }
-        ];
-
-        // Level 4 Data: Chapter 3 Step-by-Step Bunny Power Sequence
         const bunnyPowerSteps = [
-            { step: 1, label: "1. Turn ON Main Power Switch 🔌", icon: "🔌" },
-            { step: 2, label: "2. Turn ON the UPS Power 🔋", icon: "🔋" },
-            { step: 3, label: "3. Press CPU Power Button 🔴", icon: "🔴" },
-            { step: 4, label: "4. Turn ON Monitor Screen 🖥️", icon: "🖥️" }
+            { step: 1, label: "Turn ON Main Power Switch", icon: "🔌" },
+            { step: 2, label: "Turn ON the UPS Power", icon: "🔋" },
+            { step: 3, label: "Press CPU Power Button", icon: "🔴" },
+            { step: 4, label: "Turn ON Monitor Screen", icon: "🖥️" }
         ];
         let currentBunnyStep = 1;
 
-        function showScreen(screenId) {
-            clearInterval(timerInterval);
-            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
-        }
-
-        function exitToLevels() {
-            clearInterval(timerInterval);
-            showScreen('page-level-select');
-        }
-
+        // 5-Second Splash Screen Timer
         window.addEventListener('load', () => {
+            document.getElementById('dynamic-instruction-hint').innerText = hintQuestions[Math.floor(Math.random() * hintQuestions.length)];
+
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
                 splash.style.opacity = '0';
                 setTimeout(() => {
                     splash.style.display = 'none';
                     showScreen('page-instructions');
-                }, 500);
-            }, 3000);
+                }, 600);
+            }, 5000);
         });
+
+        function showScreen(screenId) {
+            clearInterval(timerInterval);
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
+        }
 
         function startLevel(lvl) {
             currentLevel = lvl;
@@ -595,14 +483,12 @@
             clearInterval(timerInterval);
             timeRemaining = 60;
             document.getElementById('hud-timer').innerText = "⏳ 60s";
-
             timerInterval = setInterval(() => {
                 timeRemaining--;
                 document.getElementById('hud-timer').innerText = `⏳ ${timeRemaining}s`;
-
                 if (timeRemaining <= 0) {
                     clearInterval(timerInterval);
-                    playSound('audio-wrong');
+                    playWrongSound();
                     nextChallenge();
                 }
             }, 1000);
@@ -613,183 +499,77 @@
             document.getElementById('next-step-btn').style.display = 'none';
             const dynamicArea = document.getElementById('gameplay-dynamic-area');
             dynamicArea.innerHTML = '';
-
             startTimer();
 
-            if (currentLevel === 1) renderLevel1(dynamicArea);
-            else if (currentLevel === 2) renderLevel2(dynamicArea);
-            else if (currentLevel === 3) renderLevel3(dynamicArea);
-            else if (currentLevel === 4) renderLevel4(dynamicArea);
+            if (currentLevel === 1 || currentLevel === 2) renderPlacesQuest(dynamicArea);
+            else if (currentLevel === 3) renderQuizQuest(dynamicArea);
+            else if (currentLevel === 4) renderBunnyQuest(dynamicArea);
         }
 
-        /* LEVEL 1: Drag & Drop Sequence */
-        let draggedItem = null;
-        let placedCount = 0;
-
-        function renderLevel1(container) {
-            const seqData = level1Sequences[currentStep];
-            placedCount = 0;
-
+        function renderPlacesQuest(container) {
+            const currentItem = placesData[currentStep % placesData.length];
             container.innerHTML = `
-                <div class="drag-instructions">${seqData.title}</div>
-                <div class="drag-container" id="drop-container"></div>
-                <div class="drag-pool" id="drag-pool"></div>
+                <div class="hint-box" style="font-size: 1.1rem; margin-bottom: 15px;">${currentItem.hint}</div>
+                <div class="place-grid" id="places-grid"></div>
             `;
+            const grid = document.getElementById('places-grid');
+            const shuffled = [...placesData].sort(() => Math.random() - 0.5);
 
-            const dropContainer = document.getElementById('drop-container');
-            const dragPool = document.getElementById('drag-pool');
-
-            seqData.steps.forEach((step, index) => {
-                const slot = document.createElement('div');
-                slot.className = 'drop-zone';
-                slot.dataset.expectedId = step.id;
-                slot.innerText = `Slot ${index + 1}: Drop Step Here`;
-
-                slot.addEventListener('dragover', e => e.preventDefault());
-                slot.addEventListener('drop', handleDrop);
-
-                dropContainer.appendChild(slot);
-            });
-
-            const shuffled = [...seqData.steps].sort(() => Math.random() - 0.5);
-            shuffled.forEach(step => {
-                const item = document.createElement('div');
-                item.className = 'draggable-item';
-                item.innerText = step.label;
-                item.draggable = true;
-                item.dataset.stepId = step.id;
-
-                item.addEventListener('dragstart', () => { draggedItem = item; });
-                dragPool.appendChild(item);
-            });
-        }
-
-        function handleDrop(e) {
-            if (draggedItem && !this.dataset.filled) {
-                if (this.dataset.expectedId === draggedItem.dataset.stepId) {
-                    this.innerHTML = draggedItem.innerText;
-                    this.style.borderColor = "var(--success-green)";
-                    this.style.background = "#E8F5E9";
-                    this.dataset.filled = "true";
-                    draggedItem.remove();
-                    placedCount++;
-                    scoreCounter += 10;
-                    document.getElementById('hud-score').innerText = `🏆 Score: ${scoreCounter}`;
-                    playSound('audio-correct');
-
-                    if (placedCount === 3) {
-                        clearInterval(timerInterval);
-                        document.getElementById('next-step-btn').style.display = 'inline-block';
-                    }
-                } else {
-                    playSound('audio-wrong');
-                }
-            }
-        }
-
-        /* LEVEL 2: Memory Matching */
-        let firstCard = null, secondCard = null;
-        let matchesFound = 0, lockBoard = false;
-
-        function renderLevel2(container) {
-            matchesFound = 0;
-            container.innerHTML = `
-                <div class="drag-instructions">Match Computer Power Cards!</div>
-                <div class="memory-grid" id="memory-grid"></div>
-            `;
-
-            const grid = document.getElementById('memory-grid');
-            const shuffledCards = [...memoryMazeCards].sort(() => Math.random() - 0.5);
-
-            shuffledCards.forEach(item => {
+            shuffled.forEach(item => {
                 const card = document.createElement('div');
-                card.className = 'memory-card';
-                card.dataset.name = item.name;
-                card.dataset.symbol = item.symbol;
-                card.innerText = '❓';
-
-                card.addEventListener('click', () => flipCard(card));
+                card.className = 'place-card';
+                card.innerHTML = `
+                    <img src="${item.img}" alt="${item.answer}" onerror="this.src='https://via.placeholder.com/65'">
+                    <span>${item.answer}</span>
+                `;
+                card.onclick = () => {
+                    if (item.answer === currentItem.answer) {
+                        playCorrectSound();
+                        scoreCounter += 10;
+                        card.style.borderColor = "var(--success-green)";
+                        card.style.background = "#E8F5E9";
+                        setTimeout(nextChallenge, 800);
+                    } else {
+                        playWrongSound();
+                        card.style.borderColor = "var(--brick-red)";
+                        card.style.background = "#FFEBEE";
+                    }
+                };
                 grid.appendChild(card);
             });
         }
 
-        function flipCard(card) {
-            if (lockBoard || card === firstCard || card.classList.contains('matched')) return;
+        function renderQuizQuest(container) {
+            const questions = [
+                { q: "💡 Hint Question: What is the very first button to switch on when starting a computer?", opts: ["🔌 Main Power Switch", "🖥️ Monitor Button", "🖱️ Mouse Click"], correct: 0 },
+                { q: "💡 Hint Question: What is 'Booting' in Chapter 3?", opts: ["⏳ Computer starting up process", "🧹 Cleaning the CPU", "🎮 Playing games"], correct: 0 }
+            ];
+            const q = questions[currentStep % questions.length];
 
-            card.classList.add('flipped');
-            card.innerText = card.dataset.symbol;
+            container.innerHTML = `
+                <div class="hint-box" style="font-size: 1.1rem; margin-bottom: 15px;">${q.q}</div>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    ${q.opts.map((opt, idx) => `
+                        <button class="choice-btn" style="padding:14px; font-weight:bold; border-radius:14px; border:2px solid var(--primary-blue);" onclick="checkQuizAnswer(${idx === q.correct})">${opt}</button>
+                    `).join('')}
+                </div>
+            `;
+        }
 
-            if (!firstCard) { firstCard = card; return; }
-
-            secondCard = card;
-            lockBoard = true;
-
-            if (firstCard.dataset.name === secondCard.dataset.name) {
-                firstCard.classList.add('matched');
-                secondCard.classList.add('matched');
+        function checkQuizAnswer(isCorrect) {
+            if (isCorrect) {
+                playCorrectSound();
                 scoreCounter += 10;
-                document.getElementById('hud-score').innerText = `🏆 Score: ${scoreCounter}`;
-                playSound('audio-correct');
-                resetBoard();
-                matchesFound++;
-
-                if (matchesFound === 3) {
-                    clearInterval(timerInterval);
-                    document.getElementById('next-step-btn').style.display = 'inline-block';
-                }
+                setTimeout(nextChallenge, 800);
             } else {
-                playSound('audio-wrong');
-                setTimeout(() => {
-                    firstCard.classList.remove('flipped');
-                    secondCard.classList.remove('flipped');
-                    firstCard.innerText = '❓';
-                    secondCard.innerText = '❓';
-                    resetBoard();
-                }, 1000);
+                playWrongSound();
             }
         }
 
-        function resetBoard() { [firstCard, secondCard, lockBoard] = [null, null, false]; }
-
-        /* LEVEL 3: Quiz Operations */
-        function renderLevel3(container) {
-            const q = level3Quiz[currentStep];
-            container.innerHTML = `
-                <div class="quiz-prompt">${q.question}</div>
-                <div class="choices-grid" id="quiz-options"></div>
-            `;
-
-            const optionsGrid = document.getElementById('quiz-options');
-            q.options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'choice-btn';
-                btn.innerText = opt.text;
-
-                btn.onclick = () => {
-                    clearInterval(timerInterval);
-                    if (opt.correct) {
-                        scoreCounter += 10;
-                        btn.style.borderColor = "var(--success-green)";
-                        btn.style.background = "#E8F5E9";
-                        playSound('audio-correct');
-                    } else {
-                        btn.style.borderColor = "var(--brick-red)";
-                        btn.style.background = "#FFEBEE";
-                        playSound('audio-wrong');
-                    }
-                    document.getElementById('hud-score').innerText = `🏆 Score: ${scoreCounter}`;
-                    setTimeout(nextChallenge, 1000);
-                };
-
-                optionsGrid.appendChild(btn);
-            });
-        }
-
-        /* LEVEL 4: Bunny Power Sequence (Chapter 3 Concept) */
-        function renderLevel4(container) {
+        function renderBunnyQuest(container) {
             currentBunnyStep = 1;
             container.innerHTML = `
-                <div class="drag-instructions">Help Bunny Start the Computer in the Correct Order!</div>
+                <div class="hint-box" style="margin-bottom:15px;">💡 Hint Question: Can you help Bunny press power buttons in correct Chapter 3 order?</div>
                 <div class="power-path" id="power-path"></div>
             `;
             updateBunnyPath();
@@ -797,6 +577,7 @@
 
         function updateBunnyPath() {
             const pathContainer = document.getElementById('power-path');
+            if (!pathContainer) return;
             pathContainer.innerHTML = '';
 
             bunnyPowerSteps.forEach(s => {
@@ -805,30 +586,22 @@
 
                 if (s.step < currentBunnyStep) {
                     stepDiv.classList.add('completed');
-                    stepDiv.innerHTML = `<span>${s.label}</span> <span>✅ Done!</span>`;
+                    stepDiv.innerHTML = `<span>Step ${s.step}: ${s.label}</span> <span>✅ Done</span>`;
                 } else if (s.step === currentBunnyStep) {
                     stepDiv.classList.add('active');
-                    stepDiv.innerHTML = `<span>🐰 Bunny is at Step ${s.step}: ${s.label}</span>
-                                         <button class="step-btn" onclick="executePowerStep(${s.step})">Press ${s.icon}</button>`;
+                    stepDiv.innerHTML = `<span>🐰 Step ${s.step}: ${s.label}</span>
+                                         <button class="step-btn" onclick="executeBunnyStep(${s.step})">Press ${s.icon}</button>`;
                 } else {
-                    stepDiv.innerHTML = `<span>${s.label}</span> <span>🔒 Locked</span>`;
+                    stepDiv.innerHTML = `<span>Step ${s.step}: ${s.label}</span> <span>🔒 Locked</span>`;
                 }
 
                 pathContainer.appendChild(stepDiv);
             });
-
-            if (currentBunnyStep > 4) {
-                pathContainer.innerHTML += `
-                    <div style="font-size: 1.4rem; font-weight: bold; color: var(--success-green); margin-top: 15px;">
-                        🎉 Computer is Fully ON! Bunny gets the Carrot 🥕!
-                    </div>
-                `;
-            }
         }
 
-        function executePowerStep(step) {
+        function executeBunnyStep(step) {
             if (step === currentBunnyStep) {
-                playSound('audio-correct');
+                playCorrectSound();
                 scoreCounter += 10;
                 document.getElementById('hud-score').innerText = `🏆 Score: ${scoreCounter}`;
                 currentBunnyStep++;
@@ -838,26 +611,22 @@
                     clearInterval(timerInterval);
                     document.getElementById('next-step-btn').style.display = 'inline-block';
                 }
+            } else {
+                playWrongSound();
             }
         }
 
         function nextChallenge() {
             currentStep++;
-            let maxSteps = (currentLevel === 1) ? level1Sequences.length : (currentLevel === 2 || currentLevel === 4) ? 1 : level3Quiz.length;
-
-            if (currentStep < maxSteps) {
+            if (currentStep < 2) {
                 loadChallenge();
             } else {
-                finishQuest();
+                clearInterval(timerInterval);
+                document.getElementById('final-score-display').innerText = `Total Score: ${scoreCounter} Points`;
+                showScreen('page-completion');
+                playCorrectSound();
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
             }
-        }
-
-        function finishQuest() {
-            clearInterval(timerInterval);
-            document.getElementById('final-score-display').innerText = `Total Score: ${scoreCounter} Points`;
-            showScreen('page-completion');
-            playSound('audio-clap');
-            confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
         }
     </script>
 </body>

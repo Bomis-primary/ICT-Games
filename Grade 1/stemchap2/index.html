@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-<title>STEM Ch 1: Robot Helper Missions</title>
+<title>STEM Ch 1: Robot Navigation & Position Explorer</title>
 
 <!-- Canvas Confetti Library -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -26,7 +26,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 15px;
+    padding: 12px;
     overflow-x: hidden;
 }
 
@@ -78,7 +78,7 @@ body {
     background: rgba(255, 255, 255, 0.98);
     width: 95%;
     max-width: 1000px;
-    padding: 25px;
+    padding: 22px;
     border-radius: 30px;
     box-shadow: 0 15px 35px rgba(0,0,0,0.18);
     text-align: center;
@@ -238,13 +238,12 @@ p.subtitle {
     color: #334155;
     font-size: 15px;
     text-align: left;
-    margin-top: 4px;
 }
 
 .ctrl-btn-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    gap: 10px;
 }
 
 .ctrl-btn {
@@ -264,15 +263,64 @@ p.subtitle {
     transition: 0.15s ease;
 }
 
-.ctrl-btn.forward { background: #0284c7; box-shadow: 0 4px 0 #0369a1; grid-column: span 2; }
-.ctrl-btn.turn-left { background: #9333ea; box-shadow: 0 4px 0 #6b21a8; }
-.ctrl-btn.turn-right { background: #f59e0b; box-shadow: 0 4px 0 #d97706; }
-.ctrl-btn.turn-180 { background: #ec4899; box-shadow: 0 4px 0 #be185d; grid-column: span 2; }
+.ctrl-btn.fwd { background: #0284c7; box-shadow: 0 4px 0 #0369a1; }
+.ctrl-btn.bwd { background: #d97706; box-shadow: 0 4px 0 #b45309; }
+.ctrl-btn.corner { background: #9333ea; box-shadow: 0 4px 0 #6b21a8; }
+.ctrl-btn.next { background: #16a34a; box-shadow: 0 4px 0 #15803d; }
 .ctrl-btn.reset-pos { background: #ef4444; box-shadow: 0 4px 0 #b91c1c; grid-column: span 2; }
 
 .ctrl-btn:active {
     transform: translateY(3px);
     box-shadow: none;
+}
+
+/* GUESS PICTURE LEVEL STYLES */
+.prompt-stage-box {
+    background: #fff8e1;
+    border: 3px solid #ffe0b2;
+    border-radius: 24px;
+    padding: 18px;
+    max-width: 500px;
+    margin: 15px auto;
+}
+
+.prompt-img-frame {
+    width: 120px;
+    height: 120px;
+    margin: 10px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.prompt-img-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.prompt-options-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.prompt-opt-btn {
+    background: #ffffff;
+    border: 3px solid #0284c7;
+    border-radius: 18px;
+    padding: 12px;
+    font-size: clamp(15px, 3.5vw, 18px);
+    font-weight: bold;
+    color: #0369a1;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #0284c7;
+    transition: 0.2s;
+}
+
+.prompt-opt-btn:hover {
+    background: #e0f2fe;
 }
 
 .feedback {
@@ -356,63 +404,60 @@ p.subtitle {
 
 <!-- 2. GAME INSTRUCTION SCREEN (Page 2) -->
 <div id="instructionScreen" class="screen">
-    <h1>🧭 STEM Robot Helper Missions!</h1>
-    <p class="subtitle">Chapter 1: Real-World Robot Navigation</p>
+    <h1>🧭 STEM Robot Navigator & Inspector</h1>
+    <p class="subtitle">Chapter 1: Robot Position Adventure</p>
 
     <div class="instructions-box">
         <div class="instruction-item">
-            <span>🏥 🚑</span>
-            <span><strong>Level 1: Medical Robot</strong> must reach the Emergency Hospital!</span>
+            <span>🚀 💎</span>
+            <span><strong>Level 1: Exploration Robot</strong> navigates to collect Space Minerals!</span>
         </div>
         <div class="instruction-item">
             <span>🤝 👵</span>
-            <span><strong>Level 2: Helper Robot</strong> must reach the person needing help!</span>
+            <span><strong>Level 2: Helper Robot</strong> moves to support a senior citizen!</span>
         </div>
         <div class="instruction-item">
             <span>🏭 📦</span>
-            <span><strong>Level 3: Factory Robot</strong> must deliver goods to the Assembly Line!</span>
+            <span><strong>Level 3: Factory Robot</strong> moves to deliver cargo packages!</span>
+        </div>
+        <div class="instruction-item">
+            <span>🔎 🖼️</span>
+            <span><strong>Level 4: Picture Inspector</strong> inspect pictures to guess robot locations!</span>
         </div>
         <div class="instruction-item">
             <span>🎮</span>
-            <span><strong>Controls:</strong> Rotate degrees, turn, and step forward without crashing into walls!</span>
+            <span><strong>Controls:</strong> Use <strong>FORWARD</strong>, <strong>BACKWARD</strong>, <strong>CORNER</strong>, and <strong>NEXT TO</strong> buttons!</span>
         </div>
     </div>
 
     <button class="btn" onclick="startGame()">🚀 Start Missions</button>
 </div>
 
-<!-- 3. GAMEPLAY SCREEN -->
+<!-- 3. GRID NAVIGATION GAMEPLAY SCREEN (Levels 1 to 3) -->
 <div id="gameScreen" class="screen">
     <div class="hud-bar">
-        <div>🌟 Level: <span id="lvlDisplay">1 / 3</span></div>
+        <div>🌟 Level: <span id="lvlDisplay">1 / 4</span></div>
         <div>🏆 Score: <span id="scoreDisplay">0</span></div>
     </div>
 
-    <h2 id="missionTitle" style="color: #0369a1; font-size: clamp(18px, 4vw, 22px); margin-bottom: 5px;">
+    <h2 id="missionTitle" style="color: #0369a1; font-size: clamp(18px, 4vw, 22px); margin-bottom: 10px;">
         Mission Loading...
     </h2>
-    <p style="color: #64748b; font-weight: bold; margin-bottom: 8px;">
-        Heading: <span id="headingDisplay">0° (UP)</span>
-    </p>
 
     <div class="game-flex-container">
         <!-- 4x4 NAVIGATION GRID -->
         <div class="grid-board" id="gridBoard"></div>
 
-        <!-- DIRECTIONAL & DEGREE CONTROLS -->
+        <!-- POSITION DIRECTION CONTROLS -->
         <div class="controls-panel">
-            <div class="control-group-title">1. Movement Command:</div>
-            <button class="ctrl-btn forward" onclick="moveForwardStep()">⬆️ Move Forward 1 Step</button>
-
-            <div class="control-group-title">2. Rotation Commands:</div>
+            <div class="control-group-title">Tap Target Movement Direction:</div>
             <div class="ctrl-btn-grid">
-                <button class="ctrl-btn turn-left" onclick="rotateRobot(-90)">↩️ Turn 90° Left</button>
-                <button class="ctrl-btn turn-right" onclick="rotateRobot(90)">↪️ Turn 90° Right</button>
-                <button class="ctrl-btn turn-180" onclick="rotateRobot(180)">🔄 U-Turn (180° Spin)</button>
+                <button class="ctrl-btn fwd" onclick="executePositionCommand('FORWARD')">⬆️ FORWARD</button>
+                <button class="ctrl-btn bwd" onclick="executePositionCommand('BACKWARD')">⬇️ BACKWARD</button>
+                <button class="ctrl-btn corner" onclick="executePositionCommand('CORNER')">📐 CORNER</button>
+                <button class="ctrl-btn next" onclick="executePositionCommand('NEXT_TO')">➡️ NEXT TO</button>
+                <button class="ctrl-btn reset-pos" onclick="resetRobotPosition()">🔄 Reset Robot Position</button>
             </div>
-
-            <div class="control-group-title">3. Stage Tools:</div>
-            <button class="ctrl-btn reset-pos" onclick="resetRobotPosition()">🔄 Reset Robot Position</button>
 
             <!-- AUTO-SOLUTION HINT BANNER -->
             <div class="hint-banner" id="hintBanner"></div>
@@ -422,56 +467,102 @@ p.subtitle {
     <div class="feedback" id="feedbackMsg"></div>
 </div>
 
-<!-- 4. VICTORY / FINAL SCORE SCREEN -->
+<!-- 4. GUESS THE PICTURE PROMPT SCREEN (Level 4) -->
+<div id="guessScreen" class="screen">
+    <div class="hud-bar">
+        <div>🌟 Level: 4 / 4</div>
+        <div>🏆 Score: <span id="guessScoreDisplay">0</span></div>
+    </div>
+
+    <div class="prompt-stage-box">
+        <h2 id="promptQuestionText" style="color: #b45309; font-size: clamp(18px, 4vw, 22px);">
+            Inspect Picture Question
+        </h2>
+        
+        <div class="prompt-img-frame">
+            <img id="promptRobotImg" src="" alt="Robot Prompt" onerror="this.outerHTML='<span style=\\'font-size:50px\\'>🤖</span>'">
+        </div>
+
+        <p style="font-weight: bold; color: #475569; margin-bottom: 10px;">Select the matching position phrase:</p>
+        <div class="prompt-options-grid" id="promptOptionsBox"></div>
+    </div>
+
+    <div class="feedback" id="guessFeedbackMsg"></div>
+</div>
+
+<!-- 5. VICTORY / FINAL SCORE SCREEN -->
 <div id="victoryScreen" class="screen">
-    <h1>🎉 All Helper Missions Complete!</h1>
-    <p class="subtitle">You successfully guided all STEM robots to their destinations!</p>
-    <div class="final-score" id="finalScoreDisplay">150</div>
-    <p style="font-size: 20px; font-weight: bold; color: #0369a1; margin-bottom: 15px;">STEM Community Hero 🏆</p>
+    <h1>🎉 All Missions Completed!</h1>
+    <p class="subtitle">You navigated and inspected all STEM Robots successfully!</p>
+    <div class="final-score" id="finalScoreDisplay">200</div>
+    <p style="font-size: 20px; font-weight: bold; color: #0369a1; margin-bottom: 15px;">STEM Master Coder 🏆</p>
 
     <button class="btn" onclick="resetGame()">🔄 Play Again</button>
 </div>
 
 <script>
-// 3 THEMED HELPER ROBOT MISSIONS
-const missions = [
+// 3 GRID MISSIONS (Exploration, Helper, Factory)
+const gridMissions = [
     {
-        title: "Mission 1: Guide Medical Robot 🩺 to Hospital 🏥",
-        robotImg: "assets/medical-robot.PNG",
-        fallbackEmoji: "🩺",
-        goalEmoji: "🏥",
-        robotStart: { r: 0, c: 0, dir: 1 }, // dir: 0=UP(0°), 1=RIGHT(90°), 2=DOWN(180°), 3=LEFT(270°)
-        target: { r: 3, c: 3 },
-        walls: [{r: 0, c: 2}, {r: 1, c: 0}, {r: 1, c: 2}, {r: 2, c: 2}, {r: 3, c: 0}],
-        autoSteps: [{type:'move'}, {type:'rot', val:90}, {type:'move'}, {type:'move'}, {type:'rot', val:-90}, {type:'move'}, {type:'rot', val:90}, {type:'move'}]
+        title: "Mission 1: Guide Exploration Robot 🚀 to Space Minerals 💎",
+        robotImg: "assets/exploration-robot.PNG",
+        fallbackEmoji: "🚀",
+        goalEmoji: "💎",
+        robotStart: { r: 3, c: 0 },
+        target: { r: 0, c: 3 },
+        walls: [{r: 1, c: 0}, {r: 1, c: 1}, {r: 2, c: 2}, {r: 3, c: 2}],
+        autoSequence: ['FORWARD', 'NEXT_TO', 'FORWARD', 'CORNER']
     },
     {
-        title: "Mission 2: Guide Helper Robot 🤝 to Needy Person 👵",
+        title: "Mission 2: Guide Helper Robot 🤝 to Senior Citizen 👵",
         robotImg: "assets/helper-robot.PNG",
         fallbackEmoji: "🤝",
         goalEmoji: "👵",
-        robotStart: { r: 3, c: 0, dir: 0 },
-        target: { r: 0, c: 3 },
-        walls: [{r: 1, c: 1}, {r: 1, c: 2}, {r: 2, c: 1}, {r: 2, c: 3}],
-        autoSteps: [{type:'move'}, {type:'move'}, {type:'move'}, {type:'rot', val:90}, {type:'move'}, {type:'move'}, {type:'move'}]
+        robotStart: { r: 3, c: 0 },
+        target: { r: 1, c: 2 },
+        walls: [{r: 1, c: 1}, {r: 2, c: 1}, {r: 2, c: 3}],
+        autoSequence: ['NEXT_TO', 'FORWARD', 'NEXT_TO']
     },
     {
-        title: "Mission 3: Guide Factory Robot 🏭 to Assembly Line 📦",
+        title: "Mission 3: Guide Factory Robot 🏭 to Package Cargo 📦",
         robotImg: "assets/factory-robot.PNG",
         fallbackEmoji: "🏭",
         goalEmoji: "📦",
-        robotStart: { r: 2, c: 0, dir: 1 },
-        target: { r: 0, c: 2 },
-        walls: [{r: 0, c: 1}, {r: 2, c: 1}, {r: 3, c: 2}, {r: 2, c: 3}],
-        autoSteps: [{type:'move'}, {type:'rot', val:-90}, {type:'move'}, {type:'rot', val:90}, {type:'move'}, {type:'rot', val:-90}, {type:'move'}]
+        robotStart: { r: 2, c: 0 },
+        target: { r: 0, c: 0 },
+        walls: [{r: 1, c: 1}, {r: 2, c: 1}, {r: 3, c: 2}],
+        autoSequence: ['FORWARD', 'CORNER']
+    }
+];
+
+// LEVEL 4: GUESS THE PICTURE PROMPT STAGE DATA
+const guessPromptData = [
+    {
+        question: "Where is the Helper Robot standing relative to the elderly person?",
+        robotImg: "assets/helper-robot.PNG",
+        options: ["NEXT TO", "BACKWARD", "CORNER", "FAR AWAY"],
+        correct: "NEXT TO"
+    },
+    {
+        question: "Where is the Exploration Robot parked inside the square grid crater?",
+        robotImg: "assets/exploration-robot.PNG",
+        options: ["CORNER", "FORWARD", "BACKWARD", "BETWEEN"],
+        correct: "CORNER"
+    },
+    {
+        question: "Where is the Factory Robot moving relative to the conveyor belt?",
+        robotImg: "assets/factory-robot.PNG",
+        options: ["FORWARD", "BACKWARD", "CORNER", "UNDER"],
+        correct: "FORWARD"
     }
 ];
 
 let currentLvl = 0;
 let score = 0;
 let attemptCount = 0;
-let robotState = { r: 0, c: 0, dir: 0 };
+let robotState = { r: 0, c: 0 };
 let isBusy = false;
+let guessPromptIndex = 0;
 
 // SCREEN CONTROLLER
 function showScreen(id) {
@@ -517,28 +608,29 @@ function startGame() {
 }
 
 function loadLevel() {
-    isBusy = false;
-    attemptCount = 0;
-    document.getElementById('feedbackMsg').innerText = '';
-    document.getElementById('hintBanner').style.display = 'none';
-    document.getElementById('lvlDisplay').innerText = `${currentLvl + 1} / ${missions.length}`;
-    document.getElementById('scoreDisplay').innerText = score;
+    if (currentLvl < 3) {
+        // GRID NAVIGATION STAGES 1 TO 3
+        showScreen('gameScreen');
+        isBusy = false;
+        attemptCount = 0;
+        document.getElementById('feedbackMsg').innerText = '';
+        document.getElementById('hintBanner').style.display = 'none';
+        document.getElementById('lvlDisplay').innerText = `${currentLvl + 1} / 4`;
+        document.getElementById('scoreDisplay').innerText = score;
 
-    const mData = missions[currentLvl];
-    document.getElementById('missionTitle').innerText = mData.title;
-    robotState = { ...mData.robotStart };
+        const mData = gridMissions[currentLvl];
+        document.getElementById('missionTitle').innerText = mData.title;
+        robotState = { ...mData.robotStart };
 
-    updateHeadingLabel();
-    renderBoard();
-}
-
-function updateHeadingLabel() {
-    const dirNames = ["0° (UP)", "90° (RIGHT)", "180° (DOWN)", "270° (LEFT)"];
-    document.getElementById('headingDisplay').innerText = dirNames[robotState.dir];
+        renderBoard();
+    } else {
+        // LEVEL 4: GUESS THE PICTURE PROMPT
+        startGuessPromptLevel();
+    }
 }
 
 function renderBoard() {
-    const mData = missions[currentLvl];
+    const mData = gridMissions[currentLvl];
     const board = document.getElementById('gridBoard');
     board.innerHTML = '';
 
@@ -553,16 +645,15 @@ function renderBoard() {
                 cell.classList.add('wall');
             }
 
-            // Target Destination check
+            // Target check
             if (mData.target.r === r && mData.target.c === c) {
                 cell.innerHTML = `<div class="goal-entity">${mData.goalEmoji}</div>`;
             }
 
             // Robot image render
             if (robotState.r === r && robotState.c === c) {
-                const rotationDeg = robotState.dir * 90;
                 cell.innerHTML = `
-                    <div class="robot-img-container" style="transform: rotate(${rotationDeg}deg)">
+                    <div class="robot-img-container">
                         <img src="${mData.robotImg}" onerror="this.outerHTML='<span style=\\'font-size:36px\\'>${mData.fallbackEmoji}</span>'">
                     </div>
                 `;
@@ -573,87 +664,71 @@ function renderBoard() {
     }
 }
 
-// REAL-TIME ROTATION COMMAND
-function rotateRobot(deg, isAuto = false) {
+// POSITION COMMAND HANDLER
+function executePositionCommand(cmd, isAuto = false) {
     if (isBusy && !isAuto) return;
-    
-    const steps = deg / 90;
-    robotState.dir = (robotState.dir + steps + 400) % 4;
-    
-    if (!isAuto) {
-        playAudioTrack('snd-correct');
+
+    let targetR = robotState.r;
+    let targetC = robotState.c;
+
+    if (cmd === 'FORWARD') {
+        targetR -= 1; // Move up one cell
+    } else if (cmd === 'BACKWARD') {
+        targetR += 1; // Move down one cell
+    } else if (cmd === 'NEXT_TO') {
+        targetC += 1; // Move right one cell
+    } else if (cmd === 'CORNER') {
+        // Move to top corner (0, 3) or top left (0, 0)
+        targetR = 0;
+        targetC = 3;
     }
 
-    updateHeadingLabel();
-    renderBoard();
-}
-
-// REAL-TIME STEP FORWARD COMMAND
-function moveForwardStep(isAuto = false) {
-    if (isBusy && !isAuto) return;
-
-    let dr = 0, dc = 0;
-    if (robotState.dir === 0) dr = -1;
-    else if (robotState.dir === 1) dc = 1;
-    else if (robotState.dir === 2) dr = 1;
-    else if (robotState.dir === 3) dc = -1;
-
-    const targetR = robotState.r + dr;
-    const targetC = robotState.c + dc;
-
-    const mData = missions[currentLvl];
+    const mData = gridMissions[currentLvl];
     const isWall = mData.walls.some(w => w.r === targetR && w.c === targetC);
 
     if (targetR >= 0 && targetR < 4 && targetC >= 0 && targetC < 4 && !isWall) {
         robotState.r = targetR;
         robotState.c = targetC;
-        
-        if (!isAuto) {
-            playAudioTrack('snd-correct');
-        }
+
+        if (!isAuto) playAudioTrack('snd-correct');
 
         renderBoard();
         checkTargetReached();
     } else {
-        // Crash / Wrong Audio Effect
+        // Collision / Wrong Audio
         playAudioTrack('snd-wrong');
         const board = document.getElementById('gridBoard');
         board.classList.add('shake-grid');
         setTimeout(() => board.classList.remove('shake-grid'), 300);
 
-        handleFailedAttempt('❌ 💥 Oops! Blocked by Wall or Grid Boundary!');
+        handleFailedAttempt('❌ 💥 Path Blocked or Out of Bounds!');
     }
 }
 
 function checkTargetReached() {
-    const mData = missions[currentLvl];
+    const mData = gridMissions[currentLvl];
     if (robotState.r === mData.target.r && robotState.c === mData.target.c) {
         isBusy = true;
         playAudioTrack('snd-clap');
         score += 50;
         document.getElementById('scoreDisplay').innerText = score;
-        document.getElementById('feedbackMsg').innerHTML = '🎉 🌟 Mission Accomplished! Destination Reached! 🌟';
+        document.getElementById('feedbackMsg').innerHTML = '🎉 🌟 Mission Accomplished! Destination Reached!';
         document.getElementById('feedbackMsg').style.color = '#15803d';
 
         confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
 
         setTimeout(() => {
             currentLvl++;
-            if (currentLvl < missions.length) {
-                loadLevel();
-            } else {
-                triggerVictory();
-            }
+            loadLevel();
         }, 1600);
     }
 }
 
 function resetRobotPosition() {
     if (isBusy) return;
-    const mData = missions[currentLvl];
+    const mData = gridMissions[currentLvl];
     robotState = { ...mData.robotStart };
     document.getElementById('feedbackMsg').innerText = '';
-    updateHeadingLabel();
     renderBoard();
 }
 
@@ -669,30 +744,76 @@ function handleFailedAttempt(msgText) {
         hintBox.style.display = 'block';
         hintBox.innerHTML = `💡 AI Assistant: Guiding robot safely...`;
 
-        const mData = missions[currentLvl];
+        const mData = gridMissions[currentLvl];
         robotState = { ...mData.robotStart };
-        updateHeadingLabel();
         renderBoard();
 
         let stepIndex = 0;
         const autoInterval = setInterval(() => {
-            if (stepIndex >= mData.autoSteps.length) {
+            if (stepIndex >= mData.autoSequence.length) {
                 clearInterval(autoInterval);
                 isBusy = false;
                 checkTargetReached();
                 return;
             }
 
-            const action = mData.autoSteps[stepIndex];
-            if (action.type === 'rot') {
-                rotateRobot(action.val, true);
-                playAudioTrack('snd-correct');
-            } else if (action.type === 'move') {
-                moveForwardStep(true);
-            }
-
+            executePositionCommand(mData.autoSequence[stepIndex], true);
             stepIndex++;
-        }, 600);
+        }, 650);
+    }
+}
+
+/* LEVEL 4: GUESS THE PICTURE PROMPT LOGIC */
+function startGuessPromptLevel() {
+    showScreen('guessScreen');
+    guessPromptIndex = 0;
+    document.getElementById('guessScoreDisplay').innerText = score;
+    loadGuessQuestion();
+}
+
+function loadGuessQuestion() {
+    document.getElementById('guessFeedbackMsg').innerText = '';
+    const qData = guessPromptData[guessPromptIndex];
+
+    document.getElementById('promptQuestionText').innerText = qData.question;
+    document.getElementById('promptRobotImg').src = qData.robotImg;
+
+    const optBox = document.getElementById('promptOptionsBox');
+    optBox.innerHTML = '';
+
+    qData.options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'prompt-opt-btn';
+        btn.innerText = opt;
+        btn.onclick = () => verifyGuessChoice(opt, qData.correct, btn);
+        optBox.appendChild(btn);
+    });
+}
+
+function verifyGuessChoice(choice, correct, btnElement) {
+    const feedback = document.getElementById('guessFeedbackMsg');
+    if (choice === correct) {
+        playAudioTrack('snd-correct');
+        score += 50;
+        document.getElementById('guessScoreDisplay').innerText = score;
+
+        feedback.innerHTML = '🎉 🌟 Spot on, Detective! Correct position!';
+        feedback.style.color = '#15803d';
+
+        confetti({ particleCount: 35, spread: 50, origin: { y: 0.7 } });
+
+        setTimeout(() => {
+            guessPromptIndex++;
+            if (guessPromptIndex < guessPromptData.length) {
+                loadGuessQuestion();
+            } else {
+                triggerVictory();
+            }
+        }, 1500);
+    } else {
+        playAudioTrack('snd-wrong');
+        feedback.innerHTML = '❌ 😢 Not quite right! Look at the picture again.';
+        feedback.style.color = '#b91c1c';
     }
 }
 

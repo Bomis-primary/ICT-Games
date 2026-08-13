@@ -492,7 +492,7 @@ p.subtitle {
 </div>
 
 <script>
-// 5 EXPANDED LEVEL CONFIGURATIONS WITH AUTOMATIC SOLUTIONS
+// 5 LEVEL CONFIGURATIONS WITH AUTOMATIC SOLUTIONS
 const levels = [
     {
         robotStart: { r: 0, c: 0, dir: 0 }, // dir: 0=UP(0°), 1=RIGHT(90°), 2=DOWN(180°), 3=LEFT(270°)
@@ -638,20 +638,25 @@ function renderBoard() {
 }
 
 // REAL-TIME ROTATION COMMAND
-function rotateRobot(deg) {
-    if (isBusy) return;
+function rotateRobot(deg, isAuto = false) {
+    if (isBusy && !isAuto) return;
     
     // Convert degrees to index steps (90deg = 1 step)
     const steps = deg / 90;
     robotState.dir = (robotState.dir + steps + 400) % 4;
     
+    // Play correct audio for successful valid rotation step
+    if (!isAuto) {
+        playAudioTrack('snd-correct');
+    }
+
     updateHeadingLabel();
     renderBoard();
 }
 
 // REAL-TIME STEP FORWARD COMMAND
-function moveForwardStep() {
-    if (isBusy) return;
+function moveForwardStep(isAuto = false) {
+    if (isBusy && !isAuto) return;
 
     let dr = 0, dc = 0;
     if (robotState.dir === 0) dr = -1;
@@ -666,12 +671,18 @@ function moveForwardStep() {
     const isWall = lvlData.walls.some(w => w.r === targetR && w.c === targetC);
 
     if (targetR >= 0 && targetR < 4 && targetC >= 0 && targetC < 4 && !isWall) {
+        // Successful valid move forward
         robotState.r = targetR;
         robotState.c = targetC;
+        
+        if (!isAuto) {
+            playAudioTrack('snd-correct');
+        }
+
         renderBoard();
         checkTargetReached();
     } else {
-        // Crash / BEEP trigger
+        // Crash / BEEP trigger - Wrong Move Sound
         playAudioTrack('snd-wrong');
         const board = document.getElementById('gridBoard');
         board.classList.add('shake-grid');
@@ -685,7 +696,7 @@ function checkTargetReached() {
     const lvlData = levels[currentLvl];
     if (robotState.r === lvlData.battery.r && robotState.c === lvlData.battery.c) {
         isBusy = true;
-        playAudioTrack('snd-correct');
+        playAudioTrack('snd-clap');
         score += 50;
         document.getElementById('scoreDisplay').innerText = score;
         document.getElementById('feedbackMsg').innerHTML = '🎉 🌟 Target Reached! Powered Up! 🔋';
@@ -742,17 +753,10 @@ function handleFailedAttempt(msgText) {
 
             const action = lvlData.autoSteps[stepIndex];
             if (action.type === 'rot') {
-                rotateRobot(action.val);
+                rotateRobot(action.val, true);
+                playAudioTrack('snd-correct');
             } else if (action.type === 'move') {
-                let dr = 0, dc = 0;
-                if (robotState.dir === 0) dr = -1;
-                else if (robotState.dir === 1) dc = 1;
-                else if (robotState.dir === 2) dr = 1;
-                else if (robotState.dir === 3) dc = -1;
-                
-                robotState.r += dr;
-                robotState.c += dc;
-                renderBoard();
+                moveForwardStep(true);
             }
 
             stepIndex++;

@@ -2,441 +2,706 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
 <title>Math & Music Fun</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Comic Sans MS',cursive;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
 }
 
-body{
-background:linear-gradient(135deg,#ffecd2,#fcb69f,#a1c4fd);
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-padding:15px;
-overflow-x:hidden;
+body {
+    background: linear-gradient(135deg, #ffecd2, #fcb69f, #a1c4fd);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    overflow-x: hidden;
 }
 
 /* --- BRANDING SPLASH SCREEN (Strict 5 Seconds) --- */
 #brand-splash {
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100vh;
-background-color: #ffffff;
-display: flex;
-justify-content: center;
-align-items: center;
-z-index: 10000;
-transition: opacity 0.5s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    z-index: 10000;
+    transition: opacity 0.5s ease;
 }
 #brand-splash img {
-max-width: 65%;
-max-height: 70vh;
-object-fit: contain;
+    max-width: 65%;
+    max-height: 60vh;
+    object-fit: contain;
+}
+.loading-track {
+    width: 60%;
+    max-width: 250px;
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #cbd5e1;
+}
+.loading-bar-fill {
+    width: 100%;
+    height: 100%;
+    background: #ff7043;
+    transform: translateX(-100%);
+    animation: loadProgress 4.5s forwards linear;
 }
 
-.screen{
-display:none;
-background:white;
-width:95%;
-max-width:900px;
-padding:30px 20px;
-border-radius:30px;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
-text-align:center;
-animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+@keyframes loadProgress {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0%); }
+}
+
+.screen {
+    display: none;
+    background: rgba(255, 255, 255, 0.96);
+    width: 95%;
+    max-width: 950px;
+    padding: 25px;
+    border-radius: 30px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    text-align: center;
+    animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin: auto;
 }
 
 @keyframes popUp {
-0% { transform: scale(0.95); opacity: 0; }
-100% { transform: scale(1); opacity: 1; }
+    0% { transform: scale(0.95); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
 }
 
-.screen.active{
-display:block;
+.screen.active {
+    display: block;
 }
 
-h1{
-color:#1565c0;
-font-size: 32px;
-margin-bottom:15px;
+h1 {
+    color: #1565c0;
+    font-size: clamp(24px, 5vw, 34px);
+    margin-bottom: 12px;
 }
 
 p.subtitle {
-font-size: 20px;
-color: #555;
-margin-bottom: 20px;
+    font-size: clamp(16px, 3.5vw, 20px);
+    color: #555;
+    margin-bottom: 18px;
 }
 
-.btn{
-background:#ff7043;
-color:white;
-border:none;
-padding:18px 32px;
-border-radius:40px;
-font-size:22px;
-font-weight:bold;
-cursor:pointer;
-margin:12px;
-transition: 0.2s ease;
-box-shadow: 0 4px 10px rgba(255,112,67,0.4);
+.btn {
+    background: #ff7043;
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 40px;
+    font-size: clamp(16px, 3.8vw, 20px);
+    font-weight: bold;
+    cursor: pointer;
+    margin: 8px;
+    transition: 0.2s ease;
+    box-shadow: 0 5px 0 #d84315;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
-.btn:hover{
-transform:scale(1.05);
-background: #e64a19;
+.btn:hover {
+    transform: scale(1.03);
+    background: #e64a19;
 }
 
-input{
-width:100%;
-max-width: 350px;
-padding:16px;
-border-radius:15px;
-border:3px solid #cbd5e1;
-font-size:22px;
-margin:15px 0;
-text-align: center;
+.btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #d84315;
 }
 
-.image-options{
-display:flex;
-justify-content:center;
-gap:25px;
-flex-wrap:wrap;
-margin-top:25px;
+.btn-back {
+    background: #78909c;
+    box-shadow: 0 5px 0 #455a64;
+}
+.btn-back:hover {
+    background: #607d8b;
 }
 
-.image-card{
-width:200px;
-height:200px;
-background:#e3f2fd;
-border-radius:25px;
-padding:15px;
-cursor:pointer;
-display:flex;
-flex-direction:column;
-justify-content:center;
-align-items:center;
-transition:0.3s;
-font-weight: bold;
-font-size: 26px;
-color: #0d47a1;
-box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+.instructions-box {
+    background: #e3f2fd;
+    border: 3px dashed #1565c0;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 15px auto;
+    text-align: left;
+    max-width: 600px;
 }
 
-.image-card:hover{
-transform:scale(1.08);
-background:#90caf9;
+.instruction-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: clamp(15px, 3.5vw, 18px);
+    color: #1e293b;
+    font-weight: bold;
 }
 
-.image-card img{
-width:100px;
-height:100px;
-object-fit:contain;
-margin-bottom:10px;
+.feedback {
+    font-size: clamp(20px, 4.5vw, 28px);
+    font-weight: bold;
+    margin-top: 15px;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
-.feedback{
-font-size:32px;
-font-weight:bold;
-margin-top:25px;
-height:45px;
+/* GAME 1: IMAGE SELECTION */
+.image-options {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
 }
 
-.drag-container{
-display:flex;
-justify-content:center;
-gap:40px;
-flex-wrap:wrap;
-margin-top:25px;
+.image-card {
+    width: clamp(140px, 28vw, 190px);
+    height: clamp(140px, 28vw, 190px);
+    background: #e3f2fd;
+    border: 3px solid #90caf9;
+    border-radius: 22px;
+    padding: 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: 0.2s;
+    font-weight: bold;
+    font-size: clamp(18px, 4vw, 24px);
+    color: #0d47a1;
+    box-shadow: 0 6px 0 #64b5f6;
 }
 
-.drag-item{
-background:#c8e6c9;
-border: 2px solid #a5d6a7;
-padding:15px;
-border-radius:20px;
-margin-bottom:15px;
-font-size:36px;
-font-weight:bold;
-width:140px;
-cursor:grab;
-box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+.image-card:hover {
+    transform: scale(1.03);
+    background: #bbdefb;
 }
 
-.drop-box{
-width:240px;
-height:90px;
-border:3px dashed #1565c0;
-border-radius:20px;
-display:flex;
-justify-content:center;
-align-items:center;
-margin-bottom:15px;
-font-size:22px;
-font-weight:bold;
-padding:10px;
-background:#f5f5f5;
-color: #333;
+.image-card img {
+    width: clamp(60px, 14vw, 90px);
+    height: clamp(60px, 14vw, 90px);
+    object-fit: contain;
+    margin-bottom: 8px;
 }
 
-.memory-grid{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:15px;
-margin-top:25px;
-}
-
-.card{
-height:130px;
-background:#38bdf8;
-border-radius:20px;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:36px;
-font-weight:bold;
-cursor:pointer;
-color:white;
-transition: background-color 0.2s ease, transform 0.2s;
-box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.card.flipped{
-background:#fff3e0;
-color:#e65100;
-border: 2px solid #ffe0b2;
-}
-
-.final-score{
-font-size:80px;
-font-weight:bold;
-color:#ff6f00;
-margin:20px 0;
-}
-
-@media(max-width:768px){
-.memory-grid{
-grid-template-columns:repeat(2,1fr);
-}
-.image-card{
-width:150px;
-height:150px;
-font-size: 20px;
-}
+/* GAME 2: DRAG & DROP */
 .drag-container {
-gap: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-top: 20px;
 }
+
+.drag-item {
+    background: #c8e6c9;
+    border: 3px solid #81c784;
+    padding: 12px;
+    border-radius: 18px;
+    margin-bottom: 12px;
+    font-size: clamp(28px, 6vw, 36px);
+    font-weight: bold;
+    width: clamp(110px, 28vw, 140px);
+    cursor: grab;
+    box-shadow: 0 4px 0 #66bb6a;
+}
+
+.drop-box {
+    width: clamp(180px, 45vw, 240px);
+    height: 75px;
+    border: 3px dashed #1565c0;
+    border-radius: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: clamp(16px, 3.5vw, 20px);
+    font-weight: bold;
+    padding: 8px;
+    background: #f8fafc;
+    color: #333;
+}
+
+/* GAME 3: MEMORY MATCH */
+.memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.card {
+    height: clamp(90px, 18vh, 120px);
+    background: #38bdf8;
+    border-radius: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: clamp(28px, 6vw, 36px);
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    transition: 0.2s;
+    box-shadow: 0 5px 0 #0284c7;
+}
+
+.card.flipped {
+    background: #fff3e0;
+    color: #e65100;
+    border: 2px solid #ffe0b2;
+    box-shadow: 0 5px 0 #ffb74d;
+}
+
+/* GAME 4: CALCULATOR CANVAS */
+.calc-stage {
+    background: #1e293b;
+    border: 6px solid #334155;
+    border-radius: 24px;
+    padding: 20px;
+    max-width: 480px;
+    margin: 15px auto;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+}
+
+.calc-screen {
+    background: #86efac;
+    border: 4px solid #4ade80;
+    border-radius: 14px;
+    padding: 15px;
+    font-family: 'Courier New', monospace;
+    font-size: clamp(28px, 6vw, 40px);
+    font-weight: bold;
+    color: #064e3b;
+    text-align: right;
+    margin-bottom: 15px;
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.2);
+}
+
+.calc-pad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.calc-btn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 15px;
+    font-size: clamp(20px, 4.5vw, 26px);
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #1d4ed8;
+}
+
+.calc-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #1d4ed8;
+}
+
+.calc-btn.op {
+    background: #f97316;
+    box-shadow: 0 4px 0 #c2410c;
+}
+
+/* GAME 5: MUSIC PLAYER STAGE */
+.music-deck {
+    background: linear-gradient(180deg, #ec4899 0%, #be185d 100%);
+    border: 6px solid #831843;
+    border-radius: 28px;
+    padding: 20px;
+    max-width: 520px;
+    margin: 15px auto;
+    color: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.music-display {
+    background: #fbcfe8;
+    color: #831843;
+    border-radius: 16px;
+    padding: 15px;
+    font-size: clamp(18px, 4vw, 24px);
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.music-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.control-btn {
+    background: white;
+    color: #be185d;
+    border: none;
+    border-radius: 50%;
+    width: clamp(65px, 14vw, 85px);
+    height: clamp(65px, 14vw, 85px);
+    font-size: clamp(24px, 5vw, 32px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #9d174d;
+}
+
+.control-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #9d174d;
+}
+
+.final-score {
+    font-size: clamp(50px, 10vw, 80px);
+    font-weight: bold;
+    color: #ff6f00;
+    margin: 15px 0;
+}
+
+.shake {
+    animation: shakeAnim 0.3s ease-in-out;
+}
+
+@keyframes shakeAnim {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+}
+
+@media(max-width: 768px) {
+    .memory-grid { grid-template-columns: repeat(2, 1fr); }
+    .drag-container { flex-direction: column; align-items: center; }
 }
 </style>
 </head>
 
 <body>
 
+<!-- AUDIO ENGINE EMBEDS -->
 <audio id="correctSound" src="assets/correct-1.mp3" preload="auto"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
 
+<!-- 1. BRANDING SPLASH SCREEN -->
 <div id="brand-splash">
-<img src="assets/innovine-logo.png" alt="Innovine Logo">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/320x100?text=Innovine+Pedagogy'">
+    <div class="loading-track">
+        <div class="loading-bar-fill"></div>
+    </div>
 </div>
 
-<div id="intro" class="screen">
-<h1>🧮 Calculator & Music Player 🎵</h1>
+<!-- 2. INSTRUCTIONS SCREEN -->
+<div id="instructionScreen" class="screen">
+    <h1>🧭 Welcome Learner!</h1>
+    <p class="subtitle">Calculator & Music Player Adventure Guide</p>
 
-<div style="margin: 20px 0;">
-<input type="text" id="studentName" placeholder="😀 Type Your Name Here">
+    <div class="instructions-box">
+        <div class="instruction-item">
+            <span>🖼️</span>
+            <span><strong>Find the Sign:</strong> Identify operational math symbols for addition.</span>
+        </div>
+        <div class="instruction-item">
+            <span>🧩</span>
+            <span><strong>Match the Sign:</strong> Connect symbols to their correct function box.</span>
+        </div>
+        <div class="instruction-item">
+            <span>🧠</span>
+            <span><strong>Memory Match:</strong> Match pairs of math and music player icons.</span>
+        </div>
+        <div class="instruction-item">
+            <span>🧮</span>
+            <span><strong>Target Calculator:</strong> Tap operational keys to reach target numbers.</span>
+        </div>
+        <div class="instruction-item">
+            <span>🎵</span>
+            <span><strong>Music Player Stage:</strong> Tap player controls to manipulate music playback!</span>
+        </div>
+    </div>
+
+    <button class="btn" onclick="showMenu()">🚀 Enter Main Menu</button>
 </div>
 
-<button class="btn" onclick="showMenu()">
-🚀 Let's Play!
-</button>
-</div>
-
+<!-- 3. MAIN MENU SCREEN -->
 <div id="menu" class="screen">
-<h1>Pick a Game!</h1>
-<p class="subtitle">Earn stars and points!</p>
+    <h1>🎮 Pick a Game!</h1>
+    <p class="subtitle">Select an activity to earn stars!</p>
 
-<button class="btn" onclick="startImageGame()">🖼️ Game 1: Find the Sign</button>
-<button class="btn" onclick="startDragGame()">🧩 Game 2: Match the Sign</button>
-<button class="btn" onclick="startMemoryGame()">🧠 Game 3: Memory Match</button>
+    <div style="display: flex; flex-direction: column; gap: 8px; max-width: 450px; margin: 0 auto;">
+        <button class="btn" onclick="startImageGame()">🖼️ Game 1: Find the Sign</button>
+        <button class="btn" onclick="startDragGame()">🧩 Game 2: Match the Sign</button>
+        <button class="btn" onclick="startMemoryGame()">🧠 Game 3: Memory Match</button>
+        <button class="btn" onclick="startCalcGame()">🧮 Game 4: Target Calculator</button>
+        <button class="btn" onclick="startMusicGame()">🎵 Game 5: Music Deck Controller</button>
+    </div>
 </div>
 
+<!-- 4. GAME 1: FIND THE SIGN -->
 <div id="imageScreen" class="screen">
-<h1>Find the Plus Sign!</h1>
-<p class="subtitle">Click the symbol used for ADDITION (+)</p>
+    <h1>Find the Plus Sign!</h1>
+    <p class="subtitle">Click the symbol used for ADDITION (+)</p>
 
-<div class="image-options">
-<div class="image-card" onclick="checkImage('minus')">
-<img src="assets/subtraction.png" alt="Minus">
-➖ Minus
+    <div class="image-options">
+        <div class="image-card" onclick="checkImage('minus', this)">
+            <img src="assets/subtraction.png" alt="Minus" onerror="this.src='https://via.placeholder.com/90?text=MINUS'">
+            ➖ Minus
+        </div>
+
+        <div class="image-card" onclick="checkImage('plus', this)">
+            <img src="assets/addition.png" alt="Plus" onerror="this.src='https://via.placeholder.com/90?text=PLUS'">
+            ➕ Plus
+        </div>
+
+        <div class="image-card" onclick="checkImage('equal', this)">
+            <img src="assets/equal.png" alt="Equal" onerror="this.src='https://via.placeholder.com/90?text=EQUAL'">
+            〓 Equal
+        </div>
+    </div>
+
+    <div class="feedback" id="imageFeedback"></div>
+    <button class="btn btn-back" onclick="showMenu()">⬅ Back to Menu</button>
 </div>
 
-<div class="image-card" onclick="checkImage('plus')">
-<img src="assets/addition.png" alt="Plus">
-➕ Plus
-</div>
-
-<div class="image-card" onclick="checkImage('equal')">
-<img src="assets/equal.png" alt="Equal">
-〓 Equal
-</div>
-</div>
-
-<div class="feedback" id="imageFeedback"></div>
-<button class="btn" onclick="showMenu()">⬅ Back</button>
-</div>
-
+<!-- 5. GAME 2: MATCH THE SIGN (DRAG & DROP) -->
 <div id="dragScreen" class="screen">
-<h1>Match the Buttons</h1>
-<p class="subtitle">Drag the symbol to the correct action box!</p>
+    <h1>Match the Buttons</h1>
+    <p class="subtitle">Drag the symbol to the correct action box!</p>
 
-<div class="drag-container">
-<div>
-<div class="drag-item" draggable="true" id="plusBtn">➕</div>
-<div class="drag-item" draggable="true" id="playBtn">▶</div>
+    <div class="drag-container">
+        <div>
+            <div class="drag-item" draggable="true" id="plusBtn">➕</div>
+            <div class="drag-item" draggable="true" id="playBtn">▶</div>
+        </div>
+
+        <div>
+            <div class="drop-box" data-answer="plusBtn">Add Numbers</div>
+            <div class="drop-box" data-answer="playBtn">Play Music</div>
+        </div>
+    </div>
+
+    <div class="feedback" id="dragFeedback"></div>
+    <button class="btn btn-back" onclick="showMenu()">⬅ Back to Menu</button>
 </div>
 
-<div>
-<div class="drop-box" data-answer="plusBtn">Add Numbers</div>
-<div class="drop-box" data-answer="playBtn">Play Music</div>
-</div>
-</div>
-
-<div class="feedback" id="dragFeedback"></div>
-<button class="btn" onclick="showMenu()">⬅ Back</button>
-</div>
-
+<!-- 6. GAME 3: MEMORY MATCH -->
 <div id="memoryScreen" class="screen">
-<h1>Memory Match</h1>
-<p class="subtitle">Find the matching pair symbols!</p>
+    <h1>Memory Match</h1>
+    <p class="subtitle">Find the matching pair symbols!</p>
 
-<div class="memory-grid" id="memoryGrid"></div>
-<div class="feedback" id="memoryFeedback"></div>
-<button class="btn" onclick="showMenu()">⬅ Back</button>
+    <div class="memory-grid" id="memoryGrid"></div>
+    <div class="feedback" id="memoryFeedback"></div>
+    <button class="btn btn-back" onclick="showMenu()">⬅ Back to Menu</button>
 </div>
 
-<div id="finalScreen" class="screen">
-<h1>🏆 Super Job!</h1>
-<h2 id="finalName"></h2>
-<div class="final-score" id="finalScore"></div>
-<h2 id="rank" style="color:#1565c0; margin-bottom:15px;"></h2>
+<!-- 7. GAME 4: TARGET CALCULATOR (NON-MCQ) -->
+<div id="calcScreen" class="screen">
+    <h1>🧮 Reach the Target Number!</h1>
+    <p class="subtitle" id="calcTargetText">Goal: Reach number 10!</p>
 
-<button class="btn" onclick="location.reload()">
-🔄 Play Again
-</button>
+    <div class="calc-stage">
+        <div class="calc-screen" id="calcDisplay">0</div>
+        <div class="calc-pad">
+            <button class="calc-btn" onclick="pressCalcNum(1)">1</button>
+            <button class="calc-btn" onclick="pressCalcNum(2)">2</button>
+            <button class="calc-btn" onclick="pressCalcNum(5)">5</button>
+            <button class="calc-btn op" onclick="pressCalcOp('+')">➕</button>
+            <button class="calc-btn op" onclick="pressCalcOp('-')">➖</button>
+            <button class="calc-btn op" style="background:#ef4444; box-shadow:0 4px 0 #b91c1c;" onclick="resetCalc()">C</button>
+        </div>
+    </div>
+
+    <div class="feedback" id="calcFeedback"></div>
+    <button class="btn btn-back" onclick="showMenu()">⬅ Back to Menu</button>
+</div>
+
+<!-- 8. GAME 5: MUSIC PLAYER STAGE (NON-MCQ) -->
+<div id="musicScreen" class="screen">
+    <h1>🎵 Music Controller Stage</h1>
+    <p class="subtitle" id="musicTaskText">Task: Tap PLAY to start music!</p>
+
+    <div class="music-deck">
+        <div class="music-display" id="musicStatus">📻 Status: STOPPED</div>
+        <div class="music-controls">
+            <button class="control-btn" id="btnPlay" onclick="pressMusicControl('PLAY', this)">▶</button>
+            <button class="control-btn" id="btnPause" onclick="pressMusicControl('PAUSE', this)">⏸</button>
+            <button class="control-btn" id="btnStop" onclick="pressMusicControl('STOP', this)">⏹</button>
+        </div>
+    </div>
+
+    <div class="feedback" id="musicFeedback"></div>
+    <button class="btn btn-back" onclick="showMenu()">⬅ Back to Menu</button>
+</div>
+
+<!-- 9. FINAL SCORE REPORT SCREEN -->
+<div id="finalScreen" class="screen">
+    <h1>🏆 Super Job!</h1>
+    <div class="final-score" id="finalScore">0 Stars</div>
+    <h2 id="rank" style="color:#1565c0; margin-bottom:15px;">Champion!</h2>
+
+    <button class="btn" onclick="showMenu()">🔄 Play Again</button>
 </div>
 
 <script>
 let totalScore = 0;
-let student = '';
 
-/* SCREEN CONTROLLERS */
-function showScreen(id){
-document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
-document.getElementById(id).classList.add('active');
+/* SCREEN MANAGEMENT ROUTER */
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
 }
 
-// Strictly locks the splash viewport screen for exactly 5 seconds
+// 5-Second Timed Branding Splash Screen Engine
 window.addEventListener('DOMContentLoaded', () => {
-setTimeout(() => {
-const splash = document.getElementById('brand-splash');
-splash.style.opacity = '0';
-setTimeout(() => {
-splash.style.display = 'none';
-showScreen('intro');
-}, 500);
-}, 5000);
+    setTimeout(() => {
+        const splash = document.getElementById('brand-splash');
+        if (splash) {
+            splash.style.opacity = '0';
+            setTimeout(() => {
+                splash.style.display = 'none';
+                showScreen('instructionScreen');
+            }, 500);
+        }
+    }, 5000);
 });
 
-function showMenu(){
-student = document.getElementById('studentName').value.trim() || student;
-if(student === ''){
-alert('Please type your name first!');
-return;
-}
-showScreen('menu');
+function showMenu() {
+    showScreen('menu');
 }
 
-/* PLAY AUDIO WORKER ENGINE */
-function playAudioTrack(id) {
-const track = document.getElementById(id);
-if(track) {
-track.currentTime = 0;
-track.play().catch(e => console.log('Audio stream deferred until click asset binding.'));
+/* AUDIO & FEEDBACK HELPER FUNCTIONS */
+function unlockAudio() {
+    ['correctSound', 'wrongSound', 'clapSound'].forEach(id => {
+        const snd = document.getElementById(id);
+        if (snd) snd.load();
+    });
 }
+
+function playAudioTrack(id) {
+    const track = document.getElementById(id);
+    if (track) {
+        track.currentTime = 0;
+        track.play().catch(e => console.log('Audio stream deferred until click.'));
+    }
+}
+
+function triggerSuccessFeedback(containerId, message, element = null) {
+    playAudioTrack('correctSound');
+    const fb = document.getElementById(containerId);
+    fb.innerHTML = `🎉 🌟 ${message} 🌟 🎉`;
+    fb.style.color = '#15803d';
+
+    if (element) {
+        const rect = element.getBoundingClientRect();
+        const x = (rect.left + rect.width / 2) / window.innerWidth;
+        const y = (rect.top + rect.height / 2) / window.innerHeight;
+        confetti({ particleCount: 35, spread: 50, origin: { x: x, y: y } });
+    } else {
+        confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+    }
+}
+
+function triggerWrongFeedback(containerId, message, element = null) {
+    playAudioTrack('wrongSound');
+    const fb = document.getElementById(containerId);
+    fb.innerHTML = `❌ 😢 ${message} 💔 ❌`;
+    fb.style.color = '#b91c1c';
+
+    if (element) {
+        element.classList.add('shake');
+        setTimeout(() => element.classList.remove('shake'), 350);
+    }
 }
 
 /* GAME 1: IMAGE LOGIC */
-function startImageGame(){
-document.getElementById('imageFeedback').innerText = '';
-showScreen('imageScreen');
+function startImageGame() {
+    unlockAudio();
+    document.getElementById('imageFeedback').innerText = '';
+    showScreen('imageScreen');
 }
 
-function checkImage(ans){
-const feedback = document.getElementById('imageFeedback');
-if(ans === 'plus'){
-playAudioTrack('correctSound');
-feedback.innerText = '🎉 Super! That is the Plus Sign!';
-feedback.style.color = 'green';
-totalScore += 2;
-setTimeout(showMenu, 1500);
-} else {
-playAudioTrack('wrongSound');
-feedback.innerText = '❌ Try Again! Look for the cross +';
-feedback.style.color = 'red';
-}
+function checkImage(ans, element) {
+    if (ans === 'plus') {
+        triggerSuccessFeedback('imageFeedback', 'Super! That is the Plus Sign!', element);
+        totalScore += 2;
+        setTimeout(showMenu, 1500);
+    } else {
+        triggerWrongFeedback('imageFeedback', 'Try Again! Look for the cross +', element);
+    }
 }
 
-/* GAME 2: DRAG LOGIC */
-function startDragGame(){
-document.getElementById('dragFeedback').innerText = '';
-showScreen('dragScreen');
-}
-
+/* GAME 2: DRAG & DROP LOGIC */
 let correctDrops = 0;
+
+function startDragGame() {
+    unlockAudio();
+    document.getElementById('dragFeedback').innerText = '';
+    showScreen('dragScreen');
+    correctDrops = 0;
+    document.querySelectorAll('.drop-box').forEach(box => {
+        box.style.background = '#f5f5f5';
+        box.innerText = box.dataset.answer === 'plusBtn' ? 'Add Numbers' : 'Play Music';
+    });
+}
+
 document.querySelectorAll('.drag-item').forEach(item => {
-item.addEventListener('dragstart', e => {
-e.dataTransfer.setData('text', e.target.id);
-});
+    item.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text', e.target.id);
+    });
 });
 
 document.querySelectorAll('.drop-box').forEach(box => {
-box.addEventListener('dragover', e => e.preventDefault());
-box.addEventListener('drop', e => {
-e.preventDefault();
-const data = e.dataTransfer.getData('text');
-const feedback = document.getElementById('dragFeedback');
+    box.addEventListener('dragover', e => e.preventDefault());
+    box.addEventListener('drop', e => {
+        e.preventDefault();
+        const data = e.dataTransfer.getData('text');
 
-if(data === box.dataset.answer){
-box.style.background = 'lightgreen';
-box.innerHTML = '✅ Got It!';
-correctDrops++;
-totalScore += 2;
-playAudioTrack('correctSound');
-feedback.innerText = '⭐ Great Match!';
-feedback.style.color = 'green';
+        if (data === box.dataset.answer) {
+            box.style.background = '#bbf7d0';
+            box.innerHTML = '✅ Got It!';
+            correctDrops++;
+            totalScore += 2;
+            triggerSuccessFeedback('dragFeedback', 'Great Match!', box);
 
-if(correctDrops === 2){
-setTimeout(showFinal, 1500);
-}
-} else {
-playAudioTrack('wrongSound');
-feedback.innerText = '❌ Not quite right! Try another box.';
-feedback.style.color = 'red';
-}
-});
+            if (correctDrops === 2) {
+                setTimeout(showFinal, 1500);
+            }
+        } else {
+            triggerWrongFeedback('dragFeedback', 'Not quite right! Try another box.', box);
+        }
+    });
 });
 
 /* GAME 3: MEMORY MATCH LOGIC */
@@ -444,81 +709,153 @@ const memoryData = ['➕', '➕', '▶', '▶', '〓', '〓', '🎵', '🎵'];
 let flipped = [];
 let matched = 0;
 
-function startMemoryGame(){
-document.getElementById('memoryFeedback').innerText = '';
-showScreen('memoryScreen');
-const grid = document.getElementById('memoryGrid');
-grid.innerHTML = '';
-matched = 0;
-flipped = [];
+function startMemoryGame() {
+    unlockAudio();
+    document.getElementById('memoryFeedback').innerText = '';
+    showScreen('memoryScreen');
+    const grid = document.getElementById('memoryGrid');
+    grid.innerHTML = '';
+    matched = 0;
+    flipped = [];
 
-const pool = [...memoryData].sort(() => 0.5 - Math.random());
-pool.forEach(item => {
-const card = document.createElement('div');
-card.className = 'card';
-card.innerHTML = '❓';
-card.onclick = () => flipCard(card, item);
-grid.appendChild(card);
-});
+    const pool = [...memoryData].sort(() => 0.5 - Math.random());
+    pool.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = '❓';
+        card.onclick = () => flipCard(card, item);
+        grid.appendChild(card);
+    });
 }
 
-function flipCard(card, item){
-if(card.classList.contains('flipped') || flipped.length >= 2) return;
+function flipCard(card, item) {
+    if (card.classList.contains('flipped') || flipped.length >= 2) return;
 
-card.classList.add('flipped');
-card.innerHTML = item;
-flipped.push({card, item});
+    card.classList.add('flipped');
+    card.innerHTML = item;
+    flipped.push({ card, item });
 
-if(flipped.length === 2){
-if(flipped[0].item === flipped[1].item){
-matched++;
-totalScore += 2;
-playAudioTrack('correctSound');
-document.getElementById('memoryFeedback').innerText = '🎉 You found a match!';
-document.getElementById('memoryFeedback').style.color = 'green';
-flipped = [];
+    if (flipped.length === 2) {
+        if (flipped[0].item === flipped[1].item) {
+            matched++;
+            totalScore += 2;
+            triggerSuccessFeedback('memoryFeedback', 'You found a match!', card);
+            flipped = [];
 
-if(matched === 4){
-setTimeout(showFinal, 1500);
-}
-} else {
-playAudioTrack('wrongSound');
-document.getElementById('memoryFeedback').innerText = '❌ Try again!';
-document.getElementById('memoryFeedback').style.color = 'red';
-setTimeout(() => {
-flipped.forEach(f => {
-f.card.classList.remove('flipped');
-f.card.innerHTML = '❓';
-});
-flipped = [];
-}, 1000);
-}
-}
+            if (matched === 4) {
+                setTimeout(showFinal, 1500);
+            }
+        } else {
+            triggerWrongFeedback('memoryFeedback', 'Try again!', card);
+            setTimeout(() => {
+                flipped.forEach(f => {
+                    f.card.classList.remove('flipped');
+                    f.card.innerHTML = '❓';
+                });
+                flipped = [];
+            }, 1000);
+        }
+    }
 }
 
-/* CELEBRATORY FRAME CLOSURE ENGINE */
-function showFinal(){
-showScreen('finalScreen');
-document.getElementById('finalName').innerHTML = `Wonderful Job, <b>${student}</b>!`;
-document.getElementById('finalScore').innerText = `${totalScore} Stars`;
+/* GAME 4: TARGET CALCULATOR LOGIC (NON-MCQ) */
+let calcVal = 0;
+let calcOp = null;
+let calcTarget = 10;
 
-let ranking = '';
-if(totalScore >= 8){
-ranking = '🏆 Tech Champion Star!';
-} else if(totalScore >= 4){
-ranking = '🌟 Brilliant Learner!';
-} else {
-ranking = '👍 Keep Practicing!';
+function startCalcGame() {
+    unlockAudio();
+    showScreen('calcScreen');
+    resetCalc();
 }
-document.getElementById('rank').innerText = ranking;
 
-// Play the clapping tracking and deploy particles
-playAudioTrack('clapSound');
-confetti({
-particleCount: 150,
-spread: 80,
-origin: { y: 0.6 }
-});
+function resetCalc() {
+    calcVal = 0;
+    calcOp = null;
+    document.getElementById('calcDisplay').innerText = '0';
+    document.getElementById('calcFeedback').innerText = '';
+}
+
+function pressCalcNum(num) {
+    if (calcOp === '+') {
+        calcVal += num;
+    } else if (calcOp === '-') {
+        calcVal -= num;
+    } else {
+        calcVal = num;
+    }
+    calcOp = null;
+    document.getElementById('calcDisplay').innerText = calcVal;
+    checkCalcTarget();
+}
+
+function pressCalcOp(op) {
+    calcOp = op;
+    document.getElementById('calcDisplay').innerText = `${calcVal} ${op}`;
+}
+
+function checkCalcTarget() {
+    if (calcVal === calcTarget) {
+        triggerSuccessFeedback('calcFeedback', 'Target Reached! Perfect Math!', document.getElementById('calcDisplay'));
+        totalScore += 5;
+        setTimeout(showFinal, 1500);
+    } else if (calcVal > calcTarget) {
+        triggerWrongFeedback('calcFeedback', 'Exceeded Target! Tap C to Reset.', document.getElementById('calcDisplay'));
+    }
+}
+
+/* GAME 5: MUSIC STAGE LOGIC (NON-MCQ) */
+let musicStageTask = 'PLAY';
+
+function startMusicGame() {
+    unlockAudio();
+    showScreen('musicScreen');
+    musicStageTask = 'PLAY';
+    document.getElementById('musicTaskText').innerText = 'Task: Tap PLAY (▶) to start music!';
+    document.getElementById('musicStatus').innerText = '📻 Status: STOPPED';
+    document.getElementById('musicFeedback').innerText = '';
+}
+
+function pressMusicControl(action, btn) {
+    const statusBox = document.getElementById('musicStatus');
+    if (action === 'PLAY') {
+        statusBox.innerText = '📻 Status: 🎵 PLAYING MUSIC...';
+    } else if (action === 'PAUSE') {
+        statusBox.innerText = '📻 Status: ⏸ MUSIC PAUSED';
+    } else if (action === 'STOP') {
+        statusBox.innerText = '📻 Status: ⏹ MUSIC STOPPED';
+    }
+
+    if (action === musicStageTask) {
+        triggerSuccessFeedback('musicFeedback', `Action ${action} Executed Correctly!`, btn);
+        totalScore += 5;
+        setTimeout(showFinal, 1500);
+    } else {
+        triggerWrongFeedback('musicFeedback', `Wrong Button! Read the Task.`, btn);
+    }
+}
+
+/* FINAL REPORT SCREEN */
+function showFinal() {
+    showScreen('finalScreen');
+    document.getElementById('finalScore').innerText = `${totalScore} Stars`;
+
+    let ranking = '';
+    if (totalScore >= 12) {
+        ranking = '🏆 Tech Champion Star!';
+    } else if (totalScore >= 6) {
+        ranking = '🌟 Brilliant Learner!';
+    } else {
+        ranking = '👍 Keep Practicing!';
+    }
+    document.getElementById('rank').innerText = ranking;
+
+    playAudioTrack('clapSound');
+    confetti({
+        particleCount: 180,
+        spread: 100,
+        origin: { y: 0.6 }
+    });
 }
 </script>
 

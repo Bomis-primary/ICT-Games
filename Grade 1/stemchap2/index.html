@@ -1,818 +1,712 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>STEM Sorting Factory: Memory Maze Edition</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <style>
-        :root {
-            --science-color: #FF4757;
-            --tech-color: #2ED573;
-            --eng-color: #1E90FF;
-            --math-color: #FFA502;
-            --dark-color: #2F3542;
-            --light-bg: rgba(255, 255, 255, 0.95);
-            --primary-blue: #4A90E2;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
-        }
+<title>STEM Ch 1: Robot Helper Missions</title>
 
-        body {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #F1F2F6;
-            overflow-x: hidden;
-            position: relative;
-            padding: 15px;
-        }
+<!-- Canvas Confetti Library -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-        /* Aesthetic Dynamic Background and Blending Layers */
-        .bg-layer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('assets/robot-bg.jpg'), url('assets/robot-bg1.jpg');
-            background-size: cover;
-            background-position: center;
-            z-index: -2;
-        }
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
 
-        .bg-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(162, 210, 255, 0.8), rgba(224, 251, 252, 0.8));
-            z-index: -1;
-        }
+body {
+    background: linear-gradient(135deg, #e0f2fe, #bae6fd, #fbc2eb);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    overflow-x: hidden;
+}
 
-        /* Base Framework Screens Containers */
-        .screen {
-            display: none;
-            width: 100%;
-            max-width: 800px;
-            background: var(--light-bg);
-            border: 8px solid var(--primary-blue);
-            border-radius: 36px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-            text-align: center;
-            position: relative;
-            animation: screenPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+/* --- 1. INDIVIDUAL BRANDING SPLASH SCREEN (Strict 5 Seconds) --- */
+#brand-splash {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    z-index: 10000;
+    transition: opacity 0.5s ease;
+}
+#brand-splash img {
+    max-width: 65%;
+    max-height: 60vh;
+    object-fit: contain;
+}
+.loading-track {
+    width: 60%;
+    max-width: 250px;
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #cbd5e1;
+}
+.loading-bar-fill {
+    width: 100%;
+    height: 100%;
+    background: #0284c7;
+    transform: translateX(-100%);
+    animation: loadProgress 4.5s forwards linear;
+}
 
-        .screen.active {
-            display: block;
-        }
+@keyframes loadProgress {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0%); }
+}
 
-        @keyframes screenPopIn {
-            0% { transform: scale(0.85); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+.screen {
+    display: none;
+    background: rgba(255, 255, 255, 0.98);
+    width: 95%;
+    max-width: 1000px;
+    padding: 25px;
+    border-radius: 30px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.18);
+    text-align: center;
+    animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin: auto;
+    border: 4px solid #38bdf8;
+}
 
-        /* 1. Strict Branding Splash Overlay Screen */
-        #splash-screen {
-            background: white;
-            border: none;
-            box-shadow: none;
-            max-width: 100%;
-            width: 100vw;
-            height: 100vh;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 9999;
-        }
-        
-        #splash-screen img {
-            max-width: 320px;
-            width: 75%;
-            height: auto;
-            animation: pulse 1.6s infinite ease-in-out;
-        }
+@keyframes popUp {
+    0% { transform: scale(0.95); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
 
-        @keyframes pulse {
-            0% { transform: scale(0.96); }
-            50% { transform: scale(1.04); }
-            100% { transform: scale(0.96); }
-        }
+.screen.active {
+    display: block;
+}
 
-        /* Setup Form Inputs */
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
+h1 {
+    color: #0284c7;
+    font-size: clamp(24px, 5vw, 34px);
+    margin-bottom: 12px;
+}
 
-        label {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: var(--dark-color);
-            display: block;
-            margin-bottom: 6px;
-        }
+p.subtitle {
+    font-size: clamp(16px, 3.5vw, 20px);
+    color: #475569;
+    margin-bottom: 18px;
+}
 
-        input {
-            width: 100%;
-            padding: 14px 20px;
-            border: 4px solid #BDE0FE;
-            border-radius: 16px;
-            font-size: 1.15rem;
-            outline: none;
-            transition: border-color 0.3s;
-        }
+.btn {
+    background: #0284c7;
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 40px;
+    font-size: clamp(16px, 3.8vw, 20px);
+    font-weight: bold;
+    cursor: pointer;
+    margin: 8px;
+    transition: 0.2s ease;
+    box-shadow: 0 5px 0 #0369a1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
 
-        input:focus { border-color: var(--primary-blue); }
+.btn:hover {
+    transform: scale(1.03);
+    background: #0369a1;
+}
 
-        .btn {
-            background-color: #2ED573;
-            color: white;
-            border: none;
-            padding: 16px 45px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            border-radius: 22px;
-            cursor: pointer;
-            box-shadow: 0 8px 0 #218c42;
-            transition: all 0.1s;
-            display: inline-block;
-            margin-top: 10px;
-        }
+.btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #0369a1;
+}
 
-        .btn:active {
-            transform: translateY(6px);
-            box-shadow: 0 2px 0 #218c42;
-        }
+/* HUD PANEL */
+.hud-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f0f9ff;
+    border: 3px dashed #0284c7;
+    border-radius: 20px;
+    padding: 10px 25px;
+    margin-bottom: 15px;
+    font-size: clamp(16px, 3.8vw, 22px);
+    font-weight: bold;
+    color: #0369a1;
+}
 
-        /* 2. Innovative Memory Maze Roadmap View */
-        .maze-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            position: relative;
-            margin: 40px 0;
-            padding: 20px 0;
-            background: rgba(255,255,255,0.7);
-            border-radius: 20px;
-            border: 3px dashed var(--primary-blue);
-        }
+/* GAME LAYOUT GRID & CONTROLS */
+.game-flex-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
 
-        .maze-line {
-            position: absolute;
-            top: 50%;
-            left: 10%;
-            width: 80%;
-            height: 8px;
-            background: #CBD5E0;
-            z-index: 1;
-            transform: translateY(-50%);
-        }
+/* GRID BOARD */
+.grid-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    background: #dbeafe;
+    padding: 12px;
+    border-radius: 24px;
+    border: 4px solid #93c5fd;
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1 / 1;
+}
 
-        .maze-node {
-            position: relative;
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            background: #A0AEC0;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 1.6rem;
-            font-weight: bold;
-            z-index: 5;
-            box-shadow: 0 6px 0 #718096;
-            transition: all 0.3s ease;
-        }
+.grid-cell {
+    background: #ffffff;
+    border-radius: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+}
 
-        .maze-node.active {
-            background: var(--primary-blue);
-            box-shadow: 0 6px 0 #2B6CB0;
-            transform: scale(1.15);
-            animation: bounce 1s infinite alternate;
-        }
+.grid-cell.wall {
+    background: #fecaca;
+    border: 2px solid #fca5a5;
+}
 
-        .maze-node.completed {
-            background: #2ED573;
-            box-shadow: 0 6px 0 #228643;
-        }
+.grid-cell.wall::after {
+    content: "🧱";
+    font-size: 32px;
+}
 
-        .maze-label {
-            position: absolute;
-            bottom: -35px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: var(--dark-color);
-            width: 100px;
-            text-align: center;
-            left: 50%;
-            transform: translateX(-50%);
-        }
+.goal-entity {
+    font-size: 38px;
+    animation: pulseGoal 1.5s infinite alternate;
+}
 
-        @keyframes bounce {
-            0% { transform: translateY(0) scale(1.15); }
-            100% { transform: translateY(-8px) scale(1.15); }
-        }
+@keyframes pulseGoal {
+    0% { transform: scale(0.9); }
+    100% { transform: scale(1.1); }
+}
 
-        /* 3. Main Gameplay Arena Panel */
-        .hud-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: white;
-            padding: 12px 25px;
-            border-radius: 18px;
-            margin-bottom: 20px;
-            border: 3px dashed var(--primary-blue);
-        }
+.robot-img-container {
+    width: 80%;
+    height: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
 
-        .hud-item {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: var(--dark-color);
-        }
+.robot-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
 
-        /* Difficulty Header Tag indicator */
-        .difficulty-badge {
-            padding: 6px 16px;
-            border-radius: 12px;
-            color: white;
-            font-weight: bold;
-            font-size: 1rem;
-            text-transform: uppercase;
-        }
-        .diff-easy { background-color: #2ED573; }
-        .diff-medium { background-color: #FFA502; }
-        .diff-hard { background-color: #FF4757; }
+/* CONTROL PANEL */
+.controls-panel {
+    background: #f8fafc;
+    border: 3px solid #cbd5e1;
+    border-radius: 24px;
+    padding: 18px;
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 
-        /* Timer Loading Fuse bar line */
-        .timer-track {
-            width: 100%;
-            height: 12px;
-            background: #E2E8F0;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            overflow: hidden;
-            display: none;
-        }
-        .timer-fill {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, #FFA502, #FF4757);
-            transition: width 0.1s linear;
-        }
+.control-group-title {
+    font-weight: bold;
+    color: #334155;
+    font-size: 15px;
+    text-align: left;
+    margin-top: 4px;
+}
 
-        /* Conveyor Belt Wrapper */
-        .conveyor-belt {
-            background: #E2E8F0;
-            padding: 20px;
-            border-radius: 24px;
-            border: 5px dashed #718096;
-            margin-bottom: 25px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 250px;
-            position: relative;
-            box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);
-        }
+.ctrl-btn-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
 
-        .conveyor-card {
-            background: white;
-            padding: 15px;
-            border-radius: 18px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
-            max-width: 260px;
-            width: 100%;
-            transition: transform 0.4s ease;
-        }
+.ctrl-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 16px;
+    border: none;
+    font-size: clamp(14px, 3.2vw, 16px);
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    transition: 0.15s ease;
+}
 
-        .conveyor-card img {
-            width: 100%;
-            height: auto;
-            border-radius: 12px;
-            display: block;
-        }
+.ctrl-btn.forward { background: #0284c7; box-shadow: 0 4px 0 #0369a1; grid-column: span 2; }
+.ctrl-btn.turn-left { background: #9333ea; box-shadow: 0 4px 0 #6b21a8; }
+.ctrl-btn.turn-right { background: #f59e0b; box-shadow: 0 4px 0 #d97706; }
+.ctrl-btn.turn-180 { background: #ec4899; box-shadow: 0 4px 0 #be185d; grid-column: span 2; }
+.ctrl-btn.reset-pos { background: #ef4444; box-shadow: 0 4px 0 #b91c1c; grid-column: span 2; }
 
-        /* Memory Obscured Screen layer state */
-        .conveyor-card.obscured img {
-            filter: blur(25px) brightness(0.4);
-        }
+.ctrl-btn:active {
+    transform: translateY(3px);
+    box-shadow: none;
+}
 
-        .memory-hint-overlay {
-            display: none;
-            position: absolute;
-            font-size: 4rem;
-            color: white;
-            z-index: 10;
-            text-shadow: 0 4px 8px rgba(0,0,0,0.5);
-            pointer-events: none;
-        }
+.feedback {
+    font-size: clamp(18px, 4vw, 24px);
+    font-weight: bold;
+    min-height: 38px;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
 
-        .fallback-text {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: var(--primary-blue);
-            margin-top: 12px;
-        }
+.hint-banner {
+    display: none;
+    background: #fef3c7;
+    border: 2px solid #f59e0b;
+    border-radius: 16px;
+    padding: 10px;
+    color: #92400e;
+    font-weight: bold;
+    font-size: 15px;
+    margin-top: 5px;
+}
 
-        /* 4. Interactive Roadblock Mechanical Overlay Container */
-        .roadblock-overlay {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(231, 76, 60, 0.95);
-            border-radius: 28px;
-            z-index: 100;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            padding: 20px;
-            animation: flashWarning 0.8s infinite alternate;
-        }
+.instructions-box {
+    background: #e0f2fe;
+    border: 3px dashed #0284c7;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 15px auto;
+    text-align: left;
+    max-width: 600px;
+}
 
-        @keyframes flashWarning {
-            0% { border: 6px solid #FF4757; }
-            100% { border: 6px solid #FFF; }
-        }
+.instruction-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: clamp(15px, 3.5vw, 18px);
+    color: #1e293b;
+    font-weight: bold;
+}
 
-        .wrench-tap-zone {
-            font-size: 5rem;
-            cursor: pointer;
-            margin: 20px 0;
-            animation: wobble 0.5s infinite alternate;
-            user-select: none;
-        }
+.final-score {
+    font-size: clamp(50px, 10vw, 75px);
+    font-weight: bold;
+    color: #0284c7;
+    margin: 15px 0;
+}
 
-        @keyframes wobble {
-            0% { transform: rotate(-15deg); }
-            100% { transform: rotate(15deg); }
-        }
+.shake-grid {
+    animation: shakeBoard 0.3s ease-in-out;
+}
 
-        .roadblock-progress-track {
-            width: 60%;
-            height: 16px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 8px;
-            overflow: hidden;
-            border: 2px solid white;
-        }
-        .roadblock-progress-fill {
-            width: 0%;
-            height: 100%;
-            background: #2ED573;
-            transition: width 0.1s ease;
-        }
-
-        /* Action Targets Input buckets Grid */
-        .sorting-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-        }
-
-        .bucket-btn {
-            color: white;
-            border: none;
-            padding: 18px;
-            font-size: 1.35rem;
-            font-weight: bold;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: transform 0.1s;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-        }
-
-        .bucket-btn:active { transform: scale(0.96); }
-        .bucket-science { background-color: var(--science-color); box-shadow: 0 6px 0 #C0392B; }
-        .bucket-tech { background-color: var(--tech-color); box-shadow: 0 6px 0 #27AE60; }
-        .bucket-eng { background-color: var(--eng-color); box-shadow: 0 6px 0 #2980B9; }
-        .bucket-math { background-color: var(--math-color); box-shadow: 0 6px 0 #D35400; }
-        .bucket-btn span { font-size: 2rem; }
-
-        /* Reward Badge Styles */
-        .rank-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            color: white;
-            padding: 16px 40px;
-            font-size: 1.9rem;
-            font-weight: bold;
-            border-radius: 50px;
-            margin: 20px 0;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .score-summary {
-            font-size: 1.35rem;
-            line-height: 1.8;
-            margin-bottom: 25px;
-            color: var(--dark-color);
-        }
-    </style>
+@keyframes shakeBoard {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+}
+</style>
 </head>
+
 <body>
 
-    <div class="bg-layer"></div>
-    <div class="bg-overlay"></div>
+<!-- AUDIO ENGINE EMBEDS -->
+<audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="snd-clap" src="assets/clap.mp3" preload="auto"></audio>
 
-    <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
-    <audio id="snd-clap" src="assets/clap.mp3" preload="auto"></audio>
-
-    <div id="splash-screen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+<!-- 1. INDIVIDUAL BRANDING SPLASH SCREEN (Strict 5 Seconds) -->
+<div id="brand-splash">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/320x100?text=Innovine+Solutions'">
+    <div class="loading-track">
+        <div class="loading-bar-fill"></div>
     </div>
+</div>
 
-    <div id="setup-screen" class="screen">
-        <h1 style="color: var(--primary-blue); margin-bottom: 10px; font-size: 2.3rem;">🏭 STEM Sorting Factory 🤖</h1>
-        <p style="margin-bottom: 25px; font-size: 1.2rem; color: #57606F;">Welcome little Engineer! Register your profile details to unlock the Memory Maze!</p>
-        
-        <form id="profile-form" onsubmit="handleRegistration(event)">
-            <div class="form-group">
-                <label for="student-name">⭐ Student Name:</label>
-                <input type="text" id="student-name" required placeholder="Enter your full name">
-            </div>
-            <div class="form-group">
-                <label for="class-name">🏫 Class / Section:</label>
-                <input type="text" id="class-name" required placeholder="e.g. Grade 1-B">
-            </div>
-            <div class="form-group">
-                <label for="school-name">🏢 School Campus:</label>
-                <input type="text" id="school-name" required placeholder="Enter school name">
-            </div>
-            <button type="submit" class="btn">Enter Factory Roadmap 🚀</button>
-        </form>
-    </div>
+<!-- 2. GAME INSTRUCTION SCREEN (Page 2) -->
+<div id="instructionScreen" class="screen">
+    <h1>🧭 STEM Robot Helper Missions!</h1>
+    <p class="subtitle">Chapter 1: Real-World Robot Navigation</p>
 
-    <div id="roadmap-screen" class="screen">
-        <h1 style="color: var(--primary-blue); font-size: 2rem;">🗺️ The STEM Memory Maze Roadmap</h1>
-        <p style="color: #57606F; margin-top: 5px;">Track your level progression as you clear sorting zones!</p>
-        
-        <div class="maze-container">
-            <div class="maze-line"></div>
-            <div id="node-1" class="maze-node active">1<div class="maze-label">Level 1<br>(Easy)</div></div>
-            <div id="node-2" class="maze-node">2<div class="maze-label">Level 2<br>(Medium)</div></div>
-            <div id="node-3" class="maze-node">3<div class="maze-label">Level 3<br>(Hard)</div></div>
+    <div class="instructions-box">
+        <div class="instruction-item">
+            <span>🏥 🚑</span>
+            <span><strong>Level 1: Medical Robot</strong> must reach the Emergency Hospital!</span>
         </div>
-
-        <button class="btn" onclick="startActiveLevelGame()" style="margin-top: 25px; padding: 14px 50px;">Launch Sorting Zone 🎮</button>
-    </div>
-
-    <div id="game-screen" class="screen">
-        <div id="roadblock-modal" class="roadblock-overlay">
-            <h2 style="font-size: 2rem;">⚠️ CONVEYOR BELT JAMMED! ⚠️</h2>
-            <p style="font-size: 1.2rem; margin-top: 5px;">Tap the giant wrench rapidly to clear out the blocked gears!</p>
-            <div class="wrench-tap-zone" onclick="registerWrenchTap()">🔧</div>
-            <div class="roadblock-progress-track">
-                <div id="roadblock-progress-fill" class="roadblock-progress-fill"></div>
-            </div>
+        <div class="instruction-item">
+            <span>🤝 👵</span>
+            <span><strong>Level 2: Helper Robot</strong> must reach the person needing help!</span>
         </div>
-
-        <div class="hud-bar">
-            <div class="hud-item" id="hud-round">📦 Item: 1 / 5</div>
-            <div id="hud-diff-badge" class="difficulty-badge diff-easy">Easy</div>
-            <div class="hud-item" id="hud-score">🏆 Score: 0</div>
+        <div class="instruction-item">
+            <span>🏭 📦</span>
+            <span><strong>Level 3: Factory Robot</strong> must deliver goods to the Assembly Line!</span>
         </div>
-
-        <div id="timer-track" class="timer-track">
-            <div id="timer-fill" class="timer-fill"></div>
-        </div>
-
-        <h2 id="sorting-tip" style="margin-bottom: 15px; font-size: 1.35rem; color: var(--dark-color);">Tap the correct bucket to sort! 👇</h2>
-
-        <div class="conveyor-belt">
-            <div id="memory-hint" class="memory-hint-overlay">❓</div>
-            <div class="conveyor-card" id="card-display">
-                <img id="card-img" src="" alt="STEM Item">
-            </div>
-            <div id="fallback-title" class="fallback-text"></div>
-        </div>
-
-        <div class="sorting-grid">
-            <button class="bucket-btn bucket-science" onclick="processSortChoice('Science')">
-                <span>🔬</span> Science
-            </button>
-            <button class="bucket-btn bucket-tech" onclick="processSortChoice('Technology')">
-                <span>💻</span> Technology
-            </button>
-            <button class="bucket-btn bucket-eng" onclick="processSortChoice('Engineering')">
-                <span>⚙️</span> Engineering
-            </button>
-            <button class="bucket-btn bucket-math" onclick="processSortChoice('Mathematics')">
-                <span>➕</span> Mathematics
-            </button>
+        <div class="instruction-item">
+            <span>🎮</span>
+            <span><strong>Controls:</strong> Rotate degrees, turn, and step forward without crashing into walls!</span>
         </div>
     </div>
 
-    <div id="end-screen" class="screen">
-        <h1 style="color: #2ED573; font-size: 2.5rem;">🎉 Factory Operation Complete! 🎉</h1>
-        <div id="end-rank" class="rank-badge">Master STEM Sorter</div>
-        
-        <div class="score-summary" id="end-summary"></div>
+    <button class="btn" onclick="startGame()">🚀 Start Missions</button>
+</div>
 
-        <button class="btn" onclick="restartWholeGame()" style="background-color: var(--primary-blue); box-shadow: 0 8px 0 #2980B9;">Play Again 🔄</button>
+<!-- 3. GAMEPLAY SCREEN -->
+<div id="gameScreen" class="screen">
+    <div class="hud-bar">
+        <div>🌟 Level: <span id="lvlDisplay">1 / 3</span></div>
+        <div>🏆 Score: <span id="scoreDisplay">0</span></div>
     </div>
 
-    <script>
-        // Total Puzzles Mapping Dataset 
-        const levelMissionConfigs = {
-            1: {
-                difficulty: "Easy",
-                rounds: [
-                    { imageSrc: "assets/science.PNG", title: "Science Material 🔬", category: "Science" },
-                    { imageSrc: "assets/technology.PNG", title: "Digital Technology 💻", category: "Technology" },
-                    { imageSrc: "assets/engineering.PNG", title: "Engineering Blueprint ⚙️", category: "Engineering" },
-                    { imageSrc: "assets/mathematics.PNG", title: "Math Equation ➕", category: "Mathematics" },
-                    { imageSrc: "assets/factory-robot.PNG", title: "Factory Robot 🤖", category: "Engineering" }
-                ]
-            },
-            2: {
-                difficulty: "Medium", // Introduces Countdown Timer Fuse countdowns
-                rounds: [
-                    { imageSrc: "assets/technology.PNG", title: "Computing Network 💻", category: "Technology" },
-                    { imageSrc: "assets/science.PNG", title: "Chemical Solution 🔬", category: "Science" },
-                    { imageSrc: "assets/factory-robot.PNG", title: "Automation Engine ⚙️", category: "Engineering" },
-                    { imageSrc: "assets/mathematics.PNG", title: "Geometry Puzzle ➕", category: "Mathematics" },
-                    { imageSrc: "assets/engineering.PNG", title: "Mechanical Gears ⚙️", category: "Engineering" }
-                ]
-            },
-            3: {
-                difficulty: "Hard", // MEMORY MODE: Cards are blurred after 2 seconds!
-                rounds: [
-                    { imageSrc: "assets/mathematics.PNG", title: "Calculus Formula ➕", category: "Mathematics" },
-                    { imageSrc: "assets/engineering.PNG", title: "Structural Bridge ⚙️", category: "Engineering" },
-                    { imageSrc: "assets/science.PNG", title: "Space Telescope 🔬", category: "Science" },
-                    { imageSrc: "assets/factory-robot.PNG", title: "Cybernetic Drone ⚙️", category: "Engineering" },
-                    { imageSrc: "assets/technology.PNG", title: "Smart Microchip 💻", category: "Technology" }
-                ]
-            }
-        };
+    <h2 id="missionTitle" style="color: #0369a1; font-size: clamp(18px, 4vw, 22px); margin-bottom: 5px;">
+        Mission Loading...
+    </h2>
+    <p style="color: #64748b; font-weight: bold; margin-bottom: 8px;">
+        Heading: <span id="headingDisplay">0° (UP)</span>
+    </p>
 
-        // Engine State Parameters Trackers
-        let activeLevelIndex = 1;
-        let activeRoundIndex = 0;
-        let totalScoreAccumulator = 0;
-        let currentWrenchTaps = 0;
-        let roadblockTriggeredThisLevel = false;
-        
-        let countdownTimerLoop = null;
-        let memoryObscureTimeout = null;
-        let timeRemainingTicks = 100;
+    <div class="game-flex-container">
+        <!-- 4x4 NAVIGATION GRID -->
+        <div class="grid-board" id="gridBoard"></div>
 
-        let studentProfileContainer = { name: '', class: '', school: '' };
+        <!-- DIRECTIONAL & DEGREE CONTROLS -->
+        <div class="controls-panel">
+            <div class="control-group-title">1. Movement Command:</div>
+            <button class="ctrl-btn forward" onclick="moveForwardStep()">⬆️ Move Forward 1 Step</button>
 
-        // 5-Second Brand Splash Overlay Timeout Setup
-        window.addEventListener('DOMContentLoaded', () => {
+            <div class="control-group-title">2. Rotation Commands:</div>
+            <div class="ctrl-btn-grid">
+                <button class="ctrl-btn turn-left" onclick="rotateRobot(-90)">↩️ Turn 90° Left</button>
+                <button class="ctrl-btn turn-right" onclick="rotateRobot(90)">↪️ Turn 90° Right</button>
+                <button class="ctrl-btn turn-180" onclick="rotateRobot(180)">🔄 U-Turn (180° Spin)</button>
+            </div>
+
+            <div class="control-group-title">3. Stage Tools:</div>
+            <button class="ctrl-btn reset-pos" onclick="resetRobotPosition()">🔄 Reset Robot Position</button>
+
+            <!-- AUTO-SOLUTION HINT BANNER -->
+            <div class="hint-banner" id="hintBanner"></div>
+        </div>
+    </div>
+
+    <div class="feedback" id="feedbackMsg"></div>
+</div>
+
+<!-- 4. VICTORY / FINAL SCORE SCREEN -->
+<div id="victoryScreen" class="screen">
+    <h1>🎉 All Helper Missions Complete!</h1>
+    <p class="subtitle">You successfully guided all STEM robots to their destinations!</p>
+    <div class="final-score" id="finalScoreDisplay">150</div>
+    <p style="font-size: 20px; font-weight: bold; color: #0369a1; margin-bottom: 15px;">STEM Community Hero 🏆</p>
+
+    <button class="btn" onclick="resetGame()">🔄 Play Again</button>
+</div>
+
+<script>
+// 3 THEMED HELPER ROBOT MISSIONS
+const missions = [
+    {
+        title: "Mission 1: Guide Medical Robot 🩺 to Hospital 🏥",
+        robotImg: "assets/medical-robot.PNG",
+        fallbackEmoji: "🩺",
+        goalEmoji: "🏥",
+        robotStart: { r: 0, c: 0, dir: 1 }, // dir: 0=UP(0°), 1=RIGHT(90°), 2=DOWN(180°), 3=LEFT(270°)
+        target: { r: 3, c: 3 },
+        walls: [{r: 0, c: 2}, {r: 1, c: 0}, {r: 1, c: 2}, {r: 2, c: 2}, {r: 3, c: 0}],
+        autoSteps: [{type:'move'}, {type:'rot', val:90}, {type:'move'}, {type:'move'}, {type:'rot', val:-90}, {type:'move'}, {type:'rot', val:90}, {type:'move'}]
+    },
+    {
+        title: "Mission 2: Guide Helper Robot 🤝 to Needy Person 👵",
+        robotImg: "assets/helper-robot.PNG",
+        fallbackEmoji: "🤝",
+        goalEmoji: "👵",
+        robotStart: { r: 3, c: 0, dir: 0 },
+        target: { r: 0, c: 3 },
+        walls: [{r: 1, c: 1}, {r: 1, c: 2}, {r: 2, c: 1}, {r: 2, c: 3}],
+        autoSteps: [{type:'move'}, {type:'move'}, {type:'move'}, {type:'rot', val:90}, {type:'move'}, {type:'move'}, {type:'move'}]
+    },
+    {
+        title: "Mission 3: Guide Factory Robot 🏭 to Assembly Line 📦",
+        robotImg: "assets/factory-robot.PNG",
+        fallbackEmoji: "🏭",
+        goalEmoji: "📦",
+        robotStart: { r: 2, c: 0, dir: 1 },
+        target: { r: 0, c: 2 },
+        walls: [{r: 0, c: 1}, {r: 2, c: 1}, {r: 3, c: 2}, {r: 2, c: 3}],
+        autoSteps: [{type:'move'}, {type:'rot', val:-90}, {type:'move'}, {type:'rot', val:90}, {type:'move'}, {type:'rot', val:-90}, {type:'move'}]
+    }
+];
+
+let currentLvl = 0;
+let score = 0;
+let attemptCount = 0;
+let robotState = { r: 0, c: 0, dir: 0 };
+let isBusy = false;
+
+// SCREEN CONTROLLER
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+// STRICT 5-SECOND SPLASH SCREEN ENGINE
+window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        const splash = document.getElementById('brand-splash');
+        if (splash) {
+            splash.style.opacity = '0';
             setTimeout(() => {
-                document.getElementById('splash-screen').style.display = 'none';
-                switchScreen('setup-screen');
-            }, 5000);
-        });
-
-        function switchScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+                splash.style.display = 'none';
+                showScreen('instructionScreen');
+            }, 500);
         }
+    }, 5000);
+});
 
-        function handleRegistration(e) {
-            e.preventDefault();
-            studentProfileContainer.name = document.getElementById('student-name').value;
-            studentProfileContainer.class = document.getElementById('class-name').value;
-            studentProfileContainer.school = document.getElementById('school-name').value;
-            
-            activeLevelIndex = 1;
-            totalScoreAccumulator = 0;
-            renderRoadmapHub();
-            switchScreen('roadmap-screen');
-        }
+function unlockAudio() {
+    ['snd-correct', 'snd-wrong', 'snd-clap'].forEach(id => {
+        const snd = document.getElementById(id);
+        if (snd) snd.load();
+    });
+}
 
-        function renderRoadmapHub() {
-            // Update Roadmap node circles highlights match state indexes
-            for (let i = 1; i <= 3; i++) {
-                const node = document.getElementById(`node-${i}`);
-                node.className = "maze-node";
-                if (i < activeLevelIndex) node.classList.add("completed");
-                if (i === activeLevelIndex) node.classList.add("active");
+function playAudioTrack(id) {
+    const track = document.getElementById(id);
+    if (track) {
+        track.currentTime = 0;
+        track.play().catch(e => console.log('Audio stream deferred until user click.'));
+    }
+}
+
+function startGame() {
+    unlockAudio();
+    currentLvl = 0;
+    score = 0;
+    showScreen('gameScreen');
+    loadLevel();
+}
+
+function loadLevel() {
+    isBusy = false;
+    attemptCount = 0;
+    document.getElementById('feedbackMsg').innerText = '';
+    document.getElementById('hintBanner').style.display = 'none';
+    document.getElementById('lvlDisplay').innerText = `${currentLvl + 1} / ${missions.length}`;
+    document.getElementById('scoreDisplay').innerText = score;
+
+    const mData = missions[currentLvl];
+    document.getElementById('missionTitle').innerText = mData.title;
+    robotState = { ...mData.robotStart };
+
+    updateHeadingLabel();
+    renderBoard();
+}
+
+function updateHeadingLabel() {
+    const dirNames = ["0° (UP)", "90° (RIGHT)", "180° (DOWN)", "270° (LEFT)"];
+    document.getElementById('headingDisplay').innerText = dirNames[robotState.dir];
+}
+
+function renderBoard() {
+    const mData = missions[currentLvl];
+    const board = document.getElementById('gridBoard');
+    board.innerHTML = '';
+
+    for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell';
+
+            // Wall check
+            const isWall = mData.walls.some(w => w.r === r && w.c === c);
+            if (isWall) {
+                cell.classList.add('wall');
             }
+
+            // Target Destination check
+            if (mData.target.r === r && mData.target.c === c) {
+                cell.innerHTML = `<div class="goal-entity">${mData.goalEmoji}</div>`;
+            }
+
+            // Robot image render
+            if (robotState.r === r && robotState.c === c) {
+                const rotationDeg = robotState.dir * 90;
+                cell.innerHTML = `
+                    <div class="robot-img-container" style="transform: rotate(${rotationDeg}deg)">
+                        <img src="${mData.robotImg}" onerror="this.outerHTML='<span style=\\'font-size:36px\\'>${mData.fallbackEmoji}</span>'">
+                    </div>
+                `;
+            }
+
+            board.appendChild(cell);
+        }
+    }
+}
+
+// REAL-TIME ROTATION COMMAND
+function rotateRobot(deg, isAuto = false) {
+    if (isBusy && !isAuto) return;
+    
+    const steps = deg / 90;
+    robotState.dir = (robotState.dir + steps + 400) % 4;
+    
+    if (!isAuto) {
+        playAudioTrack('snd-correct');
+    }
+
+    updateHeadingLabel();
+    renderBoard();
+}
+
+// REAL-TIME STEP FORWARD COMMAND
+function moveForwardStep(isAuto = false) {
+    if (isBusy && !isAuto) return;
+
+    let dr = 0, dc = 0;
+    if (robotState.dir === 0) dr = -1;
+    else if (robotState.dir === 1) dc = 1;
+    else if (robotState.dir === 2) dr = 1;
+    else if (robotState.dir === 3) dc = -1;
+
+    const targetR = robotState.r + dr;
+    const targetC = robotState.c + dc;
+
+    const mData = missions[currentLvl];
+    const isWall = mData.walls.some(w => w.r === targetR && w.c === targetC);
+
+    if (targetR >= 0 && targetR < 4 && targetC >= 0 && targetC < 4 && !isWall) {
+        robotState.r = targetR;
+        robotState.c = targetC;
+        
+        if (!isAuto) {
+            playAudioTrack('snd-correct');
         }
 
-        function startActiveLevelGame() {
-            activeRoundIndex = 0;
-            roadblockTriggeredThisLevel = false;
-            switchScreen('game-screen');
-            loadRoundStructure();
-        }
+        renderBoard();
+        checkTargetReached();
+    } else {
+        // Crash / Wrong Audio Effect
+        playAudioTrack('snd-wrong');
+        const board = document.getElementById('gridBoard');
+        board.classList.add('shake-grid');
+        setTimeout(() => board.classList.remove('shake-grid'), 300);
 
-        function loadRoundStructure() {
-            clearInterval(countdownTimerLoop);
-            clearTimeout(memoryObscureTimeout);
+        handleFailedAttempt('❌ 💥 Oops! Blocked by Wall or Grid Boundary!');
+    }
+}
 
-            const levelConfig = levelMissionConfigs[activeLevelIndex];
-            const roundData = levelConfig.rounds[activeRoundIndex];
-            
-            // Render basic metrics HUD
-            document.getElementById('hud-round').innerText = `📦 Item: ${activeRoundIndex + 1} / 5`;
-            document.getElementById('hud-score').innerText = `🏆 Score: ${totalScoreAccumulator}`;
-            
-            const badge = document.getElementById('hud-diff-badge');
-            badge.innerText = levelConfig.difficulty;
-            badge.className = `difficulty-badge diff-${levelConfig.difficulty.toLowerCase()}`;
+function checkTargetReached() {
+    const mData = missions[currentLvl];
+    if (robotState.r === mData.target.r && robotState.c === mData.target.c) {
+        isBusy = true;
+        playAudioTrack('snd-clap');
+        score += 50;
+        document.getElementById('scoreDisplay').innerText = score;
+        document.getElementById('feedbackMsg').innerHTML = '🎉 🌟 Mission Accomplished! Destination Reached! 🌟';
+        document.getElementById('feedbackMsg').style.color = '#15803d';
 
-            // Reset Card UI states
-            const cardImg = document.getElementById('card-img');
-            const cardDisplay = document.getElementById('card-display');
-            const hintOverlay = document.getElementById('memory-hint');
-            
-            cardDisplay.classList.remove('obscured');
-            hintOverlay.style.display = 'none';
-            document.getElementById('fallback-title').innerText = roundData.title;
-            cardImg.src = roundData.imageSrc;
+        confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
 
-            // Trigger roadblock failure randomly in the middle of a sorting queue (round 3)
-            if (activeRoundIndex === 2 && !roadblockTriggeredThisLevel) {
-                triggerRoadblockEvent();
+        setTimeout(() => {
+            currentLvl++;
+            if (currentLvl < missions.length) {
+                loadLevel();
+            } else {
+                triggerVictory();
+            }
+        }, 1600);
+    }
+}
+
+function resetRobotPosition() {
+    if (isBusy) return;
+    const mData = missions[currentLvl];
+    robotState = { ...mData.robotStart };
+    document.getElementById('feedbackMsg').innerText = '';
+    updateHeadingLabel();
+    renderBoard();
+}
+
+// 3-ATTEMPT AUTO HELPER
+function handleFailedAttempt(msgText) {
+    attemptCount++;
+    document.getElementById('feedbackMsg').innerHTML = msgText;
+    document.getElementById('feedbackMsg').style.color = '#b91c1c';
+
+    if (attemptCount >= 3) {
+        isBusy = true;
+        const hintBox = document.getElementById('hintBanner');
+        hintBox.style.display = 'block';
+        hintBox.innerHTML = `💡 AI Assistant: Guiding robot safely...`;
+
+        const mData = missions[currentLvl];
+        robotState = { ...mData.robotStart };
+        updateHeadingLabel();
+        renderBoard();
+
+        let stepIndex = 0;
+        const autoInterval = setInterval(() => {
+            if (stepIndex >= mData.autoSteps.length) {
+                clearInterval(autoInterval);
+                isBusy = false;
+                checkTargetReached();
                 return;
             }
 
-            // Handle Medium/Hard Mode Features
-            const timerTrack = document.getElementById('timer-track');
-            if (activeLevelIndex >= 2) {
-                timerTrack.style.display = 'block';
-                startTimeFuseLoop();
-            } else {
-                timerTrack.style.display = 'none';
+            const action = mData.autoSteps[stepIndex];
+            if (action.type === 'rot') {
+                rotateRobot(action.val, true);
+                playAudioTrack('snd-correct');
+            } else if (action.type === 'move') {
+                moveForwardStep(true);
             }
 
-            if (activeLevelIndex === 3) {
-                document.getElementById('sorting-tip').innerText = "Look closely! The card will hide soon! 🧠";
-                memoryObscureTimeout = setTimeout(() => {
-                    cardDisplay.classList.add('obscured');
-                    hintOverlay.style.display = 'block';
-                    document.getElementById('fallback-title').innerText = "Obscured Memory Item ❓";
-                    document.getElementById('sorting-tip').innerText = "Where does the hidden item belong? 🤔";
-                }, 2000); // Cards obscure after 2 seconds
-            } else {
-                document.getElementById('sorting-tip').innerText = "Tap the correct bucket to sort! 👇";
-            }
-        }
+            stepIndex++;
+        }, 600);
+    }
+}
 
-        // Timer fuse calculation loop mechanics
-        function startTimeFuseLoop() {
-            timeRemainingTicks = 100;
-            const fill = document.getElementById('timer-fill');
-            fill.style.width = '100%';
+function triggerVictory() {
+    showScreen('victoryScreen');
+    document.getElementById('finalScoreDisplay').innerText = score;
+    playAudioTrack('snd-clap');
+    confetti({ particleCount: 180, spread: 100, origin: { y: 0.6 } });
+}
 
-            // Hard mode yields shorter processing timers
-            let tickRate = activeLevelIndex === 3 ? 60 : 100; 
+function resetGame() {
+    startGame();
+}
+</script>
 
-            countdownTimerLoop = setInterval(() => {
-                timeRemainingTicks -= 1;
-                fill.style.width = `${timeRemainingTicks}%`;
-
-                if (timeRemainingTicks <= 0) {
-                    clearInterval(countdownTimerLoop);
-                    playAudioFeedback('snd-wrong');
-                    alert("Time ran out on the conveyor belt! Let's load the next item.");
-                    advanceRoundLoop();
-                }
-            }, tickRate);
-        }
-
-        // Roadblock Mechanical failure event logic
-        function triggerRoadblockEvent() {
-            roadblockTriggeredThisLevel = true;
-            currentWrenchTaps = 0;
-            document.getElementById('roadblock-progress-fill').style.width = '0%';
-            document.getElementById('roadblock-modal').style.display = 'flex';
-        }
-
-        function registerWrenchTap() {
-            currentWrenchTaps += 15; // Requires roughly 7 quick taps to fulfill constraints
-            document.getElementById('roadblock-progress-fill').style.width = `${Math.min(currentWrenchTaps, 100)}%`;
-
-            if (currentWrenchTaps >= 100) {
-                document.getElementById('roadblock-modal').style.display = 'none';
-                playAudioFeedback('snd-correct');
-                // Resume sorting challenge pipeline immediately
-                loadRoundStructure();
-            }
-        }
-
-        // Choice Processing and Scoring matrix
-        function processSortChoice(chosenCategory) {
-            // Prevent choices while roadblock is active
-            if (document.getElementById('roadblock-modal').style.display === 'flex') return;
-
-            clearInterval(countdownTimerLoop);
-            clearTimeout(memoryObscureTimeout);
-
-            const currentLevelData = levelMissionConfigs[activeLevelIndex];
-            const roundData = currentLevelData.rounds[activeRoundIndex];
-
-            if (chosenCategory === roundData.category) {
-                totalScoreAccumulator += 100;
-                playAudioFeedback('snd-correct');
-            } else {
-                playAudioFeedback('snd-wrong');
-            }
-
-            advanceRoundLoop();
-        }
-
-        function advanceRoundLoop() {
-            if (activeRoundIndex < 4) {
-                activeRoundIndex++;
-                loadRoundStructure();
-            } else {
-                // Current tier cleared!
-                if (activeLevelIndex < 3) {
-                    activeLevelIndex++;
-                    renderRoadmapHub();
-                    switchScreen('roadmap-screen');
-                } else {
-                    triggerFinalVictoryEndscreen();
-                }
-            }
-        }
-
-        function playAudioFeedback(elementId) {
-            const el = document.getElementById(elementId);
-            if (el) {
-                el.currentTime = 0;
-                el.play().catch(err => console.log('Autoplay audio pipeline skipped safely'));
-            }
-        }
-
-        function triggerFinalVictoryEndscreen() {
-            switchScreen('end-screen');
-            playAudioFeedback('snd-clap');
-
-            // Set multi-tier adaptive title badge matching highscore parameters
-            const badgeNode = document.getElementById('end-rank');
-            if (totalScoreAccumulator >= 1300) {
-                badgeNode.innerText = "Grand Master STEM Sorter 🏆";
-                badgeNode.style.background = "linear-gradient(135deg, #FFD700, #FFA500)";
-            } else if (totalScoreAccumulator >= 900) {
-                badgeNode.innerText = "Factory Supervisor 🏅";
-                badgeNode.style.background = "linear-gradient(135deg, #A2D2FF, #1E90FF)";
-            } else {
-                badgeNode.innerText = "STEM Apprentice Sorter 🛠️";
-                badgeNode.style.background = "linear-gradient(135deg, #E2E8F0, #718096)";
-            }
-
-            // Continuous Confetti Streams
-            let endDuration = 4 * 1000;
-            let animationEnd = Date.now() + endDuration;
-
-            (function frame() {
-                confetti({ particleCount: 6, angle: 60, spread: 55, origin: { x: 0, y: 0.65 } });
-                confetti({ particleCount: 6, angle: 120, spread: 55, origin: { x: 1, y: 0.65 } });
-                if (Date.now() < animationEnd) requestAnimationFrame(frame);
-            }());
-
-            document.getElementById('end-summary').innerHTML = `
-                <strong>Certified Factory Analytics:</strong><br>
-                👤 Operator: ${studentProfileContainer.name}<br>
-                🏫 Track Class: ${studentProfileContainer.class}<br>
-                🏢 Institution: ${studentProfileContainer.school}<br>
-                <hr style="margin: 15px 0; border: 1px dashed #CBD5E0;">
-                ⭐ Highscore Accumulated: <strong>${totalScoreAccumulator} / 1500 Max Points</strong><br>
-                📦 Sorter Efficiency Rating: <strong>${Math.round((totalScoreAccumulator / 1500) * 100)}% Correct</strong>
-            `;
-        }
-
-        function restartWholeGame() {
-            clearInterval(countdownTimerLoop);
-            clearTimeout(memoryObscureTimeout);
-            document.getElementById('profile-form').reset();
-            switchScreen('setup-screen');
-        }
-    </script>
 </body>
 </html>

@@ -1,755 +1,863 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Robo-Code Adventure</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <style>
-        :root {
-            --primary-color: #4A90E2;
-            --secondary-color: #2ECC71;
-            --danger-color: #E74C3C;
-            --warning-color: #F1C40F;
-            --dark-color: #2C3E50;
-            --light-color: #ECF0F1;
-            --grid-path-color: #F8F9FA;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial Rounded MT Bold', sans-serif;
-        }
+<title>Math & Music Fun</title>
 
-        body {
-            background: linear-gradient(135deg, #A2D2FF, #BDE0FE);
-            color: var(--dark-color);
-            overflow-x: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 15px;
-        }
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
-        /* Screen Wrapper Base Containers */
-        .screen {
-            display: none;
-            width: 100%;
-            max-width: 900px;
-            background: white;
-            border: 8px solid var(--primary-color);
-            border-radius: 32px;
-            padding: 30px;
-            box-shadow: 0 16px 32px rgba(0,0,0,0.2);
-            text-align: center;
-            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
 
-        .screen.active {
-            display: block;
-        }
+body {
+    background: linear-gradient(135deg, #ffecd2, #fcb69f, #a1c4fd);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    overflow-x: hidden;
+}
 
-        @keyframes popIn {
-            0% { transform: scale(0.85); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+/* --- 1. INDIVIDUAL BRANDING SPLASH SCREEN (Strict 5 Seconds) --- */
+#brand-splash {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    z-index: 10000;
+    transition: opacity 0.5s ease;
+}
+#brand-splash img {
+    max-width: 65%;
+    max-height: 60vh;
+    object-fit: contain;
+}
+.loading-track {
+    width: 60%;
+    max-width: 250px;
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #cbd5e1;
+}
+.loading-bar-fill {
+    width: 100%;
+    height: 100%;
+    background: #ff7043;
+    transform: translateX(-100%);
+    animation: loadProgress 4.5s forwards linear;
+}
 
-        /* 1. Brand Splash Screen */
-        #splash-screen {
-            background: white;
-            border: none;
-            box-shadow: none;
-            max-width: 100%;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        #splash-screen img {
-            max-width: 340px;
-            height: auto;
-            animation: pulse 1.5s infinite ease-in-out;
-        }
+@keyframes loadProgress {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0%); }
+}
 
-        @keyframes pulse {
-            0% { transform: scale(0.95); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(0.95); }
-        }
+.screen {
+    display: none;
+    background: rgba(255, 255, 255, 0.96);
+    width: 95%;
+    max-width: 950px;
+    padding: 25px;
+    border-radius: 30px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+    text-align: center;
+    animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin: auto;
+}
 
-        /* 2. Welcome Registration Form Layout */
-        .form-group {
-            margin-bottom: 22px;
-            text-align: left;
-        }
+@keyframes popUp {
+    0% { transform: scale(0.95); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
 
-        label {
-            font-size: 1.25rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            display: block;
-            margin-bottom: 8px;
-        }
+.screen.active {
+    display: block;
+}
 
-        input {
-            width: 100%;
-            padding: 14px 20px;
-            border: 3px solid #C4E0E5;
-            border-radius: 16px;
-            font-size: 1.15rem;
-            outline: none;
-            transition: all 0.3s;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-        }
+h1 {
+    color: #1565c0;
+    font-size: clamp(24px, 5vw, 34px);
+    margin-bottom: 12px;
+}
 
-        input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 8px rgba(74, 144, 226, 0.4);
-        }
+p.subtitle {
+    font-size: clamp(16px, 3.5vw, 20px);
+    color: #555;
+    margin-bottom: 18px;
+}
 
-        .btn {
-            background-color: var(--secondary-color);
-            color: white;
-            border: none;
-            padding: 16px 40px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            border-radius: 20px;
-            cursor: pointer;
-            box-shadow: 0 8px 0 #27AE60;
-            transition: all 0.1s;
-            display: inline-block;
-            margin-top: 10px;
-        }
+.btn {
+    background: #ff7043;
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 40px;
+    font-size: clamp(16px, 3.8vw, 20px);
+    font-weight: bold;
+    cursor: pointer;
+    margin: 8px;
+    transition: 0.2s ease;
+    box-shadow: 0 5px 0 #d84315;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
 
-        .btn:active {
-            transform: translateY(6px);
-            box-shadow: 0 2px 0 #27AE60;
-        }
+.btn:hover {
+    transform: scale(1.03);
+    background: #e64a19;
+}
 
-        /* 3. Main Modern Gameplay Split Panels Layout */
-        .game-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #EDF2F7;
-            padding: 15px 25px;
-            border-radius: 18px;
-            margin-bottom: 20px;
-            border: 3px dashed var(--primary-color);
-        }
+.btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #d84315;
+}
 
-        .hud-item {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: var(--dark-color);
-        }
+.btn-back {
+    background: #78909c;
+    box-shadow: 0 5px 0 #455a64;
+}
+.btn-back:hover {
+    background: #607d8b;
+}
 
-        .game-container {
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 25px;
-            align-items: start;
-        }
+.instructions-box {
+    background: #e3f2fd;
+    border: 3px dashed #1565c0;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 15px auto;
+    text-align: left;
+    max-width: 600px;
+}
 
-        @media (max-width: 750px) {
-            .game-container {
-                grid-template-columns: 1fr;
-            }
-        }
+.instruction-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: clamp(15px, 3.5vw, 18px);
+    color: #1e293b;
+    font-weight: bold;
+}
 
-        /* Dynamic Grid Arena Board */
-        .grid-map {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(4, 1fr);
-            gap: 8px;
-            background: #CBD5E0;
-            padding: 12px;
-            border-radius: 24px;
-            aspect-ratio: 1 / 1;
-            position: relative;
-            box-shadow: inset 0 4px 8px rgba(0,0,0,0.1);
-        }
+.feedback {
+    font-size: clamp(20px, 4.5vw, 28px);
+    font-weight: bold;
+    margin-top: 15px;
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
 
-        .cell {
-            background: var(--grid-path-color);
-            border-radius: 14px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 2.2rem;
-            position: relative;
-            border-bottom: 4px solid #E2E8F0;
-            transition: all 0.2s;
-        }
+/* GAME 1: IMAGE SELECTION */
+.image-options {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
 
-        .cell.obstacle { 
-            background: #FED7D7; 
-            font-size: 1.8rem;
-            border-bottom: 4px solid #FEB2B2;
-        }
+.image-card {
+    width: clamp(140px, 28vw, 190px);
+    height: clamp(140px, 28vw, 190px);
+    background: #e3f2fd;
+    border: 3px solid #90caf9;
+    border-radius: 22px;
+    padding: 12px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: 0.2s;
+    font-weight: bold;
+    font-size: clamp(18px, 4vw, 24px);
+    color: #0d47a1;
+    box-shadow: 0 6px 0 #64b5f6;
+}
 
-        /* Animated Live Moving Character Layer */
-        .robot-avatar {
-            position: absolute;
-            font-size: 2.6rem;
-            width: 22%;
-            height: 22%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 50;
-            /* Precise top/left shifting curves handled smoothly by CSS engine */
-            transition: top 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-                        left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-                        transform 0.3s ease-in-out;
-        }
+.image-card:hover {
+    transform: scale(1.03);
+    background: #bbdefb;
+}
 
-        .robot-compass {
-            font-size: 1.1rem;
-            background: var(--dark-color);
-            color: white;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: -6px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            font-weight: bold;
-            transition: transform 0.3s ease-in-out;
-        }
+.image-card img {
+    width: clamp(60px, 14vw, 90px);
+    height: clamp(60px, 14vw, 90px);
+    object-fit: contain;
+    margin-bottom: 8px;
+}
 
-        /* Command Controller Dashboard Panel */
-        .control-panel {
-            background: #F7FAFC;
-            border: 4px solid #E2E8F0;
-            border-radius: 24px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            justify-content: space-between;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
+/* GAME 2: DRAG & DROP */
+.drag-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
 
-        .command-buttons {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-            margin-bottom: 15px;
-        }
+.drag-item {
+    background: #c8e6c9;
+    border: 3px solid #81c784;
+    padding: 12px;
+    border-radius: 18px;
+    margin-bottom: 12px;
+    font-size: clamp(28px, 6vw, 36px);
+    font-weight: bold;
+    width: clamp(110px, 28vw, 140px);
+    cursor: grab;
+    box-shadow: 0 4px 0 #66bb6a;
+}
 
-        .cmd-btn {
-            color: white;
-            border: none;
-            padding: 14px 18px;
-            font-size: 1.15rem;
-            font-weight: bold;
-            border-radius: 16px;
-            cursor: pointer;
-            transition: transform 0.1s, opacity 0.2s;
-            text-align: left;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+.drop-box {
+    width: clamp(180px, 45vw, 240px);
+    height: 75px;
+    border: 3px dashed #1565c0;
+    border-radius: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: clamp(16px, 3.5vw, 20px);
+    font-weight: bold;
+    padding: 8px;
+    background: #f8fafc;
+    color: #333;
+}
 
-        .cmd-btn:active { transform: scale(0.96); }
-        .cmd-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        
-        .cmd-forward { background-color: #3498DB; box-shadow: 0 5px 0 #2980B9; }
-        .cmd-left { background-color: #9B59B6; box-shadow: 0 5px 0 #8E44AD; }
-        .cmd-right { background-color: #F39C12; box-shadow: 0 5px 0 #D35400; }
+/* GAME 3: MEMORY MATCH */
+.memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 20px;
+}
 
-        .instruction-wrapper {
-            background: white;
-            border: 3px solid #CBD5E0;
-            border-radius: 16px;
-            padding: 14px;
-            min-height: 100px;
-            margin-bottom: 15px;
-            text-align: left;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-        }
+.card {
+    height: clamp(90px, 18vh, 120px);
+    background: #38bdf8;
+    border-radius: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: clamp(28px, 6vw, 36px);
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    transition: 0.2s;
+    box-shadow: 0 5px 0 #0284c7;
+}
 
-        .instruction-title {
-            font-size: 1rem;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #718096;
-        }
+.card.flipped {
+    background: #fff3e0;
+    color: #e65100;
+    border: 2px solid #ffe0b2;
+    box-shadow: 0 5px 0 #ffb74d;
+}
 
-        .queue-box {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            max-height: 120px;
-            overflow-y: auto;
-        }
+/* GAME 4: CALCULATOR CANVAS */
+.calc-stage {
+    background: #1e293b;
+    border: 6px solid #334155;
+    border-radius: 24px;
+    padding: 20px;
+    max-width: 480px;
+    margin: 15px auto;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.25);
+}
 
-        .queue-badge {
-            background: #EDF2F7;
-            border: 2px solid #E2E8F0;
-            padding: 6px 12px;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            animation: elementPop 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
+.calc-screen {
+    background: #86efac;
+    border: 4px solid #4ade80;
+    border-radius: 14px;
+    padding: 15px;
+    font-family: 'Courier New', monospace;
+    font-size: clamp(28px, 6vw, 40px);
+    font-weight: bold;
+    color: #064e3b;
+    text-align: right;
+    margin-bottom: 15px;
+    box-shadow: inset 0 3px 6px rgba(0,0,0,0.2);
+}
 
-        @keyframes elementPop {
-            0% { transform: scale(0.6); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
+.calc-pad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
 
-        .action-buttons {
-            display: grid;
-            grid-template-columns: 1.8fr 1fr;
-            gap: 12px;
-        }
+.calc-btn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 14px;
+    padding: 15px;
+    font-size: clamp(20px, 4.5vw, 26px);
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 0 #1d4ed8;
+}
 
-        .btn-run { background-color: var(--secondary-color); box-shadow: 0 6px 0 #27AE60; padding: 14px; font-size: 1.3rem; }
-        .btn-clear { background-color: var(--danger-color); box-shadow: 0 6px 0 #C0392B; padding: 14px; font-size: 1.3rem; }
+.calc-btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #1d4ed8;
+}
 
-        /* 5. End Finish Screens Layout */
-        .rank-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #FFD700, #FFA500);
-            color: white;
-            padding: 16px 36px;
-            font-size: 1.9rem;
-            font-weight: bold;
-            border-radius: 50px;
-            margin: 22px 0;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
+.calc-btn.op {
+    background: #f97316;
+    box-shadow: 0 4px 0 #c2410c;
+}
 
-        .score-summary {
-            font-size: 1.35rem;
-            line-height: 1.8;
-            margin-bottom: 25px;
-        }
-    </style>
+/* GAME 5: MUSIC PLAYER STAGE */
+.music-deck {
+    background: linear-gradient(180deg, #ec4899 0%, #be185d 100%);
+    border: 6px solid #831843;
+    border-radius: 28px;
+    padding: 20px;
+    max-width: 520px;
+    margin: 15px auto;
+    color: white;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+.music-display {
+    background: #fbcfe8;
+    color: #831843;
+    border-radius: 16px;
+    padding: 15px;
+    font-size: clamp(18px, 4vw, 24px);
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.music-controls {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.control-btn {
+    background: white;
+    color: #be185d;
+    border: none;
+    border-radius: 50%;
+    width: clamp(65px, 14vw, 85px);
+    height: clamp(65px, 14vw, 85px);
+    font-size: clamp(24px, 5vw, 32px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 6px 0 #9d174d;
+}
+
+.control-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #9d174d;
+}
+
+.final-score {
+    font-size: clamp(50px, 10vw, 80px);
+    font-weight: bold;
+    color: #ff6f00;
+    margin: 15px 0;
+}
+
+.shake {
+    animation: shakeAnim 0.3s ease-in-out;
+}
+
+@keyframes shakeAnim {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+}
+
+@media(max-width: 768px) {
+    .memory-grid { grid-template-columns: repeat(2, 1fr); }
+    .drag-container { flex-direction: column; align-items: center; }
+}
+</style>
 </head>
+
 <body>
 
-    <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="snd-clap" src="assets/clap.mp3" preload="auto"></audio>
-    <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+<!-- AUDIO ENGINE EMBEDS -->
+<audio id="correctSound" src="assets/correct-1.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
 
-    <div id="splash-screen" class="screen active">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+<!-- 1. INDIVIDUAL BRANDING SPLASH SCREEN -->
+<div id="brand-splash">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/320x100?text=Innovine+Pedagogy'">
+    <div class="loading-track">
+        <div class="loading-bar-fill"></div>
     </div>
+</div>
 
-    <div id="intro-screen" class="screen">
-        <h1 style="color: var(--primary-color); margin-bottom: 8px; font-size: 2.3rem;">🤖 Robo-Code Adventure 🚀</h1>
-        <p style="margin-bottom: 25px; font-size: 1.15rem; color: #4A5568;">Welcome little programmer! Type your details to unlock coding missions!</p>
-        
-        <form id="start-form" onsubmit="startGame(event)">
-            <div class="form-group">
-                <label for="student-name">⭐ Student Name:</label>
-                <input type="text" id="student-name" required placeholder="Enter your full name">
-            </div>
-            <div class="form-group">
-                <label for="class-name">🏫 Class / Section:</label>
-                <input type="text" id="class-name" required placeholder="e.g. Grade 1-A">
-            </div>
-            <div class="form-group">
-                <label for="school-name">🏢 School Campus Name:</label>
-                <input type="text" id="school-name" required placeholder="Enter your school name">
-            </div>
-            <button type="submit" class="btn">Let's Code! 🎮</button>
-        </form>
-    </div>
+<!-- 2. GAME INSTRUCTION SCREEN (Shown directly after splash screen) -->
+<div id="instructionScreen" class="screen">
+    <h1>🧭 Welcome Learner!</h1>
+    <p class="subtitle">Calculator & Music Player Adventure Guide</p>
 
-    <div id="game-screen" class="screen">
-        <div class="game-header">
-            <div class="hud-item" id="hud-level">🌟 Level: 1 / 3</div>
-            <div class="hud-item" id="hud-score">🏆 Score: 0</div>
+    <div class="instructions-box">
+        <div class="instruction-item">
+            <span>🖼️</span>
+            <span><strong>Find the Sign:</strong> Identify operational math symbols for addition.</span>
         </div>
-
-        <h2 id="level-mission" style="margin-bottom: 20px; color: var(--primary-color);">Mission: Help Robot reach the Battery! 🔋</h2>
-
-        <div class="game-container">
-            <div class="grid-map" id="map-grid">
-                <div id="live-robot" class="robot-avatar">
-                    <div>🤖</div>
-                    <div id="live-arrow" class="robot-compass">▲</div>
-                </div>
-                </div>
-
-            <div class="control-panel">
-                <div>
-                    <h3 style="margin-bottom: 12px; font-size: 1.15rem; color: var(--dark-color);">Tap Directions Buttons:</h3>
-                    <div class="command-buttons">
-                        <button id="btn-cmd-f" class="cmd-btn cmd-forward" onclick="addCommand('forward')"><span>⬆️</span> Move Forward</button>
-                        <button id="btn-cmd-l" class="cmd-btn cmd-left" onclick="addCommand('left')"><span>↩️</span> Turn Left (Spin)</button>
-                        <button id="btn-cmd-r" class="cmd-btn cmd-right" onclick="addCommand('right')"><span>↪️</span> Turn Right (Spin)</button>
-                    </div>
-
-                    <div class="instruction-wrapper">
-                        <div class="instruction-title">My Code Instructions List:</div>
-                        <div class="queue-box" id="queue-box-container">
-                            </div>
-                    </div>
-                </div>
-
-                <div class="action-buttons">
-                    <button id="run-btn" class="btn btn-run" onclick="executeProgram()">🚀 RUN CODE!</button>
-                    <button id="clear-btn" class="btn btn-clear" onclick="clearQueue()">❌ Clear</button>
-                </div>
-            </div>
+        <div class="instruction-item">
+            <span>🧩</span>
+            <span><strong>Match the Sign:</strong> Connect symbols to their correct function box.</span>
+        </div>
+        <div class="instruction-item">
+            <span>🧠</span>
+            <span><strong>Memory Match:</strong> Match pairs of math and music player icons.</span>
+        </div>
+        <div class="instruction-item">
+            <span>🧮</span>
+            <span><strong>Target Calculator:</strong> Tap operational keys to reach target numbers.</span>
+        </div>
+        <div class="instruction-item">
+            <span>🎵</span>
+            <span><strong>Music Player Stage:</strong> Tap player controls to manipulate music playback!</span>
         </div>
     </div>
 
-    <div id="end-screen" class="screen">
-        <h1 style="color: var(--secondary-color); font-size: 2.6rem;">🎉 Outstanding Job! 🎉</h1>
-        <div class="rank-badge" id="end-rank">Grand Programmer</div>
-        
-        <div class="score-summary" id="end-summary">
-            </div>
+    <button class="btn" onclick="showMenu()">🚀 Enter Main Menu</button>
+</div>
 
-        <button class="btn" onclick="resetGame()" style="background-color: var(--primary-color); box-shadow: 0 8px 0 #2980B9;">Play Again 🔄</button>
+<!-- 3. MAIN MENU SCREEN -->
+<div id="menu" class="screen">
+    <h1>🎮 Pick a Game!</h1>
+    <p class="subtitle">Select an activity to earn stars!</p>
+
+    <div style="display: flex; flex-direction: column; gap: 8px; max-width: 450px; margin: 0 auto;">
+        <button class="btn" onclick="startImageGame()">🖼️ Game 1: Find the Sign</button>
+        <button class="btn" onclick="startDragGame()">🧩 Game 2: Match the Sign</button>
+        <button class="btn" onclick="startMemoryGame()">🧠 Game 3: Memory Match</button>
+        <button class="btn" onclick="startCalcGame()">🧮 Game 4: Target Calculator</button>
+        <button class="btn" onclick="startMusicGame()">🎵 Game 5: Music Deck Controller</button>
+    </div>
+</div>
+
+<!-- 4. GAME 1: FIND THE SIGN -->
+<div id="imageScreen" class="screen">
+    <h1>Find the Plus Sign!</h1>
+    <p class="subtitle">Click the symbol used for ADDITION (+)</p>
+
+    <div class="image-options">
+        <div class="image-card" onclick="checkImage('minus', this)">
+            <img src="assets/subtraction.png" alt="Minus" onerror="this.src='https://via.placeholder.com/90?text=MINUS'">
+            ➖ Minus
+        </div>
+
+        <div class="image-card" onclick="checkImage('plus', this)">
+            <img src="assets/addition.png" alt="Plus" onerror="this.src='https://via.placeholder.com/90?text=PLUS'">
+            ➕ Plus
+        </div>
+
+        <div class="image-card" onclick="checkImage('equal', this)">
+            <img src="assets/equal.png" alt="Equal" onerror="this.src='https://via.placeholder.com/90?text=EQUAL'">
+            〓 Equal
+        </div>
     </div>
 
-    <script>
-        // Core Logic State Tracking Context Configs
-        let currentLevel = 1;
-        let score = 0;
-        let commandsQueue = [];
-        let isExecuting = false;
+    <div class="feedback" id="imageFeedback"></div>
+    <button class="btn btn-back" onclick="showMenu()">⬅ Back to Menu</button>
+</div>
 
-        // Student Metadata Object Container
-        let studentProfile = { name: '', class: '', school: '' };
+<!-- 5. GAME 2: MATCH THE SIGN (DRAG & DROP) -->
+<div id="dragScreen" class="screen">
+    <h1>Match the Buttons</h1>
+    <p class="subtitle">Drag the symbol to the correct action box!</p>
 
-        // Matrix Directions Indexes and Configuration constants
-        const DIR_UP = 0, DIR_RIGHT = 1, DIR_DOWN = 2, DIR_LEFT = 3;
-        const DIR_ROTATIONS = { 0: 0, 1: 90, 2: 180, 3: 270 };
+    <div class="drag-container">
+        <div>
+            <div class="drag-item" draggable="true" id="plusBtn">➕</div>
+            <div class="drag-item" draggable="true" id="playBtn">▶</div>
+        </div>
 
-        // 4x4 Grid Maps definition models
-        const levelConfigs = {
-            1: {
-                mission: "Help Robot reach the Battery! 🔋",
-                targetEmoji: "🔋",
-                grid: [
-                    ['R', 'P', 'X', 'X'],
-                    ['X', 'P', 'X', 'X'],
-                    ['X', 'P', 'P', 'T'],
-                    ['X', 'X', 'X', 'X']
-                ],
-                startPos: {r: 0, c: 0, dir: DIR_RIGHT}
-            },
-            2: {
-                mission: "Help Robot reach the Repair Tool! 🔧",
-                targetEmoji: "🔧",
-                grid: [
-                    ['X', 'X', 'X', 'X'],
-                    ['T', 'P', 'P', 'X'],
-                    ['X', 'X', 'P', 'X'],
-                    ['X', 'X', 'R', 'X']
-                ],
-                startPos: {r: 3, c: 2, dir: DIR_UP}
-            },
-            3: {
-                mission: "Help Robot reach the Rocket Ship! 🚀",
-                targetEmoji: "🚀",
-                grid: [
-                    ['R', 'X', 'X', 'X'],
-                    ['P', 'P', 'X', 'X'],
-                    ['X', 'P', 'P', 'X'],
-                    ['X', 'X', 'T', 'X']
-                ],
-                startPos: {r: 0, c: 0, dir: DIR_DOWN}
-            }
-        };
+        <div>
+            <div class="drop-box" data-answer="plusBtn">Add Numbers</div>
+            <div class="drop-box" data-answer="playBtn">Play Music</div>
+        </div>
+    </div>
 
-        // Live Active Tracking Position Coordinates Variable
-        let robotState = { r: 0, c: 0, dir: DIR_UP };
+    <div class="feedback" id="dragFeedback"></div>
+    <button class="btn btn-back" onclick="showMenu()">⬅ Back to Menu</button>
+</div>
 
-        // Hook up 5-Second Brand splash display controls 
-        window.addEventListener('DOMContentLoaded', () => {
+<!-- 6. GAME 3: MEMORY MATCH -->
+<div id="memoryScreen" class="screen">
+    <h1>Memory Match</h1>
+    <p class="subtitle">Find the matching pair symbols!</p>
+
+    <div class="memory-grid" id="memoryGrid"></div>
+    <div class="feedback" id="memoryFeedback"></div>
+    <button class="btn btn-back" onclick="showMenu()">⬅ Back to Menu</button>
+</div>
+
+<!-- 7. GAME 4: TARGET CALCULATOR -->
+<div id="calcScreen" class="screen">
+    <h1>🧮 Reach the Target Number!</h1>
+    <p class="subtitle" id="calcTargetText">Goal: Reach number 10!</p>
+
+    <div class="calc-stage">
+        <div class="calc-screen" id="calcDisplay">0</div>
+        <div class="calc-pad">
+            <button class="calc-btn" onclick="pressCalcNum(1)">1</button>
+            <button class="calc-btn" onclick="pressCalcNum(2)">2</button>
+            <button class="calc-btn" onclick="pressCalcNum(5)">5</button>
+            <button class="calc-btn op" onclick="pressCalcOp('+')">➕</button>
+            <button class="calc-btn op" onclick="pressCalcOp('-')">➖</button>
+            <button class="calc-btn op" style="background:#ef4444; box-shadow:0 4px 0 #b91c1c;" onclick="resetCalc()">C</button>
+        </div>
+    </div>
+
+    <div class="feedback" id="calcFeedback"></div>
+    <button class="btn btn-back" onclick="showMenu()">⬅ Back to Menu</button>
+</div>
+
+<!-- 8. GAME 5: MUSIC PLAYER STAGE -->
+<div id="musicScreen" class="screen">
+    <h1>🎵 Music Controller Stage</h1>
+    <p class="subtitle" id="musicTaskText">Task: Tap PLAY to start music!</p>
+
+    <div class="music-deck">
+        <div class="music-display" id="musicStatus">📻 Status: STOPPED</div>
+        <div class="music-controls">
+            <button class="control-btn" id="btnPlay" onclick="pressMusicControl('PLAY', this)">▶</button>
+            <button class="control-btn" id="btnPause" onclick="pressMusicControl('PAUSE', this)">⏸</button>
+            <button class="control-btn" id="btnStop" onclick="pressMusicControl('STOP', this)">⏹</button>
+        </div>
+    </div>
+
+    <div class="feedback" id="musicFeedback"></div>
+    <button class="btn btn-back" onclick="showMenu()">⬅ Back to Menu</button>
+</div>
+
+<!-- 9. FINAL SCORE REPORT SCREEN -->
+<div id="finalScreen" class="screen">
+    <h1>🏆 Super Job!</h1>
+    <div class="final-score" id="finalScore">0 Stars</div>
+    <h2 id="rank" style="color:#1565c0; margin-bottom:15px;">Champion!</h2>
+
+    <button class="btn" onclick="showMenu()">🔄 Play Again</button>
+</div>
+
+<script>
+let totalScore = 0;
+
+/* SCREEN MANAGEMENT ROUTER */
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+}
+
+// 5-Second Timed Individual Branding Splash Screen Engine
+window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        const splash = document.getElementById('brand-splash');
+        if (splash) {
+            splash.style.opacity = '0';
             setTimeout(() => {
-                switchScreen('intro-screen');
-            }, 5000); // 5000ms allocation for splash branding loop
-        });
-
-        function switchScreen(screenId) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(screenId).classList.add('active');
+                splash.style.display = 'none';
+                showScreen('instructionScreen');
+            }, 500);
         }
+    }, 5000);
+});
 
-        // Setup Player Context Engine Profile
-        function startGame(e) {
-            e.preventDefault();
-            studentProfile.name = document.getElementById('student-name').value;
-            studentProfile.class = document.getElementById('class-name').value;
-            studentProfile.school = document.getElementById('school-name').value;
+function showMenu() {
+    showScreen('menu');
+}
 
-            currentLevel = 1;
-            score = 0;
-            loadLevel(currentLevel);
-            switchScreen('game-screen');
-        }
+/* AUDIO & FEEDBACK HELPER FUNCTIONS */
+function unlockAudio() {
+    ['correctSound', 'wrongSound', 'clapSound'].forEach(id => {
+        const snd = document.getElementById(id);
+        if (snd) snd.load();
+    });
+}
 
-        // Level Matrix Grid Rendering engine
-        function loadLevel(lvlId) {
-            const config = levelConfigs[lvlId];
-            document.getElementById('hud-level').innerText = `🌟 Level: ${lvlId} / 3`;
-            document.getElementById('hud-score').innerText = `🏆 Score: ${score}`;
-            document.getElementById('level-mission').innerText = `Mission: ${config.mission}`;
-            
-            commandsQueue = [];
-            renderQueue();
-            setControlsDisabled(false);
-            
-            // Set dynamic coordinate configurations back to level base default layout limits
-            robotState = { ...config.startPos };
-            buildGridStructure(config);
-            updateRobotVisualPosition();
-        }
+function playAudioTrack(id) {
+    const track = document.getElementById(id);
+    if (track) {
+        track.currentTime = 0;
+        track.play().catch(e => console.log('Audio stream deferred until click.'));
+    }
+}
 
-        function buildGridStructure(config) {
-            const mapContainer = document.getElementById('map-grid');
-            
-            // Wipe out old static blocks but preserve the moving floating avatar layer node safely
-            const robotNode = document.getElementById('live-robot');
-            mapContainer.innerHTML = '';
-            mapContainer.appendChild(robotNode);
+function triggerSuccessFeedback(containerId, message, element = null) {
+    playAudioTrack('correctSound');
+    const fb = document.getElementById(containerId);
+    fb.innerHTML = `🎉 🌟 ${message} 🌟 🎉`;
+    fb.style.color = '#15803d';
 
-            for (let r = 0; r < 4; r++) {
-                for (let c = 0; c < 4; c++) {
-                    const type = config.grid[r][c];
-                    const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    
-                    if (type === 'X') {
-                        cell.classList.add('obstacle');
-                        cell.innerText = '🧱';
-                    } else if (type === 'T') {
-                        cell.innerText = config.targetEmoji;
-                    }
-                    mapContainer.appendChild(cell);
-                }
+    if (element) {
+        const rect = element.getBoundingClientRect();
+        const x = (rect.left + rect.width / 2) / window.innerWidth;
+        const y = (rect.top + rect.height / 2) / window.innerHeight;
+        confetti({ particleCount: 35, spread: 50, origin: { x: x, y: y } });
+    } else {
+        confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+    }
+}
+
+function triggerWrongFeedback(containerId, message, element = null) {
+    playAudioTrack('wrongSound');
+    const fb = document.getElementById(containerId);
+    fb.innerHTML = `❌ 😢 ${message} 💔 ❌`;
+    fb.style.color = '#b91c1c';
+
+    if (element) {
+        element.classList.add('shake');
+        setTimeout(() => element.classList.remove('shake'), 350);
+    }
+}
+
+/* GAME 1: IMAGE LOGIC */
+function startImageGame() {
+    unlockAudio();
+    document.getElementById('imageFeedback').innerText = '';
+    showScreen('imageScreen');
+}
+
+function checkImage(ans, element) {
+    if (ans === 'plus') {
+        triggerSuccessFeedback('imageFeedback', 'Super! That is the Plus Sign!', element);
+        totalScore += 2;
+        setTimeout(showMenu, 1500);
+    } else {
+        triggerWrongFeedback('imageFeedback', 'Try Again! Look for the cross +', element);
+    }
+}
+
+/* GAME 2: DRAG & DROP LOGIC */
+let correctDrops = 0;
+
+function startDragGame() {
+    unlockAudio();
+    document.getElementById('dragFeedback').innerText = '';
+    showScreen('dragScreen');
+    correctDrops = 0;
+    document.querySelectorAll('.drop-box').forEach(box => {
+        box.style.background = '#f5f5f5';
+        box.innerText = box.dataset.answer === 'plusBtn' ? 'Add Numbers' : 'Play Music';
+    });
+}
+
+document.querySelectorAll('.drag-item').forEach(item => {
+    item.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text', e.target.id);
+    });
+});
+
+document.querySelectorAll('.drop-box').forEach(box => {
+    box.addEventListener('dragover', e => e.preventDefault());
+    box.addEventListener('drop', e => {
+        e.preventDefault();
+        const data = e.dataTransfer.getData('text');
+
+        if (data === box.dataset.answer) {
+            box.style.background = '#bbf7d0';
+            box.innerHTML = '✅ Got It!';
+            correctDrops++;
+            totalScore += 2;
+            triggerSuccessFeedback('dragFeedback', 'Great Match!', box);
+
+            if (correctDrops === 2) {
+                setTimeout(showFinal, 1500);
             }
+        } else {
+            triggerWrongFeedback('dragFeedback', 'Not quite right! Try another box.', box);
         }
+    });
+});
 
-        // Calculates coordinate shifts to apply responsive live sliding movements
-        function updateRobotVisualPosition() {
-            const robot = document.getElementById('live-robot');
-            const arrow = document.getElementById('live-arrow');
-            
-            // Grid cell layout distribution configuration calculations (Padding space offset calculation)
-            const gap = 8;
-            const padding = 12;
-            
-            // Calculate percentage based location multipliers inside responsive CSS blocks
-            let topPos = `calc(${padding}px + (${robotState.r} * (25% - ${gap / 2}px)))`;
-            let leftPos = `calc(${padding}px + (${robotState.c} * (25% - ${gap / 2}px)))`;
-            
-            robot.style.top = topPos;
-            robot.style.left = leftPos;
-            
-            // Apply spin tracking parameters to direction arrow directly
-            let targetDegrees = DIR_ROTATIONS[robotState.dir];
-            arrow.style.transform = `rotate(${targetDegrees}deg)`;
-        }
+/* GAME 3: MEMORY MATCH LOGIC */
+const memoryData = ['➕', '➕', '▶', '▶', '〓', '〓', '🎵', '🎵'];
+let flipped = [];
+let matched = 0;
 
-        // Queue list builder module functions
-        function addCommand(type) {
-            if (isExecuting) return;
-            commandsQueue.push(type);
-            renderQueue();
+function startMemoryGame() {
+    unlockAudio();
+    document.getElementById('memoryFeedback').innerText = '';
+    showScreen('memoryScreen');
+    const grid = document.getElementById('memoryGrid');
+    grid.innerHTML = '';
+    matched = 0;
+    flipped = [];
 
-            // INSTANT MOVEMENT LOOP SIMULATION: Instantly animates character position state on tap to preview path instructions!
-            const config = levelConfigs[currentLevel];
-            if (type === 'left') {
-                robotState.dir = (robotState.dir + 3) % 4;
-            } else if (type === 'right') {
-                robotState.dir = (robotState.dir + 1) % 4;
-            } else if (type === 'forward') {
-                let nextR = robotState.r;
-                let nextC = robotState.c;
+    const pool = [...memoryData].sort(() => 0.5 - Math.random());
+    pool.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = '❓';
+        card.onclick = () => flipCard(card, item);
+        grid.appendChild(card);
+    });
+}
 
-                if (robotState.dir === DIR_UP) nextR--;
-                else if (robotState.dir === DIR_RIGHT) nextC++;
-                else if (robotState.dir === DIR_DOWN) nextR++;
-                else if (robotState.dir === DIR_LEFT) nextC--;
+function flipCard(card, item) {
+    if (card.classList.contains('flipped') || flipped.length >= 2) return;
 
-                if (nextR >= 0 && nextR < 4 && nextC >= 0 && nextC < 4 && config.grid[nextR][nextC] !== 'X') {
-                    robotState.r = nextR;
-                    robotState.c = nextC;
-                }
+    card.classList.add('flipped');
+    card.innerHTML = item;
+    flipped.push({ card, item });
+
+    if (flipped.length === 2) {
+        if (flipped[0].item === flipped[1].item) {
+            matched++;
+            totalScore += 2;
+            triggerSuccessFeedback('memoryFeedback', 'You found a match!', card);
+            flipped = [];
+
+            if (matched === 4) {
+                setTimeout(showFinal, 1500);
             }
-            updateRobotVisualPosition();
-        }
-
-        function clearQueue() {
-            if (isExecuting) return;
-            loadLevel(currentLevel); // Safely reset map arrays to level defaults 
-        }
-
-        function renderQueue() {
-            const container = document.getElementById('queue-box-container');
-            container.innerHTML = '';
-            commandsQueue.forEach((cmd, idx) => {
-                const badge = document.createElement('div');
-                badge.className = 'queue-badge';
-                let icon = cmd === 'forward' ? '⬆️' : cmd === 'left' ? '↩️' : '↪️';
-                badge.innerText = `${idx + 1}. ${icon}`;
-                container.appendChild(badge);
-            });
-        }
-
-        function setControlsDisabled(status) {
-            isExecuting = status;
-            document.getElementById('btn-cmd-f').disabled = status;
-            document.getElementById('btn-cmd-l').disabled = status;
-            document.getElementById('btn-cmd-r').disabled = status;
-            document.getElementById('run-btn').disabled = status;
-            document.getElementById('clear-btn').disabled = status;
-        }
-
-        // Code execution evaluator verification processor loop
-        async function executeProgram() {
-            if (commandsQueue.length === 0 || isExecuting) return;
-            setControlsDisabled(true);
-
-            const config = levelConfigs[currentLevel];
-            // Snap character layer back to initial starting vector coordinates prior to run check
-            robotState = { ...config.startPos };
-            updateRobotVisualPosition();
-            await new Promise(resolve => setTimeout(resolve, 500));
-
-            // Execute each block step-by-step with synchronized time loops
-            for (let i = 0; i < commandsQueue.length; i++) {
-                const cmd = commandsQueue[i];
-                
-                if (cmd === 'left') {
-                    robotState.dir = (robotState.dir + 3) % 4;
-                } else if (cmd === 'right') {
-                    robotState.dir = (robotState.dir + 1) % 4;
-                } else if (cmd === 'forward') {
-                    let nextR = robotState.r;
-                    let nextC = robotState.c;
-
-                    if (robotState.dir === DIR_UP) nextR--;
-                    else if (robotState.dir === DIR_RIGHT) nextC++;
-                    else if (robotState.dir === DIR_DOWN) nextR++;
-                    else if (robotState.dir === DIR_LEFT) nextC--;
-
-                    // Boundary collision criteria metrics checks
-                    if (nextR >= 0 && nextR < 4 && nextC >= 0 && nextC < 4) {
-                        if (config.grid[nextR][nextC] === 'X') {
-                            updateRobotVisualPosition();
-                            await new Promise(resolve => setTimeout(resolve, 400));
-                            triggerFailure("Boom! Robot crashed into a brick obstacle! 🧱");
-                            return;
-                        }
-                        robotState.r = nextR;
-                        robotState.c = nextC;
-                    } else {
-                        triggerFailure("Uh oh! Robot fell off the grid map world boundaries! 🗺️");
-                        return;
-                    }
-                }
-                
-                updateRobotVisualPosition();
-                await new Promise(resolve => setTimeout(resolve, 600)); // Smooth step animation frame allocation delay
-            }
-
-            // Post code execution terminal criteria check values evaluation rules 
-            const finalCellType = config.grid[robotState.r][robotState.c];
-            if (finalCellType === 'T') {
-                triggerSuccess();
-            } else {
-                triggerFailure("The program completed but the robot did not reach the prize asset destination target! Reset and try again.");
-            }
-        }
-
-        function triggerSuccess() {
-            score += 100;
-            
-            const correctSound = document.getElementById('snd-correct');
-            const clapSound = document.getElementById('snd-clap');
-            
-            // 1. Play correct audio selection feedback sequence
-            if (correctSound) {
-                correctSound.currentTime = 0;
-                correctSound.play().catch(e => console.log("Audio pipeline stream blocked:", e));
-            }
-            
-            // 2. Continuous fire clapping noise + confetti particle streams
+        } else {
+            triggerWrongFeedback('memoryFeedback', 'Try again!', card);
             setTimeout(() => {
-                if (clapSound) {
-                    clapSound.currentTime = 0;
-                    clapSound.play().catch(e => console.log("Audio pipeline stream blocked:", e));
-                }
-                confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
-            }, 450);
-
-            setTimeout(() => {
-                alert("Wonderful Job! Your programming instructions worked perfectly! 🎉");
-                if (currentLevel < 3) {
-                    currentLevel++;
-                    loadLevel(currentLevel);
-                } else {
-                    showGameFinish();
-                }
-            }, 600);
+                flipped.forEach(f => {
+                    f.card.classList.remove('flipped');
+                    f.card.innerHTML = '❓';
+                });
+                flipped = [];
+            }, 1000);
         }
+    }
+}
 
-        function triggerFailure(message) {
-            const wrongSound = document.getElementById('snd-wrong');
-            if (wrongSound) {
-                wrongSound.currentTime = 0;
-                wrongSound.play().catch(e => console.log("Audio pipeline stream blocked:", e));
-            }
-            
-            setTimeout(() => {
-                alert(message);
-                loadLevel(currentLevel); // Reset view grid positions back safely
-            }, 200);
-        }
+/* GAME 4: TARGET CALCULATOR LOGIC */
+let calcVal = 0;
+let calcOp = null;
+let calcTarget = 10;
 
-        function showGameFinish() {
-            switchScreen('end-screen');
-            
-            // Confetti cascade loop configuration parameters
-            let duration = 4 * 1000;
-            let end = Date.now() + duration;
+function startCalcGame() {
+    unlockAudio();
+    showScreen('calcScreen');
+    resetCalc();
+}
 
-            (function frame() {
-                confetti({ particleCount: 6, angle: 60, spread: 60, origin: { x: 0 } });
-                confetti({ particleCount: 6, angle: 120, spread: 60, origin: { x: 1 } });
-                if (Date.now() < end) { requestAnimationFrame(frame); }
-            }());
+function resetCalc() {
+    calcVal = 0;
+    calcOp = null;
+    document.getElementById('calcDisplay').innerText = '0';
+    document.getElementById('calcFeedback').innerText = '';
+}
 
-            document.getElementById('end-summary').innerHTML = `
-                <strong>Programmer Certificate Profile:</strong><br>
-                👤 Name: ${studentProfile.name}<br>
-                🏫 Class: ${studentProfile.class}<br>
-                🏢 School: ${studentProfile.school}<br>
-                <hr style="margin:14px 0; border:1px dashed #CBD5E0;">
-                🌟 Total Highscore: <strong>${score} Points</strong><br>
-                🏆 Status: <strong>All 3 Static STEM Coding puzzles solved!</strong>
-            `;
-        }
+function pressCalcNum(num) {
+    if (calcOp === '+') {
+        calcVal += num;
+    } else if (calcOp === '-') {
+        calcVal -= num;
+    } else {
+        calcVal = num;
+    }
+    calcOp = null;
+    document.getElementById('calcDisplay').innerText = calcVal;
+    checkCalcTarget();
+}
 
-        function resetGame() {
-            document.getElementById('start-form').reset();
-            switchScreen('intro-screen');
-        }
-    </script>
+function pressCalcOp(op) {
+    calcOp = op;
+    document.getElementById('calcDisplay').innerText = `${calcVal} ${op}`;
+}
+
+function checkCalcTarget() {
+    if (calcVal === calcTarget) {
+        triggerSuccessFeedback('calcFeedback', 'Target Reached! Perfect Math!', document.getElementById('calcDisplay'));
+        totalScore += 5;
+        setTimeout(showFinal, 1500);
+    } else if (calcVal > calcTarget) {
+        triggerWrongFeedback('calcFeedback', 'Exceeded Target! Tap C to Reset.', document.getElementById('calcDisplay'));
+    }
+}
+
+/* GAME 5: MUSIC STAGE LOGIC */
+let musicStageTask = 'PLAY';
+
+function startMusicGame() {
+    unlockAudio();
+    showScreen('musicScreen');
+    musicStageTask = 'PLAY';
+    document.getElementById('musicTaskText').innerText = 'Task: Tap PLAY (▶) to start music!';
+    document.getElementById('musicStatus').innerText = '📻 Status: STOPPED';
+    document.getElementById('musicFeedback').innerText = '';
+}
+
+function pressMusicControl(action, btn) {
+    const statusBox = document.getElementById('musicStatus');
+    if (action === 'PLAY') {
+        statusBox.innerText = '📻 Status: 🎵 PLAYING MUSIC...';
+    } else if (action === 'PAUSE') {
+        statusBox.innerText = '📻 Status: ⏸ MUSIC PAUSED';
+    } else if (action === 'STOP') {
+        statusBox.innerText = '📻 Status: ⏹ MUSIC STOPPED';
+    }
+
+    if (action === musicStageTask) {
+        triggerSuccessFeedback('musicFeedback', `Action ${action} Executed Correctly!`, btn);
+        totalScore += 5;
+        setTimeout(showFinal, 1500);
+    } else {
+        triggerWrongFeedback('musicFeedback', `Wrong Button! Read the Task.`, btn);
+    }
+}
+
+/* FINAL REPORT SCREEN */
+function showFinal() {
+    showScreen('finalScreen');
+    document.getElementById('finalScore').innerText = `${totalScore} Stars`;
+
+    let ranking = '';
+    if (totalScore >= 12) {
+        ranking = '🏆 Tech Champion Star!';
+    } else if (totalScore >= 6) {
+        ranking = '🌟 Brilliant Learner!';
+    } else {
+        ranking = '👍 Keep Practicing!';
+    }
+    document.getElementById('rank').innerText = ranking;
+
+    playAudioTrack('clapSound');
+    confetti({
+        particleCount: 180,
+        spread: 100,
+        origin: { y: 0.6 }
+    });
+}
+</script>
+
 </body>
 </html>

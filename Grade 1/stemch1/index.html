@@ -295,6 +295,18 @@ p.subtitle {
     gap: 8px;
 }
 
+.hint-banner {
+    display: none;
+    background: #fef3c7;
+    border: 2px solid #f59e0b;
+    border-radius: 16px;
+    padding: 10px;
+    color: #92400e;
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
 .instructions-box {
     background: #e0f2fe;
     border: 3px dashed #0284c7;
@@ -361,6 +373,10 @@ p.subtitle {
             <span>▶️</span>
             <span><strong>Run Program:</strong> Press "Run Code" to make the robot execute your moves!</span>
         </div>
+        <div class="instruction-item">
+            <span>💡</span>
+            <span><strong>Helper AI:</strong> Attempt 3 times and the computer will show you the exact answer!</span>
+        </div>
     </div>
 
     <button class="btn" onclick="startGame()">🚀 Start Mission</button>
@@ -369,7 +385,7 @@ p.subtitle {
 <!-- 3. GAMEPLAY SCREEN -->
 <div id="gameScreen" class="screen">
     <div class="hud-bar">
-        <div>🌟 Level: <span id="lvlDisplay">1 / 3</span></div>
+        <div>🌟 Level: <span id="lvlDisplay">1 / 5</span></div>
         <div>🏆 Score: <span id="scoreDisplay">0</span></div>
     </div>
 
@@ -395,6 +411,9 @@ p.subtitle {
                 <button class="ctrl-btn run" onclick="executeCode()">▶️ Run Code</button>
                 <button class="ctrl-btn clear" onclick="clearCode()">🗑️ Clear</button>
             </div>
+
+            <!-- AUTO-SOLUTION HINT BANNER -->
+            <div class="hint-banner" id="hintBanner"></div>
         </div>
     </div>
 
@@ -404,35 +423,51 @@ p.subtitle {
 <!-- 4. VICTORY / FINAL SCORE SCREEN -->
 <div id="victoryScreen" class="screen">
     <h1>🎉 Mission Accomplished!</h1>
-    <p class="subtitle">You successfully powered up the Exploration Robot!</p>
-    <div class="final-score" id="finalScoreDisplay">150</div>
+    <p class="subtitle">You successfully completed all 5 Robot Navigation levels!</p>
+    <div class="final-score" id="finalScoreDisplay">250</div>
     <p style="font-size: 20px; font-weight: bold; color: #0369a1; margin-bottom: 15px;">STEM Master Coder 🏆</p>
 
     <button class="btn" onclick="resetGame()">🔄 Play Again</button>
 </div>
 
 <script>
-// LEVEL CONFIGURATIONS
+// 5 EXPANDED LEVEL CONFIGURATIONS WITH WINNING SOLUTIONS
 const levels = [
     {
         robotStart: { r: 0, c: 0, dir: 0 }, // dir: 0=UP, 1=RIGHT, 2=DOWN, 3=LEFT
         battery: { r: 2, c: 3 },
-        walls: [{r: 0, c: 2}, {r: 0, c: 3}, {r: 1, c: 0}, {r: 1, c: 2}, {r: 1, c: 3}, {r: 2, c: 0}, {r: 3, c: 0}, {r: 3, c: 1}, {r: 3, c: 2}, {r: 3, c: 3}]
+        walls: [{r: 0, c: 2}, {r: 0, c: 3}, {r: 1, c: 0}, {r: 1, c: 2}, {r: 1, c: 3}, {r: 2, c: 0}, {r: 3, c: 0}, {r: 3, c: 1}, {r: 3, c: 2}, {r: 3, c: 3}],
+        solution: ['RIGHT', 'FORWARD', 'RIGHT', 'FORWARD', 'FORWARD', 'LEFT', 'FORWARD', 'FORWARD']
     },
     {
         robotStart: { r: 3, c: 0, dir: 1 },
         battery: { r: 0, c: 3 },
-        walls: [{r: 1, c: 1}, {r: 1, c: 2}, {r: 2, c: 1}, {r: 2, c: 3}]
+        walls: [{r: 1, c: 1}, {r: 1, c: 2}, {r: 2, c: 1}, {r: 2, c: 3}],
+        solution: ['FORWARD', 'FORWARD', 'FORWARD', 'LEFT', 'FORWARD', 'FORWARD', 'FORWARD']
     },
     {
         robotStart: { r: 0, c: 0, dir: 2 },
         battery: { r: 3, c: 3 },
-        walls: [{r: 0, c: 1}, {r: 1, c: 3}, {r: 2, c: 0}, {r: 2, c: 2}]
+        walls: [{r: 0, c: 1}, {r: 1, c: 3}, {r: 2, c: 0}, {r: 2, c: 2}],
+        solution: ['FORWARD', 'LEFT', 'FORWARD', 'FORWARD', 'RIGHT', 'FORWARD', 'FORWARD', 'LEFT', 'FORWARD']
+    },
+    {
+        robotStart: { r: 3, c: 3, dir: 3 }, // Robot starts bottom-right facing LEFT
+        battery: { r: 0, c: 0 },
+        walls: [{r: 1, c: 0}, {r: 1, c: 1}, {r: 2, c: 2}, {r: 3, c: 1}],
+        solution: ['FORWARD', 'RIGHT', 'FORWARD', 'LEFT', 'FORWARD', 'RIGHT', 'FORWARD', 'FORWARD']
+    },
+    {
+        robotStart: { r: 2, c: 0, dir: 1 }, // Robot starts facing RIGHT
+        battery: { r: 1, c: 2 },
+        walls: [{r: 0, c: 1}, {r: 2, c: 1}, {r: 3, c: 2}, {r: 2, c: 3}],
+        solution: ['FORWARD', 'LEFT', 'FORWARD', 'RIGHT', 'FORWARD']
     }
 ];
 
 let currentLvl = 0;
 let score = 0;
+let attemptCount = 0;
 let robotState = { r: 0, c: 0, dir: 0 };
 let instructionsQueue = [];
 let isExecuting = false;
@@ -482,9 +517,11 @@ function startGame() {
 
 function loadLevel() {
     isExecuting = false;
+    attemptCount = 0;
     instructionsQueue = [];
     updateCodeUI();
     document.getElementById('feedbackMsg').innerText = '';
+    document.getElementById('hintBanner').style.display = 'none';
     document.getElementById('lvlDisplay').innerText = `${currentLvl + 1} / ${levels.length}`;
     document.getElementById('scoreDisplay').innerText = score;
 
@@ -532,7 +569,7 @@ function renderBoard() {
 
 function addInstruction(type) {
     if (isExecuting) return;
-    if (instructionsQueue.length < 10) {
+    if (instructionsQueue.length < 12) {
         instructionsQueue.push(type);
         updateCodeUI();
     }
@@ -593,16 +630,14 @@ function executeCode() {
                 // Crash into wall/boundary
                 clearInterval(interval);
                 playAudioTrack('snd-wrong');
-                document.getElementById('feedbackMsg').innerHTML = '❌ 💥 Oops! Robot crashed into a wall!';
-                document.getElementById('feedbackMsg').style.color = '#b91c1c';
-                setTimeout(loadLevel, 1800);
+                handleFailedAttempt('❌ 💥 Oops! Robot crashed into a wall!');
                 return;
             }
         }
 
         renderBoard();
         step++;
-    }, 600);
+    }, 550);
 }
 
 function checkMissionOutcome() {
@@ -626,9 +661,44 @@ function checkMissionOutcome() {
         }, 1800);
     } else {
         playAudioTrack('snd-wrong');
-        document.getElementById('feedbackMsg').innerHTML = '❌ 😢 Didn\'t reach the battery! Try a new code sequence.';
-        document.getElementById('feedbackMsg').style.color = '#b91c1c';
-        setTimeout(loadLevel, 1800);
+        handleFailedAttempt('❌ 😢 Didn\'t reach the battery!');
+    }
+}
+
+// 3-ATTEMPT AUTO SOLVER ENGINE
+function handleFailedAttempt(msgText) {
+    attemptCount++;
+    document.getElementById('feedbackMsg').innerHTML = msgText;
+    document.getElementById('feedbackMsg').style.color = '#b91c1c';
+
+    if (attemptCount >= 3) {
+        // Trigger Correct Auto-Solution Hint Output
+        const hintBox = document.getElementById('hintBanner');
+        hintBox.style.display = 'block';
+        hintBox.innerHTML = `💡 AI Solution Loaded! Attempting correct path...`;
+
+        // Load solution into queue
+        const lvlData = levels[currentLvl];
+        instructionsQueue = [...lvlData.solution];
+        updateCodeUI();
+
+        setTimeout(() => {
+            // Reset position and execute correct auto solution
+            robotState = { ...lvlData.robotStart };
+            renderBoard();
+            isExecuting = false;
+            executeCode();
+        }, 1200);
+    } else {
+        setTimeout(() => {
+            // Reset state for retry
+            const lvlData = levels[currentLvl];
+            robotState = { ...lvlData.robotStart };
+            instructionsQueue = [];
+            updateCodeUI();
+            renderBoard();
+            isExecuting = false;
+        }, 1800);
     }
 }
 

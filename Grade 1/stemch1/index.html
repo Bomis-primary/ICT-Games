@@ -30,7 +30,7 @@ body {
     overflow-x: hidden;
 }
 
-/* --- 1. INDIVIDUAL BRANDING SPLASH SCREEN (Strict 5 Seconds) --- */
+/* --- BRANDING SPLASH SCREEN (Strict 5 Seconds) --- */
 #brand-splash {
     position: fixed;
     top: 0;
@@ -77,7 +77,7 @@ body {
     display: none;
     background: rgba(255, 255, 255, 0.98);
     width: 95%;
-    max-width: 980px;
+    max-width: 1000px;
     padding: 25px;
     border-radius: 30px;
     box-shadow: 0 15px 35px rgba(0,0,0,0.18);
@@ -171,7 +171,7 @@ p.subtitle {
     border-radius: 24px;
     border: 4px solid #93c5fd;
     width: 100%;
-    max-width: 380px;
+    max-width: 400px;
     aspect-ratio: 1 / 1;
 }
 
@@ -181,7 +181,6 @@ p.subtitle {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 38px;
     position: relative;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
 }
@@ -196,21 +195,6 @@ p.subtitle {
     font-size: 32px;
 }
 
-.robot-entity {
-    width: 80%;
-    height: 80%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: transform 0.3s ease;
-}
-
-.robot-entity img {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
 .battery-entity {
     font-size: 36px;
     animation: pulseBattery 1.5s infinite alternate;
@@ -221,6 +205,82 @@ p.subtitle {
     100% { transform: scale(1.1); }
 }
 
+/* VECTOR ROBOT CHARACTER */
+.vector-robot {
+    width: 75%;
+    height: 75%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+}
+
+.robot-head {
+    width: 42px;
+    height: 34px;
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+    border: 3px solid #0369a1;
+    border-radius: 12px 12px 8px 8px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 0 #075985;
+}
+
+.robot-head::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    width: 4px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 2px;
+}
+
+.robot-head::after {
+    content: '';
+    position: absolute;
+    top: -12px;
+    width: 8px;
+    height: 8px;
+    background: #f59e0b;
+    border-radius: 50%;
+}
+
+.robot-eyes {
+    display: flex;
+    gap: 8px;
+}
+
+.robot-eye {
+    width: 8px;
+    height: 8px;
+    background: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.robot-eye::after {
+    content: '';
+    width: 4px;
+    height: 4px;
+    background: #0f172a;
+    border-radius: 50%;
+}
+
+.robot-pointer {
+    position: absolute;
+    top: -16px;
+    font-size: 14px;
+    color: #2563eb;
+    font-weight: 900;
+}
+
 /* CONTROL PANEL */
 .controls-panel {
     background: #f8fafc;
@@ -228,10 +288,24 @@ p.subtitle {
     border-radius: 24px;
     padding: 18px;
     width: 100%;
-    max-width: 320px;
+    max-width: 360px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+
+.control-group-title {
+    font-weight: bold;
+    color: #334155;
+    font-size: 15px;
+    text-align: left;
+    margin-top: 4px;
+}
+
+.ctrl-btn-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
 }
 
 .ctrl-btn {
@@ -239,49 +313,27 @@ p.subtitle {
     padding: 12px;
     border-radius: 16px;
     border: none;
-    font-size: clamp(15px, 3.5vw, 18px);
+    font-size: clamp(14px, 3.2vw, 16px);
     font-weight: bold;
     color: white;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 6px;
     box-shadow: 0 4px 0 rgba(0,0,0,0.2);
     transition: 0.15s ease;
 }
 
-.ctrl-btn.forward { background: #0284c7; box-shadow: 0 4px 0 #0369a1; }
-.ctrl-btn.left { background: #9333ea; box-shadow: 0 4px 0 #6b21a8; }
-.ctrl-btn.right { background: #f59e0b; box-shadow: 0 4px 0 #d97706; }
-.ctrl-btn.run { background: #22c55e; box-shadow: 0 4px 0 #15803d; margin-top: 5px; }
-.ctrl-btn.clear { background: #ef4444; box-shadow: 0 4px 0 #b91c1c; }
+.ctrl-btn.forward { background: #0284c7; box-shadow: 0 4px 0 #0369a1; grid-column: span 2; }
+.ctrl-btn.turn-left { background: #9333ea; box-shadow: 0 4px 0 #6b21a8; }
+.ctrl-btn.turn-right { background: #f59e0b; box-shadow: 0 4px 0 #d97706; }
+.ctrl-btn.turn-180 { background: #ec4899; box-shadow: 0 4px 0 #be185d; grid-column: span 2; }
+.ctrl-btn.reset-pos { background: #ef4444; box-shadow: 0 4px 0 #b91c1c; grid-column: span 2; }
 
 .ctrl-btn:active {
     transform: translateY(3px);
     box-shadow: none;
-}
-
-/* CODE INSTRUCTION QUEUE LIST */
-.code-list-box {
-    background: #ffffff;
-    border: 2px dashed #94a3b8;
-    border-radius: 14px;
-    padding: 10px;
-    min-height: 50px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    align-items: center;
-}
-
-.code-chip {
-    background: #e2e8f0;
-    color: #1e293b;
-    padding: 4px 8px;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: bold;
 }
 
 .feedback {
@@ -303,8 +355,8 @@ p.subtitle {
     padding: 10px;
     color: #92400e;
     font-weight: bold;
-    font-size: 16px;
-    margin-top: 10px;
+    font-size: 15px;
+    margin-top: 5px;
 }
 
 .instructions-box {
@@ -333,6 +385,19 @@ p.subtitle {
     color: #0284c7;
     margin: 15px 0;
 }
+
+/* SHAKE ANIMATION FOR CRASHES */
+.shake-grid {
+    animation: shakeBoard 0.3s ease-in-out;
+}
+
+@keyframes shakeBoard {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+}
 </style>
 </head>
 
@@ -354,28 +419,24 @@ p.subtitle {
 <!-- 2. GAME INSTRUCTION SCREEN (Page 2) -->
 <div id="instructionScreen" class="screen">
     <h1>🧭 Welcome STEM Explorer!</h1>
-    <p class="subtitle">Chapter 1: Robot Navigation Adventure</p>
+    <p class="subtitle">Chapter 1: Real-Time Robot Navigation</p>
 
     <div class="instructions-box">
         <div class="instruction-item">
             <span>🤖</span>
-            <span><strong>Objective:</strong> Help the Exploration Robot reach the Battery pack!</span>
+            <span><strong>Objective:</strong> Steer the vector robot to reach the Battery pack!</span>
         </div>
         <div class="instruction-item">
             <span>🧱</span>
-            <span><strong>Avoid Obstacles:</strong> Navigate around the brick walls safely.</span>
+            <span><strong>Obstacles:</strong> Don't crash into brick walls or screen edges!</span>
         </div>
         <div class="instruction-item">
-            <span>⬆️ ↩️ ↪️</span>
-            <span><strong>Programming:</strong> Tap directional buttons to build your code sequence.</span>
+            <span>📐</span>
+            <span><strong>Degrees & Turns:</strong> Rotate 90° Left/Right or 180° to face the right direction.</span>
         </div>
         <div class="instruction-item">
-            <span>▶️</span>
-            <span><strong>Run Program:</strong> Press "Run Code" to make the robot execute your moves!</span>
-        </div>
-        <div class="instruction-item">
-            <span>💡</span>
-            <span><strong>Helper AI:</strong> Attempt 3 times and the computer will show you the exact answer!</span>
+            <span>⚡</span>
+            <span><strong>Real-Time Controls:</strong> Tap buttons to move the robot immediately!</span>
         </div>
     </div>
 
@@ -390,27 +451,27 @@ p.subtitle {
     </div>
 
     <h2 style="color: #0369a1; font-size: clamp(18px, 4vw, 22px); margin-bottom: 5px;">
-        Mission: Help Robot reach the Battery! 🔋
+        Heading: <span id="headingDisplay">0° (UP)</span>
     </h2>
 
     <div class="game-flex-container">
         <!-- 4x4 NAVIGATION GRID -->
         <div class="grid-board" id="gridBoard"></div>
 
-        <!-- DIRECTIONAL CODE CONTROLS -->
+        <!-- DIRECTIONAL & DEGREE CONTROLS -->
         <div class="controls-panel">
-            <p style="font-weight: bold; color: #334155;">Tap Directions Buttons:</p>
-            <button class="ctrl-btn forward" onclick="addInstruction('FORWARD')">⬆️ Move Forward</button>
-            <button class="ctrl-btn left" onclick="addInstruction('LEFT')">↩️ Turn Left (Spin)</button>
-            <button class="ctrl-btn right" onclick="addInstruction('RIGHT')">↪️ Turn Right (Spin)</button>
-            
-            <p style="font-weight: bold; color: #334155; margin-top: 5px;">My Code Instructions:</p>
-            <div class="code-list-box" id="codeQueue"></div>
+            <div class="control-group-title">1. Movement Command:</div>
+            <button class="ctrl-btn forward" onclick="moveForwardStep()">⬆️ Move Forward 1 Step</button>
 
-            <div style="display: flex; gap: 8px; margin-top: 5px;">
-                <button class="ctrl-btn run" onclick="executeCode()">▶️ Run Code</button>
-                <button class="ctrl-btn clear" onclick="clearCode()">🗑️ Clear</button>
+            <div class="control-group-title">2. Rotation & Angle Commands:</div>
+            <div class="ctrl-btn-grid">
+                <button class="ctrl-btn turn-left" onclick="rotateRobot(-90)">↩️ Turn 90° Left</button>
+                <button class="ctrl-btn turn-right" onclick="rotateRobot(90)">↪️ Turn 90° Right</button>
+                <button class="ctrl-btn turn-180" onclick="rotateRobot(180)">🔄 U-Turn (180° Spin)</button>
             </div>
+
+            <div class="control-group-title">3. Stage Tools:</div>
+            <button class="ctrl-btn reset-pos" onclick="resetRobotPosition()">🔄 Reset Robot Position</button>
 
             <!-- AUTO-SOLUTION HINT BANNER -->
             <div class="hint-banner" id="hintBanner"></div>
@@ -423,7 +484,7 @@ p.subtitle {
 <!-- 4. VICTORY / FINAL SCORE SCREEN -->
 <div id="victoryScreen" class="screen">
     <h1>🎉 Mission Accomplished!</h1>
-    <p class="subtitle">You successfully completed all 5 Robot Navigation levels!</p>
+    <p class="subtitle">You navigated the Vector Robot through all 5 STEM challenges!</p>
     <div class="final-score" id="finalScoreDisplay">250</div>
     <p style="font-size: 20px; font-weight: bold; color: #0369a1; margin-bottom: 15px;">STEM Master Coder 🏆</p>
 
@@ -431,37 +492,37 @@ p.subtitle {
 </div>
 
 <script>
-// 5 EXPANDED LEVEL CONFIGURATIONS WITH WINNING SOLUTIONS
+// 5 EXPANDED LEVEL CONFIGURATIONS WITH AUTOMATIC SOLUTIONS
 const levels = [
     {
-        robotStart: { r: 0, c: 0, dir: 0 }, // dir: 0=UP, 1=RIGHT, 2=DOWN, 3=LEFT
+        robotStart: { r: 0, c: 0, dir: 0 }, // dir: 0=UP(0°), 1=RIGHT(90°), 2=DOWN(180°), 3=LEFT(270°)
         battery: { r: 2, c: 3 },
         walls: [{r: 0, c: 2}, {r: 0, c: 3}, {r: 1, c: 0}, {r: 1, c: 2}, {r: 1, c: 3}, {r: 2, c: 0}, {r: 3, c: 0}, {r: 3, c: 1}, {r: 3, c: 2}, {r: 3, c: 3}],
-        solution: ['RIGHT', 'FORWARD', 'RIGHT', 'FORWARD', 'FORWARD', 'LEFT', 'FORWARD', 'FORWARD']
+        autoSteps: [{type:'rot', val:90}, {type:'move'}, {type:'rot', val:90}, {type:'move'}, {type:'move'}, {type:'rot', val:-90}, {type:'move'}, {type:'move'}]
     },
     {
         robotStart: { r: 3, c: 0, dir: 1 },
         battery: { r: 0, c: 3 },
         walls: [{r: 1, c: 1}, {r: 1, c: 2}, {r: 2, c: 1}, {r: 2, c: 3}],
-        solution: ['FORWARD', 'FORWARD', 'FORWARD', 'LEFT', 'FORWARD', 'FORWARD', 'FORWARD']
+        autoSteps: [{type:'move'}, {type:'move'}, {type:'move'}, {type:'rot', val:-90}, {type:'move'}, {type:'move'}, {type:'move'}]
     },
     {
         robotStart: { r: 0, c: 0, dir: 2 },
         battery: { r: 3, c: 3 },
         walls: [{r: 0, c: 1}, {r: 1, c: 3}, {r: 2, c: 0}, {r: 2, c: 2}],
-        solution: ['FORWARD', 'LEFT', 'FORWARD', 'FORWARD', 'RIGHT', 'FORWARD', 'FORWARD', 'LEFT', 'FORWARD']
+        autoSteps: [{type:'move'}, {type:'rot', val:-90}, {type:'move'}, {type:'move'}, {type:'rot', val:90}, {type:'move'}, {type:'move'}, {type:'rot', val:-90}, {type:'move'}]
     },
     {
-        robotStart: { r: 3, c: 3, dir: 3 }, // Robot starts bottom-right facing LEFT
+        robotStart: { r: 3, c: 3, dir: 3 },
         battery: { r: 0, c: 0 },
         walls: [{r: 1, c: 0}, {r: 1, c: 1}, {r: 2, c: 2}, {r: 3, c: 1}],
-        solution: ['FORWARD', 'RIGHT', 'FORWARD', 'LEFT', 'FORWARD', 'RIGHT', 'FORWARD', 'FORWARD']
+        autoSteps: [{type:'move'}, {type:'rot', val:90}, {type:'move'}, {type:'rot', val:-90}, {type:'move'}, {type:'rot', val:90}, {type:'move'}, {type:'move'}]
     },
     {
-        robotStart: { r: 2, c: 0, dir: 1 }, // Robot starts facing RIGHT
+        robotStart: { r: 2, c: 0, dir: 1 },
         battery: { r: 1, c: 2 },
         walls: [{r: 0, c: 1}, {r: 2, c: 1}, {r: 3, c: 2}, {r: 2, c: 3}],
-        solution: ['FORWARD', 'LEFT', 'FORWARD', 'RIGHT', 'FORWARD']
+        autoSteps: [{type:'move'}, {type:'rot', val:-90}, {type:'move'}, {type:'rot', val:90}, {type:'move'}]
     }
 ];
 
@@ -469,8 +530,7 @@ let currentLvl = 0;
 let score = 0;
 let attemptCount = 0;
 let robotState = { r: 0, c: 0, dir: 0 };
-let instructionsQueue = [];
-let isExecuting = false;
+let isBusy = false;
 
 // SCREEN CONTROLLER
 function showScreen(id) {
@@ -503,7 +563,7 @@ function playAudioTrack(id) {
     const track = document.getElementById(id);
     if (track) {
         track.currentTime = 0;
-        track.play().catch(e => console.log('Audio deferred until user click.'));
+        track.play().catch(e => console.log('Audio stream deferred until user click.'));
     }
 }
 
@@ -516,10 +576,8 @@ function startGame() {
 }
 
 function loadLevel() {
-    isExecuting = false;
+    isBusy = false;
     attemptCount = 0;
-    instructionsQueue = [];
-    updateCodeUI();
     document.getElementById('feedbackMsg').innerText = '';
     document.getElementById('hintBanner').style.display = 'none';
     document.getElementById('lvlDisplay').innerText = `${currentLvl + 1} / ${levels.length}`;
@@ -528,7 +586,13 @@ function loadLevel() {
     const lvlData = levels[currentLvl];
     robotState = { ...lvlData.robotStart };
 
+    updateHeadingLabel();
     renderBoard();
+}
+
+function updateHeadingLabel() {
+    const dirNames = ["0° (UP)", "90° (RIGHT)", "180° (DOWN)", "270° (LEFT)"];
+    document.getElementById('headingDisplay').innerText = dirNames[robotState.dir];
 }
 
 function renderBoard() {
@@ -541,23 +605,29 @@ function renderBoard() {
             const cell = document.createElement('div');
             cell.className = 'grid-cell';
 
-            // Check Wall
+            // Wall check
             const isWall = lvlData.walls.some(w => w.r === r && w.c === c);
             if (isWall) {
                 cell.classList.add('wall');
             }
 
-            // Check Battery
+            // Battery check
             if (lvlData.battery.r === r && lvlData.battery.c === c) {
                 cell.innerHTML = '<div class="battery-entity">🔋</div>';
             }
 
-            // Check Robot
+            // Robot render
             if (robotState.r === r && robotState.c === c) {
                 const rotationDeg = robotState.dir * 90;
                 cell.innerHTML = `
-                    <div class="robot-entity" style="transform: rotate(${rotationDeg}deg)">
-                        <img src="assets/exploration-robot.PNG" onerror="this.src='https://via.placeholder.com/60?text=🤖'">
+                    <div class="vector-robot" style="transform: rotate(${rotationDeg}deg)">
+                        <div class="robot-pointer">▲</div>
+                        <div class="robot-head">
+                            <div class="robot-eyes">
+                                <div class="robot-eye"></div>
+                                <div class="robot-eye"></div>
+                            </div>
+                        </div>
                     </div>
                 `;
             }
@@ -567,86 +637,58 @@ function renderBoard() {
     }
 }
 
-function addInstruction(type) {
-    if (isExecuting) return;
-    if (instructionsQueue.length < 12) {
-        instructionsQueue.push(type);
-        updateCodeUI();
+// REAL-TIME ROTATION COMMAND
+function rotateRobot(deg) {
+    if (isBusy) return;
+    
+    // Convert degrees to index steps (90deg = 1 step)
+    const steps = deg / 90;
+    robotState.dir = (robotState.dir + steps + 400) % 4;
+    
+    updateHeadingLabel();
+    renderBoard();
+}
+
+// REAL-TIME STEP FORWARD COMMAND
+function moveForwardStep() {
+    if (isBusy) return;
+
+    let dr = 0, dc = 0;
+    if (robotState.dir === 0) dr = -1;
+    else if (robotState.dir === 1) dc = 1;
+    else if (robotState.dir === 2) dr = 1;
+    else if (robotState.dir === 3) dc = -1;
+
+    const targetR = robotState.r + dr;
+    const targetC = robotState.c + dc;
+
+    const lvlData = levels[currentLvl];
+    const isWall = lvlData.walls.some(w => w.r === targetR && w.c === targetC);
+
+    if (targetR >= 0 && targetR < 4 && targetC >= 0 && targetC < 4 && !isWall) {
+        robotState.r = targetR;
+        robotState.c = targetC;
+        renderBoard();
+        checkTargetReached();
+    } else {
+        // Crash / BEEP trigger
+        playAudioTrack('snd-wrong');
+        const board = document.getElementById('gridBoard');
+        board.classList.add('shake-grid');
+        setTimeout(() => board.classList.remove('shake-grid'), 300);
+
+        handleFailedAttempt('❌ 💥 Beep! Obstacle or Edge Collision!');
     }
 }
 
-function clearCode() {
-    if (isExecuting) return;
-    instructionsQueue = [];
-    updateCodeUI();
-}
-
-function updateCodeUI() {
-    const container = document.getElementById('codeQueue');
-    container.innerHTML = '';
-    instructionsQueue.forEach((cmd) => {
-        const chip = document.createElement('span');
-        chip.className = 'code-chip';
-        chip.innerText = cmd === 'FORWARD' ? '⬆️ Move' : cmd === 'LEFT' ? '↩️ Left' : '↪️ Right';
-        container.appendChild(chip);
-    });
-}
-
-function executeCode() {
-    if (isExecuting || instructionsQueue.length === 0) return;
-    isExecuting = true;
-
-    let step = 0;
-    const interval = setInterval(() => {
-        if (step >= instructionsQueue.length) {
-            clearInterval(interval);
-            checkMissionOutcome();
-            return;
-        }
-
-        const cmd = instructionsQueue[step];
-        if (cmd === 'LEFT') {
-            robotState.dir = (robotState.dir + 3) % 4;
-        } else if (cmd === 'RIGHT') {
-            robotState.dir = (robotState.dir + 1) % 4;
-        } else if (cmd === 'FORWARD') {
-            let dr = 0, dc = 0;
-            if (robotState.dir === 0) dr = -1;
-            else if (robotState.dir === 1) dc = 1;
-            else if (robotState.dir === 2) dr = 1;
-            else if (robotState.dir === 3) dc = -1;
-
-            const targetR = robotState.r + dr;
-            const targetC = robotState.c + dc;
-
-            // Boundary & Wall Collision Check
-            const lvlData = levels[currentLvl];
-            const isWall = lvlData.walls.some(w => w.r === targetR && w.c === targetC);
-
-            if (targetR >= 0 && targetR < 4 && targetC >= 0 && targetC < 4 && !isWall) {
-                robotState.r = targetR;
-                robotState.c = targetC;
-            } else {
-                // Crash into wall/boundary
-                clearInterval(interval);
-                playAudioTrack('snd-wrong');
-                handleFailedAttempt('❌ 💥 Oops! Robot crashed into a wall!');
-                return;
-            }
-        }
-
-        renderBoard();
-        step++;
-    }, 550);
-}
-
-function checkMissionOutcome() {
+function checkTargetReached() {
     const lvlData = levels[currentLvl];
     if (robotState.r === lvlData.battery.r && robotState.c === lvlData.battery.c) {
+        isBusy = true;
         playAudioTrack('snd-correct');
         score += 50;
         document.getElementById('scoreDisplay').innerText = score;
-        document.getElementById('feedbackMsg').innerHTML = '🎉 🌟 Awesome! Battery Reached! 🔋';
+        document.getElementById('feedbackMsg').innerHTML = '🎉 🌟 Target Reached! Powered Up! 🔋';
         document.getElementById('feedbackMsg').style.color = '#15803d';
 
         confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
@@ -658,47 +700,63 @@ function checkMissionOutcome() {
             } else {
                 triggerVictory();
             }
-        }, 1800);
-    } else {
-        playAudioTrack('snd-wrong');
-        handleFailedAttempt('❌ 😢 Didn\'t reach the battery!');
+        }, 1600);
     }
 }
 
-// 3-ATTEMPT AUTO SOLVER ENGINE
+function resetRobotPosition() {
+    if (isBusy) return;
+    const lvlData = levels[currentLvl];
+    robotState = { ...lvlData.robotStart };
+    document.getElementById('feedbackMsg').innerText = '';
+    updateHeadingLabel();
+    renderBoard();
+}
+
+// 3-ATTEMPT AUTO HELPER
 function handleFailedAttempt(msgText) {
     attemptCount++;
     document.getElementById('feedbackMsg').innerHTML = msgText;
     document.getElementById('feedbackMsg').style.color = '#b91c1c';
 
     if (attemptCount >= 3) {
-        // Trigger Correct Auto-Solution Hint Output
+        isBusy = true;
         const hintBox = document.getElementById('hintBanner');
         hintBox.style.display = 'block';
-        hintBox.innerHTML = `💡 AI Solution Loaded! Attempting correct path...`;
+        hintBox.innerHTML = `💡 AI Assistant: Auto-solving stage...`;
 
-        // Load solution into queue
+        // Reset to start and play sequence
         const lvlData = levels[currentLvl];
-        instructionsQueue = [...lvlData.solution];
-        updateCodeUI();
+        robotState = { ...lvlData.robotStart };
+        updateHeadingLabel();
+        renderBoard();
 
-        setTimeout(() => {
-            // Reset position and execute correct auto solution
-            robotState = { ...lvlData.robotStart };
-            renderBoard();
-            isExecuting = false;
-            executeCode();
-        }, 1200);
-    } else {
-        setTimeout(() => {
-            // Reset state for retry
-            const lvlData = levels[currentLvl];
-            robotState = { ...lvlData.robotStart };
-            instructionsQueue = [];
-            updateCodeUI();
-            renderBoard();
-            isExecuting = false;
-        }, 1800);
+        let stepIndex = 0;
+        const autoInterval = setInterval(() => {
+            if (stepIndex >= lvlData.autoSteps.length) {
+                clearInterval(autoInterval);
+                isBusy = false;
+                checkTargetReached();
+                return;
+            }
+
+            const action = lvlData.autoSteps[stepIndex];
+            if (action.type === 'rot') {
+                rotateRobot(action.val);
+            } else if (action.type === 'move') {
+                let dr = 0, dc = 0;
+                if (robotState.dir === 0) dr = -1;
+                else if (robotState.dir === 1) dc = 1;
+                else if (robotState.dir === 2) dr = 1;
+                else if (robotState.dir === 3) dc = -1;
+                
+                robotState.r += dr;
+                robotState.c += dc;
+                renderBoard();
+            }
+
+            stepIndex++;
+        }, 600);
     }
 }
 

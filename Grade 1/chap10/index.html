@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Tux Paint Canvas Inspector</title>
     
+    <!-- Canvas Confetti Library -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
@@ -27,6 +28,7 @@
             padding: 0;
             user-select: none;
             -webkit-user-select: none;
+            touch-action: manipulation;
         }
 
         body {
@@ -35,7 +37,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 15px;
+            padding: 12px;
             overflow-x: hidden;
             color: var(--text-dark);
         }
@@ -49,15 +51,39 @@
             height: 100vh;
             background-color: #ffffff;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            gap: 20px;
             z-index: 10000;
             transition: opacity 0.5s ease;
+            padding: 20px;
         }
         #brand-splash img {
             max-width: 65%;
-            max-height: 70vh;
+            max-height: 60vh;
             object-fit: contain;
+        }
+        .loading-track {
+            width: 60%;
+            max-width: 250px;
+            height: 10px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+        }
+        .loading-bar-fill {
+            width: 100%;
+            height: 100%;
+            background: var(--primary-blue);
+            transform: translateX(-100%);
+            animation: loadProgress 4.5s forwards linear;
+        }
+
+        @keyframes loadProgress {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(0%); }
         }
 
         /* --- CONTAINER FRAME --- */
@@ -69,11 +95,12 @@
             border: 6px solid var(--primary-blue);
             border-radius: 32px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            padding: 30px;
+            padding: clamp(15px, 4vw, 25px);
             text-align: center;
             position: relative;
             backdrop-filter: blur(4px);
             animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin: auto;
         }
 
         .screen.active {
@@ -85,46 +112,28 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        h1 { color: var(--primary-blue); font-size: 34px; margin-bottom: 10px; }
-        p { font-size: 20px; color: #475569; margin-bottom: 20px; }
-
-        /* Setup Panel */
-        .form-box {
-            max-width: 450px;
-            margin: 0 auto 20px auto;
-        }
-        input {
-            width: 100%;
-            padding: 16px;
-            border-radius: 18px;
-            border: 4px solid #cbd5e1;
-            font-size: 18px;
-            margin-bottom: 15px;
-            outline: none;
-            text-align: center;
-            background: #f8fafc;
-            font-family: inherit;
-        }
-        input:focus {
-            border-color: var(--primary-blue);
-            background: white;
-        }
+        h1 { color: var(--primary-blue); font-size: clamp(24px, 5vw, 34px); margin-bottom: 8px; }
+        p { font-size: clamp(15px, 3.5vw, 19px); color: #475569; margin-bottom: 15px; }
 
         /* Large Action Button */
         .btn {
             background: linear-gradient(180deg, #f97316 0%, #ea580c 100%);
             color: white;
             border: none;
-            padding: 16px 45px;
+            padding: 14px 40px;
             border-radius: 50px;
-            font-size: 22px;
+            font-size: clamp(18px, 4vw, 22px);
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 6px 0 #9a3412;
             transition: all 0.1s ease;
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
+            margin-top: 10px;
+            width: 100%;
+            max-width: 300px;
         }
         .btn:active {
             transform: translateY(4px);
@@ -138,22 +147,22 @@
             align-items: center;
             background: #f0f9ff;
             border: 3px dashed var(--primary-blue);
-            border-radius: 20px;
-            padding: 10px 25px;
-            margin-bottom: 20px;
-            font-size: 20px;
+            border-radius: 18px;
+            padding: 8px 20px;
+            margin-bottom: 15px;
+            font-size: clamp(15px, 3.5vw, 20px);
             font-weight: bold;
             color: var(--primary-dark);
         }
 
-        /* --- 3. WOODEN EASEL & CANVAS LAYOUT --- */
+        /* --- WOODEN EASEL & CANVAS LAYOUT --- */
         .easel-frame {
-            background: #b45309; /* Outer wood finish */
-            border: 12px solid var(--accent-wood);
+            background: #b45309;
+            border: 10px solid var(--accent-wood);
             border-radius: 16px;
-            padding: 15px;
-            max-width: 620px;
-            margin: 0 auto 20px auto;
+            padding: 10px;
+            max-width: 580px;
+            margin: 0 auto 15px auto;
             box-shadow: 0 10px 20px rgba(0,0,0,0.2), inset 0 2px 5px rgba(255,255,255,0.2);
             position: relative;
         }
@@ -162,10 +171,10 @@
         .easel-frame::after {
             content: '';
             position: absolute;
-            bottom: -15px;
+            bottom: -12px;
             left: -5%;
             width: 110%;
-            height: 15px;
+            height: 12px;
             background: #78350f;
             border-radius: 6px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.3);
@@ -182,40 +191,40 @@
         }
 
         .prompt-banner {
-            font-size: 22px;
+            font-size: clamp(16px, 3.8vw, 22px);
             font-weight: bold;
             color: var(--text-dark);
             background: #fef3c7;
             border: 2px solid #f59e0b;
-            padding: 12px;
+            padding: 10px;
             border-radius: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         /* --- OPTION BUTTONS LAYOUT --- */
         .options-row {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-top: 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 10px;
         }
 
         .tool-btn {
             background: white;
             color: var(--text-dark);
             border: 4px solid var(--primary-blue);
-            padding: 18px 25px;
-            border-radius: 24px;
-            font-size: 22px;
+            padding: 12px;
+            border-radius: 20px;
+            font-size: clamp(15px, 3.5vw, 19px);
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 6px 0 var(--primary-dark);
+            box-shadow: 0 5px 0 var(--primary-dark);
             transition: all 0.1s ease;
-            min-width: 200px;
             display: flex;
             align-items: center;
             justify-content: center;
+            gap: 8px;
+            min-height: 52px;
         }
 
         .tool-btn:active {
@@ -223,41 +232,50 @@
             box-shadow: 0 2px 0 var(--primary-dark);
         }
 
+        .tool-btn.shake {
+            animation: shakeBtn 0.3s ease-in-out;
+        }
+
+        @keyframes shakeBtn {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-8px); }
+            40% { transform: translateX(8px); }
+            60% { transform: translateX(-5px); }
+            80% { transform: translateX(5px); }
+        }
+
         .feedback-box {
-            font-size: 24px;
+            font-size: clamp(18px, 4vw, 22px);
             font-weight: bold;
-            min-height: 35px;
-            margin-top: 15px;
+            min-height: 38px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         /* --- CERTIFICATE VIEW --- */
         .cert-card {
             border: 6px double var(--wood-light);
             background: #fffbeb;
-            padding: 30px;
+            padding: 20px 15px;
             border-radius: 24px;
-            margin: 25px 0;
+            margin: 15px 0;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
-        .cert-name {
-            font-size: 32px;
-            color: var(--primary-blue);
-            text-decoration: underline;
-            margin: 10px 0;
-            font-weight: 900;
-        }
         .score-badge {
-            font-size: 55px;
+            font-size: clamp(36px, 8vw, 52px);
             font-weight: 900;
             color: #ea580c;
-            margin: 15px 0;
+            margin: 10px 0;
         }
         .rank-title {
             display: inline-block;
             background: linear-gradient(135deg, #eab308, #ca8a04);
             color: white;
-            padding: 12px 35px;
-            font-size: 26px;
+            padding: 10px 30px;
+            font-size: clamp(18px, 4vw, 24px);
             border-radius: 50px;
             box-shadow: 0 6px 12px rgba(202, 138, 4, 0.3);
             font-weight: bold;
@@ -266,28 +284,19 @@
 </head>
 <body>
 
+    <!-- 1. BRANDING SPLASH SCREEN -->
     <div id="brand-splash">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo">
-    </div>
-
-    <div id="screen-setup" class="screen">
-        <h1 style="font-size: 36px; margin-bottom: 5px;">🎨 Tux Paint</h1>
-        <h1>Canvas Inspector 🔍</h1>
-        <p>Become an art detective! Inspect canvases to find the tools used.</p>
-        
-        <div class="form-box">
-            <input type="text" id="inputName" placeholder="👤 Enter Student Name" required>
-            <input type="text" id="inputClass" placeholder="🏫 Enter Class / Grade">
-            <input type="text" id="inputSchool" placeholder="🏢 Enter School Name">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/320x100?text=Innovine+Pedagogy'">
+        <div class="loading-track">
+            <div class="loading-bar-fill"></div>
         </div>
-
-        <button class="btn" onclick="startInspectorQuest()">Grab Magnifying Glass 🔍</button>
     </div>
 
+    <!-- 2. GAMEPLAY SCREEN -->
     <div id="screen-game" class="screen">
         <div class="hud-bar">
-            <div id="hud-round">Canvas: 1 / 4</div>
-            <div>⭐ Correct: <span id="hud-score">0</span></div>
+            <div id="hud-round">Canvas: 1 / 8</div>
+            <div>⭐ Stars: <span id="hud-score">0</span></div>
         </div>
 
         <div class="prompt-banner" id="prompt-text">
@@ -298,28 +307,28 @@
             <canvas id="clueCanvas" width="560" height="300"></canvas>
         </div>
 
-        <div class="options-row" id="options-container">
-            </div>
+        <div class="options-row" id="options-container"></div>
 
         <div class="feedback-box" id="feedback-msg"></div>
     </div>
 
+    <!-- 3. CERTIFICATE COMPLETION SCREEN -->
     <div id="screen-completion" class="screen">
         <h1>🎉 Case Closed, Detective! 🎉</h1>
         
         <div class="cert-card">
-            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 14px; font-weight: bold;">Art Detective Academy Certificate</p>
-            <div class="cert-name" id="player-name">Student Name</div>
-            <p id="player-meta" style="font-size:16px; margin-bottom:10px; color:#64748b;"></p>
-            
-            <div class="score-badge" id="player-score">4/4 Canvases Solved</div>
-            
-            <div class="rank-title">Master Art Detective</div>
+            <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 14px; font-weight: bold; color: #78350f;">
+                Art Detective Academy Certificate
+            </p>
+            <div style="font-size: 60px; margin: 10px 0;">🕵️‍♂️🎨</div>
+            <div class="score-badge" id="player-score">8/8 Canvases Solved</div>
+            <div class="rank-title">Master Art Detective 🏆</div>
         </div>
 
-        <button class="btn" onclick="location.reload()" style="background: linear-gradient(180deg, var(--primary-blue) 0%, var(--primary-dark) 100%); box-shadow: 0 6px 0 #025a87;">🔄 Inspect Again</button>
+        <button class="btn" onclick="restartGame()" style="background: linear-gradient(180deg, var(--primary-blue) 0%, var(--primary-dark) 100%); box-shadow: 0 6px 0 #025a87;">🔄 Inspect Again</button>
     </div>
 
+    <!-- AUDIO RIG EMBEDS -->
     <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
@@ -327,22 +336,21 @@
         let currentRound = 0;
         let correctCount = 0;
         let canInteract = true;
-        let profile = { name: '', grade: '', school: '' };
 
         const canvas = document.getElementById('clueCanvas');
         const ctx = canvas.getContext('2d');
 
-        // Round Configurations & Programmatic Vector Art Engine Parameters
+        // EXPANDED 8-LEVEL DATABASE WITH VECTOR DRAWINGS
         const stages = [
+            // Level 1: Rainbow Magic
             {
-                prompt: "Look at this canvas! What magical tool made these rainbows?",
+                prompt: "Look at this canvas! What magical tool made these beautiful rainbow arcs?",
                 choices: [
                     { text: "🪄 Magic Tool", correct: true },
                     { text: "🧽 Eraser Tool", correct: false },
                     { text: "🅰️ Text Tool", correct: false }
                 ],
                 draw: () => {
-                    // Draw continuous grass lines bottom
                     ctx.fillStyle = "#22c55e";
                     ctx.fillRect(0, 240, 560, 60);
                     for (let i = 0; i < 560; i += 15) {
@@ -352,7 +360,6 @@
                         ctx.lineTo(i + 10, 240);
                         ctx.fill();
                     }
-                    // Draw explicit Rainbow Arcs
                     const colors = ["#ef4444", "#f97316", "#eab308", "#22c55e", "#3b82f6", "#6366f1", "#a855f7"];
                     colors.forEach((color, i) => {
                         ctx.beginPath();
@@ -363,77 +370,60 @@
                     });
                 }
             },
+            // Level 2: Stamp Tool
             {
-                prompt: "Wow, look at all these picture stickers! Which tool put them there?",
+                prompt: "Look at all these repeated picture stickers! Which tool stamped them onto the canvas?",
                 choices: [
                     { text: "✏️ Lines Tool", correct: false },
                     { text: "🧸 Stamp Tool", correct: true },
                     { text: "🎨 Paint Tool", correct: false }
                 ],
                 draw: () => {
-                    // Populate bear stickers grid-wise
                     const drawBearStamp = (x, y) => {
                         ctx.fillStyle = "#b45309";
-                        ctx.beginPath(); ctx.arc(x, y, 20, 0, Math.PI * 2); ctx.fill(); // Head
-                        ctx.beginPath(); ctx.arc(x - 18, y - 15, 8, 0, Math.PI * 2); ctx.fill(); // Left Ear
-                        ctx.beginPath(); ctx.arc(x + 18, y - 15, 8, 0, Math.PI * 2); ctx.fill(); // Right Ear
+                        ctx.beginPath(); ctx.arc(x, y, 20, 0, Math.PI * 2); ctx.fill();
+                        ctx.beginPath(); ctx.arc(x - 18, y - 15, 8, 0, Math.PI * 2); ctx.fill();
+                        ctx.beginPath(); ctx.arc(x + 18, y - 15, 8, 0, Math.PI * 2); ctx.fill();
                         ctx.fillStyle = "#fef08a";
-                        ctx.beginPath(); ctx.arc(x, y + 4, 8, 0, Math.PI * 2); ctx.fill(); // Snout
+                        ctx.beginPath(); ctx.arc(x, y + 4, 8, 0, Math.PI * 2); ctx.fill();
                         ctx.fillStyle = "#000000";
-                        ctx.beginPath(); ctx.arc(x - 6, y - 4, 3, 0, Math.PI * 2); ctx.fill(); // Eye L
-                        ctx.beginPath(); ctx.arc(x + 6, y - 4, 3, 0, Math.PI * 2); ctx.fill(); // Eye R
-                        ctx.beginPath(); ctx.arc(x, y + 2, 2, 0, Math.PI * 2); ctx.fill(); // Nose
+                        ctx.beginPath(); ctx.arc(x - 6, y - 4, 3, 0, Math.PI * 2); ctx.fill();
+                        ctx.beginPath(); ctx.arc(x + 6, y - 4, 3, 0, Math.PI * 2); ctx.fill();
+                        ctx.beginPath(); ctx.arc(x, y + 2, 2, 0, Math.PI * 2); ctx.fill();
                     };
                     const drawTreeStamp = (x, y) => {
-                        ctx.fillStyle = "#78350f"; ctx.fillRect(x - 5, y, 10, 25); // Trunk
+                        ctx.fillStyle = "#78350f"; ctx.fillRect(x - 5, y, 10, 25);
                         ctx.fillStyle = "#15803d";
-                        ctx.beginPath(); ctx.moveTo(x, y - 30); ctx.lineTo(x - 20, y); ctx.lineTo(x + 20, y); ctx.fill(); // Leaves
+                        ctx.beginPath(); ctx.moveTo(x, y - 30); ctx.lineTo(x - 20, y); ctx.lineTo(x + 20, y); ctx.fill();
                     };
-                    // Positions
                     drawBearStamp(100, 90); drawTreeStamp(220, 75);
                     drawBearStamp(460, 100); drawTreeStamp(350, 160);
                     drawBearStamp(140, 210); drawTreeStamp(480, 200);
                 }
             },
+            // Level 3: Shapes Tool
             {
-                prompt: "This house is built using clean shapes. Which tool drew them?",
+                prompt: "This house is built using clean geometric shapes. Which tool created them?",
                 choices: [
                     { text: "💾 Save Tool", correct: false },
                     { text: "🎨 Paint Tool", correct: false },
                     { text: "📐 Shapes Tool", correct: true }
                 ],
                 draw: () => {
-                    // Red Square Base Frame Block
-                    ctx.fillStyle = "#ef4444";
-                    ctx.lineWidth = 5;
-                    ctx.strokeStyle = "#991b1b";
-                    ctx.fillRect(190, 130, 180, 130);
-                    ctx.strokeRect(190, 130, 180, 130);
+                    ctx.fillStyle = "#ef4444"; ctx.lineWidth = 4; ctx.strokeStyle = "#991b1b";
+                    ctx.fillRect(190, 130, 180, 130); ctx.strokeRect(190, 130, 180, 130);
 
-                    // Blue Triangle Roof Block
-                    ctx.fillStyle = "#3b82f6";
-                    ctx.strokeStyle = "#1e40af";
-                    ctx.beginPath();
-                    ctx.moveTo(160, 130);
-                    ctx.lineTo(280, 40);
-                    ctx.lineTo(400, 130);
-                    ctx.closePath();
-                    ctx.fill();
-                    ctx.stroke();
+                    ctx.fillStyle = "#3b82f6"; ctx.strokeStyle = "#1e40af";
+                    ctx.beginPath(); ctx.moveTo(160, 130); ctx.lineTo(280, 40); ctx.lineTo(400, 130); ctx.closePath();
+                    ctx.fill(); ctx.stroke();
 
-                    // Yellow Square Window
-                    ctx.fillStyle = "#eab308";
-                    ctx.fillRect(215, 155, 45, 45);
-                    ctx.strokeRect(215, 155, 45, 45);
-
-                    // Brown Rectangle Door
-                    ctx.fillStyle = "#78350f";
-                    ctx.fillRect(295, 170, 45, 90);
-                    ctx.strokeRect(295, 170, 45, 90);
+                    ctx.fillStyle = "#eab308"; ctx.fillRect(215, 155, 45, 45); ctx.strokeRect(215, 155, 45, 45);
+                    ctx.fillStyle = "#78350f"; ctx.fillRect(295, 170, 45, 90); ctx.strokeRect(295, 170, 45, 90);
                 }
             },
+            // Level 4: Text Tool
             {
-                prompt: "Someone wrote words on the canvas! Which tool did they type with?",
+                prompt: "Someone typed words onto the canvas! Which tool did they use to type?",
                 choices: [
                     { text: "🅰️ Text Tool", correct: true },
                     { text: "🧽 Eraser Tool", correct: false },
@@ -441,70 +431,136 @@
                 ],
                 draw: () => {
                     ctx.fillStyle = "#1e3a8a";
-                    ctx.font = "bold 44px 'Arial Rounded MT Bold', sans-serif";
-                    ctx.textAlign = "center";
-                    ctx.textBaseline = "middle";
-                    ctx.fillText("HELLO AMIGOS!", 280, 150);
+                    ctx.font = "bold 42px 'Arial Rounded MT Bold', sans-serif";
+                    ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                    ctx.fillText("HELLO TUX PAINT!", 280, 140);
 
-                    // Decorative text cursor lines
-                    ctx.strokeStyle = "#3b82f6";
-                    ctx.lineWidth = 4;
-                    ctx.beginPath();
-                    ctx.moveTo(435, 125);
-                    ctx.lineTo(435, 175);
-                    ctx.stroke();
+                    ctx.fillStyle = "#0284c7";
+                    ctx.font = "bold 24px 'Arial Rounded MT Bold', sans-serif";
+                    ctx.fillText("Grade 1 Artists", 280, 200);
+
+                    ctx.strokeStyle = "#3b82f6"; ctx.lineWidth = 4;
+                    ctx.beginPath(); ctx.moveTo(430, 185); ctx.lineTo(430, 215); ctx.stroke();
+                }
+            },
+            // Level 5: Fill Bucket Tool
+            {
+                prompt: "The entire canvas background was turned bright blue in ONE single click! Which tool filled it?",
+                choices: [
+                    { text: "🖌️ Paint Brush", correct: false },
+                    { text: "🪣 Fill Bucket Tool", correct: true },
+                    { text: "🏷️ Stamp Tool", correct: false }
+                ],
+                draw: () => {
+                    ctx.fillStyle = "#38bdf8"; ctx.fillRect(0, 0, 560, 300);
+                    ctx.fillStyle = "#fef08a"; ctx.beginPath(); ctx.arc(100, 80, 40, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = "#ffffff";
+                    ctx.beginPath(); ctx.arc(400, 80, 25, 0, Math.PI * 2); ctx.arc(430, 80, 35, 0, Math.PI * 2); ctx.arc(460, 80, 25, 0, Math.PI * 2); ctx.fill();
+                }
+            },
+            // Level 6: Eraser Tool
+            {
+                prompt: "Oh look! White streaks rub away parts of the drawing! Which tool was used to wipe them out?",
+                choices: [
+                    { text: "🧽 Eraser Tool", correct: true },
+                    { text: "📐 Shapes Tool", correct: false },
+                    { text: "🪄 Magic Tool", correct: false }
+                ],
+                draw: () => {
+                    ctx.fillStyle = "#f472b6"; ctx.fillRect(0, 0, 560, 300);
+                    ctx.fillStyle = "#10b981"; ctx.beginPath(); ctx.arc(280, 150, 90, 0, Math.PI * 2); ctx.fill();
+
+                    // Eraser white wipe streaks
+                    ctx.strokeStyle = "#ffffff"; ctx.lineWidth = 30; ctx.lineCap = "round";
+                    ctx.beginPath(); ctx.moveTo(180, 100); ctx.lineTo(380, 100); ctx.stroke();
+                    ctx.beginPath(); ctx.moveTo(200, 180); ctx.lineTo(360, 180); ctx.stroke();
+                }
+            },
+            // Level 7: Brushes / Freehand Tool
+            {
+                prompt: "Look at these freehand wavy strokes and squiggles! Which tool painted them?",
+                choices: [
+                    { text: "📏 Line Tool", correct: false },
+                    { text: "🎨 Brushes Tool", correct: true },
+                    { text: "🅰️ Text Tool", correct: false }
+                ],
+                draw: () => {
+                    const strokeColors = ["#ef4444", "#10b981", "#8b5cf6", "#f59e0b"];
+                    strokeColors.forEach((color, i) => {
+                        ctx.strokeStyle = color; ctx.lineWidth = 14; ctx.lineCap = "round";
+                        ctx.beginPath();
+                        ctx.moveTo(50, 60 + (i * 60));
+                        ctx.bezierCurveTo(180, 10 + (i * 60), 380, 110 + (i * 60), 510, 60 + (i * 60));
+                        ctx.stroke();
+                    });
+                }
+            },
+            // Level 8: Lines Tool
+            {
+                prompt: "These perfectly straight, crisp lines form a starburst pattern! Which tool drew straight lines?",
+                choices: [
+                    { text: "📏 Lines Tool", correct: true },
+                    { text: "🧽 Eraser Tool", correct: false },
+                    { text: "🪣 Fill Bucket", correct: false }
+                ],
+                draw: () => {
+                    ctx.lineWidth = 8; ctx.lineCap = "round";
+                    const lineColors = ["#ef4444", "#f97316", "#eab308", "#10b981", "#06b6d4", "#3b82f6", "#a855f7", "#ec4899"];
+                    for (let i = 0; i < 8; i++) {
+                        const angle = (i * Math.PI) / 4;
+                        ctx.strokeStyle = lineColors[i];
+                        ctx.beginPath();
+                        ctx.moveTo(280, 150);
+                        ctx.lineTo(280 + Math.cos(angle) * 180, 150 + Math.sin(angle) * 120);
+                        ctx.stroke();
+                    }
                 }
             }
         ];
 
-        // Frame router logic setup
+        // Unlock Audio Context on First Interaction
+        function unlockAudio() {
+            const sndCorrect = document.getElementById('audio-correct');
+            const sndWrong = document.getElementById('audio-wrong');
+            if (sndCorrect) sndCorrect.load();
+            if (sndWrong) sndWrong.load();
+        }
+
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
 
-        // Trigger loading screen lockout
+        // Strict 5-Second Splash Screen Engine
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const splash = document.getElementById('brand-splash');
-                splash.style.opacity = '0';
-                setTimeout(() => {
-                    splash.style.display = 'none';
-                    showScreen('screen-setup');
-                }, 500);
+                if (splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => {
+                        splash.style.display = 'none';
+                        showScreen('screen-game');
+                        loadInspectionRound();
+                    }, 500);
+                }
             }, 5000);
         });
 
-        function startInspectorQuest() {
-            profile.name = document.getElementById('inputName').value.trim();
-            profile.grade = document.getElementById('inputClass').value.trim() || "Grade 1";
-            profile.school = document.getElementById('inputSchool').value.trim() || "ICT Primary Academy";
-
-            if (!profile.name) {
-                alert("Please enter an Art Detective name to begin!");
-                return;
-            }
-
-            currentRound = 0;
-            correctCount = 0;
-            showScreen('screen-game');
-            loadInspectionRound();
-        }
-
         function loadInspectionRound() {
+            unlockAudio();
             canInteract = true;
-            document.getElementById('feedback-msg').innerText = "";
+            document.getElementById('feedback-msg').innerHTML = "";
             
             const stage = stages[currentRound];
-            document.getElementById('hud-round').innerText = `Canvas: ${currentRound + 1} / 4`;
+            document.getElementById('hud-round').innerText = `Canvas: ${currentRound + 1} / ${stages.length}`;
             document.getElementById('hud-score').innerText = correctCount;
             document.getElementById('prompt-text').innerText = stage.prompt;
 
-            // Reset and draw on explicit canvas context
+            // Clear and render canvas art
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             stage.draw();
 
-            // Populate option selection tray buttons layout
+            // Populate choices
             const container = document.getElementById('options-container');
             container.innerHTML = "";
 
@@ -533,8 +589,19 @@
                 element.style.borderColor = "#166534";
                 element.style.color = "#ffffff";
 
-                feedback.innerText = "🌟 Spot on, Detective! That's correct!";
+                feedback.innerHTML = "🌟 🎉 Spot on, Detective! That's correct! 🎉 🌟";
                 feedback.style.color = "#166534";
+
+                // Localized Button Confetti Burst
+                const rect = element.getBoundingClientRect();
+                const x = (rect.left + rect.width / 2) / window.innerWidth;
+                const y = (rect.top + rect.height / 2) / window.innerHeight;
+                
+                confetti({
+                    particleCount: 40,
+                    spread: 50,
+                    origin: { x: x, y: y }
+                });
                 
                 if (sndCorrect) { sndCorrect.currentTime = 0; sndCorrect.play().catch(()=>{}); }
 
@@ -545,13 +612,16 @@
                     } else {
                         triggerGameCompletion();
                     }
-                }, 1800);
+                }, 1600);
             } else {
+                element.classList.add('shake');
+                setTimeout(() => element.classList.remove('shake'), 300);
+
                 element.style.background = "linear-gradient(180deg, #f87171 0%, #ef4444 100%)";
                 element.style.borderColor = "#991b1b";
                 element.style.color = "#ffffff";
 
-                feedback.innerText = "❌ Hmm, that tool doesn't match the clues. Look closer!";
+                feedback.innerHTML = "❌ 😢 Hmm, that tool doesn't match! Try again! 💔 ❌";
                 feedback.style.color = "#991b1b";
 
                 if (sndWrong) { sndWrong.currentTime = 0; sndWrong.play().catch(()=>{}); }
@@ -560,17 +630,20 @@
 
         function triggerGameCompletion() {
             showScreen('screen-completion');
-            
-            document.getElementById('player-name').innerText = profile.name;
-            document.getElementById('player-meta').innerText = `${profile.grade} | ${profile.school}`;
-            document.getElementById('player-score').innerText = `${correctCount} / 4 Canvases Solved`;
+            document.getElementById('player-score').innerText = `${correctCount} / ${stages.length} Canvases Solved`;
 
-            // Active visual canvas explosion trigger
             confetti({
-                particleCount: 150,
-                spread: 80,
+                particleCount: 180,
+                spread: 90,
                 origin: { y: 0.6 }
             });
+        }
+
+        function restartGame() {
+            currentRound = 0;
+            correctCount = 0;
+            showScreen('screen-game');
+            loadInspectionRound();
         }
     </script>
 </body>

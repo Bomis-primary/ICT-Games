@@ -6,15 +6,20 @@
     <title>Mission: The Missing Innovine Mascot!</title>
     <style>
         /* General Setup */
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0f4f8;
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             align-items: center;
             color: #333;
+            min-height: 100vh;
             overflow-x: hidden;
         }
 
@@ -30,20 +35,17 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            padding: 20px;
             z-index: 9999;
             transition: opacity 1s ease, visibility 1s ease;
         }
 
         #splash-screen img {
-            max-width: 300px;
+            max-width: 80%;
+            width: 280px;
+            height: auto;
             margin-bottom: 20px;
             animation: pulse 1.5s infinite ease-in-out;
-        }
-
-        #splash-screen h2 {
-            color: #1e3a8a;
-            font-size: 28px;
-            margin: 0;
         }
 
         @keyframes pulse {
@@ -52,12 +54,13 @@
             100% { transform: scale(1); }
         }
 
-        /* Main Game Layout (Hidden initially behind splash screen) */
+        /* Main Game Layout */
         .main-content {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
+            max-width: 950px;
             opacity: 0;
             transition: opacity 1s ease;
         }
@@ -67,41 +70,36 @@
             align-items: center;
             justify-content: space-between;
             width: 100%;
-            max-width: 900px;
             background-color: #ffffff;
-            padding: 15px 25px;
+            padding: 15px 20px;
             border-radius: 15px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             margin-bottom: 20px;
-            box-sizing: border-box;
-        }
-
-        .logo-area img {
-            height: 60px;
-            object-fit: contain;
+            text-align: center;
         }
 
         .title-area h1 {
             margin: 0;
-            font-size: 24px;
+            font-size: clamp(20px, 4vw, 26px);
             color: #1e3a8a;
         }
         .title-area p {
             margin: 5px 0 0 0;
-            font-size: 14px;
+            font-size: clamp(12px, 3vw, 14px);
             color: #6b7280;
         }
 
         .game-container {
             display: flex;
+            flex-direction: row;
             gap: 20px;
             width: 100%;
-            max-width: 900px;
         }
 
         /* Instructions & UI Panel */
         .sidebar {
             flex: 1;
+            min-width: 280px;
             background-color: #ffffff;
             padding: 20px;
             border-radius: 15px;
@@ -122,11 +120,12 @@
         .mission-box h3 {
             margin: 0 0 8px 0;
             color: #1d4ed8;
+            font-size: 18px;
         }
 
         .mission-box p {
             margin: 0;
-            font-size: 15px;
+            font-size: 14px;
             line-height: 1.4;
         }
 
@@ -137,27 +136,29 @@
         .label {
             font-weight: bold;
             font-size: 14px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             display: block;
             color: #4b5563;
         }
 
         .palette {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 20px;
+            justify-content: flex-start;
         }
 
         .color-btn {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             border: 3px solid transparent;
             cursor: pointer;
             transition: transform 0.1s ease;
+            touch-action: manipulation;
         }
 
-        .color-btn:hover {
+        .color-btn:hover, .color-btn:active {
             transform: scale(1.1);
         }
 
@@ -165,7 +166,6 @@
             border-color: #111827;
         }
 
-        /* Color profiles based on corporate asset tones */
         #color-blue { background-color: #0284c7; }
         #color-orange { background-color: #f97316; }
         #color-green { background-color: #22c55e; }
@@ -174,20 +174,25 @@
             background-color: #10b981;
             color: white;
             border: none;
-            padding: 12px 20px;
+            padding: 14px 20px;
             font-size: 16px;
             font-weight: bold;
-            border-radius: 8px;
+            border-radius: 10px;
             cursor: pointer;
             width: 100%;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.1s;
+            touch-action: manipulation;
         }
 
         .action-btn:hover {
             background-color: #059669;
         }
+        
+        .action-btn:active {
+            transform: scale(0.98);
+        }
 
-        /* MS Paint Style Canvas Viewport */
+        /* Canvas Viewport */
         .canvas-area {
             flex: 2;
             background-color: #e5e7eb;
@@ -197,6 +202,7 @@
             flex-direction: column;
             align-items: center;
             box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+            width: 100%;
         }
 
         .paint-header {
@@ -204,40 +210,70 @@
             display: flex;
             justify-content: space-between;
             padding-bottom: 10px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             color: #4b5563;
+        }
+
+        .canvas-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
         }
 
         canvas {
             background-color: #ffffff;
             border: 2px solid #9ca3af;
             border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            touch-action: none; /* Disables default touch scrolling on canvas */
             cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="2" x2="22" y2="6"></line><path d="M7.5 10.5L19 19"></path><path d="M16 2.5L21.5 8 16 13.5 10.5 8 16 2.5z"></path><path d="M10.5 8L3 15.5 3 21 8.5 21 16 13.5 10.5 8z"></path></svg>') 0 20, pointer;
+        }
+
+        /* Responsive Breakpoint for Mobile Devices */
+        @media (max-width: 768px) {
+            header {
+                justify-content: center;
+            }
+
+            .game-container {
+                flex-direction: column-reverse;
+            }
+
+            .sidebar {
+                min-width: 100%;
+            }
+
+            .palette {
+                justify-content: center;
+            }
         }
     </style>
 </head>
 <body>
 
+    <!-- 5-Second Splash Screen Overlay -->
     <div id="splash-screen">
         <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/250x100?text=Innovine+Logo';">
-        
     </div>
 
+    <!-- Main Workspace -->
     <div class="main-content" id="game-workspace">
         <header>
             <div class="title-area">
                 <h1>🎨 Mission: The Missing Innovine Mascot</h1>
-                <p>Introduction to MS Paint </p>
+                <p>Introduction to MS Paint</p>
             </div>
-                    </header>
+        </header>
 
         <div class="game-container">
             <div class="sidebar">
                 <div>
                     <div class="mission-box" id="step-box">
                         <h3 id="step-title">🚀 Level 1: Start Engine</h3>
-                        <p id="step-text">Click inside the white canvas drawing box to wake up your digital pencil and make your first sound!</p>
+                        <p id="step-text">Tap or click inside the white canvas drawing box to wake up your digital pencil and make your first sound!</p>
                     </div>
 
                     <div class="controls-group">
@@ -258,26 +294,26 @@
                     <span>✏️ Pencil Tool Active</span>
                     <span id="canvas-status">Status: Waiting for Artist</span>
                 </div>
-                <canvas id="paintCanvas" width="500" height="380"></canvas>
+                <div class="canvas-wrapper">
+                    <canvas id="paintCanvas" width="500" height="380"></canvas>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Splash Screen Timer Control Loop
+        // Splash Screen Control Loop (5 Seconds)
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
                 const workspace = document.getElementById('game-workspace');
                 
-                // Triggers smooth CSS layout transitions
                 splash.style.opacity = '0';
                 splash.style.visibility = 'hidden';
                 workspace.style.opacity = '1';
                 
-                // Welcome Chime Sound
                 setTimeout(() => { playLevelUpSound(); }, 200);
-            }, 5000); // 5000ms = Exactly 5 Seconds
+            }, 5000);
         });
 
         // App State Properties
@@ -287,20 +323,23 @@
         let currentColor = '#0284c7'; 
         let currentLevel = 1;
 
-        // Custom Sound Synth Generator Engine
+        // Custom Sound Synthesizer
         let audioCtx = null;
         function playTone(freq, type, duration) {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.type = type;
-            osc.frequency.value = freq;
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start();
-            osc.stop(audioCtx.currentTime + duration);
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) { console.log("Audio not allowed yet"); }
         }
 
         function playDrawSound() { playTone(300, 'triangle', 0.1); }
@@ -312,31 +351,68 @@
 
         // Setup Drawing Canvas Defaults
         ctx.lineCap = 'round';
-        ctx.lineWidth = 4;
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = 5;
 
-        // Drawing Event Hooks
-        canvas.addEventListener('mousedown', (e) => {
+        // Utility to calculate position across Mouse & Touch events
+        function getCoordinates(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+
+            let clientX = e.clientX;
+            let clientY = e.clientY;
+
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            }
+
+            return {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
+        }
+
+        // Drawing Handlers
+        function startDrawing(e) {
             isDrawing = true;
+            const pos = getCoordinates(e);
             ctx.beginPath();
-            ctx.moveTo(e.offsetX, e.offsetY);
+            ctx.moveTo(pos.x, pos.y);
             document.getElementById('canvas-status').innerText = "Status: Drawing ✨";
-        });
+        }
 
-        canvas.addEventListener('mousemove', (e) => {
+        function draw(e) {
             if (!isDrawing) return;
-            ctx.lineTo(e.offsetX, e.offsetY);
+            e.preventDefault(); // Prevents touch scrolling while drawing
+            const pos = getCoordinates(e);
+            ctx.lineTo(pos.x, pos.y);
             ctx.strokeStyle = currentColor;
             ctx.stroke();
-            if(Math.random() < 0.15) playDrawSound(); 
-        });
+            if (Math.random() < 0.15) playDrawSound(); 
+        }
 
-        canvas.addEventListener('mouseup', () => {
-            isDrawing = false;
-            document.getElementById('canvas-status').innerText = "Status: Canvas Ready";
-        });
-        canvas.addEventListener('mouseleave', () => isDrawing = false);
+        function stopDrawing() {
+            if (isDrawing) {
+                isDrawing = false;
+                ctx.closePath();
+                document.getElementById('canvas-status').innerText = "Status: Canvas Ready";
+            }
+        }
 
-        // Color Changer API
+        // Desktop Mouse Events
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseleave', stopDrawing);
+
+        // Mobile / Tablet Touch Events
+        canvas.addEventListener('touchstart', (e) => { startDrawing(e); e.preventDefault(); }, { passive: false });
+        canvas.addEventListener('touchmove', draw, { passive: false });
+        canvas.addEventListener('touchend', stopDrawing);
+
+        // Color Switcher
         function changeColor(colorHex, buttonElement) {
             currentColor = colorHex;
             document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
@@ -344,7 +420,7 @@
             playTone(440, 'sine', 0.05); 
         }
 
-        // Level Advancing State Machine
+        // Level Advancing Machine
         function advanceLevel() {
             currentLevel++;
             const title = document.getElementById('step-title');
@@ -355,21 +431,21 @@
 
             if (currentLevel === 2) {
                 title.innerText = "🌊 Level 2: The Wobbly Wave Test";
-                text.innerText = "Excellent! Now hold down your mouse and draw 3 large ocean waves on the white canvas without letting go!";
+                text.innerText = "Excellent! Hold down your finger or mouse and draw 3 large ocean waves across the screen!";
             } else if (currentLevel === 3) {
-                title.innerText = "🎨 Level 3: Match the Innovine Identity";
-                text.innerText = "Click on the Orange or Green color button. Use that color to trace a huge happy smile on your canvas!";
+                title.innerText = "🎨 Level 3: Match the Identity";
+                text.innerText = "Tap the Orange or Green color button. Use that color to trace a huge happy smile on your canvas!";
                 btn.innerText = "Lock in Canvas 💾";
             } else if (currentLevel === 4) {
                 title.innerText = "🏆 Victory! Mascot Restored";
-                text.innerText = "Fantastic Work, Designer! You successfully used the palette and digital pencil to save the file.";
+                text.innerText = "Fantastic Work, Designer! You successfully used the palette and digital pencil to save the mascot.";
                 btn.innerText = "Start New Session 🔄";
                 btn.style.backgroundColor = '#3b82f6';
             } else {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 currentLevel = 1;
                 title.innerText = "🚀 Level 1: Start Engine";
-                text.innerText = "Click inside the white canvas drawing box to wake up your digital pencil and make your first sound!";
+                text.innerText = "Tap or click inside the white canvas drawing box to wake up your digital pencil and make your first sound!";
                 btn.innerText = "Next Level ➡️";
                 btn.style.backgroundColor = '#10b981';
             }

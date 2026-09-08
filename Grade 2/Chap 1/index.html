@@ -100,32 +100,6 @@ h1{
   box-shadow: 0 4px 6px rgba(0,0,0,0.02);
 }
 
-/* --- REGISTRATION STYLING --- */
-.input-group {
-  max-width: 450px;
-  margin: 0 auto 20px auto;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-input {
-  width: 100%;
-  padding: 16px;
-  border-radius: 15px;
-  border: 3px solid #cbd5e1;
-  font-size: 18px;
-  text-align: center;
-  outline: none;
-  transition: border-color 0.2s;
-  background: #f8fafc;
-}
-
-input:focus {
-  border-color: #38bdf8;
-  background: #fff;
-}
-
 .btn {
   background: #ff7043;
   color: white;
@@ -278,21 +252,6 @@ input:focus {
   margin-bottom: 15px;
 }
 
-.cert-name {
-  font-size: 38px;
-  color: #1e3a8a;
-  margin: 15px 0;
-  border-bottom: 2px dashed #ca8a04;
-  display: inline-block;
-  padding: 0 30px 5px 30px;
-}
-
-.cert-meta {
-  font-size: 18px;
-  color: #475569;
-  margin-bottom: 10px;
-}
-
 .final-score {
   font-size: 64px;
   font-weight: bold;
@@ -316,7 +275,6 @@ input:focus {
   .conveyor-belt { flex-direction: column; }
   .arrow-divider { transform: rotate(90deg); margin: 5px 0; }
   h1 { font-size: 26px; }
-  .cert-name { font-size: 26px; }
 }
 </style>
 </head>
@@ -332,22 +290,10 @@ input:focus {
   <img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
 
-<!-- 2. REGISTRATION PANEL -->
-<div id="registrationScreen" class="screen">
-  <h1>The Magic IPO Factory</h1>
-  <p class="subtitle">Discover the Input-Process-Output Cycle!</p>
-  <div class="input-group">
-    <input type="text" id="studentName" placeholder="😀 Enter Student Name" autocomplete="off">
-    <input type="text" id="studentClass" placeholder="🏫 Enter Class / Grade" autocomplete="off">
-    <input type="text" id="schoolName" placeholder="🏢 Enter School Name" autocomplete="off">
-  </div>
-  <button class="btn" onclick="registerPlayer()">Enter Factory 🏭</button>
-</div>
-
-<!-- 3. MAIN LINEAR GAMEPLAY PANEL -->
+<!-- 2. MAIN GAMEPLAY PANEL -->
 <div id="gameplayScreen" class="screen">
+  <h1>The Magic IPO Factory</h1>
   <div class="scoreboard">
-    <div>👤 Player: <span id="displayPlayerName"></span></div>
     <div>🎯 Round: <span id="currentRoundNum">1</span>/4</div>
     <div>⭐ Score: <span id="currentScore">0</span></div>
   </div>
@@ -376,14 +322,11 @@ input:focus {
   <div class="feedback-box" id="feedbackDisplay"></div>
 </div>
 
-<!-- 4. END-GAME EVALUATION SCREEN -->
+<!-- 3. END-GAME EVALUATION SCREEN -->
 <div id="certificateScreen" class="screen">
   <div class="certificate">
-    <div class="cert-title">📜 Certificate of Completion</div>
-    <p class="cert-meta">This recognizes that computer builder</p>
-    <div class="cert-name" id="certPlayerName">Student Name</div>
-    <p class="cert-meta" id="certSchoolMeta">School Info</p>
-    <p class="cert-meta" style="margin-top:15px; font-weight:bold;">Has mastered the IPO Cycle with a score of:</p>
+    <div class="cert-title">📜 Factory Master Certificate</div>
+    <p style="font-size: 20px; color: #475569; margin-top: 15px; font-weight: bold;">You completed the IPO Cycle Game with a score of:</p>
     <div class="final-score" id="certFinalScore">0/4 Points</div>
     <div class="rank-badge" id="certRank">Certified Chief Systems Engineer</div>
     <div>
@@ -396,9 +339,6 @@ input:focus {
 // Game State variables
 let currentRound = 0;
 let score = 0;
-let playerName = "";
-let playerClass = "";
-let playerSchool = "";
 let isAnswered = false;
 
 // Unified Sequential Round Questions Database
@@ -452,12 +392,13 @@ window.addEventListener('DOMContentLoaded', () => {
     splash.style.opacity = '0';
     setTimeout(() => {
       splash.style.display = 'none';
-      document.getElementById('registrationScreen').classList.add('active');
+      document.getElementById('gameplayScreen').classList.add('active');
+      loadRound();
     }, 500);
   }, 5000);
 });
 
-// Fallback Synthesizer for Audio
+// Sound Handler
 function playAudio(elementId, isSuccess) {
   const audioNode = document.getElementById(elementId);
   if (audioNode && audioNode.src && audioNode.currentTime !== undefined) {
@@ -468,7 +409,7 @@ function playAudio(elementId, isSuccess) {
   }
 }
 
-// Generates tone beep if external audio file is missing
+// Fallback Sound Generator
 function playFallbackSound(isSuccess) {
   try {
     const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -478,38 +419,20 @@ function playFallbackSound(isSuccess) {
     gain.connect(ctx.destination);
     
     if (isSuccess) {
-      osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
-      osc.frequency.setValueAtTime(880, ctx.currentTime + 0.1); // A5
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime);
+      osc.frequency.setValueAtTime(880, ctx.currentTime + 0.1);
       gain.gain.setValueAtTime(0.2, ctx.currentTime);
       osc.start();
       osc.stop(ctx.currentTime + 0.3);
     } else {
       osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(220, ctx.currentTime); // A3
-      osc.frequency.setValueAtTime(164.81, ctx.currentTime + 0.15); // E3
+      osc.frequency.setValueAtTime(220, ctx.currentTime);
+      osc.frequency.setValueAtTime(164.81, ctx.currentTime + 0.15);
       gain.gain.setValueAtTime(0.2, ctx.currentTime);
       osc.start();
       osc.stop(ctx.currentTime + 0.35);
     }
-  } catch(e) { console.log('Audio disabled'); }
-}
-
-// Handler to validate inputs and start game
-function registerPlayer() {
-  playerName = document.getElementById('studentName').value.trim();
-  playerClass = document.getElementById('studentClass').value.trim();
-  playerSchool = document.getElementById('schoolName').value.trim();
-
-  if(!playerName || !playerClass || !playerSchool) {
-    alert("Please fill in your Name, Class, and School to enter the factory floor!");
-    return;
-  }
-
-  document.getElementById('displayPlayerName').innerText = playerName;
-  document.getElementById('registrationScreen').classList.remove('active');
-  document.getElementById('gameplayScreen').classList.add('active');
-
-  loadRound();
+  } catch(e) { console.log('Audio fallback failed'); }
 }
 
 // Populate round details
@@ -580,13 +503,11 @@ function evaluateChoice(selectedCard, isCorrect) {
   }, 2200);
 }
 
-// Certificate Screen
+// Result Screen
 function triggerEvaluationView() {
   document.getElementById('gameplayScreen').classList.remove('active');
   document.getElementById('certificateScreen').classList.add('active');
 
-  document.getElementById('certPlayerName').innerText = playerName;
-  document.getElementById('certSchoolMeta').innerText = `Class: ${playerClass} | ${playerSchool}`;
   document.getElementById('certFinalScore').innerText = `${score} / 4 Points`;
 
   let designRank = "";

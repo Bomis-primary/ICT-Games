@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fun with MS Paint - Tool Placement Game</title>
+    <title>Fun with MS Paint - Ultimate Challenge</title>
     <style>
         * {
             box-sizing: border-box;
@@ -82,6 +82,7 @@
             color: #ef4444;
             margin-top: 10px;
             text-align: center;
+            padding: 0 10px;
         }
 
         @keyframes shake {
@@ -162,7 +163,7 @@
             color: #334155;
         }
 
-        /* Workspace with Paint Canvas & Target Placement Zones */
+        /* Workspace Viewport */
         .paint-window {
             background-color: #ffffff;
             border: 2px solid #cbd5e1;
@@ -176,6 +177,7 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             max-height: 52vh;
             padding: 6px;
+            overflow-y: auto;
         }
 
         .paint-header-bar {
@@ -205,9 +207,11 @@
             border: 2px dashed #e2e8f0;
             border-radius: 8px;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            padding: 6px;
         }
 
         /* Interactive Target Zones on Canvas */
@@ -220,23 +224,18 @@
             justify-content: center;
             align-items: center;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 11px;
             color: #0284c7;
             text-align: center;
             cursor: pointer;
             transition: all 0.2s;
-            padding: 4px;
-        }
-
-        .target-zone.drop-hover {
-            background-color: rgba(34, 197, 94, 0.2);
-            border-color: #22c55e;
+            padding: 2px;
         }
 
         /* House Illustration SVG */
         .house-svg {
-            width: 260px;
-            height: 180px;
+            width: 250px;
+            height: 175px;
         }
 
         /* Bottom Tool Selection Dock */
@@ -296,6 +295,42 @@
             opacity: 0.6;
         }
 
+        /* Guess & Quiz Option Buttons */
+        .quiz-options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .quiz-btn {
+            background-color: #f8fafc;
+            border: 2px solid #cbd5e1;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #1e293b;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quiz-btn img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+        }
+
+        .quiz-btn.selected {
+            background-color: #e0f2fe;
+            border-color: #0284c7;
+            color: #0369a1;
+        }
+
         /* Controls */
         .controls {
             display: flex;
@@ -334,7 +369,7 @@
     <!-- Sad Overlay for Wrong Answer -->
     <div id="sad-overlay">
         <div class="smiley">😢</div>
-        <div class="msg" id="sad-msg">Wrong Tool Placed!</div>
+        <div class="msg" id="sad-msg">Wrong Answer!</div>
     </div>
 
     <!-- Audio Elements -->
@@ -347,7 +382,7 @@
             <div class="title-area">
                 <h1>
                     <img src="assets/ms paint.png" alt="MS Paint" onerror="this.style.display='none'">
-                    MS Paint Placement Game
+                    MS Paint Challenge
                 </h1>
             </div>
             <div class="timer-badge" id="timer-display">⏱️ 20s</div>
@@ -360,9 +395,9 @@
 
         <!-- MS Paint Canvas Viewport -->
         <div class="paint-window">
-            <div class="paint-header-bar">
+            <div class="paint-header-bar" id="paint-header-bar">
                 <span>Untitled - MS Paint</span>
-                <div class="window-controls">
+                <div class="window-controls" id="window-controls">
                     <img src="assets/minimize.png" alt="min" onerror="this.style.display='none'">
                     <img src="assets/maximize.png" alt="max" onerror="this.style.display='none'">
                     <img src="assets/close.png" alt="close" onerror="this.style.display='none'">
@@ -370,7 +405,7 @@
             </div>
 
             <div class="canvas-area" id="canvas-area">
-                <!-- SVG House & Dynamic Target Zones Rendered Here -->
+                <!-- SVG House & Dynamic Content Rendered Here -->
             </div>
         </div>
 
@@ -421,14 +456,15 @@
             }
         }
 
-        // Level Definitions
+        // Expanded Level Definitions
         const levels = [
             {
                 level: 1,
-                title: "🏠 Level 1: Draw the Roof Outlines",
+                type: "placement",
+                title: "🏠 Level 1: Draw the House Roof Outlines",
                 desc: "Drag or tap the correct tool to place it on the roof outline!",
                 targetLabel: "Place Tool Here to Draw Roof 🔺",
-                targetPos: { top: '20px', left: '50px', width: '160px', height: '50px' },
+                targetPos: { top: '20px', left: '45px', width: '160px', height: '48px' },
                 correctTool: "pencil",
                 houseState: "outline_roof",
                 dockTools: [
@@ -439,10 +475,11 @@
             },
             {
                 level: 2,
-                title: "🚪 Level 2: Clean the Mistake",
-                desc: "Oh no! There's an extra line on the wall. Place the correct tool on the line to clean it!",
-                targetLabel: "Place Tool Here to Erase Line ✏️",
-                targetPos: { top: '90px', left: '175px', width: '50px', height: '40px' },
+                type: "placement",
+                title: "🚪 Level 2: Clean Up the Extra Line",
+                desc: "Oh no! A red line is spoiling the house wall. Place the Eraser on it!",
+                targetLabel: "Place Eraser Here ✏️",
+                targetPos: { top: '85px', left: '170px', width: '50px', height: '40px' },
                 correctTool: "eraser",
                 houseState: "extra_line",
                 dockTools: [
@@ -453,10 +490,11 @@
             },
             {
                 level: 3,
+                type: "placement",
                 title: "🎨 Level 3: Paint the House Roof",
-                desc: "Choose and place the tool inside the roof to fill it with color!",
+                desc: "Select and place the Fill Bucket inside the roof to color it orange!",
                 targetLabel: "Place Tool Here to Color Roof 🎨",
-                targetPos: { top: '30px', left: '70px', width: '120px', height: '45px' },
+                targetPos: { top: '25px', left: '65px', width: '120px', height: '40px' },
                 correctTool: "fill",
                 houseState: "colored_walls",
                 dockTools: [
@@ -467,10 +505,11 @@
             },
             {
                 level: 4,
-                title: "🏷️ Level 4: Add Your Name to the Artwork",
-                desc: "Which tool should you place on the canvas bottom to type your name?",
-                targetLabel: "Place Tool Here to Type Name 📝",
-                targetPos: { top: '145px', left: '40px', width: '180px', height: '30px' },
+                type: "placement",
+                title: "🏷️ Level 4: Add Your Name to the Drawing",
+                desc: "Place the Text Tool on the bottom section to sign your drawing!",
+                targetLabel: "Place Tool Here to Write Name 📝",
+                targetPos: { top: '142px', left: '35px', width: '180px', height: '28px' },
                 correctTool: "text",
                 houseState: "completed_house",
                 dockTools: [
@@ -478,6 +517,57 @@
                     { id: "eraser", name: "Eraser", img: "assets/eraser.png" },
                     { id: "pencil", name: "Pencil", img: "assets/pencil.png" }
                 ]
+            },
+            {
+                level: 5,
+                type: "guess_riddle",
+                title: "🔍 Level 5: Tool Riddle Puzzle",
+                desc: "Riddle: 'I can pour color into whole shapes with just one single click! Who am I?'",
+                options: [
+                    { id: "pencil", name: "Pencil Tool", img: "assets/pencil.png" },
+                    { id: "fill", name: "Fill with Color Bucket", img: "assets/fill-with-color.png" },
+                    { id: "eraser", name: "Eraser Tool", img: "assets/eraser.png" }
+                ],
+                correctAnswer: "fill"
+            },
+            {
+                level: 6,
+                type: "sequence_puzzle",
+                title: "🧩 Level 6: Sequence Order Puzzle",
+                desc: "Select the correct step sequence to draw a house in MS Paint:",
+                options: [
+                    { id: "opt1", text: "1. Color ➔ 2. Erase ➔ 3. Draw Lines" },
+                    { id: "opt2", text: "1. Draw Roof Outlines ➔ 2. Erase Extra Lines ➔ 3. Fill Color" },
+                    { id: "opt3", text: "1. Erase ➔ 2. Write Text ➔ 3. Fill Color" }
+                ],
+                correctAnswer: "opt2"
+            },
+            {
+                level: 7,
+                type: "placement",
+                title: "❌ Level 7: Close MS Paint Window",
+                desc: "You finished drawing! Place the Close button on the top-right corner of the window bar.",
+                targetLabel: "Place Close Button Here ❌",
+                targetPos: { top: '4px', left: '200px', width: '45px', height: '20px' },
+                correctTool: "close",
+                houseState: "completed_house",
+                dockTools: [
+                    { id: "minimize", name: "Minimize", img: "assets/minimize.png" },
+                    { id: "close", name: "Close (X)", img: "assets/close.png" },
+                    { id: "maximize", name: "Maximize", img: "assets/maximize.png" }
+                ]
+            },
+            {
+                level: 8,
+                type: "spot_puzzle",
+                title: "🎯 Level 8: Spot & Match Challenge",
+                desc: "Which tool was used to erase the extra mistake lines in Level 2?",
+                options: [
+                    { id: "eraser", name: "Eraser Tool", img: "assets/eraser.png" },
+                    { id: "pencil", name: "Pencil Tool", img: "assets/pencil.png" },
+                    { id: "color", name: "Color Palette", img: "assets/color .png" }
+                ],
+                correctAnswer: "eraser"
             }
         ];
 
@@ -487,6 +577,7 @@
         let timerInterval = null;
         let selectedToolId = null;
         let placedToolId = null;
+        let selectedQuizOption = null;
 
         function startTimer() {
             clearInterval(timerInterval);
@@ -523,6 +614,7 @@
         function resetCurrentLevel() {
             selectedToolId = null;
             placedToolId = null;
+            selectedQuizOption = null;
 
             const lvlData = levels.find(l => l.level === currentLevel);
             const canvasArea = document.getElementById('canvas-area');
@@ -530,65 +622,95 @@
 
             canvasArea.innerHTML = '';
             toolsDock.innerHTML = '';
+            toolsDock.style.display = 'flex';
 
-            // Render SVG House Illustration according to Level State
-            canvasArea.innerHTML = getHouseSVG(lvlData.houseState);
+            if (lvlData.type === "placement") {
+                // Render SVG House Illustration according to Level State
+                canvasArea.innerHTML = getHouseSVG(lvlData.houseState);
 
-            // Render Dynamic Target Zone
-            const target = document.createElement('div');
-            target.className = 'target-zone';
-            target.id = 'target-zone';
-            target.style.top = lvlData.targetPos.top;
-            target.style.left = lvlData.targetPos.left;
-            target.style.width = lvlData.targetPos.width;
-            target.style.height = lvlData.targetPos.height;
-            target.innerText = lvlData.targetLabel;
+                // Render Dynamic Target Zone
+                const target = document.createElement('div');
+                target.className = 'target-zone';
+                target.id = 'target-zone';
+                target.style.top = lvlData.targetPos.top;
+                target.style.left = lvlData.targetPos.left;
+                target.style.width = lvlData.targetPos.width;
+                target.style.height = lvlData.targetPos.height;
+                target.innerText = lvlData.targetLabel;
 
-            // Target zone tap handler
-            target.onclick = () => {
-                if (selectedToolId) {
-                    placeToolInZone(selectedToolId);
-                }
-            };
+                target.onclick = () => {
+                    if (selectedToolId) {
+                        placeToolInZone(selectedToolId);
+                    }
+                };
 
-            canvasArea.appendChild(target);
+                canvasArea.appendChild(target);
 
-            // Render Dock Tools
-            const shuffledTools = [...lvlData.dockTools].sort(() => Math.random() - 0.5);
-            shuffledTools.forEach(tool => {
-                const card = document.createElement('div');
-                card.className = 'tool-card';
-                card.id = `tool-${tool.id}`;
-                card.setAttribute('data-id', tool.id);
+                // Render Dock Tools
+                const shuffledTools = [...lvlData.dockTools].sort(() => Math.random() - 0.5);
+                shuffledTools.forEach(tool => {
+                    const card = document.createElement('div');
+                    card.className = 'tool-card';
+                    card.id = `tool-${tool.id}`;
+                    card.setAttribute('data-id', tool.id);
 
-                card.innerHTML = `
-                    <img src="${tool.img}" alt="${tool.name}" onerror="this.onerror=null; this.src='https://via.placeholder.com/38?text=${tool.name}';">
-                    <span>${tool.name}</span>
-                `;
+                    card.innerHTML = `
+                        <img src="${tool.img}" alt="${tool.name}" onerror="this.onerror=null; this.src='https://via.placeholder.com/38?text=${tool.name}';">
+                        <span>${tool.name}</span>
+                    `;
 
-                makeMobileDraggable(card, tool.id);
-                toolsDock.appendChild(card);
-            });
+                    makeMobileDraggable(card, tool.id);
+                    toolsDock.appendChild(card);
+                });
+
+            } else {
+                // Riddle / Sequence / Quiz Options Layout
+                toolsDock.style.display = 'none';
+
+                const quizContainer = document.createElement('div');
+                quizContainer.className = 'quiz-options-list';
+
+                lvlData.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'quiz-btn';
+                    
+                    if (opt.img) {
+                        btn.innerHTML = `<img src="${opt.img}" onerror="this.style.display='none'"> <span>${opt.name}</span>`;
+                    } else {
+                        btn.innerHTML = `<span>${opt.text}</span>`;
+                    }
+
+                    btn.onclick = () => {
+                        document.querySelectorAll('.quiz-btn').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                        selectedQuizOption = opt.id;
+                    };
+
+                    quizContainer.appendChild(btn);
+                });
+
+                canvasArea.appendChild(quizContainer);
+            }
 
             startTimer();
         }
 
         // SVG Render Helper for MS Paint House Drawing
         function getHouseSVG(state) {
-            let extraLine = state === "extra_line" ? `<line x1="180" y1="100" x2="210" y2="120" stroke="#ef4444" stroke-width="3" />` : '';
+            let extraLine = state === "extra_line" ? `<line x1="175" y1="95" x2="205" y2="115" stroke="#ef4444" stroke-width="3" />` : '';
             let roofFill = (state === "colored_walls" || state === "completed_house") ? "#f97316" : "none";
             let wallFill = (state === "colored_walls" || state === "completed_house") ? "#fef08a" : "none";
 
             return `
-                <svg class="house-svg" viewBox="0 0 260 180">
+                <svg class="house-svg" viewBox="0 0 250 175">
                     <!-- Roof -->
-                    <polygon points="130,20 40,80 220,80" fill="${roofFill}" stroke="#334155" stroke-width="3" />
+                    <polygon points="125,18 35,75 215,75" fill="${roofFill}" stroke="#334155" stroke-width="3" />
                     <!-- Body -->
-                    <rect x="55" y="80" width="150" height="85" fill="${wallFill}" stroke="#334155" stroke-width="3" />
+                    <rect x="50" y="75" width="150" height="85" fill="${wallFill}" stroke="#334155" stroke-width="3" />
                     <!-- Door -->
-                    <rect x="110" y="115" width="40" height="50" fill="#94a3b8" stroke="#334155" stroke-width="2" />
+                    <rect x="105" y="110" width="40" height="50" fill="#94a3b8" stroke="#334155" stroke-width="2" />
                     <!-- Window -->
-                    <rect x="70" y="95" width="30" height="30" fill="#38bdf8" stroke="#334155" stroke-width="2" />
+                    <rect x="65" y="90" width="30" height="30" fill="#38bdf8" stroke="#334155" stroke-width="2" />
                     ${extraLine}
                 </svg>
             `;
@@ -666,16 +788,26 @@
         // Answer Checking Logic
         function checkAnswer() {
             const lvlData = levels.find(l => l.level === currentLevel);
+            let isCorrect = false;
 
-            if (!placedToolId) {
-                handleWrongAttempt("Please place a tool into the highlighted canvas target!");
-                return;
+            if (lvlData.type === "placement") {
+                if (!placedToolId) {
+                    handleWrongAttempt("Please place a tool into the target zone!");
+                    return;
+                }
+                isCorrect = placedToolId === lvlData.correctTool;
+            } else {
+                if (!selectedQuizOption) {
+                    handleWrongAttempt("Please select an option first!");
+                    return;
+                }
+                isCorrect = selectedQuizOption === lvlData.correctAnswer;
             }
 
-            if (placedToolId === lvlData.correctTool) {
+            if (isCorrect) {
                 handleCorrectAnswer();
             } else {
-                handleWrongAttempt("Wrong Tool Placed!");
+                handleWrongAttempt("Wrong Answer!");
             }
         }
 
@@ -688,8 +820,8 @@
                 if (currentLevel < levels.length) {
                     loadLevel(currentLevel + 1);
                 } else {
-                    document.getElementById('level-title').innerText = "🏆 Master Artist!";
-                    document.getElementById('level-desc').innerText = "You successfully placed all MS Paint tools correctly!";
+                    document.getElementById('level-title').innerText = "🏆 Master Paint Grandmaster!";
+                    document.getElementById('level-desc').innerText = "Congratulations! You completed all 8 MS Paint levels!";
                     document.getElementById('check-btn').innerText = "Play Again 🔄";
                     document.getElementById('check-btn').onclick = () => {
                         document.getElementById('check-btn').onclick = checkAnswer;
@@ -725,7 +857,7 @@
             }, 1200);
         }
 
-        // Confetti Effect Generator
+        // Confetti Particle Burst Engine
         function triggerConfetti() {
             const canvas = document.getElementById('confetti-canvas');
             const ctx = canvas.getContext('2d');

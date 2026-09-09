@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Fun with MS Paint - Interactive Challenge</title>
+    <title>Fun with MS Paint - Tool Placement Game</title>
     <style>
         * {
             box-sizing: border-box;
@@ -45,7 +45,7 @@
             object-fit: contain;
         }
 
-        /* Confetti Canvas Overlay */
+        /* Confetti Overlay Canvas */
         #confetti-canvas {
             position: fixed;
             top: 0;
@@ -82,7 +82,6 @@
             color: #ef4444;
             margin-top: 10px;
             text-align: center;
-            padding: 0 15px;
         }
 
         @keyframes shake {
@@ -97,7 +96,7 @@
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 650px;
+            max-width: 600px;
             height: 100%;
             justify-content: space-between;
             opacity: 0;
@@ -163,164 +162,146 @@
             color: #334155;
         }
 
-        /* Interactive Area */
-        .interactive-area {
+        /* Workspace with Paint Canvas & Target Placement Zones */
+        .paint-window {
             background-color: #ffffff;
-            padding: 10px;
+            border: 2px solid #cbd5e1;
             border-radius: 10px;
             width: 100%;
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+            position: relative;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            max-height: 58vh;
-            overflow-y: auto;
+            max-height: 52vh;
+            padding: 6px;
         }
 
-        /* Tool Palette Options */
-        .tool-palette {
+        .paint-header-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f1f5f9;
+            padding: 4px 8px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #475569;
+        }
+
+        .paint-header-bar .window-controls img {
+            height: 14px;
+            margin-left: 4px;
+        }
+
+        .canvas-area {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            border: 2px dashed #e2e8f0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        /* Interactive Target Zones on Canvas */
+        .target-zone {
+            position: absolute;
+            border: 2px dashed #0284c7;
+            background-color: rgba(2, 132, 199, 0.1);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 12px;
+            color: #0284c7;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            padding: 4px;
+        }
+
+        .target-zone.drop-hover {
+            background-color: rgba(34, 197, 94, 0.2);
+            border-color: #22c55e;
+        }
+
+        /* House Illustration SVG */
+        .house-svg {
+            width: 260px;
+            height: 180px;
+        }
+
+        /* Bottom Tool Selection Dock */
+        .tools-dock {
+            background-color: #ffffff;
+            padding: 8px;
+            border-radius: 10px;
+            width: 100%;
             display: flex;
             justify-content: center;
             gap: 12px;
-            flex-wrap: wrap;
-            width: 100%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            margin-top: 6px;
         }
 
         .tool-card {
-            width: 85px;
-            height: 90px;
+            width: 70px;
+            height: 75px;
             background-color: #f8fafc;
             border: 2px solid #cbd5e1;
             border-radius: 10px;
-            padding: 6px;
+            padding: 4px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
+            cursor: grab;
             user-select: none;
+            touch-action: none;
+            position: relative;
+            z-index: 10;
         }
 
         .tool-card img {
-            max-width: 42px;
-            max-height: 42px;
+            max-width: 38px;
+            max-height: 38px;
             object-fit: contain;
             pointer-events: none;
         }
 
         .tool-card span {
-            margin-top: 5px;
-            font-size: 11px;
-            font-weight: 600;
+            margin-top: 4px;
+            font-size: 10px;
+            font-weight: bold;
             text-align: center;
             color: #334155;
             pointer-events: none;
         }
 
-        .tool-card.selected {
+        .tool-card.selected-tap {
             border-color: #0284c7;
             background-color: #e0f2fe;
-            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.3);
+            box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.4);
         }
 
-        /* Interactive Drawing Canvas View (House Drawing Activity) */
-        .paint-canvas-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            height: 100%;
+        .tool-card.dragging {
+            opacity: 0.6;
         }
 
-        .paint-toolbar {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 8px;
-            background-color: #f1f5f9;
-            padding: 6px;
-            border-radius: 8px;
-            width: 100%;
-            justify-content: center;
-        }
-
-        .paint-tool-btn {
-            background-color: #ffffff;
-            border: 1px solid #cbd5e1;
-            padding: 4px 8px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 12px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .paint-tool-btn img {
-            width: 20px;
-            height: 20px;
-            object-fit: contain;
-        }
-
-        .paint-tool-btn.active {
-            border-color: #0284c7;
-            background-color: #e0f2fe;
-            color: #0369a1;
-        }
-
-        canvas#houseCanvas {
-            background-color: #ffffff;
-            border: 2px solid #94a3b8;
-            border-radius: 8px;
-            touch-action: none;
-            cursor: crosshair;
-        }
-
-        /* Generic Multiple Choice Options */
-        .option-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            width: 100%;
-        }
-
-        .option-btn {
-            background-color: #f8fafc;
-            border: 2px solid #cbd5e1;
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #1e293b;
-            cursor: pointer;
-            width: 100%;
-            text-align: left;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .option-btn img {
-            height: 28px;
-            width: auto;
-            object-fit: contain;
-        }
-
-        .option-btn.selected {
-            background-color: #e0f2fe;
-            border-color: #0284c7;
-            color: #0369a1;
-        }
-
-        /* Action Buttons */
+        /* Controls */
         .controls {
             display: flex;
             gap: 10px;
             width: 100%;
-            margin-bottom: 5px;
+            margin: 6px 0 2px 0;
         }
 
         .action-btn {
@@ -342,31 +323,31 @@
 </head>
 <body>
 
-    <!-- 5-Second Splash Screen Overlay -->
+    <!-- 5-Second Splash Screen -->
     <div id="splash-screen">
         <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/250x100?text=Innovine+Logo';">
     </div>
 
-    <!-- Confetti Particle Overlay Canvas -->
+    <!-- Canvas for Confetti -->
     <canvas id="confetti-canvas"></canvas>
 
-    <!-- Sad Overlay for Incorrect Attempts -->
+    <!-- Sad Overlay for Wrong Answer -->
     <div id="sad-overlay">
         <div class="smiley">😢</div>
-        <div class="msg" id="sad-msg">Wrong Tool! Try Again</div>
+        <div class="msg" id="sad-msg">Wrong Tool Placed!</div>
     </div>
 
-    <!-- Assets Audio elements -->
+    <!-- Audio Elements -->
     <audio id="audio-clap" src="assets/clap.mp3" preload="auto"></audio>
     <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
 
-    <!-- Main Game Viewport -->
+    <!-- Game Workspace -->
     <div class="main-content" id="game-workspace">
         <header>
             <div class="title-area">
                 <h1>
                     <img src="assets/ms paint.png" alt="MS Paint" onerror="this.style.display='none'">
-                    Fun with MS Paint
+                    MS Paint Placement Game
                 </h1>
             </div>
             <div class="timer-badge" id="timer-display">⏱️ 20s</div>
@@ -377,8 +358,25 @@
             <p id="level-desc">Description</p>
         </div>
 
-        <div class="interactive-area" id="interactive-area">
-            <!-- Content dynamically rendered here -->
+        <!-- MS Paint Canvas Viewport -->
+        <div class="paint-window">
+            <div class="paint-header-bar">
+                <span>Untitled - MS Paint</span>
+                <div class="window-controls">
+                    <img src="assets/minimize.png" alt="min" onerror="this.style.display='none'">
+                    <img src="assets/maximize.png" alt="max" onerror="this.style.display='none'">
+                    <img src="assets/close.png" alt="close" onerror="this.style.display='none'">
+                </div>
+            </div>
+
+            <div class="canvas-area" id="canvas-area">
+                <!-- SVG House & Dynamic Target Zones Rendered Here -->
+            </div>
+        </div>
+
+        <!-- Tool Dock -->
+        <div class="tools-dock" id="tools-dock">
+            <!-- Available tools rendered dynamically -->
         </div>
 
         <div class="controls">
@@ -388,18 +386,18 @@
     </div>
 
     <script>
-        // Splash Screen Timer (5 Seconds)
+        // Splash Screen (5 Seconds)
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 document.getElementById('splash-screen').style.opacity = '0';
                 document.getElementById('splash-screen').style.visibility = 'hidden';
                 document.getElementById('game-workspace').style.opacity = '1';
             }, 5000);
-            
+
             loadLevel(1);
         });
 
-        // Audio Handler
+        // Sound Player
         function playSound(type) {
             const clapAudio = document.getElementById('audio-clap');
             const correctAudio = document.getElementById('audio-correct');
@@ -411,12 +409,11 @@
                     correctAudio.play().catch(err => {});
                 });
             } else if (type === 'wrong') {
-                // Synthetic fallback beep for wrong answer
                 try {
                     const ctx = new (window.AudioContext || window.webkitAudioContext)();
                     const osc = ctx.createOscillator();
                     osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(150, ctx.currentTime);
+                    osc.frequency.setValueAtTime(160, ctx.currentTime);
                     osc.connect(ctx.destination);
                     osc.start();
                     osc.stop(ctx.currentTime + 0.3);
@@ -424,61 +421,63 @@
             }
         }
 
-        // Game Levels Data
+        // Level Definitions
         const levels = [
             {
                 level: 1,
-                type: "tool_selection",
-                title: "🏠 Level 1: Drawing the House Roof & Walls",
-                desc: "Which tool should you select to draw the straight lines for the roof and walls of a house?",
-                options: [
-                    { id: "pencil", name: "Pencil / Line Tool", img: "assets/pencil.png" },
-                    { id: "eraser", name: "Eraser Tool", img: "assets/eraser.png" },
-                    { id: "text", name: "Text Tool", img: "assets/text-tool.png" }
-                ],
-                correctAnswer: "pencil"
+                title: "🏠 Level 1: Draw the Roof Outlines",
+                desc: "Drag or tap the correct tool to place it on the roof outline!",
+                targetLabel: "Place Tool Here to Draw Roof 🔺",
+                targetPos: { top: '20px', left: '50px', width: '160px', height: '50px' },
+                correctTool: "pencil",
+                houseState: "outline_roof",
+                dockTools: [
+                    { id: "pencil", name: "Pencil", img: "assets/pencil.png" },
+                    { id: "eraser", name: "Eraser", img: "assets/eraser.png" },
+                    { id: "fill", name: "Fill Color", img: "assets/fill-with-color.png" }
+                ]
             },
             {
                 level: 2,
-                type: "tool_selection",
-                title: "🎨 Level 2: Coloring the House",
-                desc: "Which tool allows you to fill the walls and roof of your house with vibrant colors?",
-                options: [
-                    { id: "eraser", name: "Eraser Tool", img: "assets/eraser.png" },
-                    { id: "fill", name: "Fill with Color", img: "assets/fill-with-color.png" },
-                    { id: "pencil", name: "Pencil Tool", img: "assets/pencil.png" }
-                ],
-                correctAnswer: "fill"
+                title: "🚪 Level 2: Clean the Mistake",
+                desc: "Oh no! There's an extra line on the wall. Place the correct tool on the line to clean it!",
+                targetLabel: "Place Tool Here to Erase Line ✏️",
+                targetPos: { top: '90px', left: '175px', width: '50px', height: '40px' },
+                correctTool: "eraser",
+                houseState: "extra_line",
+                dockTools: [
+                    { id: "fill", name: "Fill Color", img: "assets/fill-with-color.png" },
+                    { id: "eraser", name: "Eraser", img: "assets/eraser.png" },
+                    { id: "text", name: "Text Tool", img: "assets/text-tool.png" }
+                ]
             },
             {
                 level: 3,
-                type: "tool_selection",
-                title: "✏️ Level 3: Fixing Mistakes",
-                desc: "Oh no! A line went outside the house boundary. Which tool will you use to erase it?",
-                options: [
-                    { id: "eraser", name: "Eraser Tool", img: "assets/eraser.png" },
-                    { id: "color", name: "Color Palette", img: "assets/color .png" },
+                title: "🎨 Level 3: Paint the House Roof",
+                desc: "Choose and place the tool inside the roof to fill it with color!",
+                targetLabel: "Place Tool Here to Color Roof 🎨",
+                targetPos: { top: '30px', left: '70px', width: '120px', height: '45px' },
+                correctTool: "fill",
+                houseState: "colored_walls",
+                dockTools: [
+                    { id: "pencil", name: "Pencil", img: "assets/pencil.png" },
+                    { id: "fill", name: "Fill Color", img: "assets/fill-with-color.png" },
                     { id: "text", name: "Text Tool", img: "assets/text-tool.png" }
-                ],
-                correctAnswer: "eraser"
+                ]
             },
             {
                 level: 4,
-                type: "window_control",
-                title: "🖥️ Level 4: Closing MS Paint",
-                desc: "Which window control button is used to close the MS Paint window when you are finished?",
-                options: [
-                    { id: "minimize", name: "Minimize Button", img: "assets/minimize.png" },
-                    { id: "maximize", name: "Maximize Button", img: "assets/maximize.png" },
-                    { id: "close", name: "Close Button (X)", img: "assets/close.png" }
-                ],
-                correctAnswer: "close"
-            },
-            {
-                level: 5,
-                type: "hands_on_canvas",
-                title: "🎨 Level 5: Hands-on Activity — Draw & Color Your House!",
-                desc: "Select tools from the toolbar to draw and color a house on the canvas below!"
+                title: "🏷️ Level 4: Add Your Name to the Artwork",
+                desc: "Which tool should you place on the canvas bottom to type your name?",
+                targetLabel: "Place Tool Here to Type Name 📝",
+                targetPos: { top: '145px', left: '40px', width: '180px', height: '30px' },
+                correctTool: "text",
+                houseState: "completed_house",
+                dockTools: [
+                    { id: "text", name: "Text Tool", img: "assets/text-tool.png" },
+                    { id: "eraser", name: "Eraser", img: "assets/eraser.png" },
+                    { id: "pencil", name: "Pencil", img: "assets/pencil.png" }
+                ]
             }
         ];
 
@@ -487,10 +486,7 @@
         let timerSeconds = 20;
         let timerInterval = null;
         let selectedToolId = null;
-
-        // Hands-on Canvas state
-        let activeCanvasTool = 'pencil';
-        let isDrawing = false;
+        let placedToolId = null;
 
         function startTimer() {
             clearInterval(timerInterval);
@@ -515,7 +511,6 @@
         function loadLevel(lvlNumber) {
             currentLevel = lvlNumber;
             wrongAttempts = 0;
-            selectedToolId = null;
             const lvlData = levels.find(l => l.level === lvlNumber);
 
             document.getElementById('level-title').innerText = lvlData.title;
@@ -527,160 +522,160 @@
 
         function resetCurrentLevel() {
             selectedToolId = null;
+            placedToolId = null;
+
             const lvlData = levels.find(l => l.level === currentLevel);
-            const container = document.getElementById('interactive-area');
-            container.innerHTML = '';
+            const canvasArea = document.getElementById('canvas-area');
+            const toolsDock = document.getElementById('tools-dock');
 
-            if (lvlData.type === "tool_selection" || lvlData.type === "window_control") {
-                const palette = document.createElement('div');
-                palette.className = 'tool-palette';
+            canvasArea.innerHTML = '';
+            toolsDock.innerHTML = '';
 
-                lvlData.options.forEach(opt => {
-                    const card = document.createElement('div');
-                    card.className = 'tool-card';
-                    card.onclick = () => {
-                        document.querySelectorAll('.tool-card').forEach(c => c.classList.remove('selected'));
-                        card.classList.add('selected');
-                        selectedToolId = opt.id;
-                    };
+            // Render SVG House Illustration according to Level State
+            canvasArea.innerHTML = getHouseSVG(lvlData.houseState);
 
-                    card.innerHTML = `
-                        <img src="${opt.img}" alt="${opt.name}" onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=${opt.id}';">
-                        <span>${opt.name}</span>
-                    `;
-                    palette.appendChild(card);
-                });
+            // Render Dynamic Target Zone
+            const target = document.createElement('div');
+            target.className = 'target-zone';
+            target.id = 'target-zone';
+            target.style.top = lvlData.targetPos.top;
+            target.style.left = lvlData.targetPos.left;
+            target.style.width = lvlData.targetPos.width;
+            target.style.height = lvlData.targetPos.height;
+            target.innerText = lvlData.targetLabel;
 
-                container.appendChild(palette);
+            // Target zone tap handler
+            target.onclick = () => {
+                if (selectedToolId) {
+                    placeToolInZone(selectedToolId);
+                }
+            };
 
-            } else if (lvlData.type === "hands_on_canvas") {
-                // Interactive Paint Canvas for Drawing House
-                container.innerHTML = `
-                    <div class="paint-canvas-container">
-                        <div class="paint-toolbar">
-                            <button class="paint-tool-btn active" id="btn-pencil" onclick="setCanvasTool('pencil')">
-                                <img src="assets/pencil.png" onerror="this.style.display='none'"> Pencil
-                            </button>
-                            <button class="paint-tool-btn" id="btn-fill" onclick="setCanvasTool('fill')">
-                                <img src="assets/fill-with-color.png" onerror="this.style.display='none'"> Fill Color
-                            </button>
-                            <button class="paint-tool-btn" id="btn-eraser" onclick="setCanvasTool('eraser')">
-                                <img src="assets/eraser.png" onerror="this.style.display='none'"> Eraser
-                            </button>
-                        </div>
-                        <canvas id="houseCanvas" width="280" height="180"></canvas>
-                    </div>
+            canvasArea.appendChild(target);
+
+            // Render Dock Tools
+            const shuffledTools = [...lvlData.dockTools].sort(() => Math.random() - 0.5);
+            shuffledTools.forEach(tool => {
+                const card = document.createElement('div');
+                card.className = 'tool-card';
+                card.id = `tool-${tool.id}`;
+                card.setAttribute('data-id', tool.id);
+
+                card.innerHTML = `
+                    <img src="${tool.img}" alt="${tool.name}" onerror="this.onerror=null; this.src='https://via.placeholder.com/38?text=${tool.name}';">
+                    <span>${tool.name}</span>
                 `;
-                initHouseCanvas();
-            }
+
+                makeMobileDraggable(card, tool.id);
+                toolsDock.appendChild(card);
+            });
 
             startTimer();
         }
 
-        // Hands-On Canvas Logic
-        function setCanvasTool(tool) {
-            activeCanvasTool = tool;
-            document.querySelectorAll('.paint-tool-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`btn-${tool}`).classList.add('active');
+        // SVG Render Helper for MS Paint House Drawing
+        function getHouseSVG(state) {
+            let extraLine = state === "extra_line" ? `<line x1="180" y1="100" x2="210" y2="120" stroke="#ef4444" stroke-width="3" />` : '';
+            let roofFill = (state === "colored_walls" || state === "completed_house") ? "#f97316" : "none";
+            let wallFill = (state === "colored_walls" || state === "completed_house") ? "#fef08a" : "none";
+
+            return `
+                <svg class="house-svg" viewBox="0 0 260 180">
+                    <!-- Roof -->
+                    <polygon points="130,20 40,80 220,80" fill="${roofFill}" stroke="#334155" stroke-width="3" />
+                    <!-- Body -->
+                    <rect x="55" y="80" width="150" height="85" fill="${wallFill}" stroke="#334155" stroke-width="3" />
+                    <!-- Door -->
+                    <rect x="110" y="115" width="40" height="50" fill="#94a3b8" stroke="#334155" stroke-width="2" />
+                    <!-- Window -->
+                    <rect x="70" y="95" width="30" height="30" fill="#38bdf8" stroke="#334155" stroke-width="2" />
+                    ${extraLine}
+                </svg>
+            `;
         }
 
-        function initHouseCanvas() {
-            const canvas = document.getElementById('houseCanvas');
-            if (!canvas) return;
-            const ctx = canvas.getContext('2d');
+        // Mobile Drag & Drop + Tap Selection Engine
+        function makeMobileDraggable(cardElement, toolId) {
+            let activeTouch = false;
+            let currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
 
-            // Draw a light guide outline of a house
-            ctx.strokeStyle = '#cbd5e1';
-            ctx.lineWidth = 2;
-            ctx.setLineDash([4, 4]);
-
-            // Roof Guide
-            ctx.beginPath();
-            ctx.moveTo(140, 30);
-            ctx.lineTo(60, 80);
-            ctx.lineTo(220, 80);
-            ctx.closePath();
-            ctx.stroke();
-
-            // House Body Guide
-            ctx.strokeRect(70, 80, 140, 80);
-            ctx.setLineDash([]); // Reset line dash
-
-            // Draw Handlers
-            function getCanvasCoords(e) {
-                const rect = canvas.getBoundingClientRect();
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                return {
-                    x: clientX - rect.left,
-                    y: clientY - rect.top
-                };
-            }
-
-            function startDraw(e) {
-                isDrawing = true;
-                const pos = getCanvasCoords(e);
-
-                if (activeCanvasTool === 'fill') {
-                    // Fill area simulation
-                    ctx.fillStyle = '#f59e0b'; // Wall color
-                    if (pos.y < 80) {
-                        ctx.fillStyle = '#ef4444'; // Roof color
-                    }
-                    ctx.fillRect(pos.x - 15, pos.y - 15, 30, 30);
+            cardElement.addEventListener('click', () => {
+                document.querySelectorAll('.tool-card').forEach(c => c.classList.remove('selected-tap'));
+                if (selectedToolId === toolId) {
+                    selectedToolId = null;
                 } else {
-                    ctx.beginPath();
-                    ctx.moveTo(pos.x, pos.y);
+                    selectedToolId = toolId;
+                    cardElement.classList.add('selected-tap');
                 }
-            }
+            });
 
-            function draw(e) {
-                if (!isDrawing || activeCanvasTool === 'fill') return;
-                const pos = getCanvasCoords(e);
+            cardElement.addEventListener('touchstart', (e) => {
+                activeTouch = true;
+                const touch = e.touches[0];
+                initialX = touch.clientX - xOffset;
+                initialY = touch.clientY - yOffset;
+                cardElement.classList.add('dragging');
+                cardElement.style.zIndex = '1000';
+            }, { passive: true });
 
-                if (activeCanvasTool === 'eraser') {
-                    ctx.clearRect(pos.x - 8, pos.y - 8, 16, 16);
-                } else {
-                    ctx.strokeStyle = '#1e293b';
-                    ctx.lineWidth = 3;
-                    ctx.lineTo(pos.x, pos.y);
-                    ctx.stroke();
+            cardElement.addEventListener('touchmove', (e) => {
+                if (!activeTouch) return;
+                const touch = e.touches[0];
+                currentX = touch.clientX - initialX;
+                currentY = touch.clientY - initialY;
+                xOffset = currentX;
+                yOffset = currentY;
+                cardElement.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+            }, { passive: true });
+
+            cardElement.addEventListener('touchend', (e) => {
+                if (!activeTouch) return;
+                activeTouch = false;
+                cardElement.classList.remove('dragging');
+
+                const changedTouch = e.changedTouches[0];
+                cardElement.style.display = 'none';
+                const dropTarget = document.elementFromPoint(changedTouch.clientX, changedTouch.clientY);
+                cardElement.style.display = 'flex';
+
+                cardElement.style.transform = 'none';
+                xOffset = 0;
+                yOffset = 0;
+                cardElement.style.zIndex = '10';
+
+                const zone = dropTarget ? dropTarget.closest('.target-zone') : null;
+                if (zone) {
+                    placeToolInZone(toolId);
                 }
-            }
-
-            function stopDraw() {
-                isDrawing = false;
-            }
-
-            canvas.addEventListener('mousedown', startDraw);
-            canvas.addEventListener('mousemove', draw);
-            canvas.addEventListener('mouseup', stopDraw);
-
-            canvas.addEventListener('touchstart', startDraw, { passive: true });
-            canvas.addEventListener('touchmove', draw, { passive: true });
-            canvas.addEventListener('touchend', stopDraw);
+            });
         }
 
-        // Check Answer & Wrong Attempt Logic
+        function placeToolInZone(toolId) {
+            placedToolId = toolId;
+            const targetZone = document.getElementById('target-zone');
+            const toolCard = document.getElementById(`tool-${toolId}`);
+
+            if (targetZone && toolCard) {
+                targetZone.style.backgroundColor = 'rgba(34, 197, 94, 0.25)';
+                targetZone.style.borderColor = '#16a34a';
+                targetZone.style.color = '#15803d';
+                targetZone.innerText = `Placed: ${toolCard.querySelector('span').innerText} ✅`;
+            }
+        }
+
+        // Answer Checking Logic
         function checkAnswer() {
             const lvlData = levels.find(l => l.level === currentLevel);
-            let isCorrect = false;
 
-            if (lvlData.type === "hands_on_canvas") {
-                // Hands-on level automatically awards completion upon submission
-                isCorrect = true;
-            } else {
-                if (!selectedToolId) {
-                    handleWrongAttempt("Please select a tool first!");
-                    return;
-                }
-                isCorrect = selectedToolId === lvlData.correctAnswer;
+            if (!placedToolId) {
+                handleWrongAttempt("Please place a tool into the highlighted canvas target!");
+                return;
             }
 
-            if (isCorrect) {
+            if (placedToolId === lvlData.correctTool) {
                 handleCorrectAnswer();
             } else {
-                handleWrongAttempt("Incorrect Tool! Try Again.");
+                handleWrongAttempt("Wrong Tool Placed!");
             }
         }
 
@@ -694,7 +689,7 @@
                     loadLevel(currentLevel + 1);
                 } else {
                     document.getElementById('level-title').innerText = "🏆 Master Artist!";
-                    document.getElementById('level-desc').innerText = "You have completed all MS Paint challenges!";
+                    document.getElementById('level-desc').innerText = "You successfully placed all MS Paint tools correctly!";
                     document.getElementById('check-btn').innerText = "Play Again 🔄";
                     document.getElementById('check-btn').onclick = () => {
                         document.getElementById('check-btn').onclick = checkAnswer;
@@ -730,7 +725,7 @@
             }, 1200);
         }
 
-        // Confetti Burst Generator
+        // Confetti Effect Generator
         function triggerConfetti() {
             const canvas = document.getElementById('confetti-canvas');
             const ctx = canvas.getContext('2d');

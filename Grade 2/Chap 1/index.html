@@ -1,535 +1,503 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Magic IPO Factory - Grade 2</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mission: The Missing Innovine Mascot!</title>
+    <style>
+        /* General Setup */
+        * {
+            box-sizing: border-box;
+        }
 
-<!-- Canvas Confetti Library -->
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #333;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-<style>
-*{
-  margin:0;
-  padding:0;
-  box-sizing:border-box;
-  font-family:'Comic Sans MS', cursive, sans-serif;
-}
+        /* 5-Second Splash Screen Overlay */
+        #splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 9999;
+            transition: opacity 1s ease, visibility 1s ease;
+        }
 
-body{
-  background: linear-gradient(135deg, #ffe5ec, #eae6ff, #e8f0fe);
-  min-height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:15px;
-  overflow-x:hidden;
-}
+        #splash-screen img {
+            max-width: 80%;
+            width: 280px;
+            height: auto;
+            margin-bottom: 20px;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
 
-/* --- BRANDING SPLASH SCREEN --- */
-#brand-splash {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100vh;
-  background-color: #ffffff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
-  transition: opacity 0.5s ease;
-}
-#brand-splash img {
-  max-width: 65%;
-  max-height: 70vh;
-  object-fit: contain;
-}
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
 
-/* --- MAIN CONTAINER CARDS --- */
-.screen{
-  display:none;
-  background: white;
-  width: 95%;
-  max-width: 900px;
-  padding: 35px 25px;
-  border-radius: 35px;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.12);
-  text-align: center;
-  position: relative;
-  border: 4px solid #b3e5fc;
-  animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
+        /* Main Game Layout */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 950px;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
 
-@keyframes popUp {
-  0% { transform: scale(0.95); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            background-color: #ffffff;
+            padding: 15px 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            text-align: center;
+        }
 
-.screen.active{
-  display:block;
-}
+        .title-area h1 {
+            margin: 0;
+            font-size: clamp(20px, 4vw, 26px);
+            color: #1e3a8a;
+        }
+        .title-area p {
+            margin: 5px 0 0 0;
+            font-size: clamp(12px, 3vw, 14px);
+            color: #6b7280;
+        }
 
-h1{
-  color: #0284c7;
-  font-size: 36px;
-  margin-bottom: 10px;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
-}
+        .game-container {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            width: 100%;
+        }
 
-.subtitle{
-  font-size: 18px;
-  color: #64748b;
-  margin-bottom: 25px;
-}
+        /* Instructions & UI Panel */
+        .sidebar {
+            flex: 1;
+            min-width: 280px;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
 
-/* --- SCOREBAR BAR --- */
-.scoreboard {
-  background: #f0fdf4;
-  border: 2px solid #bbf7d0;
-  padding: 12px 25px;
-  border-radius: 50px;
-  display: inline-flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 30px;
-  margin-bottom: 25px;
-  font-size: 20px;
-  font-weight: bold;
-  color: #166534;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.02);
-}
+        .mission-box {
+            background-color: #eff6ff;
+            border-left: 5px solid #3b82f6;
+            padding: 15px;
+            border-radius: 0 10px 10px 0;
+            margin-bottom: 15px;
+        }
 
-.btn {
-  background: #ff7043;
-  color: white;
-  border: none;
-  padding: 16px 36px;
-  border-radius: 50px;
-  font-size: 22px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
-  box-shadow: 0 6px 14px rgba(255,112,67,0.3);
-  transition: transform 0.2s, background-color 0.2s;
-}
+        .mission-box h3 {
+            margin: 0 0 8px 0;
+            color: #1d4ed8;
+            font-size: 18px;
+        }
 
-.btn:hover {
-  transform: scale(1.05);
-  background: #e64a19;
-}
+        .mission-box p {
+            margin: 0;
+            font-size: 14px;
+            line-height: 1.4;
+        }
 
-/* --- CONVEYOR BELT IPO FLOW STYLING --- */
-.factory-floor {
-  background: #f8fafc;
-  border: 3px dashed #cbd5e1;
-  border-radius: 24px;
-  padding: 20px;
-  margin: 20px 0;
-  position: relative;
-}
+        /* Reference Asset Box for Levels */
+        .asset-preview-box {
+            margin-top: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            display: none;
+        }
 
-.conveyor-belt {
-  display: flex;
-  justify-content: space-between;
-  align-items: stretch;
-  gap: 15px;
-  margin-bottom: 25px;
-  position: relative;
-  flex-wrap: wrap;
-}
+        .asset-preview-box img {
+            max-width: 100%;
+            max-height: 100px;
+            border-radius: 8px;
+            border: 1px dashed #cbd5e1;
+        }
 
-.ipo-card {
-  flex: 1;
-  min-width: 200px;
-  background: white;
-  padding: 20px 15px;
-  border-radius: 20px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-  border: 3px solid #e2e8f0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
+        .controls-group {
+            margin-top: 10px;
+        }
 
-.ipo-card.input-card { border-color: #fca5a5; background: #fff5f5; }
-.ipo-card.process-card { border-color: #fde047; background: #fefce8; }
-.ipo-card.output-card { border-color: #86efac; background: #f0fdf4; border-style: dashed; }
+        .label {
+            font-weight: bold;
+            font-size: 14px;
+            margin-bottom: 10px;
+            display: block;
+            color: #4b5563;
+        }
 
-.ipo-label {
-  font-size: 14px;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-  padding: 4px 12px;
-  border-radius: 12px;
-  color: white;
-}
-.input-card .ipo-label { background: #ef4444; }
-.process-card .ipo-label { background: #eab308; color: #451a03; }
-.output-card .ipo-label { background: #22c55e; }
+        .palette {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            justify-content: flex-start;
+        }
 
-.ipo-content {
-  font-size: 18px;
-  font-weight: bold;
-  color: #334155;
-  line-height: 1.4;
-}
+        .color-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            touch-action: manipulation;
+        }
 
-.arrow-divider {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  color: #94a3b8;
-}
+        .color-btn:hover, .color-btn:active {
+            transform: scale(1.1);
+        }
 
-/* --- CHOOSE OPTIONS STYLING --- */
-.prompt-text {
-  font-size: 22px;
-  color: #1e293b;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
+        .color-btn.active {
+            border-color: #111827;
+        }
 
-.options-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 15px;
-  margin-top: 15px;
-}
+        #color-blue { background-color: #0284c7; }
+        #color-orange { background-color: #f97316; }
+        #color-green { background-color: #22c55e; }
 
-.option-card {
-  background: white;
-  border: 3px solid #e2e8f0;
-  padding: 20px;
-  border-radius: 20px;
-  font-size: 20px;
-  font-weight: bold;
-  color: #334155;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.03);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-}
+        .action-btn {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s, transform 0.1s;
+            touch-action: manipulation;
+        }
 
-.option-card:hover {
-  transform: translateY(-3px);
-  border-color: #38bdf8;
-  background: #f0f9ff;
-}
+        .action-btn:hover {
+            background-color: #059669;
+        }
+        
+        .action-btn:active {
+            transform: scale(0.98);
+        }
 
-.feedback-box {
-  height: 40px;
-  font-size: 24px;
-  font-weight: bold;
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+        /* Canvas Viewport */
+        .canvas-area {
+            flex: 2;
+            background-color: #e5e7eb;
+            padding: 15px;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
+            width: 100%;
+        }
 
-/* --- CERTIFICATE VIEW STYLING --- */
-.certificate {
-  border: 8px double #eab308;
-  background: #fffdf5;
-  padding: 40px 30px;
-  border-radius: 24px;
-  box-shadow: inset 0 0 40px rgba(234,179,8,0.05);
-}
+        .paint-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 10px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #4b5563;
+        }
 
-.cert-title {
-  font-size: 24px;
-  color: #ca8a04;
-  letter-spacing: 2px;
-  font-weight: bold;
-  text-transform: uppercase;
-  margin-bottom: 15px;
-}
+        .canvas-wrapper {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
 
-.final-score {
-  font-size: 64px;
-  font-weight: bold;
-  color: #dc2626;
-  margin: 15px 0;
-}
+        canvas {
+            background-color: #ffffff;
+            border: 2px solid #9ca3af;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            touch-action: none;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="2" x2="22" y2="6"></line><path d="M7.5 10.5L19 19"></path><path d="M16 2.5L21.5 8 16 13.5 10.5 8 16 2.5z"></path><path d="M10.5 8L3 15.5 3 21 8.5 21 16 13.5 10.5 8z"></path></svg>') 0 20, pointer;
+        }
 
-.rank-badge {
-  background: #ca8a04;
-  color: white;
-  font-size: 24px;
-  padding: 12px 30px;
-  border-radius: 50px;
-  display: inline-block;
-  font-weight: bold;
-  margin-top: 10px;
-  box-shadow: 0 4px 10px rgba(202,138,4,0.3);
-}
+        /* Mobile Responsive Adjustments */
+        @media (max-width: 768px) {
+            header {
+                justify-content: center;
+            }
 
-@media(max-width: 600px) {
-  .conveyor-belt { flex-direction: column; }
-  .arrow-divider { transform: rotate(90deg); margin: 5px 0; }
-  h1 { font-size: 26px; }
-}
-</style>
+            .game-container {
+                flex-direction: column-reverse;
+            }
+
+            .sidebar {
+                min-width: 100%;
+            }
+
+            .palette {
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<!-- CORE GAME AUDIO FEEDBACK -->
-<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
-<audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
-
-<!-- 1. BRANDING SPLASH SCREEN (5 SECONDS) -->
-<div id="brand-splash">
-  <img src="assets/innovine-logo.png" alt="Innovine Logo">
-</div>
-
-<!-- 2. MAIN GAMEPLAY PANEL -->
-<div id="gameplayScreen" class="screen">
-  <h1>The Magic IPO Factory</h1>
-  <div class="scoreboard">
-    <div>🎯 Round: <span id="currentRoundNum">1</span>/4</div>
-    <div>⭐ Score: <span id="currentScore">0</span></div>
-  </div>
-
-  <div class="factory-floor">
-    <div class="conveyor-belt">
-      <div class="ipo-card input-card">
-        <span class="ipo-label">Input</span>
-        <div class="ipo-content" id="inputContent">...</div>
-      </div>
-      <div class="arrow-divider">➜</div>
-      <div class="ipo-card process-card">
-        <span class="ipo-label">Process</span>
-        <div class="ipo-content" id="processContent">...</div>
-      </div>
-      <div class="arrow-divider">➜</div>
-      <div class="ipo-card output-card">
-        <span class="ipo-label">Output</span>
-        <div class="ipo-content" id="outputContent" style="color:#94a3b8; font-style:italic;">? Hidden ?</div>
-      </div>
+    <!-- 5-Second Splash Screen Overlay -->
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/250x100?text=Innovine+Logo';">
     </div>
-  </div>
 
-  <div class="prompt-text" id="roundPrompt">...</div>
-  <div class="options-grid" id="optionsContainer"></div>
-  <div class="feedback-box" id="feedbackDisplay"></div>
-</div>
+    <!-- Main Game Content -->
+    <div class="main-content" id="game-workspace">
+        <header>
+            <div class="title-area">
+                <h1>🎨 Mission: The Missing Innovine Mascot!</h1>
+                <p>Introduction to MS Paint & IPO Cycle</p>
+            </div>
+        </header>
 
-<!-- 3. END-GAME EVALUATION SCREEN -->
-<div id="certificateScreen" class="screen">
-  <div class="certificate">
-    <div class="cert-title">📜 Factory Master Certificate</div>
-    <p style="font-size: 20px; color: #475569; margin-top: 15px; font-weight: bold;">You completed the IPO Cycle Game with a score of:</p>
-    <div class="final-score" id="certFinalScore">0/4 Points</div>
-    <div class="rank-badge" id="certRank">Certified Chief Systems Engineer</div>
-    <div>
-      <button class="btn" onclick="location.reload()" style="margin-top: 30px; font-size:18px; padding:12px 25px;">Play Again 🔄</button>
+        <div class="game-container">
+            <div class="sidebar">
+                <div>
+                    <div class="mission-box" id="step-box">
+                        <h3 id="step-title">🚀 Level 1: Start Engine</h3>
+                        <p id="step-text">Tap or click inside the white canvas drawing box to wake up your digital pencil and make your first sound!</p>
+                    </div>
+
+                    <!-- Asset Reference Display -->
+                    <div class="asset-preview-box" id="asset-preview-container">
+                        <span class="label">Reference Hint:</span>
+                        <img id="asset-preview-img" src="" alt="Reference Asset" onerror="this.style.display='none'">
+                    </div>
+
+                    <div class="controls-group">
+                        <span class="label">Innovine Power Palette:</span>
+                        <div class="palette">
+                            <button class="color-btn active" id="color-blue" onclick="changeColor('#0284c7', this)"></button>
+                            <button class="color-btn" id="color-orange" onclick="changeColor('#f97316', this)"></button>
+                            <button class="color-btn" id="color-green" onclick="changeColor('#22c55e', this)"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="action-btn" id="next-btn" onclick="advanceLevel()">Next Level ➡️</button>
+            </div>
+
+            <div class="canvas-area">
+                <div class="paint-header">
+                    <span>✏️ Pencil Tool Active</span>
+                    <span id="canvas-status">Status: Waiting for Artist</span>
+                </div>
+                <div class="canvas-wrapper">
+                    <canvas id="paintCanvas" width="500" height="380"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<script>
-// Game State variables
-let currentRound = 0;
-let score = 0;
-let isAnswered = false;
+    <script>
+        // Splash Screen Timer Loop
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                const workspace = document.getElementById('game-workspace');
+                
+                splash.style.opacity = '0';
+                splash.style.visibility = 'hidden';
+                workspace.style.opacity = '1';
+                
+                setTimeout(() => { playLevelUpSound(); }, 200);
+            }, 5000);
+        });
 
-// Unified Sequential Round Questions Database
-const ipoRoundsData = [
-  {
-    input: "🥭 Raw Mangoes & Sugar",
-    process: "Blends in a Mixer",
-    prompt: "What is the final OUTPUT?",
-    options: [
-      { text: "🧃 Sweet Mango Juice", isCorrect: true },
-      { text: "🍕 Cheese Pizza", isCorrect: false },
-      { text: "🪵 Wooden Chair", isCorrect: false }
-    ]
-  },
-  {
-    input: "⌨️ Tapping keys 'A-P-P-L-E' on Keyboard",
-    process: "CPU processes the letters",
-    prompt: "What is the correct OUTPUT on the screen?",
-    options: [
-      { text: "🔊 A loud beep sound", isCorrect: false },
-      { text: "🍎 The word 'APPLE' shows on Monitor", isCorrect: true },
-      { text: "🖨️ A printed picture", isCorrect: false }
-    ]
-  },
-  {
-    input: "🧼 Dirty Clothes & Washing Powder",
-    process: "Spinning inside the Washing Machine",
-    prompt: "What is the wonderful OUTPUT?",
-    options: [
-      { text: "👕 Clean, fresh clothes", isCorrect: true },
-      { text: "🍽️ Hot dinner", isCorrect: false },
-      { text: "🎒 New school bag", isCorrect: false }
-    ]
-  },
-  {
-    input: "Numbers: 5 and 2 (with a '+' sign)",
-    process: "CPU adds the numbers together",
-    prompt: "What is the mathematical OUTPUT?",
-    options: [
-      { text: "🔢 3", isCorrect: false },
-      { text: "🔢 10", isCorrect: false },
-      { text: "🔢 7", isCorrect: true }
-    ]
-  }
-];
+        // App State Properties
+        const canvas = document.getElementById('paintCanvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let currentColor = '#0284c7'; 
+        let currentLevel = 1;
 
-// Splash Screen Timer Controller (Exactly 5 Seconds)
-window.addEventListener('DOMContentLoaded', () => {
-  setTimeout(() => {
-    const splash = document.getElementById('brand-splash');
-    splash.style.opacity = '0';
-    setTimeout(() => {
-      splash.style.display = 'none';
-      document.getElementById('gameplayScreen').classList.add('active');
-      loadRound();
-    }, 500);
-  }, 5000);
-});
+        // Sound Synthesizer Engine
+        let audioCtx = null;
+        function playTone(freq, type, duration) {
+            try {
+                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch(e) { console.log("Audio waiting for user gesture"); }
+        }
 
-// Sound Handler
-function playAudio(elementId, isSuccess) {
-  const audioNode = document.getElementById(elementId);
-  if (audioNode && audioNode.src && audioNode.currentTime !== undefined) {
-    audioNode.currentTime = 0;
-    audioNode.play().catch(() => playFallbackSound(isSuccess));
-  } else {
-    playFallbackSound(isSuccess);
-  }
-}
+        function playDrawSound() { playTone(300, 'triangle', 0.1); }
+        function playLevelUpSound() {
+            playTone(523.25, 'sine', 0.15); 
+            setTimeout(() => playTone(659.25, 'sine', 0.15), 100); 
+            setTimeout(() => playTone(783.99, 'sine', 0.3), 200); 
+        }
 
-// Fallback Sound Generator
-function playFallbackSound(isSuccess) {
-  try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    
-    if (isSuccess) {
-      osc.frequency.setValueAtTime(587.33, ctx.currentTime);
-      osc.frequency.setValueAtTime(880, ctx.currentTime + 0.1);
-      gain.gain.setValueAtTime(0.2, ctx.currentTime);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.3);
-    } else {
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(220, ctx.currentTime);
-      osc.frequency.setValueAtTime(164.81, ctx.currentTime + 0.15);
-      gain.gain.setValueAtTime(0.2, ctx.currentTime);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.35);
-    }
-  } catch(e) { console.log('Audio fallback failed'); }
-}
+        // Setup Drawing Canvas Defaults
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.lineWidth = 5;
 
-// Populate round details
-function loadRound() {
-  isAnswered = false;
-  document.getElementById('feedbackDisplay').innerText = "";
-  document.getElementById('outputContent').innerText = "? Hidden ?";
-  document.getElementById('outputContent').style.color = "#94a3b8";
-  document.getElementById('outputContent').style.fontStyle = "italic";
+        // Coordinate Mapping across Mobile Touch & Desktop Mouse
+        function getCoordinates(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
 
-  const currentData = ipoRoundsData[currentRound];
+            let clientX = e.clientX;
+            let clientY = e.clientY;
 
-  document.getElementById('currentRoundNum').innerText = currentRound + 1;
-  document.getElementById('inputContent').innerText = currentData.input;
-  document.getElementById('processContent').innerText = currentData.process;
-  document.getElementById('roundPrompt').innerText = currentData.prompt;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            }
 
-  const optionsContainer = document.getElementById('optionsContainer');
-  optionsContainer.innerHTML = "";
+            return {
+                x: (clientX - rect.left) * scaleX,
+                y: (clientY - rect.top) * scaleY
+            };
+        }
 
-  currentData.options.forEach(option => {
-    const card = document.createElement('div');
-    card.className = "option-card";
-    card.innerText = option.text;
-    card.onclick = () => evaluateChoice(card, option.isCorrect);
-    optionsContainer.appendChild(card);
-  });
-}
+        // Drawing Event Handlers
+        function startDrawing(e) {
+            isDrawing = true;
+            const pos = getCoordinates(e);
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+            document.getElementById('canvas-status').innerText = "Status: Drawing ✨";
+        }
 
-// Evaluate selection
-function evaluateChoice(selectedCard, isCorrect) {
-  if(isAnswered) return;
-  isAnswered = true;
+        function draw(e) {
+            if (!isDrawing) return;
+            e.preventDefault();
+            const pos = getCoordinates(e);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.strokeStyle = currentColor;
+            ctx.stroke();
+            if (Math.random() < 0.15) playDrawSound(); 
+        }
 
-  const feedbackDisplay = document.getElementById('feedbackDisplay');
+        function stopDrawing() {
+            if (isDrawing) {
+                isDrawing = false;
+                ctx.closePath();
+                document.getElementById('canvas-status').innerText = "Status: Canvas Ready";
+            }
+        }
 
-  if(isCorrect) {
-    score++;
-    document.getElementById('currentScore').innerText = score;
-    selectedCard.style.background = "#dcfce7";
-    selectedCard.style.borderColor = "#22c55e";
-    feedbackDisplay.innerText = "🎉 Brilliant! Correct Answer!";
-    feedbackDisplay.style.color = "#166534";
-    playAudio('correctSound', true);
-  } else {
-    selectedCard.style.background = "#fee2e2";
-    selectedCard.style.borderColor = "#ef4444";
-    feedbackDisplay.innerText = "❌ Let's try to fix that next time!";
-    feedbackDisplay.style.color = "#991b1b";
-    playAudio('wrongSound', false);
-  }
+        // Desktop Events
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mouseleave', stopDrawing);
 
-  // Reveal output
-  const targetedAnswer = ipoRoundsData[currentRound].options.find(o => o.isCorrect).text;
-  const outputField = document.getElementById('outputContent');
-  outputField.innerText = targetedAnswer;
-  outputField.style.color = "#166534";
-  outputField.style.fontStyle = "normal";
+        // Touch Mobile Events
+        canvas.addEventListener('touchstart', (e) => { startDrawing(e); e.preventDefault(); }, { passive: false });
+        canvas.addEventListener('touchmove', draw, { passive: false });
+        canvas.addEventListener('touchend', stopDrawing);
 
-  // Next round delay
-  setTimeout(() => {
-    currentRound++;
-    if(currentRound < ipoRoundsData.length) {
-      loadRound();
-    } else {
-      triggerEvaluationView();
-    }
-  }, 2200);
-}
+        // Color Changing Function
+        function changeColor(colorHex, buttonElement) {
+            currentColor = colorHex;
+            document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
+            buttonElement.classList.add('active');
+            playTone(440, 'sine', 0.05); 
+        }
 
-// Result Screen
-function triggerEvaluationView() {
-  document.getElementById('gameplayScreen').classList.remove('active');
-  document.getElementById('certificateScreen').classList.add('active');
+        // Helper to load assets conditionally
+        function showAssetHint(src) {
+            const container = document.getElementById('asset-preview-container');
+            const img = document.getElementById('asset-preview-img');
+            img.style.display = 'block';
+            img.src = src;
+            container.style.display = 'block';
+        }
 
-  document.getElementById('certFinalScore').innerText = `${score} / 4 Points`;
+        function hideAssetHint() {
+            document.getElementById('asset-preview-container').style.display = 'none';
+        }
 
-  let designRank = "";
-  if(score === 4) {
-    designRank = "🏆 Certified Chief Systems Engineer";
-  } else if (score >= 2) {
-    designRank = "🌟 Expert Factory Junior Planner";
-  } else {
-    designRank = "📘 Systems Apprentice Explorer";
-  }
+        // Level State Machine (Extended with 2 extra IPO Cycle levels)
+        function advanceLevel() {
+            currentLevel++;
+            const title = document.getElementById('step-title');
+            const text = document.getElementById('step-text');
+            const btn = document.getElementById('next-btn');
 
-  document.getElementById('certRank').innerText = designRank;
+            playLevelUpSound();
 
-  playAudio('clapSound', true);
-  if(typeof confetti === 'function') {
-    confetti({
-      particleCount: 200,
-      spread: 90,
-      origin: { y: 0.6 }
-    });
-  }
-}
-</script>
+            if (currentLevel === 2) {
+                hideAssetHint();
+                title.innerText = "🌊 Level 2: The Wobbly Wave Test";
+                text.innerText = "Excellent! Hold down your finger or mouse and draw 3 large ocean waves across the screen!";
+            } else if (currentLevel === 3) {
+                hideAssetHint();
+                title.innerText = "🎨 Level 3: Match the Identity";
+                text.innerText = "Tap the Orange or Green color button. Use that color to trace a huge happy smile on your canvas!";
+            } else if (currentLevel === 4) {
+                // NEW LEVEL 4: IPO Cycle - INPUT STAGE
+                showAssetHint('assets/keyboard-input.png');
+                title.innerText = "⌨️ Level 4: IPO Cycle - Input Stage";
+                text.innerText = "In the IPO Cycle, Input is what you give to the computer! Draw an Input device (Keyboard or Mouse) or write a letter on the canvas.";
+            } else if (currentLevel === 5) {
+                // NEW LEVEL 5: IPO Cycle - PROCESS & OUTPUT STAGE
+                showAssetHint('assets/ipo-process-output.png');
+                title.innerText = "⚙️ Level 5: IPO Cycle - Process & Output";
+                text.innerText = "Now completes the IPO Cycle! Draw a Processing Box (CPU) or an Output screen showing the finished Mascot!";
+                btn.innerText = "Lock in Canvas 💾";
+            } else if (currentLevel === 6) {
+                hideAssetHint();
+                title.innerText = "🏆 Victory! Mascot & IPO Restored!";
+                text.innerText = "Fantastic Work, Designer! You successfully used the palette, completed the IPO Cycle, and saved the Mascot!";
+                btn.innerText = "Start New Session 🔄";
+                btn.style.backgroundColor = '#3b82f6';
+            } else {
+                hideAssetHint();
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                currentLevel = 1;
+                title.innerText = "🚀 Level 1: Start Engine";
+                text.innerText = "Tap or click inside the white canvas drawing box to wake up your digital pencil and make your first sound!";
+                btn.innerText = "Next Level ➡️";
+                btn.style.backgroundColor = '#10b981';
+            }
+        }
+    </script>
 </body>
 </html>

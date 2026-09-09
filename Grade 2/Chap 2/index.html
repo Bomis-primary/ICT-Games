@@ -2,27 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPO Cycle Interactive Challenge!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fun with MS Paint - Interactive Challenge</title>
     <style>
         * {
             box-sizing: border-box;
+            touch-action: manipulation;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0f4f8;
             margin: 0;
-            padding: 15px;
+            padding: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
             color: #333;
-            min-height: 100vh;
-            overflow-x: hidden;
+            height: 100vh;
+            max-height: 100vh;
+            overflow: hidden;
         }
 
-        /* 5-Second Splash Screen Overlay */
+        /* 5-Second Splash Screen */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -31,211 +33,294 @@
             height: 100vh;
             background-color: #ffffff;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
             z-index: 9999;
-            transition: opacity 1s ease, visibility 1s ease;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
         }
 
         #splash-screen img {
-            max-width: 80%;
-            width: 300px;
-            height: auto;
-            margin-bottom: 20px;
-            animation: pulse 1.5s infinite ease-in-out;
+            max-width: 75%;
+            max-height: 50vh;
+            object-fit: contain;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        /* Confetti Canvas Overlay */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9998;
         }
 
-        /* Main Game Layout */
+        /* Sad Overlay on Wrong Answer */
+        #sad-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(255, 255, 255, 0.88);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9997;
+        }
+
+        #sad-overlay .smiley {
+            font-size: 85px;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        #sad-overlay .msg {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ef4444;
+            margin-top: 10px;
+            text-align: center;
+            padding: 0 15px;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-15px); }
+            40%, 80% { transform: translateX(15px); }
+        }
+
+        /* Main Compact Layout */
         .main-content {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 950px;
+            max-width: 650px;
+            height: 100%;
+            justify-content: space-between;
             opacity: 0;
-            transition: opacity 1s ease;
+            transition: opacity 0.8s ease;
         }
 
         header {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             width: 100%;
             background-color: #ffffff;
-            padding: 15px 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            text-align: center;
+            padding: 8px 12px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .title-area h1 {
             margin: 0;
-            font-size: clamp(20px, 4vw, 26px);
-            color: #1e3a8a;
-        }
-        
-        .title-area p {
-            margin: 5px 0 0 0;
-            font-size: clamp(12px, 3vw, 14px);
-            color: #6b7280;
-        }
-
-        .game-container {
+            font-size: 16px;
+            color: #0284c7;
             display: flex;
-            flex-direction: column;
-            gap: 20px;
-            width: 100%;
+            align-items: center;
+            gap: 6px;
         }
 
-        /* Mission / Instruction Box */
+        .title-area h1 img {
+            height: 22px;
+            width: auto;
+        }
+
+        /* Timer Badge */
+        .timer-badge {
+            background-color: #ef4444;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 14px;
+            min-width: 65px;
+            text-align: center;
+        }
+
+        /* Level Banner */
         .mission-box {
-            background-color: #eff6ff;
-            border-left: 5px solid #3b82f6;
-            padding: 15px 20px;
-            border-radius: 0 12px 12px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            width: 100%;
+            background-color: #e0f2fe;
+            border-left: 4px solid #0284c7;
+            padding: 8px 12px;
+            border-radius: 0 8px 8px 0;
+            margin: 4px 0;
         }
 
         .mission-box h3 {
-            margin: 0 0 5px 0;
-            color: #1d4ed8;
-            font-size: 18px;
+            margin: 0;
+            color: #0369a1;
+            font-size: 14px;
         }
 
         .mission-box p {
-            margin: 0;
-            font-size: 15px;
-            line-height: 1.4;
+            margin: 2px 0 0 0;
+            font-size: 12px;
+            color: #334155;
         }
 
-        /* IPO Drop Zones */
-        .ipo-zones {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            width: 100%;
-        }
-
-        .drop-zone {
-            flex: 1;
+        /* Interactive Area */
+        .interactive-area {
             background-color: #ffffff;
-            border: 3px dashed #9ca3af;
-            border-radius: 15px;
-            padding: 15px 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 180px;
-            position: relative;
-            transition: background-color 0.2s, border-color 0.2s;
-        }
-
-        .drop-zone.drag-over {
-            background-color: #e0f2fe;
-            border-color: #0284c7;
-        }
-
-        .drop-zone h4 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-            padding: 6px 12px;
-            border-radius: 8px;
-            color: white;
-            text-transform: uppercase;
-        }
-
-        .zone-input h4 { background-color: #0284c7; }
-        .zone-process h4 { background-color: #f97316; }
-        .zone-output h4 { background-color: #22c55e; }
-
-        .zone-slot {
+            padding: 10px;
+            border-radius: 10px;
             width: 100%;
             flex: 1;
             display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Cards / Options Section */
-        .cards-container {
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            display: flex;
             flex-direction: column;
             align-items: center;
-            width: 100%;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            max-height: 58vh;
+            overflow-y: auto;
         }
 
-        .cards-list {
+        /* Tool Palette Options */
+        .tool-palette {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 12px;
             flex-wrap: wrap;
-            margin-top: 10px;
             width: 100%;
         }
 
-        .item-card {
-            width: 110px;
-            height: 120px;
+        .tool-card {
+            width: 85px;
+            height: 90px;
             background-color: #f8fafc;
             border: 2px solid #cbd5e1;
-            border-radius: 12px;
-            padding: 8px;
+            border-radius: 10px;
+            padding: 6px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            cursor: grab;
-            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            cursor: pointer;
+            transition: all 0.2s;
             user-select: none;
-            touch-action: none;
         }
 
-        .item-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-            border-color: #3b82f6;
-        }
-
-        .item-card img {
-            max-width: 70px;
-            max-height: 70px;
+        .tool-card img {
+            max-width: 42px;
+            max-height: 42px;
             object-fit: contain;
             pointer-events: none;
         }
 
-        .item-card span {
-            margin-top: 6px;
-            font-size: 13px;
+        .tool-card span {
+            margin-top: 5px;
+            font-size: 11px;
             font-weight: 600;
             text-align: center;
             color: #334155;
+            pointer-events: none;
         }
 
-        .item-card.selected-tap {
-            border-color: #3b82f6;
-            background-color: #eff6ff;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+        .tool-card.selected {
+            border-color: #0284c7;
+            background-color: #e0f2fe;
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.3);
+        }
+
+        /* Interactive Drawing Canvas View (House Drawing Activity) */
+        .paint-canvas-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .paint-toolbar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+            background-color: #f1f5f9;
+            padding: 6px;
+            border-radius: 8px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .paint-tool-btn {
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .paint-tool-btn img {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+        }
+
+        .paint-tool-btn.active {
+            border-color: #0284c7;
+            background-color: #e0f2fe;
+            color: #0369a1;
+        }
+
+        canvas#houseCanvas {
+            background-color: #ffffff;
+            border: 2px solid #94a3b8;
+            border-radius: 8px;
+            touch-action: none;
+            cursor: crosshair;
+        }
+
+        /* Generic Multiple Choice Options */
+        .option-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .option-btn {
+            background-color: #f8fafc;
+            border: 2px solid #cbd5e1;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #1e293b;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .option-btn img {
+            height: 28px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .option-btn.selected {
+            background-color: #e0f2fe;
+            border-color: #0284c7;
+            color: #0369a1;
         }
 
         /* Action Buttons */
         .controls {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             width: 100%;
-            margin-top: 10px;
+            margin-bottom: 5px;
         }
 
         .action-btn {
@@ -243,39 +328,15 @@
             background-color: #10b981;
             color: white;
             border: none;
-            padding: 14px 20px;
-            font-size: 16px;
+            padding: 12px;
+            font-size: 15px;
             font-weight: bold;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-            touch-action: manipulation;
         }
-
-        .action-btn:hover { background-color: #059669; }
-        .action-btn:active { transform: scale(0.98); }
 
         .action-btn.reset-btn {
             background-color: #6b7280;
-        }
-        .action-btn.reset-btn:hover { background-color: #4b5563; }
-
-        /* Responsive design for phones */
-        @media (max-width: 650px) {
-            .ipo-zones {
-                flex-direction: column;
-            }
-            .drop-zone {
-                min-height: 120px;
-            }
-            .item-card {
-                width: 95px;
-                height: 105px;
-            }
-            .item-card img {
-                max-width: 55px;
-                max-height: 55px;
-            }
         }
     </style>
 </head>
@@ -283,72 +344,56 @@
 
     <!-- 5-Second Splash Screen Overlay -->
     <div id="splash-screen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x120?text=Innovine+Logo';">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/250x100?text=Innovine+Logo';">
     </div>
 
-    <!-- Audio Elements from assets folder -->
-    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+    <!-- Confetti Particle Overlay Canvas -->
+    <canvas id="confetti-canvas"></canvas>
 
-    <!-- Main Game Workspace -->
+    <!-- Sad Overlay for Incorrect Attempts -->
+    <div id="sad-overlay">
+        <div class="smiley">😢</div>
+        <div class="msg" id="sad-msg">Wrong Tool! Try Again</div>
+    </div>
+
+    <!-- Assets Audio elements -->
+    <audio id="audio-clap" src="assets/clap.mp3" preload="auto"></audio>
+    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
+
+    <!-- Main Game Viewport -->
     <div class="main-content" id="game-workspace">
         <header>
             <div class="title-area">
-                <h1>⚙️ Mission: Master the IPO Cycle!</h1>
-                <p>Input ➔ Process ➔ Output Challenge</p>
+                <h1>
+                    <img src="assets/ms paint.png" alt="MS Paint" onerror="this.style.display='none'">
+                    Fun with MS Paint
+                </h1>
             </div>
+            <div class="timer-badge" id="timer-display">⏱️ 20s</div>
         </header>
 
-        <div class="game-container">
-            <!-- Mission Level Box -->
-            <div class="mission-box">
-                <h3 id="level-title">🥤 Level 1: Making Fresh Juice</h3>
-                <p id="level-desc">Drag or tap the items below into their correct stage in the IPO cycle!</p>
-            </div>
+        <div class="mission-box">
+            <h3 id="level-title">Level 1</h3>
+            <p id="level-desc">Description</p>
+        </div>
 
-            <!-- IPO Drop Target Zones -->
-            <div class="ipo-zones">
-                <div class="drop-zone zone-input" data-type="input" onclick="handleZoneTap('input')">
-                    <h4>1. Input</h4>
-                    <div class="zone-slot" id="slot-input"></div>
-                </div>
+        <div class="interactive-area" id="interactive-area">
+            <!-- Content dynamically rendered here -->
+        </div>
 
-                <div class="drop-zone zone-process" data-type="process" onclick="handleZoneTap('process')">
-                    <h4>2. Process</h4>
-                    <div class="zone-slot" id="slot-process"></div>
-                </div>
-
-                <div class="drop-zone zone-output" data-type="output" onclick="handleZoneTap('output')">
-                    <h4>3. Output</h4>
-                    <div class="zone-slot" id="slot-output"></div>
-                </div>
-            </div>
-
-            <!-- Cards Pool -->
-            <div class="cards-container">
-                <span class="label" style="font-weight: bold; color: #4b5563;">Available Items (Drag or Tap to Place):</span>
-                <div class="cards-list" id="cards-list">
-                    <!-- Cards will be dynamically injected here -->
-                </div>
-            </div>
-
-            <div class="controls">
-                <button class="action-btn reset-btn" onclick="resetCurrentLevel()">Clear / Reset 🔄</button>
-                <button class="action-btn" id="check-btn" onclick="checkAnswer()">Check Answer ✨</button>
-            </div>
+        <div class="controls">
+            <button class="action-btn reset-btn" onclick="resetCurrentLevel()">Clear 🔄</button>
+            <button class="action-btn" id="check-btn" onclick="checkAnswer()">Submit ✨</button>
         </div>
     </div>
 
     <script>
-        // Splash Screen Timer Loop (5 Seconds)
+        // Splash Screen Timer (5 Seconds)
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                const workspace = document.getElementById('game-workspace');
-                
-                splash.style.opacity = '0';
-                splash.style.visibility = 'hidden';
-                workspace.style.opacity = '1';
+                document.getElementById('splash-screen').style.opacity = '0';
+                document.getElementById('splash-screen').style.visibility = 'hidden';
+                document.getElementById('game-workspace').style.opacity = '1';
             }, 5000);
             
             loadLevel(1);
@@ -356,15 +401,26 @@
 
         // Audio Handler
         function playSound(type) {
+            const clapAudio = document.getElementById('audio-clap');
             const correctAudio = document.getElementById('audio-correct');
-            const wrongAudio = document.getElementById('audio-wrong');
 
             if (type === 'correct') {
-                correctAudio.currentTime = 0;
-                correctAudio.play().catch(e => console.log('Audio playback prevented:', e));
+                clapAudio.currentTime = 0;
+                clapAudio.play().catch(e => {
+                    correctAudio.currentTime = 0;
+                    correctAudio.play().catch(err => {});
+                });
             } else if (type === 'wrong') {
-                wrongAudio.currentTime = 0;
-                wrongAudio.play().catch(e => console.log('Audio playback prevented:', e));
+                // Synthetic fallback beep for wrong answer
+                try {
+                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                    const osc = ctx.createOscillator();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(150, ctx.currentTime);
+                    osc.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                } catch(e) {}
             }
         }
 
@@ -372,201 +428,345 @@
         const levels = [
             {
                 level: 1,
-                title: "🥤 Level 1: Making Fresh Juice",
-                desc: "Arrange the items to show how orange juice is made using the Input ➔ Process ➔ Output cycle!",
-                items: [
-                    { id: "oranges", name: "Oranges", type: "input", img: "assets/oranges.png" },
-                    { id: "juicer", name: "Juicer", type: "process", img: "assets/juicer.png" },
-                    { id: "juice-glass", name: "Juice Glass", type: "output", img: "assets/juice-glass.png" }
-                ]
+                type: "tool_selection",
+                title: "🏠 Level 1: Drawing the House Roof & Walls",
+                desc: "Which tool should you select to draw the straight lines for the roof and walls of a house?",
+                options: [
+                    { id: "pencil", name: "Pencil / Line Tool", img: "assets/pencil.png" },
+                    { id: "eraser", name: "Eraser Tool", img: "assets/eraser.png" },
+                    { id: "text", name: "Text Tool", img: "assets/text-tool.png" }
+                ],
+                correctAnswer: "pencil"
             },
             {
                 level: 2,
-                title: "🎨 Level 2: Making a Clay Toy",
-                desc: "Identify the Input, Process, and Output steps required to make a clay toy!",
-                items: [
-                    { id: "clay", name: "Raw Clay", type: "input", img: "assets/clay.png" },
-                    { id: "child-clay", name: "Shaping Clay", type: "process", img: "assets/child-clay.png" },
-                    { id: "clay-toy", name: "Clay Toy", type: "output", img: "assets/clay-toy.png" }
-                ]
+                type: "tool_selection",
+                title: "🎨 Level 2: Coloring the House",
+                desc: "Which tool allows you to fill the walls and roof of your house with vibrant colors?",
+                options: [
+                    { id: "eraser", name: "Eraser Tool", img: "assets/eraser.png" },
+                    { id: "fill", name: "Fill with Color", img: "assets/fill-with-color.png" },
+                    { id: "pencil", name: "Pencil Tool", img: "assets/pencil.png" }
+                ],
+                correctAnswer: "fill"
             },
             {
                 level: 3,
-                title: "💻 Level 3: Computer Processing",
-                desc: "Show how a computer takes data, processes it, and displays the result!",
-                items: [
-                    { id: "keyboard", name: "Keyboard", type: "input", img: "assets/keyboard.png" },
-                    { id: "cpu", name: "CPU", type: "process", img: "assets/CPU.png" },
-                    { id: "monitor", name: "Monitor", type: "output", img: "assets/monitor.png" }
-                ]
+                type: "tool_selection",
+                title: "✏️ Level 3: Fixing Mistakes",
+                desc: "Oh no! A line went outside the house boundary. Which tool will you use to erase it?",
+                options: [
+                    { id: "eraser", name: "Eraser Tool", img: "assets/eraser.png" },
+                    { id: "color", name: "Color Palette", img: "assets/color .png" },
+                    { id: "text", name: "Text Tool", img: "assets/text-tool.png" }
+                ],
+                correctAnswer: "eraser"
+            },
+            {
+                level: 4,
+                type: "window_control",
+                title: "🖥️ Level 4: Closing MS Paint",
+                desc: "Which window control button is used to close the MS Paint window when you are finished?",
+                options: [
+                    { id: "minimize", name: "Minimize Button", img: "assets/minimize.png" },
+                    { id: "maximize", name: "Maximize Button", img: "assets/maximize.png" },
+                    { id: "close", name: "Close Button (X)", img: "assets/close.png" }
+                ],
+                correctAnswer: "close"
+            },
+            {
+                level: 5,
+                type: "hands_on_canvas",
+                title: "🎨 Level 5: Hands-on Activity — Draw & Color Your House!",
+                desc: "Select tools from the toolbar to draw and color a house on the canvas below!"
             }
         ];
 
         let currentLevel = 1;
-        let selectedCard = null;
-        let placements = { input: null, process: null, output: null };
+        let wrongAttempts = 0;
+        let timerSeconds = 20;
+        let timerInterval = null;
+        let selectedToolId = null;
 
-        // Load Level Setup
+        // Hands-on Canvas state
+        let activeCanvasTool = 'pencil';
+        let isDrawing = false;
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerSeconds = 20;
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                updateTimerDisplay();
+
+                if (timerSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    handleWrongAttempt("⏱️ Time's up!");
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            document.getElementById('timer-display').innerText = `⏱️ ${timerSeconds}s`;
+        }
+
         function loadLevel(lvlNumber) {
             currentLevel = lvlNumber;
+            wrongAttempts = 0;
+            selectedToolId = null;
             const lvlData = levels.find(l => l.level === lvlNumber);
 
             document.getElementById('level-title').innerText = lvlData.title;
             document.getElementById('level-desc').innerText = lvlData.desc;
-            document.getElementById('check-btn').innerText = "Check Answer ✨";
+            document.getElementById('check-btn').innerText = "Submit ✨";
 
             resetCurrentLevel();
         }
 
-        // Reset Level State
         function resetCurrentLevel() {
-            placements = { input: null, process: null, output: null };
-            selectedCard = null;
-
-            document.getElementById('slot-input').innerHTML = '';
-            document.getElementById('slot-process').innerHTML = '';
-            document.getElementById('slot-output').innerHTML = '';
-
+            selectedToolId = null;
             const lvlData = levels.find(l => l.level === currentLevel);
-            const cardsList = document.getElementById('cards-list');
-            cardsList.innerHTML = '';
+            const container = document.getElementById('interactive-area');
+            container.innerHTML = '';
 
-            // Shuffle cards for challenge
-            const shuffledItems = [...lvlData.items].sort(() => Math.random() - 0.5);
+            if (lvlData.type === "tool_selection" || lvlData.type === "window_control") {
+                const palette = document.createElement('div');
+                palette.className = 'tool-palette';
 
-            shuffledItems.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'item-card';
-                card.draggable = true;
-                card.id = `card-${item.id}`;
-                card.setAttribute('data-id', item.id);
-                card.setAttribute('data-type', item.type);
+                lvlData.options.forEach(opt => {
+                    const card = document.createElement('div');
+                    card.className = 'tool-card';
+                    card.onclick = () => {
+                        document.querySelectorAll('.tool-card').forEach(c => c.classList.remove('selected'));
+                        card.classList.add('selected');
+                        selectedToolId = opt.id;
+                    };
 
-                card.innerHTML = `
-                    <img src="${item.img}" alt="${item.name}" onerror="this.onerror=null; this.src='https://via.placeholder.com/70?text=${item.name}';">
-                    <span>${item.name}</span>
+                    card.innerHTML = `
+                        <img src="${opt.img}" alt="${opt.name}" onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=${opt.id}';">
+                        <span>${opt.name}</span>
+                    `;
+                    palette.appendChild(card);
+                });
+
+                container.appendChild(palette);
+
+            } else if (lvlData.type === "hands_on_canvas") {
+                // Interactive Paint Canvas for Drawing House
+                container.innerHTML = `
+                    <div class="paint-canvas-container">
+                        <div class="paint-toolbar">
+                            <button class="paint-tool-btn active" id="btn-pencil" onclick="setCanvasTool('pencil')">
+                                <img src="assets/pencil.png" onerror="this.style.display='none'"> Pencil
+                            </button>
+                            <button class="paint-tool-btn" id="btn-fill" onclick="setCanvasTool('fill')">
+                                <img src="assets/fill-with-color.png" onerror="this.style.display='none'"> Fill Color
+                            </button>
+                            <button class="paint-tool-btn" id="btn-eraser" onclick="setCanvasTool('eraser')">
+                                <img src="assets/eraser.png" onerror="this.style.display='none'"> Eraser
+                            </button>
+                        </div>
+                        <canvas id="houseCanvas" width="280" height="180"></canvas>
+                    </div>
                 `;
-
-                // Drag & Drop Handlers
-                card.addEventListener('dragstart', handleDragStart);
-                
-                // Tap/Click Handlers for Mobile Accessibility
-                card.addEventListener('click', (e) => handleCardTap(card, item));
-
-                cardsList.appendChild(card);
-            });
-
-            setupDropZones();
-        }
-
-        // Tap Selection for Mobile / Laptop Accessibility
-        function handleCardTap(cardElement, item) {
-            document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected-tap'));
-            if (selectedCard && selectedCard.id === item.id) {
-                selectedCard = null;
-            } else {
-                selectedCard = item;
-                cardElement.classList.add('selected-tap');
+                initHouseCanvas();
             }
+
+            startTimer();
         }
 
-        function handleZoneTap(zoneType) {
-            if (!selectedCard) return;
-
-            // Place selected item into zone
-            placeItemInZone(selectedCard.id, zoneType);
-            selectedCard = null;
-            document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected-tap'));
+        // Hands-On Canvas Logic
+        function setCanvasTool(tool) {
+            activeCanvasTool = tool;
+            document.querySelectorAll('.paint-tool-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${tool}`).classList.add('active');
         }
 
-        // Drag and Drop Logic
-        let draggedItemId = null;
+        function initHouseCanvas() {
+            const canvas = document.getElementById('houseCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
 
-        function handleDragStart(e) {
-            draggedItemId = e.target.getAttribute('data-id');
-            e.dataTransfer.setData('text/plain', draggedItemId);
-        }
+            // Draw a light guide outline of a house
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([4, 4]);
 
-        function setupDropZones() {
-            const zones = document.querySelectorAll('.drop-zone');
-            zones.forEach(zone => {
-                zone.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    zone.classList.add('drag-over');
-                });
+            // Roof Guide
+            ctx.beginPath();
+            ctx.moveTo(140, 30);
+            ctx.lineTo(60, 80);
+            ctx.lineTo(220, 80);
+            ctx.closePath();
+            ctx.stroke();
 
-                zone.addEventListener('dragleave', () => {
-                    zone.classList.remove('drag-over');
-                });
+            // House Body Guide
+            ctx.strokeRect(70, 80, 140, 80);
+            ctx.setLineDash([]); // Reset line dash
 
-                zone.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    zone.classList.remove('drag-over');
-                    const itemId = e.dataTransfer.getData('text/plain') || draggedItemId;
-                    const zoneType = zone.getAttribute('data-type');
-                    placeItemInZone(itemId, zoneType);
-                });
-            });
-        }
+            // Draw Handlers
+            function getCanvasCoords(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return {
+                    x: clientX - rect.left,
+                    y: clientY - rect.top
+                };
+            }
 
-        function placeItemInZone(itemId, zoneType) {
-            const card = document.getElementById(`card-${itemId}`);
-            if (!card) return;
+            function startDraw(e) {
+                isDrawing = true;
+                const pos = getCanvasCoords(e);
 
-            // Remove card from any existing zone
-            Object.keys(placements).forEach(z => {
-                if (placements[z] === itemId) {
-                    placements[z] = null;
-                    document.getElementById(`slot-${z}`).innerHTML = '';
+                if (activeCanvasTool === 'fill') {
+                    // Fill area simulation
+                    ctx.fillStyle = '#f59e0b'; // Wall color
+                    if (pos.y < 80) {
+                        ctx.fillStyle = '#ef4444'; // Roof color
+                    }
+                    ctx.fillRect(pos.x - 15, pos.y - 15, 30, 30);
+                } else {
+                    ctx.beginPath();
+                    ctx.moveTo(pos.x, pos.y);
                 }
-            });
-
-            // If target zone already has an item, return it to pool
-            if (placements[zoneType]) {
-                const existingId = placements[zoneType];
-                const existingCard = document.getElementById(`card-${existingId}`);
-                document.getElementById('cards-list').appendChild(existingCard);
             }
 
-            // Move card to new slot
-            placements[zoneType] = itemId;
-            document.getElementById(`slot-${zoneType}`).appendChild(card);
+            function draw(e) {
+                if (!isDrawing || activeCanvasTool === 'fill') return;
+                const pos = getCanvasCoords(e);
+
+                if (activeCanvasTool === 'eraser') {
+                    ctx.clearRect(pos.x - 8, pos.y - 8, 16, 16);
+                } else {
+                    ctx.strokeStyle = '#1e293b';
+                    ctx.lineWidth = 3;
+                    ctx.lineTo(pos.x, pos.y);
+                    ctx.stroke();
+                }
+            }
+
+            function stopDraw() {
+                isDrawing = false;
+            }
+
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDraw);
+
+            canvas.addEventListener('touchstart', startDraw, { passive: true });
+            canvas.addEventListener('touchmove', draw, { passive: true });
+            canvas.addEventListener('touchend', stopDraw);
         }
 
-        // Check Answer & Sound Logic
+        // Check Answer & Wrong Attempt Logic
         function checkAnswer() {
             const lvlData = levels.find(l => l.level === currentLevel);
+            let isCorrect = false;
 
-            let isComplete = placements.input && placements.process && placements.output;
-            if (!isComplete) {
-                alert("Please place an item in all three boxes (Input, Process, Output)!");
-                return;
+            if (lvlData.type === "hands_on_canvas") {
+                // Hands-on level automatically awards completion upon submission
+                isCorrect = true;
+            } else {
+                if (!selectedToolId) {
+                    handleWrongAttempt("Please select a tool first!");
+                    return;
+                }
+                isCorrect = selectedToolId === lvlData.correctAnswer;
             }
 
-            let inputCorrect = lvlData.items.find(i => i.type === 'input').id === placements.input;
-            let processCorrect = lvlData.items.find(i => i.type === 'process').id === placements.process;
-            let outputCorrect = lvlData.items.find(i => i.type === 'output').id === placements.output;
+            if (isCorrect) {
+                handleCorrectAnswer();
+            } else {
+                handleWrongAttempt("Incorrect Tool! Try Again.");
+            }
+        }
 
-            if (inputCorrect && processCorrect && outputCorrect) {
-                playSound('correct');
-                
+        function handleCorrectAnswer() {
+            clearInterval(timerInterval);
+            playSound('correct');
+            triggerConfetti();
+
+            setTimeout(() => {
                 if (currentLevel < levels.length) {
-                    alert("🎉 Correct! Great job! Moving to the next level.");
                     loadLevel(currentLevel + 1);
                 } else {
-                    alert("🏆 Victory! You have mastered the IPO Cycle!");
-                    document.getElementById('level-title').innerText = "🏆 Victory! All Levels Completed!";
-                    document.getElementById('level-desc').innerText = "You have successfully solved all the IPO challenges!";
-                    document.getElementById('check-btn').innerText = "Restart Game 🔄";
+                    document.getElementById('level-title').innerText = "🏆 Master Artist!";
+                    document.getElementById('level-desc').innerText = "You have completed all MS Paint challenges!";
+                    document.getElementById('check-btn').innerText = "Play Again 🔄";
                     document.getElementById('check-btn').onclick = () => {
                         document.getElementById('check-btn').onclick = checkAnswer;
                         loadLevel(1);
                     };
                 }
-            } else {
-                playSound('wrong');
-                alert("❌ Oops! Some items are in the wrong place. Try again!");
+            }, 1800);
+        }
+
+        function handleWrongAttempt(message) {
+            wrongAttempts++;
+            playSound('wrong');
+
+            // Show Sad Overlay
+            const overlay = document.getElementById('sad-overlay');
+            document.getElementById('sad-msg').innerText = message;
+            overlay.style.display = 'flex';
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+
+                if (wrongAttempts >= 2) {
+                    // Auto-advance after 2 wrong attempts
+                    clearInterval(timerInterval);
+                    if (currentLevel < levels.length) {
+                        loadLevel(currentLevel + 1);
+                    } else {
+                        loadLevel(1);
+                    }
+                } else {
+                    resetCurrentLevel();
+                }
+            }, 1200);
+        }
+
+        // Confetti Burst Generator
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            let particles = [];
+            for (let i = 0; i < 75; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                    size: Math.random() * 8 + 4,
+                    speed: Math.random() * 5 + 3
+                });
             }
+
+            let animationFrame;
+            function render() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    p.y += p.speed;
+                });
+
+                if (particles.some(p => p.y < canvas.height)) {
+                    animationFrame = requestAnimationFrame(render);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    cancelAnimationFrame(animationFrame);
+                }
+            }
+            render();
         }
     </script>
 </body>

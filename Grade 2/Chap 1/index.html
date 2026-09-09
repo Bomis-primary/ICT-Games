@@ -2,27 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IPO Cycle Interactive Challenge!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IPO Cycle Mobile Game</title>
     <style>
         * {
             box-sizing: border-box;
+            touch-action: manipulation;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0f4f8;
             margin: 0;
-            padding: 15px;
+            padding: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
             color: #333;
-            min-height: 100vh;
-            overflow-x: hidden;
+            height: 100vh;
+            max-height: 100vh;
+            overflow: hidden;
         }
 
-        /* 5-Second Splash Screen Overlay */
+        /* 5-Second Splash Screen */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -31,152 +33,155 @@
             height: 100vh;
             background-color: #ffffff;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
             z-index: 9999;
-            transition: opacity 1s ease, visibility 1s ease;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
         }
 
         #splash-screen img {
-            max-width: 80%;
-            width: 300px;
-            height: auto;
-            margin-bottom: 20px;
-            animation: pulse 1.5s infinite ease-in-out;
+            max-width: 75%;
+            max-height: 50vh;
+            object-fit: contain;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        /* Confetti Canvas */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 9998;
         }
 
-        /* Main Game Layout */
+        /* Sad Smiley Animation Overlay */
+        #sad-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(255, 255, 255, 0.85);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9997;
+        }
+
+        #sad-overlay .smiley {
+            font-size: 90px;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        #sad-overlay .msg {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ef4444;
+            margin-top: 10px;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-15px); }
+            40%, 80% { transform: translateX(15px); }
+        }
+
+        /* Main Compact Layout */
         .main-content {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 950px;
+            max-width: 600px;
+            height: 100%;
+            justify-content: space-between;
             opacity: 0;
-            transition: opacity 1s ease;
+            transition: opacity 0.8s ease;
         }
 
         header {
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             width: 100%;
             background-color: #ffffff;
-            padding: 15px 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            text-align: center;
+            padding: 8px 12px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .title-area h1 {
             margin: 0;
-            font-size: clamp(20px, 4vw, 26px);
+            font-size: 16px;
             color: #1e3a8a;
         }
-        
-        .title-area p {
-            margin: 5px 0 0 0;
-            font-size: clamp(12px, 3vw, 14px);
-            color: #6b7280;
-        }
 
-        .game-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 100%;
-        }
-
-        /* On-Screen Feedback Banner (Replaces alert boxes) */
-        #feedback-banner {
-            width: 100%;
-            padding: 12px 20px;
-            border-radius: 10px;
-            text-align: center;
+        /* Timer Pill */
+        .timer-badge {
+            background-color: #ef4444;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
             font-weight: bold;
-            font-size: 16px;
-            display: none;
-            transition: all 0.3s ease;
+            font-size: 14px;
+            min-width: 65px;
+            text-align: center;
         }
 
-        #feedback-banner.success {
-            display: block;
-            background-color: #d1fae5;
-            color: #065f46;
-            border: 2px solid #10b981;
-        }
-
-        #feedback-banner.error {
-            display: block;
-            background-color: #fee2e2;
-            color: #991b1b;
-            border: 2px solid #ef4444;
-        }
-
-        /* Mission / Instruction Box */
+        /* Level Banner */
         .mission-box {
+            width: 100%;
             background-color: #eff6ff;
-            border-left: 5px solid #3b82f6;
-            padding: 15px 20px;
-            border-radius: 0 12px 12px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 4px solid #3b82f6;
+            padding: 8px 12px;
+            border-radius: 0 8px 8px 0;
+            margin: 4px 0;
         }
 
         .mission-box h3 {
-            margin: 0 0 5px 0;
+            margin: 0;
             color: #1d4ed8;
-            font-size: 18px;
+            font-size: 14px;
         }
 
         .mission-box p {
-            margin: 0;
-            font-size: 15px;
-            line-height: 1.4;
+            margin: 2px 0 0 0;
+            font-size: 12px;
+            color: #4b5563;
         }
 
-        /* IPO Drop Zones */
+        /* Drop Zones (IPO) */
         .ipo-zones {
             display: flex;
-            justify-content: space-between;
-            gap: 15px;
+            gap: 6px;
             width: 100%;
+            flex: 1;
+            max-height: 140px;
         }
 
         .drop-zone {
             flex: 1;
             background-color: #ffffff;
-            border: 3px dashed #9ca3af;
-            border-radius: 15px;
-            padding: 15px 10px;
+            border: 2px dashed #9ca3af;
+            border-radius: 10px;
+            padding: 4px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 170px;
-            position: relative;
-            transition: background-color 0.2s, border-color 0.2s;
-        }
-
-        .drop-zone.drag-over {
-            background-color: #e0f2fe;
-            border-color: #0284c7;
         }
 
         .drop-zone h4 {
-            margin: 0 0 10px 0;
-            font-size: 16px;
-            padding: 6px 12px;
-            border-radius: 8px;
+            margin: 0 0 4px 0;
+            font-size: 11px;
+            padding: 3px 6px;
+            border-radius: 4px;
             color: white;
             text-transform: uppercase;
+            width: 100%;
+            text-align: center;
         }
 
         .zone-input h4 { background-color: #0284c7; }
@@ -191,111 +196,101 @@
             align-items: center;
         }
 
-        /* Puzzle / Guess Level Wrapper */
+        /* Interactive Card Area */
         .interactive-area {
             background-color: #ffffff;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            padding: 10px;
+            border-radius: 10px;
+            width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            width: 100%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
 
         .cards-list {
             display: flex;
             justify-content: center;
-            gap: 20px;
-            flex-wrap: wrap;
-            margin-top: 10px;
+            gap: 10px;
             width: 100%;
+            min-height: 90px;
         }
 
         .item-card {
-            width: 110px;
-            height: 120px;
+            width: 80px;
+            height: 85px;
             background-color: #f8fafc;
             border: 2px solid #cbd5e1;
-            border-radius: 12px;
-            padding: 8px;
+            border-radius: 10px;
+            padding: 4px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            cursor: grab;
-            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
             user-select: none;
             touch-action: none;
-        }
-
-        .item-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-            border-color: #3b82f6;
+            position: relative;
+            z-index: 10;
         }
 
         .item-card img {
-            max-width: 65px;
-            max-height: 65px;
+            max-width: 45px;
+            max-height: 45px;
             object-fit: contain;
             pointer-events: none;
         }
 
         .item-card span {
-            margin-top: 6px;
-            font-size: 13px;
+            margin-top: 4px;
+            font-size: 11px;
             font-weight: 600;
             text-align: center;
             color: #334155;
+            pointer-events: none;
+        }
+
+        .item-card.dragging {
+            opacity: 0.6;
         }
 
         .item-card.selected-tap {
             border-color: #3b82f6;
             background-color: #eff6ff;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
         }
 
-        /* Styles for Level 4 Guess Puzzle Options */
+        /* Guess Options (Level 4 & 5) */
         .guess-options {
             display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
+            flex-direction: column;
+            gap: 8px;
             width: 100%;
-            margin-top: 15px;
         }
 
         .guess-btn {
             background-color: #f1f5f9;
             border: 2px solid #cbd5e1;
-            padding: 15px 25px;
-            border-radius: 12px;
-            font-size: 16px;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 13px;
             font-weight: bold;
             color: #1e293b;
             cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .guess-btn:hover {
-            background-color: #e2e8f0;
-            border-color: #3b82f6;
+            width: 100%;
         }
 
         .guess-btn.selected {
             background-color: #eff6ff;
             border-color: #3b82f6;
             color: #1d4ed8;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
         }
 
-        /* Action Controls */
+        /* Action Buttons */
         .controls {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             width: 100%;
-            margin-top: 5px;
+            margin-bottom: 5px;
         }
 
         .action-btn {
@@ -303,100 +298,79 @@
             background-color: #10b981;
             color: white;
             border: none;
-            padding: 14px 20px;
-            font-size: 16px;
+            padding: 12px;
+            font-size: 15px;
             font-weight: bold;
-            border-radius: 10px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-            touch-action: manipulation;
         }
-
-        .action-btn:hover { background-color: #059669; }
-        .action-btn:active { transform: scale(0.98); }
 
         .action-btn.reset-btn {
             background-color: #6b7280;
-        }
-        .action-btn.reset-btn:hover { background-color: #4b5563; }
-
-        @media (max-width: 650px) {
-            .ipo-zones {
-                flex-direction: column;
-            }
-            .drop-zone {
-                min-height: 120px;
-            }
-            .item-card {
-                width: 95px;
-                height: 105px;
-            }
-            .item-card img {
-                max-width: 50px;
-                max-height: 50px;
-            }
         }
     </style>
 </head>
 <body>
 
-    <!-- 5-Second Splash Screen Overlay -->
+    <!-- 5-Second Splash Screen -->
     <div id="splash-screen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x120?text=Innovine+Logo';">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/250x100?text=Innovine+Logo';">
     </div>
 
-    <!-- Assets Audio elements -->
+    <!-- Canvas for Confetti -->
+    <canvas id="confetti-canvas"></canvas>
+
+    <!-- Sad Smiley Overlay -->
+    <div id="sad-overlay">
+        <div class="smiley">😢</div>
+        <div class="msg" id="sad-msg">Wrong Answer!</div>
+    </div>
+
+    <!-- Audio Elements -->
     <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
-    <!-- Main Workspace -->
+    <!-- Workspace -->
     <div class="main-content" id="game-workspace">
         <header>
             <div class="title-area">
-                <h1>⚙️ Mission: Master the IPO Cycle!</h1>
-                <p>Input ➔ Process ➔ Output Challenge</p>
+                <h1>⚙️ IPO Challenge</h1>
             </div>
+            <div class="timer-badge" id="timer-display">⏱️ 20s</div>
         </header>
 
-        <div class="game-container">
-            <!-- Smooth On-Screen Feedback Banner (No Alert Boxes) -->
-            <div id="feedback-banner"></div>
+        <div class="mission-box">
+            <h3 id="level-title">Level 1</h3>
+            <p id="level-desc">Description</p>
+        </div>
 
-            <!-- Level Info Box -->
-            <div class="mission-box">
-                <h3 id="level-title">🥤 Level 1: Making Fresh Juice</h3>
-                <p id="level-desc">Drag or tap the items below into their correct stage in the IPO cycle!</p>
+        <!-- IPO Drag & Drop Area (Levels 1,2,3) -->
+        <div class="ipo-zones" id="ipo-zones-view">
+            <div class="drop-zone zone-input" data-type="input" onclick="handleZoneTap('input')">
+                <h4>1. Input</h4>
+                <div class="zone-slot" id="slot-input"></div>
             </div>
 
-            <!-- Standard IPO Drag/Tap View (Levels 1, 2, 3) -->
-            <div class="ipo-zones" id="ipo-zones-view">
-                <div class="drop-zone zone-input" data-type="input" onclick="handleZoneTap('input')">
-                    <h4>1. Input</h4>
-                    <div class="zone-slot" id="slot-input"></div>
-                </div>
-
-                <div class="drop-zone zone-process" data-type="process" onclick="handleZoneTap('process')">
-                    <h4>2. Process</h4>
-                    <div class="zone-slot" id="slot-process"></div>
-                </div>
-
-                <div class="drop-zone zone-output" data-type="output" onclick="handleZoneTap('output')">
-                    <h4>3. Output</h4>
-                    <div class="zone-slot" id="slot-output"></div>
-                </div>
+            <div class="drop-zone zone-process" data-type="process" onclick="handleZoneTap('process')">
+                <h4>2. Process</h4>
+                <div class="zone-slot" id="slot-process"></div>
             </div>
 
-            <!-- Puzzle / Guess View (Level 4 & 5) -->
-            <div class="interactive-area" id="interactive-area">
-                <span class="label" id="cards-label" style="font-weight: bold; color: #4b5563;">Available Items (Drag or Tap to Place):</span>
-                <div class="cards-list" id="cards-list"></div>
-                <div class="guess-options" id="guess-options" style="display: none;"></div>
+            <div class="drop-zone zone-output" data-type="output" onclick="handleZoneTap('output')">
+                <h4>3. Output</h4>
+                <div class="zone-slot" id="slot-output"></div>
             </div>
+        </div>
 
-            <div class="controls">
-                <button class="action-btn reset-btn" onclick="resetCurrentLevel()">Clear / Reset 🔄</button>
-                <button class="action-btn" id="check-btn" onclick="checkAnswer()">Check Answer ✨</button>
-            </div>
+        <!-- Card Pool / Quiz Options -->
+        <div class="interactive-area" id="interactive-area">
+            <div class="cards-list" id="cards-list"></div>
+            <div class="guess-options" id="guess-options" style="display: none;"></div>
+        </div>
+
+        <div class="controls">
+            <button class="action-btn reset-btn" onclick="resetCurrentLevel()">Clear 🔄</button>
+            <button class="action-btn" id="check-btn" onclick="checkAnswer()">Submit ✨</button>
         </div>
     </div>
 
@@ -404,12 +378,9 @@
         // Splash Screen (5 Seconds)
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                const splash = document.getElementById('splash-screen');
-                const workspace = document.getElementById('game-workspace');
-                
-                splash.style.opacity = '0';
-                splash.style.visibility = 'hidden';
-                workspace.style.opacity = '1';
+                document.getElementById('splash-screen').style.opacity = '0';
+                document.getElementById('splash-screen').style.visibility = 'hidden';
+                document.getElementById('game-workspace').style.opacity = '1';
             }, 5000);
             
             loadLevel(1);
@@ -422,33 +393,20 @@
 
             if (type === 'correct') {
                 correctAudio.currentTime = 0;
-                correctAudio.play().catch(e => console.log('Audio playback waiting for gesture'));
+                correctAudio.play().catch(e => {});
             } else if (type === 'wrong') {
                 wrongAudio.currentTime = 0;
-                wrongAudio.play().catch(e => console.log('Audio playback waiting for gesture'));
+                wrongAudio.play().catch(e => {});
             }
         }
 
-        // Display smooth feedback without alerts
-        function showFeedback(message, isSuccess) {
-            const banner = document.getElementById('feedback-banner');
-            banner.className = isSuccess ? 'success' : 'error';
-            banner.innerText = message;
-        }
-
-        function clearFeedback() {
-            const banner = document.getElementById('feedback-banner');
-            banner.style.display = 'none';
-            banner.className = '';
-        }
-
-        // Level Definitions
+        // Game Levels Setup
         const levels = [
             {
                 level: 1,
                 type: "standard",
                 title: "🥤 Level 1: Making Fresh Juice",
-                desc: "Arrange the items to show how orange juice is made using the Input ➔ Process ➔ Output cycle!",
+                desc: "Drag or tap items into Input, Process, and Output!",
                 items: [
                     { id: "oranges", name: "Oranges", type: "input", img: "assets/oranges.png" },
                     { id: "juicer", name: "Juicer", type: "process", img: "assets/juicer.png" },
@@ -459,10 +417,10 @@
                 level: 2,
                 type: "standard",
                 title: "🎨 Level 2: Making a Clay Toy",
-                desc: "Identify the Input, Process, and Output steps required to make a clay toy!",
+                desc: "Place the items in correct IPO order!",
                 items: [
                     { id: "clay", name: "Raw Clay", type: "input", img: "assets/clay.png" },
-                    { id: "child-clay", name: "Shaping Clay", type: "process", img: "assets/child-clay.png" },
+                    { id: "child-clay", name: "Shaping", type: "process", img: "assets/child-clay.png" },
                     { id: "clay-toy", name: "Clay Toy", type: "output", img: "assets/clay-toy.png" }
                 ]
             },
@@ -470,7 +428,7 @@
                 level: 3,
                 type: "standard",
                 title: "💻 Level 3: Computer Hardware",
-                desc: "Show how a computer takes data, processes it, and displays the result!",
+                desc: "Arrange computer parts according to IPO!",
                 items: [
                     { id: "keyboard", name: "Keyboard", type: "input", img: "assets/keyboard.png" },
                     { id: "cpu", name: "CPU", type: "process", img: "assets/CPU.png" },
@@ -480,8 +438,8 @@
             {
                 level: 4,
                 type: "guess_riddle",
-                title: "🔍 Level 4: Guess the Stage Riddle!",
-                desc: "Riddle: 'I am the brain of the computer. I take your raw data, calculate it, and work hard inside! What IPO stage am I?'",
+                title: "🔍 Level 4: Riddle Puzzle",
+                desc: "Riddle: 'I am the brain of the computer that processes calculations. What stage am I?'",
                 options: ["INPUT Stage ⌨️", "PROCESS Stage ⚙️", "OUTPUT Stage 🖥️"],
                 correctAnswer: "PROCESS Stage ⚙️",
                 hintImage: "assets/CPU.png"
@@ -489,8 +447,8 @@
             {
                 level: 5,
                 type: "sequence_puzzle",
-                title: "🧩 Level 5: IPO Sequence Puzzle",
-                desc: "Which order correctly shows the IPO Cycle workflow from start to finish?",
+                title: "🧩 Level 5: IPO Order Puzzle",
+                desc: "Select the correct sequence order for the IPO cycle:",
                 options: [
                     "Output ➔ Process ➔ Input",
                     "Input ➔ Process ➔ Output",
@@ -501,24 +459,46 @@
         ];
 
         let currentLevel = 1;
+        let wrongAttempts = 0;
+        let timerSeconds = 20;
+        let timerInterval = null;
         let selectedCard = null;
         let selectedOption = null;
         let placements = { input: null, process: null, output: null };
 
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerSeconds = 20;
+            updateTimerDisplay();
+
+            timerInterval = setInterval(() => {
+                timerSeconds--;
+                updateTimerDisplay();
+
+                if (timerSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    handleWrongAttempt("⏱️ Time's up!");
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            document.getElementById('timer-display').innerText = `⏱️ ${timerSeconds}s`;
+        }
+
         function loadLevel(lvlNumber) {
             currentLevel = lvlNumber;
-            clearFeedback();
+            wrongAttempts = 0;
             const lvlData = levels.find(l => l.level === lvlNumber);
 
             document.getElementById('level-title').innerText = lvlData.title;
             document.getElementById('level-desc').innerText = lvlData.desc;
-            document.getElementById('check-btn').innerText = "Check Answer ✨";
+            document.getElementById('check-btn').innerText = "Submit ✨";
 
             resetCurrentLevel();
         }
 
         function resetCurrentLevel() {
-            clearFeedback();
             placements = { input: null, process: null, output: null };
             selectedCard = null;
             selectedOption = null;
@@ -527,7 +507,6 @@
             const ipoView = document.getElementById('ipo-zones-view');
             const cardsList = document.getElementById('cards-list');
             const guessOptions = document.getElementById('guess-options');
-            const cardsLabel = document.getElementById('cards-label');
 
             cardsList.innerHTML = '';
             guessOptions.innerHTML = '';
@@ -538,36 +517,30 @@
             if (lvlData.type === "standard") {
                 ipoView.style.display = 'flex';
                 guessOptions.style.display = 'none';
-                cardsLabel.style.display = 'block';
-                cardsLabel.innerText = "Available Items (Drag or Tap to Place):";
 
                 const shuffledItems = [...lvlData.items].sort(() => Math.random() - 0.5);
                 shuffledItems.forEach(item => {
                     const card = document.createElement('div');
                     card.className = 'item-card';
-                    card.draggable = true;
                     card.id = `card-${item.id}`;
                     card.setAttribute('data-id', item.id);
-                    card.setAttribute('data-type', item.type);
 
                     card.innerHTML = `
-                        <img src="${item.img}" alt="${item.name}" onerror="this.onerror=null; this.src='https://via.placeholder.com/65?text=${item.name}';">
+                        <img src="${item.img}" alt="${item.name}" onerror="this.onerror=null; this.src='https://via.placeholder.com/45?text=${item.name}';">
                         <span>${item.name}</span>
                     `;
 
-                    card.addEventListener('dragstart', handleDragStart);
-                    card.addEventListener('click', () => handleCardTap(card, item));
+                    // Attach Touch Drag & Tap Handlers
+                    makeMobileDraggable(card, item);
                     cardsList.appendChild(card);
                 });
-                setupDropZones();
 
-            } else if (lvlData.type === "guess_riddle" || lvlData.type === "sequence_puzzle") {
+            } else {
                 ipoView.style.display = 'none';
-                cardsLabel.style.display = 'none';
                 guessOptions.style.display = 'flex';
 
-                if(lvlData.hintImage) {
-                    cardsList.innerHTML = `<img src="${lvlData.hintImage}" style="max-height: 100px; object-fit: contain;" alt="Hint">`;
+                if (lvlData.hintImage) {
+                    cardsList.innerHTML = `<img src="${lvlData.hintImage}" style="max-height: 60px; object-fit: contain;" alt="Hint">`;
                 }
 
                 lvlData.options.forEach(opt => {
@@ -582,17 +555,64 @@
                     guessOptions.appendChild(btn);
                 });
             }
+
+            startTimer();
         }
 
-        // Tap Handlers
-        function handleCardTap(cardElement, item) {
-            document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected-tap'));
-            if (selectedCard && selectedCard.id === item.id) {
-                selectedCard = null;
-            } else {
-                selectedCard = item;
-                cardElement.classList.add('selected-tap');
-            }
+        // Touch Drag & Drop Engine for Mobile
+        function makeMobileDraggable(cardElement, item) {
+            let activeTouch = false;
+            let currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
+
+            cardElement.addEventListener('click', () => {
+                document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected-tap'));
+                if (selectedCard && selectedCard.id === item.id) {
+                    selectedCard = null;
+                } else {
+                    selectedCard = item;
+                    cardElement.classList.add('selected-tap');
+                }
+            });
+
+            cardElement.addEventListener('touchstart', (e) => {
+                activeTouch = true;
+                const touch = e.touches[0];
+                initialX = touch.clientX - xOffset;
+                initialY = touch.clientY - yOffset;
+                cardElement.classList.add('dragging');
+                cardElement.style.zIndex = '1000';
+            }, { passive: true });
+
+            cardElement.addEventListener('touchmove', (e) => {
+                if (!activeTouch) return;
+                const touch = e.touches[0];
+                currentX = touch.clientX - initialX;
+                currentY = touch.clientY - initialY;
+                xOffset = currentX;
+                yOffset = currentY;
+                cardElement.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
+            }, { passive: true });
+
+            cardElement.addEventListener('touchend', (e) => {
+                if (!activeTouch) return;
+                activeTouch = false;
+                cardElement.classList.remove('dragging');
+
+                const changedTouch = e.changedTouches[0];
+                cardElement.style.display = 'none';
+                const dropTarget = document.elementFromPoint(changedTouch.clientX, changedTouch.clientY);
+                cardElement.style.display = 'flex';
+
+                cardElement.style.transform = 'none';
+                xOffset = 0;
+                yOffset = 0;
+                cardElement.style.zIndex = '10';
+
+                const zone = dropTarget ? dropTarget.closest('.drop-zone') : null;
+                if (zone) {
+                    placeItemInZone(item.id, zone.getAttribute('data-type'));
+                }
+            });
         }
 
         function handleZoneTap(zoneType) {
@@ -600,30 +620,6 @@
             placeItemInZone(selectedCard.id, zoneType);
             selectedCard = null;
             document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected-tap'));
-        }
-
-        // Drag and Drop Logic
-        let draggedItemId = null;
-        function handleDragStart(e) {
-            draggedItemId = e.target.getAttribute('data-id');
-            e.dataTransfer.setData('text/plain', draggedItemId);
-        }
-
-        function setupDropZones() {
-            const zones = document.querySelectorAll('.drop-zone');
-            zones.forEach(zone => {
-                zone.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    zone.classList.add('drag-over');
-                });
-                zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-                zone.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    zone.classList.remove('drag-over');
-                    const itemId = e.dataTransfer.getData('text/plain') || draggedItemId;
-                    placeItemInZone(itemId, zone.getAttribute('data-type'));
-                });
-            });
         }
 
         function placeItemInZone(itemId, zoneType) {
@@ -647,15 +643,15 @@
             document.getElementById(`slot-${zoneType}`).appendChild(card);
         }
 
-        // Check Answers & Play Sounds (No Dialog Boxes)
+        // Check Answer & Wrong Attempts Handling
         function checkAnswer() {
             const lvlData = levels.find(l => l.level === currentLevel);
+            let isCorrect = false;
 
             if (lvlData.type === "standard") {
                 let isComplete = placements.input && placements.process && placements.output;
                 if (!isComplete) {
-                    playSound('wrong');
-                    showFeedback("⚠️ Please place an item in all three boxes (Input, Process, Output)!", false);
+                    handleWrongAttempt("Incomplete Answer!");
                     return;
                 }
 
@@ -663,46 +659,105 @@
                 let processCorrect = lvlData.items.find(i => i.type === 'process').id === placements.process;
                 let outputCorrect = lvlData.items.find(i => i.type === 'output').id === placements.output;
 
-                if (inputCorrect && processCorrect && outputCorrect) {
-                    playSound('correct');
-                    showFeedback("👏 Excellent work! Correct arrangement!", true);
-                    setTimeout(() => advanceToNextLevel(), 1800);
-                } else {
-                    playSound('wrong');
-                    showFeedback("❌ Some items are in the wrong stage. Try again!", false);
-                }
-
-            } else if (lvlData.type === "guess_riddle" || lvlData.type === "sequence_puzzle") {
+                isCorrect = inputCorrect && processCorrect && outputCorrect;
+            } else {
                 if (!selectedOption) {
-                    playSound('wrong');
-                    showFeedback("⚠️ Please select an answer option first!", false);
+                    handleWrongAttempt("No option selected!");
                     return;
                 }
+                isCorrect = selectedOption === lvlData.correctAnswer;
+            }
 
-                if (selectedOption === lvlData.correctAnswer) {
-                    playSound('correct');
-                    showFeedback("👏 Fantastic! That is the correct answer!", true);
-                    setTimeout(() => advanceToNextLevel(), 1800);
-                } else {
-                    playSound('wrong');
-                    showFeedback("❌ That's not quite right. Try again!", false);
-                }
+            if (isCorrect) {
+                handleCorrectAnswer();
+            } else {
+                handleWrongAttempt("Wrong Answer!");
             }
         }
 
-        function advanceToNextLevel() {
-            if (currentLevel < levels.length) {
-                loadLevel(currentLevel + 1);
-            } else {
-                showFeedback("🏆 VICTORY! You have completed all 5 IPO Cycle levels!", true);
-                document.getElementById('level-title').innerText = "🏆 Game Completed!";
-                document.getElementById('level-desc').innerText = "You have mastered the IPO Cycle!";
-                document.getElementById('check-btn').innerText = "Restart Game 🔄";
-                document.getElementById('check-btn').onclick = () => {
-                    document.getElementById('check-btn').onclick = checkAnswer;
-                    loadLevel(1);
-                };
+        function handleCorrectAnswer() {
+            clearInterval(timerInterval);
+            playSound('correct');
+            triggerConfetti();
+
+            setTimeout(() => {
+                if (currentLevel < levels.length) {
+                    loadLevel(currentLevel + 1);
+                } else {
+                    document.getElementById('level-title').innerText = "🏆 Victory!";
+                    document.getElementById('level-desc').innerText = "You completed all levels!";
+                    document.getElementById('check-btn').innerText = "Restart 🔄";
+                    document.getElementById('check-btn').onclick = () => {
+                        document.getElementById('check-btn').onclick = checkAnswer;
+                        loadLevel(1);
+                    };
+                }
+            }, 1800);
+        }
+
+        function handleWrongAttempt(message) {
+            wrongAttempts++;
+            playSound('wrong');
+
+            // Show Sad Overlay
+            const overlay = document.getElementById('sad-overlay');
+            document.getElementById('sad-msg').innerText = message;
+            overlay.style.display = 'flex';
+
+            setTimeout(() => {
+                overlay.style.display = 'none';
+
+                if (wrongAttempts >= 2) {
+                    // Auto-advance after 2 wrong attempts
+                    clearInterval(timerInterval);
+                    if (currentLevel < levels.length) {
+                        loadLevel(currentLevel + 1);
+                    } else {
+                        loadLevel(1);
+                    }
+                } else {
+                    resetCurrentLevel();
+                }
+            }, 1200);
+        }
+
+        // Confetti Effect Generator
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            let particles = [];
+            for (let i = 0; i < 70; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                    size: Math.random() * 8 + 4,
+                    speed: Math.random() * 5 + 3
+                });
             }
+
+            let animationFrame;
+            function render() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+                    p.y += p.speed;
+                });
+
+                if (particles.some(p => p.y < canvas.height)) {
+                    animationFrame = requestAnimationFrame(render);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    cancelAnimationFrame(animationFrame);
+                }
+            }
+            render();
         }
     </script>
 </body>

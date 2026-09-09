@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mission: The Missing Innovine Mascot!</title>
+    <title>IPO Cycle Interactive Challenge!</title>
     <style>
-        /* General Setup */
         * {
             box-sizing: border-box;
         }
@@ -42,7 +41,7 @@
 
         #splash-screen img {
             max-width: 80%;
-            width: 280px;
+            width: 300px;
             height: auto;
             margin-bottom: 20px;
             animation: pulse 1.5s infinite ease-in-out;
@@ -68,7 +67,7 @@
         header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             width: 100%;
             background-color: #ffffff;
             padding: 15px 20px;
@@ -83,6 +82,7 @@
             font-size: clamp(20px, 4vw, 26px);
             color: #1e3a8a;
         }
+        
         .title-area p {
             margin: 5px 0 0 0;
             font-size: clamp(12px, 3vw, 14px);
@@ -91,86 +91,155 @@
 
         .game-container {
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             gap: 20px;
             width: 100%;
         }
 
-        /* Instructions & UI Panel */
-        .sidebar {
-            flex: 1;
-            min-width: 280px;
-            background-color: #ffffff;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
+        /* Mission / Instruction Box */
         .mission-box {
             background-color: #eff6ff;
             border-left: 5px solid #3b82f6;
-            padding: 15px;
-            border-radius: 0 10px 10px 0;
-            margin-bottom: 15px;
+            padding: 15px 20px;
+            border-radius: 0 12px 12px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
         .mission-box h3 {
-            margin: 0 0 8px 0;
+            margin: 0 0 5px 0;
             color: #1d4ed8;
             font-size: 18px;
         }
 
         .mission-box p {
             margin: 0;
-            font-size: 14px;
+            font-size: 15px;
             line-height: 1.4;
         }
 
-        .controls-group {
-            margin-top: 15px;
-        }
-
-        .label {
-            font-weight: bold;
-            font-size: 14px;
-            margin-bottom: 10px;
-            display: block;
-            color: #4b5563;
-        }
-
-        .palette {
+        /* IPO Drop Zones */
+        .ipo-zones {
             display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            justify-content: flex-start;
+            justify-content: space-between;
+            gap: 15px;
+            width: 100%;
         }
 
-        .color-btn {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            border: 3px solid transparent;
-            cursor: pointer;
-            transition: transform 0.1s ease;
-            touch-action: manipulation;
+        .drop-zone {
+            flex: 1;
+            background-color: #ffffff;
+            border: 3px dashed #9ca3af;
+            border-radius: 15px;
+            padding: 15px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 180px;
+            position: relative;
+            transition: background-color 0.2s, border-color 0.2s;
         }
 
-        .color-btn:hover, .color-btn:active {
-            transform: scale(1.1);
+        .drop-zone.drag-over {
+            background-color: #e0f2fe;
+            border-color: #0284c7;
         }
 
-        .color-btn.active {
-            border-color: #111827;
+        .drop-zone h4 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            color: white;
+            text-transform: uppercase;
         }
 
-        #color-blue { background-color: #0284c7; }
-        #color-orange { background-color: #f97316; }
-        #color-green { background-color: #22c55e; }
+        .zone-input h4 { background-color: #0284c7; }
+        .zone-process h4 { background-color: #f97316; }
+        .zone-output h4 { background-color: #22c55e; }
+
+        .zone-slot {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Cards / Options Section */
+        .cards-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .cards-list {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .item-card {
+            width: 110px;
+            height: 120px;
+            background-color: #f8fafc;
+            border: 2px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+            user-select: none;
+            touch-action: none;
+        }
+
+        .item-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            border-color: #3b82f6;
+        }
+
+        .item-card img {
+            max-width: 70px;
+            max-height: 70px;
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        .item-card span {
+            margin-top: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            text-align: center;
+            color: #334155;
+        }
+
+        .item-card.selected-tap {
+            border-color: #3b82f6;
+            background-color: #eff6ff;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Action Buttons */
+        .controls {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            margin-top: 10px;
+        }
 
         .action-btn {
+            flex: 1;
             background-color: #10b981;
             color: white;
             border: none;
@@ -179,75 +248,33 @@
             font-weight: bold;
             border-radius: 10px;
             cursor: pointer;
-            width: 100%;
             transition: background 0.2s, transform 0.1s;
             touch-action: manipulation;
         }
 
-        .action-btn:hover {
-            background-color: #059669;
-        }
-        
-        .action-btn:active {
-            transform: scale(0.98);
-        }
+        .action-btn:hover { background-color: #059669; }
+        .action-btn:active { transform: scale(0.98); }
 
-        /* Canvas Viewport */
-        .canvas-area {
-            flex: 2;
-            background-color: #e5e7eb;
-            padding: 15px;
-            border-radius: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.1);
-            width: 100%;
+        .action-btn.reset-btn {
+            background-color: #6b7280;
         }
+        .action-btn.reset-btn:hover { background-color: #4b5563; }
 
-        .paint-header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            padding-bottom: 10px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #4b5563;
-        }
-
-        .canvas-wrapper {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
-
-        canvas {
-            background-color: #ffffff;
-            border: 2px solid #9ca3af;
-            border-radius: 8px;
-            width: 100%;
-            max-width: 500px;
-            height: auto;
-            touch-action: none; /* Disables default touch scrolling on canvas */
-            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="2" x2="22" y2="6"></line><path d="M7.5 10.5L19 19"></path><path d="M16 2.5L21.5 8 16 13.5 10.5 8 16 2.5z"></path><path d="M10.5 8L3 15.5 3 21 8.5 21 16 13.5 10.5 8z"></path></svg>') 0 20, pointer;
-        }
-
-        /* Responsive Breakpoint for Mobile Devices */
-        @media (max-width: 768px) {
-            header {
-                justify-content: center;
+        /* Responsive design for phones */
+        @media (max-width: 650px) {
+            .ipo-zones {
+                flex-direction: column;
             }
-
-            .game-container {
-                flex-direction: column-reverse;
+            .drop-zone {
+                min-height: 120px;
             }
-
-            .sidebar {
-                min-width: 100%;
+            .item-card {
+                width: 95px;
+                height: 105px;
             }
-
-            .palette {
-                justify-content: center;
+            .item-card img {
+                max-width: 55px;
+                max-height: 55px;
             }
         }
     </style>
@@ -256,53 +283,64 @@
 
     <!-- 5-Second Splash Screen Overlay -->
     <div id="splash-screen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/250x100?text=Innovine+Logo';">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x120?text=Innovine+Logo';">
     </div>
 
-    <!-- Main Workspace -->
+    <!-- Audio Elements from assets folder -->
+    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+
+    <!-- Main Game Workspace -->
     <div class="main-content" id="game-workspace">
         <header>
             <div class="title-area">
-                <h1>🎨 Mission: The Missing Innovine Mascot</h1>
-                <p>Introduction to MS Paint</p>
+                <h1>⚙️ Mission: Master the IPO Cycle!</h1>
+                <p>Input ➔ Process ➔ Output Challenge</p>
             </div>
         </header>
 
         <div class="game-container">
-            <div class="sidebar">
-                <div>
-                    <div class="mission-box" id="step-box">
-                        <h3 id="step-title">🚀 Level 1: Start Engine</h3>
-                        <p id="step-text">Tap or click inside the white canvas drawing box to wake up your digital pencil and make your first sound!</p>
-                    </div>
-
-                    <div class="controls-group">
-                        <span class="label">Innovine Power Palette:</span>
-                        <div class="palette">
-                            <button class="color-btn active" id="color-blue" onclick="changeColor('#0284c7', this)"></button>
-                            <button class="color-btn" id="color-orange" onclick="changeColor('#f97316', this)"></button>
-                            <button class="color-btn" id="color-green" onclick="changeColor('#22c55e', this)"></button>
-                        </div>
-                    </div>
-                </div>
-
-                <button class="action-btn" id="next-btn" onclick="advanceLevel()">Next Level ➡️</button>
+            <!-- Mission Level Box -->
+            <div class="mission-box">
+                <h3 id="level-title">🥤 Level 1: Making Fresh Juice</h3>
+                <p id="level-desc">Drag or tap the items below into their correct stage in the IPO cycle!</p>
             </div>
 
-            <div class="canvas-area">
-                <div class="paint-header">
-                    <span>✏️ Pencil Tool Active</span>
-                    <span id="canvas-status">Status: Waiting for Artist</span>
+            <!-- IPO Drop Target Zones -->
+            <div class="ipo-zones">
+                <div class="drop-zone zone-input" data-type="input" onclick="handleZoneTap('input')">
+                    <h4>1. Input</h4>
+                    <div class="zone-slot" id="slot-input"></div>
                 </div>
-                <div class="canvas-wrapper">
-                    <canvas id="paintCanvas" width="500" height="380"></canvas>
+
+                <div class="drop-zone zone-process" data-type="process" onclick="handleZoneTap('process')">
+                    <h4>2. Process</h4>
+                    <div class="zone-slot" id="slot-process"></div>
                 </div>
+
+                <div class="drop-zone zone-output" data-type="output" onclick="handleZoneTap('output')">
+                    <h4>3. Output</h4>
+                    <div class="zone-slot" id="slot-output"></div>
+                </div>
+            </div>
+
+            <!-- Cards Pool -->
+            <div class="cards-container">
+                <span class="label" style="font-weight: bold; color: #4b5563;">Available Items (Drag or Tap to Place):</span>
+                <div class="cards-list" id="cards-list">
+                    <!-- Cards will be dynamically injected here -->
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="action-btn reset-btn" onclick="resetCurrentLevel()">Clear / Reset 🔄</button>
+                <button class="action-btn" id="check-btn" onclick="checkAnswer()">Check Answer ✨</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Splash Screen Control Loop (5 Seconds)
+        // Splash Screen Timer Loop (5 Seconds)
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
@@ -311,143 +349,223 @@
                 splash.style.opacity = '0';
                 splash.style.visibility = 'hidden';
                 workspace.style.opacity = '1';
-                
-                setTimeout(() => { playLevelUpSound(); }, 200);
             }, 5000);
+            
+            loadLevel(1);
         });
 
-        // App State Properties
-        const canvas = document.getElementById('paintCanvas');
-        const ctx = canvas.getContext('2d');
-        let isDrawing = false;
-        let currentColor = '#0284c7'; 
+        // Audio Handler
+        function playSound(type) {
+            const correctAudio = document.getElementById('audio-correct');
+            const wrongAudio = document.getElementById('audio-wrong');
+
+            if (type === 'correct') {
+                correctAudio.currentTime = 0;
+                correctAudio.play().catch(e => console.log('Audio playback prevented:', e));
+            } else if (type === 'wrong') {
+                wrongAudio.currentTime = 0;
+                wrongAudio.play().catch(e => console.log('Audio playback prevented:', e));
+            }
+        }
+
+        // Game Levels Data
+        const levels = [
+            {
+                level: 1,
+                title: "🥤 Level 1: Making Fresh Juice",
+                desc: "Arrange the items to show how orange juice is made using the Input ➔ Process ➔ Output cycle!",
+                items: [
+                    { id: "oranges", name: "Oranges", type: "input", img: "assets/oranges.png" },
+                    { id: "juicer", name: "Juicer", type: "process", img: "assets/juicer.png" },
+                    { id: "juice-glass", name: "Juice Glass", type: "output", img: "assets/juice-glass.png" }
+                ]
+            },
+            {
+                level: 2,
+                title: "🎨 Level 2: Making a Clay Toy",
+                desc: "Identify the Input, Process, and Output steps required to make a clay toy!",
+                items: [
+                    { id: "clay", name: "Raw Clay", type: "input", img: "assets/clay.png" },
+                    { id: "child-clay", name: "Shaping Clay", type: "process", img: "assets/child-clay.png" },
+                    { id: "clay-toy", name: "Clay Toy", type: "output", img: "assets/clay-toy.png" }
+                ]
+            },
+            {
+                level: 3,
+                title: "💻 Level 3: Computer Processing",
+                desc: "Show how a computer takes data, processes it, and displays the result!",
+                items: [
+                    { id: "keyboard", name: "Keyboard", type: "input", img: "assets/keyboard.png" },
+                    { id: "cpu", name: "CPU", type: "process", img: "assets/CPU.png" },
+                    { id: "monitor", name: "Monitor", type: "output", img: "assets/monitor.png" }
+                ]
+            }
+        ];
+
         let currentLevel = 1;
+        let selectedCard = null;
+        let placements = { input: null, process: null, output: null };
 
-        // Custom Sound Synthesizer
-        let audioCtx = null;
-        function playTone(freq, type, duration) {
-            try {
-                if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-                const osc = audioCtx.createOscillator();
-                const gain = audioCtx.createGain();
-                osc.type = type;
-                osc.frequency.value = freq;
-                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.start();
-                osc.stop(audioCtx.currentTime + duration);
-            } catch(e) { console.log("Audio not allowed yet"); }
+        // Load Level Setup
+        function loadLevel(lvlNumber) {
+            currentLevel = lvlNumber;
+            const lvlData = levels.find(l => l.level === lvlNumber);
+
+            document.getElementById('level-title').innerText = lvlData.title;
+            document.getElementById('level-desc').innerText = lvlData.desc;
+            document.getElementById('check-btn').innerText = "Check Answer ✨";
+
+            resetCurrentLevel();
         }
 
-        function playDrawSound() { playTone(300, 'triangle', 0.1); }
-        function playLevelUpSound() {
-            playTone(523.25, 'sine', 0.15); 
-            setTimeout(() => playTone(659.25, 'sine', 0.15), 100); 
-            setTimeout(() => playTone(783.99, 'sine', 0.3), 200); 
+        // Reset Level State
+        function resetCurrentLevel() {
+            placements = { input: null, process: null, output: null };
+            selectedCard = null;
+
+            document.getElementById('slot-input').innerHTML = '';
+            document.getElementById('slot-process').innerHTML = '';
+            document.getElementById('slot-output').innerHTML = '';
+
+            const lvlData = levels.find(l => l.level === currentLevel);
+            const cardsList = document.getElementById('cards-list');
+            cardsList.innerHTML = '';
+
+            // Shuffle cards for challenge
+            const shuffledItems = [...lvlData.items].sort(() => Math.random() - 0.5);
+
+            shuffledItems.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'item-card';
+                card.draggable = true;
+                card.id = `card-${item.id}`;
+                card.setAttribute('data-id', item.id);
+                card.setAttribute('data-type', item.type);
+
+                card.innerHTML = `
+                    <img src="${item.img}" alt="${item.name}" onerror="this.onerror=null; this.src='https://via.placeholder.com/70?text=${item.name}';">
+                    <span>${item.name}</span>
+                `;
+
+                // Drag & Drop Handlers
+                card.addEventListener('dragstart', handleDragStart);
+                
+                // Tap/Click Handlers for Mobile Accessibility
+                card.addEventListener('click', (e) => handleCardTap(card, item));
+
+                cardsList.appendChild(card);
+            });
+
+            setupDropZones();
         }
 
-        // Setup Drawing Canvas Defaults
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-        ctx.lineWidth = 5;
-
-        // Utility to calculate position across Mouse & Touch events
-        function getCoordinates(e) {
-            const rect = canvas.getBoundingClientRect();
-            const scaleX = canvas.width / rect.width;
-            const scaleY = canvas.height / rect.height;
-
-            let clientX = e.clientX;
-            let clientY = e.clientY;
-
-            if (e.touches && e.touches.length > 0) {
-                clientX = e.touches[0].clientX;
-                clientY = e.touches[0].clientY;
-            }
-
-            return {
-                x: (clientX - rect.left) * scaleX,
-                y: (clientY - rect.top) * scaleY
-            };
-        }
-
-        // Drawing Handlers
-        function startDrawing(e) {
-            isDrawing = true;
-            const pos = getCoordinates(e);
-            ctx.beginPath();
-            ctx.moveTo(pos.x, pos.y);
-            document.getElementById('canvas-status').innerText = "Status: Drawing ✨";
-        }
-
-        function draw(e) {
-            if (!isDrawing) return;
-            e.preventDefault(); // Prevents touch scrolling while drawing
-            const pos = getCoordinates(e);
-            ctx.lineTo(pos.x, pos.y);
-            ctx.strokeStyle = currentColor;
-            ctx.stroke();
-            if (Math.random() < 0.15) playDrawSound(); 
-        }
-
-        function stopDrawing() {
-            if (isDrawing) {
-                isDrawing = false;
-                ctx.closePath();
-                document.getElementById('canvas-status').innerText = "Status: Canvas Ready";
-            }
-        }
-
-        // Desktop Mouse Events
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('mouseup', stopDrawing);
-        canvas.addEventListener('mouseleave', stopDrawing);
-
-        // Mobile / Tablet Touch Events
-        canvas.addEventListener('touchstart', (e) => { startDrawing(e); e.preventDefault(); }, { passive: false });
-        canvas.addEventListener('touchmove', draw, { passive: false });
-        canvas.addEventListener('touchend', stopDrawing);
-
-        // Color Switcher
-        function changeColor(colorHex, buttonElement) {
-            currentColor = colorHex;
-            document.querySelectorAll('.color-btn').forEach(btn => btn.classList.remove('active'));
-            buttonElement.classList.add('active');
-            playTone(440, 'sine', 0.05); 
-        }
-
-        // Level Advancing Machine
-        function advanceLevel() {
-            currentLevel++;
-            const title = document.getElementById('step-title');
-            const text = document.getElementById('step-text');
-            const btn = document.getElementById('next-btn');
-
-            playLevelUpSound();
-
-            if (currentLevel === 2) {
-                title.innerText = "🌊 Level 2: The Wobbly Wave Test";
-                text.innerText = "Excellent! Hold down your finger or mouse and draw 3 large ocean waves across the screen!";
-            } else if (currentLevel === 3) {
-                title.innerText = "🎨 Level 3: Match the Identity";
-                text.innerText = "Tap the Orange or Green color button. Use that color to trace a huge happy smile on your canvas!";
-                btn.innerText = "Lock in Canvas 💾";
-            } else if (currentLevel === 4) {
-                title.innerText = "🏆 Victory! Mascot Restored";
-                text.innerText = "Fantastic Work, Designer! You successfully used the palette and digital pencil to save the mascot.";
-                btn.innerText = "Start New Session 🔄";
-                btn.style.backgroundColor = '#3b82f6';
+        // Tap Selection for Mobile / Laptop Accessibility
+        function handleCardTap(cardElement, item) {
+            document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected-tap'));
+            if (selectedCard && selectedCard.id === item.id) {
+                selectedCard = null;
             } else {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                currentLevel = 1;
-                title.innerText = "🚀 Level 1: Start Engine";
-                text.innerText = "Tap or click inside the white canvas drawing box to wake up your digital pencil and make your first sound!";
-                btn.innerText = "Next Level ➡️";
-                btn.style.backgroundColor = '#10b981';
+                selectedCard = item;
+                cardElement.classList.add('selected-tap');
+            }
+        }
+
+        function handleZoneTap(zoneType) {
+            if (!selectedCard) return;
+
+            // Place selected item into zone
+            placeItemInZone(selectedCard.id, zoneType);
+            selectedCard = null;
+            document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected-tap'));
+        }
+
+        // Drag and Drop Logic
+        let draggedItemId = null;
+
+        function handleDragStart(e) {
+            draggedItemId = e.target.getAttribute('data-id');
+            e.dataTransfer.setData('text/plain', draggedItemId);
+        }
+
+        function setupDropZones() {
+            const zones = document.querySelectorAll('.drop-zone');
+            zones.forEach(zone => {
+                zone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    zone.classList.add('drag-over');
+                });
+
+                zone.addEventListener('dragleave', () => {
+                    zone.classList.remove('drag-over');
+                });
+
+                zone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    zone.classList.remove('drag-over');
+                    const itemId = e.dataTransfer.getData('text/plain') || draggedItemId;
+                    const zoneType = zone.getAttribute('data-type');
+                    placeItemInZone(itemId, zoneType);
+                });
+            });
+        }
+
+        function placeItemInZone(itemId, zoneType) {
+            const card = document.getElementById(`card-${itemId}`);
+            if (!card) return;
+
+            // Remove card from any existing zone
+            Object.keys(placements).forEach(z => {
+                if (placements[z] === itemId) {
+                    placements[z] = null;
+                    document.getElementById(`slot-${z}`).innerHTML = '';
+                }
+            });
+
+            // If target zone already has an item, return it to pool
+            if (placements[zoneType]) {
+                const existingId = placements[zoneType];
+                const existingCard = document.getElementById(`card-${existingId}`);
+                document.getElementById('cards-list').appendChild(existingCard);
+            }
+
+            // Move card to new slot
+            placements[zoneType] = itemId;
+            document.getElementById(`slot-${zoneType}`).appendChild(card);
+        }
+
+        // Check Answer & Sound Logic
+        function checkAnswer() {
+            const lvlData = levels.find(l => l.level === currentLevel);
+
+            let isComplete = placements.input && placements.process && placements.output;
+            if (!isComplete) {
+                alert("Please place an item in all three boxes (Input, Process, Output)!");
+                return;
+            }
+
+            let inputCorrect = lvlData.items.find(i => i.type === 'input').id === placements.input;
+            let processCorrect = lvlData.items.find(i => i.type === 'process').id === placements.process;
+            let outputCorrect = lvlData.items.find(i => i.type === 'output').id === placements.output;
+
+            if (inputCorrect && processCorrect && outputCorrect) {
+                playSound('correct');
+                
+                if (currentLevel < levels.length) {
+                    alert("🎉 Correct! Great job! Moving to the next level.");
+                    loadLevel(currentLevel + 1);
+                } else {
+                    alert("🏆 Victory! You have mastered the IPO Cycle!");
+                    document.getElementById('level-title').innerText = "🏆 Victory! All Levels Completed!";
+                    document.getElementById('level-desc').innerText = "You have successfully solved all the IPO challenges!";
+                    document.getElementById('check-btn').innerText = "Restart Game 🔄";
+                    document.getElementById('check-btn').onclick = () => {
+                        document.getElementById('check-btn').onclick = checkAnswer;
+                        loadLevel(1);
+                    };
+                }
+            } else {
+                playSound('wrong');
+                alert("❌ Oops! Some items are in the wrong place. Try again!");
             }
         }
     </script>

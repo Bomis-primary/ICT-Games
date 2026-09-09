@@ -92,8 +92,34 @@
         .game-container {
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
             width: 100%;
+        }
+
+        /* On-Screen Feedback Banner (Replaces alert boxes) */
+        #feedback-banner {
+            width: 100%;
+            padding: 12px 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 16px;
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        #feedback-banner.success {
+            display: block;
+            background-color: #d1fae5;
+            color: #065f46;
+            border: 2px solid #10b981;
+        }
+
+        #feedback-banner.error {
+            display: block;
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #ef4444;
         }
 
         /* Mission / Instruction Box */
@@ -134,7 +160,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 180px;
+            min-height: 170px;
             position: relative;
             transition: background-color 0.2s, border-color 0.2s;
         }
@@ -165,8 +191,8 @@
             align-items: center;
         }
 
-        /* Cards / Options Section */
-        .cards-container {
+        /* Puzzle / Guess Level Wrapper */
+        .interactive-area {
             background-color: #ffffff;
             padding: 20px;
             border-radius: 15px;
@@ -210,8 +236,8 @@
         }
 
         .item-card img {
-            max-width: 70px;
-            max-height: 70px;
+            max-width: 65px;
+            max-height: 65px;
             object-fit: contain;
             pointer-events: none;
         }
@@ -230,12 +256,46 @@
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
         }
 
-        /* Action Buttons */
+        /* Styles for Level 4 Guess Puzzle Options */
+        .guess-options {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            width: 100%;
+            margin-top: 15px;
+        }
+
+        .guess-btn {
+            background-color: #f1f5f9;
+            border: 2px solid #cbd5e1;
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #1e293b;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .guess-btn:hover {
+            background-color: #e2e8f0;
+            border-color: #3b82f6;
+        }
+
+        .guess-btn.selected {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            color: #1d4ed8;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Action Controls */
         .controls {
             display: flex;
             gap: 15px;
             width: 100%;
-            margin-top: 10px;
+            margin-top: 5px;
         }
 
         .action-btn {
@@ -260,7 +320,6 @@
         }
         .action-btn.reset-btn:hover { background-color: #4b5563; }
 
-        /* Responsive design for phones */
         @media (max-width: 650px) {
             .ipo-zones {
                 flex-direction: column;
@@ -273,8 +332,8 @@
                 height: 105px;
             }
             .item-card img {
-                max-width: 55px;
-                max-height: 55px;
+                max-width: 50px;
+                max-height: 50px;
             }
         }
     </style>
@@ -286,11 +345,11 @@
         <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/300x120?text=Innovine+Logo';">
     </div>
 
-    <!-- Audio Elements from assets folder -->
+    <!-- Assets Audio elements -->
     <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
-    <!-- Main Game Workspace -->
+    <!-- Main Workspace -->
     <div class="main-content" id="game-workspace">
         <header>
             <div class="title-area">
@@ -300,14 +359,17 @@
         </header>
 
         <div class="game-container">
-            <!-- Mission Level Box -->
+            <!-- Smooth On-Screen Feedback Banner (No Alert Boxes) -->
+            <div id="feedback-banner"></div>
+
+            <!-- Level Info Box -->
             <div class="mission-box">
                 <h3 id="level-title">🥤 Level 1: Making Fresh Juice</h3>
                 <p id="level-desc">Drag or tap the items below into their correct stage in the IPO cycle!</p>
             </div>
 
-            <!-- IPO Drop Target Zones -->
-            <div class="ipo-zones">
+            <!-- Standard IPO Drag/Tap View (Levels 1, 2, 3) -->
+            <div class="ipo-zones" id="ipo-zones-view">
                 <div class="drop-zone zone-input" data-type="input" onclick="handleZoneTap('input')">
                     <h4>1. Input</h4>
                     <div class="zone-slot" id="slot-input"></div>
@@ -324,12 +386,11 @@
                 </div>
             </div>
 
-            <!-- Cards Pool -->
-            <div class="cards-container">
-                <span class="label" style="font-weight: bold; color: #4b5563;">Available Items (Drag or Tap to Place):</span>
-                <div class="cards-list" id="cards-list">
-                    <!-- Cards will be dynamically injected here -->
-                </div>
+            <!-- Puzzle / Guess View (Level 4 & 5) -->
+            <div class="interactive-area" id="interactive-area">
+                <span class="label" id="cards-label" style="font-weight: bold; color: #4b5563;">Available Items (Drag or Tap to Place):</span>
+                <div class="cards-list" id="cards-list"></div>
+                <div class="guess-options" id="guess-options" style="display: none;"></div>
             </div>
 
             <div class="controls">
@@ -340,7 +401,7 @@
     </div>
 
     <script>
-        // Splash Screen Timer Loop (5 Seconds)
+        // Splash Screen (5 Seconds)
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
@@ -361,17 +422,31 @@
 
             if (type === 'correct') {
                 correctAudio.currentTime = 0;
-                correctAudio.play().catch(e => console.log('Audio playback prevented:', e));
+                correctAudio.play().catch(e => console.log('Audio playback waiting for gesture'));
             } else if (type === 'wrong') {
                 wrongAudio.currentTime = 0;
-                wrongAudio.play().catch(e => console.log('Audio playback prevented:', e));
+                wrongAudio.play().catch(e => console.log('Audio playback waiting for gesture'));
             }
         }
 
-        // Game Levels Data
+        // Display smooth feedback without alerts
+        function showFeedback(message, isSuccess) {
+            const banner = document.getElementById('feedback-banner');
+            banner.className = isSuccess ? 'success' : 'error';
+            banner.innerText = message;
+        }
+
+        function clearFeedback() {
+            const banner = document.getElementById('feedback-banner');
+            banner.style.display = 'none';
+            banner.className = '';
+        }
+
+        // Level Definitions
         const levels = [
             {
                 level: 1,
+                type: "standard",
                 title: "🥤 Level 1: Making Fresh Juice",
                 desc: "Arrange the items to show how orange juice is made using the Input ➔ Process ➔ Output cycle!",
                 items: [
@@ -382,6 +457,7 @@
             },
             {
                 level: 2,
+                type: "standard",
                 title: "🎨 Level 2: Making a Clay Toy",
                 desc: "Identify the Input, Process, and Output steps required to make a clay toy!",
                 items: [
@@ -392,23 +468,46 @@
             },
             {
                 level: 3,
-                title: "💻 Level 3: Computer Processing",
+                type: "standard",
+                title: "💻 Level 3: Computer Hardware",
                 desc: "Show how a computer takes data, processes it, and displays the result!",
                 items: [
                     { id: "keyboard", name: "Keyboard", type: "input", img: "assets/keyboard.png" },
                     { id: "cpu", name: "CPU", type: "process", img: "assets/CPU.png" },
                     { id: "monitor", name: "Monitor", type: "output", img: "assets/monitor.png" }
                 ]
+            },
+            {
+                level: 4,
+                type: "guess_riddle",
+                title: "🔍 Level 4: Guess the Stage Riddle!",
+                desc: "Riddle: 'I am the brain of the computer. I take your raw data, calculate it, and work hard inside! What IPO stage am I?'",
+                options: ["INPUT Stage ⌨️", "PROCESS Stage ⚙️", "OUTPUT Stage 🖥️"],
+                correctAnswer: "PROCESS Stage ⚙️",
+                hintImage: "assets/CPU.png"
+            },
+            {
+                level: 5,
+                type: "sequence_puzzle",
+                title: "🧩 Level 5: IPO Sequence Puzzle",
+                desc: "Which order correctly shows the IPO Cycle workflow from start to finish?",
+                options: [
+                    "Output ➔ Process ➔ Input",
+                    "Input ➔ Process ➔ Output",
+                    "Process ➔ Input ➔ Output"
+                ],
+                correctAnswer: "Input ➔ Process ➔ Output"
             }
         ];
 
         let currentLevel = 1;
         let selectedCard = null;
+        let selectedOption = null;
         let placements = { input: null, process: null, output: null };
 
-        // Load Level Setup
         function loadLevel(lvlNumber) {
             currentLevel = lvlNumber;
+            clearFeedback();
             const lvlData = levels.find(l => l.level === lvlNumber);
 
             document.getElementById('level-title').innerText = lvlData.title;
@@ -418,48 +517,74 @@
             resetCurrentLevel();
         }
 
-        // Reset Level State
         function resetCurrentLevel() {
+            clearFeedback();
             placements = { input: null, process: null, output: null };
             selectedCard = null;
+            selectedOption = null;
 
+            const lvlData = levels.find(l => l.level === currentLevel);
+            const ipoView = document.getElementById('ipo-zones-view');
+            const cardsList = document.getElementById('cards-list');
+            const guessOptions = document.getElementById('guess-options');
+            const cardsLabel = document.getElementById('cards-label');
+
+            cardsList.innerHTML = '';
+            guessOptions.innerHTML = '';
             document.getElementById('slot-input').innerHTML = '';
             document.getElementById('slot-process').innerHTML = '';
             document.getElementById('slot-output').innerHTML = '';
 
-            const lvlData = levels.find(l => l.level === currentLevel);
-            const cardsList = document.getElementById('cards-list');
-            cardsList.innerHTML = '';
+            if (lvlData.type === "standard") {
+                ipoView.style.display = 'flex';
+                guessOptions.style.display = 'none';
+                cardsLabel.style.display = 'block';
+                cardsLabel.innerText = "Available Items (Drag or Tap to Place):";
 
-            // Shuffle cards for challenge
-            const shuffledItems = [...lvlData.items].sort(() => Math.random() - 0.5);
+                const shuffledItems = [...lvlData.items].sort(() => Math.random() - 0.5);
+                shuffledItems.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'item-card';
+                    card.draggable = true;
+                    card.id = `card-${item.id}`;
+                    card.setAttribute('data-id', item.id);
+                    card.setAttribute('data-type', item.type);
 
-            shuffledItems.forEach(item => {
-                const card = document.createElement('div');
-                card.className = 'item-card';
-                card.draggable = true;
-                card.id = `card-${item.id}`;
-                card.setAttribute('data-id', item.id);
-                card.setAttribute('data-type', item.type);
+                    card.innerHTML = `
+                        <img src="${item.img}" alt="${item.name}" onerror="this.onerror=null; this.src='https://via.placeholder.com/65?text=${item.name}';">
+                        <span>${item.name}</span>
+                    `;
 
-                card.innerHTML = `
-                    <img src="${item.img}" alt="${item.name}" onerror="this.onerror=null; this.src='https://via.placeholder.com/70?text=${item.name}';">
-                    <span>${item.name}</span>
-                `;
+                    card.addEventListener('dragstart', handleDragStart);
+                    card.addEventListener('click', () => handleCardTap(card, item));
+                    cardsList.appendChild(card);
+                });
+                setupDropZones();
 
-                // Drag & Drop Handlers
-                card.addEventListener('dragstart', handleDragStart);
-                
-                // Tap/Click Handlers for Mobile Accessibility
-                card.addEventListener('click', (e) => handleCardTap(card, item));
+            } else if (lvlData.type === "guess_riddle" || lvlData.type === "sequence_puzzle") {
+                ipoView.style.display = 'none';
+                cardsLabel.style.display = 'none';
+                guessOptions.style.display = 'flex';
 
-                cardsList.appendChild(card);
-            });
+                if(lvlData.hintImage) {
+                    cardsList.innerHTML = `<img src="${lvlData.hintImage}" style="max-height: 100px; object-fit: contain;" alt="Hint">`;
+                }
 
-            setupDropZones();
+                lvlData.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.className = 'guess-btn';
+                    btn.innerText = opt;
+                    btn.onclick = () => {
+                        document.querySelectorAll('.guess-btn').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                        selectedOption = opt;
+                    };
+                    guessOptions.appendChild(btn);
+                });
+            }
         }
 
-        // Tap Selection for Mobile / Laptop Accessibility
+        // Tap Handlers
         function handleCardTap(cardElement, item) {
             document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected-tap'));
             if (selectedCard && selectedCard.id === item.id) {
@@ -472,8 +597,6 @@
 
         function handleZoneTap(zoneType) {
             if (!selectedCard) return;
-
-            // Place selected item into zone
             placeItemInZone(selectedCard.id, zoneType);
             selectedCard = null;
             document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected-tap'));
@@ -481,7 +604,6 @@
 
         // Drag and Drop Logic
         let draggedItemId = null;
-
         function handleDragStart(e) {
             draggedItemId = e.target.getAttribute('data-id');
             e.dataTransfer.setData('text/plain', draggedItemId);
@@ -494,17 +616,12 @@
                     e.preventDefault();
                     zone.classList.add('drag-over');
                 });
-
-                zone.addEventListener('dragleave', () => {
-                    zone.classList.remove('drag-over');
-                });
-
+                zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
                 zone.addEventListener('drop', (e) => {
                     e.preventDefault();
                     zone.classList.remove('drag-over');
                     const itemId = e.dataTransfer.getData('text/plain') || draggedItemId;
-                    const zoneType = zone.getAttribute('data-type');
-                    placeItemInZone(itemId, zoneType);
+                    placeItemInZone(itemId, zone.getAttribute('data-type'));
                 });
             });
         }
@@ -513,7 +630,6 @@
             const card = document.getElementById(`card-${itemId}`);
             if (!card) return;
 
-            // Remove card from any existing zone
             Object.keys(placements).forEach(z => {
                 if (placements[z] === itemId) {
                     placements[z] = null;
@@ -521,51 +637,71 @@
                 }
             });
 
-            // If target zone already has an item, return it to pool
             if (placements[zoneType]) {
                 const existingId = placements[zoneType];
                 const existingCard = document.getElementById(`card-${existingId}`);
                 document.getElementById('cards-list').appendChild(existingCard);
             }
 
-            // Move card to new slot
             placements[zoneType] = itemId;
             document.getElementById(`slot-${zoneType}`).appendChild(card);
         }
 
-        // Check Answer & Sound Logic
+        // Check Answers & Play Sounds (No Dialog Boxes)
         function checkAnswer() {
             const lvlData = levels.find(l => l.level === currentLevel);
 
-            let isComplete = placements.input && placements.process && placements.output;
-            if (!isComplete) {
-                alert("Please place an item in all three boxes (Input, Process, Output)!");
-                return;
-            }
-
-            let inputCorrect = lvlData.items.find(i => i.type === 'input').id === placements.input;
-            let processCorrect = lvlData.items.find(i => i.type === 'process').id === placements.process;
-            let outputCorrect = lvlData.items.find(i => i.type === 'output').id === placements.output;
-
-            if (inputCorrect && processCorrect && outputCorrect) {
-                playSound('correct');
-                
-                if (currentLevel < levels.length) {
-                    alert("🎉 Correct! Great job! Moving to the next level.");
-                    loadLevel(currentLevel + 1);
-                } else {
-                    alert("🏆 Victory! You have mastered the IPO Cycle!");
-                    document.getElementById('level-title').innerText = "🏆 Victory! All Levels Completed!";
-                    document.getElementById('level-desc').innerText = "You have successfully solved all the IPO challenges!";
-                    document.getElementById('check-btn').innerText = "Restart Game 🔄";
-                    document.getElementById('check-btn').onclick = () => {
-                        document.getElementById('check-btn').onclick = checkAnswer;
-                        loadLevel(1);
-                    };
+            if (lvlData.type === "standard") {
+                let isComplete = placements.input && placements.process && placements.output;
+                if (!isComplete) {
+                    playSound('wrong');
+                    showFeedback("⚠️ Please place an item in all three boxes (Input, Process, Output)!", false);
+                    return;
                 }
+
+                let inputCorrect = lvlData.items.find(i => i.type === 'input').id === placements.input;
+                let processCorrect = lvlData.items.find(i => i.type === 'process').id === placements.process;
+                let outputCorrect = lvlData.items.find(i => i.type === 'output').id === placements.output;
+
+                if (inputCorrect && processCorrect && outputCorrect) {
+                    playSound('correct');
+                    showFeedback("👏 Excellent work! Correct arrangement!", true);
+                    setTimeout(() => advanceToNextLevel(), 1800);
+                } else {
+                    playSound('wrong');
+                    showFeedback("❌ Some items are in the wrong stage. Try again!", false);
+                }
+
+            } else if (lvlData.type === "guess_riddle" || lvlData.type === "sequence_puzzle") {
+                if (!selectedOption) {
+                    playSound('wrong');
+                    showFeedback("⚠️ Please select an answer option first!", false);
+                    return;
+                }
+
+                if (selectedOption === lvlData.correctAnswer) {
+                    playSound('correct');
+                    showFeedback("👏 Fantastic! That is the correct answer!", true);
+                    setTimeout(() => advanceToNextLevel(), 1800);
+                } else {
+                    playSound('wrong');
+                    showFeedback("❌ That's not quite right. Try again!", false);
+                }
+            }
+        }
+
+        function advanceToNextLevel() {
+            if (currentLevel < levels.length) {
+                loadLevel(currentLevel + 1);
             } else {
-                playSound('wrong');
-                alert("❌ Oops! Some items are in the wrong place. Try again!");
+                showFeedback("🏆 VICTORY! You have completed all 5 IPO Cycle levels!", true);
+                document.getElementById('level-title').innerText = "🏆 Game Completed!";
+                document.getElementById('level-desc').innerText = "You have mastered the IPO Cycle!";
+                document.getElementById('check-btn').innerText = "Restart Game 🔄";
+                document.getElementById('check-btn').onclick = () => {
+                    document.getElementById('check-btn').onclick = checkAnswer;
+                    loadLevel(1);
+                };
             }
         }
     </script>

@@ -2,31 +2,46 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Writer Diagnostic Lab: Tool Detective</title>
     <style>
-        body {
+        * {
+            box-sizing: border-box;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f8fafc;
-            margin: 0;
-            padding: 20px;
+            color: #334155;
+        }
+
+        body {
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #334155;
-            user-select: none;
+            justify-content: center;
+            height: 100dvh;
+            padding: 8px;
         }
 
-        /* Guaranteed 5-Second Brand Overlay */
+        /* 5-Second Clean White Splash Screen */
         #splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100vh;
+            height: 100dvh;
             background-color: #ffffff;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
@@ -34,184 +49,230 @@
         }
 
         #splash-screen img {
-            max-width: 260px;
-            margin-bottom: 20px;
-            animation: pulse 1.5s infinite ease-in-out;
+            max-width: 300px;
+            width: 75%;
+            height: auto;
+            object-fit: contain;
         }
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.04); }
-        }
-
+        /* Main Workspace */
         .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
             width: 100%;
-            max-width: 1000px;
+            max-width: 460px;
+            height: 100%;
+            max-height: 100dvh;
+            justify-content: space-between;
             opacity: 0;
             transition: opacity 0.5s ease;
+            gap: 6px;
+            padding-bottom: calc(env(safe-area-inset-bottom, 6px) + 4px);
         }
 
         header {
             text-align: center;
             background: white;
-            padding: 20px;
-            border-radius: 16px;
+            width: 100%;
+            padding: 8px 12px;
+            border-radius: 12px;
             border: 2px solid #e2e8f0;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        header h1 { margin: 0; font-size: 26px; color: #0f172a; }
-        header p { margin: 6px 0 0 0; color: #64748b; font-size: 14px; font-weight: 500; }
+        header h1 {
+            margin: 0;
+            font-size: 15px;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .task-badge {
+            background-color: #2563eb;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: bold;
+        }
 
         .game-layout {
-            display: grid;
-            grid-template-columns: 1.1fr 1fr;
-            gap: 24px;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            flex: 1;
+            gap: 6px;
+            overflow: hidden;
         }
 
         .card {
             background: white;
-            border-radius: 16px;
+            border-radius: 12px;
             border: 2px solid #e2e8f0;
-            padding: 24px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            gap: 8px;
+            flex-shrink: 0;
         }
 
         .riddle-box {
             background-color: #f0fdf4;
             border: 1px solid #bbf7d0;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 20px;
+            border-radius: 8px;
+            padding: 8px 10px;
         }
 
-        .riddle-box h3 { margin: 0 0 6px 0; color: #166534; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .riddle-box p { margin: 0; font-size: 16px; font-weight: 600; color: #14532d; line-height: 1.4; }
+        .riddle-box h3 {
+            margin: 0 0 2px 0;
+            color: #166534;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
 
-        /* Simulated OpenOffice Writer Tool Dock */
+        .riddle-box p {
+            margin: 0;
+            font-size: 11px;
+            font-weight: 600;
+            color: #14532d;
+            line-height: 1.3;
+        }
+
+        /* Toolbar Dock */
         .oo-dock {
             background: #f1f5f9;
             border: 1px solid #cbd5e1;
-            border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 20px;
+            border-radius: 8px;
+            padding: 6px;
         }
 
         .oo-toolbar-row {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             align-items: center;
-            flex-wrap: wrap;
+            justify-content: space-between;
         }
 
         .oo-btn {
             background: white;
             border: 1px solid #94a3b8;
             border-radius: 6px;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 4px;
-            transition: all 0.1s ease;
+            font-weight: bold;
+            font-size: 14px;
         }
 
-        .oo-btn:hover { background: #f8fafc; }
-        .oo-btn img { width: 100%; height: 100%; object-fit: contain; }
         .oo-btn.active {
             background: #e0f2fe;
             border-color: #0284c7;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
+            color: #0284c7;
         }
 
         .oo-dropdown {
-            height: 40px;
-            padding: 0 8px;
+            height: 36px;
+            padding: 0 4px;
             border-radius: 6px;
             border: 1px solid #94a3b8;
             background: white;
             font-weight: 600;
+            font-size: 11px;
             color: #334155;
-            cursor: pointer;
         }
 
         .separator {
             width: 1px;
-            height: 28px;
+            height: 24px;
             background: #cbd5e1;
-            margin: 0 4px;
         }
 
         .submit-btn {
             background-color: #2563eb;
             color: white;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
-            padding: 14px;
+            padding: 12px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            transition: background 0.2s;
             width: 100%;
+            flex-shrink: 0;
+            box-shadow: 0 3px 0 #1d4ed8;
+            transition: background 0.2s;
         }
-        .submit-btn:hover { background-color: #1d4ed8; }
 
-        /* Document Display Area */
+        .submit-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #1d4ed8;
+        }
+
+        /* Sandbox Canvas Window */
         .preview-pane {
             background: #475569;
-            border-radius: 16px;
-            padding: 16px;
+            border-radius: 12px;
+            padding: 8px;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 6px;
+            flex: 1;
+            min-height: 150px;
+            overflow: hidden;
         }
 
         .pane-header {
             display: flex;
             justify-content: space-between;
             color: #cbd5e1;
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 600;
         }
 
         canvas {
             background: #ffffff;
-            border-radius: 8px;
-            width: 100%;
-            height: auto;
+            border-radius: 6px;
+            max-width: 100%;
+            max-height: 100%;
+            touch-action: none;
         }
 
-        /* Teacher Diagnostic Assessment Display Screen */
+        /* Diagnostic Assessment Report Screen */
         #diagnostic-screen {
             display: none;
             background: white;
             border: 2px solid #e2e8f0;
             border-radius: 16px;
-            padding: 32px;
+            padding: 16px;
             width: 100%;
-            box-sizing: border-box;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            height: 100%;
+            max-height: 100dvh;
+            overflow-y: auto;
+            animation: scaleUp 0.3s ease-out;
         }
 
         .metric-card {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 16px;
-            margin-top: 12px;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 8px;
         }
 
         .rating-bar-bg {
             background: #e2e8f0;
             height: 8px;
             border-radius: 4px;
-            margin-top: 8px;
+            margin-top: 6px;
             overflow: hidden;
         }
 
@@ -221,56 +282,58 @@
             width: 0%;
             transition: width 1s ease-out;
         }
+
+        @keyframes scaleUp {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body>
 
+    <!-- 5-Second Clean White Splash Screen -->
     <div id="splash-screen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/250x90?text=Innovine';">
-        <h3 style="color: #64748b; font-weight: 500;">Analyzing Diagnostic Assets...</h3>
+        <img src="assets/innovine-logo.png" alt="Innovine Solutions Logo" onerror="this.src='https://via.placeholder.com/300x120?text=Innovine+Solutions';">
     </div>
 
+    <!-- Main Workspace Layout -->
     <div class="main-container" id="workspace">
         <header>
-            <h1>🕵️‍♂️ OpenOffice Writer: Tool Detective</h1>
-            <p>Ability & Concept Recognition Diagnostic Environment</p>
+            <h1>🕵️ Writer Tool Detective</h1>
+            <div class="task-badge" id="task-badge">Task 1 / 5</div>
         </header>
 
         <div class="game-layout" id="game-core">
             <div class="card">
-                <div>
-                    <div class="riddle-box">
-                        <h3 id="round-number">Task 1: Tool Purpose Challenge</h3>
-                        <p id="riddle-text">"I want to make my words look extra thick, dark, and heavy so they stand out. Which layout tool do I click?"</p>
-                    </div>
+                <div class="riddle-box">
+                    <h3 id="round-number">Task 1: Tool Purpose Challenge</h3>
+                    <p id="riddle-text">"I want to make my words look extra thick, dark, and heavy so they stand out. Which tool do I click?"</p>
+                </div>
 
-                    <p style="font-size: 13px; font-weight: 600; color: #64748b; margin-bottom: 8px;">Find and configure the tool match below:</p>
-                    
-                    <div class="oo-dock">
-                        <div class="oo-toolbar-row">
-                            <button class="oo-btn" title="Undo" onclick="registerAction('undo')"><img src="assets/undo.png" alt="Undo"></button>
-                            <button class="oo-btn" title="Redo" onclick="registerAction('redo')"><img src="assets/redo.png" alt="Redo"></button>
-                            
-                            <div class="separator"></div>
+                <div class="oo-dock">
+                    <div class="oo-toolbar-row">
+                        <button class="oo-btn" title="Undo" onclick="registerAction('undo')">↩️</button>
+                        <button class="oo-btn" title="Redo" onclick="registerAction('redo')">↪️</button>
 
-                            <select id="size-dropdown" class="oo-dropdown" onchange="registerAction('size')">
-                                <option value="24">24 pt</option>
-                                <option value="36">36 pt</option>
-                            </select>
+                        <div class="separator"></div>
 
-                            <div class="separator"></div>
+                        <select id="size-dropdown" class="oo-dropdown" onchange="registerAction('size')">
+                            <option value="24">24 pt</option>
+                            <option value="36">36 pt</option>
+                        </select>
 
-                            <button id="tool-bold" class="oo-btn" title="Bold" onclick="toggleModifier('bold')"><img src="assets/bold.png" alt="B"></button>
-                            <button id="tool-italic" class="oo-btn" title="Italic" onclick="toggleModifier('italic')"><img src="assets/Italic.png" alt="I"></button>
-                            <button id="tool-underline" class="oo-btn" title="Underline" onclick="toggleModifier('underline')"><img src="assets/underline.png" alt="U"></button>
-                            
-                            <div class="separator"></div>
+                        <div class="separator"></div>
 
-                            <select id="color-dropdown" class="oo-dropdown" onchange="registerAction('color')">
-                                <option value="black">⚫ Black</option>
-                                <option value="purple">🔮 Purple</option>
-                            </select>
-                        </div>
+                        <button id="tool-bold" class="oo-btn" title="Bold" onclick="toggleModifier('bold')"><b>B</b></button>
+                        <button id="tool-italic" class="oo-btn" title="Italic" onclick="toggleModifier('italic')"><i>I</i></button>
+                        <button id="tool-underline" class="oo-btn" title="Underline" onclick="toggleModifier('underline')"><u>U</u></button>
+
+                        <div class="separator"></div>
+
+                        <select id="color-dropdown" class="oo-dropdown" onchange="registerAction('color')">
+                            <option value="black">⚫ Black</option>
+                            <option value="purple">🔮 Purple</option>
+                        </select>
                     </div>
                 </div>
 
@@ -282,54 +345,54 @@
                     <span>Writer Sandbox View</span>
                     <span id="diagnostic-log" style="color: #60a5fa;">Awaiting adjustment...</span>
                 </div>
-                <canvas id="docCanvas" width="460" height="320"></canvas>
+                <canvas id="docCanvas" width="320" height="200"></canvas>
             </div>
         </div>
 
+        <!-- Diagnostic Screen -->
         <div id="diagnostic-screen">
-            <h2 style="margin: 0 0 4px 0; color: #0f172a;">📊 Teacher Assessment Profile</h2>
-            <p style="margin: 0 0 24px 0; color: #64748b; font-size: 14px;">Real-time analysis based on interface interaction parameters.</p>
-            
+            <h2 style="margin: 0 0 2px 0; color: #0f172a; font-size: 16px;">📊 Assessment Summary Profile</h2>
+            <p style="margin: 0 0 12px 0; color: #64748b; font-size: 11px;">Interface interaction parameter results.</p>
+
             <div class="metric-card">
-                <div style="display:flex; justify-content:space-between; font-weight:600;">
-                    <span>Icon/Symbol Identification Ability</span>
+                <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:600;">
+                    <span>Icon Recognition</span>
                     <span id="score-ident">0%</span>
                 </div>
-                <p style="margin:4px 0 0 0; font-size:12px; color:#64748b;">Measures capability to translate semantic descriptions into spatial toolbar clicks.</p>
                 <div class="rating-bar-bg"><div id="bar-ident" class="rating-bar-fill"></div></div>
             </div>
 
             <div class="metric-card">
-                <div style="display:flex; justify-content:space-between; font-weight:600;">
-                    <span>Property & Attribute Awareness</span>
+                <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:600;">
+                    <span>Attribute Control</span>
                     <span id="score-attr">0%</span>
                 </div>
-                <p style="margin:4px 0 0 0; font-size:12px; color:#64748b;">Measures comprehension of contextual modifications (Font Sizing / Coloring parameters).</p>
                 <div class="rating-bar-bg"><div id="bar-attr" class="rating-bar-fill"></div></div>
             </div>
 
             <div class="metric-card">
-                <div style="display:flex; justify-content:space-between; font-weight:600;">
-                    <span>Motor Interface Efficiency</span>
+                <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:600;">
+                    <span>Interface Efficiency</span>
                     <span id="score-motor">Excellent</span>
                 </div>
-                <p style="margin:4px 0 0 0; font-size:12px; color:#64748b;">Tracks mis-clicks and interaction friction paths with toolbar buttons.</p>
             </div>
 
-            <button class="submit-btn" style="margin-top:24px; background:#475569;" onclick="location.reload()">Reset Diagnostic Run 🔄</button>
+            <button class="submit-btn" style="margin-top:14px; background:#475569;" onclick="location.reload()">Reset Diagnostic Run 🔄</button>
         </div>
     </div>
 
+    <!-- Audio Elements -->
     <audio id="sound-yes" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="sound-no" src="assets/wrong.mp3" preload="auto"></audio>
     <audio id="sound-fanfare" src="assets/clap.mp3" preload="auto"></audio>
 
     <script>
-        // FORCED BRAND VISIBILITY DELAY AT INITIALIZATION
+        // Exactly 5 Seconds Splash Delay
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                document.getElementById('splash-screen').style.opacity = '0';
-                document.getElementById('splash-screen').style.visibility = 'hidden';
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                splash.style.visibility = 'hidden';
                 document.getElementById('workspace').style.opacity = '1';
                 drawCanvasDocument();
             }, 5000);
@@ -343,43 +406,44 @@
         let selectedItalic = false;
         let selectedUnderline = false;
 
-        // Metric Trackers to judge actual student aptitude
         let totalMisClicks = 0;
         let correctIdentifications = 0;
         let correctAttributes = 0;
 
-        // Interactive evaluation tasks
+        // 5 Diagnostic Tasks
         const roundData = {
-            1: { riddle: '"I want to make my words look extra thick, dark, and heavy so they stand out. Which button tool do I turn on?"', bold: true, italic: false, underline: false, size: "24", color: "black" },
-            2: { riddle: '"The text needs to slant slightly forwards, like it is leaning or sliding into place. Help me locate the correct style tool!"', bold: false, italic: true, underline: false, size: "24", color: "black" },
-            3: { riddle: '"Urgent Alert! We must emphasize this text by placing a solid horizontal line directly underneath it, changing the size to 36pt and text color to Purple!"', bold: false, italic: false, underline: true, size: "36", color: "purple" }
+            1: { riddle: '"I want to make my words look extra thick, dark, and heavy so they stand out. Which tool do I click?"', bold: true, italic: false, underline: false, size: "24", color: "black" },
+            2: { riddle: '"The text needs to slant slightly forwards, like it is leaning into place. Find the slanting tool!"', bold: false, italic: true, underline: false, size: "24", color: "black" },
+            3: { riddle: '"Emphasize text with a line underneath, size 36pt, and Purple color!"', bold: false, italic: false, underline: true, size: "36", color: "purple" },
+            4: { riddle: '"Make the text bigger! Change the font size setting to 36 pt!"', bold: false, italic: false, underline: false, size: "36", color: "black" },
+            5: { riddle: '"Give the text color! Change the font color setting to Purple!"', bold: false, italic: false, underline: false, size: "24", color: "purple" }
         };
 
         function audioTrigger(id) {
             const player = document.getElementById(id);
-            if(player) { player.currentTime = 0; player.play().catch(()=>{}); }
+            if (player) { player.currentTime = 0; player.play().catch(() => {}); }
         }
 
         function registerAction(actionType) {
-            if(actionType === 'undo' || actionType === 'redo') {
+            if (actionType === 'undo' || actionType === 'redo') {
                 totalMisClicks++;
                 audioTrigger('sound-no');
-                document.getElementById('diagnostic-log').innerText = "Notice: That button changes document history, not text appearance!";
+                document.getElementById('diagnostic-log').innerText = "Notice: That changes document history!";
                 return;
             }
             drawCanvasDocument();
         }
 
         function toggleModifier(style) {
-            if(style === 'bold') {
+            if (style === 'bold') {
                 selectedBold = !selectedBold;
                 document.getElementById('tool-bold').classList.toggle('active', selectedBold);
             }
-            if(style === 'italic') {
+            if (style === 'italic') {
                 selectedItalic = !selectedItalic;
                 document.getElementById('tool-italic').classList.toggle('active', selectedItalic);
             }
-            if(style === 'underline') {
+            if (style === 'underline') {
                 selectedUnderline = !selectedUnderline;
                 document.getElementById('tool-underline').classList.toggle('active', selectedUnderline);
             }
@@ -387,31 +451,31 @@
         }
 
         function drawCanvasDocument() {
-            ctx.clearRect(0,0,canvas.width,canvas.height);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.fillStyle = "#ffffff";
-            ctx.fillRect(15,15,canvas.width-30,canvas.height-30);
-            
+            ctx.fillRect(10, 10, canvas.width - 20, canvas.height - 20);
+
             let currentSize = document.getElementById('size-dropdown').value;
             let currentColor = document.getElementById('color-dropdown').value;
-            
+
             let fontStyle = "";
-            if(selectedItalic) fontStyle += "italic ";
-            if(selectedBold) fontStyle += "bold ";
+            if (selectedItalic) fontStyle += "italic ";
+            if (selectedBold) fontStyle += "bold ";
             fontStyle += currentSize + "px Arial";
-            
+
             ctx.font = fontStyle;
             ctx.fillStyle = currentColor;
-            
+
             let sampleString = "Writer Test Page";
-            ctx.fillText(sampleString, 60, 160);
-            
-            if(selectedUnderline) {
+            ctx.fillText(sampleString, 30, 100);
+
+            if (selectedUnderline) {
                 let w = ctx.measureText(sampleString).width;
                 ctx.strokeStyle = currentColor;
-                ctx.lineWidth = 3;
+                ctx.lineWidth = 2;
                 ctx.beginPath();
-                ctx.moveTo(60, 170);
-                ctx.lineTo(60 + w, 170);
+                ctx.moveTo(30, 108);
+                ctx.lineTo(30 + w, 108);
                 ctx.stroke();
             }
         }
@@ -421,28 +485,26 @@
             let currentSize = document.getElementById('size-dropdown').value;
             let currentColor = document.getElementById('color-dropdown').value;
 
-            // Diagnostic assessment matching logic
             let isIconCorrect = (selectedBold === target.bold && selectedItalic === target.italic && selectedUnderline === target.underline);
             let isAttributeCorrect = (currentSize === target.size && currentColor === target.color);
 
-            if(isIconCorrect) correctIdentifications++;
-            if(isAttributeCorrect) correctAttributes++;
+            if (isIconCorrect) correctIdentifications++;
+            if (isAttributeCorrect) correctAttributes++;
 
-            if(isIconCorrect && isAttributeCorrect) {
+            if (isIconCorrect && isAttributeCorrect) {
                 audioTrigger('sound-yes');
-                document.getElementById('diagnostic-log').innerText = "Success: Correct choice mapped!";
+                document.getElementById('diagnostic-log').innerText = "Success: Correct tool mapped!";
             } else {
                 audioTrigger('sound-no');
-                document.getElementById('diagnostic-log').innerText = "Recorded: Moving forward to build baseline profile.";
+                document.getElementById('diagnostic-log').innerText = "Recorded: Moving to next task...";
             }
 
-            // Move to next diagnostic challenge or generate diagnostic sheet
-            if(activeRound < 3) {
+            if (activeRound < 5) {
                 activeRound++;
-                document.getElementById('round-number').innerText = `Task ${activeRound}: Diagnostic Progression`;
+                document.getElementById('task-badge').innerText = `Task ${activeRound} / 5`;
+                document.getElementById('round-number').innerText = `Task ${activeRound}: Tool Purpose Challenge`;
                 document.getElementById('riddle-text').innerText = roundData[activeRound].riddle;
-                
-                // Clear selection vectors
+
                 selectedBold = false; selectedItalic = false; selectedUnderline = false;
                 document.getElementById('tool-bold').classList.remove('active');
                 document.getElementById('tool-italic').classList.remove('active');
@@ -458,8 +520,8 @@
             document.getElementById('diagnostic-screen').style.display = 'block';
             audioTrigger('sound-fanfare');
 
-            let identificationPercentage = Math.round((correctIdentifications / 3) * 100);
-            let attributePercentage = Math.round((correctAttributes / 3) * 100);
+            let identificationPercentage = Math.round((correctIdentifications / 5) * 100);
+            let attributePercentage = Math.round((correctAttributes / 5) * 100);
 
             document.getElementById('score-ident').innerText = identificationPercentage + "%";
             document.getElementById('bar-ident').style.width = identificationPercentage + "%";
@@ -468,8 +530,8 @@
             document.getElementById('bar-attr').style.width = attributePercentage + "%";
 
             let motorStatus = "High Efficiency";
-            if(totalMisClicks > 2) motorStatus = "Developing Spatial Control";
-            if(totalMisClicks > 5) motorStatus = "Needs Assistance with Targeted Clicks";
+            if (totalMisClicks > 2) motorStatus = "Developing Spatial Control";
+            if (totalMisClicks > 5) motorStatus = "Needs Assistance with Clicks";
             document.getElementById('score-motor').innerText = motorStatus;
         }
     </script>

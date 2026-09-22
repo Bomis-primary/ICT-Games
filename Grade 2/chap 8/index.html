@@ -132,7 +132,7 @@
             line-height: 1.3;
         }
 
-        /* Simulated OpenOffice Writer Studio Window */
+        /* OpenOffice Writer Studio Window */
         .writer-window {
             background: #f1f5f9;
             padding: 6px;
@@ -186,7 +186,7 @@
             box-shadow: 0 6px 16px rgba(0,0,0,0.3);
         }
 
-        /* Writer Document Page Canvas View */
+        /* Document Page Canvas View */
         .doc-page {
             background: #ffffff;
             border-radius: 8px;
@@ -208,7 +208,7 @@
             margin: 4px 0;
         }
 
-        /* Interactive Drag Target Boxes for Stage 4 */
+        /* Interactive Drag Target Boxes */
         .drop-targets {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -231,7 +231,7 @@
             justify-content: center;
         }
 
-        /* Keyboard Shortcut Buttons for Stage 5 */
+        /* Shortcut Grid */
         .shortcut-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -239,7 +239,7 @@
             margin-top: 6px;
         }
 
-        /* Bottom Action Button */
+        /* Action Button */
         .action-btn {
             background-color: #94a3b8;
             color: white;
@@ -266,7 +266,7 @@
             box-shadow: 0 1px 0 #047857;
         }
 
-        /* Victory Badge Screen Overlay */
+        /* Victory Badge Screen */
         #badge-screen {
             display: none;
             flex-direction: column;
@@ -331,11 +331,11 @@
 
                 <div class="writer-window">
                     <div class="toolbar-dock" id="toolbar-container">
-                        <!-- Dynamic Toolbar Content -->
+                        <!-- Dynamic Toolbar -->
                     </div>
 
                     <div class="doc-page" id="doc-view">
-                        <!-- Dynamic Document Content -->
+                        <!-- Dynamic Canvas Page -->
                     </div>
                 </div>
             </div>
@@ -352,12 +352,80 @@
         </div>
     </div>
 
-    <!-- Audio Elements -->
+    <!-- HTML5 Audio Tags matching folder asset filenames -->
     <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="snd-clap" src="assets/clap.mp3" preload="auto"></audio>
     <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <script>
+        // Audio Engine with Automatic Web Audio API Fallback
+        let audioCtx = null;
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass) {
+                    audioCtx = new AudioContextClass();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        window.addEventListener('pointerdown', initAudioContext, { once: true });
+
+        function playSound(type) {
+            initAudioContext();
+
+            let elementId = 'snd-correct';
+            if (type === 'wrong') elementId = 'snd-wrong';
+
+            const elem = document.getElementById(elementId);
+            if (elem) {
+                elem.currentTime = 0;
+                elem.play().catch(() => playSynthSound(type));
+            } else {
+                playSynthSound(type);
+            }
+        }
+
+        function playSynthSound(type) {
+            if (!audioCtx) return;
+
+            const now = audioCtx.currentTime;
+
+            if (type === 'correct') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.15);
+
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
+
+            } else if (type === 'wrong') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.setValueAtTime(120, now + 0.1);
+
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+        }
+
         // Exactly 5 Seconds Splash Screen Delay
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
@@ -374,18 +442,7 @@
         let italicApplied = false;
         let underlineApplied = false;
 
-        let alignTarget = "center";
-        let listCount = 0;
         let dropCount = 0;
-        let shortcutDone = false;
-
-        function playSound(id) {
-            const sound = document.getElementById(id);
-            if (sound) {
-                sound.currentTime = 0;
-                sound.play().catch(() => {});
-            }
-        }
 
         function unlockNext() {
             const btn = document.getElementById('next-btn');
@@ -430,7 +487,7 @@
                 desc.innerText = "Tap the CENTER alignment tool (≡) to center-align the document title!";
 
                 toolbar.innerHTML = `
-                    <button class="tool-btn" onclick="applyAlign('left')">equiv; Left</button>
+                    <button class="tool-btn" onclick="applyAlign('left')">&equiv; Left</button>
                     <button class="tool-btn" onclick="applyAlign('center')">≡ Center</button>
                     <button class="tool-btn" onclick="applyAlign('right')">&equiv; Right</button>
                 `;
@@ -442,8 +499,6 @@
             } else if (stageNum === 3) {
                 title.innerText = "📋 Stage 3: Bulleted List Creation";
                 desc.innerText = "Tap the Bullets (•) button to turn these sentences into a neat bulleted list!";
-
-                listCount = 0;
 
                 toolbar.innerHTML = `
                     <button class="tool-btn" onclick="applyList('bullet')">• Bullets</button>
@@ -482,8 +537,6 @@
                 title.innerText = "⚡ Stage 5: Writer Shortcut Challenge";
                 desc.innerText = "Tap the correct shortcut key button for Bold: <b>Ctrl + B</b>!";
 
-                shortcutDone = false;
-
                 toolbar.innerHTML = `<span style="font-size:12px; font-weight:bold; color:#6d28d9;">Writer Keyboard Shortcuts</span>`;
 
                 docView.innerHTML = `
@@ -516,10 +569,10 @@
             }
 
             if (boldApplied && italicApplied && underlineApplied) {
-                playSound('snd-correct');
+                playSound('correct');
                 unlockNext();
             } else {
-                playSound('snd-correct');
+                playSound('correct');
             }
         }
 
@@ -529,20 +582,20 @@
             target.style.textAlign = dir;
 
             if (dir === 'center') {
-                playSound('snd-correct');
+                playSound('correct');
                 unlockNext();
             } else {
-                playSound('snd-wrong');
+                playSound('wrong');
             }
         }
 
         // --- STAGE 3 FUNCTIONS ---
         function applyList(type) {
             if (type === 'bullet') {
-                playSound('snd-correct');
+                playSound('correct');
                 unlockNext();
             } else {
-                playSound('snd-wrong');
+                playSound('wrong');
             }
         }
 
@@ -592,18 +645,18 @@
 
                         const zone = document.getElementById(targetZoneId).getBoundingClientRect();
                         if (endX >= zone.left && endX <= zone.right && endY >= zone.top && endY <= zone.bottom) {
-                            playSound('snd-correct');
+                            playSound('correct');
                             document.getElementById(targetZoneId).style.background = "#dcfce7";
                             document.getElementById(targetZoneId).innerText = "✅ Matched!";
                             btnElement.style.display = "none";
                             dropCount++;
 
                             if (dropCount >= 2) {
-                                playSound('snd-clap');
+                                playSound('correct');
                                 unlockNext();
                             }
                         } else {
-                            playSound('snd-wrong');
+                            playSound('wrong');
                         }
                     }
                 };
@@ -621,10 +674,10 @@
         // --- STAGE 5 FUNCTIONS ---
         function checkShortcut(code) {
             if (code === 'ctrl-b') {
-                playSound('snd-correct');
+                playSound('correct');
                 unlockNext();
             } else {
-                playSound('snd-wrong');
+                playSound('wrong');
             }
         }
 
@@ -634,7 +687,7 @@
             } else {
                 document.getElementById('main-game-layout').style.display = 'none';
                 document.getElementById('badge-screen').style.display = 'flex';
-                playSound('snd-clap');
+                playSound('correct');
             }
         }
     </script>

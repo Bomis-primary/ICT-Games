@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Scratch Jr Space Mission Adventure</title>
+<title>Scratch Jr Space Drag & Drop Adventure</title>
 
 <style>
 * {
@@ -51,7 +51,7 @@ body {
     object-fit: contain;
 }
 
-/* Main Workspace Container */
+/* Main Workspace */
 .main-container {
     display: flex;
     flex-direction: column;
@@ -143,12 +143,12 @@ header h1 {
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 
-/* Deep Space Scenery Preview Stage */
+/* Space Scenery Preview Stage */
 .stage-preview {
     background: radial-gradient(circle at 80% 20%, #4338ca 0%, #0f172a 70%), url('https://www.transparenttextures.com/patterns/stardust.png');
     border-radius: 10px;
     border: 2px solid #6366f1;
-    height: 145px;
+    height: 140px;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -230,7 +230,7 @@ header h1 {
     border-color: transparent #ffffff transparent transparent;
 }
 
-/* Scratch Jr Category Icon Tabs */
+/* Category Filter Tabs */
 .category-tabs {
     display: flex;
     gap: 6px;
@@ -254,10 +254,6 @@ header h1 {
     font-size: 12px;
 }
 
-.cat-tab:active {
-    transform: scale(0.92);
-}
-
 .cat-yellow { background: #eab308; }
 .cat-blue   { background: #2563eb; }
 .cat-purple { background: #9333ea; }
@@ -265,7 +261,7 @@ header h1 {
 .cat-orange { background: #ea580c; }
 .cat-red    { background: #dc2626; }
 
-/* Script Builder Slot Line */
+/* Drag & Drop Script Target Area */
 .script-area {
     background: #0f172a;
     border: 2px dashed #f59e0b;
@@ -276,7 +272,12 @@ header h1 {
     padding: 4px;
     gap: 6px;
     overflow-x: auto;
-    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.script-area.drag-over {
+    background: #1e293b;
+    border-color: #22c55e;
 }
 
 .script-placeholder {
@@ -287,7 +288,7 @@ header h1 {
     text-align: center;
 }
 
-/* Image Block Palette Box */
+/* Block Image Palette Box */
 .block-palette {
     background: #0f172a;
     border-radius: 8px;
@@ -301,25 +302,23 @@ header h1 {
     min-height: 60px;
 }
 
-/* Clickable Block Image Buttons */
-.jr-block-btn {
-    border: none;
-    background: transparent;
-    cursor: pointer;
+/* Draggable & Clickable Image Block Items */
+.jr-block-item {
+    cursor: grab;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 0;
     margin: 0;
-    outline: none;
     transition: transform 0.15s ease;
 }
 
-.jr-block-btn:active {
+.jr-block-item:active {
+    cursor: grabbing;
     transform: scale(0.92);
 }
 
-.jr-block-btn img {
+.jr-block-item img {
     height: 44px;
     width: auto;
     object-fit: contain;
@@ -350,7 +349,18 @@ header h1 {
     box-shadow: 0 1px 0 #15803d;
 }
 
-/* Final Screen Overlay */
+.clear-btn {
+    background: #475569;
+    border: none;
+    color: white;
+    font-size: 10px;
+    padding: 3px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+/* Victory Screen Overlay */
 #final-screen {
     display: none;
     flex-direction: column;
@@ -404,29 +414,26 @@ header h1 {
     <!-- Main Workspace Layout -->
     <div class="main-container" id="app-workspace">
         <header>
-            <h1>🚀 Scratch Jr Space Scenery</h1>
+            <h1>🚀 Scratch Jr Space Missions</h1>
             <div class="score-badge" id="level-badge">Mission 1 / 6</div>
         </header>
 
         <div class="game-layout" id="game-core">
             <div class="instruction-card">
                 <h3 id="mission-title">Mission 1: Event & Start Trigger</h3>
-                <p id="mission-desc">Tap the <b>3 Dots Event</b> or <b>Yellow Flag</b> image block to start your script!</p>
+                <p id="mission-desc">Drag or tap the <b>Yellow Flag</b> or <b>3 Dots Event</b> image block to start your script!</p>
             </div>
 
             <div class="scratch-studio">
-                <!-- Deep Space Scenery Stage -->
+                <!-- Deep Space Scenery Preview Stage -->
                 <div class="stage-preview">
-                    <!-- Background Stars -->
                     <div class="star-field" style="top: 15px; left: 30px;">✨</div>
                     <div class="star-field" style="top: 45px; left: 140px;">⭐</div>
                     <div class="star-field" style="top: 20px; left: 240px;">✨</div>
 
-                    <!-- Scenery Elements -->
                     <div class="scenery-planet">🪐</div>
                     <div class="scenery-station">🛸</div>
 
-                    <!-- Interactive Actor Sprite -->
                     <img src="assets/sprite.png" class="sprite-actor" id="spaceActor" alt="Sprite" onerror="this.src='https://cdn-icons-png.flaticon.com/512/616/616489.png';">
                     <div class="speech-bubble" id="actorBubble">Hello Space! 🌌</div>
                 </div>
@@ -441,14 +448,14 @@ header h1 {
                     <div class="cat-tab cat-red">🔴</div>
                 </div>
 
-                <!-- Script Line Slot -->
-                <div class="script-area" id="scriptLine" onclick="clearScriptLine()">
-                    <div class="script-placeholder" id="scriptPlaceholder">Tap block images below to build script (Tap line to clear)</div>
+                <!-- Drag & Drop Target Script Line Slot -->
+                <div class="script-area" id="scriptLine" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+                    <div class="script-placeholder" id="scriptPlaceholder">Drag & drop block images here (Tap line to clear)</div>
                 </div>
 
-                <!-- Block Image Palette Options -->
+                <!-- Block Image Palette Box -->
                 <div class="block-palette" id="blockPalette">
-                    <!-- Dynamic Clickable Image Blocks -->
+                    <!-- Dynamic Blocks -->
                 </div>
             </div>
 
@@ -466,12 +473,12 @@ header h1 {
         </div>
     </div>
 
-    <!-- Audio Elements using Asset Folder filenames -->
+    <!-- Audio Elements -->
     <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <script>
-        // Web Audio Synthesizer Fallback
+        // Web Audio Synthesizer Fallback Engine
         let audioCtx = null;
 
         function initAudioContext() {
@@ -536,72 +543,53 @@ header h1 {
             }
         }
 
-        // Mission Configurations featuring '3 dots.png' and 'commands.png'
+        // Available Asset Blocks
+        const allBlocks = [
+            { id: 'yellow', src: 'assets/yellow.png', alt: 'Yellow Start Flag' },
+            { id: '3dots', src: 'assets/3 dots.png', alt: '3 Dots Event' },
+            { id: 'forward', src: 'assets/forward.png', alt: 'Forward Move' },
+            { id: 'say', src: 'assets/say.png', alt: 'Say Speech' },
+            { id: 'sound', src: 'assets/sound.png', alt: 'Sound Pop' },
+            { id: 'commands', src: 'assets/commands.png', alt: 'Command Block' }
+        ];
+
+        // Mission Definitions
         const missions = [
             {
                 title: "Mission 1: Event & Start Trigger",
-                desc: "Tap the <b>3 Dots Event</b> image block to start your script!",
-                palette: [
-                    { id: '3dots', src: 'assets/3 dots.png', alt: '3 Dots Event' },
-                    { id: 'sound', src: 'assets/sound.png', alt: 'Sound' }
-                ],
-                solution: ['3dots']
+                desc: "Drag or tap the <b>Yellow Start Flag</b> or <b>3 Dots Event</b> block into the script line!",
+                solution: [['yellow', '3dots']]
             },
             {
                 title: "Mission 2: Move Forward to Saturn",
-                desc: "Combine <b>3 Dots Event</b> + <b>Forward Move</b> image blocks!",
-                palette: [
-                    { id: '3dots', src: 'assets/3 dots.png', alt: '3 Dots Event' },
-                    { id: 'forward', src: 'assets/forward.png', alt: 'Forward' },
-                    { id: 'say', src: 'assets/say.png', alt: 'Say' }
-                ],
-                solution: ['3dots', 'forward']
+                desc: "Combine <b>Event Block</b> + <b>Forward Move</b> image blocks!",
+                solution: [['yellow', '3dots'], ['forward']]
             },
             {
                 title: "Mission 3: Looks & Speech Bubble",
-                desc: "Add <b>Say Hello</b> block image to speak in the space scenery!",
-                palette: [
-                    { id: '3dots', src: 'assets/3 dots.png', alt: '3 Dots Event' },
-                    { id: 'say', src: 'assets/say.png', alt: 'Say' },
-                    { id: 'forward', src: 'assets/forward.png', alt: 'Forward' }
-                ],
-                solution: ['3dots', 'say']
+                desc: "Add <b>Say Hello</b> block image to speak in space scenery!",
+                solution: [['yellow', '3dots'], ['say']]
             },
             {
                 title: "Mission 4: Sound Pop Block",
-                desc: "Combine <b>3 Dots Event</b> + <b>Sound Pop</b> image block!",
-                palette: [
-                    { id: '3dots', src: 'assets/3 dots.png', alt: '3 Dots Event' },
-                    { id: 'sound', src: 'assets/sound.png', alt: 'Sound' },
-                    { id: 'forward', src: 'assets/forward.png', alt: 'Forward' }
-                ],
-                solution: ['3dots', 'sound']
+                desc: "Combine <b>Event Block</b> + <b>Sound Pop</b> image block!",
+                solution: [['yellow', '3dots'], ['sound']]
             },
             {
                 title: "Mission 5: Command Control Block",
                 desc: "Add <b>Command Block</b> at the end of your script sequence!",
-                palette: [
-                    { id: '3dots', src: 'assets/3 dots.png', alt: '3 Dots Event' },
-                    { id: 'forward', src: 'assets/forward.png', alt: 'Forward' },
-                    { id: 'commands', src: 'assets/commands.png', alt: 'Command Block' }
-                ],
-                solution: ['3dots', 'forward', 'commands']
+                solution: [['yellow', '3dots'], ['forward'], ['commands']]
             },
             {
                 title: "Mission 6: Full Space Combo",
                 desc: "Build full sequence: <b>Event</b> ➔ <b>Forward</b> ➔ <b>Say</b> ➔ <b>Command Block</b>!",
-                palette: [
-                    { id: '3dots', src: 'assets/3 dots.png', alt: '3 Dots Event' },
-                    { id: 'forward', src: 'assets/forward.png', alt: 'Forward' },
-                    { id: 'say', src: 'assets/say.png', alt: 'Say' },
-                    { id: 'commands', src: 'assets/commands.png', alt: 'Command Block' }
-                ],
-                solution: ['3dots', 'forward', 'say', 'commands']
+                solution: [['yellow', '3dots'], ['forward'], ['say'], ['commands']]
             }
         ];
 
         let currentMissionIdx = 0;
         let userScript = [];
+        let draggedBlockId = null;
 
         // 5-Second Splash Delay
         window.addEventListener('DOMContentLoaded', () => {
@@ -630,27 +618,57 @@ header h1 {
             document.getElementById('actorBubble').style.display = 'none';
 
             renderScriptLine();
+            renderPalette();
+        }
 
-            // Render Palette with Image Buttons
+        function renderPalette() {
             const palette = document.getElementById('blockPalette');
             palette.innerHTML = '';
-            m.palette.forEach(block => {
-                const btn = document.createElement('button');
-                btn.className = 'jr-block-btn';
-                btn.onclick = () => addBlockToScript(block);
+
+            allBlocks.forEach(block => {
+                const item = document.createElement('div');
+                item.className = 'jr-block-item';
+                item.draggable = true;
+                item.onclick = () => addBlockToScript(block.id);
+
+                item.ondragstart = (e) => {
+                    draggedBlockId = block.id;
+                    e.dataTransfer.setData('text/plain', block.id);
+                };
 
                 const img = document.createElement('img');
                 img.src = block.src;
                 img.alt = block.alt;
 
-                btn.appendChild(img);
-                palette.appendChild(btn);
+                item.appendChild(img);
+                palette.appendChild(item);
             });
         }
 
-        function addBlockToScript(block) {
-            userScript.push(block);
-            renderScriptLine();
+        function handleDragOver(e) {
+            e.preventDefault();
+            document.getElementById('scriptLine').classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            document.getElementById('scriptLine').classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            document.getElementById('scriptLine').classList.remove('drag-over');
+            const blockId = e.dataTransfer.getData('text/plain') || draggedBlockId;
+            if (blockId) {
+                addBlockToScript(blockId);
+            }
+        }
+
+        function addBlockToScript(blockId) {
+            const blockObj = allBlocks.find(b => b.id === blockId);
+            if (blockObj) {
+                userScript.push(blockObj);
+                renderScriptLine();
+            }
         }
 
         function clearScriptLine() {
@@ -663,20 +681,25 @@ header h1 {
             scriptLine.innerHTML = '';
 
             if (userScript.length === 0) {
-                scriptLine.innerHTML = `<div class="script-placeholder">Tap block images below to build script (Tap line to clear)</div>`;
+                scriptLine.innerHTML = `<div class="script-placeholder">Drag & drop block images here (Tap line to clear)</div>`;
                 return;
             }
 
-            userScript.forEach(block => {
-                const btn = document.createElement('button');
-                btn.className = 'jr-block-btn';
+            userScript.forEach((block, idx) => {
+                const item = document.createElement('div');
+                item.className = 'jr-block-item';
+                item.onclick = (e) => {
+                    e.stopPropagation();
+                    userScript.splice(idx, 1);
+                    renderScriptLine();
+                };
 
                 const img = document.createElement('img');
                 img.src = block.src;
                 img.alt = block.alt;
 
-                btn.appendChild(img);
-                scriptLine.appendChild(btn);
+                item.appendChild(img);
+                scriptLine.appendChild(item);
             });
         }
 
@@ -687,7 +710,8 @@ header h1 {
 
             if (isCorrect) {
                 for (let i = 0; i < m.solution.length; i++) {
-                    if (userScript[i].id !== m.solution[i]) {
+                    const allowedIds = m.solution[i];
+                    if (!allowedIds.includes(userScript[i].id)) {
                         isCorrect = false;
                         break;
                     }

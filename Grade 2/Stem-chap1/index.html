@@ -2,1158 +2,748 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Electricity STEM Adventure</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Scratch Jr Catch & Match Space Mission</title>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Comic Sans MS', cursive;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
-body{
-overflow:hidden;
-background:linear-gradient(45deg,#6a11cb,#2575fc,#ff758c,#ffd200);
-background-size:400% 400%;
-animation:bgMove 10s infinite alternate;
-height:100vh;
+body {
+    overflow: hidden;
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    color: #f8fafc;
 }
 
-@keyframes bgMove{
-0%{background-position:left;}
-100%{background-position:right;}
+/* 5-Second Clean White Splash Screen */
+#splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
 }
 
-.sparkles{
-position:fixed;
-width:100%;
-height:100%;
-overflow:hidden;
-pointer-events:none;
-z-index:0;
+#splash-screen img {
+    max-width: 300px;
+    width: 75%;
+    height: auto;
+    object-fit: contain;
 }
 
-.sparkle{
-position:absolute;
-width:10px;
-height:10px;
-background:white;
-border-radius:50%;
-animation:sparkleMove 5s linear infinite;
-opacity:0.7;
+/* Main Workspace */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    height: 100%;
+    max-height: 100dvh;
+    justify-content: space-between;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    gap: 6px;
+    padding-bottom: calc(env(safe-area-inset-bottom, 6px) + 4px);
 }
 
-@keyframes sparkleMove{
-0%{
-transform:translateY(100vh);
-}
-100%{
-transform:translateY(-100px);
-}
-}
-
-.screen{
-display:none;
-width:100%;
-height:100vh;
-padding:20px;
-overflow:auto;
-position:relative;
-z-index:2;
+header {
+    background: #ffffff;
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 3px solid #6366f1;
+    box-shadow: 0 3px 0px #4338ca;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.active{
-display:block;
+header h1 {
+    margin: 0;
+    font-size: 15px;
+    color: #4338ca;
+    font-weight: 700;
 }
 
-.logo{
-position:fixed;
-top:10px;
-left:10px;
-width:120px;
-z-index:999;
+.score-badge {
+    background-color: #4338ca;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
 }
 
-.scoreBox{
-position:fixed;
-top:10px;
-right:10px;
-background:white;
-padding:10px 20px;
-border-radius:20px;
-font-size:24px;
-font-weight:bold;
-z-index:999;
-box-shadow:0 0 10px rgba(0,0,0,0.3);
+.game-layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex: 1;
+    gap: 6px;
+    overflow: hidden;
 }
 
-.guideBox{
-position:fixed;
-bottom:20px;
-left:20px;
-background:white;
-padding:15px 20px;
-border-radius:20px;
-font-size:22px;
-max-width:420px;
-display:none;
-z-index:999;
-box-shadow:0 0 15px rgba(0,0,0,0.3);
-animation:flash 1s infinite alternate;
+/* Mission Goal Card */
+.instruction-card {
+    background-color: #ffffff;
+    border-left: 4px solid #f59e0b;
+    padding: 8px 10px;
+    border-radius: 4px 8px 8px 4px;
+    flex-shrink: 0;
 }
 
-@keyframes flash{
-from{transform:scale(1);}
-to{transform:scale(1.05);}
+.instruction-card h3 {
+    margin: 0 0 2px 0;
+    color: #b45309;
+    font-size: 13px;
+    font-weight: 700;
 }
 
-.header{
-text-align:center;
-margin-top:40px;
-color:white;
-text-shadow:3px 3px 5px black;
+.instruction-card p {
+    margin: 0 0 4px 0;
+    font-size: 11px;
+    color: #334155;
+    line-height: 1.3;
 }
 
-.header h1{
-font-size:55px;
+.target-blueprint {
+    background: #fef3c7;
+    border: 1px dashed #f59e0b;
+    border-radius: 6px;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: bold;
+    color: #92400e;
 }
 
-.levelBox{
-max-width:1150px;
-margin:20px auto;
-background:rgba(255,255,255,0.95);
-padding:25px;
-border-radius:30px;
-min-height:580px;
-box-shadow:0 0 20px rgba(0,0,0,0.3);
+/* Scratch Jr Space Studio Window */
+.scratch-studio {
+    background: #1e1b4b;
+    border-radius: 14px;
+    border: 3px solid #f59e0b;
+    padding: 6px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 
-.question{
-font-size:30px;
-text-align:center;
-margin:25px 0;
+/* Space Scenery Stage Preview */
+.stage-preview {
+    background: radial-gradient(circle at 80% 20%, #4338ca 0%, #0f172a 70%), url('https://www.transparenttextures.com/patterns/stardust.png');
+    border-radius: 10px;
+    border: 2px solid #6366f1;
+    height: 135px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 15px;
 }
 
-.buttonArea{
-display:flex;
-justify-content:center;
-flex-wrap:wrap;
-gap:20px;
-margin-top:25px;
+.scenery-planet {
+    position: absolute;
+    top: 10px;
+    right: 25px;
+    font-size: 44px;
+    filter: drop-shadow(0 0 10px #38bdf8);
+    animation: floatPlanet 6s ease-in-out infinite alternate;
 }
 
-.gameBtn{
-padding:18px 35px;
-font-size:24px;
-border:none;
-border-radius:20px;
-cursor:pointer;
-background:linear-gradient(to right,#ff758c,#ff7eb3);
-color:white;
-transition:0.3s;
+.scenery-station {
+    position: absolute;
+    bottom: 12px;
+    right: 90px;
+    font-size: 26px;
+    opacity: 0.8;
 }
 
-.gameBtn:hover{
-transform:scale(1.1);
+.star-field {
+    position: absolute;
+    font-size: 10px;
+    color: #fef08a;
+    animation: pulseStar 2s infinite alternate;
 }
 
-.imageCard{
-width:180px;
-height:180px;
-background:white;
-border-radius:20px;
-padding:10px;
-cursor:pointer;
-transition:0.3s;
-box-shadow:0 5px 10px rgba(0,0,0,0.3);
-object-fit:contain;
+@keyframes floatPlanet {
+    0% { transform: translateY(0px) rotate(0deg); }
+    100% { transform: translateY(-8px) rotate(5deg); }
 }
 
-.imageCard:hover{
-transform:scale(1.1);
+@keyframes pulseStar {
+    0% { opacity: 0.3; }
+    100% { opacity: 1; }
 }
 
-.correct{
-border:8px solid limegreen;
-background:limegreen !important;
-color:white;
+/* Space Actor Sprite */
+.sprite-actor {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    z-index: 10;
+    transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+    filter: drop-shadow(0 0 8px #facc15);
 }
 
-.wrong{
-border:8px solid red;
-background:red !important;
-color:white;
+.speech-bubble {
+    position: absolute;
+    bottom: 75px;
+    left: 70px;
+    background: #ffffff;
+    color: #0f172a;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
+    display: none;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.4);
+    z-index: 20;
 }
 
-.nextBtn{
-display:none;
-margin:30px auto;
+.speech-bubble::after {
+    content: '';
+    position: absolute;
+    left: -6px;
+    bottom: 6px;
+    border-width: 5px 7px 5px 0;
+    border-style: solid;
+    border-color: transparent #ffffff transparent transparent;
 }
 
-.confetti{
-position:fixed;
-width:10px;
-height:10px;
-animation:fall 4s linear forwards;
-z-index:9999;
+/* Category Filter Tabs Bar */
+.category-tabs {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    align-items: center;
+    background: #0f172a;
+    padding: 4px;
+    border-radius: 8px;
 }
 
-@keyframes fall{
-0%{
-transform:translateY(-100px) rotate(0deg);
-opacity:1;
-}
-100%{
-transform:translateY(100vh) rotate(720deg);
-opacity:0;
-}
-}
-
-.platformArea{
-position:relative;
-width:100%;
-height:300px;
-background:linear-gradient(to bottom,#87ceeb,#fff);
-border-radius:20px;
-overflow:hidden;
-margin-top:30px;
+.cat-tab {
+    width: 28px;
+    height: 24px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.3);
 }
 
-.player{
-position:absolute;
-left:20px;
-bottom:20px;
-font-size:60px;
-transition:0.4s;
+.cat-yellow { background: #eab308; }
+.cat-blue   { background: #2563eb; }
+.cat-purple { background: #9333ea; }
+.cat-green  { background: #16a34a; }
+.cat-orange { background: #ea580c; }
+
+/* Script Target Drop Area */
+.script-area {
+    background: #0f172a;
+    border: 2px dashed #f59e0b;
+    border-radius: 8px;
+    min-height: 58px;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    gap: 6px;
+    overflow-x: auto;
+    transition: background 0.2s, border-color 0.2s;
 }
 
-.platform{
-position:absolute;
-width:120px;
-height:20px;
-background:#8e44ad;
-border-radius:20px;
+.script-area.drag-over {
+    background: #1e293b;
+    border-color: #22c55e;
 }
 
-.goal{
-position:absolute;
-right:20px;
-top:20px;
-font-size:60px;
+.script-placeholder {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
 }
 
-.finalScreen{
-text-align:center;
-margin-top:70px;
-color:white;
+/* Block Palette Container */
+.block-palette {
+    background: #0f172a;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    padding: 6px;
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    min-height: 58px;
 }
 
-.finalScreen h1{
-font-size:60px;
-text-shadow:4px 4px black;
+/* Image Block Items */
+.jr-block-item {
+    cursor: grab;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    transition: transform 0.15s ease;
 }
 
-.badge{
-display:inline-block;
-padding:20px;
-margin:15px;
-background:gold;
-border-radius:20px;
-font-size:28px;
+.jr-block-item:active {
+    cursor: grabbing;
+    transform: scale(0.92);
 }
 
-.replay{
-padding:20px 40px;
-font-size:30px;
-border:none;
-border-radius:20px;
-background:#00c853;
-color:white;
-cursor:pointer;
-margin-top:30px;
+.jr-block-item img {
+    height: 42px;
+    width: auto;
+    object-fit: contain;
+    pointer-events: none;
 }
 
-@media(max-width:768px){
-
-.question{
-font-size:22px;
+/* Action Submit Green Flag Button */
+.run-flag-btn {
+    background-color: #16a34a;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    flex-shrink: 0;
+    box-shadow: 0 3px 0 #15803d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 
-.gameBtn{
-font-size:18px;
-padding:15px;
+.run-flag-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #15803d;
 }
 
-.logo{
-width:80px;
+/* Victory Overlay */
+#final-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #0f172a;
+    border: 4px solid #6366f1;
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    width: 100%;
+    height: 100%;
+    max-height: 100dvh;
+    color: white;
+    animation: scaleUp 0.3s ease-out;
 }
 
-.header h1{
-font-size:32px;
+#final-screen span {
+    font-size: 50px;
 }
 
-.imageCard{
-width:120px;
-height:120px;
+#final-screen h2 {
+    color: #818cf8;
+    font-size: 18px;
+    margin: 8px 0;
+    font-weight: 800;
 }
 
-.guideBox{
-font-size:16px;
-max-width:280px;
+#final-screen p {
+    font-size: 12px;
+    color: #cbd5e1;
+    line-height: 1.4;
+    margin-bottom: 16px;
 }
 
+@keyframes scaleUp {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
 }
-
 </style>
 </head>
 
 <body>
 
-<div class="sparkles" id="sparkles"></div>
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<div class="scoreBox">
-⭐ Score: <span id="score">0</span>/8
-</div>
-
-<div class="guideBox" id="guideBox">
-🤖 Great job!
-</div>
-
-<!-- START SCREEN -->
-
-<div class="screen active" id="startScreen">
-
-<div class="header">
-
-<h1>⚡ Electricity STEM Adventure ⚡</h1>
-
-
-</div>
-
-<div class="levelBox">
-
-<div class="question">
-
-🌟 Welcome Young Scientist! 🌟
-
-<br><br>
-
-Learn:
-<br><br>
-
-⚡ Electricity  
-💡 Circuits  
-🔋 Batteries  
-🚫 Safety Rules  
-🧲 Electric Appliances
-
-</div>
-
-<div class="buttonArea">
-
-<button class="gameBtn"
-onclick="startGame()">
-
-START GAME
-
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- GAME SCREEN -->
-
-<div class="screen" id="gameScreen">
-
-<div class="levelBox">
-
-<h2 id="levelTitle"></h2>
-
-<div class="question" id="questionText"></div>
-
-<div id="gameArea"></div>
-
-<div class="buttonArea">
-
-<button class="gameBtn nextBtn"
-id="nextBtn"
-onclick="nextQuestion()">
-
-➡ NEXT LEVEL
-
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- FINAL SCREEN -->
-
-<div class="screen" id="finalScreen">
-
-<div class="finalScreen">
-
-<h1>🎉 YOU COMPLETED ALL LEVELS 🎉</h1>
-
-<h2 id="finalScore"></h2>
-
-<div class="badge">⚡ Electricity Hero</div>
-<div class="badge">🔋 Circuit Master</div>
-<div class="badge">🌈 STEM Champion</div>
-
-<br>
-
-<button class="replay"
-onclick="location.reload()">
-
-PLAY AGAIN
-
-</button>
-
-</div>
-
-</div>
-
-<script>
-
-const correctSound =
-new Audio("assets/correct-1.mp3");
-
-const wrongSound =
-new Audio("assets/wrong.mp3");
-
-let currentQuestion = 0;
-let score = 0;
-
-const questions = [
-
-{
-title:"Level 1 - Electrical Appliances",
-question:"Click ALL appliances using electricity",
-type:"appliances"
-},
-
-{
-title:"Level 2 - Closed Circuit",
-question:"Click the CLOSED CIRCUIT picture",
-type:"circuit"
-},
-
-{
-title:"Level 3 - Safety Hero",
-question:"Choose SAFE electricity actions",
-type:"safety"
-},
-
-{
-title:"Level 4 - Platform Circuit Maze",
-question:"Jump platforms to reach glowing bulb",
-type:"platform"
-},
-
-{
-title:"Level 5 - Space Power Mission",
-question:"Charge the spaceship battery",
-type:"space"
-},
-
-{
-title:"Level 6 - Electricity Detective",
-question:"Find the electrical appliances",
-type:"detective"
-},
-
-{
-title:"Level 7 - Bulb Switch Puzzle",
-question:"Which switch will turn bulb ON?",
-type:"switch"
-},
-
-{
-title:"Level 8 - STEM Quiz",
-question:"Electricity makes appliances ____",
-type:"dropdown",
-correct:"Work"
-}
-
-];
-
-function createSparkles(){
-
-for(let i=0;i<60;i++){
-
-const sparkle =
-document.createElement("div");
-
-sparkle.classList.add("sparkle");
-
-sparkle.style.left =
-Math.random()*100+"%";
-
-sparkle.style.animationDuration =
-(Math.random()*5+3)+"s";
-
-document.getElementById("sparkles")
-.appendChild(sparkle);
-
-}
-
-}
-
-createSparkles();
-
-function showGuide(message){
-
-const guide =
-document.getElementById("guideBox");
-
-guide.innerHTML = "🤖 " + message;
-
-guide.style.display = "block";
-
-setTimeout(()=>{
-
-guide.style.display = "none";
-
-},3000);
-
-}
-
-function startGame(){
-
-document.getElementById("startScreen")
-.classList.remove("active");
-
-document.getElementById("gameScreen")
-.classList.add("active");
-
-loadQuestion();
-
-}
-
-function loadQuestion(){
-
-if(currentQuestion >= questions.length){
-
-showFinal();
-return;
-
-}
-
-document.getElementById("nextBtn")
-.style.display="none";
-
-const q = questions[currentQuestion];
-
-document.getElementById("levelTitle")
-.innerHTML=q.title;
-
-document.getElementById("questionText")
-.innerHTML=q.question;
-
-const gameArea =
-document.getElementById("gameArea");
-
-gameArea.innerHTML="";
-
-if(q.type==="appliances"){
-
-gameArea.innerHTML=`
-
-<div class="buttonArea">
-
-<img src="assets/fan.png"
-class="imageCard"
-onclick="checkAppliance(true,this)">
-
-<img src="assets/fridge.jpeg"
-class="imageCard"
-onclick="checkAppliance(true,this)">
-
-<img src="assets/laptop.png"
-class="imageCard"
-onclick="checkAppliance(true,this)">
-
-<img src="assets/microwave.jpg"
-class="imageCard"
-onclick="checkAppliance(true,this)">
-
-</div>
-
-`;
-
-}
-
-else if(q.type==="circuit"){
-
-gameArea.innerHTML=`
-
-<div class="buttonArea">
-
-<img src="assets/closed circuits.png"
-class="imageCard"
-onclick="correctAnswer(this,
-'Awesome! You completed the circuit!')">
-
-<img src="assets/fan.png"
-class="imageCard"
-onclick="wrongAnswer(this,
-'Oops! That is not a circuit.')">
-
-</div>
-
-`;
-
-}
-
-else if(q.type==="safety"){
-
-gameArea.innerHTML=`
-
-<div class="buttonArea">
-
-<button class="gameBtn"
-onclick="checkSafety(true,this)">
-🙌 Dry Hands
-</button>
-
-<button class="gameBtn"
-onclick="checkSafety(false,this)">
-💧 Wet Hands
-</button>
-
-<button class="gameBtn"
-onclick="checkSafety(true,this)">
-🔌 Safe Plug
-</button>
-
-<button class="gameBtn"
-onclick="checkSafety(false,this)">
-⚡ Touch Wire
-</button>
-
-</div>
-
-`;
-
-safeCount=0;
-
-}
-
-else if(q.type==="platform"){
-
-gameArea.innerHTML=`
-
-<div class="platformArea">
-
-<div class="platform"
-style="left:80px;bottom:80px;"></div>
-
-<div class="platform"
-style="left:250px;bottom:140px;"></div>
-
-<div class="platform"
-style="left:450px;bottom:100px;"></div>
-
-<div class="platform"
-style="left:650px;bottom:170px;"></div>
-
-<div class="player"
-id="platformPlayer">
-
-⚡
-
-</div>
-
-<div class="goal">
-
-💡
-
-</div>
-
-</div>
-
-<div class="buttonArea">
-
-<button class="gameBtn"
-onclick="movePlatformPlayer()">
-
-JUMP ➡
-
-</button>
-
-</div>
-
-`;
-
-platformStep=0;
-
-}
-
-else if(q.type==="space"){
-
-gameArea.innerHTML=`
-
-<div style="text-align:center;
-margin-top:40px;">
-
-<div style="font-size:100px;"
-id="rocket">
-
-🚀
-
-</div>
-
-<div style="font-size:90px;">
-🔋
-</div>
-
-<div class="buttonArea">
-
-<button class="gameBtn"
-onclick="chargeRocket()">
-
-CHARGE ⚡
-
-</button>
-
-</div>
-
-</div>
-
-`;
-
-}
-
-else if(q.type==="detective"){
-
-gameArea.innerHTML=`
-
-<div class="buttonArea">
-
-<img src="assets/fan.png"
-class="imageCard"
-onclick="detectiveAnswer(true,this)">
-
-<img src="assets/laptop.png"
-class="imageCard"
-onclick="detectiveAnswer(true,this)">
-
-<img src="assets/microwave.jpg"
-class="imageCard"
-onclick="detectiveAnswer(true,this)">
-
-<img src="assets/fridge.jpeg"
-class="imageCard"
-onclick="detectiveAnswer(true,this)">
-
-</div>
-
-`;
-
-detectiveCount=0;
-
-}
-
-else if(q.type==="switch"){
-
-gameArea.innerHTML=`
-
-<div class="buttonArea">
-
-<button class="gameBtn"
-onclick="correctAnswer(this,
-'Great job! Electricity is flowing!')">
-
-ON SWITCH
-
-</button>
-
-<button class="gameBtn"
-onclick="wrongAnswer(this,
-'Oh no! Bulb is OFF.')">
-
-OFF SWITCH
-
-</button>
-
-</div>
-
-`;
-
-}
-
-else if(q.type==="dropdown"){
-
-gameArea.innerHTML=`
-
-<div style="text-align:center;">
-
-<select id="dropdown"
-style="
-padding:15px;
-font-size:24px;
-border-radius:20px;
-">
-
-<option>Select</option>
-<option>Sleep</option>
-<option>Dance</option>
-<option>Work</option>
-
-</select>
-
-<br><br>
-
-<button class="gameBtn"
-onclick="checkDropdown()">
-
-SUBMIT
-
-</button>
-
-</div>
-
-`;
-
-}
-
-}
-
-let applianceCount=0;
-
-function checkAppliance(correct,element){
-
-if(correct){
-
-element.classList.add("correct");
-
-correctSound.play();
-
-showGuide(
-"Excellent! This appliance uses electricity."
-);
-
-applianceCount++;
-
-if(applianceCount===4){
-
-score++;
-
-updateScore();
-
-showNextButton();
-
-}
-
-}else{
-
-wrongSound.play();
-
-showGuide(
-"Oops! Try again little scientist."
-);
-
-}
-
-}
-
-function correctAnswer(element,message){
-
-element.classList.add("correct");
-
-correctSound.play();
-
-showGuide(message);
-
-score++;
-
-updateScore();
-
-showNextButton();
-
-}
-
-function wrongAnswer(element,message){
-
-element.classList.add("wrong");
-
-wrongSound.play();
-
-showGuide(message);
-
-showNextButton();
-
-}
-
-let safeCount=0;
-
-function checkSafety(correct,element){
-
-if(correct){
-
-element.classList.add("correct");
-
-correctSound.play();
-
-showGuide(
-"Safe choice! You are an electricity hero!"
-);
-
-safeCount++;
-
-if(safeCount===2){
-
-score++;
-
-updateScore();
-
-showNextButton();
-
-}
-
-}else{
-
-element.classList.add("wrong");
-
-wrongSound.play();
-
-showGuide(
-"Careful! That is dangerous."
-);
-
-}
-
-}
-
-let platformStep=0;
-
-function movePlatformPlayer(){
-
-const player =
-document.getElementById("platformPlayer");
-
-platformStep++;
-
-if(platformStep===1){
-
-player.style.left="120px";
-player.style.bottom="120px";
-
-}
-
-if(platformStep===2){
-
-player.style.left="300px";
-player.style.bottom="180px";
-
-}
-
-if(platformStep===3){
-
-player.style.left="500px";
-player.style.bottom="140px";
-
-}
-
-if(platformStep===4){
-
-player.style.left="720px";
-player.style.bottom="210px";
-
-correctSound.play();
-
-showGuide(
-"Fantastic! You reached the glowing bulb!"
-);
-
-score++;
-
-updateScore();
-
-confettiBlast();
-
-showNextButton();
-
-}
-
-}
-
-function chargeRocket(){
-
-const rocket =
-document.getElementById("rocket");
-
-rocket.style.transform=
-"translateY(-150px)";
-
-correctSound.play();
-
-showGuide(
-"Rocket charged successfully!"
-);
-
-score++;
-
-updateScore();
-
-confettiBlast();
-
-showNextButton();
-
-}
-
-let detectiveCount=0;
-
-function detectiveAnswer(correct,element){
-
-if(correct){
-
-element.classList.add("correct");
-
-correctSound.play();
-
-showGuide(
-"Awesome detective work!"
-);
-
-detectiveCount++;
-
-if(detectiveCount===4){
-
-score++;
-
-updateScore();
-
-confettiBlast();
-
-showNextButton();
-
-}
-
-}else{
-
-wrongSound.play();
-
-showGuide(
-"Oops! That is not electrical."
-);
-
-}
-
-}
-
-function checkDropdown(){
-
-const answer =
-document.getElementById("dropdown").value;
-
-if(answer==="Work"){
-
-correctSound.play();
-
-showGuide(
-"Correct! Electricity helps appliances work."
-);
-
-score++;
-
-updateScore();
-
-confettiBlast();
-
-}else{
-
-wrongSound.play();
-
-showGuide(
-"Try again! Think carefully."
-);
-
-}
-
-showNextButton();
-
-}
-
-function updateScore(){
-
-document.getElementById("score")
-.innerHTML=score;
-
-}
-
-function showNextButton(){
-
-document.getElementById("nextBtn")
-.style.display="block";
-
-}
-
-function nextQuestion(){
-
-currentQuestion++;
-
-loadQuestion();
-
-}
-
-function confettiBlast(){
-
-for(let i=0;i<120;i++){
-
-const confetti =
-document.createElement("div");
-
-confetti.classList.add("confetti");
-
-confetti.style.left =
-Math.random()*window.innerWidth+"px";
-
-confetti.style.background =
-`hsl(${Math.random()*360},
-100%,50%)`;
-
-confetti.style.animationDuration =
-(Math.random()*3+2)+"s";
-
-document.body.appendChild(confetti);
-
-setTimeout(()=>{
-confetti.remove();
-},5000);
-
-}
-
-}
-
-function showFinal(){
-
-document.getElementById("gameScreen")
-.classList.remove("active");
-
-document.getElementById("finalScreen")
-.classList.add("active");
-
-document.getElementById("finalScore")
-.innerHTML =
-`⭐ You scored ${score} out of ${questions.length}`;
-
-confettiBlast();
-
-}
-
-</script>
-
+    <!-- 5-Second Clean White Splash Screen -->
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Solutions Logo" onerror="this.src='https://via.placeholder.com/300x120?text=Innovine+Solutions';">
+    </div>
+
+    <!-- Main Workspace Layout -->
+    <div class="main-container" id="app-workspace">
+        <header>
+            <h1>🚀 Scratch Jr Space Missions</h1>
+            <div class="score-badge" id="level-badge">Mission 1 / 5</div>
+        </header>
+
+        <div class="game-layout" id="game-core">
+            <div class="instruction-card">
+                <h3 id="mission-title">Mission 1: Event Trigger Block</h3>
+                <p id="mission-desc">Catch and match the blocks into the script line to complete the blueprint!</p>
+                <div class="target-blueprint">
+                    <span>Target Sequence:</span>
+                    <span id="target-blueprint-text">[ Event Start Block ]</span>
+                </div>
+            </div>
+
+            <div class="scratch-studio">
+                <!-- Space Scenery Stage -->
+                <div class="stage-preview">
+                    <div class="star-field" style="top: 15px; left: 30px;">✨</div>
+                    <div class="star-field" style="top: 45px; left: 140px;">⭐</div>
+                    <div class="star-field" style="top: 20px; left: 240px;">✨</div>
+
+                    <div class="scenery-planet">🪐</div>
+                    <div class="scenery-station">🛸</div>
+
+                    <img src="assets/sprite.png" class="sprite-actor" id="spaceActor" alt="Sprite" onerror="this.src='https://cdn-icons-png.flaticon.com/512/616/616489.png';">
+                    <div class="speech-bubble" id="actorBubble">Hello Space! 🌌</div>
+                </div>
+
+                <!-- Category Filter Bar -->
+                <div class="category-tabs">
+                    <div class="cat-tab cat-yellow">🟢</div>
+                    <div class="cat-tab cat-blue">🔵</div>
+                    <div class="cat-tab cat-purple">🟣</div>
+                    <div class="cat-tab cat-green">🟢</div>
+                    <div class="cat-tab cat-orange">🟠</div>
+                </div>
+
+                <!-- Drag & Drop Script Target Line -->
+                <div class="script-area" id="scriptLine" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="clearScriptLine()">
+                    <div class="script-placeholder" id="scriptPlaceholder">Drag & drop block images here (Tap line to clear)</div>
+                </div>
+
+                <!-- Block Palette Box -->
+                <div class="block-palette" id="blockPalette">
+                    <!-- Dynamic Palette Options -->
+                </div>
+            </div>
+
+            <button class="run-flag-btn" id="runBtn" onclick="executeScript()">
+                <span>🟢</span> RUN GREEN FLAG SCRIPT
+            </button>
+        </div>
+
+        <!-- Victory Screen Overlay -->
+        <div id="final-screen">
+            <span>🎉🏅🌌</span>
+            <h2>SCRATCH JR SPACE CHAMPION!</h2>
+            <p>Outstanding job! You matched and executed all Scratch Jr space programs!</p>
+            <button class="run-flag-btn" style="max-width:200px;" onclick="location.reload()">Play Mission Again 🔄</button>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+
+    <script>
+        // Web Audio Synthesizer Fallback
+        let audioCtx = null;
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass) {
+                    audioCtx = new AudioContextClass();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        window.addEventListener('pointerdown', initAudioContext, { once: true });
+
+        function playSound(type) {
+            initAudioContext();
+            let elementId = (type === 'correct') ? 'snd-correct' : 'snd-wrong';
+            const elem = document.getElementById(elementId);
+            
+            if (elem) {
+                elem.currentTime = 0;
+                elem.play().catch(() => playSynthSound(type));
+            } else {
+                playSynthSound(type);
+            }
+        }
+
+        function playSynthSound(type) {
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+
+            if (type === 'correct') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.15);
+
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            } else {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.setValueAtTime(120, now + 0.1);
+
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+        }
+
+        // Palette Asset Blocks
+        const allBlocks = [
+            { id: 'yellow', src: 'assets/yellow.png', alt: 'Yellow Start Flag', type: 'event' },
+            { id: '3dots', src: 'assets/3 dots.png', alt: '3 Dots Event', type: 'event' },
+            { id: 'forward', src: 'assets/forward.png', alt: 'Forward Move', type: 'motion' },
+            { id: 'say', src: 'assets/say.png', alt: 'Say Speech', type: 'looks' },
+            { id: 'sound', src: 'assets/sound.png', alt: 'Sound Pop', type: 'sound' }
+        ];
+
+        // 5 Play-Way Match & Catch Missions
+        const missions = [
+            {
+                title: "Mission 1: Catch the Start Block",
+                desc: "Drag or tap a <b>Yellow Start Flag</b> or <b>3 Dots Event</b> image block!",
+                blueprintText: "[ Event Start Block ]",
+                requiredTypes: ['event']
+            },
+            {
+                title: "Mission 2: Move Actor to Saturn",
+                desc: "Match <b>Event Start</b> + <b>Forward Move</b> image blocks!",
+                blueprintText: "[ Event Block ] ➔ [ Forward Move ]",
+                requiredTypes: ['event', 'motion']
+            },
+            {
+                title: "Mission 3: Space Speech Mission",
+                desc: "Match <b>Event Start</b> + <b>Say Hello</b> image blocks!",
+                blueprintText: "[ Event Block ] ➔ [ Say Hello ]",
+                requiredTypes: ['event', 'looks']
+            },
+            {
+                title: "Mission 4: Sound Pop Audio",
+                desc: "Match <b>Event Start</b> + <b>Sound Pop</b> image blocks!",
+                blueprintText: "[ Event Block ] ➔ [ Sound Pop ]",
+                requiredTypes: ['event', 'sound']
+            },
+            {
+                title: "Mission 5: Full Space Action Sequence",
+                desc: "Match all 4 action blocks to complete the full space adventure!",
+                blueprintText: "[ Event ] ➔ [ Forward ] ➔ [ Say ] ➔ [ Sound Pop ]",
+                requiredTypes: ['event', 'motion', 'looks', 'sound']
+            }
+        ];
+
+        let currentMissionIdx = 0;
+        let userScript = [];
+        let draggedBlockId = null;
+
+        // 5-Second Splash Screen Timer
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                splash.style.visibility = 'hidden';
+                document.getElementById('app-workspace').style.opacity = '1';
+                loadMission(0);
+            }, 5000);
+        });
+
+        function loadMission(idx) {
+            currentMissionIdx = idx;
+            userScript = [];
+
+            const m = missions[idx];
+
+            document.getElementById('level-badge').innerText = `Mission ${idx + 1} / 5`;
+            document.getElementById('mission-title').innerText = m.title;
+            document.getElementById('mission-desc').innerHTML = m.desc;
+            document.getElementById('target-blueprint-text').innerText = m.blueprintText;
+
+            // Reset Stage Preview State
+            const actor = document.getElementById('spaceActor');
+            actor.style.left = '20px';
+            document.getElementById('actorBubble').style.display = 'none';
+
+            renderScriptLine();
+            renderPalette();
+        }
+
+        function renderPalette() {
+            const palette = document.getElementById('blockPalette');
+            palette.innerHTML = '';
+
+            allBlocks.forEach(block => {
+                const item = document.createElement('div');
+                item.className = 'jr-block-item';
+                item.draggable = true;
+                item.onclick = () => addBlockToScript(block.id);
+
+                item.ondragstart = (e) => {
+                    draggedBlockId = block.id;
+                    e.dataTransfer.setData('text/plain', block.id);
+                };
+
+                const img = document.createElement('img');
+                img.src = block.src;
+                img.alt = block.alt;
+
+                item.appendChild(img);
+                palette.appendChild(item);
+            });
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            document.getElementById('scriptLine').classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            document.getElementById('scriptLine').classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            document.getElementById('scriptLine').classList.remove('drag-over');
+            const blockId = e.dataTransfer.getData('text/plain') || draggedBlockId;
+            if (blockId) {
+                addBlockToScript(blockId);
+            }
+        }
+
+        function addBlockToScript(blockId) {
+            const blockObj = allBlocks.find(b => b.id === blockId);
+            if (blockObj) {
+                userScript.push(blockObj);
+                renderScriptLine();
+            }
+        }
+
+        function clearScriptLine() {
+            userScript = [];
+            renderScriptLine();
+        }
+
+        function renderScriptLine() {
+            const scriptLine = document.getElementById('scriptLine');
+            scriptLine.innerHTML = '';
+
+            if (userScript.length === 0) {
+                scriptLine.innerHTML = `<div class="script-placeholder">Drag & drop block images here (Tap line to clear)</div>`;
+                return;
+            }
+
+            userScript.forEach((block, idx) => {
+                const item = document.createElement('div');
+                item.className = 'jr-block-item';
+                item.onclick = (e) => {
+                    e.stopPropagation();
+                    userScript.splice(idx, 1);
+                    renderScriptLine();
+                };
+
+                const img = document.createElement('img');
+                img.src = block.src;
+                img.alt = block.alt;
+
+                item.appendChild(img);
+                scriptLine.appendChild(item);
+            });
+        }
+
+        function executeScript() {
+            const m = missions[currentMissionIdx];
+
+            // Validate User Script
+            let userTypes = userScript.map(b => b.type);
+            let isCorrect = (userTypes.length === m.requiredTypes.length);
+
+            if (isCorrect) {
+                for (let i = 0; i < m.requiredTypes.length; i++) {
+                    if (userTypes[i] !== m.requiredTypes[i]) {
+                        isCorrect = false;
+                        break;
+                    }
+                }
+            }
+
+            // Animate Character Sprite Actions
+            userScript.forEach(block => {
+                if (block.id === 'forward') {
+                    document.getElementById('spaceActor').style.left = '180px';
+                }
+                if (block.id === 'say') {
+                    document.getElementById('actorBubble').style.display = 'block';
+                }
+            });
+
+            if (isCorrect) {
+                playSound('correct');
+                setTimeout(() => {
+                    if (currentMissionIdx < missions.length - 1) {
+                        loadMission(currentMissionIdx + 1);
+                    } else {
+                        document.getElementById('game-core').style.display = 'none';
+                        document.getElementById('final-screen').style.display = 'flex';
+                    }
+                }, 1300);
+            } else {
+                playSound('wrong');
+            }
+        }
+    </script>
 </body>
 </html>

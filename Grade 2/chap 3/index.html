@@ -33,44 +33,26 @@
             padding: 8px;
         }
 
-        /* 5-Second Splash Screen */
+        /* 5-Second Clean White Splash Screen matching screenshot */
         #splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100dvh;
-            background-color: #1a252f;
+            background-color: #ffffff;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
             transition: opacity 0.6s ease, visibility 0.6s ease;
-            color: white;
-            text-align: center;
-            padding: 20px;
         }
 
         #splash-screen img {
-            max-width: 250px;
-            width: 70%;
+            max-width: 320px;
+            width: 75%;
             height: auto;
-            margin-bottom: 20px;
-            animation: pulse 1.5s infinite ease-in-out;
-        }
-
-        #splash-screen h2 {
-            font-size: 16px;
-            font-weight: 600;
-            color: #ecf0f1;
-            margin: 0;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+            object-fit: contain;
         }
 
         /* Main Workspace Layout */
@@ -284,10 +266,9 @@
 </head>
 <body>
 
-    <!-- 5-Second Splash Screen -->
+    <!-- 5-Second Clean Splash Screen -->
     <div id="splash-screen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/250x90?text=Innovine';">
-        <h2>System Booting... Preparing Canvas Studio</h2>
+        <img src="assets/innovine-logo.png" alt="Innovine Solutions Logo" onerror="this.src='https://via.placeholder.com/300x120?text=Innovine+Solutions';">
     </div>
 
     <!-- Main Game Workspace -->
@@ -340,7 +321,7 @@
         <button class="action-btn" id="next-btn" onclick="processStage()" disabled>Complete Step on Canvas First</button>
     </div>
 
-    <!-- Audio Track Elements (Referencing Repository Assets) -->
+    <!-- Audio Track Elements -->
     <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="snd-clap" src="assets/clap.mp3" preload="auto"></audio>
     <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
@@ -411,7 +392,7 @@
             element.classList.add('active');
         }
 
-        // Canvas Touch / Click Interaction Handling
+        // Canvas Interaction Engine
         canvas.addEventListener('click', handleCanvasInteraction);
 
         function handleCanvasInteraction(e) {
@@ -431,7 +412,7 @@
                     ctx.fillStyle = "#e74c3c";
                     ctx.fillRect(80, 40, 160, 120);
 
-                    // Add a tiny smudge line for Stage 4
+                    // Add a tiny smudge line for Stage 3
                     ctx.fillStyle = "#34495e";
                     ctx.fillRect(210, 140, 20, 10);
 
@@ -467,7 +448,7 @@
                     triggerSound('snd-correct');
 
                     ctx.fillStyle = "#2ecc71";
-                    ctx.fillRect(210, 140, 20, 10); // Clear smudge with green
+                    ctx.fillRect(210, 140, 20, 10);
 
                     document.getElementById('score-label').innerText = "Status: Smudge Cleaned!";
                     unlockNext();
@@ -491,7 +472,7 @@
                     triggerSound('snd-wrong');
                 }
             }
-            // STAGE 5: Fill Blue Frame (Final Victory)
+            // STAGE 5: Fill Blue Frame
             else if (currentStage === 5) {
                 if (selectedTool === 'fill' && selectedColor === '#3498db' && (x < 70 || x > 250 || y < 30 || y > 170)) {
                     isFrameRestored = true;
@@ -551,7 +532,6 @@
                 desc.innerText = "Select the <b>Fill Bucket (🪣)</b> and the <b>Blue Color</b>, then click the outer background frame to finish!";
                 selectTool('fill');
             } else {
-                // Restart Game Loop
                 currentStage = 1;
                 isZoomed = false;
                 isFilled = false;

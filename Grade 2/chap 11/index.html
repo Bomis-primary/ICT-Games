@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Scratch Jr Space Drag & Drop Adventure</title>
+<title>Scratch Jr Space Coding Adventure</title>
 
 <style>
 * {
@@ -51,7 +51,7 @@ body {
     object-fit: contain;
 }
 
-/* Main Workspace */
+/* Main Workspace Container */
 .main-container {
     display: flex;
     flex-direction: column;
@@ -105,7 +105,7 @@ header h1 {
     overflow: hidden;
 }
 
-/* Instruction Header Card */
+/* Instruction & Target Blueprint Box */
 .instruction-card {
     background-color: #ffffff;
     border-left: 4px solid #f59e0b;
@@ -122,13 +122,26 @@ header h1 {
 }
 
 .instruction-card p {
-    margin: 0;
+    margin: 0 0 4px 0;
     font-size: 11px;
     color: #334155;
     line-height: 1.3;
 }
 
-/* Scratch Jr Space Studio Window */
+.target-blueprint {
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 6px;
+    padding: 4px 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: bold;
+    color: #92400e;
+}
+
+/* Scratch Jr Studio Window */
 .scratch-studio {
     background: #1e1b4b;
     border-radius: 14px;
@@ -143,12 +156,12 @@ header h1 {
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 
-/* Space Scenery Preview Stage */
+/* Deep Space Stage Preview */
 .stage-preview {
     background: radial-gradient(circle at 80% 20%, #4338ca 0%, #0f172a 70%), url('https://www.transparenttextures.com/patterns/stardust.png');
     border-radius: 10px;
     border: 2px solid #6366f1;
-    height: 140px;
+    height: 130px;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -161,7 +174,7 @@ header h1 {
     position: absolute;
     top: 10px;
     right: 25px;
-    font-size: 46px;
+    font-size: 44px;
     filter: drop-shadow(0 0 10px #38bdf8);
     animation: floatPlanet 6s ease-in-out infinite alternate;
 }
@@ -170,7 +183,7 @@ header h1 {
     position: absolute;
     bottom: 12px;
     right: 90px;
-    font-size: 28px;
+    font-size: 26px;
     opacity: 0.8;
 }
 
@@ -198,16 +211,15 @@ header h1 {
     object-fit: contain;
     position: absolute;
     left: 20px;
-    bottom: 25px;
+    bottom: 20px;
     z-index: 10;
     transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
     filter: drop-shadow(0 0 8px #facc15);
 }
 
-/* Speech Bubble */
 .speech-bubble {
     position: absolute;
-    bottom: 80px;
+    bottom: 75px;
     left: 70px;
     background: #ffffff;
     color: #0f172a;
@@ -230,7 +242,7 @@ header h1 {
     border-color: transparent #ffffff transparent transparent;
 }
 
-/* Category Filter Tabs */
+/* Category Tabs Bar */
 .category-tabs {
     display: flex;
     gap: 6px;
@@ -242,16 +254,14 @@ header h1 {
 }
 
 .cat-tab {
-    width: 30px;
-    height: 26px;
+    width: 28px;
+    height: 24px;
     border-radius: 6px;
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 11px;
     box-shadow: 0 2px 0 rgba(0,0,0,0.3);
-    transition: transform 0.1s;
-    font-size: 12px;
 }
 
 .cat-yellow { background: #eab308; }
@@ -259,20 +269,19 @@ header h1 {
 .cat-purple { background: #9333ea; }
 .cat-green  { background: #16a34a; }
 .cat-orange { background: #ea580c; }
-.cat-red    { background: #dc2626; }
 
-/* Drag & Drop Target Script Line Slot */
+/* Script Target Drop Slots Line */
 .script-area {
     background: #0f172a;
     border: 2px dashed #f59e0b;
     border-radius: 8px;
-    min-height: 56px;
+    min-height: 58px;
     display: flex;
     align-items: center;
     padding: 4px;
     gap: 6px;
     overflow-x: auto;
-    transition: background 0.2s, border-color 0.2s;
+    transition: background 0.2s;
 }
 
 .script-area.drag-over {
@@ -288,21 +297,21 @@ header h1 {
     text-align: center;
 }
 
-/* Block Image Palette Box */
+/* Block Image Palette Container */
 .block-palette {
     background: #0f172a;
     border-radius: 8px;
     border: 1px solid #334155;
-    padding: 8px;
+    padding: 6px;
     display: flex;
     gap: 8px;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    min-height: 60px;
+    min-height: 58px;
 }
 
-/* Draggable & Clickable Image Block Items */
+/* Image Block Items */
 .jr-block-item {
     cursor: grab;
     display: inline-flex;
@@ -319,13 +328,13 @@ header h1 {
 }
 
 .jr-block-item img {
-    height: 44px;
+    height: 42px;
     width: auto;
     object-fit: contain;
     pointer-events: none;
 }
 
-/* Action Submit Green Flag Button */
+/* Green Flag Execution Button */
 .run-flag-btn {
     background-color: #16a34a;
     color: white;
@@ -404,13 +413,17 @@ header h1 {
     <div class="main-container" id="app-workspace">
         <header>
             <h1>🚀 Scratch Jr Space Missions</h1>
-            <div class="score-badge" id="level-badge">Mission 1 / 6</div>
+            <div class="score-badge" id="level-badge">Mission 1 / 5</div>
         </header>
 
         <div class="game-layout" id="game-core">
             <div class="instruction-card">
-                <h3 id="mission-title">Mission 1: Event & Start Trigger</h3>
-                <p id="mission-desc">Drag or tap the <b>Yellow Start Flag</b> or <b>3 Dots Event</b> block into the script line!</p>
+                <h3 id="mission-title">Mission 1: Event Trigger Block</h3>
+                <p id="mission-desc">Build the target script blueprint below by dragging or tapping the correct blocks!</p>
+                <div class="target-blueprint">
+                    <span>Target Script Goal:</span>
+                    <span id="target-blueprint-text">Yellow Flag OR 3 Dots Event</span>
+                </div>
             </div>
 
             <div class="scratch-studio">
@@ -434,17 +447,16 @@ header h1 {
                     <div class="cat-tab cat-purple">🟣</div>
                     <div class="cat-tab cat-green">🟢</div>
                     <div class="cat-tab cat-orange">🟠</div>
-                    <div class="cat-tab cat-red">🔴</div>
                 </div>
 
                 <!-- Drag & Drop Target Script Line Slot -->
-                <div class="script-area" id="scriptLine" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+                <div class="script-area" id="scriptLine" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)" onclick="clearScriptLine()">
                     <div class="script-placeholder" id="scriptPlaceholder">Drag & drop block images here (Tap line to clear)</div>
                 </div>
 
-                <!-- Block Image Palette Box -->
+                <!-- Block Image Palette Container (NO commands.png) -->
                 <div class="block-palette" id="blockPalette">
-                    <!-- Dynamic Blocks -->
+                    <!-- Dynamic Palette -->
                 </div>
             </div>
 
@@ -457,7 +469,7 @@ header h1 {
         <div id="final-screen">
             <span>🎉🏅🌌</span>
             <h2>SCRATCH JR SPACE CHAMPION!</h2>
-            <p>Outstanding job! You mastered event, motion, sound, and command image blocks!</p>
+            <p>Outstanding job! You mastered event, motion, sound, and speech image blocks!</p>
             <button class="run-flag-btn" style="max-width:200px;" onclick="location.reload()">Play Mission Again 🔄</button>
         </div>
     </div>
@@ -532,47 +544,46 @@ header h1 {
             }
         }
 
-        // Available Asset Blocks
+        // Available Asset Blocks (commands.png strictly omitted)
         const allBlocks = [
-            { id: 'yellow', src: 'assets/yellow.png', alt: 'Yellow Start Flag' },
-            { id: '3dots', src: 'assets/3 dots.png', alt: '3 Dots Event' },
-            { id: 'forward', src: 'assets/forward.png', alt: 'Forward Move' },
-            { id: 'say', src: 'assets/say.png', alt: 'Say Speech' },
-            { id: 'sound', src: 'assets/sound.png', alt: 'Sound Pop' },
-            { id: 'commands', src: 'assets/commands.png', alt: 'Command Block' }
+            { id: 'yellow', src: 'assets/yellow.png', alt: 'Yellow Start Flag', type: 'event' },
+            { id: '3dots', src: 'assets/3 dots.png', alt: '3 Dots Event', type: 'event' },
+            { id: 'forward', src: 'assets/forward.png', alt: 'Forward Move', type: 'motion' },
+            { id: 'say', src: 'assets/say.png', alt: 'Say Speech', type: 'looks' },
+            { id: 'sound', src: 'assets/sound.png', alt: 'Sound Pop', type: 'sound' }
         ];
 
-        // Mission Definitions
+        // 5 Crystal-Clear Missions
         const missions = [
             {
-                title: "Mission 1: Event & Start Trigger",
-                desc: "Drag or tap the <b>Yellow Start Flag</b> or <b>3 Dots Event</b> block into the script line!",
-                solution: [['yellow', '3dots']]
+                title: "Mission 1: Event Trigger Block",
+                desc: "Drag or tap an <b>Event Start Block</b> (Yellow Flag OR 3 Dots) into the script line!",
+                blueprintText: "[ Event Start Block ]",
+                requiredTypes: ['event']
             },
             {
                 title: "Mission 2: Move Forward to Saturn",
-                desc: "Combine <b>Event Block</b> + <b>Forward Move</b> image blocks!",
-                solution: [['yellow', '3dots'], ['forward']]
+                desc: "Combine an <b>Event Start Block</b> + <b>Forward Move</b> block to move across space!",
+                blueprintText: "[ Event Block ] ➔ [ Forward Move ]",
+                requiredTypes: ['event', 'motion']
             },
             {
-                title: "Mission 3: Looks & Speech Bubble",
-                desc: "Add <b>Say Hello</b> block image to speak in space scenery!",
-                solution: [['yellow', '3dots'], ['say']]
+                title: "Mission 3: Space Speech Bubble",
+                desc: "Combine an <b>Event Start Block</b> + <b>Say Hello Block</b> to make the character speak!",
+                blueprintText: "[ Event Block ] ➔ [ Say Hello ]",
+                requiredTypes: ['event', 'looks']
             },
             {
-                title: "Mission 4: Sound Pop Block",
-                desc: "Combine <b>Event Block</b> + <b>Sound Pop</b> image block!",
-                solution: [['yellow', '3dots'], ['sound']]
+                title: "Mission 4: Sound Pop Effect",
+                desc: "Combine an <b>Event Start Block</b> + <b>Sound Pop Block</b> to trigger audio!",
+                blueprintText: "[ Event Block ] ➔ [ Sound Pop ]",
+                requiredTypes: ['event', 'sound']
             },
             {
-                title: "Mission 5: Command Control Block",
-                desc: "Add <b>Command Block</b> at the end of your script sequence!",
-                solution: [['yellow', '3dots'], ['forward'], ['commands']]
-            },
-            {
-                title: "Mission 6: Full Space Combo",
-                desc: "Build full sequence: <b>Event</b> ➔ <b>Forward</b> ➔ <b>Say</b> ➔ <b>Command Block</b>!",
-                solution: [['yellow', '3dots'], ['forward'], ['say'], ['commands']]
+                title: "Mission 5: Full Action Combo",
+                desc: "Build the complete Scratch Jr program sequence across space!",
+                blueprintText: "[ Event ] ➔ [ Forward ] ➔ [ Say ] ➔ [ Sound Pop ]",
+                requiredTypes: ['event', 'motion', 'looks', 'sound']
             }
         ];
 
@@ -597,9 +608,10 @@ header h1 {
 
             const m = missions[idx];
 
-            document.getElementById('level-badge').innerText = `Mission ${idx + 1} / 6`;
+            document.getElementById('level-badge').innerText = `Mission ${idx + 1} / 5`;
             document.getElementById('mission-title').innerText = m.title;
             document.getElementById('mission-desc').innerHTML = m.desc;
+            document.getElementById('target-blueprint-text').innerText = m.blueprintText;
 
             // Reset Stage Preview State
             const actor = document.getElementById('spaceActor');
@@ -695,19 +707,20 @@ header h1 {
         function executeScript() {
             const m = missions[currentMissionIdx];
 
-            let isCorrect = userScript.length === m.solution.length;
+            // Validate Script against Mission Required Types
+            let userTypes = userScript.map(b => b.type);
+            let isCorrect = (userTypes.length === m.requiredTypes.length);
 
             if (isCorrect) {
-                for (let i = 0; i < m.solution.length; i++) {
-                    const allowedIds = m.solution[i];
-                    if (!allowedIds.includes(userScript[i].id)) {
+                for (let i = 0; i < m.requiredTypes.length; i++) {
+                    if (userTypes[i] !== m.requiredTypes[i]) {
                         isCorrect = false;
                         break;
                     }
                 }
             }
 
-            // Animate actor through space scenery
+            // Animate Character Sprite Actions
             userScript.forEach(block => {
                 if (block.id === 'forward') {
                     document.getElementById('spaceActor').style.left = '180px';

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Wire Detective: Hazard Hunter</title>
+    <title>Wire Detective: Multi-Level Hazard Hunter</title>
     <style>
         * {
             box-sizing: border-box;
@@ -55,7 +55,7 @@
             object-fit: contain;
         }
 
-        /* Main Workspace */
+        /* Main Workspace Layout */
         .main-content {
             display: flex;
             flex-direction: column;
@@ -79,7 +79,9 @@
             border: 3px solid #b45309;
             box-shadow: 0 3px 0px #78350f;
             flex-shrink: 0;
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         header h1 {
@@ -89,14 +91,15 @@
             font-weight: 700;
         }
 
-        header p {
-            margin: 2px 0 0 0;
+        .level-badge {
+            background-color: #b45309;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
             font-size: 11px;
-            color: #d97706;
             font-weight: bold;
         }
 
-        /* Game Layout Container */
         .game-container {
             display: flex;
             flex-direction: column;
@@ -279,14 +282,14 @@
     <div class="main-content" id="app-workspace">
         <div id="main-game-layout" style="display:flex; flex-direction:column; width:100%; height:100%; justify-content:space-between; gap:6px;">
             <header>
-                <h1>🕵️ Wire Detective: Hazard Hunter</h1>
-                <p>Computer Room Safety Investigation</p>
+                <h1>🕵️ Wire Detective</h1>
+                <div class="level-badge" id="level-badge">Level 1 / 3</div>
             </header>
 
             <div class="game-container">
                 <div class="instruction-card">
-                    <h3>🔍 Your Mission:</h3>
-                    <p>Tap on the <b>3 hidden hazards</b> inside the computer lab window to fix them and make the room safe!</p>
+                    <h3 id="level-title">🔍 Level 1: Computer Lab Inspection</h3>
+                    <p id="level-desc">Tap on the <b>3 hidden hazards</b> inside the computer lab window to fix them!</p>
                 </div>
 
                 <div class="canvas-window">
@@ -298,23 +301,21 @@
                 </div>
 
                 <div class="dock-panel">
-                    <ul class="checklist">
-                        <li id="chk-cable">❌ Broken Frayed Power Cable</li>
-                        <li id="chk-water">❌ Water Bottle on CPU Tower</li>
-                        <li id="chk-trip">❌ Loose Aisle Trip Wire</li>
+                    <ul class="checklist" id="checklist-container">
+                        <!-- Dynamic Checklist -->
                     </ul>
                 </div>
             </div>
 
-            <button class="action-btn" id="finish-btn" onclick="claimBadge()" disabled>Find All 3 Hazards First</button>
+            <button class="action-btn" id="finish-btn" onclick="advanceLevel()" disabled>Find All 3 Hazards First</button>
         </div>
 
         <!-- Badge Award Screen -->
         <div id="badge-screen">
             <span>🕵️‍♂️🏅</span>
-            <h2>INNOVINE CERTIFIED HAZARD HUNTER!</h2>
-            <p>Brilliant spatial scanning! You identified electrical and liquid hazards, secured the loose wires, and made the lab safe!</p>
-            <button class="action-btn active-step" style="max-width:200px;" onclick="location.reload()">Inspect Lab Again 🔄</button>
+            <h2>INNOVINE GRAND MASTER HAZARD HUNTER!</h2>
+            <p>Outstanding detective work! You cleared all 3 rooms, secured all power cables, liquid risks, and hardware hazards!</p>
+            <button class="action-btn active-step" style="max-width:200px;" onclick="location.reload()">Re-inspect Rooms 🔄</button>
         </div>
     </div>
 
@@ -331,21 +332,49 @@
                 splash.style.opacity = '0';
                 splash.style.visibility = 'hidden';
                 document.getElementById('app-workspace').style.opacity = '1';
-                drawLabEnvironment();
+                loadLevel(1);
             }, 5000);
         });
 
         const canvas = document.getElementById('detectiveCanvas');
         const ctx = canvas.getContext('2d');
 
+        let currentLevel = 1;
         let hazardsFoundCount = 0;
 
-        // Interactive Target Regions (Touch-optimized enlarged hitboxes)
-        const targets = {
-            cable: { x: 10, y: 70, w: 60, h: 50, found: false, name: "Frayed Cable" },
-            water: { x: 135, y: 45, w: 50, h: 45, found: false, name: "Water Bottle" },
-            trip:  { x: 190, y: 170, w: 120, h: 40, found: false, name: "Trip Wire" }
-        };
+        // --- LEVEL DEFINITIONS ---
+        const levels = [
+            {
+                level: 1,
+                title: "🔍 Level 1: Computer Lab Inspection",
+                desc: "Tap on the 3 hazards in the Computer Lab (Frayed Cable, Water Bottle, Trip Wire)!",
+                targets: {
+                    t1: { x: 10, y: 70, w: 60, h: 50, found: false, name: "Frayed Power Cable", id: "t1" },
+                    t2: { x: 135, y: 45, w: 50, h: 45, found: false, name: "Water Bottle on CPU", id: "t2" },
+                    t3: { x: 190, y: 170, w: 120, h: 40, found: false, name: "Loose Aisle Trip Wire", id: "t3" }
+                }
+            },
+            {
+                level: 2,
+                title: "🖥️ Level 2: Server Room Safety",
+                desc: "Inspect the Server Room! Tap on the Unplugged Fan, Overloaded Power Strip, and Dust Vents!",
+                targets: {
+                    t1: { x: 20, y: 110, w: 55, h: 50, found: false, name: "Unplugged Cooling Fan", id: "t1" },
+                    t2: { x: 120, y: 155, w: 70, h: 45, found: false, name: "Overloaded Power Strip", id: "t2" },
+                    t3: { x: 230, y: 50, w: 60, h: 50, found: false, name: "Dust Blocked Air Vents", id: "t3" }
+                }
+            },
+            {
+                level: 3,
+                title: "🤖 Level 3: Robotics Lab Challenge",
+                desc: "Final Mission! Tap on the Exposed Circuit, Wet Floor Spot, and Unsecured Battery Pack!",
+                targets: {
+                    t1: { x: 30, y: 50, w: 60, h: 50, found: false, name: "Exposed Live Circuit", id: "t1" },
+                    t2: { x: 120, y: 160, w: 80, h: 50, found: false, name: "Wet Floor Near Outlet", id: "t2" },
+                    t3: { x: 235, y: 110, w: 65, h: 50, found: false, name: "Unsecured Battery Pack", id: "t3" }
+                }
+            }
+        ];
 
         function playSound(id) {
             const track = document.getElementById(id);
@@ -355,93 +384,225 @@
             }
         }
 
-        // --- CANVAS RENDER ENGINE ---
-        function drawLabEnvironment() {
+        function loadLevel(lvlNum) {
+            currentLevel = lvlNum;
+            hazardsFoundCount = 0;
+            const lvl = levels.find(l => l.level === lvlNum);
+
+            document.getElementById('level-badge').innerText = `Level ${lvlNum} / 3`;
+            document.getElementById('level-title').innerText = lvl.title;
+            document.getElementById('level-desc').innerText = lvl.desc;
+            document.getElementById('score-counter').innerText = `Hazards Fixed: 0 / 3`;
+            document.getElementById('detective-status').innerText = `Status: Scan room...`;
+
+            const btn = document.getElementById('finish-btn');
+            btn.disabled = true;
+            btn.classList.remove('active-step');
+            btn.innerText = "Find All 3 Hazards First";
+
+            // Render Checklist
+            const checklistContainer = document.getElementById('checklist-container');
+            checklistContainer.innerHTML = '';
+            for (let k in lvl.targets) {
+                let tgt = lvl.targets[k];
+                tgt.found = false;
+                const li = document.createElement('li');
+                li.id = `chk-${tgt.id}`;
+                li.innerText = `❌ ${tgt.name}`;
+                checklistContainer.appendChild(li);
+            }
+
+            drawEnvironment();
+        }
+
+        // --- ENVIRONMENT RENDERING ---
+        function drawEnvironment() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const lvl = levels.find(l => l.level === currentLevel);
 
-            // Wall & Floor Layout
-            ctx.fillStyle = "#f1f5f9";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#cbd5e1";
-            ctx.fillRect(0, 165, canvas.width, 55);
+            if (currentLevel === 1) {
+                // Room 1: Computer Lab
+                ctx.fillStyle = "#f1f5f9";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = "#cbd5e1";
+                ctx.fillRect(0, 165, canvas.width, 55);
 
-            // Safe Decoy: Monitor
-            ctx.fillStyle = "#475569";
-            ctx.fillRect(70, 45, 80, 60);
-            ctx.fillStyle = "#1e293b";
-            ctx.fillRect(75, 50, 70, 50);
-            ctx.fillStyle = "#64748b";
-            ctx.fillRect(105, 105, 10, 25);
-            ctx.fillRect(90, 130, 40, 6);
+                // Decoys
+                ctx.fillStyle = "#475569";
+                ctx.fillRect(70, 45, 80, 60);
+                ctx.fillStyle = "#1e293b";
+                ctx.fillRect(75, 50, 70, 50);
+                ctx.fillStyle = "#64748b";
+                ctx.fillRect(105, 105, 10, 25);
+                ctx.fillRect(90, 130, 40, 6);
 
-            // Safe Decoy: Headphones
-            ctx.font = "20px sans-serif";
-            ctx.fillText("🎧", 200, 115);
+                // Target 1: Cable
+                if (!lvl.targets.t1.found) {
+                    ctx.strokeStyle = "#ef4444";
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(15, 95);
+                    ctx.bezierCurveTo(25, 75, 45, 110, 55, 90);
+                    ctx.stroke();
+                    ctx.fillStyle = "#eab308";
+                    ctx.font = "bold 12px sans-serif";
+                    ctx.fillText("⚡", 30, 85);
+                } else {
+                    ctx.fillStyle = "#78716c";
+                    ctx.fillRect(15, 85, 45, 16);
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "bold 8px sans-serif";
+                    ctx.fillText("TAPED SAFE", 17, 96);
+                }
 
-            // Safe Decoy: Stack of Notebooks
-            ctx.fillStyle = "#ec4899";
-            ctx.fillRect(30, 120, 35, 8);
-            ctx.fillStyle = "#10b981";
-            ctx.fillRect(31, 112, 33, 8);
+                // Target 2: Water Bottle
+                ctx.fillStyle = "#334155";
+                ctx.fillRect(135, 80, 45, 65);
+                if (!lvl.targets.t2.found) {
+                    ctx.fillStyle = "#38bdf8";
+                    ctx.fillRect(148, 55, 18, 25);
+                    ctx.fillStyle = "#ef4444";
+                    ctx.fillRect(151, 52, 12, 4);
+                    ctx.font = "12px sans-serif";
+                    ctx.fillText("💧", 168, 75);
+                } else {
+                    ctx.fillStyle = "#16a34a";
+                    ctx.font = "bold 9px sans-serif";
+                    ctx.fillText("✅ CLEARED", 136, 74);
+                }
 
-            // HAZARD 1: Frayed Power Cable (Left Socket)
-            if (!targets.cable.found) {
-                ctx.strokeStyle = "#ef4444";
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.moveTo(15, 95);
-                ctx.bezierCurveTo(25, 75, 45, 110, 55, 90);
-                ctx.stroke();
+                // Target 3: Trip Wire
+                if (!lvl.targets.t3.found) {
+                    ctx.strokeStyle = "#dc2626";
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(200, 195);
+                    ctx.lineTo(300, 185);
+                    ctx.stroke();
+                    ctx.fillStyle = "#dc2626";
+                    ctx.font = "bold 9px sans-serif";
+                    ctx.fillText("⚠️ LOOSE WIRE", 220, 182);
+                } else {
+                    ctx.fillStyle = "#78716c";
+                    ctx.fillRect(200, 188, 100, 10);
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "8px sans-serif";
+                    ctx.fillText("TAPED DOWN SECURE", 215, 196);
+                }
 
-                ctx.fillStyle = "#eab308";
-                ctx.font = "bold 12px sans-serif";
-                ctx.fillText("⚡", 30, 85);
-            } else {
-                ctx.fillStyle = "#78716c";
-                ctx.fillRect(15, 85, 45, 16);
-                ctx.fillStyle = "#ffffff";
-                ctx.font = "bold 8px sans-serif";
-                ctx.fillText("TAPED SAFE", 17, 96);
-            }
+            } else if (currentLevel === 2) {
+                // Room 2: Server Room
+                ctx.fillStyle = "#0f172a";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // HAZARD 2: Water Bottle on CPU Tower
-            ctx.fillStyle = "#334155";
-            ctx.fillRect(135, 80, 45, 65);
-            if (!targets.water.found) {
-                ctx.fillStyle = "#38bdf8";
-                ctx.fillRect(148, 55, 18, 25);
-                ctx.fillStyle = "#ef4444";
-                ctx.fillRect(151, 52, 12, 4);
-                ctx.font = "12px sans-serif";
-                ctx.fillText("💧", 168, 75);
-            } else {
-                ctx.fillStyle = "#16a34a";
-                ctx.font = "bold 9px sans-serif";
-                ctx.fillText("✅ CLEARED", 136, 74);
-            }
+                // Racks
+                ctx.fillStyle = "#334155";
+                ctx.fillRect(80, 30, 100, 120);
+                ctx.fillStyle = "#1e293b";
+                for (let i = 0; i < 4; i++) ctx.fillRect(85, 40 + (i * 25), 90, 18);
 
-            // HAZARD 3: Loose Trip Wire on Floor
-            if (!targets.trip.found) {
-                ctx.strokeStyle = "#dc2626";
-                ctx.lineWidth = 3;
-                ctx.beginPath();
-                ctx.moveTo(200, 195);
-                ctx.lineTo(300, 185);
-                ctx.stroke();
+                // Target 1: Fan
+                if (!lvl.targets.t1.found) {
+                    ctx.fillStyle = "#ef4444";
+                    ctx.font = "24px sans-serif";
+                    ctx.fillText("🌀", 30, 140);
+                    ctx.font = "bold 9px sans-serif";
+                    ctx.fillText("OFFLINE", 25, 155);
+                } else {
+                    ctx.fillStyle = "#22c55e";
+                    ctx.font = "24px sans-serif";
+                    ctx.fillText("🌀", 30, 140);
+                    ctx.font = "bold 9px sans-serif";
+                    ctx.fillText("ACTIVE", 28, 155);
+                }
 
-                ctx.fillStyle = "#dc2626";
-                ctx.font = "bold 9px sans-serif";
-                ctx.fillText("⚠️ LOOSE WIRE", 220, 182);
-            } else {
-                ctx.fillStyle = "#78716c";
-                ctx.fillRect(200, 188, 100, 10);
-                ctx.fillStyle = "#ffffff";
-                ctx.font = "8px sans-serif";
-                ctx.fillText("TAPED DOWN SECURE", 215, 196);
+                // Target 2: Power Strip
+                if (!lvl.targets.t2.found) {
+                    ctx.fillStyle = "#f59e0b";
+                    ctx.fillRect(125, 165, 60, 20);
+                    ctx.fillStyle = "#ef4444";
+                    ctx.font = "bold 10px sans-serif";
+                    ctx.fillText("⚡ OVERLOAD", 122, 160);
+                } else {
+                    ctx.fillStyle = "#78716c";
+                    ctx.fillRect(125, 165, 60, 20);
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "bold 8px sans-serif";
+                    ctx.fillText("SAFE STRIP", 130, 178);
+                }
+
+                // Target 3: Dust Vents
+                if (!lvl.targets.t3.found) {
+                    ctx.fillStyle = "#78716c";
+                    ctx.fillRect(235, 55, 50, 40);
+                    ctx.fillStyle = "#ef4444";
+                    ctx.font = "bold 9px sans-serif";
+                    ctx.fillText("💨 DUSTY", 240, 50);
+                } else {
+                    ctx.fillStyle = "#38bdf8";
+                    ctx.fillRect(235, 55, 50, 40);
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "bold 8px sans-serif";
+                    ctx.fillText("CLEAN VENT", 237, 78);
+                }
+
+            } else if (currentLevel === 3) {
+                // Room 3: Robotics Lab
+                ctx.fillStyle = "#1e1b4b";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Robot Deco
+                ctx.font = "50px sans-serif";
+                ctx.fillText("🤖", 140, 100);
+
+                // Target 1: Live Circuit
+                if (!lvl.targets.t1.found) {
+                    ctx.fillStyle = "#ef4444";
+                    ctx.fillRect(35, 55, 50, 40);
+                    ctx.fillStyle = "#facc15";
+                    ctx.font = "bold 14px sans-serif";
+                    ctx.fillText("⚡", 50, 80);
+                } else {
+                    ctx.fillStyle = "#15803d";
+                    ctx.fillRect(35, 55, 50, 40);
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "bold 8px sans-serif";
+                    ctx.fillText("COVERED", 40, 78);
+                }
+
+                // Target 2: Wet Floor
+                if (!lvl.targets.t2.found) {
+                    ctx.fillStyle = "#38bdf8";
+                    ctx.beginPath();
+                    ctx.ellipse(160, 180, 35, 15, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = "#ef4444";
+                    ctx.font = "bold 9px sans-serif";
+                    ctx.fillText("💧 WET SPILL", 135, 160);
+                } else {
+                    ctx.fillStyle = "#a8a29e";
+                    ctx.font = "bold 9px sans-serif";
+                    ctx.fillText("🧹 DRIED SAFE", 135, 180);
+                }
+
+                // Target 3: Battery Pack
+                if (!lvl.targets.t3.found) {
+                    ctx.fillStyle = "#dc2626";
+                    ctx.fillRect(240, 115, 55, 35);
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "bold 9px sans-serif";
+                    ctx.fillText("🔋 LOOSE", 245, 136);
+                } else {
+                    ctx.fillStyle = "#16a34a";
+                    ctx.fillRect(240, 115, 55, 35);
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "bold 8px sans-serif";
+                    ctx.fillText("SECURED", 248, 136);
+                }
             }
         }
 
-        // --- ACCURATE TOUCH & CLICK DETECTOR ---
+        // --- TOUCH INTERACTION DETECTOR ---
         canvas.addEventListener('click', function(e) {
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;
@@ -449,10 +610,11 @@
             const mouseX = (e.clientX - rect.left) * scaleX;
             const mouseY = (e.clientY - rect.top) * scaleY;
 
+            const lvl = levels.find(l => l.level === currentLevel);
             let hitRegistered = false;
 
-            for (let key in targets) {
-                let tgt = targets[key];
+            for (let k in lvl.targets) {
+                let tgt = lvl.targets[k];
                 if (!tgt.found) {
                     if (mouseX >= tgt.x && mouseX <= (tgt.x + tgt.w) && mouseY >= tgt.y && mouseY <= (tgt.y + tgt.h)) {
                         tgt.found = true;
@@ -460,15 +622,15 @@
                         hazardsFoundCount++;
 
                         playSound('snd-correct');
-                        document.getElementById(`chk-${key}`).className = "found";
-                        document.getElementById(`chk-${key}`).innerText = `✅ Fixed: ${tgt.name}!`;
+                        document.getElementById(`chk-${tgt.id}`).className = "found";
+                        document.getElementById(`chk-${tgt.id}`).innerText = `✅ Fixed: ${tgt.name}!`;
                         document.getElementById('score-counter').innerText = `Hazards Fixed: ${hazardsFoundCount} / 3`;
                         document.getElementById('detective-status').innerText = `Status: Fixed ${tgt.name}!`;
 
-                        drawLabEnvironment();
+                        drawEnvironment();
 
                         if (hazardsFoundCount === 3) {
-                            unlockBadgeStepButton();
+                            unlockNextLevelButton();
                         }
                         break;
                     }
@@ -477,23 +639,27 @@
 
             if (!hitRegistered) {
                 playSound('snd-wrong');
-                document.getElementById('detective-status').innerText = "Status: That item is safe! Keep searching.";
+                document.getElementById('detective-status').innerText = "Status: That spot is safe! Keep hunting.";
             }
         });
 
-        function unlockBadgeStepButton() {
+        function unlockNextLevelButton() {
             playSound('snd-clap');
             const btn = document.getElementById('finish-btn');
             btn.disabled = false;
             btn.classList.add('active-step');
-            btn.innerText = "Claim Detective Badge ➡️";
-            document.getElementById('detective-status').innerText = "Status: Lab Secure! Claim your badge!";
+            btn.innerText = currentLevel === 3 ? "Claim Grand Detective Badge 🎉" : "Advance to Next Room ➡️";
+            document.getElementById('detective-status').innerText = "Status: Room Secured!";
         }
 
-        function claimBadge() {
-            document.getElementById('main-game-layout').style.display = 'none';
-            document.getElementById('badge-screen').style.display = 'flex';
-            playSound('snd-clap');
+        function advanceLevel() {
+            if (currentLevel < 3) {
+                loadLevel(currentLevel + 1);
+            } else {
+                document.getElementById('main-game-layout').style.display = 'none';
+                document.getElementById('badge-screen').style.display = 'flex';
+                playSound('snd-clap');
+            }
         }
     </script>
 </body>

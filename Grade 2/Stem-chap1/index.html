@@ -148,7 +148,7 @@ header h1 {
     display: flex;
     gap: 8px;
     width: 100%;
-    height: 120px;
+    height: 130px;
 }
 
 .drop-box {
@@ -159,10 +159,11 @@ header h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     padding: 6px;
     text-align: center;
     transition: background 0.2s, border-color 0.2s;
+    cursor: pointer;
 }
 
 .drop-box.drag-over {
@@ -174,6 +175,7 @@ header h1 {
     font-size: 11px;
     color: #0369a1;
     margin-bottom: 4px;
+    pointer-events: none;
 }
 
 .drop-box .slot-items {
@@ -182,10 +184,12 @@ header h1 {
     gap: 4px;
     justify-content: center;
     align-items: center;
+    width: 100%;
+    height: 100%;
 }
 
 .drop-box .slot-items img {
-    height: 36px;
+    height: 38px;
     width: auto;
     object-fit: contain;
 }
@@ -323,11 +327,11 @@ header h1 {
             <div class="stem-studio">
                 <!-- Drop Target Zones -->
                 <div class="drop-zone-container">
-                    <div class="drop-box" id="dropZoneA" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'A')">
+                    <div class="drop-box" id="dropZoneA" onclick="handleZoneClick('A')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'A')">
                         <h4 id="boxTitleA">⚡ Electrical Appliances</h4>
                         <div class="slot-items" id="slotItemsA"></div>
                     </div>
-                    <div class="drop-box" id="dropZoneB" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'B')">
+                    <div class="drop-box" id="dropZoneB" onclick="handleZoneClick('B')" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'B')">
                         <h4 id="boxTitleB">🚫 Non-Electrical</h4>
                         <div class="slot-items" id="slotItemsB"></div>
                     </div>
@@ -353,7 +357,7 @@ header h1 {
         </div>
     </div>
 
-    <!-- Audio Elements using Asset Folder filenames -->
+    <!-- Audio Elements -->
     <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
@@ -431,22 +435,22 @@ header h1 {
                 boxA: "⚡ Electrical",
                 boxB: "🚫 Non-Electrical",
                 items: [
-                    { id: 'fan', src: 'assets/fan.png', target: 'A' },
-                    { id: 'fridge', src: 'assets/fridge.jpeg', target: 'A' },
-                    { id: 'laptop', src: 'assets/laptop.png', target: 'A' },
-                    { id: 'circuit', src: 'assets/closed circuits.png', target: 'B' }
+                    { id: 'l1_fan', src: 'assets/fan.png', target: 'A' },
+                    { id: 'l1_fridge', src: 'assets/fridge.jpeg', target: 'A' },
+                    { id: 'l1_laptop', src: 'assets/laptop.png', target: 'A' },
+                    { id: 'l1_circuit', src: 'assets/closed circuits.png', target: 'B' }
                 ]
             },
             {
                 title: "Level 2: Kitchen Appliances",
-                desc: "Find kitchen items that require electricity to work!",
+                desc: "Sort kitchen appliances into <b>⚡ Kitchen Electric</b> or <b>🚫 Other Items</b>!",
                 boxA: "⚡ Kitchen Electric",
                 boxB: "🚫 Other Items",
                 items: [
-                    { id: 'microwave', src: 'assets/microwave.jpg', target: 'A' },
-                    { id: 'fridge', src: 'assets/fridge.jpeg', target: 'A' },
-                    { id: 'fan', src: 'assets/fan.png', target: 'B' },
-                    { id: 'laptop', src: 'assets/laptop.png', target: 'B' }
+                    { id: 'l2_microwave', src: 'assets/microwave.jpg', target: 'A' },
+                    { id: 'l2_fridge', src: 'assets/fridge.jpeg', target: 'A' },
+                    { id: 'l2_fan', src: 'assets/fan.png', target: 'B' },
+                    { id: 'l2_laptop', src: 'assets/laptop.png', target: 'B' }
                 ]
             },
             {
@@ -455,9 +459,9 @@ header h1 {
                 boxA: "⚡ Electric Laundry & Tech",
                 boxB: "🚫 Others",
                 items: [
-                    { id: 'washing', src: 'assets/washing machine.png', target: 'A' },
-                    { id: 'laptop', src: 'assets/laptop.png', target: 'A' },
-                    { id: 'fan', src: 'assets/fan.png', target: 'B' }
+                    { id: 'l3_washing', src: 'assets/washing machine.png', target: 'A' },
+                    { id: 'l3_laptop', src: 'assets/laptop.png', target: 'A' },
+                    { id: 'l3_fan', src: 'assets/fan.png', target: 'B' }
                 ]
             },
             {
@@ -466,15 +470,16 @@ header h1 {
                 boxA: "💡 Closed Circuit",
                 boxB: "🔌 Appliances",
                 items: [
-                    { id: 'circuit', src: 'assets/closed circuits.png', target: 'A' },
-                    { id: 'microwave', src: 'assets/microwave.jpg', target: 'B' },
-                    { id: 'washing', src: 'assets/washing machine.png', target: 'B' }
+                    { id: 'l4_circuit', src: 'assets/closed circuits.png', target: 'A' },
+                    { id: 'l4_microwave', src: 'assets/microwave.jpg', target: 'B' },
+                    { id: 'l4_washing', src: 'assets/washing machine.png', target: 'B' }
                 ]
             }
         ];
 
         let currentLevelIdx = 0;
         let activeAssignments = {};
+        let selectedItemId = null;
         let draggedItemId = null;
 
         // 5-Second Splash Delay
@@ -491,6 +496,7 @@ header h1 {
         function loadLevel(idx) {
             currentLevelIdx = idx;
             activeAssignments = {};
+            selectedItemId = null;
 
             const lvl = levels[idx];
 
@@ -522,18 +528,20 @@ header h1 {
         function createCardElement(item) {
             const card = document.createElement('div');
             card.className = 'card-item';
+            if (selectedItemId === item.id) {
+                card.style.borderColor = '#16a34a';
+                card.style.transform = 'scale(1.05)';
+            }
             card.draggable = true;
 
-            // Tap to toggle assignment between Box A and Box B
-            card.onclick = () => {
-                if (!activeAssignments[item.id]) {
-                    assignItemToBox(item.id, 'A');
-                } else if (activeAssignments[item.id] === 'A') {
-                    assignItemToBox(item.id, 'B');
+            // Tap selection
+            card.onclick = (e) => {
+                e.stopPropagation();
+                if (selectedItemId === item.id) {
+                    selectedItemId = null;
                 } else {
-                    delete activeAssignments[item.id];
+                    selectedItemId = item.id;
                 }
-                updateSlotsUI();
                 renderPalette();
             };
 
@@ -548,6 +556,15 @@ header h1 {
 
             card.appendChild(img);
             return card;
+        }
+
+        function handleZoneClick(boxTarget) {
+            if (selectedItemId) {
+                assignItemToBox(selectedItemId, boxTarget);
+                selectedItemId = null;
+                updateSlotsUI();
+                renderPalette();
+            }
         }
 
         function handleDragOver(e) {
@@ -565,6 +582,7 @@ header h1 {
             const itemId = e.dataTransfer.getData('text/plain') || draggedItemId;
             if (itemId) {
                 assignItemToBox(itemId, boxTarget);
+                selectedItemId = null;
                 updateSlotsUI();
                 renderPalette();
             }
@@ -588,7 +606,8 @@ header h1 {
                     const img = document.createElement('img');
                     img.src = item.src;
                     img.alt = item.id;
-                    img.onclick = () => {
+                    img.onclick = (e) => {
+                        e.stopPropagation();
                         delete activeAssignments[item.id];
                         updateSlotsUI();
                         renderPalette();

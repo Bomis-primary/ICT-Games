@@ -2,234 +2,292 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>KidPix: Pixel Pets Rescue!</title>
     <style>
-        body {
-            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
-            background-color: #fbcfe8; /* Fun bubblegum pink background */
+        * {
+            box-sizing: border-box;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            overflow: hidden;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
+            background-color: #fbcfe8;
+            color: #1e293b;
+        }
+
+        body {
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #1e293b;
-            overflow-x: hidden;
-            user-select: none;
+            justify-content: center;
+            height: 100dvh;
+            padding: 8px;
         }
 
-        /* 5-Second Splash Screen (Logo Only Appears Here) */
+        /* 5-Second Clean White Splash Screen matching Innovine Logo */
         #splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100vh;
+            height: 100dvh;
             background-color: #ffffff;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
         }
 
         #splash-screen img {
-            max-width: 280px;
-            margin-bottom: 25px;
-            animation: bounce 1s infinite alternate;
+            max-width: 300px;
+            width: 75%;
+            height: auto;
+            object-fit: contain;
         }
 
-        #splash-screen h2 {
-            color: #db2777;
-            font-size: 30px;
-            margin: 0;
-        }
-
-        @keyframes bounce {
-            0% { transform: translateY(0) scale(1); }
-            100% { transform: translateY(-15px) scale(1.03); }
-        }
-
-        /* Main Workspace Design */
+        /* Main Game Layout Container */
         .main-content {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 1000px;
+            max-width: 460px;
+            height: 100%;
+            max-height: 100dvh;
+            justify-content: space-between;
             opacity: 0;
-            transition: opacity 1s ease;
+            transition: opacity 0.6s ease;
+            gap: 6px;
+            padding-bottom: calc(env(safe-area-inset-bottom, 6px) + 4px);
         }
 
         header {
             background: #ffffff;
             width: 100%;
-            padding: 15px 30px;
-            border-radius: 25px;
-            border: 4px solid #db2777;
-            box-shadow: 6px 6px 0px #9d174d;
-            margin-bottom: 25px;
-            box-sizing: border-box;
-            text-align: center;
+            padding: 8px 12px;
+            border-radius: 12px;
+            border: 3px solid #db2777;
+            box-shadow: 0 3px 0px #9d174d;
+            flex-shrink: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         header h1 {
             margin: 0;
-            font-size: 28px;
+            font-size: 15px;
             color: #db2777;
+            font-weight: 700;
         }
 
-        .game-grid {
-            display: flex;
-            gap: 25px;
-            width: 100%;
+        .status-badge {
+            background-color: #db2777;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: bold;
         }
 
-        /* Side Controls & Toolbox */
-        .sidebar {
-            flex: 1;
-            background: white;
-            padding: 25px;
-            border-radius: 22px;
-            border: 4px solid #3b82f6;
-            box-shadow: 6px 6px 0px #1d4ed8;
+        /* Mission Container */
+        .game-container {
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            width: 100%;
+            flex: 1;
+            gap: 6px;
+            overflow: hidden;
         }
 
+        /* Instructions Card */
         .instruction-card {
             background-color: #eff6ff;
-            border: 3px dashed #3b82f6;
-            padding: 15px;
-            border-radius: 14px;
-            margin-bottom: 20px;
+            border-left: 4px solid #3b82f6;
+            padding: 8px 10px;
+            border-radius: 4px 8px 8px 4px;
+            flex-shrink: 0;
         }
 
         .instruction-card h3 {
-            margin: 0 0 8px 0;
+            margin: 0 0 3px 0;
             color: #1d4ed8;
-            font-size: 18px;
+            font-size: 13px;
+            font-weight: 700;
         }
 
-        .tool-rack {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+        .instruction-card p {
+            margin: 0;
+            font-size: 11px;
+            color: #334155;
+            line-height: 1.3;
         }
 
-        .tool-btn {
-            background: #f8fafc;
-            border: 3px solid #cbd5e1;
-            padding: 12px 6px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: transform 0.1s, background-color 0.1s;
-        }
-
-        .tool-btn.active {
-            background: #fef2f2;
-            border-color: #ef4444;
-            transform: scale(1.05);
-        }
-
-        .action-btn {
-            background-color: #10b981;
-            color: white;
-            font-size: 18px;
-            font-weight: bold;
-            padding: 14px;
-            border: none;
-            border-radius: 12px;
-            box-shadow: 4px 4px 0px #047857;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        /* Canvas Viewport Window */
+        /* Canvas Viewport */
         .canvas-window {
-            flex: 1.8;
             background: #ffffff;
-            padding: 15px;
-            border-radius: 25px;
-            border: 4px solid #f59e0b;
-            box-shadow: 6px 6px 0px #d97706;
+            padding: 6px;
+            border-radius: 12px;
+            border: 3px solid #f59e0b;
+            box-shadow: 0 3px 0px #d97706;
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: center;
+            flex: 1;
+            min-height: 160px;
+            position: relative;
+            overflow: hidden;
         }
 
         .canvas-meta {
             width: 100%;
             display: flex;
             justify-content: space-between;
-            margin-bottom: 12px;
-            font-weight: bold;
+            margin-bottom: 4px;
+            font-weight: 700;
+            font-size: 11px;
             color: #b45309;
         }
 
         canvas {
             background: #ffffff;
-            border: 4px solid #e2e8f0;
-            border-radius: 16px;
-            cursor: crosshair;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            max-width: 100%;
+            max-height: 100%;
+            touch-action: none;
+        }
+
+        /* Tool Rack Dock */
+        .dock-panel {
+            background: white;
+            padding: 8px;
+            border-radius: 12px;
+            border: 3px solid #3b82f6;
+            box-shadow: 0 3px 0px #1d4ed8;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .tool-rack {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 4px;
+        }
+
+        .tool-btn {
+            background: #f8fafc;
+            border: 2px solid #cbd5e1;
+            padding: 6px 2px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .tool-btn.active {
+            background: #fef2f2;
+            border-color: #ef4444;
+            color: #dc2626;
+        }
+
+        /* Bottom Action Button */
+        .action-btn {
+            background-color: #94a3b8;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: not-allowed;
+            width: 100%;
+            flex-shrink: 0;
+            box-shadow: 0 3px 0 #64748b;
+            transition: background-color 0.2s;
+        }
+
+        .action-btn.active-step {
+            background-color: #10b981;
+            cursor: pointer;
+            box-shadow: 0 3px 0 #047857;
+        }
+
+        .action-btn.active-step:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #047857;
         }
     </style>
 </head>
 <body>
 
+    <!-- 5-Second Clean White Splash Screen -->
     <div id="splash-screen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/250x90?text=Innovine';">
-        <h2>🐶 KidPix 1: Pixel Pets Rescue! 🐱</h2>
+        <img src="assets/innovine-logo.png" alt="Innovine Solutions Logo" onerror="this.src='https://via.placeholder.com/300x120?text=Innovine+Solutions';">
     </div>
 
+    <!-- Main Workspace -->
     <div class="main-content" id="app-workspace">
         <header>
-            <h1>🐾 KidPix Rescue Room: Save the Animals! 🐾</h1>
+            <h1>🐾 KidPix Rescue Room</h1>
+            <div class="status-badge" id="round-badge">Round 1 / 5</div>
         </header>
 
-        <div class="game-grid">
-            <div class="sidebar">
-                <div>
-                    <div class="instruction-card">
-                        <h3 id="round-title">🧼 Round 1: Wash the Muddy Puppy</h3>
-                        <p id="round-desc">A poor puppy got stuck in digital mud! Select the <b>Magic Wand (🪄)</b> tool and tap the giant brown mud puddle on the canvas to clean his fur!</p>
-                    </div>
-
-                    <span style="font-weight:bold; font-size:14px; color:#475569; display:block; margin-bottom:8px;">KidPix Gadgets:</span>
-                    <div class="tool-rack">
-                        <button class="tool-btn active" id="tool-wand" onclick="selectTool('wand')">🪄 Wand</button>
-                        <button class="tool-btn" id="tool-spray" onclick="selectTool('spray')">💨 Spray</button>
-                        <button class="tool-btn" id="tool-stamp" onclick="selectTool('stamp')">⭐ Stamp</button>
-                    </div>
-                </div>
-
-                <button class="action-btn" id="next-btn" onclick="advanceRound()" disabled style="background-color:#94a3b8; box-shadow:none; cursor:not-allowed;">Solve Round Objective First</button>
+        <div class="game-container">
+            <div class="instruction-card">
+                <h3 id="round-title">🧼 Round 1: Wash the Muddy Puppy</h3>
+                <p id="round-desc">A poor puppy got stuck in digital mud! Select the <b>Magic Wand (🪄)</b> tool and tap the brown mud pile to clean his fur!</p>
             </div>
 
             <div class="canvas-window">
                 <div class="canvas-meta">
                     <span id="active-tool-label">Active Tool: Magic Wand</span>
-                    <span id="status-label">Status: Rescue Mission Started!</span>
+                    <span id="status-label">Status: Mission Started!</span>
                 </div>
-                <canvas id="rescueCanvas" width="550" height="400"></canvas>
+                <canvas id="rescueCanvas" width="320" height="220"></canvas>
+            </div>
+
+            <div class="dock-panel">
+                <div class="tool-rack">
+                    <button class="tool-btn active" id="tool-wand" onclick="selectTool('wand')">🪄 Wand</button>
+                    <button class="tool-btn" id="tool-spray" onclick="selectTool('spray')">💨 Spray</button>
+                    <button class="tool-btn" id="tool-fill" onclick="selectTool('fill')">🪣 Bucket</button>
+                    <button class="tool-btn" id="tool-brush" onclick="selectTool('brush')">🖌️ Brush</button>
+                    <button class="tool-btn" id="tool-stamp" onclick="selectTool('stamp')">⭐ Stamp</button>
+                </div>
             </div>
         </div>
+
+        <button class="action-btn" id="next-btn" onclick="advanceRound()" disabled>Solve Round Objective First</button>
     </div>
 
+    <!-- Audio Elements -->
     <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="snd-clap" src="assets/clap.mp3" preload="auto"></audio>
     <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <script>
+        // Exactly 5 Seconds Splash Delay
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                document.getElementById('splash-screen').style.opacity = '0';
-                document.getElementById('splash-screen').style.visibility = 'hidden';
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                splash.style.visibility = 'hidden';
                 document.getElementById('app-workspace').style.opacity = '1';
                 loadRound1();
             }, 5000);
@@ -237,16 +295,19 @@
 
         const canvas = document.getElementById('rescueCanvas');
         const ctx = canvas.getContext('2d');
-        
+
         let activeRound = 1;
         let selectedTool = 'wand';
+
         let round1Cleared = false;
         let round2Count = 0;
-        let round3Count = 0;
+        let round3Cleared = false;
+        let round4Count = 0;
+        let round5Count = 0;
 
         function playSound(id) {
             const sound = document.getElementById(id);
-            if(sound) {
+            if (sound) {
                 sound.currentTime = 0;
                 sound.play().catch(() => {});
             }
@@ -255,113 +316,183 @@
         function selectTool(tool) {
             selectedTool = tool;
             document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`tool-${tool}`).classList.add('active');
-            
+            const targetBtn = document.getElementById(`tool-${tool}`);
+            if (targetBtn) targetBtn.classList.add('active');
+
             let name = "Magic Wand";
-            if(tool === 'spray') name = "Color Spray Can";
-            if(tool === 'stamp') name = "Mystery Stamp";
+            if (tool === 'spray') name = "Color Spray";
+            if (tool === 'fill') name = "Paint Bucket";
+            if (tool === 'brush') name = "Wacky Brush";
+            if (tool === 'stamp') name = "Pet Stamp";
             document.getElementById('active-tool-label').innerText = `Active Tool: ${name}`;
         }
 
-        // --- ROUND INITIALIZATIONS ---
+        // --- ROUND CREATION LOGIC ---
         function loadRound1() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            // Draw a big brown mud patch over a puppy emoji
             ctx.fillStyle = "#854d0e";
             ctx.beginPath();
-            ctx.arc(275, 200, 90, 0, Math.PI * 2);
+            ctx.arc(160, 110, 50, 0, Math.PI * 2);
             ctx.fill();
 
-            ctx.font = "30px sans-serif";
-            ctx.fillText("Mud Pile", 215, 80);
+            ctx.fillStyle = "#1e293b";
+            ctx.font = "bold 12px sans-serif";
+            ctx.fillText("Mud Pile", 138, 50);
         }
 
         function loadRound2() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            // Draw a sad cat container needing custom grass feed background
-            ctx.fillStyle = "#cbd5e1";
-            ctx.fillRect(50, 50, canvas.width - 100, canvas.height - 100);
-            
-            ctx.font = "80px Arial";
-            ctx.fillText("🐱", 230, 220);
-            
+            ctx.fillStyle = "#e2e8f0";
+            ctx.fillRect(20, 20, canvas.width - 40, canvas.height - 40);
+
+            ctx.font = "50px sans-serif";
+            ctx.fillText("🐱", 135, 120);
+
             ctx.fillStyle = "#334155";
-            ctx.font = "bold 20px sans-serif";
-            ctx.fillText("Spray 5 fields of Green Grass around the kitten!", 70, 320);
+            ctx.font = "bold 11px sans-serif";
+            ctx.fillText("Spray 5 grass fields for the kitten!", 70, 180);
         }
 
         function loadRound3() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            // Draw an empty wildlife forest sanctuary background
-            ctx.fillStyle = "#bbf7d0";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.fillStyle = "#166534";
-            ctx.font = "bold 20px sans-serif";
-            ctx.fillText("🌲 Nature Park Sanctuary 🌲", 140, 50);
-            ctx.fillText("Place 5 Animal Stamps into their forest home!", 70, 350);
+            ctx.strokeStyle = "#475569";
+            ctx.lineWidth = 3;
+            ctx.strokeRect(90, 50, 140, 110);
+
+            ctx.font = "45px sans-serif";
+            ctx.fillText("🐰", 138, 120);
+
+            ctx.fillStyle = "#334155";
+            ctx.font = "bold 11px sans-serif";
+            ctx.fillText("Fill Yellow paint to build a cozy house!", 60, 190);
         }
 
-        // --- CANVAS CLICK INTERACTION ENGINE ---
+        function loadRound4() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#fef08a";
+            ctx.fillRect(0, 140, canvas.width, 80);
+
+            ctx.font = "40px sans-serif";
+            ctx.fillText("🐶", 40, 120);
+            ctx.fillText("🐱", 220, 120);
+
+            ctx.fillStyle = "#15803d";
+            ctx.font = "bold 11px sans-serif";
+            ctx.fillText("Brush 4 colorful flowers in the garden!", 60, 40);
+        }
+
+        function loadRound5() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#dcfce7";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "#166534";
+            ctx.font = "bold 13px sans-serif";
+            ctx.fillText("🌲 Nature Park Protection Zone 🌲", 55, 30);
+            ctx.font = "bold 11px sans-serif";
+            ctx.fillText("Place 5 wild animal stamps into their home!", 45, 195);
+        }
+
+        // --- INTERACTION ENGINE ---
         canvas.addEventListener('click', function(e) {
             const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
 
-            // ROUND 1 LOGIC
+            // ROUND 1: Magic Wand
             if (activeRound === 1) {
-                if (selectedTool === 'wand' && x >= 185 && x <= 365 && y >= 110 && y <= 290) {
+                if (selectedTool === 'wand' && (x >= 110 && x <= 210 && y >= 60 && y <= 160)) {
                     round1Cleared = true;
                     playSound('snd-correct');
-                    
+
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    ctx.font = "110px Arial";
-                    ctx.fillText("🐶", 215, 230);
-                    
+                    ctx.font = "70px sans-serif";
+                    ctx.fillText("🐶", 125, 135);
+
                     document.getElementById('status-label').innerText = "Status: Puppy Clean & Happy!";
                     unlockNext();
                 } else {
                     playSound('snd-wrong');
                 }
             }
-            // ROUND 2 LOGIC
-            if (activeRound === 2) {
+            // ROUND 2: Color Spray
+            else if (activeRound === 2) {
                 if (selectedTool === 'spray') {
                     round2Count++;
                     playSound('snd-correct');
-                    
-                    // Draw neon green grass patterns
+
                     ctx.fillStyle = "#22c55e";
-                    for(let i=0; i<15; i++) {
-                        let rx = x + (Math.random() * 40 - 20);
-                        let ry = y + (Math.random() * 40 - 20);
-                        ctx.fillRect(rx, ry, 6, 6);
+                    for (let i = 0; i < 12; i++) {
+                        let rx = x + (Math.random() * 30 - 15);
+                        let ry = y + (Math.random() * 30 - 15);
+                        ctx.fillRect(rx, ry, 5, 5);
                     }
-                    
-                    document.getElementById('status-label').innerText = `Grass Fields Fed: ${round2Count} / 5`;
-                    if(round2Count >= 5) {
-                        playSound('snd-clap'); // Success sound clip
+
+                    document.getElementById('status-label').innerText = `Grass Fields: ${round2Count} / 5`;
+                    if (round2Count >= 5) {
+                        playSound('snd-clap');
                         unlockNext();
                     }
                 } else {
                     playSound('snd-wrong');
                 }
             }
-            // ROUND 3 LOGIC
-            if (activeRound === 3) {
-                if (selectedTool === 'stamp') {
-                    round3Count++;
+            // ROUND 3: Paint Bucket
+            else if (activeRound === 3) {
+                if (selectedTool === 'fill' && (x >= 90 && x <= 230 && y >= 50 && y <= 160)) {
+                    round3Cleared = true;
                     playSound('snd-correct');
-                    
-                    const junglePets = ['🦁', '🐯', '🐼', '🐨', '🦊', '🐰'];
-                    let pet = junglePets[Math.floor(Math.random() * junglePets.length)];
-                    
-                    ctx.font = "55px Arial";
-                    ctx.fillText(pet, x - 25, y + 25);
-                    
-                    document.getElementById('status-label').innerText = `Animals Saved: ${round3Count} / 5`;
-                    if(round3Count >= 5) {
-                        playSound('snd-clap'); // Big round of applause triggered
+
+                    ctx.fillStyle = "#fde047";
+                    ctx.fillRect(90, 50, 140, 110);
+
+                    ctx.font = "45px sans-serif";
+                    ctx.fillText("🐰", 138, 120);
+
+                    document.getElementById('status-label').innerText = "Status: House Painted Yellow!";
+                    unlockNext();
+                } else {
+                    playSound('snd-wrong');
+                }
+            }
+            // ROUND 4: Wacky Brush
+            else if (activeRound === 4) {
+                if (selectedTool === 'brush') {
+                    round4Count++;
+                    playSound('snd-correct');
+
+                    const flowers = ['🌸', '🌻', '🌷', '🌺'];
+                    let fl = flowers[round4Count % flowers.length];
+
+                    ctx.font = "25px sans-serif";
+                    ctx.fillText(fl, x - 12, y + 10);
+
+                    document.getElementById('status-label').innerText = `Flowers Planted: ${round4Count} / 4`;
+                    if (round4Count >= 4) {
+                        playSound('snd-clap');
+                        unlockNext();
+                    }
+                } else {
+                    playSound('snd-wrong');
+                }
+            }
+            // ROUND 5: Stamp Tool
+            else if (activeRound === 5) {
+                if (selectedTool === 'stamp') {
+                    round5Count++;
+                    playSound('snd-correct');
+
+                    const animals = ['🦁', '🐼', '🐨', '🦊', '🐯'];
+                    let pet = animals[(round5Count - 1) % animals.length];
+
+                    ctx.font = "35px sans-serif";
+                    ctx.fillText(pet, x - 18, y + 18);
+
+                    document.getElementById('status-label').innerText = `Animals Saved: ${round5Count} / 5`;
+                    if (round5Count >= 5) {
+                        playSound('snd-clap');
                         unlockNext();
                     }
                 } else {
@@ -373,47 +504,62 @@
         function unlockNext() {
             const btn = document.getElementById('next-btn');
             btn.disabled = false;
-            btn.style.backgroundColor = "#10b981";
-            btn.style.cursor = "pointer";
-            btn.innerText = activeRound === 3 ? "Complete All Missions! 🏆" : "Go to Next Round ➡️";
+            btn.classList.add('active-step');
+            btn.innerText = activeRound === 5 ? "Complete Mission 🎉" : "Go to Next Round ➡️";
         }
 
         function advanceRound() {
             const title = document.getElementById('round-title');
             const desc = document.getElementById('round-desc');
+            const badge = document.getElementById('round-badge');
             const btn = document.getElementById('next-btn');
-            
+
             btn.disabled = true;
-            btn.style.backgroundColor = "#94a3b8";
-            btn.style.cursor = "not-allowed";
+            btn.classList.remove('active-step');
             btn.innerText = "Solve Round Objective First";
 
             if (activeRound === 1) {
                 activeRound = 2;
+                badge.innerText = "Round 2 / 5";
                 title.innerText = "💨 Round 2: Feed the Hungry Kitten";
-                desc.innerText = "The kitten needs some cozy green grass fields! Grab the <b>Color Spray Can (💨)</b> and click 5 times around the canvas to spray clean green grass patches!";
+                desc.innerText = "Grab the <b>Color Spray (💨)</b> tool and tap 5 times around the canvas to spray grass patches!";
                 selectTool('spray');
                 loadRound2();
-                document.getElementById('status-label').innerText = "Status: Protect the kitty.";
             } else if (activeRound === 2) {
                 activeRound = 3;
-                title.innerText = "⭐ Round 3: The Sanctuary Repopulation";
-                desc.innerText = "Let's welcome animals back home. Select the <b>Mystery Stamp tool (⭐)</b> and click 5 times to stamp wild friends safely inside the green nature park protection zone!";
-                selectTool('stamp');
+                badge.innerText = "Round 3 / 5";
+                title.innerText = "🪣 Round 3: Paint the Bunny Shelter";
+                desc.innerText = "Select the <b>Paint Bucket (🪣)</b> tool and tap inside the box outline to color the bunny house yellow!";
+                selectTool('fill');
                 loadRound3();
-                document.getElementById('status-label').innerText = "Status: Populating forest...";
+            } else if (activeRound === 3) {
+                activeRound = 4;
+                badge.innerText = "Round 4 / 5";
+                title.innerText = "🖌️ Round 4: Garden Flowers";
+                desc.innerText = "Select the <b>Wacky Brush (🖌️)</b> tool and click 4 times in the garden to draw colorful flowers!";
+                selectTool('brush');
+                loadRound4();
+            } else if (activeRound === 4) {
+                activeRound = 5;
+                badge.innerText = "Round 5 / 5";
+                title.innerText = "⭐ Round 5: Forest Sanctuary";
+                desc.innerText = "Select the <b>Pet Stamp (⭐)</b> tool and click 5 times to place wild friends safely in the forest!";
+                selectTool('stamp');
+                loadRound5();
             } else {
-                // Wrap game around loop smoothly
-                alert("Spectacular Work, Hero! You rescued all the digital pixel pets!");
                 activeRound = 1;
                 round1Cleared = false;
                 round2Count = 0;
-                round3Count = 0;
+                round3Cleared = false;
+                round4Count = 0;
+                round5Count = 0;
+
+                badge.innerText = "Round 1 / 5";
                 title.innerText = "🧼 Round 1: Wash the Muddy Puppy";
-                desc.innerText = "A poor puppy got stuck in digital mud! Select the Magic Wand (🪄) tool and tap the giant brown mud puddle on the canvas to clean his fur!";
+                desc.innerText = "Select the Magic Wand (🪄) tool and tap the brown mud pile to clean his fur!";
                 selectTool('wand');
                 loadRound1();
-                document.getElementById('status-label').innerText = "Status: Playground Reset Complete.";
+                document.getElementById('status-label').innerText = "Status: Reset Complete.";
             }
         }
     </script>

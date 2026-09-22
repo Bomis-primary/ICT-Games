@@ -2,43 +2,69 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mission: The Great Innovine Logo Glitch!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>MS Paint 2: Advanced Studio Challenge</title>
     <style>
-        /* General Layout */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #fafafa;
+        * {
+            box-sizing: border-box;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        body {
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #2c3e50;
-            overflow-x: hidden;
+            justify-content: center;
+            height: 100dvh;
+            padding: 8px;
         }
 
-        /* 5-Second Splash Screen Overlay (Logo Only Appears Here) */
+        /* 5-Second Splash Screen */
         #splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100vh;
+            height: 100dvh;
             background-color: #1a252f;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
             color: white;
+            text-align: center;
+            padding: 20px;
         }
 
         #splash-screen img {
-            max-width: 280px;
-            margin-bottom: 25px;
+            max-width: 250px;
+            width: 70%;
+            height: auto;
+            margin-bottom: 20px;
             animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        #splash-screen h2 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ecf0f1;
+            margin: 0;
         }
 
         @keyframes pulse {
@@ -47,15 +73,20 @@
             100% { transform: scale(1); }
         }
 
-        /* Main Game Work Environment */
+        /* Main Workspace Layout */
         .main-content {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 950px;
+            max-width: 460px;
+            height: 100%;
+            max-height: 100dvh;
+            justify-content: space-between;
             opacity: 0;
-            transition: opacity 1s ease;
+            transition: opacity 0.6s ease;
+            gap: 6px;
+            padding-bottom: calc(env(safe-area-inset-bottom, 6px) + 4px);
         }
 
         header {
@@ -64,63 +95,142 @@
             justify-content: space-between;
             width: 100%;
             background: white;
-            padding: 15px 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            box-sizing: border-box;
+            padding: 8px 12px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
         }
 
-        .game-grid {
-            display: flex;
-            gap: 25px;
-            width: 100%;
+        header h1 {
+            margin: 0;
+            font-size: 15px;
+            color: #2c3e50;
+            font-weight: 700;
         }
 
-        /* Interactive Sidebar */
-        .sidebar {
-            flex: 1;
-            background: white;
-            padding: 25px;
+        header p {
+            margin: 2px 0 0 0;
+            font-size: 11px;
+            color: #7f8c8d;
+        }
+
+        .status-badge {
+            background-color: #20c997;
+            color: white;
+            padding: 4px 10px;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        /* Game Grid Container */
+        .game-container {
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            width: 100%;
+            flex: 1;
+            gap: 6px;
+            overflow: hidden;
         }
 
+        /* Mission Instructions Box */
         .instruction-card {
             background-color: #fff9db;
-            border-left: 5px solid #fcc419;
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 20px;
+            border-left: 4px solid #fcc419;
+            padding: 8px 10px;
+            border-radius: 4px 8px 8px 4px;
+            flex-shrink: 0;
         }
 
         .instruction-card h3 {
-            margin: 0 0 8px 0;
+            margin: 0 0 3px 0;
             color: #e67e22;
+            font-size: 13px;
+            font-weight: 700;
         }
 
-        /* Tool Palette Layout */
+        .instruction-card p {
+            margin: 0;
+            font-size: 11px;
+            color: #495057;
+            line-height: 1.3;
+        }
+
+        /* Canvas Viewport */
+        .canvas-window {
+            background: #e9ecef;
+            padding: 6px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            min-height: 160px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .canvas-meta {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            font-weight: 700;
+            font-size: 11px;
+            color: #495057;
+        }
+
+        canvas {
+            background: white;
+            border: 2px solid #ced4da;
+            border-radius: 8px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+            max-width: 100%;
+            max-height: 100%;
+            touch-action: none;
+        }
+
+        /* Tool Rack & Palette Dock */
+        .dock-panel {
+            background: white;
+            padding: 8px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .dock-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        .section-label {
+            font-weight: 700;
+            font-size: 11px;
+            color: #6c757d;
+        }
+
         .tool-rack {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
+            display: flex;
+            gap: 6px;
         }
 
         .tool-btn {
             background: #f1f3f5;
             border: 2px solid #dee2e6;
-            padding: 12px;
-            font-size: 18px;
+            padding: 6px 12px;
+            font-size: 16px;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.15s ease;
         }
 
-        .tool-btn:hover { background: #e9ecef; }
         .tool-btn.active {
             background: #e7f5ff;
             border-color: #339af0;
@@ -128,160 +238,170 @@
 
         .palette {
             display: flex;
-            gap: 12px;
-            margin-bottom: 25px;
+            gap: 8px;
         }
 
         .color-dot {
-            width: 35px;
-            height: 35px;
-            border-radius: 8px;
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
             border: 2px solid #dee2e6;
             cursor: pointer;
         }
-        .color-dot.active { border: 3px solid #2b2b2b; }
 
+        .color-dot.active {
+            border: 3px solid #1c7ed6;
+            transform: scale(1.1);
+        }
+
+        /* Action Next Button */
         .action-btn {
-            background-color: #22b8cf;
+            background-color: #95a5a6;
             color: white;
-            font-size: 16px;
-            font-weight: bold;
-            padding: 14px;
+            font-size: 14px;
+            font-weight: 700;
+            padding: 12px;
             border: none;
             border-radius: 8px;
+            cursor: not-allowed;
+            width: 100%;
+            flex-shrink: 0;
+            box-shadow: 0 3px 0 #7f8c8d;
+            transition: background-color 0.2s;
+        }
+
+        .action-btn.active-step {
+            background-color: #2f9e44;
             cursor: pointer;
-            width: 100%;
+            box-shadow: 0 3px 0 #2b8a3e;
         }
 
-        /* Canvas Space Setup */
-        .canvas-window {
-            flex: 1.5;
-            background: #e9ecef;
-            padding: 20px;
-            border-radius: 12px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .canvas-meta {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            font-weight: bold;
-            font-size: 13px;
-            color: #495057;
-        }
-
-        canvas {
-            background: white;
-            border: 2px solid #ced4da;
-            border-radius: 6px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+        .action-btn.active-step:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #2b8a3e;
         }
     </style>
 </head>
 <body>
 
+    <!-- 5-Second Splash Screen -->
     <div id="splash-screen">
         <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/250x90?text=Innovine';">
-        <h2>System Booting... Preparing Canvas Lab</h2>
+        <h2>System Booting... Preparing Canvas Studio</h2>
     </div>
 
+    <!-- Main Game Workspace -->
     <div class="main-content" id="app-workspace">
         <header>
             <div>
-                <h1 style="margin:0; font-size: 22px; color: #2c3e50;">🖌️ MS Paint 2: Advanced Studio</h1>
-                <p style="margin:4px 0 0 0; font-size:13px; color:#7f8c8d;">Grade 2 - Fill, Magnify & Text Tools</p>
+                <h1>🖌️ MS Paint 2 Studio</h1>
+                <p>Grade 2 - Advanced Drawing Tools</p>
             </div>
-            </header>
+            <div class="status-badge" id="stage-badge">Stage 1 / 5</div>
+        </header>
 
-        <div class="game-grid">
-            <div class="sidebar">
-                <div>
-                    <div class="instruction-card">
-                        <h3 id="mission-title">🔍 Stage 1: Find the Secret Bug</h3>
-                        <p id="mission-desc">The glitch inside the logo is too tiny to see! Choose the <b>Magnifier (🔍)</b> tool, then click directly on the tiny red block to zoom in!</p>
-                    </div>
-
-                    <span style="font-weight:bold; font-size:13px; color:#666;">Advanced Tools:</span>
-                    <div class="tool-rack">
-                        <button class="tool-btn active" id="tool-zoom" onclick="selectTool('zoom')">🔍</button>
-                        <button class="tool-btn" id="tool-fill" onclick="selectTool('fill')">🪣</button>
-                        <button class="tool-btn" id="tool-text" onclick="selectTool('text')">🅰️</button>
-                    </div>
-
-                    <span style="font-weight:bold; font-size:13px; color:#666;">Color Palette:</span>
-                    <div class="palette">
-                        <div class="color-dot active" style="background:#e74c3c;" onclick="selectColor('#e74c3c', this)"></div>
-                        <div class="color-dot" style="background:#2ecc71;" onclick="selectColor('#2ecc71', this)"></div>
-                        <div class="color-dot" style="background:#3498db;" onclick="selectColor('#3498db', this)"></div>
-                    </div>
-                </div>
-
-                <button class="action-btn" id="next-btn" onclick="processStage()" disabled style="background-color:#95a5a6; cursor:not-allowed;">Find Glitch on Canvas First</button>
+        <div class="game-container">
+            <div class="instruction-card">
+                <h3 id="mission-title">🔍 Stage 1: Find the Glitch</h3>
+                <p id="mission-desc">The glitch inside the logo is too tiny! Choose the <b>Magnifier (🔍)</b> tool, then click the small red box on the canvas to zoom in!</p>
             </div>
 
             <div class="canvas-window">
                 <div class="canvas-meta">
                     <span id="active-tool-label">Active Tool: Magnifier</span>
-                    <span id="score-label">Status: System Initialized</span>
+                    <span id="score-label">Status: Initialized</span>
                 </div>
-                <canvas id="paintCanvas" width="500" height="380"></canvas>
+                <canvas id="paintCanvas" width="320" height="220"></canvas>
+            </div>
+
+            <div class="dock-panel">
+                <div class="dock-row">
+                    <span class="section-label">Tools:</span>
+                    <div class="tool-rack">
+                        <button class="tool-btn active" id="tool-zoom" onclick="selectTool('zoom')">🔍</button>
+                        <button class="tool-btn" id="tool-fill" onclick="selectTool('fill')">🪣</button>
+                        <button class="tool-btn" id="tool-eraser" onclick="selectTool('eraser')">🧹</button>
+                        <button class="tool-btn" id="tool-text" onclick="selectTool('text')">🅰️</button>
+                    </div>
+                </div>
+
+                <div class="dock-row">
+                    <span class="section-label">Palette:</span>
+                    <div class="palette">
+                        <div class="color-dot active" id="dot-red" style="background:#e74c3c;" onclick="selectColor('#e74c3c', this)"></div>
+                        <div class="color-dot" id="dot-green" style="background:#2ecc71;" onclick="selectColor('#2ecc71', this)"></div>
+                        <div class="color-dot" id="dot-blue" style="background:#3498db;" onclick="selectColor('#3498db', this)"></div>
+                        <div class="color-dot" id="dot-white" style="background:#ffffff;" onclick="selectColor('#ffffff', this)"></div>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <button class="action-btn" id="next-btn" onclick="processStage()" disabled>Complete Step on Canvas First</button>
     </div>
 
+    <!-- Audio Track Elements (Referencing Repository Assets) -->
     <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="snd-clap" src="assets/clap.mp3" preload="auto"></audio>
     <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <script>
-        // Splash page timing engine (5000 milliseconds = 5 seconds)
+        // Exactly 5 Seconds Splash Screen Delay
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                document.getElementById('splash-screen').style.opacity = '0';
-                document.getElementById('splash-screen').style.visibility = 'hidden';
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                splash.style.visibility = 'hidden';
                 document.getElementById('app-workspace').style.opacity = '1';
                 initCanvas();
-            }, 5000); // 5000ms = Exactly 5 Seconds
+            }, 5000);
         });
 
         const canvas = document.getElementById('paintCanvas');
         const ctx = canvas.getContext('2d');
-        
+
         let currentStage = 1;
         let selectedTool = 'zoom';
         let selectedColor = '#e74c3c';
+
+        // Stage progress tracking variables
         let isZoomed = false;
         let isFilled = false;
+        let isErased = false;
         let textEntered = false;
+        let isFrameRestored = false;
 
-        // Triggers the respective audio objects loaded from repository
+        // Audio Trigger Logic
         function triggerSound(elementId) {
             const audioTrack = document.getElementById(elementId);
-            if(audioTrack) {
+            if (audioTrack) {
                 audioTrack.currentTime = 0;
-                audioTrack.play().catch(err => console.log("Browser sound focus waiting for gesture interaction"));
+                audioTrack.play().catch(() => {});
             }
         }
 
         function initCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            // Paint the small canvas target box
+
+            // Draw outer border frame
+            ctx.strokeStyle = "#bdc3c7";
+            ctx.lineWidth = 4;
+            ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+
+            // Draw initial small glitch box
             ctx.fillStyle = "#e74c3c";
-            ctx.fillRect(235, 165, 30, 30);
-            
+            ctx.fillRect(145, 95, 30, 30);
+
             ctx.fillStyle = "#2c3e50";
-            ctx.font = "12px Arial";
-            ctx.fillText("Glitch Element", 215, 150);
+            ctx.font = "bold 11px sans-serif";
+            ctx.fillText("Glitch Element", 123, 85);
         }
 
         function selectTool(tool) {
             selectedTool = tool;
             document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`tool-${tool}`).classList.add('active');
+            const targetBtn = document.getElementById(`tool-${tool}`);
+            if (targetBtn) targetBtn.classList.add('active');
             document.getElementById('active-tool-label').innerText = `Active Tool: ${tool.toUpperCase()}`;
         }
 
@@ -291,100 +411,161 @@
             element.classList.add('active');
         }
 
-        // Processing student interactions inside canvas view
-        canvas.addEventListener('click', function(e) {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
+        // Canvas Touch / Click Interaction Handling
+        canvas.addEventListener('click', handleCanvasInteraction);
 
-            // STAGE 1 LOGIC
+        function handleCanvasInteraction(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            const x = (e.clientX - rect.left) * scaleX;
+            const y = (e.clientY - rect.top) * scaleY;
+
+            // STAGE 1: Magnifier tool on secret glitch
             if (currentStage === 1) {
-                if (selectedTool === 'zoom' && (x >= 210 && x <= 280 && y >= 140 && y <= 210)) {
+                if (selectedTool === 'zoom' && (x >= 120 && x <= 200 && y >= 70 && y <= 140)) {
                     isZoomed = true;
-                    triggerSound('snd-correct'); // Right step sound
+                    triggerSound('snd-correct');
                     
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     ctx.fillStyle = "#e74c3c";
-                    ctx.fillRect(150, 90, 200, 200); // Emulates dynamic magnifying glass upgrade
-                    
-                    document.getElementById('score-label').innerText = "Status: Target magnified!";
+                    ctx.fillRect(80, 40, 160, 120);
+
+                    // Add a tiny smudge line for Stage 4
+                    ctx.fillStyle = "#34495e";
+                    ctx.fillRect(210, 140, 20, 10);
+
+                    document.getElementById('score-label').innerText = "Status: Glitch Magnified!";
                     unlockNext();
                 } else {
-                    triggerSound('snd-wrong'); // Wrong selection sound
-                }
-            }
-            // STAGE 2 LOGIC
-            else if (currentStage === 2) {
-                if (selectedTool === 'fill' && selectedColor === '#2ecc71' && (x >= 150 && x <= 350 && y >= 90 && y <= 290)) {
-                    isFilled = true;
-                    triggerSound('snd-correct'); // Right tool color match combination
-                    
-                    ctx.fillStyle = "#2ecc71";
-                    ctx.fillRect(150, 90, 200, 200);
-                    
-                    document.getElementById('score-label').innerText = "Status: Color Fixed!";
-                    unlockNext();
-                } else {
-                    triggerSound('snd-wrong'); // Incorrect color or placement
-                }
-            }
-            // STAGE 3 LOGIC
-            else if (currentStage === 3) {
-                if (selectedTool === 'text' && !textEntered && (x >= 150 && x <= 350 && y >= 90 && y <= 290)) {
-                    textEntered = true;
-                    triggerSound('snd-clap'); // Big applause success theme triggered on final code completion
-                    
-                    ctx.fillStyle = "#ffffff";
-                    ctx.font = "bold 24px sans-serif";
-                    ctx.fillText("INNOVINE", 185, 200);
-                    
-                    document.getElementById('score-label').innerText = "Status: Canvas Fully Restored!";
-                    unlockNext();
-                } else if(selectedTool !== 'text') {
                     triggerSound('snd-wrong');
                 }
             }
-        });
+            // STAGE 2: Fill tool with Green color
+            else if (currentStage === 2) {
+                if (selectedTool === 'fill' && selectedColor === '#2ecc71' && (x >= 80 && x <= 240 && y >= 40 && y <= 160)) {
+                    isFilled = true;
+                    triggerSound('snd-correct');
+
+                    ctx.fillStyle = "#2ecc71";
+                    ctx.fillRect(80, 40, 160, 120);
+
+                    // Keep smudge line
+                    ctx.fillStyle = "#34495e";
+                    ctx.fillRect(210, 140, 20, 10);
+
+                    document.getElementById('score-label').innerText = "Status: Color Filled Green!";
+                    unlockNext();
+                } else {
+                    triggerSound('snd-wrong');
+                }
+            }
+            // STAGE 3: Eraser tool on smudge
+            else if (currentStage === 3) {
+                if (selectedTool === 'eraser' && (x >= 200 && x <= 240 && y >= 130 && y <= 160)) {
+                    isErased = true;
+                    triggerSound('snd-correct');
+
+                    ctx.fillStyle = "#2ecc71";
+                    ctx.fillRect(210, 140, 20, 10); // Clear smudge with green
+
+                    document.getElementById('score-label').innerText = "Status: Smudge Cleaned!";
+                    unlockNext();
+                } else {
+                    triggerSound('snd-wrong');
+                }
+            }
+            // STAGE 4: Text tool stamp
+            else if (currentStage === 4) {
+                if (selectedTool === 'text' && !textEntered && (x >= 80 && x <= 240 && y >= 40 && y <= 160)) {
+                    textEntered = true;
+                    triggerSound('snd-correct');
+
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "bold 20px sans-serif";
+                    ctx.fillText("INNOVINE", 108, 110);
+
+                    document.getElementById('score-label').innerText = "Status: Text Label Stamped!";
+                    unlockNext();
+                } else {
+                    triggerSound('snd-wrong');
+                }
+            }
+            // STAGE 5: Fill Blue Frame (Final Victory)
+            else if (currentStage === 5) {
+                if (selectedTool === 'fill' && selectedColor === '#3498db' && (x < 70 || x > 250 || y < 30 || y > 170)) {
+                    isFrameRestored = true;
+                    triggerSound('snd-clap');
+
+                    ctx.strokeStyle = "#3498db";
+                    ctx.lineWidth = 10;
+                    ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
+
+                    document.getElementById('score-label').innerText = "Status: Studio Canvas Restored!";
+                    unlockNext();
+                } else {
+                    triggerSound('snd-wrong');
+                }
+            }
+        }
 
         function unlockNext() {
             const btn = document.getElementById('next-btn');
             btn.disabled = false;
-            btn.style.backgroundColor = "#2f9e44";
-            btn.style.cursor = "pointer";
-            btn.innerText = currentStage === 3 ? "Complete Mission 🎉" : "Advance System Engine ➡️";
+            btn.classList.add('active-step');
+            btn.innerText = currentStage === 5 ? "Mission Accomplished! Restart 🎉" : "Advance to Next Stage ➡️";
         }
 
         function processStage() {
             const title = document.getElementById('mission-title');
             const desc = document.getElementById('mission-desc');
+            const badge = document.getElementById('stage-badge');
             const btn = document.getElementById('next-btn');
-            
+
             btn.disabled = true;
-            btn.style.backgroundColor = "#95a5a6";
-            btn.style.cursor = "not-allowed";
+            btn.classList.remove('active-step');
             btn.innerText = "Complete Action on Canvas First";
 
             if (currentStage === 1) {
                 currentStage = 2;
-                title.innerText = "🪣 Stage 2: The Color Bucket Refill";
-                desc.innerText = "Great job zooming in! Now pick up your Paint Bucket (🪣), click the Green color dot from the palette, and flood fill the big box to clean it.";
+                badge.innerText = "Stage 2 / 5";
+                title.innerText = "🪣 Stage 2: Fill Color Bucket";
+                desc.innerText = "Select the <b>Fill Bucket (🪣)</b> tool and the <b>Green Color</b>, then click inside the red block to repair the color!";
                 selectTool('fill');
             } else if (currentStage === 2) {
                 currentStage = 3;
-                title.innerText = "🅰️ Stage 3: Stamp out the Brand Label";
-                desc.innerText = "Nice color fix! Lastly, click the Text tool (🅰️) and click inside the green canvas square to write down the final 'INNOVINE' watermark stamp code.";
+                badge.innerText = "Stage 3 / 5";
+                title.innerText = "🧹 Stage 3: Clean the Smudge";
+                desc.innerText = "Select the <b>Eraser (🧹)</b> tool and click on the dark smudge in the bottom-right corner of the block to clean it!";
+                selectTool('eraser');
+            } else if (currentStage === 3) {
+                currentStage = 4;
+                badge.innerText = "Stage 4 / 5";
+                title.innerText = "🅰️ Stage 4: Add Text Stamp";
+                desc.innerText = "Select the <b>Text Tool (🅰️)</b> and click inside the green square to stamp the 'INNOVINE' label!";
                 selectTool('text');
+            } else if (currentStage === 4) {
+                currentStage = 5;
+                badge.innerText = "Stage 5 / 5";
+                title.innerText = "🎨 Stage 5: Restore Outer Border";
+                desc.innerText = "Select the <b>Fill Bucket (🪣)</b> and the <b>Blue Color</b>, then click the outer background frame to finish!";
+                selectTool('fill');
             } else {
-                // Loop execution wrap-around
+                // Restart Game Loop
                 currentStage = 1;
                 isZoomed = false;
                 isFilled = false;
+                isErased = false;
                 textEntered = false;
-                title.innerText = "🔍 Stage 1: Find the Secret Bug";
-                desc.innerText = "The glitch inside the logo is too tiny to see! Choose the Magnifier (🔍) tool, then click directly on the tiny red block to zoom in!";
+                isFrameRestored = false;
+
+                badge.innerText = "Stage 1 / 5";
+                title.innerText = "🔍 Stage 1: Find the Glitch";
+                desc.innerText = "The glitch inside the logo is too tiny! Choose the Magnifier (🔍) tool, then click the small red box on the canvas to zoom in!";
                 selectTool('zoom');
+                selectColor('#e74c3c', document.getElementById('dot-red'));
                 initCanvas();
-                document.getElementById('score-label').innerText = "Status: Reset complete.";
+                document.getElementById('score-label').innerText = "Status: Reset Complete.";
             }
         }
     </script>

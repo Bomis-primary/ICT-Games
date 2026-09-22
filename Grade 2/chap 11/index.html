@@ -51,7 +51,7 @@ body {
     object-fit: contain;
 }
 
-/* Main App Workspace */
+/* Main Workspace Container */
 .main-container {
     display: flex;
     flex-direction: column;
@@ -148,7 +148,7 @@ header h1 {
     background: radial-gradient(circle at 80% 20%, #4338ca 0%, #0f172a 70%), url('https://www.transparenttextures.com/patterns/stardust.png');
     border-radius: 10px;
     border: 2px solid #6366f1;
-    height: 150px;
+    height: 145px;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -157,12 +157,11 @@ header h1 {
     padding: 0 15px;
 }
 
-/* Decorative Scenery Elements */
 .scenery-planet {
     position: absolute;
     top: 10px;
     right: 25px;
-    font-size: 48px;
+    font-size: 46px;
     filter: drop-shadow(0 0 10px #38bdf8);
     animation: floatPlanet 6s ease-in-out infinite alternate;
 }
@@ -171,7 +170,7 @@ header h1 {
     position: absolute;
     bottom: 12px;
     right: 90px;
-    font-size: 30px;
+    font-size: 28px;
     opacity: 0.8;
 }
 
@@ -199,7 +198,7 @@ header h1 {
     object-fit: contain;
     position: absolute;
     left: 20px;
-    bottom: 30px;
+    bottom: 25px;
     z-index: 10;
     transition: all 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
     filter: drop-shadow(0 0 8px #facc15);
@@ -208,7 +207,7 @@ header h1 {
 /* Speech Bubble */
 .speech-bubble {
     position: absolute;
-    bottom: 85px;
+    bottom: 80px;
     left: 70px;
     background: #ffffff;
     color: #0f172a;
@@ -266,12 +265,12 @@ header h1 {
 .cat-orange { background: #ea580c; }
 .cat-red    { background: #dc2626; }
 
-/* Script Builder Drop Slot Line */
+/* Script Builder Slot Line */
 .script-area {
     background: #0f172a;
     border: 2px dashed #f59e0b;
     border-radius: 8px;
-    min-height: 58px;
+    min-height: 56px;
     display: flex;
     align-items: center;
     padding: 4px;
@@ -299,10 +298,10 @@ header h1 {
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    min-height: 62px;
+    min-height: 60px;
 }
 
-/* Clickable Block Buttons with Asset Images */
+/* Clickable Block Image Buttons */
 .jr-block-btn {
     border: none;
     background: transparent;
@@ -321,7 +320,7 @@ header h1 {
 }
 
 .jr-block-btn img {
-    height: 46px;
+    height: 44px;
     width: auto;
     object-fit: contain;
     pointer-events: none;
@@ -351,7 +350,7 @@ header h1 {
     box-shadow: 0 1px 0 #15803d;
 }
 
-/* Victory Screen Overlay */
+/* Final Screen Overlay */
 #final-screen {
     display: none;
     flex-direction: column;
@@ -411,12 +410,12 @@ header h1 {
 
         <div class="game-layout" id="game-core">
             <div class="instruction-card">
-                <h3 id="mission-title">Mission 1: Yellow Start Flag Trigger</h3>
-                <p id="mission-desc">Tap the <b>Yellow Start Flag</b> image block to add it to your script!</p>
+                <h3 id="mission-title">Mission 1: Event & Start Trigger</h3>
+                <p id="mission-desc">Tap the <b>3 Dots Event</b> or <b>Yellow Flag</b> image block to start your script!</p>
             </div>
 
             <div class="scratch-studio">
-                <!-- Deep Space Scenery Preview Stage -->
+                <!-- Deep Space Scenery Stage -->
                 <div class="stage-preview">
                     <!-- Background Stars -->
                     <div class="star-field" style="top: 15px; left: 30px;">✨</div>
@@ -442,7 +441,7 @@ header h1 {
                     <div class="cat-tab cat-red">🔴</div>
                 </div>
 
-                <!-- Script Programming Line Slot -->
+                <!-- Script Line Slot -->
                 <div class="script-area" id="scriptLine" onclick="clearScriptLine()">
                     <div class="script-placeholder" id="scriptPlaceholder">Tap block images below to build script (Tap line to clear)</div>
                 </div>
@@ -458,21 +457,21 @@ header h1 {
             </button>
         </div>
 
-        <!-- Victory Screen -->
+        <!-- Victory Screen Overlay -->
         <div id="final-screen">
             <span>🎉🏅🌌</span>
             <h2>SCRATCH JR SPACE CHAMPION!</h2>
-            <p>Outstanding job! You mastered image block scripting in space scenery!</p>
+            <p>Outstanding job! You mastered event, motion, sound, and command image blocks!</p>
             <button class="run-flag-btn" style="max-width:200px;" onclick="location.reload()">Play Mission Again 🔄</button>
         </div>
     </div>
 
-    <!-- Audio Elements -->
+    <!-- Audio Elements using Asset Folder filenames -->
     <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <script>
-        // Web Audio Synthesizer Engine
+        // Web Audio Synthesizer Fallback
         let audioCtx = null;
 
         function initAudioContext() {
@@ -537,67 +536,67 @@ header h1 {
             }
         }
 
-        // Mission Definitions
+        // Mission Configurations featuring '3 dots.png' and 'commands.png'
         const missions = [
             {
-                title: "Mission 1: Yellow Start Flag Trigger",
-                desc: "Tap the <b>Yellow Start Flag</b> block image to start your script!",
+                title: "Mission 1: Event & Start Trigger",
+                desc: "Tap the <b>3 Dots Event</b> image block to start your script!",
                 palette: [
-                    { id: 'yellow', src: 'assets/yellow.png', alt: 'Yellow Flag' },
+                    { id: '3dots', src: 'assets/3 dots.png', alt: '3 Dots Event' },
                     { id: 'sound', src: 'assets/sound.png', alt: 'Sound' }
                 ],
-                solution: ['yellow']
+                solution: ['3dots']
             },
             {
                 title: "Mission 2: Move Forward to Saturn",
-                desc: "Combine <b>Yellow Start</b> + <b>Forward Move</b> to travel across space!",
+                desc: "Combine <b>3 Dots Event</b> + <b>Forward Move</b> image blocks!",
                 palette: [
-                    { id: 'yellow', src: 'assets/yellow.png', alt: 'Yellow Flag' },
+                    { id: '3dots', src: 'assets/3 dots.png', alt: '3 Dots Event' },
                     { id: 'forward', src: 'assets/forward.png', alt: 'Forward' },
                     { id: 'say', src: 'assets/say.png', alt: 'Say' }
                 ],
-                solution: ['yellow', 'forward']
+                solution: ['3dots', 'forward']
             },
             {
                 title: "Mission 3: Looks & Speech Bubble",
                 desc: "Add <b>Say Hello</b> block image to speak in the space scenery!",
                 palette: [
-                    { id: 'yellow', src: 'assets/yellow.png', alt: 'Yellow Flag' },
+                    { id: '3dots', src: 'assets/3 dots.png', alt: '3 Dots Event' },
                     { id: 'say', src: 'assets/say.png', alt: 'Say' },
                     { id: 'forward', src: 'assets/forward.png', alt: 'Forward' }
                 ],
-                solution: ['yellow', 'say']
+                solution: ['3dots', 'say']
             },
             {
                 title: "Mission 4: Sound Pop Block",
-                desc: "Combine <b>Yellow Start</b> + <b>Sound Pop</b> image block!",
+                desc: "Combine <b>3 Dots Event</b> + <b>Sound Pop</b> image block!",
                 palette: [
-                    { id: 'yellow', src: 'assets/yellow.png', alt: 'Yellow Flag' },
+                    { id: '3dots', src: 'assets/3 dots.png', alt: '3 Dots Event' },
                     { id: 'sound', src: 'assets/sound.png', alt: 'Sound' },
                     { id: 'forward', src: 'assets/forward.png', alt: 'Forward' }
                 ],
-                solution: ['yellow', 'sound']
+                solution: ['3dots', 'sound']
             },
             {
-                title: "Mission 5: Red End Block",
-                desc: "Add <b>End Block</b> at the end of your script sequence!",
+                title: "Mission 5: Command Control Block",
+                desc: "Add <b>Command Block</b> at the end of your script sequence!",
                 palette: [
-                    { id: 'yellow', src: 'assets/yellow.png', alt: 'Yellow Flag' },
+                    { id: '3dots', src: 'assets/3 dots.png', alt: '3 Dots Event' },
                     { id: 'forward', src: 'assets/forward.png', alt: 'Forward' },
-                    { id: 'commands', src: 'assets/commands.png', alt: 'End Block' }
+                    { id: 'commands', src: 'assets/commands.png', alt: 'Command Block' }
                 ],
-                solution: ['yellow', 'forward', 'commands']
+                solution: ['3dots', 'forward', 'commands']
             },
             {
                 title: "Mission 6: Full Space Combo",
-                desc: "Build full sequence: <b>Start</b> ➔ <b>Forward</b> ➔ <b>Say</b> ➔ <b>End Block</b>!",
+                desc: "Build full sequence: <b>Event</b> ➔ <b>Forward</b> ➔ <b>Say</b> ➔ <b>Command Block</b>!",
                 palette: [
-                    { id: 'yellow', src: 'assets/yellow.png', alt: 'Yellow Flag' },
+                    { id: '3dots', src: 'assets/3 dots.png', alt: '3 Dots Event' },
                     { id: 'forward', src: 'assets/forward.png', alt: 'Forward' },
                     { id: 'say', src: 'assets/say.png', alt: 'Say' },
-                    { id: 'commands', src: 'assets/commands.png', alt: 'End Block' }
+                    { id: 'commands', src: 'assets/commands.png', alt: 'Command Block' }
                 ],
-                solution: ['yellow', 'forward', 'say', 'commands']
+                solution: ['3dots', 'forward', 'say', 'commands']
             }
         ];
 

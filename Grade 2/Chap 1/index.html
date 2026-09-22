@@ -2,26 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>IPO Cycle Mobile Game</title>
     <style>
         * {
             box-sizing: border-box;
             touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f4f8;
-            margin: 0;
-            padding: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #333;
-            height: 100vh;
-            max-height: 100vh;
-            overflow: hidden;
+            justify-content: center;
+            padding: 8px;
+            height: 100dvh; /* Prevents overflow issues with mobile browser address bars */
         }
 
         /* 5-Second Splash Screen */
@@ -30,18 +39,18 @@
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100vh;
+            height: 100dvh;
             background-color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
         }
 
         #splash-screen img {
-            max-width: 75%;
-            max-height: 50vh;
+            max-width: 70%;
+            max-height: 40dvh;
             object-fit: contain;
         }
 
@@ -51,7 +60,7 @@
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100vh;
+            height: 100dvh;
             pointer-events: none;
             z-index: 9998;
         }
@@ -62,8 +71,8 @@
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100vh;
-            background-color: rgba(255, 255, 255, 0.85);
+            height: 100dvh;
+            background-color: rgba(255, 255, 255, 0.92);
             display: none;
             flex-direction: column;
             justify-content: center;
@@ -72,15 +81,16 @@
         }
 
         #sad-overlay .smiley {
-            font-size: 90px;
+            font-size: 80px;
             animation: shake 0.5s ease-in-out;
         }
 
         #sad-overlay .msg {
-            font-size: 20px;
-            font-weight: bold;
+            font-size: 22px;
+            font-weight: 700;
             color: #ef4444;
-            margin-top: 10px;
+            margin-top: 12px;
+            text-align: center;
         }
 
         @keyframes shake {
@@ -89,17 +99,20 @@
             40%, 80% { transform: translateX(15px); }
         }
 
-        /* Main Compact Layout */
+        /* Main Workspace Container */
         .main-content {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 600px;
+            max-width: 480px;
             height: 100%;
+            max-height: 100dvh;
             justify-content: space-between;
             opacity: 0;
-            transition: opacity 0.8s ease;
+            transition: opacity 0.6s ease;
+            gap: 8px;
+            padding-bottom: calc(env(safe-area-inset-bottom, 8px) + 4px);
         }
 
         header {
@@ -108,27 +121,29 @@
             justify-content: space-between;
             width: 100%;
             background-color: #ffffff;
-            padding: 8px 12px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            padding: 8px 14px;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
         }
 
         .title-area h1 {
             margin: 0;
-            font-size: 16px;
+            font-size: 17px;
+            font-weight: 700;
             color: #1e3a8a;
         }
 
-        /* Timer Pill */
+        /* Timer Badge */
         .timer-badge {
             background-color: #ef4444;
-            color: white;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-weight: bold;
+            color: #ffffff;
+            padding: 5px 12px;
+            border-radius: 16px;
+            font-weight: 700;
             font-size: 14px;
-            min-width: 65px;
+            min-width: 70px;
             text-align: center;
+            letter-spacing: 0.5px;
         }
 
         /* Level Banner */
@@ -137,51 +152,62 @@
             background-color: #eff6ff;
             border-left: 4px solid #3b82f6;
             padding: 8px 12px;
-            border-radius: 0 8px 8px 0;
-            margin: 4px 0;
+            border-radius: 4px 10px 10px 4px;
         }
 
         .mission-box h3 {
             margin: 0;
             color: #1d4ed8;
-            font-size: 14px;
+            font-size: 15px;
+            font-weight: 700;
         }
 
         .mission-box p {
-            margin: 2px 0 0 0;
-            font-size: 12px;
+            margin: 3px 0 0 0;
+            font-size: 13px;
             color: #4b5563;
+            line-height: 1.3;
         }
 
-        /* Drop Zones (IPO) */
+        /* Drop Zones (IPO Area) */
         .ipo-zones {
             display: flex;
-            gap: 6px;
+            gap: 8px;
             width: 100%;
             flex: 1;
-            max-height: 140px;
+            min-height: 120px;
+            max-height: 150px;
         }
 
         .drop-zone {
             flex: 1;
             background-color: #ffffff;
             border: 2px dashed #9ca3af;
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 4px;
             display: flex;
             flex-direction: column;
             align-items: center;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .drop-zone.drag-over {
+            background-color: #f0f9ff;
+            border-color: #0284c7;
         }
 
         .drop-zone h4 {
             margin: 0 0 4px 0;
             font-size: 11px;
-            padding: 3px 6px;
-            border-radius: 4px;
+            font-weight: 700;
+            padding: 4px 2px;
+            border-radius: 6px;
             color: white;
             text-transform: uppercase;
             width: 100%;
             text-align: center;
+            letter-spacing: 0.5px;
         }
 
         .zone-input h4 { background-color: #0284c7; }
@@ -194,48 +220,53 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            pointer-events: none;
         }
 
         /* Interactive Card Area */
         .interactive-area {
             background-color: #ffffff;
             padding: 10px;
-            border-radius: 10px;
+            border-radius: 12px;
             width: 100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            min-height: 110px;
+            justify-content: center;
         }
 
         .cards-list {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            align-items: center;
+            gap: 12px;
             width: 100%;
-            min-height: 90px;
+            min-height: 85px;
         }
 
         .item-card {
-            width: 80px;
+            width: 82px;
             height: 85px;
             background-color: #f8fafc;
             border: 2px solid #cbd5e1;
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 4px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            user-select: none;
-            touch-action: none;
             position: relative;
             z-index: 10;
+            cursor: grab;
+            touch-action: none; /* Disables browser scrolling over cards */
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
         }
 
         .item-card img {
-            max-width: 45px;
-            max-height: 45px;
+            max-width: 44px;
+            max-height: 44px;
             object-fit: contain;
             pointer-events: none;
         }
@@ -247,19 +278,24 @@
             text-align: center;
             color: #334155;
             pointer-events: none;
+            line-height: 1.1;
         }
 
         .item-card.dragging {
-            opacity: 0.6;
+            opacity: 0.85;
+            transform: scale(1.08);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            z-index: 1000 !important;
+            cursor: grabbing;
         }
 
         .item-card.selected-tap {
             border-color: #3b82f6;
             background-color: #eff6ff;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.4);
         }
 
-        /* Guess Options (Level 4 & 5) */
+        /* Multiple Choice Options (Levels 4 & 5) */
         .guess-options {
             display: flex;
             flex-direction: column;
@@ -268,18 +304,20 @@
         }
 
         .guess-btn {
-            background-color: #f1f5f9;
+            background-color: #f8fafc;
             border: 2px solid #cbd5e1;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: bold;
+            padding: 12px 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
             color: #1e293b;
             cursor: pointer;
             width: 100%;
+            text-align: center;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
         }
 
-        .guess-btn.selected {
+        .guess-btn:active, .guess-btn.selected {
             background-color: #eff6ff;
             border-color: #3b82f6;
             color: #1d4ed8;
@@ -290,7 +328,7 @@
             display: flex;
             gap: 10px;
             width: 100%;
-            margin-bottom: 5px;
+            margin-top: 4px;
         }
 
         .action-btn {
@@ -298,15 +336,27 @@
             background-color: #10b981;
             color: white;
             border: none;
-            padding: 12px;
-            font-size: 15px;
-            font-weight: bold;
-            border-radius: 8px;
+            padding: 14px 10px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 10px;
             cursor: pointer;
+            box-shadow: 0 3px 0 #059669;
+            transition: transform 0.1s ease, background-color 0.15s ease;
+        }
+
+        .action-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #059669;
         }
 
         .action-btn.reset-btn {
             background-color: #6b7280;
+            box-shadow: 0 3px 0 #4b5563;
+        }
+
+        .action-btn.reset-btn:active {
+            box-shadow: 0 1px 0 #4b5563;
         }
     </style>
 </head>
@@ -330,7 +380,7 @@
     <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
-    <!-- Workspace -->
+    <!-- Game Workspace -->
     <div class="main-content" id="game-workspace">
         <header>
             <div class="title-area">
@@ -344,7 +394,7 @@
             <p id="level-desc">Description</p>
         </div>
 
-        <!-- IPO Drag & Drop Area (Levels 1,2,3) -->
+        <!-- IPO Drag & Drop Area (Levels 1, 2, 3) -->
         <div class="ipo-zones" id="ipo-zones-view">
             <div class="drop-zone zone-input" data-type="input" onclick="handleZoneTap('input')">
                 <h4>1. Input</h4>
@@ -378,8 +428,9 @@
         // Splash Screen (5 Seconds)
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                document.getElementById('splash-screen').style.opacity = '0';
-                document.getElementById('splash-screen').style.visibility = 'hidden';
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                splash.style.visibility = 'hidden';
                 document.getElementById('game-workspace').style.opacity = '1';
             }, 5000);
             
@@ -393,14 +444,14 @@
 
             if (type === 'correct') {
                 correctAudio.currentTime = 0;
-                correctAudio.play().catch(e => {});
+                correctAudio.play().catch(() => {});
             } else if (type === 'wrong') {
                 wrongAudio.currentTime = 0;
-                wrongAudio.play().catch(e => {});
+                wrongAudio.play().catch(() => {});
             }
         }
 
-        // Game Levels Setup
+        // Game Levels Data
         const levels = [
             {
                 level: 1,
@@ -526,11 +577,10 @@
                     card.setAttribute('data-id', item.id);
 
                     card.innerHTML = `
-                        <img src="${item.img}" alt="${item.name}" onerror="this.onerror=null; this.src='https://via.placeholder.com/45?text=${item.name}';">
+                        <img src="${item.img}" alt="${item.name}" onerror="this.onerror=null; this.src='https://via.placeholder.com/45?text=${encodeURIComponent(item.name)}';">
                         <span>${item.name}</span>
                     `;
 
-                    // Attach Touch Drag & Tap Handlers
                     makeMobileDraggable(card, item);
                     cardsList.appendChild(card);
                 });
@@ -540,7 +590,7 @@
                 guessOptions.style.display = 'flex';
 
                 if (lvlData.hintImage) {
-                    cardsList.innerHTML = `<img src="${lvlData.hintImage}" style="max-height: 60px; object-fit: contain;" alt="Hint">`;
+                    cardsList.innerHTML = `<img src="${lvlData.hintImage}" style="max-height: 65px; object-fit: contain;" alt="Hint">`;
                 }
 
                 lvlData.options.forEach(opt => {
@@ -559,13 +609,17 @@
             startTimer();
         }
 
-        // Touch Drag & Drop Engine for Mobile
+        // Unified Mobile & Touch Drag/Tap Engine
         function makeMobileDraggable(cardElement, item) {
-            let activeTouch = false;
-            let currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
+            let isDragging = false;
+            let startX = 0, startY = 0;
+            let initialRect = null;
 
-            cardElement.addEventListener('click', () => {
+            // Tap Selection Logic
+            cardElement.addEventListener('click', (e) => {
+                if (isDragging) return;
                 document.querySelectorAll('.item-card').forEach(c => c.classList.remove('selected-tap'));
+
                 if (selectedCard && selectedCard.id === item.id) {
                     selectedCard = null;
                 } else {
@@ -574,45 +628,66 @@
                 }
             });
 
-            cardElement.addEventListener('touchstart', (e) => {
-                activeTouch = true;
-                const touch = e.touches[0];
-                initialX = touch.clientX - xOffset;
-                initialY = touch.clientY - yOffset;
-                cardElement.classList.add('dragging');
-                cardElement.style.zIndex = '1000';
-            }, { passive: true });
+            // Touch / Pointer Down
+            const onPointerDown = (e) => {
+                isDragging = false;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
-            cardElement.addEventListener('touchmove', (e) => {
-                if (!activeTouch) return;
-                const touch = e.touches[0];
-                currentX = touch.clientX - initialX;
-                currentY = touch.clientY - initialY;
-                xOffset = currentX;
-                yOffset = currentY;
-                cardElement.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
-            }, { passive: true });
+                startX = clientX;
+                startY = clientY;
+                initialRect = cardElement.getBoundingClientRect();
 
-            cardElement.addEventListener('touchend', (e) => {
-                if (!activeTouch) return;
-                activeTouch = false;
-                cardElement.classList.remove('dragging');
+                const onPointerMove = (moveEvent) => {
+                    const curX = moveEvent.touches ? moveEvent.touches[0].clientX : moveEvent.clientX;
+                    const curY = moveEvent.touches ? moveEvent.touches[0].clientY : moveEvent.clientY;
 
-                const changedTouch = e.changedTouches[0];
-                cardElement.style.display = 'none';
-                const dropTarget = document.elementFromPoint(changedTouch.clientX, changedTouch.clientY);
-                cardElement.style.display = 'flex';
+                    const deltaX = curX - startX;
+                    const deltaY = curY - startY;
 
-                cardElement.style.transform = 'none';
-                xOffset = 0;
-                yOffset = 0;
-                cardElement.style.zIndex = '10';
+                    if (Math.hypot(deltaX, deltaY) > 6) {
+                        isDragging = true;
+                        cardElement.classList.add('dragging');
+                        cardElement.style.position = 'fixed';
+                        cardElement.style.left = `${initialRect.left + deltaX}px`;
+                        cardElement.style.top = `${initialRect.top + deltaY}px`;
+                    }
+                };
 
-                const zone = dropTarget ? dropTarget.closest('.drop-zone') : null;
-                if (zone) {
-                    placeItemInZone(item.id, zone.getAttribute('data-type'));
-                }
-            });
+                const onPointerUp = (upEvent) => {
+                    window.removeEventListener('mousemove', onPointerMove);
+                    window.removeEventListener('mouseup', onPointerUp);
+                    window.removeEventListener('touchmove', onPointerMove);
+                    window.removeEventListener('touchend', onPointerUp);
+
+                    if (isDragging) {
+                        cardElement.classList.remove('dragging');
+                        cardElement.style.position = '';
+                        cardElement.style.left = '';
+                        cardElement.style.top = '';
+
+                        const endX = upEvent.changedTouches ? upEvent.changedTouches[0].clientX : upEvent.clientX;
+                        const endY = upEvent.changedTouches ? upEvent.changedTouches[0].clientY : upEvent.clientY;
+
+                        cardElement.style.display = 'none';
+                        const dropTarget = document.elementFromPoint(endX, endY);
+                        cardElement.style.display = 'flex';
+
+                        const zone = dropTarget ? dropTarget.closest('.drop-zone') : null;
+                        if (zone) {
+                            placeItemInZone(item.id, zone.getAttribute('data-type'));
+                        }
+                    }
+                };
+
+                window.addEventListener('mousemove', onPointerMove, { passive: true });
+                window.addEventListener('mouseup', onPointerUp, { passive: true });
+                window.addEventListener('touchmove', onPointerMove, { passive: true });
+                window.addEventListener('touchend', onPointerUp, { passive: true });
+            };
+
+            cardElement.addEventListener('mousedown', onPointerDown);
+            cardElement.addEventListener('touchstart', onPointerDown, { passive: true });
         }
 
         function handleZoneTap(zoneType) {
@@ -626,6 +701,7 @@
             const card = document.getElementById(`card-${itemId}`);
             if (!card) return;
 
+            // Clear item from previous zone if already placed
             Object.keys(placements).forEach(z => {
                 if (placements[z] === itemId) {
                     placements[z] = null;
@@ -633,17 +709,20 @@
                 }
             });
 
+            // Return existing item in target zone back to card pool
             if (placements[zoneType]) {
                 const existingId = placements[zoneType];
                 const existingCard = document.getElementById(`card-${existingId}`);
-                document.getElementById('cards-list').appendChild(existingCard);
+                if (existingCard) {
+                    document.getElementById('cards-list').appendChild(existingCard);
+                }
             }
 
             placements[zoneType] = itemId;
             document.getElementById(`slot-${zoneType}`).appendChild(card);
         }
 
-        // Check Answer & Wrong Attempts Handling
+        // Check Answer & Handle Submissions
         function checkAnswer() {
             const lvlData = levels.find(l => l.level === currentLevel);
             let isCorrect = false;
@@ -699,7 +778,6 @@
             wrongAttempts++;
             playSound('wrong');
 
-            // Show Sad Overlay
             const overlay = document.getElementById('sad-overlay');
             document.getElementById('sad-msg').innerText = message;
             overlay.style.display = 'flex';
@@ -708,7 +786,6 @@
                 overlay.style.display = 'none';
 
                 if (wrongAttempts >= 2) {
-                    // Auto-advance after 2 wrong attempts
                     clearInterval(timerInterval);
                     if (currentLevel < levels.length) {
                         loadLevel(currentLevel + 1);
@@ -721,7 +798,7 @@
             }, 1200);
         }
 
-        // Confetti Effect Generator
+        // Confetti Effect
         function triggerConfetti() {
             const canvas = document.getElementById('confetti-canvas');
             const ctx = canvas.getContext('2d');
@@ -734,7 +811,7 @@
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height - canvas.height,
                     color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-                    size: Math.random() * 8 + 4,
+                    size: Math.random() * 7 + 4,
                     speed: Math.random() * 5 + 3
                 });
             }

@@ -2,782 +2,664 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Scratch Jr Space Adventure</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Scratch Jr Space Mission</title>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Comic Sans MS', cursive;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
-body{
-overflow:hidden;
-background:linear-gradient(45deg,#6a11cb,#2575fc,#ff758c,#ff7eb3);
-background-size:400% 400%;
-animation:bgMove 12s infinite alternate;
-height:100vh;
+body {
+    overflow: hidden;
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%);
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    color: #1e293b;
 }
 
-@keyframes bgMove{
-0%{background-position:left;}
-100%{background-position:right;}
+/* 5-Second Clean White Splash Screen */
+#splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100dvh;
+    background-color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
 }
 
-.sparkles{
-position:fixed;
-width:100%;
-height:100%;
-overflow:hidden;
-pointer-events:none;
+#splash-screen img {
+    max-width: 300px;
+    width: 75%;
+    height: auto;
+    object-fit: contain;
 }
 
-.sparkle{
-position:absolute;
-width:10px;
-height:10px;
-background:white;
-border-radius:50%;
-animation:sparkleMove 6s linear infinite;
-opacity:0.8;
+/* Main Workspace Container */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    height: 100%;
+    max-height: 100dvh;
+    justify-content: space-between;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    gap: 6px;
+    padding-bottom: calc(env(safe-area-inset-bottom, 6px) + 4px);
 }
 
-@keyframes sparkleMove{
-0%{
-transform:translateY(100vh);
-}
-100%{
-transform:translateY(-100px);
-}
-}
-
-.screen{
-display:none;
-width:100%;
-height:100vh;
-padding:20px;
-overflow:auto;
-position:relative;
-z-index:2;
+header {
+    background: #ffffff;
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 12px;
+    border: 3px solid #6366f1;
+    box-shadow: 0 3px 0px #4338ca;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.active{
-display:block;
+header h1 {
+    margin: 0;
+    font-size: 15px;
+    color: #4338ca;
+    font-weight: 700;
 }
 
-.logo{
-position:fixed;
-top:10px;
-left:10px;
-width:120px;
-z-index:999;
+.score-badge {
+    background-color: #4338ca;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
 }
 
-.scoreBox{
-position:fixed;
-top:10px;
-right:10px;
-background:white;
-padding:10px 20px;
-border-radius:20px;
-font-size:24px;
-font-weight:bold;
-z-index:999;
+.game-layout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex: 1;
+    gap: 6px;
+    overflow: hidden;
 }
 
-.header{
-text-align:center;
-margin-top:40px;
-color:white;
-text-shadow:3px 3px 5px black;
+/* Mission Card Header */
+.instruction-card {
+    background-color: #ffffff;
+    border-left: 4px solid #f59e0b;
+    padding: 8px 10px;
+    border-radius: 4px 8px 8px 4px;
+    flex-shrink: 0;
 }
 
-.header h1{
-font-size:55px;
+.instruction-card h3 {
+    margin: 0 0 2px 0;
+    color: #b45309;
+    font-size: 13px;
+    font-weight: 700;
 }
 
-.levelBox{
-max-width:1100px;
-margin:20px auto;
-background:rgba(255,255,255,0.95);
-padding:25px;
-border-radius:30px;
-min-height:560px;
-box-shadow:0 0 20px rgba(0,0,0,0.3);
+.instruction-card p {
+    margin: 0;
+    font-size: 11px;
+    color: #334155;
+    line-height: 1.3;
 }
 
-.question{
-font-size:30px;
-text-align:center;
-margin:25px 0;
+/* Scratch Jr Studio Window Interface */
+.scratch-studio {
+    background: #fef3c7;
+    border-radius: 14px;
+    border: 3px solid #f59e0b;
+    padding: 6px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    overflow: hidden;
+    position: relative;
 }
 
-.buttonArea{
-display:flex;
-justify-content:center;
-flex-wrap:wrap;
-gap:20px;
-margin-top:25px;
+/* Stage Space Preview Canvas */
+.stage-preview {
+    background: #0f172a;
+    border-radius: 10px;
+    border: 2px solid #334155;
+    height: 140px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
 }
 
-.gameBtn{
-padding:18px 35px;
-font-size:24px;
-border:none;
-border-radius:20px;
-cursor:pointer;
-background:linear-gradient(to right,#ff758c,#ff7eb3);
-color:white;
-transition:0.3s;
+/* Star/Starfish Sprite Animation */
+.sprite-actor {
+    font-size: 42px;
+    position: absolute;
+    left: 20px;
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.gameBtn:hover{
-transform:scale(1.1);
+.planet-target {
+    font-size: 50px;
+    position: absolute;
+    right: 20px;
 }
 
-.dropdown{
-padding:15px;
-font-size:24px;
-border-radius:15px;
-border:3px solid purple;
+.speech-bubble {
+    position: absolute;
+    top: 15px;
+    left: 70px;
+    background: white;
+    color: #0f172a;
+    padding: 4px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: bold;
+    display: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
-.correct{
-background:limegreen !important;
+.speech-bubble::after {
+    content: '';
+    position: absolute;
+    left: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 4px 6px 4px 0;
+    border-style: solid;
+    border-color: transparent white transparent transparent;
 }
 
-.wrong{
-background:red !important;
+/* Category Filter Tabs (Matching Scratch Jr colors) */
+.category-tabs {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
 }
 
-.nextBtn{
-display:none;
-margin:30px auto;
+.cat-tab {
+    width: 28px;
+    height: 24px;
+    border-radius: 6px 6px 0 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
 }
 
-.confetti{
-position:fixed;
-width:10px;
-height:10px;
-animation:fall 4s linear forwards;
-z-index:9999;
+.cat-yellow { background: #facc15; }
+.cat-blue   { background: #3b82f6; }
+.cat-purple { background: #a855f7; }
+.cat-green  { background: #22c55e; }
+.cat-orange { background: #f97316; }
+.cat-red    { background: #ef4444; }
+
+/* Coding Programming Script Line Slot */
+.script-area {
+    background: #ffffff;
+    border: 2px dashed #f59e0b;
+    border-radius: 8px;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    padding: 4px;
+    gap: 4px;
+    overflow-x: auto;
 }
 
-@keyframes fall{
-0%{
-transform:translateY(-100px) rotate(0deg);
-opacity:1;
-}
-100%{
-transform:translateY(100vh) rotate(720deg);
-opacity:0;
-}
+.script-placeholder {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: bold;
+    width: 100%;
+    text-align: center;
 }
 
-.rocketArea{
-text-align:center;
-margin-top:30px;
+/* Block Palette Container */
+.block-palette {
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    padding: 6px;
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+    min-height: 52px;
 }
 
-.rocket{
-font-size:90px;
-transition:1s;
-display:inline-block;
+/* Puzzle Coding Blocks */
+.jr-block {
+    height: 38px;
+    padding: 0 10px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: white;
+    font-weight: bold;
+    font-size: 12px;
+    cursor: pointer;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.2);
+    position: relative;
 }
 
-.planet{
-font-size:90px;
-margin-left:300px;
+.jr-block:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.2);
 }
 
-.puzzleArea{
-display:grid;
-grid-template-columns:repeat(3,120px);
-gap:15px;
-justify-content:center;
-margin-top:30px;
+.block-yellow { background: #eab308; }
+.block-blue   { background: #2563eb; }
+.block-purple { background: #9333ea; }
+.block-green  { background: #16a34a; }
+.block-red    { background: #dc2626; }
+
+/* Action Submit / Green Flag Run Button */
+.run-flag-btn {
+    background-color: #16a34a;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    width: 100%;
+    flex-shrink: 0;
+    box-shadow: 0 3px 0 #15803d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
 }
 
-.puzzlePiece{
-width:120px;
-height:120px;
-background:#ffeb3b;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:40px;
-border-radius:20px;
-cursor:pointer;
-transition:0.3s;
+.run-flag-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 1px 0 #15803d;
 }
 
-.puzzlePiece:hover{
-transform:scale(1.1);
+.run-flag-btn:disabled {
+    background-color: #94a3b8;
+    box-shadow: 0 3px 0 #64748b;
+    cursor: not-allowed;
 }
 
-.danceArea{
-text-align:center;
-margin-top:30px;
+/* Final Screen */
+#final-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border: 4px solid #6366f1;
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    width: 100%;
+    height: 100%;
+    max-height: 100dvh;
+    animation: scaleUp 0.3s ease-out;
 }
 
-.cat{
-font-size:100px;
-animation:none;
+#final-screen span {
+    font-size: 50px;
 }
 
-@keyframes dance{
-0%{transform:rotate(0deg);}
-25%{transform:rotate(15deg);}
-50%{transform:rotate(-15deg);}
-75%{transform:rotate(15deg);}
-100%{transform:rotate(0deg);}
+#final-screen h2 {
+    color: #4338ca;
+    font-size: 18px;
+    margin: 8px 0;
+    font-weight: 800;
 }
 
-.progress{
-width:100%;
-height:25px;
-background:#ddd;
-border-radius:20px;
-overflow:hidden;
-margin-top:15px;
+#final-screen p {
+    font-size: 12px;
+    color: #4b5563;
+    line-height: 1.4;
+    margin-bottom: 16px;
 }
 
-.progressBar{
-height:100%;
-width:0%;
-background:linear-gradient(to right,#00f260,#0575e6);
-transition:0.5s;
+@keyframes scaleUp {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
 }
-
-.finalScreen{
-text-align:center;
-margin-top:70px;
-color:white;
-}
-
-.finalScreen h1{
-font-size:60px;
-text-shadow:4px 4px black;
-}
-
-.badge{
-display:inline-block;
-padding:20px;
-margin:15px;
-background:gold;
-border-radius:20px;
-font-size:28px;
-}
-
-.replay{
-padding:20px 40px;
-font-size:30px;
-border:none;
-border-radius:20px;
-background:#00c853;
-color:white;
-cursor:pointer;
-margin-top:30px;
-}
-
-@media(max-width:768px){
-
-.question{
-font-size:22px;
-}
-
-.gameBtn{
-font-size:18px;
-padding:15px;
-}
-
-.logo{
-width:80px;
-}
-
-.header h1{
-font-size:32px;
-}
-
-.planet{
-margin-left:120px;
-}
-
-.puzzleArea{
-grid-template-columns:repeat(2,100px);
-}
-
-.puzzlePiece{
-width:100px;
-height:100px;
-}
-
-}
-
 </style>
 </head>
 
 <body>
 
-<div class="sparkles" id="sparkles"></div>
-
-<img src="assets/innovine-logo.png" class="logo">
-
-<div class="scoreBox">
-⭐ Score: <span id="score">0</span>/6
-</div>
-
-<!-- START SCREEN -->
-
-<div class="screen active" id="startScreen">
-
-<div class="header">
-<h1>🚀 Scratch Jr Space Mission 🌈</h1>
-<h2>Coding + Puzzle + Dance Adventure</h2>
-</div>
-
-<div class="levelBox">
-
-<div style="text-align:center;">
-<img src="assets/scratch-Jr.png" width="220">
-</div>
-
-<div class="question">
-🤖 Welcome Space Coder!<br><br>
-Scratch Jr helps kids create:
-<br><br>
-✅ Games  
-✅ Stories  
-✅ Animations  
-✅ Dance Shows  
-✅ Coding Adventures
-</div>
-
-<div class="buttonArea">
-<button class="gameBtn" onclick="startGame()">START ADVENTURE</button>
-</div>
-
-</div>
-
-</div>
-
-<!-- GAME SCREEN -->
-
-<div class="screen" id="gameScreen">
-
-<div class="progress">
-<div class="progressBar" id="progressBar"></div>
-</div>
-
-<div class="levelBox">
-
-<h2 id="levelTitle"></h2>
-
-<div class="question" id="questionText"></div>
-
-<div id="gameArea"></div>
-
-<div class="buttonArea">
-<button class="gameBtn nextBtn" id="nextBtn" onclick="nextQuestion()">
-➡ NEXT LEVEL
-</button>
-</div>
-
-</div>
-
-</div>
-
-<!-- FINAL SCREEN -->
-
-<div class="screen" id="finalScreen">
-
-<div class="finalScreen">
-
-<h1>🎉 AMAZING SPACE CODER 🎉</h1>
-
-<h2 id="finalScore"></h2>
-
-<div class="badge">🏅 Coding Star</div>
-<div class="badge">🚀 Space Explorer</div>
-<div class="badge">🌈 Scratch Jr Hero</div>
-
-<br>
-
-<button class="replay" onclick="location.reload()">PLAY AGAIN</button>
-
-</div>
-
-</div>
-
-<script>
-
-const correctSound = new Audio("assets/correct-1.mp3");
-const wrongSound = new Audio("assets/wrong.mp3");
-
-let currentQuestion = 0;
-let score = 0;
-
-const questions = [
-
-{
-title:"Level 1 - Coding Dropdown",
-question:"Choose the block that MOVES sprite FORWARD",
-type:"dropdown",
-options:["Select","Forward","Sound","Jump"],
-correct:"Forward"
-},
-
-{
-title:"Level 2 - Sound Mission",
-question:"Choose the SOUND block",
-type:"dropdown",
-options:["Select","Sound","Forward","Rotate"],
-correct:"Sound"
-},
-
-{
-title:"Level 3 - Space Rocket Mission",
-question:"Launch rocket to planet!",
-type:"rocket"
-},
-
-{
-title:"Level 4 - Scratch Jr Puzzle",
-question:"Click puzzle pieces in correct order: 1 → 2 → 3",
-type:"puzzle"
-},
-
-{
-title:"Level 5 - Cat Dance Party",
-question:"Make the cat dance!",
-type:"dance"
-},
-
-{
-title:"Level 6 - Coding Challenge",
-question:"Choose the picture used in Scratch Jr",
-type:"dropdown",
-options:["Select","Sprite","Tree","Ball"],
-correct:"Sprite"
-}
-
-];
-
-function createSparkles(){
-
-for(let i=0;i<60;i++){
-
-const sparkle=document.createElement("div");
-
-sparkle.classList.add("sparkle");
-
-sparkle.style.left=Math.random()*100+"%";
-
-sparkle.style.animationDuration=
-(Math.random()*5+3)+"s";
-
-document.getElementById("sparkles").appendChild(sparkle);
-
-}
-
-}
-
-createSparkles();
-
-function startGame(){
-
-document.getElementById("startScreen")
-.classList.remove("active");
-
-document.getElementById("gameScreen")
-.classList.add("active");
-
-loadQuestion();
-
-}
-
-function loadQuestion(){
-
-if(currentQuestion>=questions.length){
-
-showFinal();
-return;
-
-}
-
-document.getElementById("nextBtn").style.display="none";
-
-const q=questions[currentQuestion];
-
-document.getElementById("levelTitle").innerHTML=q.title;
-
-document.getElementById("questionText").innerHTML=q.question;
-
-document.getElementById("progressBar").style.width=
-(currentQuestion/questions.length)*100+"%";
-
-const gameArea=document.getElementById("gameArea");
-
-gameArea.innerHTML="";
-
-if(q.type==="dropdown"){
-
-gameArea.innerHTML=`
-
-<div style="text-align:center;">
-
-<select class="dropdown" id="answerSelect">
-
-${q.options.map(option=>
-`<option>${option}</option>`
-).join("")}
-
-</select>
-
-<br><br>
-
-<button class="gameBtn"
-onclick="checkDropdown('${q.correct}')">
-SUBMIT
-</button>
-
-</div>
-
-`;
-
-}
-
-else if(q.type==="rocket"){
-
-gameArea.innerHTML=`
-
-<div class="rocketArea">
-
-<span class="rocket" id="rocket">🚀</span>
-
-<span class="planet">🪐</span>
-
-<div class="buttonArea">
-
-<button class="gameBtn"
-onclick="launchRocket()">
-LAUNCH 🚀
-</button>
-
-</div>
-
-</div>
-
-`;
-
-}
-
-else if(q.type==="puzzle"){
-
-gameArea.innerHTML=`
-
-<div class="puzzleArea">
-
-<div class="puzzlePiece"
-onclick="checkPuzzle(1,this)">1</div>
-
-<div class="puzzlePiece"
-onclick="checkPuzzle(2,this)">2</div>
-
-<div class="puzzlePiece"
-onclick="checkPuzzle(3,this)">3</div>
-
-</div>
-
-`;
-
-puzzleStep=1;
-
-}
-
-else if(q.type==="dance"){
-
-gameArea.innerHTML=`
-
-<div class="danceArea">
-
-<div class="cat" id="cat">🐱</div>
-
-<div class="buttonArea">
-
-<button class="gameBtn"
-onclick="danceCat()">
-DANCE 💃
-</button>
-
-</div>
-
-</div>
-
-`;
-
-}
-
-}
-
-function checkDropdown(correct){
-
-const answer=
-document.getElementById("answerSelect").value;
-
-if(answer===correct){
-
-correctSound.play();
-
-score++;
-
-document.getElementById("score").innerHTML=score;
-
-confettiBlast();
-
-}else{
-
-wrongSound.play();
-
-}
-
-showNextButton();
-
-}
-
-function launchRocket(){
-
-const rocket=document.getElementById("rocket");
-
-rocket.style.transform=
-"translateX(300px) translateY(-100px)";
-
-correctSound.play();
-
-score++;
-
-document.getElementById("score").innerHTML=score;
-
-confettiBlast();
-
-showNextButton();
-
-}
-
-let puzzleStep=1;
-
-function checkPuzzle(number,element){
-
-if(number===puzzleStep){
-
-element.style.background="limegreen";
-
-correctSound.play();
-
-puzzleStep++;
-
-if(puzzleStep===4){
-
-score++;
-
-document.getElementById("score").innerHTML=score;
-
-confettiBlast();
-
-showNextButton();
-
-}
-
-}else{
-
-element.style.background="red";
-
-wrongSound.play();
-
-showNextButton();
-
-}
-
-}
-
-function danceCat(){
-
-const cat=document.getElementById("cat");
-
-cat.style.animation="dance 1s infinite";
-
-correctSound.play();
-
-score++;
-
-document.getElementById("score").innerHTML=score;
-
-confettiBlast();
-
-showNextButton();
-
-}
-
-function showNextButton(){
-
-document.getElementById("nextBtn").style.display="block";
-
-}
-
-function nextQuestion(){
-
-currentQuestion++;
-
-loadQuestion();
-
-}
-
-function confettiBlast(){
-
-for(let i=0;i<100;i++){
-
-const confetti=document.createElement("div");
-
-confetti.classList.add("confetti");
-
-confetti.style.left=
-Math.random()*window.innerWidth+"px";
-
-confetti.style.background=
-`hsl(${Math.random()*360},100%,50%)`;
-
-confetti.style.animationDuration=
-(Math.random()*3+2)+"s";
-
-document.body.appendChild(confetti);
-
-setTimeout(()=>{
-confetti.remove();
-},5000);
-
-}
-
-}
-
-function showFinal(){
-
-document.getElementById("gameScreen")
-.classList.remove("active");
-
-document.getElementById("finalScreen")
-.classList.add("active");
-
-document.getElementById("finalScore").innerHTML=
-`⭐ You scored ${score} out of ${questions.length}`;
-
-confettiBlast();
-
-}
-
-</script>
-
+    <!-- 5-Second Clean White Splash Screen -->
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Solutions Logo" onerror="this.src='https://via.placeholder.com/300x120?text=Innovine+Solutions';">
+    </div>
+
+    <!-- Main Workspace Layout -->
+    <div class="main-container" id="app-workspace">
+        <header>
+            <h1>🚀 Scratch Jr Space Mission</h1>
+            <div class="score-badge" id="level-badge">Mission 1 / 6</div>
+        </header>
+
+        <div class="game-layout" id="game-core">
+            <div class="instruction-card">
+                <h3 id="mission-title">Mission 1: Green Flag Trigger</h3>
+                <p id="mission-desc">Tap the <b>Yellow Start Flag (🚩)</b> block to begin your script!</p>
+            </div>
+
+            <div class="scratch-studio">
+                <!-- Stage Area -->
+                <div class="stage-preview">
+                    <div class="sprite-actor" id="spaceActor">⭐</div>
+                    <div class="speech-bubble" id="actorBubble">Hello Space!</div>
+                    <div class="planet-target" id="planetTarget">🪐</div>
+                </div>
+
+                <!-- Scratch Jr Category Tabs -->
+                <div class="category-tabs">
+                    <div class="cat-tab cat-yellow">🟡</div>
+                    <div class="cat-tab cat-blue">🔵</div>
+                    <div class="cat-tab cat-purple">🟣</div>
+                    <div class="cat-tab cat-green">🟢</div>
+                    <div class="cat-tab cat-orange">🟠</div>
+                    <div class="cat-tab cat-red">🔴</div>
+                </div>
+
+                <!-- Script Programming Line Line -->
+                <div class="script-area" id="scriptLine" onclick="clearScriptLine()">
+                    <div class="script-placeholder" id="scriptPlaceholder">Tap blocks below to build script (Tap line to clear)</div>
+                </div>
+
+                <!-- Block Palette Options -->
+                <div class="block-palette" id="blockPalette">
+                    <!-- Dynamic Blocks -->
+                </div>
+            </div>
+
+            <button class="run-flag-btn" id="runBtn" onclick="executeScript()">
+                <span>🟢</span> RUN GREEN FLAG SCRIPT
+            </button>
+        </div>
+
+        <!-- Victory Screen -->
+        <div id="final-screen">
+            <span>🎉🏅🚀</span>
+            <h2>SCRATCH JR SPACE CHAMPION!</h2>
+            <p>Fantastic job! You mastered Trigger Flags, Motion, Looks, Sound, and End Blocks!</p>
+            <button class="run-flag-btn" style="max-width:200px;" onclick="location.reload()">Play Mission Again 🔄</button>
+        </div>
+    </div>
+
+    <!-- HTML5 Audio Tags using specified repository asset filenames -->
+    <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+
+    <script>
+        // Audio Synthesizer Fallback Engine
+        let audioCtx = null;
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass) {
+                    audioCtx = new AudioContextClass();
+                }
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        window.addEventListener('pointerdown', initAudioContext, { once: true });
+
+        function playSound(type) {
+            initAudioContext();
+            let elementId = (type === 'correct') ? 'snd-correct' : 'snd-wrong';
+            const elem = document.getElementById(elementId);
+            
+            if (elem) {
+                elem.currentTime = 0;
+                elem.play().catch(() => playSynthSound(type));
+            } else {
+                playSynthSound(type);
+            }
+        }
+
+        function playSynthSound(type) {
+            if (!audioCtx) return;
+            const now = audioCtx.currentTime;
+
+            if (type === 'correct') {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.15);
+
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.25);
+            } else {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.setValueAtTime(120, now + 0.1);
+
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+        }
+
+        // 6 Scratch Jr Missions
+        const missions = [
+            {
+                title: "Mission 1: Yellow Start Flag Trigger",
+                desc: "Tap the <b>Yellow Start Flag (🚩)</b> block to begin your script!",
+                palette: [
+                    { id: 'flag', label: '🚩 Start', color: 'yellow' },
+                    { id: 'sound', label: '🔊 Pop', color: 'green' }
+                ],
+                solution: ['flag']
+            },
+            {
+                title: "Mission 2: Move Forward to Saturn",
+                desc: "Combine <b>🚩 Start</b> + <b>➡️ Move Right</b> to move the Star Sprite!",
+                palette: [
+                    { id: 'flag', label: '🚩 Start', color: 'yellow' },
+                    { id: 'move', label: '➡️ Move Right', color: 'blue' },
+                    { id: 'say', label: '💬 Say', color: 'purple' }
+                ],
+                solution: ['flag', 'move']
+            },
+            {
+                title: "Mission 3: Looks & Speech Bubble",
+                desc: "Add <b>💬 Say Hello</b> to make the Star Sprite speak in space!",
+                palette: [
+                    { id: 'flag', label: '🚩 Start', color: 'yellow' },
+                    { id: 'say', label: '💬 Say Hello', color: 'purple' },
+                    { id: 'move', label: '➡️ Move Right', color: 'blue' }
+                ],
+                solution: ['flag', 'say']
+            },
+            {
+                title: "Mission 4: Sound Pop Block",
+                desc: "Combine <b>🚩 Start</b> + <b>🔊 Pop Sound</b> to play audio!",
+                palette: [
+                    { id: 'flag', label: '🚩 Start', color: 'yellow' },
+                    { id: 'sound', label: '🔊 Pop Sound', color: 'green' },
+                    { id: 'move', label: '➡️ Move Right', color: 'blue' }
+                ],
+                solution: ['flag', 'sound']
+            },
+            {
+                title: "Mission 5: Red End Block",
+                desc: "Add <b>🛑 End Block</b> at the end of your script!",
+                palette: [
+                    { id: 'flag', label: '🚩 Start', color: 'yellow' },
+                    { id: 'move', label: '➡️ Move Right', color: 'blue' },
+                    { id: 'end', label: '🛑 End', color: 'red' }
+                ],
+                solution: ['flag', 'move', 'end']
+            },
+            {
+                title: "Mission 6: Full Space Combo",
+                desc: "Create complete sequence: <b>🚩 Start</b> ➔ <b>➡️ Move</b> ➔ <b>💬 Say</b> ➔ <b>🛑 End</b>!",
+                palette: [
+                    { id: 'flag', label: '🚩 Start', color: 'yellow' },
+                    { id: 'move', label: '➡️ Move Right', color: 'blue' },
+                    { id: 'say', label: '💬 Say Hello', color: 'purple' },
+                    { id: 'end', label: '🛑 End', color: 'red' }
+                ],
+                solution: ['flag', 'move', 'say', 'end']
+            }
+        ];
+
+        let currentMissionIdx = 0;
+        let userScript = [];
+
+        // 5-Second Splash Delay
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                splash.style.visibility = 'hidden';
+                document.getElementById('app-workspace').style.opacity = '1';
+                loadMission(0);
+            }, 5000);
+        });
+
+        function loadMission(idx) {
+            currentMissionIdx = idx;
+            userScript = [];
+
+            const m = missions[idx];
+
+            document.getElementById('level-badge').innerText = `Mission ${idx + 1} / 6`;
+            document.getElementById('mission-title').innerText = m.title;
+            document.getElementById('mission-desc').innerHTML = m.desc;
+
+            // Reset Stage Preview
+            const actor = document.getElementById('spaceActor');
+            actor.style.left = '20px';
+            document.getElementById('actorBubble').style.display = 'none';
+
+            renderScriptLine();
+
+            // Render Palette
+            const palette = document.getElementById('blockPalette');
+            palette.innerHTML = '';
+            m.palette.forEach(block => {
+                const elem = document.createElement('div');
+                elem.className = `jr-block block-${block.color}`;
+                elem.innerText = block.label;
+                elem.onclick = () => addBlockToScript(block);
+                palette.appendChild(elem);
+            });
+        }
+
+        function addBlockToScript(block) {
+            userScript.push(block);
+            renderScriptLine();
+        }
+
+        function clearScriptLine() {
+            userScript = [];
+            renderScriptLine();
+        }
+
+        function renderScriptLine() {
+            const scriptLine = document.getElementById('scriptLine');
+            scriptLine.innerHTML = '';
+
+            if (userScript.length === 0) {
+                scriptLine.innerHTML = `<div class="script-placeholder">Tap blocks below to build script (Tap line to clear)</div>`;
+                return;
+            }
+
+            userScript.forEach(block => {
+                const elem = document.createElement('div');
+                elem.className = `jr-block block-${block.color}`;
+                elem.innerText = block.label;
+                scriptLine.appendChild(elem);
+            });
+        }
+
+        function executeScript() {
+            const m = missions[currentMissionIdx];
+
+            // Check if user script matches solution length and IDs
+            let isCorrect = userScript.length === m.solution.length;
+
+            if (isCorrect) {
+                for (let i = 0; i < m.solution.length; i++) {
+                    if (userScript[i].id !== m.solution[i]) {
+                        isCorrect = false;
+                        break;
+                    }
+                }
+            }
+
+            // Animate stage actions based on blocks inside userScript
+            userScript.forEach(block => {
+                if (block.id === 'move') {
+                    document.getElementById('spaceActor').style.left = '180px';
+                }
+                if (block.id === 'say') {
+                    document.getElementById('actorBubble').style.display = 'block';
+                }
+            });
+
+            if (isCorrect) {
+                playSound('correct');
+                setTimeout(() => {
+                    if (currentMissionIdx < missions.length - 1) {
+                        loadMission(currentMissionIdx + 1);
+                    } else {
+                        document.getElementById('game-core').style.display = 'none';
+                        document.getElementById('final-screen').style.display = 'flex';
+                    }
+                }, 1200);
+            } else {
+                playSound('wrong');
+            }
+        }
+    </script>
 </body>
 </html>

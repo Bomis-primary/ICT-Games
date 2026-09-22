@@ -2,26 +2,35 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Fun with MS Paint - Ultimate Challenge</title>
     <style>
         * {
             box-sizing: border-box;
             touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f4f8;
-            margin: 0;
-            padding: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            color: #333;
-            height: 100vh;
-            max-height: 100vh;
-            overflow: hidden;
+            justify-content: center;
+            padding: 8px;
+            height: 100dvh; /* Prevents mobile browser address bar overflow */
         }
 
         /* 5-Second Splash Screen */
@@ -30,18 +39,18 @@
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100vh;
+            height: 100dvh;
             background-color: #ffffff;
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
         }
 
         #splash-screen img {
-            max-width: 75%;
-            max-height: 50vh;
+            max-width: 70%;
+            max-height: 40dvh;
             object-fit: contain;
         }
 
@@ -51,7 +60,7 @@
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100vh;
+            height: 100dvh;
             pointer-events: none;
             z-index: 9998;
         }
@@ -62,8 +71,8 @@
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100vh;
-            background-color: rgba(255, 255, 255, 0.88);
+            height: 100dvh;
+            background-color: rgba(255, 255, 255, 0.92);
             display: none;
             flex-direction: column;
             justify-content: center;
@@ -72,17 +81,17 @@
         }
 
         #sad-overlay .smiley {
-            font-size: 85px;
+            font-size: 80px;
             animation: shake 0.5s ease-in-out;
         }
 
         #sad-overlay .msg {
-            font-size: 20px;
-            font-weight: bold;
+            font-size: 22px;
+            font-weight: 700;
             color: #ef4444;
-            margin-top: 10px;
+            margin-top: 12px;
             text-align: center;
-            padding: 0 10px;
+            padding: 0 16px;
         }
 
         @keyframes shake {
@@ -91,17 +100,20 @@
             40%, 80% { transform: translateX(15px); }
         }
 
-        /* Main Compact Layout */
+        /* Main Workspace Container */
         .main-content {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
-            max-width: 600px;
+            max-width: 480px;
             height: 100%;
+            max-height: 100dvh;
             justify-content: space-between;
             opacity: 0;
-            transition: opacity 0.8s ease;
+            transition: opacity 0.6s ease;
+            gap: 6px;
+            padding-bottom: calc(env(safe-area-inset-bottom, 8px) + 4px);
         }
 
         header {
@@ -111,13 +123,14 @@
             width: 100%;
             background-color: #ffffff;
             padding: 8px 12px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
         }
 
         .title-area h1 {
             margin: 0;
             font-size: 16px;
+            font-weight: 700;
             color: #0284c7;
             display: flex;
             align-items: center;
@@ -133,12 +146,13 @@
         .timer-badge {
             background-color: #ef4444;
             color: white;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 16px;
+            font-weight: 700;
             font-size: 14px;
-            min-width: 65px;
+            min-width: 70px;
             text-align: center;
+            letter-spacing: 0.5px;
         }
 
         /* Level Banner */
@@ -147,37 +161,38 @@
             background-color: #e0f2fe;
             border-left: 4px solid #0284c7;
             padding: 8px 12px;
-            border-radius: 0 8px 8px 0;
-            margin: 4px 0;
+            border-radius: 4px 10px 10px 4px;
         }
 
         .mission-box h3 {
             margin: 0;
             color: #0369a1;
             font-size: 14px;
+            font-weight: 700;
         }
 
         .mission-box p {
-            margin: 2px 0 0 0;
+            margin: 3px 0 0 0;
             font-size: 12px;
             color: #334155;
+            line-height: 1.3;
         }
 
         /* Workspace Viewport */
         .paint-window {
             background-color: #ffffff;
             border: 2px solid #cbd5e1;
-            border-radius: 10px;
+            border-radius: 12px;
             width: 100%;
             flex: 1;
             display: flex;
             flex-direction: column;
             align-items: center;
             position: relative;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            max-height: 52vh;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            max-height: 52dvh;
             padding: 6px;
-            overflow-y: auto;
+            overflow: hidden;
         }
 
         .paint-header-bar {
@@ -186,11 +201,11 @@
             justify-content: space-between;
             align-items: center;
             background: #f1f5f9;
-            padding: 4px 8px;
-            border-radius: 6px;
+            padding: 6px 10px;
+            border-radius: 8px;
             margin-bottom: 6px;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 700;
             color: #475569;
         }
 
@@ -218,41 +233,44 @@
         .target-zone {
             position: absolute;
             border: 2px dashed #0284c7;
-            background-color: rgba(2, 132, 199, 0.1);
+            background-color: rgba(2, 132, 199, 0.12);
             border-radius: 8px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-weight: bold;
+            font-weight: 700;
             font-size: 11px;
             color: #0284c7;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
-            padding: 2px;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+            padding: 4px;
         }
 
         /* House Illustration SVG */
         .house-svg {
-            width: 250px;
-            height: 175px;
+            width: 100%;
+            max-width: 250px;
+            height: auto;
+            max-height: 175px;
         }
 
         /* Bottom Tool Selection Dock */
         .tools-dock {
             background-color: #ffffff;
             padding: 8px;
-            border-radius: 10px;
+            border-radius: 12px;
             width: 100%;
             display: flex;
             justify-content: center;
             gap: 12px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            margin-top: 6px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+            min-height: 85px;
+            align-items: center;
         }
 
         .tool-card {
-            width: 70px;
+            width: 75px;
             height: 75px;
             background-color: #f8fafc;
             border: 2px solid #cbd5e1;
@@ -263,10 +281,10 @@
             align-items: center;
             justify-content: center;
             cursor: grab;
-            user-select: none;
-            touch-action: none;
+            touch-action: none; /* Prevents vertical scrolling during drag */
             position: relative;
             z-index: 10;
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
         }
 
         .tool-card img {
@@ -279,20 +297,25 @@
         .tool-card span {
             margin-top: 4px;
             font-size: 10px;
-            font-weight: bold;
+            font-weight: 700;
             text-align: center;
             color: #334155;
             pointer-events: none;
+            line-height: 1.1;
         }
 
         .tool-card.selected-tap {
             border-color: #0284c7;
             background-color: #e0f2fe;
-            box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.4);
+            box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.4);
         }
 
         .tool-card.dragging {
-            opacity: 0.6;
+            opacity: 0.85;
+            transform: scale(1.08);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            z-index: 1000 !important;
+            cursor: grabbing;
         }
 
         /* Guess & Quiz Option Buttons */
@@ -306,17 +329,18 @@
         .quiz-btn {
             background-color: #f8fafc;
             border: 2px solid #cbd5e1;
-            padding: 10px 12px;
-            border-radius: 8px;
+            padding: 12px 14px;
+            border-radius: 10px;
             font-size: 13px;
-            font-weight: bold;
+            font-weight: 700;
             color: #1e293b;
             cursor: pointer;
             width: 100%;
             text-align: left;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            transition: background-color 0.15s ease, border-color 0.15s ease;
         }
 
         .quiz-btn img {
@@ -325,18 +349,18 @@
             object-fit: contain;
         }
 
-        .quiz-btn.selected {
+        .quiz-btn:active, .quiz-btn.selected {
             background-color: #e0f2fe;
             border-color: #0284c7;
             color: #0369a1;
         }
 
-        /* Controls */
+        /* Control Action Buttons */
         .controls {
             display: flex;
             gap: 10px;
             width: 100%;
-            margin: 6px 0 2px 0;
+            margin-top: 2px;
         }
 
         .action-btn {
@@ -344,15 +368,27 @@
             background-color: #10b981;
             color: white;
             border: none;
-            padding: 12px;
-            font-size: 15px;
-            font-weight: bold;
-            border-radius: 8px;
+            padding: 14px 10px;
+            font-size: 16px;
+            font-weight: 700;
+            border-radius: 10px;
             cursor: pointer;
+            box-shadow: 0 3px 0 #059669;
+            transition: transform 0.1s ease, background-color 0.15s ease;
+        }
+
+        .action-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 #059669;
         }
 
         .action-btn.reset-btn {
             background-color: #6b7280;
+            box-shadow: 0 3px 0 #4b5563;
+        }
+
+        .action-btn.reset-btn:active {
+            box-shadow: 0 1px 0 #4b5563;
         }
     </style>
 </head>
@@ -405,13 +441,13 @@
             </div>
 
             <div class="canvas-area" id="canvas-area">
-                <!-- SVG House & Dynamic Content Rendered Here -->
+                <!-- Dynamic SVG House / Quiz Options Rendered Here -->
             </div>
         </div>
 
         <!-- Tool Dock -->
         <div class="tools-dock" id="tools-dock">
-            <!-- Available tools rendered dynamically -->
+            <!-- Tools dynamically generated here -->
         </div>
 
         <div class="controls">
@@ -424,8 +460,9 @@
         // Splash Screen (5 Seconds)
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
-                document.getElementById('splash-screen').style.opacity = '0';
-                document.getElementById('splash-screen').style.visibility = 'hidden';
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                splash.style.visibility = 'hidden';
                 document.getElementById('game-workspace').style.opacity = '1';
             }, 5000);
 
@@ -439,9 +476,9 @@
 
             if (type === 'correct') {
                 clapAudio.currentTime = 0;
-                clapAudio.play().catch(e => {
+                clapAudio.play().catch(() => {
                     correctAudio.currentTime = 0;
-                    correctAudio.play().catch(err => {});
+                    correctAudio.play().catch(() => {});
                 });
             } else if (type === 'wrong') {
                 try {
@@ -464,7 +501,7 @@
                 title: "🏠 Level 1: Draw the House Roof Outlines",
                 desc: "Drag or tap the correct tool to place it on the roof outline!",
                 targetLabel: "Place Tool Here to Draw Roof 🔺",
-                targetPos: { top: '20px', left: '45px', width: '160px', height: '48px' },
+                targetPos: { top: '15px', left: '40px', width: '170px', height: '50px' },
                 correctTool: "pencil",
                 houseState: "outline_roof",
                 dockTools: [
@@ -479,7 +516,7 @@
                 title: "🚪 Level 2: Clean Up the Extra Line",
                 desc: "Oh no! A red line is spoiling the house wall. Place the Eraser on it!",
                 targetLabel: "Place Eraser Here ✏️",
-                targetPos: { top: '85px', left: '170px', width: '50px', height: '40px' },
+                targetPos: { top: '80px', left: '160px', width: '60px', height: '45px' },
                 correctTool: "eraser",
                 houseState: "extra_line",
                 dockTools: [
@@ -494,7 +531,7 @@
                 title: "🎨 Level 3: Paint the House Roof",
                 desc: "Select and place the Fill Bucket inside the roof to color it orange!",
                 targetLabel: "Place Tool Here to Color Roof 🎨",
-                targetPos: { top: '25px', left: '65px', width: '120px', height: '40px' },
+                targetPos: { top: '20px', left: '60px', width: '130px', height: '45px' },
                 correctTool: "fill",
                 houseState: "colored_walls",
                 dockTools: [
@@ -509,7 +546,7 @@
                 title: "🏷️ Level 4: Add Your Name to the Drawing",
                 desc: "Place the Text Tool on the bottom section to sign your drawing!",
                 targetLabel: "Place Tool Here to Write Name 📝",
-                targetPos: { top: '142px', left: '35px', width: '180px', height: '28px' },
+                targetPos: { top: '135px', left: '30px', width: '190px', height: '30px' },
                 correctTool: "text",
                 houseState: "completed_house",
                 dockTools: [
@@ -548,7 +585,7 @@
                 title: "❌ Level 7: Close MS Paint Window",
                 desc: "You finished drawing! Place the Close button on the top-right corner of the window bar.",
                 targetLabel: "Place Close Button Here ❌",
-                targetPos: { top: '4px', left: '200px', width: '45px', height: '20px' },
+                targetPos: { top: '2px', left: '195px', width: '50px', height: '24px' },
                 correctTool: "close",
                 houseState: "completed_house",
                 dockTools: [
@@ -625,10 +662,8 @@
             toolsDock.style.display = 'flex';
 
             if (lvlData.type === "placement") {
-                // Render SVG House Illustration according to Level State
                 canvasArea.innerHTML = getHouseSVG(lvlData.houseState);
 
-                // Render Dynamic Target Zone
                 const target = document.createElement('div');
                 target.className = 'target-zone';
                 target.id = 'target-zone';
@@ -646,7 +681,6 @@
 
                 canvasArea.appendChild(target);
 
-                // Render Dock Tools
                 const shuffledTools = [...lvlData.dockTools].sort(() => Math.random() - 0.5);
                 shuffledTools.forEach(tool => {
                     const card = document.createElement('div');
@@ -655,7 +689,7 @@
                     card.setAttribute('data-id', tool.id);
 
                     card.innerHTML = `
-                        <img src="${tool.img}" alt="${tool.name}" onerror="this.onerror=null; this.src='https://via.placeholder.com/38?text=${tool.name}';">
+                        <img src="${tool.img}" alt="${tool.name}" onerror="this.onerror=null; this.src='https://via.placeholder.com/38?text=${encodeURIComponent(tool.name)}';">
                         <span>${tool.name}</span>
                     `;
 
@@ -664,7 +698,6 @@
                 });
 
             } else {
-                // Riddle / Sequence / Quiz Options Layout
                 toolsDock.style.display = 'none';
 
                 const quizContainer = document.createElement('div');
@@ -716,12 +749,15 @@
             `;
         }
 
-        // Mobile Drag & Drop + Tap Selection Engine
+        // Unified Mobile Drag & Drop + Tap Engine
         function makeMobileDraggable(cardElement, toolId) {
-            let activeTouch = false;
-            let currentX, currentY, initialX, initialY, xOffset = 0, yOffset = 0;
+            let isDragging = false;
+            let startX = 0, startY = 0;
+            let initialRect = null;
 
-            cardElement.addEventListener('click', () => {
+            // Tap Handler
+            cardElement.addEventListener('click', (e) => {
+                if (isDragging) return;
                 document.querySelectorAll('.tool-card').forEach(c => c.classList.remove('selected-tap'));
                 if (selectedToolId === toolId) {
                     selectedToolId = null;
@@ -731,45 +767,66 @@
                 }
             });
 
-            cardElement.addEventListener('touchstart', (e) => {
-                activeTouch = true;
-                const touch = e.touches[0];
-                initialX = touch.clientX - xOffset;
-                initialY = touch.clientY - yOffset;
-                cardElement.classList.add('dragging');
-                cardElement.style.zIndex = '1000';
-            }, { passive: true });
+            // Touch / Pointer Down Handler
+            const onPointerDown = (e) => {
+                isDragging = false;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
 
-            cardElement.addEventListener('touchmove', (e) => {
-                if (!activeTouch) return;
-                const touch = e.touches[0];
-                currentX = touch.clientX - initialX;
-                currentY = touch.clientY - initialY;
-                xOffset = currentX;
-                yOffset = currentY;
-                cardElement.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
-            }, { passive: true });
+                startX = clientX;
+                startY = clientY;
+                initialRect = cardElement.getBoundingClientRect();
 
-            cardElement.addEventListener('touchend', (e) => {
-                if (!activeTouch) return;
-                activeTouch = false;
-                cardElement.classList.remove('dragging');
+                const onPointerMove = (moveEvent) => {
+                    const curX = moveEvent.touches ? moveEvent.touches[0].clientX : moveEvent.clientX;
+                    const curY = moveEvent.touches ? moveEvent.touches[0].clientY : moveEvent.clientY;
 
-                const changedTouch = e.changedTouches[0];
-                cardElement.style.display = 'none';
-                const dropTarget = document.elementFromPoint(changedTouch.clientX, changedTouch.clientY);
-                cardElement.style.display = 'flex';
+                    const deltaX = curX - startX;
+                    const deltaY = curY - startY;
 
-                cardElement.style.transform = 'none';
-                xOffset = 0;
-                yOffset = 0;
-                cardElement.style.zIndex = '10';
+                    if (Math.hypot(deltaX, deltaY) > 6) {
+                        isDragging = true;
+                        cardElement.classList.add('dragging');
+                        cardElement.style.position = 'fixed';
+                        cardElement.style.left = `${initialRect.left + deltaX}px`;
+                        cardElement.style.top = `${initialRect.top + deltaY}px`;
+                    }
+                };
 
-                const zone = dropTarget ? dropTarget.closest('.target-zone') : null;
-                if (zone) {
-                    placeToolInZone(toolId);
-                }
-            });
+                const onPointerUp = (upEvent) => {
+                    window.removeEventListener('mousemove', onPointerMove);
+                    window.removeEventListener('mouseup', onPointerUp);
+                    window.removeEventListener('touchmove', onPointerMove);
+                    window.removeEventListener('touchend', onPointerUp);
+
+                    if (isDragging) {
+                        cardElement.classList.remove('dragging');
+                        cardElement.style.position = '';
+                        cardElement.style.left = '';
+                        cardElement.style.top = '';
+
+                        const endX = upEvent.changedTouches ? upEvent.changedTouches[0].clientX : upEvent.clientX;
+                        const endY = upEvent.changedTouches ? upEvent.changedTouches[0].clientY : upEvent.clientY;
+
+                        cardElement.style.display = 'none';
+                        const dropTarget = document.elementFromPoint(endX, endY);
+                        cardElement.style.display = 'flex';
+
+                        const zone = dropTarget ? dropTarget.closest('.target-zone') : null;
+                        if (zone) {
+                            placeToolInZone(toolId);
+                        }
+                    }
+                };
+
+                window.addEventListener('mousemove', onPointerMove, { passive: true });
+                window.addEventListener('mouseup', onPointerUp, { passive: true });
+                window.addEventListener('touchmove', onPointerMove, { passive: true });
+                window.addEventListener('touchend', onPointerUp, { passive: true });
+            };
+
+            cardElement.addEventListener('mousedown', onPointerDown);
+            cardElement.addEventListener('touchstart', onPointerDown, { passive: true });
         }
 
         function placeToolInZone(toolId) {
@@ -835,7 +892,6 @@
             wrongAttempts++;
             playSound('wrong');
 
-            // Show Sad Overlay
             const overlay = document.getElementById('sad-overlay');
             document.getElementById('sad-msg').innerText = message;
             overlay.style.display = 'flex';
@@ -844,7 +900,6 @@
                 overlay.style.display = 'none';
 
                 if (wrongAttempts >= 2) {
-                    // Auto-advance after 2 wrong attempts
                     clearInterval(timerInterval);
                     if (currentLevel < levels.length) {
                         loadLevel(currentLevel + 1);
@@ -870,7 +925,7 @@
                     x: Math.random() * canvas.width,
                     y: Math.random() * canvas.height - canvas.height,
                     color: `hsl(${Math.random() * 360}, 100%, 50%)`,
-                    size: Math.random() * 8 + 4,
+                    size: Math.random() * 7 + 4,
                     speed: Math.random() * 5 + 3
                 });
             }

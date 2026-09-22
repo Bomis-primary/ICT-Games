@@ -128,7 +128,7 @@ header h1 {
     line-height: 1.3;
 }
 
-/* Scratch Jr Studio Window Interface */
+/* Scratch Jr Studio Window */
 .scratch-studio {
     background: #fef3c7;
     border-radius: 14px;
@@ -147,7 +147,7 @@ header h1 {
     background: #0f172a;
     border-radius: 10px;
     border: 2px solid #334155;
-    height: 140px;
+    height: 130px;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -156,16 +156,18 @@ header h1 {
     padding: 0 20px;
 }
 
-/* Star/Starfish Sprite Animation */
+/* Sprite Actor Image */
 .sprite-actor {
-    font-size: 42px;
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
     position: absolute;
     left: 20px;
     transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .planet-target {
-    font-size: 50px;
+    font-size: 45px;
     position: absolute;
     right: 20px;
 }
@@ -173,7 +175,7 @@ header h1 {
 .speech-bubble {
     position: absolute;
     top: 15px;
-    left: 70px;
+    left: 75px;
     background: white;
     color: #0f172a;
     padding: 4px 8px;
@@ -195,22 +197,28 @@ header h1 {
     border-color: transparent white transparent transparent;
 }
 
-/* Category Filter Tabs (Matching Scratch Jr colors) */
+/* Category Filter Tabs */
 .category-tabs {
     display: flex;
-    gap: 4px;
+    gap: 6px;
     justify-content: center;
+    align-items: center;
 }
 
 .cat-tab {
-    width: 28px;
-    height: 24px;
-    border-radius: 6px 6px 0 0;
+    width: 32px;
+    height: 28px;
+    border-radius: 6px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 12px;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.2);
+    transition: transform 0.1s;
+}
+
+.cat-tab:active {
+    transform: scale(0.92);
 }
 
 .cat-yellow { background: #facc15; }
@@ -220,17 +228,18 @@ header h1 {
 .cat-orange { background: #f97316; }
 .cat-red    { background: #ef4444; }
 
-/* Coding Programming Script Line Slot */
+/* Script Programming Line Slot */
 .script-area {
     background: #ffffff;
     border: 2px dashed #f59e0b;
     border-radius: 8px;
-    min-height: 48px;
+    min-height: 54px;
     display: flex;
     align-items: center;
     padding: 4px;
-    gap: 4px;
+    gap: 6px;
     overflow-x: auto;
+    cursor: pointer;
 }
 
 .script-placeholder {
@@ -246,42 +255,41 @@ header h1 {
     background: #ffffff;
     border-radius: 8px;
     border: 1px solid #cbd5e1;
-    padding: 6px;
+    padding: 8px;
     display: flex;
-    gap: 6px;
+    gap: 8px;
     justify-content: center;
+    align-items: center;
     flex-wrap: wrap;
-    min-height: 52px;
+    min-height: 60px;
 }
 
-/* Puzzle Coding Blocks */
-.jr-block {
-    height: 38px;
-    padding: 0 10px;
-    border-radius: 6px;
+/* Clickable Block Buttons using Asset Folder Images */
+.jr-block-btn {
+    border: none;
+    background: transparent;
+    cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 4px;
-    color: white;
-    font-weight: bold;
-    font-size: 12px;
-    cursor: pointer;
-    box-shadow: 0 3px 0 rgba(0,0,0,0.2);
-    position: relative;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    outline: none;
+    transition: transform 0.15s ease;
 }
 
-.jr-block:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+.jr-block-btn:active {
+    transform: scale(0.92);
 }
 
-.block-yellow { background: #eab308; }
-.block-blue   { background: #2563eb; }
-.block-purple { background: #9333ea; }
-.block-green  { background: #16a34a; }
-.block-red    { background: #dc2626; }
+.jr-block-btn img {
+    height: 44px;
+    width: auto;
+    object-fit: contain;
+    pointer-events: none;
+}
 
-/* Action Submit / Green Flag Run Button */
+/* Action Submit Green Flag Button */
 .run-flag-btn {
     background-color: #16a34a;
     color: white;
@@ -303,12 +311,6 @@ header h1 {
 .run-flag-btn:active {
     transform: translateY(2px);
     box-shadow: 0 1px 0 #15803d;
-}
-
-.run-flag-btn:disabled {
-    background-color: #94a3b8;
-    box-shadow: 0 3px 0 #64748b;
-    cursor: not-allowed;
 }
 
 /* Final Screen */
@@ -370,21 +372,21 @@ header h1 {
 
         <div class="game-layout" id="game-core">
             <div class="instruction-card">
-                <h3 id="mission-title">Mission 1: Green Flag Trigger</h3>
-                <p id="mission-desc">Tap the <b>Yellow Start Flag (🚩)</b> block to begin your script!</p>
+                <h3 id="mission-title">Mission 1: Yellow Start Flag Trigger</h3>
+                <p id="mission-desc">Tap the <b>Yellow Start Flag</b> block to add it to your script!</p>
             </div>
 
             <div class="scratch-studio">
                 <!-- Stage Area -->
                 <div class="stage-preview">
-                    <div class="sprite-actor" id="spaceActor">⭐</div>
+                    <img src="assets/sprite.png" class="sprite-actor" id="spaceActor" alt="Sprite" onerror="this.src='https://cdn-icons-png.flaticon.com/512/616/616489.png';">
                     <div class="speech-bubble" id="actorBubble">Hello Space!</div>
                     <div class="planet-target" id="planetTarget">🪐</div>
                 </div>
 
-                <!-- Scratch Jr Category Tabs -->
+                <!-- Category Tabs -->
                 <div class="category-tabs">
-                    <div class="cat-tab cat-yellow">🟡</div>
+                    <div class="cat-tab cat-yellow">🟢</div>
                     <div class="cat-tab cat-blue">🔵</div>
                     <div class="cat-tab cat-purple">🟣</div>
                     <div class="cat-tab cat-green">🟢</div>
@@ -392,14 +394,14 @@ header h1 {
                     <div class="cat-tab cat-red">🔴</div>
                 </div>
 
-                <!-- Script Programming Line Line -->
+                <!-- Script Programming Line Slot -->
                 <div class="script-area" id="scriptLine" onclick="clearScriptLine()">
                     <div class="script-placeholder" id="scriptPlaceholder">Tap blocks below to build script (Tap line to clear)</div>
                 </div>
 
                 <!-- Block Palette Options -->
                 <div class="block-palette" id="blockPalette">
-                    <!-- Dynamic Blocks -->
+                    <!-- Dynamic Clickable Blocks -->
                 </div>
             </div>
 
@@ -417,12 +419,12 @@ header h1 {
         </div>
     </div>
 
-    <!-- HTML5 Audio Tags using specified repository asset filenames -->
+    <!-- Audio Elements -->
     <audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
 
     <script>
-        // Audio Synthesizer Fallback Engine
+        // Web Audio Synthesizer Engine (Fallback)
         let audioCtx = null;
 
         function initAudioContext() {
@@ -487,67 +489,67 @@ header h1 {
             }
         }
 
-        // 6 Scratch Jr Missions
+        // Mission Definitions Mapping to Assets Directory
         const missions = [
             {
                 title: "Mission 1: Yellow Start Flag Trigger",
-                desc: "Tap the <b>Yellow Start Flag (🚩)</b> block to begin your script!",
+                desc: "Tap the <b>Yellow Start Flag</b> block to begin your script!",
                 palette: [
-                    { id: 'flag', label: '🚩 Start', color: 'yellow' },
-                    { id: 'sound', label: '🔊 Pop', color: 'green' }
+                    { id: 'yellow', src: 'assets/yellow.png', alt: 'Yellow Flag' },
+                    { id: 'sound', src: 'assets/sound.png', alt: 'Sound' }
                 ],
-                solution: ['flag']
+                solution: ['yellow']
             },
             {
                 title: "Mission 2: Move Forward to Saturn",
-                desc: "Combine <b>🚩 Start</b> + <b>➡️ Move Right</b> to move the Star Sprite!",
+                desc: "Combine <b>Yellow Start</b> + <b>Forward Move</b> to move the Sprite!",
                 palette: [
-                    { id: 'flag', label: '🚩 Start', color: 'yellow' },
-                    { id: 'move', label: '➡️ Move Right', color: 'blue' },
-                    { id: 'say', label: '💬 Say', color: 'purple' }
+                    { id: 'yellow', src: 'assets/yellow.png', alt: 'Yellow Flag' },
+                    { id: 'forward', src: 'assets/forward.png', alt: 'Forward' },
+                    { id: 'say', src: 'assets/say.png', alt: 'Say' }
                 ],
-                solution: ['flag', 'move']
+                solution: ['yellow', 'forward']
             },
             {
                 title: "Mission 3: Looks & Speech Bubble",
-                desc: "Add <b>💬 Say Hello</b> to make the Star Sprite speak in space!",
+                desc: "Add <b>Say Hello</b> to make the Sprite speak in space!",
                 palette: [
-                    { id: 'flag', label: '🚩 Start', color: 'yellow' },
-                    { id: 'say', label: '💬 Say Hello', color: 'purple' },
-                    { id: 'move', label: '➡️ Move Right', color: 'blue' }
+                    { id: 'yellow', src: 'assets/yellow.png', alt: 'Yellow Flag' },
+                    { id: 'say', src: 'assets/say.png', alt: 'Say' },
+                    { id: 'forward', src: 'assets/forward.png', alt: 'Forward' }
                 ],
-                solution: ['flag', 'say']
+                solution: ['yellow', 'say']
             },
             {
                 title: "Mission 4: Sound Pop Block",
-                desc: "Combine <b>🚩 Start</b> + <b>🔊 Pop Sound</b> to play audio!",
+                desc: "Combine <b>Yellow Start</b> + <b>Sound Pop</b> block!",
                 palette: [
-                    { id: 'flag', label: '🚩 Start', color: 'yellow' },
-                    { id: 'sound', label: '🔊 Pop Sound', color: 'green' },
-                    { id: 'move', label: '➡️ Move Right', color: 'blue' }
+                    { id: 'yellow', src: 'assets/yellow.png', alt: 'Yellow Flag' },
+                    { id: 'sound', src: 'assets/sound.png', alt: 'Sound' },
+                    { id: 'forward', src: 'assets/forward.png', alt: 'Forward' }
                 ],
-                solution: ['flag', 'sound']
+                solution: ['yellow', 'sound']
             },
             {
                 title: "Mission 5: Red End Block",
-                desc: "Add <b>🛑 End Block</b> at the end of your script!",
+                desc: "Add <b>End Block</b> at the end of your script!",
                 palette: [
-                    { id: 'flag', label: '🚩 Start', color: 'yellow' },
-                    { id: 'move', label: '➡️ Move Right', color: 'blue' },
-                    { id: 'end', label: '🛑 End', color: 'red' }
+                    { id: 'yellow', src: 'assets/yellow.png', alt: 'Yellow Flag' },
+                    { id: 'forward', src: 'assets/forward.png', alt: 'Forward' },
+                    { id: 'commands', src: 'assets/commands.png', alt: 'End Block' }
                 ],
-                solution: ['flag', 'move', 'end']
+                solution: ['yellow', 'forward', 'commands']
             },
             {
                 title: "Mission 6: Full Space Combo",
-                desc: "Create complete sequence: <b>🚩 Start</b> ➔ <b>➡️ Move</b> ➔ <b>💬 Say</b> ➔ <b>🛑 End</b>!",
+                desc: "Create full sequence: <b>Start</b> ➔ <b>Forward</b> ➔ <b>Say</b> ➔ <b>End Block</b>!",
                 palette: [
-                    { id: 'flag', label: '🚩 Start', color: 'yellow' },
-                    { id: 'move', label: '➡️ Move Right', color: 'blue' },
-                    { id: 'say', label: '💬 Say Hello', color: 'purple' },
-                    { id: 'end', label: '🛑 End', color: 'red' }
+                    { id: 'yellow', src: 'assets/yellow.png', alt: 'Yellow Flag' },
+                    { id: 'forward', src: 'assets/forward.png', alt: 'Forward' },
+                    { id: 'say', src: 'assets/say.png', alt: 'Say' },
+                    { id: 'commands', src: 'assets/commands.png', alt: 'End Block' }
                 ],
-                solution: ['flag', 'move', 'say', 'end']
+                solution: ['yellow', 'forward', 'say', 'commands']
             }
         ];
 
@@ -586,11 +588,16 @@ header h1 {
             const palette = document.getElementById('blockPalette');
             palette.innerHTML = '';
             m.palette.forEach(block => {
-                const elem = document.createElement('div');
-                elem.className = `jr-block block-${block.color}`;
-                elem.innerText = block.label;
-                elem.onclick = () => addBlockToScript(block);
-                palette.appendChild(elem);
+                const btn = document.createElement('button');
+                btn.className = 'jr-block-btn';
+                btn.onclick = () => addBlockToScript(block);
+
+                const img = document.createElement('img');
+                img.src = block.src;
+                img.alt = block.alt;
+
+                btn.appendChild(img);
+                palette.appendChild(btn);
             });
         }
 
@@ -614,17 +621,21 @@ header h1 {
             }
 
             userScript.forEach(block => {
-                const elem = document.createElement('div');
-                elem.className = `jr-block block-${block.color}`;
-                elem.innerText = block.label;
-                scriptLine.appendChild(elem);
+                const btn = document.createElement('button');
+                btn.className = 'jr-block-btn';
+
+                const img = document.createElement('img');
+                img.src = block.src;
+                img.alt = block.alt;
+
+                btn.appendChild(img);
+                scriptLine.appendChild(btn);
             });
         }
 
         function executeScript() {
             const m = missions[currentMissionIdx];
 
-            // Check if user script matches solution length and IDs
             let isCorrect = userScript.length === m.solution.length;
 
             if (isCorrect) {
@@ -636,9 +647,8 @@ header h1 {
                 }
             }
 
-            // Animate stage actions based on blocks inside userScript
             userScript.forEach(block => {
-                if (block.id === 'move') {
+                if (block.id === 'forward') {
                     document.getElementById('spaceActor').style.left = '180px';
                 }
                 if (block.id === 'say') {

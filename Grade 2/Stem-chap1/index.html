@@ -51,7 +51,7 @@ body {
     object-fit: contain;
 }
 
-/* Main Container Workspace */
+/* Main Workspace */
 .main-container {
     display: flex;
     flex-direction: column;
@@ -128,7 +128,7 @@ header h1 {
     line-height: 1.3;
 }
 
-/* Game Studio Playground */
+/* STEM Studio */
 .stem-studio {
     background: #e0f2fe;
     border-radius: 14px;
@@ -143,7 +143,7 @@ header h1 {
     box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
-/* Target Drop Zone Area */
+/* Drop Targets */
 .drop-zone-container {
     display: flex;
     gap: 8px;
@@ -163,7 +163,6 @@ header h1 {
     padding: 6px;
     text-align: center;
     transition: background 0.2s, border-color 0.2s;
-    cursor: pointer;
 }
 
 .drop-box.drag-over {
@@ -181,20 +180,34 @@ header h1 {
 .drop-box .slot-items {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
+    gap: 6px;
     justify-content: center;
     align-items: center;
     width: 100%;
     height: 100%;
 }
 
-.drop-box .slot-items img {
-    height: 38px;
-    width: auto;
-    object-fit: contain;
+.slot-card {
+    width: 46px;
+    height: 46px;
+    background: #f8fafc;
+    border: 2px solid #0284c7;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    cursor: pointer;
 }
 
-/* Draggable Items Box */
+.slot-card img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+}
+
+/* Items Palette */
 .items-palette {
     background: #ffffff;
     border-radius: 10px;
@@ -210,8 +223,8 @@ header h1 {
 }
 
 .card-item {
-    width: 72px;
-    height: 72px;
+    width: 70px;
+    height: 70px;
     background: #f8fafc;
     border: 2px solid #38bdf8;
     border-radius: 10px;
@@ -224,9 +237,10 @@ header h1 {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.card-item:active {
-    cursor: grabbing;
-    transform: scale(0.92);
+.card-item.selected {
+    border-color: #16a34a;
+    transform: scale(1.08);
+    box-shadow: 0 0 8px #16a34a;
 }
 
 .card-item img {
@@ -320,8 +334,8 @@ header h1 {
 
         <div class="game-layout" id="game-core">
             <div class="instruction-card">
-                <h3 id="level-title">Level 1: Electrical Appliances</h3>
-                <p id="level-desc">Drag or tap the items into the correct boxes to sort them!</p>
+                <h3 id="level-title">Level 1: Electricity Detective</h3>
+                <p id="level-desc">Drag or tap an item, then tap a box to place it!</p>
             </div>
 
             <div class="stem-studio">
@@ -339,7 +353,7 @@ header h1 {
 
                 <!-- Draggable Items Container -->
                 <div class="items-palette" id="itemsPalette">
-                    <!-- Dynamic Level Items -->
+                    <!-- Dynamic Items -->
                 </div>
             </div>
 
@@ -427,7 +441,7 @@ header h1 {
             }
         }
 
-        // 4 Interactive STEM Levels with Asset Images
+        // Accurately Defined Target Mappings
         const levels = [
             {
                 title: "Level 1: Electricity Detective",
@@ -438,14 +452,14 @@ header h1 {
                     { id: 'l1_fan', src: 'assets/fan.png', target: 'A' },
                     { id: 'l1_fridge', src: 'assets/fridge.jpeg', target: 'A' },
                     { id: 'l1_laptop', src: 'assets/laptop.png', target: 'A' },
-                    { id: 'l1_circuit', src: 'assets/closed circuits.png', target: 'B' }
+                    { id: 'l1_microwave', src: 'assets/microwave.jpg', target: 'A' }
                 ]
             },
             {
-                title: "Level 2: Kitchen Appliances",
-                desc: "Sort kitchen appliances into <b>⚡ Kitchen Electric</b> or <b>🚫 Other Items</b>!",
+                title: "Level 2: Kitchen vs General",
+                desc: "Sort items into <b>⚡ Kitchen Electric</b> or <b>🚫 Other Electric</b>!",
                 boxA: "⚡ Kitchen Electric",
-                boxB: "🚫 Other Items",
+                boxB: "🚫 Other Electric",
                 items: [
                     { id: 'l2_microwave', src: 'assets/microwave.jpg', target: 'A' },
                     { id: 'l2_fridge', src: 'assets/fridge.jpeg', target: 'A' },
@@ -454,25 +468,27 @@ header h1 {
                 ]
             },
             {
-                title: "Level 3: Home Cleaners & Tech",
-                desc: "Match home cleaning appliances and study gadgets!",
-                boxA: "⚡ Electric Laundry & Tech",
-                boxB: "🚫 Others",
+                title: "Level 3: Laundry & Study Tech",
+                desc: "Sort items into <b>⚡ Laundry & Tech</b> or <b>🚫 Cooling Appliances</b>!",
+                boxA: "⚡ Laundry & Tech",
+                boxB: "🚫 Cooling Items",
                 items: [
                     { id: 'l3_washing', src: 'assets/washing machine.png', target: 'A' },
                     { id: 'l3_laptop', src: 'assets/laptop.png', target: 'A' },
-                    { id: 'l3_fan', src: 'assets/fan.png', target: 'B' }
+                    { id: 'l3_fan', src: 'assets/fan.png', target: 'B' },
+                    { id: 'l3_fridge', src: 'assets/fridge.jpeg', target: 'B' }
                 ]
             },
             {
                 title: "Level 4: Closed Circuits",
                 desc: "Separate <b>💡 Closed Circuits</b> from general appliances!",
                 boxA: "💡 Closed Circuit",
-                boxB: "🔌 Appliances",
+                boxB: "🔌 Household Appliances",
                 items: [
                     { id: 'l4_circuit', src: 'assets/closed circuits.png', target: 'A' },
                     { id: 'l4_microwave', src: 'assets/microwave.jpg', target: 'B' },
-                    { id: 'l4_washing', src: 'assets/washing machine.png', target: 'B' }
+                    { id: 'l4_washing', src: 'assets/washing machine.png', target: 'B' },
+                    { id: 'l4_laptop', src: 'assets/laptop.png', target: 'B' }
                 ]
             }
         ];
@@ -529,12 +545,10 @@ header h1 {
             const card = document.createElement('div');
             card.className = 'card-item';
             if (selectedItemId === item.id) {
-                card.style.borderColor = '#16a34a';
-                card.style.transform = 'scale(1.05)';
+                card.classList.add('selected');
             }
             card.draggable = true;
 
-            // Tap selection
             card.onclick = (e) => {
                 e.stopPropagation();
                 if (selectedItemId === item.id) {
@@ -603,10 +617,16 @@ header h1 {
             lvl.items.forEach(item => {
                 const assignedBox = activeAssignments[item.id];
                 if (assignedBox) {
+                    const wrapper = document.createElement('div');
+                    wrapper.className = 'slot-card';
+                    
                     const img = document.createElement('img');
                     img.src = item.src;
                     img.alt = item.id;
-                    img.onclick = (e) => {
+
+                    wrapper.appendChild(img);
+
+                    wrapper.onclick = (e) => {
                         e.stopPropagation();
                         delete activeAssignments[item.id];
                         updateSlotsUI();
@@ -614,9 +634,9 @@ header h1 {
                     };
 
                     if (assignedBox === 'A') {
-                        slotA.appendChild(img);
+                        slotA.appendChild(wrapper);
                     } else if (assignedBox === 'B') {
-                        slotB.appendChild(img);
+                        slotB.appendChild(wrapper);
                     }
                 }
             });

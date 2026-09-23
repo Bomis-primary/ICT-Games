@@ -15,8 +15,8 @@
   --neon-pink: #ff007f;
   --neon-yellow: #ffe600;
   --dark-bg: #090d16;
-  --card-bg: rgba(23, 32, 54, 0.75);
-  --glass-border: rgba(0, 242, 254, 0.3);
+  --card-bg: rgba(23, 32, 54, 0.85);
+  --glass-border: rgba(0, 242, 254, 0.35);
   --glow-shadow: 0 0 25px rgba(0, 242, 254, 0.35);
 }
 
@@ -38,7 +38,7 @@ body {
   position: relative;
 }
 
-/* Cybernetic Animated Background Grid & Particles */
+/* Background Cyber Grid */
 .cyber-bg {
   position: fixed;
   top: 0;
@@ -116,7 +116,7 @@ body {
   object-fit: contain;
 }
 
-/* App Screens Container */
+/* App Layout Setup */
 .screen {
   display: none;
   width: 100%;
@@ -140,7 +140,7 @@ body {
   left: 20px;
   right: 20px;
   display: flex;
-  justify-content: flex-end; /* Align score to right without logo */
+  justify-content: flex-end;
   align-items: center;
   z-index: 999;
   pointer-events: none;
@@ -169,7 +169,7 @@ body {
   text-shadow: 0 0 12px var(--neon-yellow);
 }
 
-/* Assistant Guide Dialog Overlay */
+/* Assistant Guide Popup */
 .guideBox {
   position: fixed;
   bottom: 25px;
@@ -195,7 +195,7 @@ body {
   100% { transform: translate(-50%, 0) scale(1); opacity: 1; }
 }
 
-/* Glassmorphic Level Container */
+/* Glassmorphic Level Box Container */
 .levelBox {
   width: 100%;
   max-width: 920px;
@@ -212,16 +212,6 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-}
-
-.header h1 {
-  font-size: 38px;
-  font-weight: 800;
-  text-align: center;
-  background: linear-gradient(135deg, var(--primary-cyan) 0%, var(--neon-green) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 10px rgba(0,242,254,0.5));
 }
 
 .question {
@@ -242,7 +232,6 @@ body {
   margin: 20px 0;
 }
 
-/* Interactive Modern Buttons */
 .gameBtn {
   padding: 16px 38px;
   font-size: 22px;
@@ -265,10 +254,6 @@ body {
   box-shadow: 0 10px 30px rgba(0, 242, 254, 0.7);
 }
 
-.gameBtn:active {
-  transform: translateY(2px) scale(0.98);
-}
-
 .backBtn {
   position: absolute;
   top: 20px;
@@ -287,7 +272,6 @@ body {
   box-shadow: 0 6px 20px rgba(0, 255, 136, 0.4);
 }
 
-/* Interactive Image Option Cards */
 .imageCard {
   width: 175px;
   height: 175px;
@@ -295,7 +279,7 @@ body {
   border-radius: 28px;
   padding: 16px;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.3s ease;
   box-shadow: 0 10px 25px rgba(0,0,0,0.3);
   object-fit: contain;
   border: 4px solid transparent;
@@ -304,7 +288,6 @@ body {
 .imageCard:hover {
   transform: translateY(-8px) scale(1.06);
   border-color: var(--primary-cyan);
-  box-shadow: 0 15px 35px rgba(0, 242, 254, 0.5);
 }
 
 .correct {
@@ -344,7 +327,130 @@ body {
   color: #ffecb3;
 }
 
-/* Minigame: River Electric Bridge Rescue */
+/* INTERACTIVE CIRCUIT SIMULATOR STYLES */
+.circuit-board {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  height: 280px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 3px solid var(--primary-cyan);
+  border-radius: 30px;
+  margin: 10px auto;
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 0 25px rgba(0, 242, 254, 0.3);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.wire-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.wire-line {
+  stroke: #475569;
+  stroke-width: 6;
+  fill: none;
+  stroke-dasharray: 10 0;
+  transition: all 0.4s ease;
+}
+
+.wire-line.active {
+  stroke: var(--neon-green);
+  stroke-dasharray: 8 6;
+  animation: flowElectricity 0.6s linear infinite;
+  filter: drop-shadow(0 0 8px var(--neon-green));
+}
+
+@keyframes flowElectricity {
+  0% { stroke-dashoffset: 28; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.battery-pack {
+  position: absolute;
+  left: 30px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 70px;
+  height: 100px;
+  background: linear-gradient(135deg, #ffe600, #ff9900);
+  border: 3px solid #fff;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #000;
+  font-weight: 800;
+  font-size: 20px;
+  box-shadow: 0 0 15px rgba(255, 230, 0, 0.5);
+}
+
+.battery-pack::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  width: 24px;
+  height: 10px;
+  background: #cbd5e1;
+  border-radius: 4px 4px 0 0;
+}
+
+.interactive-switch {
+  position: absolute;
+  top: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  border: 2px solid var(--primary-cyan);
+  padding: 8px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.interactive-switch:hover {
+  scale: 1.08;
+  border-color: var(--neon-green);
+}
+
+.bulb-container {
+  position: absolute;
+  right: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bulb-icon {
+  font-size: 70px;
+  filter: grayscale(100%) opacity(0.4);
+  transition: all 0.5s ease;
+}
+
+.bulb-icon.glowing {
+  filter: grayscale(0%) opacity(1) drop-shadow(0 0 35px var(--neon-yellow)) drop-shadow(0 0 60px #ffea00);
+  animation: glowPulse 1s infinite alternate;
+}
+
+@keyframes glowPulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.12); }
+}
+
+/* Minigame River Rescue */
 .riverArea {
   position: relative;
   width: 100%;
@@ -379,7 +485,7 @@ body {
   border-color: var(--primary-cyan);
 }
 
-/* Minigame: Drag and Drop Area */
+/* Drag & Drop Area */
 .dragArea {
   display: flex;
   justify-content: center;
@@ -417,11 +523,6 @@ body {
   box-shadow: 0 8px 25px rgba(255, 230, 0, 0.4);
   transition: transform 0.2s;
   touch-action: none;
-}
-
-.dragItem:active {
-  cursor: grabbing;
-  transform: scale(1.06);
 }
 
 /* Final Victory Modal Screen */
@@ -465,13 +566,12 @@ body {
 
 @media(max-width: 768px) {
   .levelBox { margin-top: 65px; padding: 20px; min-height: auto; }
-  .header h1 { font-size: 28px; }
   .question { font-size: 20px; }
   .gameBtn { font-size: 18px; padding: 12px 28px; }
   .imageCard { width: 130px; height: 130px; padding: 10px; }
-  .stone { width: 68px; height: 68px; font-size: 30px; }
-  .riverArea { height: 200px; }
-  .guideBox { font-size: 17px; width: 92vw; }
+  .circuit-board { height: 230px; }
+  .bulb-icon { font-size: 50px; }
+  .battery-pack { width: 55px; height: 80px; font-size: 16px; }
 }
 </style>
 </head>
@@ -483,7 +583,7 @@ body {
 </div>
 <div class="sparkles" id="sparkles"></div>
 
-<!-- 1-SECOND CLEAN WHITE SPLASH SCREEN (ONLY PLACE WITH INNOVINE LOGO) -->
+<!-- 1-SECOND CLEAN WHITE SPLASH SCREEN -->
 <div id="splashScreen">
   <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'250\' height=\'100\' viewBox=\'0 0 250 100\'><rect width=\'250\' height=\'100\' rx=\'20\' fill=\'%2300f2fe\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'28\' font-weight=\'bold\' fill=\'%230f172a\'>INNOVINE</text></svg>';">
 </div>
@@ -629,8 +729,8 @@ const svgSwitch = "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/s
 const svgSolar = "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><rect width=\'100\' height=\'100\' fill=\'%230f172a\' rx=\'15\'/><polygon points=\'20,30 80,30 90,75 10,75\' fill=\'%230284c7\' stroke=\'%2300f2fe\' stroke-width=\'3\'/><circle cx=\'50\' cy=\'20\' r=\'10\' fill=\'%23ffe600\'/></svg>";
 
 const questions = [
-  { title:"⚡ Circuit Builder", question:"Choose the CLOSED CIRCUIT", type:"circuit" },
-  { title:"🧩 Sorting Game", question:"Find the CLOSED circuit", type:"sorting" },
+  { title:"⚡ Interactive Circuit", question:"Tap SWITCH to CLOSE the circuit & light the bulb!", type:"interactive_circuit" },
+  { title:"🧩 Sorting Game", question:"Find the CLOSED circuit option below", type:"sorting" },
   { title:"🌉 River Wire Rescue", question:"Help Robo repair broken electric bridge in order (1 ➔ 2 ➔ 3)", type:"wirebridge" },
   { title:"🔎 Detective Mission", question:"Find ALL 3 electrical components!", type:"detective" },
   { title:"🏃 Speed Challenge", question:"Click POWER SOURCE before time runs out!", type:"speed" },
@@ -640,7 +740,6 @@ const questions = [
 
 window.addEventListener("DOMContentLoaded", () => {
   createSparkles();
-  // Splash Screen appears for 1 second before disappearing directly into Level 1
   setTimeout(() => {
     const splash = document.getElementById("splashScreen");
     splash.style.opacity = "0";
@@ -684,16 +783,34 @@ function loadQuestion() {
   const q = questions[currentQuestion];
   document.getElementById("levelTitle").innerHTML = q.title;
   document.getElementById("questionText").innerHTML = q.question;
-  document.getElementById("tipBox").innerHTML = "💡 Tap or interact to answer!";
+  document.getElementById("tipBox").innerHTML = "💡 Tap or interact to complete the circuit!";
 
   const gameArea = document.getElementById("gameArea");
   gameArea.innerHTML = "";
 
-  if(q.type === "circuit") {
+  if(q.type === "interactive_circuit") {
     gameArea.innerHTML = `
-      <div class="buttonArea">
-        <img src="assets/closed-circuit.png" class="imageCard" onerror="this.src='${svgClosedCircuit}'" onclick="correctAnswer(this, 'Awesome! You completed the circuit!', '💡 Closed circuits allow electricity to flow.')">
-        <img src="assets/open circuit.png" class="imageCard" onerror="this.src='${svgOpenCircuit}'" onclick="wrongAnswer(this, 'Oh no! The wire is broken!', '⚡ Open circuits stop electricity flow.')">
+      <div class="circuit-board">
+        <svg class="wire-svg">
+          <path d="M 65 140 L 65 35 L 200 35" class="wire-line" id="wireTopLeft"/>
+          <path d="M 320 35 L 450 35 L 450 140" class="wire-line" id="wireTopRight"/>
+          <path d="M 65 140 L 65 240 L 450 240 L 450 140" class="wire-line" id="wireBottom"/>
+        </svg>
+
+        <div class="battery-pack">
+          <span>+</span>
+          <span>🔋</span>
+          <span>-</span>
+        </div>
+
+        <div class="interactive-switch" id="circuitSwitch" onclick="toggleCircuitSwitch()">
+          <span id="switchIcon">🔴</span>
+          <span id="switchStatus">SWITCH OPEN</span>
+        </div>
+
+        <div class="bulb-container">
+          <div class="bulb-icon" id="bulbLight">💡</div>
+        </div>
       </div>`;
   }
   else if(q.type === "sorting") {
@@ -753,11 +870,35 @@ function loadQuestion() {
     dropBox.addEventListener("dragover", (e) => e.preventDefault());
     dropBox.addEventListener("drop", dropItem);
 
-    // Mobile touch events
     dragItem.addEventListener("touchstart", handleTouchStart, false);
     dragItem.addEventListener("touchmove", handleTouchMove, false);
     dragItem.addEventListener("touchend", handleTouchEnd, false);
   }
+}
+
+let isClosed = false;
+function toggleCircuitSwitch() {
+  if (isClosed) return;
+  isClosed = true;
+
+  document.getElementById("switchIcon").innerText = "🟢";
+  document.getElementById("switchStatus").innerText = "CLOSED CIRCUIT";
+  document.getElementById("circuitSwitch").style.borderColor = "var(--neon-green)";
+  
+  document.getElementById("wireTopLeft").classList.add("active");
+  document.getElementById("wireTopRight").classList.add("active");
+  document.getElementById("wireBottom").classList.add("active");
+
+  document.getElementById("bulbLight").classList.add("glowing");
+
+  soundEngine.playCorrect();
+  showGuide("Awesome! You completed the closed circuit & the bulb is glowing!");
+  document.getElementById("tipBox").innerHTML = "💡 In a closed circuit, electricity flows freely in a loop to power devices!";
+  
+  score++;
+  updateScore();
+  confettiBlast();
+  showNextButton();
 }
 
 function correctAnswer(element, message, tip) {
@@ -894,12 +1035,14 @@ function showNextButton() {
 }
 
 function nextQuestion() {
+  isClosed = false;
   currentQuestion++;
   loadQuestion();
 }
 
 function goBack() {
   if(currentQuestion > 0) {
+    isClosed = false;
     currentQuestion--;
     loadQuestion();
   }
@@ -933,6 +1076,7 @@ function showFinal() {
 }
 
 function restartGame() {
+  isClosed = false;
   currentQuestion = 0;
   score = 0;
   updateScore();

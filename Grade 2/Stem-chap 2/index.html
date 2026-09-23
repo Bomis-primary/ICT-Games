@@ -75,7 +75,7 @@ body {
   100% { transform: translateY(-10vh) scale(0.2); opacity: 0; }
 }
 
-/* 5-Second Clean White Splash Screen (Matching standard games format) */
+/* 1-Second Clean White Splash Screen */
 #splashScreen {
   position: fixed;
   top: 0;
@@ -87,7 +87,7 @@ body {
   justify-content: center;
   align-items: center;
   z-index: 99999;
-  transition: opacity 0.8s ease, visibility 0.8s ease;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
 #splashScreen img {
@@ -426,20 +426,6 @@ body {
   width: 100%;
 }
 
-.nameInput {
-  padding: 16px 25px;
-  font-size: 22px;
-  border-radius: 50px;
-  border: 2px solid #00f2fe;
-  background: rgba(15, 23, 42, 0.8);
-  color: #fff;
-  width: 320px;
-  max-width: 85vw;
-  text-align: center;
-  outline: none;
-  box-shadow: 0 0 15px rgba(0,242,254,0.3);
-}
-
 .badge {
   display: inline-block;
   padding: 20px 35px;
@@ -489,7 +475,7 @@ body {
 <div class="bg-canvas"></div>
 <div class="sparkles" id="sparkles"></div>
 
-<!-- 5-SECOND CLEAN WHITE SPLASH SCREEN -->
+<!-- 1-SECOND CLEAN WHITE SPLASH SCREEN -->
 <div id="splashScreen">
   <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/250x100?text=Innovine+Logo';">
 </div>
@@ -507,34 +493,10 @@ body {
   🤖 Great Job!
 </div>
 
-<!-- 1. START SCREEN -->
-<div class="screen" id="startScreen">
-  <div class="levelBox" style="text-align: center;">
-    <div class="header">
-      <h1>⚡ Robo STEM Circuit Universe ⚡</h1>
-      <h2>Electricity Adventure for Young Inventors</h2>
-    </div>
-
-    <div class="question" style="margin: 30px 0;">
-      🌈 Welcome Young STEM Hero!
-      <br><br>
-      Learn closed circuits, solar power, switches, and power sources!
-    </div>
-
-    <div>
-      <input type="text" id="playerName" class="nameInput" placeholder="Enter Your Name">
-      <br><br>
-      <button class="gameBtn" onclick="startGame()">
-        🚀 START ADVENTURE
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- 2. GAMEPLAY SCREEN -->
-<div class="screen" id="gameScreen">
+<!-- 1. GAMEPLAY SCREEN (DIRECT ENTRY AFTER SPLASH) -->
+<div class="screen active" id="gameScreen">
   <div class="levelBox">
-    <button class="gameBtn backBtn" onclick="goBack()">
+    <button class="gameBtn backBtn" id="backBtn" onclick="goBack()" style="display: none;">
       ⬅ BACK
     </button>
 
@@ -555,11 +517,11 @@ body {
   </div>
 </div>
 
-<!-- 3. FINAL VICTORY SCREEN -->
+<!-- 2. FINAL VICTORY SCREEN -->
 <div class="screen" id="finalScreen">
   <div class="levelBox" style="text-align: center;">
     <div class="finalScreen">
-      <h1>🏆 Congratulations <span id="finalName" style="color: #00ff88;"></span>! 🏆</h1>
+      <h1>🏆 Mission Accomplished! 🏆</h1>
       <h2 id="finalScore" style="font-size: 28px; margin: 20px 0;"></h2>
 
       <div id="badgeArea"></div>
@@ -636,7 +598,6 @@ const soundEngine = new SoundEngine();
 
 let currentQuestion = 0;
 let score = 0;
-let playerName = "";
 let wireStep = 1;
 let detectiveCount = 0;
 let timerValue = 5;
@@ -661,14 +622,15 @@ const questions = [
 
 window.addEventListener("DOMContentLoaded", () => {
   createSparkles();
+  // Splash Screen appears for 1 second before disappearing directly to Level 1
   setTimeout(() => {
     const splash = document.getElementById("splashScreen");
     splash.style.opacity = "0";
     setTimeout(() => {
       splash.style.visibility = "hidden";
-      document.getElementById("startScreen").classList.add("active");
-    }, 800);
-  }, 5000);
+      loadQuestion();
+    }, 500);
+  }, 1000);
 });
 
 function createSparkles() {
@@ -683,20 +645,9 @@ function createSparkles() {
   }
 }
 
-function startGame() {
-  playerName = document.getElementById("playerName").value.trim();
-  if(!playerName) {
-    alert("Please enter your name young hero!");
-    return;
-  }
-  document.getElementById("startScreen").classList.remove("active");
-  document.getElementById("gameScreen").classList.add("active");
-  loadQuestion();
-}
-
 function showGuide(message) {
   const guide = document.getElementById("guideBox");
-  guide.innerHTML = `🤖 Robo ${playerName}: ${message}`;
+  guide.innerHTML = `🤖 Robo: ${message}`;
   guide.style.display = "block";
   setTimeout(() => {
     guide.style.display = "none";
@@ -710,6 +661,7 @@ function loadQuestion() {
     return;
   }
 
+  document.getElementById("backBtn").style.display = currentQuestion > 0 ? "inline-flex" : "none";
   document.getElementById("nextBtn").style.display = "none";
   const q = questions[currentQuestion];
   document.getElementById("levelTitle").innerHTML = q.title;
@@ -950,7 +902,6 @@ function confettiBlast() {
 function showFinal() {
   document.getElementById("gameScreen").classList.remove("active");
   document.getElementById("finalScreen").classList.add("active");
-  document.getElementById("finalName").innerHTML = playerName;
   document.getElementById("finalScore").innerHTML = `⭐ Total Score: ${score} / ${questions.length}`;
 
   let badgeText = "";
@@ -968,7 +919,8 @@ function restartGame() {
   score = 0;
   updateScore();
   document.getElementById("finalScreen").classList.remove("active");
-  document.getElementById("startScreen").classList.add("active");
+  document.getElementById("gameScreen").classList.add("active");
+  loadQuestion();
 }
 </script>
 

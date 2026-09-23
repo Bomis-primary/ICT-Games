@@ -2,10 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Innovine Scratch Block Master - Folder Switcher Arcade</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@700;800;900&display=swap');
+
         :root {
             --scratch-orange: #ffab19;
             --scratch-blue: #4c97ff;
@@ -13,214 +15,234 @@
             --scratch-green: #2ecc71;
             --scratch-pink: #ff6680;
             --dark-bg: #0f172a;
-            --panel-bg: #1e293b;
+            --panel-bg: rgba(30, 41, 59, 0.95);
+            --border-glow: rgba(76, 151, 255, 0.4);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Fredoka', 'Segoe UI', Tahoma, sans-serif;
             user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background: #ffffff;
+            background: var(--dark-bg);
             min-height: 100vh;
+            min-height: -webkit-fill-available;
+            width: 100vw;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            transition: background 0.5s ease;
+            padding: 10px;
+            color: #ffffff;
+            position: relative;
         }
 
-        body.game-active {
-            background: linear-gradient(135deg, #1e293b, var(--dark-bg));
-        }
-
-        /* 5-Second Pure White Splash Screen with Image Logo Layout */
-        #splashScreen {
+        /* Ambient Cyber Backdrop */
+        .bg-grid {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(76, 151, 255, 0.18) 0%, transparent 45%),
+                radial-gradient(circle at 80% 80%, rgba(153, 102, 255, 0.18) 0%, transparent 45%),
+                linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        /* 5-Second Clean White Splash Screen */
+        #splashScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             background: #ffffff;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
-            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 99999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
         }
 
         #splashScreen img {
-            width: 280px;
-            max-width: 80%;
+            width: 260px;
+            max-width: 75vw;
             animation: pulse 2s infinite ease-in-out;
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.04); }
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.05); opacity: 1; }
         }
 
-        /* Main Shell Window */
+        /* Core Application Shell Frame */
         .app-window {
-            width: 95vw;
-            max-width: 1000px;
-            height: 88vh;
-            min-height: 600px;
+            width: 100%;
+            max-width: 850px;
+            height: 92vh;
+            max-height: 750px;
             z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
         }
 
+        /* Intro / Welcome Card Panel */
         .welcome-card {
-            background: rgba(255, 255, 255, 0.96);
-            border: 1px solid rgba(255,255,255,0.5);
-            border-radius: 32px;
-            padding: 42px;
+            background: var(--panel-bg);
+            border: 2px solid var(--border-glow);
+            border-radius: 28px;
+            padding: clamp(20px, 5vw, 36px);
             text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            max-width: 620px;
-            margin: 0 auto;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            width: 100%;
+            margin: auto;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
         .welcome-card h1 span {
             background: linear-gradient(135deg, var(--scratch-orange), var(--scratch-blue));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
+        }
+
+        /* Main Game Arcade Layout Structure */
+        .game-layout {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            gap: 12px;
+            justify-content: space-between;
+        }
+
+        /* Top HUD Navbar */
+        .top-hud {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            background: var(--panel-bg);
+            border: 2px solid var(--border-glow);
+            padding: 10px 16px;
+            border-radius: 18px;
+            color: white;
+            font-weight: 700;
+            font-size: clamp(0.8rem, 3vw, 1rem);
+            align-items: center;
+            text-align: center;
+        }
+
+        .hud-val {
+            color: var(--scratch-orange);
             font-weight: 800;
         }
 
-        /* Conveyor Layout Structure */
-        .game-layout {
-            display: grid;
-            grid-template-rows: auto 1fr auto;
-            height: 100%;
-            gap: 15px;
-        }
-
-        .top-hud {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--panel-bg);
-            border: 2px solid #334155;
-            padding: 14px 25px;
-            border-radius: 16px;
-            color: white;
-            font-weight: 700;
-        }
-
         .badge-level {
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
+            background: var(--scratch-purple);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
             text-transform: uppercase;
+            display: inline-block;
         }
-        .lvl-active { background: var(--scratch-purple); }
 
-        /* Conveyor Runway Arena */
+        /* Main Interactive Conveyor Arena */
         .conveyor-arena {
-            background: #1e293b;
-            border: 3px solid #334155;
+            background: rgba(15, 23, 42, 0.85);
+            border: 2px solid var(--border-glow);
             border-radius: 24px;
             position: relative;
+            flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 20px;
+            padding: 16px;
             overflow: hidden;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
         }
 
-        /* Falling Data Node */
-        .conveyor-track {
-            flex-grow: 1;
+        /* Active Item Data Card */
+        .item-card-zone {
             width: 100%;
-            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
         }
 
         .falling-item {
-            position: absolute;
-            left: 50%;
-            top: 10%;
-            transform: translateX(-50%);
-            background: #0f172a;
+            background: rgba(30, 41, 59, 0.95);
             border: 3px dashed var(--scratch-blue);
-            border-radius: 16px;
-            padding: 16px 30px;
+            border-radius: 20px;
+            padding: 16px 24px;
             color: white;
             font-weight: 800;
-            font-size: 1.3rem;
+            font-size: clamp(1.1rem, 4vw, 1.4rem);
             display: flex;
             align-items: center;
             gap: 12px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            animation: itemSlideDown 4s linear infinite;
-        }
-
-        @keyframes itemSlideDown {
-            0% { top: 5%; opacity: 0; transform: translateX(-50%) scale(0.9); }
-            15% { opacity: 1; transform: translateX(-50%) scale(1); }
-            85% { opacity: 1; }
-            100% { top: 65%; opacity: 0; transform: translateX(-50%) scale(0.8); }
-        }
-
-        /* Dock Receptor Bucket */
-        .active-bin-receptor {
-            background: rgba(255, 255, 255, 0.05);
-            border: 3px solid var(--scratch-orange);
-            border-radius: 20px;
-            width: 280px;
-            padding: 15px;
+            cursor: grab;
+            touch-action: none;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            max-width: 90%;
             text-align: center;
-            color: white;
-            font-weight: 800;
-            font-size: 1.2rem;
-            box-shadow: 0 0 20px rgba(255, 171, 25, 0.2);
-            transition: all 0.2s ease;
-            margin-bottom: 10px;
         }
 
-        /* Dynamic Control Swappers */
-        .controller-deck {
+        .falling-item:active {
+            cursor: grabbing;
+            transform: scale(1.05);
+            border-color: var(--scratch-orange);
+        }
+
+        /* Bucket Selection Area */
+        .buckets-container {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 10px;
             width: 100%;
-            max-width: 650px;
+            margin-top: 15px;
         }
 
-        .switch-btn {
-            padding: 14px;
-            border-radius: 14px;
-            border: 2px solid #475569;
+        .bucket-btn {
+            background: rgba(30, 41, 59, 0.9);
+            border: 2px solid var(--border-glow);
+            border-radius: 16px;
+            padding: 14px 10px;
             color: white;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: clamp(0.85rem, 3.2vw, 1rem);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .btn-text { background: #2563eb; }
-        .btn-image { background: var(--scratch-purple); }
-        .btn-rules { background: var(--scratch-pink); }
-        
-        .switch-btn:hover {
-            transform: translateY(-2px);
-            filter: brightness(1.1);
-        }
-        .switch-btn.active-choice {
-            border-color: #ffffff;
-            box-shadow: 0 0 15px white;
-            transform: scale(1.02);
+            gap: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
 
-        /* Immersive Center Modals */
+        .bucket-btn:hover, .bucket-btn:active {
+            transform: translateY(-3px) scale(1.02);
+            border-color: var(--scratch-orange);
+            background: rgba(255, 171, 25, 0.15);
+        }
+
+        /* Modals & Popups */
         .pop-shroud {
             position: absolute;
             top: 0;
@@ -234,45 +256,51 @@
             z-index: 100;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.2s ease;
+            transition: opacity 0.25s ease;
+            padding: 16px;
         }
+
         .pop-shroud.active {
             opacity: 1;
             pointer-events: auto;
         }
 
         .pop-card {
-            background: white;
+            background: #ffffff;
+            color: #0f172a;
             border-radius: 24px;
-            padding: 30px;
-            width: 400px;
-            max-width: 85%;
+            padding: 24px;
+            width: 100%;
+            max-width: 380px;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
 
-        .pop-btn {
-            background: #0f172a;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 50px;
-            font-weight: bold;
-            margin-top: 15px;
-            cursor: pointer;
+        .pop-card p {
+            color: #475569;
+            font-size: 0.95rem;
+            line-height: 1.4;
+            margin: 12px 0 18px 0;
         }
 
         .btn-primary {
             background: linear-gradient(135deg, var(--scratch-blue), #2563eb);
             color: white;
             border: none;
-            padding: 14px 36px;
-            border-radius: 30px;
+            padding: 14px 32px;
+            border-radius: 50px;
             font-weight: 700;
             font-size: 1.1rem;
             cursor: pointer;
             box-shadow: 0 6px 20px rgba(76,151,255,0.4);
-            transition: transform 0.2s;
+            transition: all 0.2s ease;
+            width: 100%;
+            max-width: 280px;
+        }
+
+        .btn-primary:hover, .btn-primary:active {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(76,151,255,0.6);
         }
 
         .hidden { display: none !important; }
@@ -284,209 +312,310 @@
     <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
     <audio id="audioClap" src="assets/clap.mp3" preload="auto"></audio>
 
+    <div class="bg-grid"></div>
+
+    <!-- 5-Second Exclusive Splash Screen -->
     <div id="splashScreen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/280x100?text=Innovine+Universal'">
-        <p style="margin-top:20px; font-weight:600; color:#64748b; letter-spacing: 1px;">Files and Folders...</p>
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'100\' viewBox=\'0 0 280 100\'><rect width=\'280\' height=\'100\' rx=\'20\' fill=\'%234c97ff\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'26\' font-weight=\'bold\' fill=\'%23ffffff\'>INNOVINE</text></svg>';">
+        <p style="margin-top:20px; font-weight:700; color:#64748b; letter-spacing:1px; font-size:0.95rem;">Files & Folder Arcade...</p>
     </div>
 
+    <!-- Main Shell Window -->
     <div class="app-window hidden" id="appInterfaceShell">
         
+        <!-- INTRO SCREEN -->
         <div id="introView" class="welcome-card">
-            <img src="assets/innovine-logo.png" alt="Logo" style="max-width:140px; margin-bottom:15px;" onerror="this.style.display='none'">
-            <h1><span>CONVEYOR SWITCHER</span></h1>
-            <h2 style="color: #64748b; font-size: 1.1rem; margin-bottom: 24px;">Interactive Arcade</h2>
-            <p style="text-align: left; line-height: 1.7; color: #475569; margin-bottom: 26px; background: #f1f5f9; padding: 20px; border-radius: 14px; font-size: 0.95rem;">
-                Welcome, Speed Clerk! File items and naming rule questions are descending down the arcade track. Read the item, then click the selector buttons to match the active collection bucket framework to secure incoming data blocks!
-            </p>
-            <button class="btn-primary" onclick="launchSimulator()">Launch Arcade Module</button>
+            <h1><span>FOLDER SWITCHER ARCADE</span></h1>
+            <h2 style="color: #cbd5e1; font-size: 1.05rem; margin: 8px 0 20px 0; font-weight: 600;">Interactive Data Classifier</h2>
+            <div style="text-align: left; line-height: 1.6; color: #e2e8f0; margin-bottom: 24px; background: rgba(15, 23, 42, 0.6); padding: 18px; border-radius: 16px; font-size: 0.9rem; border-left: 4px solid var(--scratch-blue);">
+                <p style="font-weight:700; color:var(--scratch-orange); margin-bottom:6px;">🎮 Multi-Stage Arcade Rules:</p>
+                <ol style="margin-left:18px;">
+                    <li>Read the falling file name, shortcut, or folder rule displayed inside the scanner card.</li>
+                    <li>Tap the correct destination folder button below to sort the data!</li>
+                    <li>Complete all 3 progressive stages to achieve the High Score Certificate!</li>
+                </ol>
+            </div>
+            <button class="btn-primary" onclick="launchSimulator()">Launch Stage 1 ➜</button>
         </div>
 
+        <!-- MAIN GAMEPLAY SCREEN -->
         <div id="gameViewPanel" class="game-layout hidden">
             <div class="top-hud">
-                <div>🏆 Arcade Score: <span id="scoreDisplayLabel" style="color:var(--scratch-orange)">0</span></div>
-                <div style="font-size:1.1rem;">⚡ Wave Block: <span id="missionLevelTitle" style="color:#60a5fa">1 / 12</span></div>
-                <div id="difficultyBadge" class="badge-level lvl-active">Processing</div>
+                <div>🎯 Score: <span id="scoreDisplayLabel" class="hud-val">0</span></div>
+                <div>⚡ Track: <span id="missionLevelTitle" class="hud-val">1 / 12</span></div>
+                <div><span id="difficultyBadge" class="badge-level">Stage 1</span></div>
             </div>
 
             <div class="conveyor-arena">
-                
-                <div class="conveyor-track">
+                <div style="font-size:0.85rem; color:#94a3b8; font-weight:600;" id="stageInstruction">
+                    Stage 1: Sort File Extensions Into Correct Folders
+                </div>
+
+                <div class="item-card-zone">
                     <div class="falling-item" id="activeFallingNode">
-                        <span id="nodeIcon">📄</span>
+                        <span id="nodeIcon" style="font-size:2rem;">📝</span>
                         <span id="nodeName">document.txt</span>
                     </div>
                 </div>
 
-                <div class="active-bin-receptor" id="receptorDisplayBox">
-                    📂 Active: Text Folder
+                <div class="buckets-container" id="bucketsTray">
+                    <!-- Dynamic Bucket Buttons Injected Here -->
                 </div>
 
-                <div class="controller-deck">
-                    <button class="switch-btn btn-text active-choice" onclick="toggleActiveBucket('text', this)">📝 Text Folder</button>
-                    <button class="switch-btn btn-image" onclick="toggleActiveBucket('image', this)">🎨 Image Folder</button>
-                    <button class="switch-btn btn-rules" onclick="toggleActiveBucket('rules', this)">⚠️ OS System Rules</button>
-                </div>
-
-                <div class="pop-shroud" id="feedbackPopup shroud">
+                <!-- Feedback Popup Overlay -->
+                <div class="pop-shroud" id="feedbackPopupShroud">
                     <div class="pop-card">
-                        <div id="popIcon" style="font-size:3.5rem; margin-bottom:10px;">✨</div>
-                        <h2 id="popTitle" style="margin-bottom:10px;">Verification Result</h2>
-                        <p id="popBody" style="color:#475569; font-size:0.95rem; line-height:1.4; margin-bottom:15px;">Filing metrics data.</p>
-                        <button class="pop-btn" onclick="dismissArcadeModal()">Continue Wave</button>
+                        <div id="popIcon" style="font-size:3.5rem; margin-bottom:6px;">✨</div>
+                        <h2 id="popTitle" style="margin-bottom:8px; font-family:'Outfit', sans-serif;">Verification Result</h2>
+                        <p id="popBody">Filing metrics data.</p>
+                        <button class="btn-primary" style="padding:10px 24px; font-size:1rem;" onclick="dismissArcadeModal()">Continue Arcade ➔</button>
                     </div>
                 </div>
-
-            </div>
-            <div style="background:#1e293b; color:#94a3b8; text-align:center; padding:10px; border-radius:10px; font-size:0.85rem; font-weight:bold;">
-                Tip: Always configure your target bucket classification quickly before checking or finishing your evaluation run!
             </div>
         </div>
 
+        <!-- FINAL REPORT CERTIFICATE SCREEN -->
         <div id="evaluationReportCard" class="welcome-card hidden">
-            <h1 style="color:var(--scratch-green)">🎉 Data Processing Completed!</h1>
-            <p style="margin-top:15px; font-size:1.15rem;" id="finalPerformanceReportSummary"></p>
-            <div style="font-size: 4.5rem; margin: 25px 0;">⚡🗄️🕹️⭐</div>
-            <button class="btn-primary" onclick="restartCampaignSession()">Restart Arcade Run</button>
+            <h1 style="color:var(--scratch-green); margin-bottom:10px;">🎉 Processing Completed!</h1>
+            <p style="margin-top:10px; font-size:1.05rem; color:#cbd5e1;" id="finalPerformanceReportSummary"></p>
+            <div style="font-size: 3.8rem; margin: 20px 0;">📂⚡🕹️🏆</div>
+            <button class="btn-primary" onclick="restartCampaignSession()">Restart Arcade Session 🔄</button>
         </div>
 
     </div>
 
     <script>
-        // 5-Second Exclusive Splash Screen Hook Timeout
+        /* Audio Synthesizer Engine with HTML5 Fallback */
+        class SoundEngine {
+            constructor() { this.ctx = null; }
+            init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+
+            playCorrect() {
+                const audio = document.getElementById("audioCorrect");
+                if (audio) audio.play().catch(() => this.synthCorrect());
+                else this.synthCorrect();
+            }
+
+            synthCorrect() {
+                this.init(); if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.25);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(now); osc.stop(now + 0.35);
+            }
+
+            playWrong() {
+                const audio = document.getElementById("audioWrong");
+                if (audio) audio.play().catch(() => this.synthWrong());
+                else this.synthWrong();
+            }
+
+            synthWrong() {
+                this.init(); if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, now);
+                osc.frequency.linearRampToValueAtTime(90, now + 0.3);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(now); osc.stop(now + 0.3);
+            }
+
+            playClap() {
+                const audio = document.getElementById("audioClap");
+                if (audio) audio.play().catch(() => {});
+            }
+        }
+
+        const soundEngine = new SoundEngine();
+
+        /* Splash Screen Timing */
         setTimeout(() => {
             const splashNode = document.getElementById("splashScreen");
             splashNode.style.opacity = "0";
             setTimeout(() => {
-                splashNode.style.setProperty("display", "none", "important");
-                document.body.classList.add("game-active");
+                splashNode.style.display = "none";
                 document.getElementById("appInterfaceShell").classList.remove("hidden");
-            }, 600);
+            }, 500);
         }, 5000);
 
-        // Linear Wave Database Checklist Matrix (12 Items, No Repeat Loops)
-        const waveDatabase = [
-            { name: "story.txt", icon: "📝", cat: "text", hint: "Correct! The .txt extension tracks structural text layers inside notepad documents." },
-            { name: "bird.png", icon: "🎨", cat: "image", hint: "Awesome! Portable Network Graphics (.png) store image canvas components safely." },
-            { name: "fish.bmp", icon: "🖼️", cat: "image", hint: "Perfect. Bitmap image formats save picture pixels directly onto disk drives." },
-            { name: "alphabets.txt", icon: "📄", cat: "text", hint: "Correct! Structural character collections require the plain text extension." },
-            { name: "home.jpg", icon: "📸", cat: "image", hint: "Great! Joint Photographic Experts Group (.jpg) files manage camera media graphics." },
-            { name: "Name Rule: Science <Physics>", icon: "🚫", cat: "rules", hint: "Brilliant! Angle brackets (< >) are illegal reserved character symbols." },
-            { name: "Name Rule: Math Homework", icon: "✅", cat: "rules", hint: "Spot on! Plain alphabetic text layers form clean accepted directory titles." },
-            { name: "Name Rule: English/Poems", icon: "🚫", cat: "rules", hint: "Correct choice! Forward slashes (/) specify folder layers and are forbidden inside labels." },
-            { name: "Name Rule: MyPictures", icon: "✅", cat: "rules", hint: "Correct. Standard letters with condensed spaces compile perfectly." },
-            { name: "Shortcut: Shift + Delete", icon: "💥", cat: "rules", hint: "Incredible! Shift + Delete purges targeted disk space blocks instantly without entering the Recycle Bin." },
-            { name: "State: File remains open inside App", icon: "🔒", cat: "rules", hint: "Correct! Active background structures enforce system locks to avoid conflict corruption bugs." },
-            { name: "Action: Restore from Recycle Bin", icon: "♻️", cat: "rules", hint: "Excellent! Restoring shifts document tracks back cleanly to their original address paths." }
+        /* Multi-Stage Item Database */
+        const gameStages = [
+            {
+                stageTitle: "Stage 1: File Types & Extensions",
+                instruction: "Classify items into Text or Image Folders!",
+                buckets: [
+                    { id: "text", label: "📝 Text Folder" },
+                    { id: "image", label: "🎨 Image Folder" }
+                ],
+                items: [
+                    { name: "story.txt", icon: "📝", correctBucket: "text", hint: "The .txt extension specifies text documents." },
+                    { name: "bird.png", icon: "🎨", correctBucket: "image", hint: "Portable Network Graphics (.png) store image files." },
+                    { name: "fish.bmp", icon: "🖼️", correctBucket: "image", hint: "Bitmap (.bmp) format stores digital picture pixels." },
+                    { name: "notes.txt", icon: "📄", correctBucket: "text", hint: "Text documents use plain text (.txt) extensions." },
+                    { name: "home.jpg", icon: "📸", correctBucket: "image", hint: "JPEG (.jpg) files manage camera graphics and photos." }
+                ]
+            },
+            {
+                stageTitle: "Stage 2: OS Folder Naming Rules",
+                instruction: "Determine if folder names are Valid or Invalid!",
+                buckets: [
+                    { id: "valid", label: "✅ Valid Name" },
+                    { id: "invalid", label: "🚫 Invalid Name" }
+                ],
+                items: [
+                    { name: "Science <Physics>", icon: "🚫", correctBucket: "invalid", hint: "Angle brackets (< >) are illegal reserved character symbols." },
+                    { name: "Math Homework", icon: "✅", correctBucket: "valid", hint: "Standard text labels form clean accepted folder titles." },
+                    { name: "English/Poems", icon: "🚫", correctBucket: "invalid", hint: "Forward slashes (/) specify paths and are forbidden inside labels." },
+                    { name: "MyPictures", icon: "✅", correctBucket: "valid", hint: "Condensed alphabetic text compiles perfectly as a folder name." }
+                ]
+            },
+            {
+                stageTitle: "Stage 3: Shortcuts & File Actions",
+                instruction: "Route deletion shortcuts and restoration tasks!",
+                buckets: [
+                    { id: "permanent", label: "💥 Permanent Delete" },
+                    { id: "recycle", label: "♻️ Recycle Bin" }
+                ],
+                items: [
+                    { name: "Shift + Delete", icon: "💥", correctBucket: "permanent", hint: "Shift + Delete purges files immediately without entering the Recycle Bin." },
+                    { name: "Restore File Action", icon: "♻️", correctBucket: "recycle", hint: "Restoring moves deleted files back to their original folder path." },
+                    { name: "Standard Delete Key", icon: "🗑️", correctBucket: "recycle", hint: "Pressing Delete sends files safely to the Recycle Bin." }
+                ]
+            }
         ];
 
-        let waveIndex = 0;
+        let currentStageIndex = 0;
+        let currentItemIndex = 0;
         let arcadeScore = 0;
-        let selectedBucketType = "text";
+        let totalItemsInSession = 0;
         let interactionActive = false;
 
-        function triggerAudioNode(id) {
-            const audio = document.getElementById(id);
-            if (audio) {
-                audio.currentTime = 0;
-                audio.play().catch(e => console.log("Audio kick:", e));
-            }
-        }
+        // Calculate total items across all stages
+        gameStages.forEach(stg => totalItemsInSession += stg.items.length);
 
         function launchSimulator() {
-            triggerAudioNode("audioCorrect");
+            soundEngine.playCorrect();
             document.getElementById("introView").classList.add("hidden");
             document.getElementById("gameViewPanel").classList.remove("hidden");
-            loadWaveNodeParameters();
+            currentStageIndex = 0;
+            currentItemIndex = 0;
+            arcadeScore = 0;
+            loadStageAndItem();
         }
 
-        function toggleActiveBucket(type, buttonElement) {
-            if (interactionActive) return;
-            selectedBucketType = type;
-            
-            // Manage toggle CSS classes visually
-            document.querySelectorAll('.switch-btn').forEach(b => b.classList.remove('active-choice'));
-            buttonElement.classList.add('active-choice');
-            
-            // Format receptor text box title label
-            const titleMap = { text: "📝 Text Folder", image: "🎨 Image Folder", rules: "⚠️ OS System Rules" };
-            document.getElementById("receptorDisplayBox").innerText = `📂 Active: ${titleMap[type]}`;
-
-            // Evaluate answer instantly as the sliding item registers a lock drop
-            evaluateActiveLanding();
-        }
-
-        function loadWaveNodeParameters() {
+        function loadStageAndItem() {
             interactionActive = false;
+            const stage = gameStages[currentStageIndex];
+            const item = stage.items[currentItemIndex];
+
+            document.getElementById("difficultyBadge").innerText = `Stage ${currentStageIndex + 1}`;
+            document.getElementById("stageInstruction").innerText = stage.instruction;
             document.getElementById("scoreDisplayLabel").innerText = arcadeScore;
-            document.getElementById("missionLevelTitle").innerText = `${waveIndex + 1} / 12`;
+            
+            // Calculate current overall question number
+            let currentOverall = 1;
+            for(let i=0; i<currentStageIndex; i++) currentOverall += gameStages[i].items.length;
+            currentOverall += currentItemIndex;
 
-            const data = waveDatabase[waveIndex];
-            document.getElementById("nodeIcon").innerText = data.icon;
-            document.getElementById("nodeName").innerText = data.name;
+            document.getElementById("missionLevelTitle").innerText = `${currentOverall} / ${totalItemsInSession}`;
 
-            // Reset CSS animation paths dynamically to guarantee loop refresh tracking
-            const element = document.getElementById("activeFallingNode");
-            element.style.animation = 'none';
-            element.offsetHeight; 
-            element.style.animation = 'itemSlideDown 4.5s cubic-bezier(0.1, 0.8, 0.3, 1) infinite';
+            document.getElementById("nodeIcon").innerText = item.icon;
+            document.getElementById("nodeName").innerText = item.name;
+
+            // Render Buckets for Current Stage
+            const tray = document.getElementById("bucketsTray");
+            tray.innerHTML = "";
+            stage.buckets.forEach(b => {
+                const btn = document.createElement("button");
+                btn.className = "bucket-btn";
+                btn.innerHTML = `<span>${b.label}</span>`;
+                btn.onclick = () => submitClassification(b.id);
+                tray.appendChild(btn);
+            });
         }
 
-        function evaluateActiveLanding() {
+        function submitClassification(selectedBucketId) {
             if (interactionActive) return;
             interactionActive = true;
 
-            const data = waveDatabase[waveIndex];
-            const shroud = document.getElementById("feedbackPopup shroud");
-            
+            const stage = gameStages[currentStageIndex];
+            const item = stage.items[currentItemIndex];
+
+            const shroud = document.getElementById("feedbackPopupShroud");
             const pIcon = document.getElementById("popIcon");
             const pTitle = document.getElementById("popTitle");
             const pBody = document.getElementById("popBody");
 
-            pBody.innerText = data.hint;
+            pBody.innerText = item.hint;
 
-            if (selectedBucketType === data.cat) {
+            if (selectedBucketId === item.correctBucket) {
                 arcadeScore += 100;
                 document.getElementById("scoreDisplayLabel").innerText = arcadeScore;
-                
+
                 pIcon.innerText = "⭐";
-                pTitle.innerText = "Data Sector Synchronized!";
+                pTitle.innerText = "Correct Classification!";
                 pTitle.style.color = "#2ecc71";
-                
-                triggerAudioNode("audioCorrect");
-                confetti({ particleCount: 30, spread: 50, origin: { y: 0.7 } });
+
+                soundEngine.playCorrect();
+                if (window.confetti) confetti({ particleCount: 35, spread: 50, origin: { y: 0.7 } });
             } else {
                 pIcon.innerText = "💥";
-                pTitle.innerText = "Filing Collision Loop!";
+                pTitle.innerText = "Filing Collision!";
                 pTitle.style.color = "#ff6680";
-                
-                triggerAudioNode("audioWrong");
+
+                soundEngine.playWrong();
             }
 
             shroud.classList.add("active");
         }
 
         function dismissArcadeModal() {
-            document.getElementById("feedbackPopup shroud").classList.remove("active");
-            
-            waveIndex++;
-            if (waveIndex < waveDatabase.length) {
-                loadWaveNodeParameters();
+            document.getElementById("feedbackPopupShroud").classList.remove("active");
+
+            currentItemIndex++;
+            const stage = gameStages[currentStageIndex];
+
+            if (currentItemIndex < stage.items.length) {
+                loadStageAndItem();
             } else {
-                // Trigger endgame panel safely
-                document.getElementById("gameViewPanel").classList.add("hidden");
-                document.getElementById("evaluationReportCard").classList.remove("hidden");
-                triggerAudioNode("audioClap");
-                document.getElementById("finalPerformanceReportSummary").innerHTML = 
-                    `Arcade Processing Finished! You routed all 12 wave tracks securely.<br><br><strong>Final Score: ${arcadeScore} / 1200 Terminal Points</strong>`;
+                currentStageIndex++;
+                currentItemIndex = 0;
+                if (currentStageIndex < gameStages.length) {
+                    soundEngine.playClap();
+                    loadStageAndItem();
+                } else {
+                    renderFinalCertificate();
+                }
             }
+        }
+
+        function renderFinalCertificate() {
+            document.getElementById("gameViewPanel").classList.add("hidden");
+            document.getElementById("evaluationReportCard").classList.remove("hidden");
+            soundEngine.playClap();
+
+            const maxScore = totalItemsInSession * 100;
+            document.getElementById("finalPerformanceReportSummary").innerHTML = 
+                `Arcade Processing Finished! You routed all ${totalItemsInSession} wave tracks across 3 stages.<br><br><strong style="color:var(--scratch-orange); font-size:1.3rem;">Final Score: ${arcadeScore} / ${maxScore} Points</strong>`;
         }
 
         function restartCampaignSession() {
             document.getElementById("evaluationReportCard").classList.add("hidden");
             document.getElementById("gameViewPanel").classList.remove("hidden");
-            waveIndex = 0;
+            currentStageIndex = 0;
+            currentItemIndex = 0;
             arcadeScore = 0;
-            loadWaveNodeParameters();
+            loadStageAndItem();
         }
     </script>
 </body>

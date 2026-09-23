@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Tech Treasure Hunter: Multi-Level Expedition</title>
+<title>Tech Treasure Hunter: Multi-Stage Memory Expedition</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@700;800;900&display=swap');
 
@@ -257,7 +257,7 @@ button.act-btn:hover, button.act-btn:active {
     font-weight: 800;
 }
 
-/* NEW HOLOGRAPHIC SCANNER QUESTION BOX */
+/* HOLOGRAPHIC SCANNER QUESTION BOX */
 .holo-scanner-box {
     position: relative;
     background: radial-gradient(circle at center, rgba(0, 242, 254, 0.12) 0%, rgba(15, 23, 42, 0.9) 80%);
@@ -493,7 +493,7 @@ button.act-btn:hover, button.act-btn:active {
     <!-- MENU / REGISTRATION PANEL -->
     <div id="menuPanel" class="intro-panel">
         <h1>Tech Treasure Hunter</h1>
-        <div class="mode-badge">3-Stage Progressive Expedition</div>
+        <div class="mode-badge">2-Stage Memory & Hardware Expedition</div>
         
         <div class="student-input-box">
             <label for="studentName">👤 Enter Explorer Student Name:</label>
@@ -501,28 +501,27 @@ button.act-btn:hover, button.act-btn:active {
         </div>
 
         <div class="briefing">
-            <p style="font-weight:700; margin-bottom:6px; color:var(--primary-cyan);">🤠 3 Progressive Dig Levels:</p>
+            <p style="font-weight:700; margin-bottom:6px; color:var(--primary-cyan);">🤠 Expedition Stage Guide:</p>
             <ol>
-                <li><strong>Level 1:</strong> Hardware ⚙️ vs Software 💿</li>
-                <li><strong>Level 2:</strong> Input 📥 vs Output 📤 Devices</li>
-                <li><strong>Level 3:</strong> Storage 💾 vs Processing 🧠 Devices</li>
+                <li><strong>Stage 1:</strong> Hardware ⚙️ vs Software 💿</li>
+                <li><strong>Stage 2:</strong> Memory Maze (RAM ⚡ vs ROM 🔒)</li>
                 <li>Tap coordinate boxes <strong>[ ? ]</strong> to scan artifacts & earn your Certificate!</li>
             </ol>
         </div>
-        <button class="act-btn" onclick="registerAndStart()">Start Level 1 Dig ➜</button>
+        <button class="act-btn" onclick="registerAndStart()">Start Stage 1 Dig ➜</button>
     </div>
 
     <!-- GAME PANEL -->
     <div id="gamePanel" class="hidden">
         <div class="hud">
             <div class="hud-card">👤 <span id="studentHUD">Student</span></div>
-            <div class="hud-card">🎯 Level: <span id="levelHUD">1/3</span></div>
+            <div class="hud-card">🎯 Level: <span id="levelHUD">1/2</span></div>
             <div class="hud-card">🏆 Score: <span id="scoreHUD">0</span></div>
         </div>
 
         <!-- HOLOGRAPHIC SCANNER QUESTION BOX -->
         <div class="holo-scanner-box">
-            <div class="level-tag" id="levelCategoryTag">STAGE 1: HW VS SW</div>
+            <div class="level-tag" id="levelCategoryTag">STAGE 1: HARDWARE VS SOFTWARE</div>
             <div class="artifact-title" id="itemName">Select a Grid Cell</div>
             <div class="artifact-context" id="itemContext">Tap any teal coordinate block [ ? ] down in the grid below...</div>
             <div class="party-blower-banner" id="confettiBanner">🎉 CONFETTI POPPED! CELEBRATION ACTIVE 🎉</div>
@@ -531,8 +530,8 @@ button.act-btn:hover, button.act-btn:active {
         <div class="expedition-grid" id="mapGrid"></div>
 
         <div class="tools-tray">
-            <button class="classify-btn btn-a" id="btnOptionA" onclick="submitClassification('A')">Option A ⚙️</button>
-            <button class="classify-btn btn-b" id="btnOptionB" onclick="submitClassification('B')">Option B 💿</button>
+            <button class="classify-btn btn-a" id="btnOptionA" onclick="submitClassification('A')">Hardware ⚙️</button>
+            <button class="classify-btn btn-b" id="btnOptionB" onclick="submitClassification('B')">Software 💿</button>
         </div>
 
         <div class="ticker-feedback" id="tickerBox">Unearth a coordinate block first before tapping your classification tool!</div>
@@ -614,62 +613,42 @@ setTimeout(() => {
 const levelsDatabase = [
     {
         levelIndex: 1,
-        title: "STAGE 1: HW VS SW",
+        title: "STAGE 1: HARDWARE VS SOFTWARE",
         optionALabel: "Hardware ⚙️",
         optionBLabel: "Software 💿",
         optionAKey: "hardware",
         optionBKey: "software",
         items: [
             { name: "🖱️ Desktop Mouse", category: "hardware", context: "A physical plastic mouse used to move screen pointers.", ruleLog: "Hardware refers to physical computer parts you can touch." },
-            { name: "🎨 Paint App", category: "software", context: "An electronic program used to draw and color on screen.", ruleLog: "Software consists of code programs running inside the computer." },
-            { name: "⌨️ Typing Keyboard", category: "hardware", context: "A physical board with keys used to type text.", ruleLog: "Keyboards are physical hardware input devices." },
-            { name: "🌐 Web Browser", category: "software", context: "An app used to search websites and browse online stories.", ruleLog: "Browsers run internally as virtual code software applications." },
-            { name: "🖥️ Monitor Display", category: "hardware", context: "The glass visual screen displaying pictures on your desk.", ruleLog: "The monitor is a solid visible piece of computer hardware." },
-            { name: "🕹️ Video Game App", category: "software", context: "A digital game loaded inside system memory.", ruleLog: "Video games are software products compiled from electronic code." },
+            { name: "🎨 Paint Drawing App", category: "software", context: "An electronic program used to draw and color on screen.", ruleLog: "Software consists of code programs running inside the computer." },
+            { name: "⌨️ Typing Keyboard", category: "hardware", context: "A rectangular board with keys used to type text.", ruleLog: "Keyboards are physical hardware input devices." },
+            { name: "🌐 Internet Browser", category: "software", context: "An app used to search websites and browse online stories.", ruleLog: "Browsers run internally as virtual code software applications." },
+            { name: "🖥️ Monitor Screen", category: "hardware", context: "The glass visual screen displaying pictures on your desk.", ruleLog: "The monitor is a solid visible piece of computer hardware." },
+            { name: "🕹️ Computer Game App", category: "software", context: "A digital game program loaded inside system memory.", ruleLog: "Video games are software products compiled from electronic code." },
             { name: "🖨️ Inkjet Printer", category: "hardware", context: "A physical box machine that prints ink on sheets of paper.", ruleLog: "Printers are touchable hardware output devices." },
             { name: "⚙️ Operating System", category: "software", context: "The main background program (like Windows) running the system.", ruleLog: "Operating Systems are system software running hardware tracks." },
-            { name: "🔊 Audio Speaker", category: "hardware", context: "A box module emitting music and sound effects.", ruleLog: "Speakers are physical sound output hardware." },
-            { name: "🎬 Media Player", category: "software", context: "A utility app executed on screen to view video files.", ruleLog: "Media players are digital application software programs." }
+            { name: "🔊 Sound Speaker", category: "hardware", context: "A box module emitting music and sound effects.", ruleLog: "Speakers are physical sound output hardware." },
+            { name: "🎬 Video Player App", category: "software", context: "A utility app executed on screen to view video files.", ruleLog: "Video players are digital application software programs." }
         ]
     },
     {
         levelIndex: 2,
-        title: "STAGE 2: INPUT VS OUTPUT",
-        optionALabel: "Input Device 📥",
-        optionBLabel: "Output Device 📤",
-        optionAKey: "input",
-        optionBKey: "output",
+        title: "STAGE 2: MEMORY MAZE (RAM VS ROM)",
+        optionALabel: "RAM ⚡ (Temporary)",
+        optionBLabel: "ROM 🔒 (Permanent)",
+        optionAKey: "ram",
+        optionBKey: "rom",
         items: [
-            { name: "📷 Web Camera", category: "input", context: "Captures your video and sends it INTO the computer.", ruleLog: "Input devices feed data and signals into the computer system." },
-            { name: "🎧 Headphones", category: "output", context: "Sends music and audio OUT from the computer to your ears.", ruleLog: "Output devices receive processed data and display or emit it." },
-            { name: "🎤 Microphone", category: "input", context: "Records your voice and carries sound signals INTO the PC.", ruleLog: "Microphones capture real-world sound and feed it in as input." },
-            { name: "📽️ Projector", category: "output", context: "Beams huge images OUT onto a wall screen for everyone.", ruleLog: "Projectors display visual computer output onto big surfaces." },
-            { name: "🔍 Document Scanner", category: "input", context: "Scans paper photos and sends digital copies INTO the PC.", ruleLog: "Scanners digitize physical documents into computer input." },
-            { name: "📟 LED Monitor", category: "output", context: "Renders graphics and text OUT visually to the user.", ruleLog: "Monitors present output results visually from the computer." },
-            { name: "🎮 Gamepad Joystick", category: "input", context: "Sends button clicks and movement directions INTO the game.", ruleLog: "Joysticks transmit control instructions as input signals." },
-            { name: "🖨️ Paper Printer", category: "output", context: "Prints electronic documents OUT onto physical paper sheets.", ruleLog: "Printers produce physical output from digital files." },
-            { name: "🖊️ Graphics Tablet", category: "input", context: "Sends stylus pen strokes INTO drawing software.", ruleLog: "Drawing tablets capture pen strokes and feed them in as input." },
-            { name: "🔔 Buzzing Speaker", category: "output", context: "Plays alert chimes and audio songs OUT loud.", ruleLog: "Speakers convert digital audio signals into sound output." }
-        ]
-    },
-    {
-        levelIndex: 3,
-        title: "STAGE 3: STORAGE VS PROCESSING",
-        optionALabel: "Storage Device 💾",
-        optionBLabel: "Processing Device 🧠",
-        optionAKey: "storage",
-        optionBKey: "processing",
-        items: [
-            { name: "🧠 CPU Processor", category: "processing", context: "The central brain that calculates instructions and math.", ruleLog: "The CPU processes calculations and executes code instructions." },
-            { name: "💾 USB Flash Drive", category: "storage", context: "A portable stick that saves photos and homework files.", ruleLog: "Flash drives store digital files permanently or portably." },
-            { name: "🎮 GPU Graphics Card", category: "processing", context: "Renders 3D game visuals and complex math frames.", ruleLog: "GPUs process 3D graphics and image computations rapidly." },
-            { name: "💿 Optical DVD Disc", category: "storage", context: "A shiny round disc holding movie files and game data.", ruleLog: "Discs store audio, video, and software files." },
-            { name: "💽 Hard Disk Drive", category: "storage", context: "The main magnetic drive storing all programs and files.", ruleLog: "Hard drives store the operating system and user documents." },
-            { name: "⚡ CPU Core Chip", category: "processing", context: "Executes micro-code logic at billions of cycles per second.", ruleLog: "Processor cores perform digital calculations and data logic." },
-            { name: "📱 MicroSD Memory Card", category: "storage", context: "A tiny card expanding storage in cameras and tablets.", ruleLog: "Memory cards store photos and videos in small devices." },
-            { name: "⚙️ Motherboard Chipset", category: "processing", context: "Directs data traffic flow between CPU, RAM, and graphics.", ruleLog: "Chipsets coordinate processing and data flow between parts." },
-            { name: "☁️ Cloud Backup Server", category: "storage", context: "Saves drive backups safely over internet connections.", ruleLog: "Cloud servers provide remote data storage space." },
-            { name: "🧮 Math Co-Processor", category: "processing", context: "Speeds up complex floating point calculation logic.", ruleLog: "Co-processors calculate specialized mathematical tasks." }
+            { name: "⚡ Active Browser Tabs", category: "ram", context: "Holds open website tabs while the computer stays powered ON.", ruleLog: "RAM (Random Access Memory) is temporary volatile memory cleared when powered off." },
+            { name: "🔒 BIOS Startup Firmware", category: "rom", context: "Permanent startup chip instructions that never change or erase.", ruleLog: "ROM (Read-Only Memory) stores permanent non-volatile boot instructions." },
+            { name: "🎮 Current Game Session", category: "ram", context: "Stores active game graphics and current player levels temporarily.", ruleLog: "Active application data runs inside temporary RAM memory." },
+            { name: "🔒 Factory Boot Loader", category: "rom", context: "Stores built-in manufacturer start-up code inside the motherboard.", ruleLog: "Factory system boot code is permanently written inside ROM chips." },
+            { name: "📝 Unsaved Word Document", category: "ram", context: "Holds typed text temporarily before clicking the save button.", ruleLog: "Unsaved work resides temporarily in volatile RAM." },
+            { name: "🔒 Motherboard System Clock", category: "rom", context: "Stores hardware configuration settings permanently.", ruleLog: "Core hardware firmware settings are saved inside permanent ROM." },
+            { name: "🎬 Active Video Stream Buffer", category: "ram", context: "Buffers movie frames temporarily while playing online.", ruleLog: "Streaming video buffers rely on fast, temporary RAM space." },
+            { name: "🔒 Hardware Serial Number", category: "rom", context: "Unique factory ID code stamped permanently onto memory chips.", ruleLog: "Factory serial data is permanent Read-Only Memory." },
+            { name: "🎨 Active Paint Canvas Data", category: "ram", context: "Holds current paint strokes in temporary workspace memory.", ruleLog: "Active workspace canvases rely on temporary volatile RAM." },
+            { name: "🔒 Smartphone Firmware", category: "rom", context: "Core system startup software that boots your phone hardware safely.", ruleLog: "Core system firmware is stored permanently inside ROM." }
         ]
     }
 ];
@@ -750,7 +729,7 @@ function triggerScan(cellID) {
 
     const ticker = document.getElementById("tickerBox");
     ticker.className = "ticker-feedback";
-    ticker.innerHTML = "Artifact unearthed! Choose the correct category tool below.";
+    ticker.innerHTML = "Artifact unearthed! Choose the correct classification tool below.";
 }
 
 function submitClassification(optionChoice) {
@@ -818,18 +797,18 @@ function renderFinalCertificate() {
 
     let titleRank = "";
     let remarks = "";
-    const maxScore = 3000;
+    const maxScore = 2000;
     const ratio = totalScore / maxScore;
 
     if (ratio >= 0.85) {
-        titleRank = "👑 Master STEM Systems Champion";
-        remarks = `Exceptional work, ${playerStudentName}! You correctly analyzed hardware, software, input, output, storage, and processing components across all 3 progressive stages with highest precision!`;
+        titleRank = "👑 Master STEM Memory Explorer";
+        remarks = `Exceptional work, ${playerStudentName}! You correctly analyzed hardware, software, RAM, and ROM memory systems across both stages with precision!`;
     } else if (ratio >= 0.55) {
-        titleRank = "💼 Senior Systems Analyst";
-        remarks = `Great effort, ${playerStudentName}! You completed all 3 excavation stages successfully. Review a few hardware and processing rules to score a perfect certificate next run!`;
+        titleRank = "💼 Senior Memory Systems Analyst";
+        remarks = `Great effort, ${playerStudentName}! You completed both stages. Review temporary RAM vs permanent ROM rules to score a perfect certificate next run!`;
     } else {
         titleRank = "🌱 Junior Dig Site Cadet";
-        remarks = `Good attempt, ${playerStudentName}! You explored all 3 stages. Review the core differences between input/output and storage/processing devices, then boot up a fresh run!`;
+        remarks = `Good attempt, ${playerStudentName}! You explored both stages. Review the core differences between hardware/software and volatile memory to improve!`;
     }
 
     document.getElementById("finalRank").innerText = titleRank;

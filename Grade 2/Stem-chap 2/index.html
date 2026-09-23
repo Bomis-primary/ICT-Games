@@ -6,21 +6,25 @@
 <title>⚡ Robo STEM Circuit Universe ⚡</title>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&family=Fredoka:wght@500;700&display=swap');
+
 :root {
-  --primary-glow: #00f2fe;
-  --secondary-glow: #4facfe;
-  --accent-neon: #00ff88;
-  --wrong-glow: #ff0055;
-  --glass-bg: rgba(255, 255, 255, 0.15);
-  --glass-border: rgba(255, 255, 255, 0.3);
-  --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  --primary-cyan: #00f2fe;
+  --primary-blue: #4facfe;
+  --neon-green: #00ff88;
+  --neon-pink: #ff007f;
+  --neon-yellow: #ffe600;
+  --dark-bg: #090d16;
+  --card-bg: rgba(23, 32, 54, 0.75);
+  --glass-border: rgba(0, 242, 254, 0.3);
+  --glow-shadow: 0 0 25px rgba(0, 242, 254, 0.35);
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Fredoka', 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Fredoka', 'Outfit', sans-serif;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -29,13 +33,13 @@ body {
   overflow: hidden;
   height: 100vh;
   width: 100vw;
-  background: #0f172a;
+  background: var(--dark-bg);
   color: #fff;
   position: relative;
 }
 
-/* Background Canvas & Animated Circuit Glows */
-.bg-canvas {
+/* Cybernetic Animated Background Grid & Particles */
+.cyber-bg {
   position: fixed;
   top: 0;
   left: 0;
@@ -44,9 +48,25 @@ body {
   z-index: 0;
   pointer-events: none;
   background: 
-    radial-gradient(circle at 20% 20%, rgba(79, 172, 254, 0.25) 0%, transparent 40%),
-    radial-gradient(circle at 80% 80%, rgba(240, 147, 251, 0.25) 0%, transparent 40%),
-    linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+    radial-gradient(circle at 15% 15%, rgba(0, 242, 254, 0.18) 0%, transparent 45%),
+    radial-gradient(circle at 85% 85%, rgba(255, 0, 127, 0.18) 0%, transparent 45%),
+    linear-gradient(180deg, #090d16 0%, #111827 50%, #090d16 100%);
+}
+
+.circuit-grid {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(0, 242, 254, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 242, 254, 0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+  animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+  0% { background-position: 0 0; }
+  100% { background-position: 40px 40px; }
 }
 
 .sparkles {
@@ -60,18 +80,18 @@ body {
 
 .sparkle {
   position: absolute;
-  width: 10px;
-  height: 10px;
-  background: #fff;
+  width: 8px;
+  height: 8px;
+  background: var(--primary-cyan);
   border-radius: 50%;
-  box-shadow: 0 0 10px #00f2fe, 0 0 20px #00f2fe;
-  animation: sparkleMove 7s linear infinite;
-  opacity: 0.8;
+  box-shadow: 0 0 12px var(--primary-cyan), 0 0 20px var(--neon-green);
+  animation: floatUp 6s linear infinite;
+  opacity: 0.7;
 }
 
-@keyframes sparkleMove {
+@keyframes floatUp {
   0% { transform: translateY(105vh) scale(0); opacity: 0; }
-  50% { opacity: 0.9; transform: translateY(50vh) scale(1.2); }
+  50% { opacity: 1; transform: translateY(50vh) scale(1.3); }
   100% { transform: translateY(-10vh) scale(0.2); opacity: 0; }
 }
 
@@ -96,7 +116,7 @@ body {
   object-fit: contain;
 }
 
-/* Layout Screens Setup */
+/* App Screens Container */
 .screen {
   display: none;
   width: 100%;
@@ -113,7 +133,7 @@ body {
   align-items: center;
 }
 
-/* HUD Header Bar */
+/* Cyber Futuristic HUD Navbar */
 .top-nav {
   position: fixed;
   top: 15px;
@@ -127,106 +147,97 @@ body {
 }
 
 .nav-logo {
-  width: 100px;
+  width: 110px;
   height: auto;
-  filter: drop-shadow(0 0 8px rgba(255,255,255,0.5));
+  filter: drop-shadow(0 0 10px rgba(0,242,254,0.6));
   pointer-events: auto;
 }
 
 .scoreBox {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-  padding: 8px 22px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 2px solid var(--primary-cyan);
+  padding: 8px 24px;
   border-radius: 50px;
   font-size: 22px;
-  font-weight: bold;
+  font-weight: 700;
   color: #fff;
-  box-shadow: var(--card-shadow);
+  box-shadow: var(--glow-shadow);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   pointer-events: auto;
 }
 
 .scoreBox span {
-  color: #ffe600;
-  font-size: 26px;
-  text-shadow: 0 0 10px rgba(255,230,0,0.5);
+  color: var(--neon-yellow);
+  font-size: 28px;
+  text-shadow: 0 0 12px var(--neon-yellow);
 }
 
-/* Assistant Guide Popup */
+/* Assistant Guide Dialog Overlay */
 .guideBox {
   position: fixed;
-  bottom: 20px;
+  bottom: 25px;
   left: 50%;
   transform: translateX(-50%);
-  background: rgba(15, 23, 42, 0.95);
-  border: 2px solid #00f2fe;
-  padding: 12px 25px;
-  border-radius: 25px;
-  font-size: 20px;
+  background: rgba(9, 13, 22, 0.95);
+  border: 2px solid var(--neon-green);
+  padding: 14px 28px;
+  border-radius: 30px;
+  font-size: 22px;
+  font-weight: 600;
   color: #fff;
   display: none;
   z-index: 999;
-  box-shadow: 0 0 25px rgba(0, 242, 254, 0.5);
+  box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
   text-align: center;
   max-width: 90vw;
-  animation: popUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-@keyframes popUp {
-  0% { transform: translate(-50%, 50px) scale(0.7); opacity: 0; }
+@keyframes popIn {
+  0% { transform: translate(-50%, 40px) scale(0.8); opacity: 0; }
   100% { transform: translate(-50%, 0) scale(1); opacity: 1; }
 }
 
-/* Glassmorphic Card Container */
+/* Glassmorphic Level Container */
 .levelBox {
   width: 100%;
-  max-width: 900px;
-  margin: 70px auto 20px auto;
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
+  max-width: 920px;
+  margin: 75px auto 20px auto;
+  background: var(--card-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 2px solid var(--glass-border);
   padding: 30px;
   border-radius: 35px;
-  min-height: 520px;
-  box-shadow: var(--card-shadow);
+  min-height: 530px;
+  box-shadow: var(--glow-shadow), inset 0 0 20px rgba(0, 242, 254, 0.1);
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
-.header {
-  text-align: center;
-  margin-top: 10px;
-  color: #fff;
-}
-
 .header h1 {
-  font-size: 40px;
-  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 50%, #00ff88 100%);
+  font-size: 38px;
+  font-weight: 800;
+  text-align: center;
+  background: linear-gradient(135deg, var(--primary-cyan) 0%, var(--neon-green) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 8px rgba(0,242,254,0.4));
-  margin-bottom: 8px;
-}
-
-.header h2 {
-  font-size: 20px;
-  color: #cbd5e1;
-  font-weight: 400;
+  filter: drop-shadow(0 2px 10px rgba(0,242,254,0.5));
 }
 
 .question {
   font-size: 26px;
+  font-weight: 600;
   text-align: center;
   margin: 15px 0;
-  color: #f8fafc;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+  color: #f1f5f9;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.7);
 }
 
 .buttonArea {
@@ -238,18 +249,18 @@ body {
   margin: 20px 0;
 }
 
-/* Interactive Buttons */
+/* Interactive Modern Buttons */
 .gameBtn {
-  padding: 16px 36px;
+  padding: 16px 38px;
   font-size: 22px;
-  font-weight: bold;
+  font-weight: 700;
   border: none;
   border-radius: 50px;
   cursor: pointer;
-  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-  color: #0f172a;
-  box-shadow: 0 4px 15px rgba(0, 242, 254, 0.4);
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: linear-gradient(135deg, var(--primary-cyan) 0%, var(--primary-blue) 100%);
+  color: #090d16;
+  box-shadow: 0 6px 20px rgba(0, 242, 254, 0.4);
+  transition: all 0.25s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -257,65 +268,67 @@ body {
 }
 
 .gameBtn:hover {
-  transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 8px 25px rgba(0, 242, 254, 0.7);
+  transform: translateY(-4px) scale(1.04);
+  box-shadow: 0 10px 30px rgba(0, 242, 254, 0.7);
 }
 
 .gameBtn:active {
-  transform: translateY(1px) scale(0.98);
+  transform: translateY(2px) scale(0.98);
 }
 
 .backBtn {
   position: absolute;
   top: 20px;
   right: 20px;
-  padding: 8px 20px;
+  padding: 8px 22px;
   font-size: 16px;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
-  border: 1px solid rgba(255,255,255,0.3);
+  border: 1px solid rgba(255, 255, 255, 0.25);
 }
 
 .nextBtn {
   display: none;
   margin: 15px auto 0 auto;
-  background: linear-gradient(135deg, #00ff88 0%, #60efff 100%);
+  background: linear-gradient(135deg, var(--neon-green) 0%, #00d2ff 100%);
+  box-shadow: 0 6px 20px rgba(0, 255, 136, 0.4);
 }
 
-/* Asset Cards */
+/* Interactive Image Option Cards */
 .imageCard {
-  width: 170px;
-  height: 170px;
+  width: 175px;
+  height: 175px;
   background: rgba(255, 255, 255, 0.95);
-  border-radius: 25px;
-  padding: 15px;
+  border-radius: 28px;
+  padding: 16px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.3);
   object-fit: contain;
   border: 4px solid transparent;
 }
 
 .imageCard:hover {
   transform: translateY(-8px) scale(1.06);
-  box-shadow: 0 15px 30px rgba(0, 242, 254, 0.4);
+  border-color: var(--primary-cyan);
+  box-shadow: 0 15px 35px rgba(0, 242, 254, 0.5);
 }
 
 .correct {
-  border-color: #00ff88 !important;
-  background: rgba(0, 255, 136, 0.25) !important;
-  box-shadow: 0 0 30px #00ff88 !important;
-  animation: glowCorrect 0.6s infinite alternate;
+  border-color: var(--neon-green) !important;
+  background: rgba(0, 255, 136, 0.2) !important;
+  box-shadow: 0 0 35px var(--neon-green) !important;
+  animation: pulseCorrect 0.6s infinite alternate;
 }
 
 .wrong {
-  border-color: #ff0055 !important;
-  background: rgba(255, 0, 85, 0.25) !important;
-  box-shadow: 0 0 30px #ff0055 !important;
+  border-color: var(--neon-pink) !important;
+  background: rgba(255, 0, 127, 0.2) !important;
+  box-shadow: 0 0 35px var(--neon-pink) !important;
   animation: shake 0.4s ease-in-out;
 }
 
-@keyframes glowCorrect {
+@keyframes pulseCorrect {
   from { transform: scale(1); }
   to { transform: scale(1.08); }
 }
@@ -327,10 +340,10 @@ body {
 }
 
 .tipBox {
-  background: rgba(255, 243, 205, 0.15);
-  border: 1px solid rgba(255, 224, 130, 0.4);
+  background: rgba(255, 230, 0, 0.12);
+  border: 1px solid rgba(255, 230, 0, 0.35);
   backdrop-filter: blur(8px);
-  padding: 14px 20px;
+  padding: 14px 22px;
   border-radius: 20px;
   margin-top: 15px;
   font-size: 20px;
@@ -338,104 +351,104 @@ body {
   color: #ffecb3;
 }
 
-/* Minigame 3: River Wire Rescue */
+/* Minigame: River Electric Bridge Rescue */
 .riverArea {
   position: relative;
   width: 100%;
   height: 240px;
   background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
-  border-radius: 25px;
+  border-radius: 28px;
   overflow: hidden;
   margin-top: 15px;
-  border: 2px solid rgba(255,255,255,0.3);
-  box-shadow: inset 0 0 30px rgba(0,0,0,0.4);
+  border: 2px solid rgba(0, 242, 254, 0.4);
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
 }
 
 .stone {
   position: absolute;
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, #64748b 0%, #334155 100%);
+  width: 82px;
+  height: 82px;
+  background: linear-gradient(135deg, #475569 0%, #1e293b 100%);
   border: 3px solid #94a3b8;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 36px;
+  font-size: 38px;
   color: white;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.4);
 }
 
 .stone:hover {
   transform: scale(1.15);
-  border-color: #00f2fe;
+  border-color: var(--primary-cyan);
 }
 
-/* Minigame 7: Drag & Drop */
+/* Minigame: Drag and Drop Area */
 .dragArea {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 30px;
+  gap: 35px;
   flex-wrap: wrap;
   margin-top: 20px;
 }
 
 .dragBox {
-  width: 220px;
-  height: 160px;
-  border: 3px dashed #00f2fe;
-  border-radius: 25px;
+  width: 230px;
+  height: 165px;
+  border: 3px dashed var(--primary-cyan);
+  border-radius: 28px;
   background: rgba(0, 242, 254, 0.08);
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 22px;
-  color: #00f2fe;
-  font-weight: bold;
+  color: var(--primary-cyan);
+  font-weight: 700;
   text-align: center;
   padding: 10px;
   transition: all 0.3s ease;
 }
 
 .dragItem {
-  padding: 22px 35px;
-  background: linear-gradient(135deg, #ffe600 0%, #ffb700 100%);
-  color: #0f172a;
-  border-radius: 25px;
+  padding: 22px 38px;
+  background: linear-gradient(135deg, var(--neon-yellow) 0%, #ffb700 100%);
+  color: #090d16;
+  border-radius: 28px;
   font-size: 24px;
-  font-weight: bold;
+  font-weight: 800;
   cursor: grab;
-  box-shadow: 0 8px 20px rgba(255, 230, 0, 0.4);
+  box-shadow: 0 8px 25px rgba(255, 230, 0, 0.4);
   transition: transform 0.2s;
   touch-action: none;
 }
 
 .dragItem:active {
   cursor: grabbing;
-  transform: scale(1.05);
+  transform: scale(1.06);
 }
 
-/* Final Celebration Modal */
+/* Final Victory Modal Screen */
 .finalScreen {
   text-align: center;
-  margin-top: 30px;
+  margin-top: 20px;
   color: white;
   width: 100%;
 }
 
 .badge {
   display: inline-block;
-  padding: 20px 35px;
+  padding: 20px 40px;
   margin: 20px;
-  background: linear-gradient(135deg, #ffe600 0%, #ff9900 100%);
-  color: #0f172a;
-  border-radius: 30px;
-  font-size: 28px;
-  font-weight: bold;
-  box-shadow: 0 10px 30px rgba(255, 230, 0, 0.5);
+  background: linear-gradient(135deg, var(--neon-yellow) 0%, #ff9900 100%);
+  color: #090d16;
+  border-radius: 35px;
+  font-size: 30px;
+  font-weight: 800;
+  box-shadow: 0 10px 35px rgba(255, 230, 0, 0.6);
   animation: bounce 1.5s infinite alternate;
 }
 
@@ -458,26 +471,28 @@ body {
 }
 
 @media(max-width: 768px) {
-  .levelBox { margin-top: 60px; padding: 20px; min-height: auto; }
-  .header h1 { font-size: 30px; }
+  .levelBox { margin-top: 65px; padding: 20px; min-height: auto; }
+  .header h1 { font-size: 28px; }
   .question { font-size: 20px; }
   .gameBtn { font-size: 18px; padding: 12px 28px; }
   .imageCard { width: 130px; height: 130px; padding: 10px; }
-  .stone { width: 65px; height: 65px; font-size: 28px; }
+  .stone { width: 68px; height: 68px; font-size: 30px; }
   .riverArea { height: 200px; }
-  .guideBox { font-size: 16px; width: 92vw; }
+  .guideBox { font-size: 17px; width: 92vw; }
 }
 </style>
 </head>
 
 <body>
 
-<div class="bg-canvas"></div>
+<div class="cyber-bg">
+  <div class="circuit-grid"></div>
+</div>
 <div class="sparkles" id="sparkles"></div>
 
 <!-- 1-SECOND CLEAN WHITE SPLASH SCREEN -->
 <div id="splashScreen">
-  <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='https://via.placeholder.com/250x100?text=Innovine+Logo';">
+  <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'250\' height=\'100\' viewBox=\'0 0 250 100\'><rect width=\'250\' height=\'100\' rx=\'20\' fill=\'%2300f2fe\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'28\' font-weight=\'bold\' fill=\'%230f172a\'>INNOVINE</text></svg>';">
 </div>
 
 <!-- TOP HUD NAVBAR -->
@@ -493,14 +508,14 @@ body {
   🤖 Great Job!
 </div>
 
-<!-- 1. GAMEPLAY SCREEN (DIRECT ENTRY AFTER SPLASH) -->
+<!-- GAMEPLAY SCREEN -->
 <div class="screen active" id="gameScreen">
   <div class="levelBox">
     <button class="gameBtn backBtn" id="backBtn" onclick="goBack()" style="display: none;">
       ⬅ BACK
     </button>
 
-    <h2 id="levelTitle" style="color: #00f2fe; text-align: center; font-size: 28px;"></h2>
+    <h2 id="levelTitle" style="color: var(--primary-cyan); text-align: center; font-size: 28px;"></h2>
     <div class="question" id="questionText"></div>
 
     <div id="gameArea"></div>
@@ -517,11 +532,11 @@ body {
   </div>
 </div>
 
-<!-- 2. FINAL VICTORY SCREEN -->
+<!-- FINAL VICTORY SCREEN -->
 <div class="screen" id="finalScreen">
   <div class="levelBox" style="text-align: center;">
     <div class="finalScreen">
-      <h1>🏆 Mission Accomplished! 🏆</h1>
+      <h1 style="font-size: 40px; color: var(--neon-green);">🏆 Mission Accomplished! 🏆</h1>
       <h2 id="finalScore" style="font-size: 28px; margin: 20px 0;"></h2>
 
       <div id="badgeArea"></div>
@@ -535,7 +550,7 @@ body {
 </div>
 
 <script>
-/* Audio Synthesizer Engine & Fallback */
+/* Synthesized Web Audio Sound Engine (Fallback for reliable playback) */
 class SoundEngine {
   constructor() {
     this.ctx = null;
@@ -553,20 +568,30 @@ class SoundEngine {
       this.init();
       if (!this.ctx) return;
       const now = this.ctx.currentTime;
-      const osc = this.ctx.createOscillator();
+      const osc1 = this.ctx.createOscillator();
+      const osc2 = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
 
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(523.25, now);
-      osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.3);
+      osc1.type = 'sine';
+      osc2.type = 'triangle';
+
+      osc1.frequency.setValueAtTime(523.25, now); // C5
+      osc1.frequency.exponentialRampToValueAtTime(783.99, now + 0.25); // G5
+
+      osc2.frequency.setValueAtTime(261.63, now); 
+      osc2.frequency.exponentialRampToValueAtTime(392.00, now + 0.25);
 
       gain.gain.setValueAtTime(0.3, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
 
-      osc.connect(gain);
+      osc1.connect(gain);
+      osc2.connect(gain);
       gain.connect(this.ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.4);
+
+      osc1.start(now);
+      osc2.start(now);
+      osc1.stop(now + 0.35);
+      osc2.stop(now + 0.35);
     });
   }
 
@@ -588,6 +613,7 @@ class SoundEngine {
 
       osc.connect(gain);
       gain.connect(this.ctx.destination);
+
       osc.start(now);
       osc.stop(now + 0.3);
     });
@@ -603,9 +629,9 @@ let detectiveCount = 0;
 let timerValue = 5;
 let timerInterval = null;
 
-// SVG Inline Fallbacks for Missing Local Assets
+// SVG Fallbacks for Missing Local Assets
 const svgClosedCircuit = "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><rect width=\'100\' height=\'100\' fill=\'%230f172a\' rx=\'15\'/><path d=\'M20 50 L80 50\' stroke=\'%2300ff88\' stroke-width=\'8\'/><circle cx=\'50\' cy=\'50\' r=\'12\' fill=\'%23ffe600\'/></svg>";
-const svgOpenCircuit = "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><rect width=\'100\' height=\'100\' fill=\'%230f172a\' rx=\'15\'/><path d=\'M20 50 L45 50 M55 30 L80 50\' stroke=\'%23ff0055\' stroke-width=\'8\'/><circle cx=\'50\' cy=\'50\' r=\'10\' fill=\'%2364748b\'/></svg>";
+const svgOpenCircuit = "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><rect width=\'100\' height=\'100\' fill=\'%230f172a\' rx=\'15\'/><path d=\'M20 50 L45 50 M55 30 L80 50\' stroke=\'%23ff007f\' stroke-width=\'8\'/><circle cx=\'50\' cy=\'50\' r=\'10\' fill=\'%2364748b\'/></svg>";
 const svgPowerSource = "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><rect width=\'100\' height=\'100\' fill=\'%230f172a\' rx=\'15\'/><rect x=\'30\' y=\'25\' width=\'40\' height=\'50\' fill=\'%23ffe600\' rx=\'5\'/><text x=\'50\' y=\'58\' font-size=\'28\' text-anchor=\'middle\' fill=\'%230f172a\' font-weight=\'bold\'>⚡</text></svg>";
 const svgSwitch = "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><rect width=\'100\' height=\'100\' fill=\'%230f172a\' rx=\'15\'/><rect x=\'25\' y=\'40\' width=\'50\' height=\'20\' fill=\'%2300f2fe\' rx=\'10\'/><circle cx=\'60\' cy=\'50\' r=\'8\' fill=\'%23fff\'/></svg>";
 const svgSolar = "data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><rect width=\'100\' height=\'100\' fill=\'%230f172a\' rx=\'15\'/><polygon points=\'20,30 80,30 90,75 10,75\' fill=\'%230284c7\' stroke=\'%2300f2fe\' stroke-width=\'3\'/><circle cx=\'50\' cy=\'20\' r=\'10\' fill=\'%23ffe600\'/></svg>";
@@ -622,7 +648,7 @@ const questions = [
 
 window.addEventListener("DOMContentLoaded", () => {
   createSparkles();
-  // Splash Screen appears for 1 second before disappearing directly to Level 1
+  // Splash Screen appears for 1 second before disappearing directly into Level 1
   setTimeout(() => {
     const splash = document.getElementById("splashScreen");
     splash.style.opacity = "0";
@@ -708,7 +734,7 @@ function loadQuestion() {
   else if(q.type === "speed") {
     gameArea.innerHTML = `
       <div style="text-align:center;">
-        <h1 id="timer" style="color:#ff0055; font-size:60px; text-shadow:0 0 15px rgba(255,0,85,0.6);">5</h1>
+        <h1 id="timer" style="color:var(--neon-pink); font-size:60px; text-shadow:0 0 20px rgba(255,0,127,0.7);">5</h1>
         <br>
         <img src="assets/power source.png" class="imageCard" onerror="this.src='${svgPowerSource}'" onclick="speedClick(this)">
       </div>`;

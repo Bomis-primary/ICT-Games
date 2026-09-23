@@ -3,20 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Innovine Scratch Block Master - Folder Switcher Arcade</title>
+    <title>Innovine File & Folder STEM Arcade</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@700;800;900&display=swap');
 
         :root {
-            --scratch-orange: #ffab19;
-            --scratch-blue: #4c97ff;
-            --scratch-purple: #9966ff;
-            --scratch-green: #2ecc71;
-            --scratch-pink: #ff6680;
-            --dark-bg: #0f172a;
-            --panel-bg: rgba(30, 41, 59, 0.95);
-            --border-glow: rgba(76, 151, 255, 0.4);
+            --bright-bg: #e0f2fe;
+            --panel-bg: #ffffff;
+            --primary-blue: #0284c7;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --accent-green: #10b981;
+            --accent-pink: #ec4899;
+            --text-dark: #0f172a;
+            --border-color: #bae6fd;
+            --shadow-light: 0 10px 25px -5px rgba(2, 132, 199, 0.15);
         }
 
         * {
@@ -30,7 +32,9 @@
         }
 
         body {
-            background: var(--dark-bg);
+            background: var(--bright-bg);
+            background-image: radial-gradient(#38bdf8 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
             min-height: 100vh;
             min-height: -webkit-fill-available;
             width: 100vw;
@@ -38,27 +42,11 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            padding: 10px;
-            color: #ffffff;
-            position: relative;
+            padding: 12px;
+            color: var(--text-dark);
         }
 
-        /* Ambient Cyber Backdrop */
-        .bg-grid {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-            background: 
-                radial-gradient(circle at 20% 20%, rgba(76, 151, 255, 0.18) 0%, transparent 45%),
-                radial-gradient(circle at 80% 80%, rgba(153, 102, 255, 0.18) 0%, transparent 45%),
-                linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        }
-
-        /* 5-Second Clean White Splash Screen */
+        /* 5-Second Pure White Splash Screen */
         #splashScreen {
             position: fixed;
             top: 0;
@@ -75,22 +63,22 @@
         }
 
         #splashScreen img {
-            width: 260px;
-            max-width: 75vw;
+            width: 280px;
+            max-width: 80vw;
             animation: pulse 2s infinite ease-in-out;
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.9; }
+            0%, 100% { transform: scale(1); opacity: 0.95; }
             50% { transform: scale(1.05); opacity: 1; }
         }
 
-        /* Core Application Shell Frame */
+        /* Main Shell Container */
         .app-window {
             width: 100%;
-            max-width: 850px;
+            max-width: 880px;
             height: 92vh;
-            max-height: 750px;
+            max-height: 760px;
             z-index: 10;
             display: flex;
             flex-direction: column;
@@ -98,30 +86,28 @@
             position: relative;
         }
 
-        /* Intro / Welcome Card Panel */
-        .welcome-card {
+        /* Welcome & Victory Panel */
+        .card-panel {
             background: var(--panel-bg);
-            border: 2px solid var(--border-glow);
-            border-radius: 28px;
+            border: 3px solid var(--border-color);
+            border-radius: 32px;
             padding: clamp(20px, 5vw, 36px);
             text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            box-shadow: var(--shadow-light);
             width: 100%;
             margin: auto;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
         }
 
-        .welcome-card h1 span {
-            background: linear-gradient(135deg, var(--scratch-orange), var(--scratch-blue));
+        .card-panel h1 span {
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-pink));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             font-family: 'Outfit', sans-serif;
             font-weight: 900;
-            font-size: clamp(1.8rem, 6vw, 2.5rem);
+            font-size: clamp(1.8rem, 6vw, 2.6rem);
         }
 
-        /* Main Game Arcade Layout Structure */
+        /* Gameplay Layout */
         .game-layout {
             display: flex;
             flex-direction: column;
@@ -134,122 +120,215 @@
         .top-hud {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
+            gap: 10px;
             background: var(--panel-bg);
-            border: 2px solid var(--border-glow);
-            padding: 10px 16px;
-            border-radius: 18px;
-            color: white;
+            border: 2px solid var(--border-color);
+            padding: 12px 18px;
+            border-radius: 20px;
             font-weight: 700;
-            font-size: clamp(0.8rem, 3vw, 1rem);
+            font-size: clamp(0.85rem, 3vw, 1.05rem);
             align-items: center;
             text-align: center;
+            box-shadow: var(--shadow-light);
         }
 
         .hud-val {
-            color: var(--scratch-orange);
+            color: var(--accent-orange);
             font-weight: 800;
         }
 
-        .badge-level {
-            background: var(--scratch-purple);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
+        .badge-stage {
+            background: #e0f2fe;
+            color: var(--primary-blue);
+            padding: 4px 12px;
+            border-radius: 14px;
+            font-size: 0.8rem;
             text-transform: uppercase;
-            display: inline-block;
+            font-weight: 800;
         }
 
-        /* Main Interactive Conveyor Arena */
-        .conveyor-arena {
-            background: rgba(15, 23, 42, 0.85);
-            border: 2px solid var(--border-glow);
-            border-radius: 24px;
-            position: relative;
+        /* Main Game Arena Box */
+        .game-arena {
+            background: var(--panel-bg);
+            border: 3px solid var(--border-color);
+            border-radius: 28px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow-light);
+            position: relative;
             overflow: hidden;
-            box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
         }
 
-        /* Active Item Data Card */
-        .item-card-zone {
+        /* GAME MODE 1: BASKET CATCH & DROP */
+        .basket-arena {
             width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 10px;
-        }
-
-        .falling-item {
-            background: rgba(30, 41, 59, 0.95);
-            border: 3px dashed var(--scratch-blue);
-            border-radius: 20px;
-            padding: 16px 24px;
-            color: white;
-            font-weight: 800;
-            font-size: clamp(1.1rem, 4vw, 1.4rem);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            cursor: grab;
-            touch-action: none;
-            transition: transform 0.2s ease, border-color 0.2s ease;
-            max-width: 90%;
-            text-align: center;
-        }
-
-        .falling-item:active {
-            cursor: grabbing;
-            transform: scale(1.05);
-            border-color: var(--scratch-orange);
-        }
-
-        /* Bucket Selection Area */
-        .buckets-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 10px;
-            width: 100%;
-            margin-top: 15px;
-        }
-
-        .bucket-btn {
-            background: rgba(30, 41, 59, 0.9);
-            border: 2px solid var(--border-glow);
-            border-radius: 16px;
-            padding: 14px 10px;
-            color: white;
-            font-weight: 700;
-            font-size: clamp(0.85rem, 3.2vw, 1rem);
-            cursor: pointer;
-            transition: all 0.2s ease;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 6px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            gap: 15px;
+            height: 100%;
+            justify-content: space-between;
         }
 
-        .bucket-btn:hover, .bucket-btn:active {
-            transform: translateY(-3px) scale(1.02);
-            border-color: var(--scratch-orange);
-            background: rgba(255, 171, 25, 0.15);
+        .draggable-item {
+            background: #f0f9ff;
+            border: 3px dashed var(--primary-blue);
+            padding: 16px 28px;
+            border-radius: 22px;
+            font-size: clamp(1.1rem, 4vw, 1.4rem);
+            font-weight: 800;
+            color: var(--primary-blue);
+            cursor: grab;
+            touch-action: none;
+            box-shadow: 0 8px 20px rgba(2, 132, 199, 0.15);
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        /* Modals & Popups */
+        .draggable-item:active {
+            cursor: grabbing;
+            transform: scale(1.08);
+            background: #e0f2fe;
+        }
+
+        .baskets-tray {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 14px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .basket-box {
+            background: #f8fafc;
+            border: 3px solid #cbd5e1;
+            border-radius: 24px;
+            padding: 18px 10px;
+            text-align: center;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .basket-box:hover, .basket-box.drag-over {
+            border-color: var(--accent-orange);
+            background: #fff7ed;
+            transform: translateY(-4px);
+        }
+
+        .basket-icon {
+            font-size: 2.4rem;
+        }
+
+        .basket-title {
+            font-size: clamp(0.95rem, 3.5vw, 1.15rem);
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        /* GAME MODE 2: STEP SEQUENCER */
+        .sequence-arena {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            height: 100%;
+            justify-content: space-between;
+        }
+
+        .step-slots-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .step-slot {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 52px;
+        }
+
+        .step-slot.filled {
+            border-style: solid;
+            border-color: var(--primary-blue);
+            background: #f0f9ff;
+            color: var(--primary-blue);
+        }
+
+        .step-chip-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 6px;
+        }
+
+        .step-chip {
+            background: #ffffff;
+            border: 2px solid var(--primary-blue);
+            padding: 8px 14px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+
+        .step-chip:hover {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        /* Buttons & Utility */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-cyan));
+            color: white;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(2, 132, 199, 0.3);
+            transition: all 0.25s ease;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .btn-primary:hover, .btn-primary:active {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(2, 132, 199, 0.5);
+        }
+
+        /* Feedback Popup Shroud */
         .pop-shroud {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(15, 23, 42, 0.9);
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(4px);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -267,40 +346,21 @@
 
         .pop-card {
             background: #ffffff;
-            color: #0f172a;
-            border-radius: 24px;
+            border: 3px solid var(--border-color);
+            border-radius: 28px;
             padding: 24px;
             width: 100%;
             max-width: 380px;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
 
         .pop-card p {
             color: #475569;
             font-size: 0.95rem;
             line-height: 1.4;
-            margin: 12px 0 18px 0;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--scratch-blue), #2563eb);
-            color: white;
-            border: none;
-            padding: 14px 32px;
-            border-radius: 50px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            cursor: pointer;
-            box-shadow: 0 6px 20px rgba(76,151,255,0.4);
-            transition: all 0.2s ease;
-            width: 100%;
-            max-width: 280px;
-        }
-
-        .btn-primary:hover, .btn-primary:active {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 8px 25px rgba(76,151,255,0.6);
+            margin: 10px 0 18px 0;
+            font-weight: 600;
         }
 
         .hidden { display: none !important; }
@@ -308,84 +368,107 @@
 </head>
 <body>
 
+    <!-- Audio Elements with Synthesizer Engine Fallback -->
     <audio id="audioCorrect" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
     <audio id="audioClap" src="assets/clap.mp3" preload="auto"></audio>
 
-    <div class="bg-grid"></div>
-
-    <!-- 5-Second Exclusive Splash Screen -->
+    <!-- 5-Second Pure White Splash Screen -->
     <div id="splashScreen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'100\' viewBox=\'0 0 280 100\'><rect width=\'280\' height=\'100\' rx=\'20\' fill=\'%234c97ff\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'26\' font-weight=\'bold\' fill=\'%23ffffff\'>INNOVINE</text></svg>';">
-        <p style="margin-top:20px; font-weight:700; color:#64748b; letter-spacing:1px; font-size:0.95rem;">Files & Folder Arcade...</p>
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'100\' viewBox=\'0 0 280 100\'><rect width=\'280\' height=\'100\' rx=\'20\' fill=\'%230284c7\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'26\' font-weight=\'bold\' fill=\'%23ffffff\'>INNOVINE</text></svg>';">
+        <p style="margin-top:16px; font-weight:700; color:#0284c7; letter-spacing:1px; font-size:0.95rem;">File & Folder STEM Arcade...</p>
     </div>
 
-    <!-- Main Shell Window -->
+    <!-- Main Shell Container -->
     <div class="app-window hidden" id="appInterfaceShell">
-        
+
         <!-- INTRO SCREEN -->
-        <div id="introView" class="welcome-card">
-            <h1><span>FOLDER SWITCHER ARCADE</span></h1>
-            <h2 style="color: #cbd5e1; font-size: 1.05rem; margin: 8px 0 20px 0; font-weight: 600;">Interactive Data Classifier</h2>
-            <div style="text-align: left; line-height: 1.6; color: #e2e8f0; margin-bottom: 24px; background: rgba(15, 23, 42, 0.6); padding: 18px; border-radius: 16px; font-size: 0.9rem; border-left: 4px solid var(--scratch-blue);">
-                <p style="font-weight:700; color:var(--scratch-orange); margin-bottom:6px;">🎮 Multi-Stage Arcade Rules:</p>
-                <ol style="margin-left:18px;">
-                    <li>Read the falling file name, shortcut, or folder rule displayed inside the scanner card.</li>
-                    <li>Tap the correct destination folder button below to sort the data!</li>
-                    <li>Complete all 3 progressive stages to achieve the High Score Certificate!</li>
-                </ol>
+        <div id="introView" class="card-panel">
+            <h1><span>FILE & FOLDER ARCADE</span></h1>
+            <p style="color: #64748b; font-size: 1.05rem; margin: 8px 0 20px 0; font-weight: 600;">Interactive STEM Learning Modules</p>
+            
+            <div style="text-align: left; line-height: 1.6; color: #334155; margin-bottom: 24px; background: #f0f9ff; padding: 20px; border-radius: 20px; font-size: 0.92rem; border: 2px solid var(--border-color);">
+                <p style="font-weight:800; color:var(--primary-blue); margin-bottom:8px; font-size:1.05rem;">🕹️ 3 Interactive Game Modes:</p>
+                <ul style="margin-left:20px;">
+                    <li style="margin-bottom:6px;"><strong>Game 1: File Basket Drop</strong> — Drag & drop items into the correct category basket!</li>
+                    <li style="margin-bottom:6px;"><strong>Game 2: Folder Creation Steps</strong> — Arrange steps in the correct order to create a folder!</li>
+                    <li><strong>Game 3: OS Naming Basket</strong> — Separate valid folder names from invalid OS characters!</li>
+                </ul>
             </div>
-            <button class="btn-primary" onclick="launchSimulator()">Launch Stage 1 ➜</button>
+            
+            <button class="btn-primary" onclick="launchArcade()">Start Arcade Missions ➜</button>
         </div>
 
         <!-- MAIN GAMEPLAY SCREEN -->
         <div id="gameViewPanel" class="game-layout hidden">
             <div class="top-hud">
                 <div>🎯 Score: <span id="scoreDisplayLabel" class="hud-val">0</span></div>
-                <div>⚡ Track: <span id="missionLevelTitle" class="hud-val">1 / 12</span></div>
-                <div><span id="difficultyBadge" class="badge-level">Stage 1</span></div>
+                <div>⚡ Mission: <span id="missionLevelTitle" class="hud-val">1 / 3</span></div>
+                <div><span id="badgeStage" class="badge-stage">Mode 1</span></div>
             </div>
 
-            <div class="conveyor-arena">
-                <div style="font-size:0.85rem; color:#94a3b8; font-weight:600;" id="stageInstruction">
-                    Stage 1: Sort File Extensions Into Correct Folders
+            <div class="game-arena">
+                <div style="font-size:1rem; color:var(--primary-blue); font-weight:800; margin-bottom:8px;" id="gameTitle">
+                    Game 1: Categorize Items Into Correct Baskets
                 </div>
 
-                <div class="item-card-zone">
-                    <div class="falling-item" id="activeFallingNode">
-                        <span id="nodeIcon" style="font-size:2rem;">📝</span>
-                        <span id="nodeName">document.txt</span>
+                <!-- GAME MODE 1 & 3 CONTAINER: BASKET DROPS -->
+                <div id="basketModeContainer" class="basket-arena">
+                    <div style="font-size:0.9rem; color:#64748b; font-weight:600;" id="basketInstructions">
+                        Drag the item card or tap the correct basket below!
+                    </div>
+
+                    <div class="draggable-item" id="dragItemCard" draggable="true">
+                        <span id="itemIcon">📄</span>
+                        <span id="itemName">story.txt</span>
+                    </div>
+
+                    <div class="baskets-tray" id="basketsTray">
+                        <!-- Dynamic Baskets Injected Here -->
                     </div>
                 </div>
 
-                <div class="buckets-container" id="bucketsTray">
-                    <!-- Dynamic Bucket Buttons Injected Here -->
+                <!-- GAME MODE 2 CONTAINER: STEP SEQUENCER -->
+                <div id="sequenceModeContainer" class="sequence-arena hidden">
+                    <div style="font-size:0.9rem; color:#64748b; font-weight:600; text-align:center;">
+                        Tap chips below in the CORRECT sequence order to create a new folder!
+                    </div>
+
+                    <div class="step-slots-container" id="stepSlotsContainer">
+                        <!-- Step Slots Injected Here -->
+                    </div>
+
+                    <div class="step-chip-pool" id="stepChipPool">
+                        <!-- Step Chips Injected Here -->
+                    </div>
+
+                    <button class="btn-primary" style="margin:8px auto 0 auto; padding:10px 24px; font-size:0.95rem;" onclick="checkSequenceAnswer()">Verify Sequence Order ➔</button>
                 </div>
 
                 <!-- Feedback Popup Overlay -->
                 <div class="pop-shroud" id="feedbackPopupShroud">
                     <div class="pop-card">
                         <div id="popIcon" style="font-size:3.5rem; margin-bottom:6px;">✨</div>
-                        <h2 id="popTitle" style="margin-bottom:8px; font-family:'Outfit', sans-serif;">Verification Result</h2>
-                        <p id="popBody">Filing metrics data.</p>
-                        <button class="btn-primary" style="padding:10px 24px; font-size:1rem;" onclick="dismissArcadeModal()">Continue Arcade ➔</button>
+                        <h2 id="popTitle" style="margin-bottom:6px; font-family:'Outfit', sans-serif; color:var(--text-dark);">Result</h2>
+                        <p id="popBody">Feedback description here.</p>
+                        <button class="btn-primary" style="padding:10px 24px; font-size:1rem;" onclick="dismissArcadeModal()">Next Challenge ➔</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- FINAL REPORT CERTIFICATE SCREEN -->
-        <div id="evaluationReportCard" class="welcome-card hidden">
-            <h1 style="color:var(--scratch-green); margin-bottom:10px;">🎉 Processing Completed!</h1>
-            <p style="margin-top:10px; font-size:1.05rem; color:#cbd5e1;" id="finalPerformanceReportSummary"></p>
-            <div style="font-size: 3.8rem; margin: 20px 0;">📂⚡🕹️🏆</div>
-            <button class="btn-primary" onclick="restartCampaignSession()">Restart Arcade Session 🔄</button>
+        <div id="evaluationReportCard" class="card-panel hidden">
+            <h1 style="color:var(--accent-green); margin-bottom:10px;">🎉 Mission Accomplished!</h1>
+            <p style="margin-top:10px; font-size:1.1rem; color:#334155; line-height:1.5;" id="finalPerformanceReportSummary"></p>
+            <div style="font-size: 3.8rem; margin: 20px 0;">📂⭐🕹️🏆</div>
+            <button class="btn-primary" onclick="restartArcade()">Play Again 🔄</button>
         </div>
 
     </div>
 
     <script>
-        /* Audio Synthesizer Engine with HTML5 Fallback */
+        /* Audio Engine with Synthesizer Fallback */
         class SoundEngine {
             constructor() { this.ctx = null; }
             init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
@@ -438,7 +521,7 @@
 
         const soundEngine = new SoundEngine();
 
-        /* Splash Screen Timing */
+        /* Splash Screen Timing - 5 Seconds */
         setTimeout(() => {
             const splashNode = document.getElementById("splashScreen");
             splashNode.style.opacity = "0";
@@ -448,108 +531,138 @@
             }, 500);
         }, 5000);
 
-        /* Multi-Stage Item Database */
-        const gameStages = [
+        /* Arcade Modes Dataset */
+        const arcadeModes = [
             {
-                stageTitle: "Stage 1: File Types & Extensions",
-                instruction: "Classify items into Text or Image Folders!",
-                buckets: [
-                    { id: "text", label: "📝 Text Folder" },
-                    { id: "image", label: "🎨 Image Folder" }
+                modeId: 1,
+                type: "basket",
+                title: "Game 1: File & Folder Category Baskets",
+                instructions: "Drop or click items into the Text or Image Basket!",
+                baskets: [
+                    { id: "text", title: "Text Basket", icon: "📝" },
+                    { id: "image", title: "Image Basket", icon: "🎨" }
                 ],
                 items: [
-                    { name: "story.txt", icon: "📝", correctBucket: "text", hint: "The .txt extension specifies text documents." },
-                    { name: "bird.png", icon: "🎨", correctBucket: "image", hint: "Portable Network Graphics (.png) store image files." },
-                    { name: "fish.bmp", icon: "🖼️", correctBucket: "image", hint: "Bitmap (.bmp) format stores digital picture pixels." },
-                    { name: "notes.txt", icon: "📄", correctBucket: "text", hint: "Text documents use plain text (.txt) extensions." },
-                    { name: "home.jpg", icon: "📸", correctBucket: "image", hint: "JPEG (.jpg) files manage camera graphics and photos." }
+                    { name: "story.txt", icon: "📄", correctBasket: "text", hint: "The .txt extension belongs to text files." },
+                    { name: "photo.jpg", icon: "📸", correctBasket: "image", hint: "JPEG (.jpg) files belong to image categories." },
+                    { name: "notes.txt", icon: "📝", correctBasket: "text", hint: "Text documents store written notes." },
+                    { name: "graphic.png", icon: "🖼️", correctBasket: "image", hint: "PNG graphics belong inside image folders." }
                 ]
             },
             {
-                stageTitle: "Stage 2: OS Folder Naming Rules",
-                instruction: "Determine if folder names are Valid or Invalid!",
-                buckets: [
-                    { id: "valid", label: "✅ Valid Name" },
-                    { id: "invalid", label: "🚫 Invalid Name" }
-                ],
-                items: [
-                    { name: "Science <Physics>", icon: "🚫", correctBucket: "invalid", hint: "Angle brackets (< >) are illegal reserved character symbols." },
-                    { name: "Math Homework", icon: "✅", correctBucket: "valid", hint: "Standard text labels form clean accepted folder titles." },
-                    { name: "English/Poems", icon: "🚫", correctBucket: "invalid", hint: "Forward slashes (/) specify paths and are forbidden inside labels." },
-                    { name: "MyPictures", icon: "✅", correctBucket: "valid", hint: "Condensed alphabetic text compiles perfectly as a folder name." }
+                modeId: 2,
+                type: "sequence",
+                title: "Game 2: Folder Creation Sequence Steps",
+                correctSequence: [
+                    "Right-click on desktop",
+                    "Hover over 'New'",
+                    "Click 'Folder'",
+                    "Type new folder name"
                 ]
             },
             {
-                stageTitle: "Stage 3: Shortcuts & File Actions",
-                instruction: "Route deletion shortcuts and restoration tasks!",
-                buckets: [
-                    { id: "permanent", label: "💥 Permanent Delete" },
-                    { id: "recycle", label: "♻️ Recycle Bin" }
+                modeId: 3,
+                type: "basket",
+                title: "Game 3: OS Naming Rule Baskets",
+                instructions: "Separate valid folder names from invalid OS characters!",
+                baskets: [
+                    { id: "valid", title: "Valid Basket", icon: "✅" },
+                    { id: "invalid", title: "Invalid Basket", icon: "🚫" }
                 ],
                 items: [
-                    { name: "Shift + Delete", icon: "💥", correctBucket: "permanent", hint: "Shift + Delete purges files immediately without entering the Recycle Bin." },
-                    { name: "Restore File Action", icon: "♻️", correctBucket: "recycle", hint: "Restoring moves deleted files back to their original folder path." },
-                    { name: "Standard Delete Key", icon: "🗑️", correctBucket: "recycle", hint: "Pressing Delete sends files safely to the Recycle Bin." }
+                    { name: "Science <Physics>", icon: "🚫", correctBasket: "invalid", hint: "Angle brackets (< >) are illegal reserved OS symbols." },
+                    { name: "Math Homework", icon: "✅", correctBasket: "valid", hint: "Standard text labels form valid folder names." },
+                    { name: "English/Poems", icon: "🚫", correctBasket: "invalid", hint: "Slashes (/) are forbidden inside folder labels." },
+                    { name: "MyPictures", icon: "✅", correctBasket: "valid", hint: "Alphabetic text forms valid folder names." }
                 ]
             }
         ];
 
-        let currentStageIndex = 0;
+        let currentModeIndex = 0;
         let currentItemIndex = 0;
         let arcadeScore = 0;
-        let totalItemsInSession = 0;
+        let userSequence = [];
         let interactionActive = false;
 
-        // Calculate total items across all stages
-        gameStages.forEach(stg => totalItemsInSession += stg.items.length);
-
-        function launchSimulator() {
+        function launchArcade() {
             soundEngine.playCorrect();
             document.getElementById("introView").classList.add("hidden");
             document.getElementById("gameViewPanel").classList.remove("hidden");
-            currentStageIndex = 0;
+            currentModeIndex = 0;
             currentItemIndex = 0;
             arcadeScore = 0;
-            loadStageAndItem();
+            loadCurrentMode();
         }
 
-        function loadStageAndItem() {
+        function loadCurrentMode() {
             interactionActive = false;
-            const stage = gameStages[currentStageIndex];
-            const item = stage.items[currentItemIndex];
-
-            document.getElementById("difficultyBadge").innerText = `Stage ${currentStageIndex + 1}`;
-            document.getElementById("stageInstruction").innerText = stage.instruction;
-            document.getElementById("scoreDisplayLabel").innerText = arcadeScore;
+            const mode = arcadeModes[currentModeIndex];
             
-            // Calculate current overall question number
-            let currentOverall = 1;
-            for(let i=0; i<currentStageIndex; i++) currentOverall += gameStages[i].items.length;
-            currentOverall += currentItemIndex;
+            document.getElementById("badgeStage").innerText = `Mode ${currentModeIndex + 1}`;
+            document.getElementById("gameTitle").innerText = mode.title;
+            document.getElementById("scoreDisplayLabel").innerText = arcadeScore;
+            document.getElementById("missionLevelTitle").innerText = `${currentModeIndex + 1} / 3`;
 
-            document.getElementById("missionLevelTitle").innerText = `${currentOverall} / ${totalItemsInSession}`;
+            const basketContainer = document.getElementById("basketModeContainer");
+            const sequenceContainer = document.getElementById("sequenceModeContainer");
 
-            document.getElementById("nodeIcon").innerText = item.icon;
-            document.getElementById("nodeName").innerText = item.name;
-
-            // Render Buckets for Current Stage
-            const tray = document.getElementById("bucketsTray");
-            tray.innerHTML = "";
-            stage.buckets.forEach(b => {
-                const btn = document.createElement("button");
-                btn.className = "bucket-btn";
-                btn.innerHTML = `<span>${b.label}</span>`;
-                btn.onclick = () => submitClassification(b.id);
-                tray.appendChild(btn);
-            });
+            if (mode.type === "basket") {
+                basketContainer.classList.remove("hidden");
+                sequenceContainer.classList.add("hidden");
+                loadBasketItem();
+            } else if (mode.type === "sequence") {
+                basketContainer.classList.add("hidden");
+                sequenceContainer.classList.remove("hidden");
+                loadSequenceGame();
+            }
         }
 
-        function submitClassification(selectedBucketId) {
+        /* Basket Mode Functions */
+        function loadBasketItem() {
+            const mode = arcadeModes[currentModeIndex];
+            const item = mode.items[currentItemIndex];
+
+            document.getElementById("basketInstructions").innerText = mode.instructions;
+            document.getElementById("itemIcon").innerText = item.icon;
+            document.getElementById("itemName").innerText = item.name;
+
+            // Render Baskets
+            const tray = document.getElementById("basketsTray");
+            tray.innerHTML = "";
+            mode.baskets.forEach(b => {
+                const box = document.createElement("div");
+                box.className = "basket-box";
+                box.innerHTML = `
+                    <div class="basket-icon">${b.icon}</div>
+                    <div class="basket-title">${b.title}</div>
+                `;
+                
+                // Click support
+                box.onclick = () => submitBasketChoice(b.id);
+                
+                // Drag & Drop event support
+                box.ondragover = (e) => { e.preventDefault(); box.classList.add("drag-over"); };
+                box.ondragleave = () => box.classList.remove("drag-over");
+                box.ondrop = (e) => {
+                    e.preventDefault();
+                    box.classList.remove("drag-over");
+                    submitBasketChoice(b.id);
+                };
+
+                tray.appendChild(box);
+            });
+
+            // Touch Drag setup for Card
+            const card = document.getElementById("dragItemCard");
+            card.ondragstart = (e) => { e.dataTransfer.setData("text", "card"); };
+        }
+
+        function submitBasketChoice(selectedBasketId) {
             if (interactionActive) return;
             interactionActive = true;
 
-            const stage = gameStages[currentStageIndex];
-            const item = stage.items[currentItemIndex];
+            const mode = arcadeModes[currentModeIndex];
+            const item = mode.items[currentItemIndex];
 
             const shroud = document.getElementById("feedbackPopupShroud");
             const pIcon = document.getElementById("popIcon");
@@ -558,20 +671,20 @@
 
             pBody.innerText = item.hint;
 
-            if (selectedBucketId === item.correctBucket) {
+            if (selectedBasketId === item.correctBasket) {
                 arcadeScore += 100;
                 document.getElementById("scoreDisplayLabel").innerText = arcadeScore;
 
                 pIcon.innerText = "⭐";
-                pTitle.innerText = "Correct Classification!";
-                pTitle.style.color = "#2ecc71";
+                pTitle.innerText = "Correct Catch!";
+                pTitle.style.color = "#10b981";
 
                 soundEngine.playCorrect();
                 if (window.confetti) confetti({ particleCount: 35, spread: 50, origin: { y: 0.7 } });
             } else {
                 pIcon.innerText = "💥";
-                pTitle.innerText = "Filing Collision!";
-                pTitle.style.color = "#ff6680";
+                pTitle.innerText = "Wrong Basket!";
+                pTitle.style.color = "#ec4899";
 
                 soundEngine.playWrong();
             }
@@ -579,43 +692,148 @@
             shroud.classList.add("active");
         }
 
+        /* Sequence Mode Functions */
+        function loadSequenceGame() {
+            userSequence = [];
+            const mode = arcadeModes[currentModeIndex];
+            
+            // Shuffle chips
+            const shuffled = [...mode.correctSequence].sort(() => Math.random() - 0.5);
+
+            const slotsContainer = document.getElementById("stepSlotsContainer");
+            const chipPool = document.getElementById("stepChipPool");
+
+            slotsContainer.innerHTML = "";
+            chipPool.innerHTML = "";
+
+            for (let i = 0; i < mode.correctSequence.length; i++) {
+                const slot = document.createElement("div");
+                slot.className = "step-slot";
+                slot.id = `stepSlot_${i}`;
+                slot.innerHTML = `<span>Step ${i + 1}:</span> <span style="font-weight:600;" id="slotText_${i}">[ Empty Slot ]</span>`;
+                slotsContainer.appendChild(slot);
+            }
+
+            shuffled.forEach((text, idx) => {
+                const chip = document.createElement("div");
+                chip.className = "step-chip";
+                chip.innerText = text;
+                chip.onclick = () => selectSequenceChip(text, chip);
+                chipPool.appendChild(chip);
+            });
+        }
+
+        function selectSequenceChip(text, chipElement) {
+            const mode = arcadeModes[currentModeIndex];
+            if (userSequence.length >= mode.correctSequence.length) return;
+
+            const slotIndex = userSequence.length;
+            userSequence.push(text);
+
+            const slot = document.getElementById(`stepSlot_${slotIndex}`);
+            const slotText = document.getElementById(`slotText_${slotIndex}`);
+
+            slot.classList.add("filled");
+            slotText.innerText = text;
+
+            chipElement.style.display = "none";
+            soundEngine.playCorrect();
+        }
+
+        function checkSequenceAnswer() {
+            if (interactionActive) return;
+            
+            const mode = arcadeModes[currentModeIndex];
+            if (userSequence.length < mode.correctSequence.length) {
+                alert("Please select all steps before verifying!");
+                return;
+            }
+
+            interactionActive = true;
+            let isCorrect = true;
+            for (let i = 0; i < mode.correctSequence.length; i++) {
+                if (userSequence[i] !== mode.correctSequence[i]) {
+                    isCorrect = false;
+                    break;
+                }
+            }
+
+            const shroud = document.getElementById("feedbackPopupShroud");
+            const pIcon = document.getElementById("popIcon");
+            const pTitle = document.getElementById("popTitle");
+            const pBody = document.getElementById("popBody");
+
+            if (isCorrect) {
+                arcadeScore += 200;
+                document.getElementById("scoreDisplayLabel").innerText = arcadeScore;
+
+                pIcon.innerText = "🏆";
+                pTitle.innerText = "Perfect Sequence!";
+                pTitle.style.color = "#10b981";
+                pBody.innerText = "Awesome job! You arranged all folder creation steps in the exact order.";
+
+                soundEngine.playCorrect();
+                if (window.confetti) confetti({ particleCount: 40, spread: 60, origin: { y: 0.7 } });
+            } else {
+                pIcon.innerText = "💥";
+                pTitle.innerText = "Sequence Error!";
+                pTitle.style.color = "#ec4899";
+                pBody.innerText = "The step order was incorrect! Remember: Right-click ➔ Hover 'New' ➔ Click 'Folder' ➔ Type Name.";
+
+                soundEngine.playWrong();
+            }
+
+            shroud.classList.add("active");
+        }
+
+        /* Modal & Progression Management */
         function dismissArcadeModal() {
             document.getElementById("feedbackPopupShroud").classList.remove("active");
 
-            currentItemIndex++;
-            const stage = gameStages[currentStageIndex];
+            const mode = arcadeModes[currentModeIndex];
 
-            if (currentItemIndex < stage.items.length) {
-                loadStageAndItem();
-            } else {
-                currentStageIndex++;
-                currentItemIndex = 0;
-                if (currentStageIndex < gameStages.length) {
-                    soundEngine.playClap();
-                    loadStageAndItem();
+            if (mode.type === "basket") {
+                currentItemIndex++;
+                if (currentItemIndex < mode.items.length) {
+                    interactionActive = false;
+                    loadBasketItem();
                 } else {
-                    renderFinalCertificate();
+                    currentModeIndex++;
+                    currentItemIndex = 0;
+                    advanceOrFinish();
                 }
+            } else {
+                currentModeIndex++;
+                currentItemIndex = 0;
+                advanceOrFinish();
             }
         }
 
-        function renderFinalCertificate() {
+        function advanceOrFinish() {
+            if (currentModeIndex < arcadeModes.length) {
+                soundEngine.playClap();
+                loadCurrentMode();
+            } else {
+                renderFinalReport();
+            }
+        }
+
+        function renderFinalReport() {
             document.getElementById("gameViewPanel").classList.add("hidden");
             document.getElementById("evaluationReportCard").classList.remove("hidden");
             soundEngine.playClap();
 
-            const maxScore = totalItemsInSession * 100;
             document.getElementById("finalPerformanceReportSummary").innerHTML = 
-                `Arcade Processing Finished! You routed all ${totalItemsInSession} wave tracks across 3 stages.<br><br><strong style="color:var(--scratch-orange); font-size:1.3rem;">Final Score: ${arcadeScore} / ${maxScore} Points</strong>`;
+                `Arcade Session Complete! You completed all 3 STEM missions.<br><br><strong style="color:var(--primary-blue); font-size:1.4rem;">Final Score: ${arcadeScore} / 1000 Points</strong>`;
         }
 
-        function restartCampaignSession() {
+        function restartArcade() {
             document.getElementById("evaluationReportCard").classList.add("hidden");
             document.getElementById("gameViewPanel").classList.remove("hidden");
-            currentStageIndex = 0;
+            currentModeIndex = 0;
             currentItemIndex = 0;
             arcadeScore = 0;
-            loadStageAndItem();
+            loadCurrentMode();
         }
     </script>
 </body>

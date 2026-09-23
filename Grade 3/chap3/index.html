@@ -177,6 +177,31 @@
             font-size: clamp(0.85rem, 2.8vw, 0.95rem);
             color: #1e3a8a;
             font-weight: 600;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .in-game-ticker {
+            font-size: 0.82rem;
+            font-weight: 800;
+            margin-top: 6px;
+            padding: 4px 8px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .in-game-ticker.correct {
+            display: block;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+        }
+
+        .in-game-ticker.wrong {
+            display: block;
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-pink);
         }
 
         .key-input-matrix {
@@ -205,6 +230,19 @@
             box-shadow: 0 0px 0px transparent;
             background: var(--word-blue);
             color: #ffffff;
+        }
+
+        .matrix-key-btn.flash-correct {
+            background: var(--accent-green) !important;
+            color: #ffffff !important;
+            border-color: var(--accent-green) !important;
+            box-shadow: 0 0 12px rgba(16, 185, 129, 0.6) !important;
+        }
+
+        .matrix-key-btn.flash-wrong {
+            background: var(--accent-pink) !important;
+            color: #ffffff !important;
+            border-color: var(--accent-pink) !important;
         }
 
         /* Right Word Document Simulator */
@@ -287,49 +325,6 @@
             box-shadow: 0 8px 25px rgba(43, 87, 154, 0.5);
         }
 
-        /* Feedback Popup Shroud */
-        .popup-modal-shroud {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(4px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 999;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.25s ease;
-            padding: 16px;
-        }
-
-        .popup-modal-shroud.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .popup-modal-card {
-            background: #ffffff;
-            border: 3px solid var(--border-blue);
-            border-radius: 26px;
-            padding: 24px;
-            width: 100%;
-            max-width: 380px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-
-        .popup-modal-card p {
-            color: #475569;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            margin: 10px 0 16px 0;
-            font-weight: 600;
-        }
-
         /* Mobile Adjustments */
         @media (max-width: 680px) {
             .split-arena {
@@ -359,7 +354,7 @@
     <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
     <audio id="audioClap" src="assets/clap.mp3" preload="auto"></audio>
 
-    <!-- 5-Second Pure White Splash Screen -->
+    <!-- 5-Second Clean White Splash Screen -->
     <div id="splashScreen">
         <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'100\' viewBox=\'0 0 280 100\'><rect width=\'280\' height=\'100\' rx=\'20\' fill=\'%232b579a\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'26\' font-weight=\'bold\' fill=\'%23ffffff\'>INNOVINE</text></svg>';">
         <p style="margin-top:16px; font-weight:700; color:#2b579a; letter-spacing:1px; font-size:0.95rem;">MS Word Shortcut Arcade...</p>
@@ -377,7 +372,7 @@
                 <ol style="margin-left:18px;">
                     <li>Read the objective manual or observe the highlighted zone on the Word layout.</li>
                     <li>Click the correct command key module on the left panel.</li>
-                    <li>Defuse all 10 target sectors to earn your High Score Certificate!</li>
+                    <li>Complete all 10 target sectors to earn your High Score Certificate!</li>
                 </ol>
             </div>
             <button class="btn-primary" onclick="launchMatrixModule()">Launch Arcade ➜</button>
@@ -397,6 +392,7 @@
                     <div class="task-descriptor">
                         <div style="color:var(--word-blue); text-transform:uppercase; font-size:0.75rem; font-weight:800; letter-spacing:0.5px; margin-bottom:4px;">Active Objective</div>
                         <div id="objectiveTextString">Loading sector data...</div>
+                        <div class="in-game-ticker" id="inGameTicker"></div>
                     </div>
                     <div class="key-input-matrix" id="keyboardGridMatrixBox"></div>
                 </div>
@@ -420,16 +416,6 @@
                         <div>Print Layout &nbsp; 100%</div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- FEEDBACK POPUP MODAL -->
-        <div class="popup-modal-shroud" id="interactiveGlobalModalShroud">
-            <div class="popup-modal-card">
-                <div id="modalIconEmblem" style="font-size:3.5rem; margin-bottom:6px;">✨</div>
-                <h2 id="modalHeaderTitle" style="font-weight:800; margin-bottom:6px;">Evaluation Feedback</h2>
-                <p id="modalBodyTextString">Filing sector parameters...</p>
-                <button class="btn-primary" style="padding:10px 24px; font-size:1rem;" onclick="dismissMatrixModal()">Next Objective ➔</button>
             </div>
         </div>
 
@@ -554,7 +540,8 @@
                 const btn = document.createElement("button");
                 btn.className = "matrix-key-btn";
                 btn.innerText = keyText;
-                btn.onclick = () => dispatchKeyValidation(keyText);
+                btn.setAttribute("data-key", keyText);
+                btn.onclick = () => dispatchKeyValidation(keyText, btn);
                 box.appendChild(btn);
             });
         }
@@ -563,6 +550,10 @@
             matrixSystemLocked = false;
             document.getElementById("scoreDisplayLabel").innerText = runningMatrixScore;
             document.getElementById("sectorDisplayLabel").innerText = `${sectorIndex + 1} / 10`;
+
+            const ticker = document.getElementById("inGameTicker");
+            ticker.className = "in-game-ticker";
+            ticker.style.display = "none";
 
             const sectorData = sectorDatabase[sectorIndex];
             document.getElementById("objectiveTextString").innerText = sectorData.objective;
@@ -593,53 +584,56 @@
             }
         }
 
-        function dispatchKeyValidation(clickedKeyName) {
+        function dispatchKeyValidation(clickedKeyName, clickedBtn) {
             if (matrixSystemLocked) return;
             matrixSystemLocked = true;
 
             const sectorData = sectorDatabase[sectorIndex];
-            const modalShroud = document.getElementById("interactiveGlobalModalShroud");
-            const mIcon = document.getElementById("modalIconEmblem");
-            const mTitle = document.getElementById("modalHeaderTitle");
-            const mBody = document.getElementById("modalBodyTextString");
+            const ticker = document.getElementById("inGameTicker");
+            const isCorrect = (clickedKeyName === sectorData.targetKey);
 
-            mBody.innerText = sectorData.hint;
-
-            if (clickedKeyName === sectorData.targetKey) {
+            if (isCorrect) {
                 runningMatrixScore += 100;
                 document.getElementById("scoreDisplayLabel").innerText = runningMatrixScore;
-                mIcon.innerText = "🔑";
-                mTitle.innerText = "Override Success!";
-                mTitle.style.color = "#10b981";
-                soundEngine.playCorrect();
                 
+                clickedBtn.classList.add("flash-correct");
+                ticker.className = "in-game-ticker correct";
+                ticker.innerText = "🎉 Correct!";
+
+                soundEngine.playCorrect();
                 if (typeof confetti !== 'undefined') {
                     confetti({ particleCount: 35, spread: 50, origin: { y: 0.6 } });
                 }
             } else {
-                mIcon.innerText = "💥";
-                mTitle.innerText = "Validation Fault!";
-                mTitle.style.color = "#ef4444";
+                clickedBtn.classList.add("flash-wrong");
+                
+                // Highlight the correct answer button in green so student learns
+                const allBtns = document.querySelectorAll(".matrix-key-btn");
+                allBtns.forEach(btn => {
+                    if (btn.getAttribute("data-key") === sectorData.targetKey) {
+                        btn.classList.add("flash-correct");
+                    }
+                });
+
+                ticker.className = "in-game-ticker wrong";
+                ticker.innerText = `💥 Wrong! Correct Answer: [${sectorData.targetKey}]`;
+
                 soundEngine.playWrong();
             }
-            
-            modalShroud.classList.add("active");
-        }
 
-        function dismissMatrixModal() {
-            document.getElementById("interactiveGlobalModalShroud").classList.remove("active");
-            matrixSystemLocked = false; 
-            
-            sectorIndex++;
-            if (sectorIndex < sectorDatabase.length) {
-                loadSectorObjective();
-            } else {
-                document.getElementById("gameViewPanel").classList.add("hidden");
-                document.getElementById("evaluationReportCard").classList.remove("hidden");
-                soundEngine.playClap();
-                document.getElementById("finalPerformanceReportSummary").innerHTML = 
-                    `Excellent System Processing!<br><br><strong style="color:var(--word-blue); font-size:1.3rem;">Final Score: ${runningMatrixScore} / 1000 Points</strong>`;
-            }
+            // Automatically move to next question after 1.5s
+            setTimeout(() => {
+                sectorIndex++;
+                if (sectorIndex < sectorDatabase.length) {
+                    loadSectorObjective();
+                } else {
+                    document.getElementById("gameViewPanel").classList.add("hidden");
+                    document.getElementById("evaluationReportCard").classList.remove("hidden");
+                    soundEngine.playClap();
+                    document.getElementById("finalPerformanceReportSummary").innerHTML = 
+                        `Excellent System Processing!<br><br><strong style="color:var(--word-blue); font-size:1.3rem;">Final Score: ${runningMatrixScore} / 1000 Points</strong>`;
+                }
+            }, 1500);
         }
 
         function restartCampaignSession() {

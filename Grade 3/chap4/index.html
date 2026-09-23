@@ -1,176 +1,563 @@
-<!DOCTYPE html><html lang="en"><head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Innovine Solutions - Word Processing Master Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Word Processing Master - Interactive Puzzle Arcade</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@700;800;900&display=swap');
+
         :root {
             --bg-canvas: #f0fdf4;
-            --word-blue: #2b579a; 
-            --comic-orange: #ea580c; 
+            --word-blue: #2b579a;
+            --word-dark-blue: #1b365d;
+            --comic-orange: #ea580c;
             --slate-dark: #1e293b;
             --success: #10b981;
             --error: #ef4444;
             --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --border-blue: #bfdbfe;
+            --shadow-light: 0 10px 25px -5px rgba(43, 87, 154, 0.15);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', system-ui, sans-serif; }
-        body { min-height: 100vh; display: flex; justify-content: center; align-items: center; background: var(--bg-canvas); padding: 15px; user-select: none; }
-        
-        /* STAGE 1: EXCLUSIVE 5-SECOND LOGO SPLASH SCREEN */
-        #splash { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; display: flex; justify-content: center; align-items: center; z-index: 9999; }
-        #splash img { width: 320px; max-width: 85%; animation: elegantPulse 2.5s infinite ease-in-out; }
-        @keyframes elegantPulse { 0%, 100% { transform: scale(1); opacity: 0.95; } 50% { transform: scale(1.04); opacity: 1; } }
 
-        /* STAGE 2: MAIN FRAMEWORK */
-        .container { width: 100%; max-width: 900px; background: #ffffff; border-radius: 20px; padding: 35px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08); position: relative; border-top: 10px solid var(--word-blue); text-align: center; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Fredoka', 'Segoe UI', system-ui, sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-canvas);
+            background-image: radial-gradient(#86efac 1.2px, transparent 1.2px);
+            background-size: 20px 20px;
+            padding: 12px;
+            overflow: hidden;
+            color: var(--slate-dark);
+        }
+
+        /* 5-Second White Splash Screen */
+        #splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        #splash img {
+            width: 280px;
+            max-width: 80vw;
+            animation: elegantPulse 2s infinite ease-in-out;
+        }
+
+        @keyframes elegantPulse {
+            0%, 100% { transform: scale(1); opacity: 0.95; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        /* Main Container Framework */
+        .container {
+            width: 100%;
+            max-width: 880px;
+            height: 94vh;
+            max-height: 780px;
+            background: #ffffff;
+            border-radius: 28px;
+            padding: clamp(16px, 4vw, 28px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            position: relative;
+            border-top: 10px solid var(--word-blue);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
         .hidden { display: none !important; }
-        .intro-panel h1 { font-size: 2.5rem; color: var(--word-blue); margin-bottom: 10px; font-weight: 800; }
-        .mode-badge { display: inline-block; padding: 6px 18px; background: #eff6ff; color: var(--word-blue); border-radius: 20px; font-weight: 700; font-size: 0.9rem; margin-bottom: 25px; text-transform: uppercase; border: 1px solid #bfdbfe; }
-        .briefing { background: #f8fafc; padding: 25px; border-radius: 14px; border-left: 6px solid var(--word-blue); text-align: left; margin-bottom: 30px; }
-        .briefing ol { margin-left: 20px; line-height: 1.8; color: #334155; font-size: 1.1rem; }
-        button.act-btn { padding: 18px 45px; background: var(--comic-orange); color: white; font-size: 1.3rem; font-weight: 700; border: none; border-radius: 12px; cursor: pointer; box-shadow: 0 6px 15px rgba(234, 88, 12, 0.3); transition: all 0.2s ease; }
-        button.act-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(234, 88, 12, 0.4); }
-        
-        .hud { display: flex; justify-content: space-between; margin-bottom: 25px; gap: 15px; }
-        .hud-card { background: var(--slate-dark); color: white; padding: 12px 25px; border-radius: 8px; font-weight: 700; font-size: 1.1rem; }
-        
-        /* WORKSPACE & LAYOUT COMPONENT STYLE */
-        .game-card { background: #f0f7ff; border: 2px dashed var(--word-blue); padding: 25px; border-radius: 12px; margin-bottom: 25px; text-align: left; }
-        .game-title { font-size: 1.4rem; font-weight: 800; color: var(--slate-dark); margin-bottom: 15px; }
-        .options-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 20px; }
-        @media (min-width: 600px) { .options-grid { grid-template-columns: 1fr 1fr; } }
-        
-        .option-btn { background: white; border: 3px solid #cbd5e1; padding: 16px; border-radius: 12px; font-weight: 700; font-size: 1.1rem; cursor: pointer; text-align: left; transition: all 0.2s ease; }
-        .option-btn:hover { border-color: var(--word-blue); background: #eff6ff; }
-        
-        /* DRAG & DROP MATCHING DESIGN */
-        .drag-container { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
-        @media (min-width: 600px) { .drag-container { flex-direction: row; } }
-        .drag-pool, .drop-zone-container { flex: 1; background: #f1f5f9; padding: 20px; border-radius: 12px; border: 1px dashed #cbd5e1; display: flex; flex-direction: column; gap: 12px; }
-        .drag-item { background: var(--word-blue); color: white; padding: 12px; border-radius: 8px; font-weight: 700; cursor: grab; text-align: center; touch-action: none; }
-        .drop-row { display: flex; align-items: center; justify-content: space-between; background: white; padding: 10px; border-radius: 8px; border: 2px solid #cbd5e1; }
-        .drop-box { width: 130px; height: 45px; background: #e2e8f0; border: 2px dashed #94a3b8; border-radius: 6px; display: flex; justify-content: center; align-items: center; font-weight: 700; color: var(--word-blue); }
-        
-        /* UNSCRAMBLE WORD DESIGN */
-        .scramble-box { font-size: 2rem; font-weight: 800; tracking-spacing: 4px; color: var(--accent-purple); background: white; padding: 15px; border-radius: 10px; border: 2px solid #cbd5e1; text-align: center; margin: 15px 0; text-transform: uppercase; letter-spacing: 5px; }
-        .word-input { width: 100%; padding: 15px; font-size: 1.2rem; font-weight: 700; border: 3px solid #cbd5e1; border-radius: 10px; text-transform: uppercase; text-align: center; margin-bottom: 15px; }
-        .word-input:focus { border-color: var(--word-blue); outline: none; }
 
-        /* LAYOUT GUESSING GRAPHICS */
-        .layout-graphic { width: 120px; height: 160px; background: white; border: 3px solid var(--slate-dark); margin: 20px auto; position: relative; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .layout-graphic.landscape { width: 160px; height: 120px; }
-        .lines-dummy { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-        .line-d { height: 6px; background: #cbd5e1; border-radius: 2px; width: 100%; }
-        
-        .ticker-feedback { margin-top: 20px; padding: 20px; border-radius: 8px; text-align: center; font-weight: 700; font-size: 1.2rem; min-height: 65px; background: #f1f5f9; border-left: 6px solid #cbd5e1; }
+        .intro-panel h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(1.8rem, 5vw, 2.6rem);
+            color: var(--word-blue);
+            margin-bottom: 6px;
+            font-weight: 900;
+        }
+
+        .mode-badge {
+            display: inline-block;
+            padding: 4px 16px;
+            background: #eff6ff;
+            color: var(--word-blue);
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            border: 1px solid var(--border-blue);
+        }
+
+        .briefing {
+            background: #f8fafc;
+            padding: 18px;
+            border-radius: 16px;
+            border-left: 5px solid var(--word-blue);
+            text-align: left;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+
+        .briefing ol {
+            margin-left: 18px;
+            line-height: 1.6;
+            color: #334155;
+        }
+
+        button.act-btn {
+            padding: 14px 36px;
+            background: var(--comic-orange);
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 800;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(234, 88, 12, 0.3);
+            transition: all 0.2s ease;
+            width: 100%;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+
+        button.act-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(234, 88, 12, 0.4);
+        }
+
+        /* Top HUD Navbar */
+        .hud {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .hud-card {
+            background: var(--slate-dark);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: clamp(0.8rem, 3vw, 0.95rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Gameplay Stage Cards */
+        .game-card {
+            background: #f0f7ff;
+            border: 2px dashed var(--word-blue);
+            padding: 16px;
+            border-radius: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .game-title {
+            font-size: clamp(1rem, 3.5vw, 1.25rem);
+            font-weight: 800;
+            color: var(--slate-dark);
+            margin-bottom: 10px;
+        }
+
+        /* LEVEL 1: VISUAL ORIENTATION CARDS */
+        .orientation-box {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        .page-card {
+            background: #ffffff;
+            border: 3px solid #cbd5e1;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+        }
+
+        .page-card:hover {
+            border-color: var(--word-blue);
+            transform: translateY(-4px);
+        }
+
+        .page-card.portrait { width: 110px; height: 150px; }
+        .page-card.landscape { width: 160px; height: 110px; }
+
+        .dummy-lines {
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .dummy-line {
+            height: 5px;
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        /* LEVEL 2: INTERACTIVE WORD SEARCH GRID */
+        .word-search-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            max-width: 320px;
+            margin: 10px auto;
+        }
+
+        .grid-cell {
+            aspect-ratio: 1 / 1;
+            background: #ffffff;
+            border: 2px solid var(--border-blue);
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--word-blue);
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .grid-cell.selected {
+            background: var(--word-blue);
+            color: #ffffff;
+            border-color: var(--word-blue);
+        }
+
+        .grid-cell.found {
+            background: var(--success);
+            color: #ffffff;
+            border-color: var(--success);
+        }
+
+        /* LEVEL 3 & 4: UNSCRAMBLE & CROSSWORD PUZZLE */
+        .scramble-display {
+            font-size: clamp(1.4rem, 5vw, 2rem);
+            font-weight: 900;
+            color: var(--accent-purple);
+            background: #ffffff;
+            padding: 10px 20px;
+            border-radius: 14px;
+            border: 2px solid var(--border-blue);
+            letter-spacing: 4px;
+            margin: 10px 0;
+        }
+
+        .puzzle-input-row {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .puzzle-slot {
+            width: 42px;
+            height: 48px;
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-align: center;
+            text-transform: uppercase;
+            border: 3px solid var(--word-blue);
+            border-radius: 10px;
+            background: #ffffff;
+            color: var(--slate-dark);
+        }
+
+        /* LEVEL 5: DRAG & DROP MATCHING */
+        .drag-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .drag-pool {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .drag-chip {
+            background: var(--word-blue);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            cursor: grab;
+            touch-action: none;
+        }
+
+        .drop-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #ffffff;
+            padding: 8px 12px;
+            border-radius: 12px;
+            border: 2px solid var(--border-blue);
+        }
+
+        .drop-box {
+            width: 110px;
+            height: 38px;
+            background: #e2e8f0;
+            border: 2px dashed #94a3b8;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 800;
+            font-size: 0.85rem;
+            color: var(--word-blue);
+        }
+
+        /* Ticker Feedback Bar */
+        .ticker-feedback {
+            margin-top: 8px;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: clamp(0.85rem, 3vw, 0.95rem);
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            border-left: 5px solid #cbd5e1;
+        }
+
         .ticker-feedback.good { background: #ecfdf5; border-left-color: var(--success); color: #065f46; }
         .ticker-feedback.bad { background: #fef2f2; border-left-color: var(--error); color: #991b1b; }
-        .rank-shell { width: 140px; height: 140px; border-radius: 50%; background: var(--word-blue); color: white; font-size: 2.5rem; font-weight: 800; display: flex; justify-content: center; align-items: center; margin: 20px auto; border: 5px solid #ffffff; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
+
+        /* Report Screen Shell */
+        .rank-shell {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: var(--word-blue);
+            color: white;
+            font-size: 2.2rem;
+            font-weight: 900;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px auto;
+            border: 4px solid #ffffff;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+        }
     </style>
 </head>
 <body>
 
+    <!-- Exclusive Audio Elements -->
+    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+
+    <!-- 5-Second Splash Screen -->
     <div id="splash">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'100\' viewBox=\'0 0 280 100\'><rect width=\'280\' height=\'100\' rx=\'20\' fill=\'%232b579a\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'26\' font-weight=\'bold\' fill=\'%23ffffff\'>INNOVINE</text></svg>';">
     </div>
 
+    <!-- Main App Container -->
     <div class="container hidden" id="appMainframe">
-        <!-- START SCREEN -->
+        
+        <!-- START MENU PANEL -->
         <div id="menuPanel" class="intro-panel">
             <h1>Word Processing Wizard</h1>
-            <div class="mode-badge">CBSE Grade 3 ICT Chapter 4</div>
+            <div class="mode-badge">5-Level Interactive Puzzle Arcade</div>
             <div class="briefing">
-                <p style="font-weight: 800; margin-bottom: 12px; color: var(--slate-dark); font-size: 1.2rem;">🎯 Your High-Score Challenge Instructions:</p>
+                <p style="font-weight:800; margin-bottom:8px; color:var(--slate-dark);">🎮 5 Interactive Mission Levels:</p>
                 <ol>
-                    <li>Master **Cut, Copy, Paste, Page Orientation**, and **Spell Check**!</li>
-                    <li>Unscramble hidden words and match complex processing shortkeys.</li>
-                    <li><strong>Reach the Target Point Goal:</strong> You must score at least <strong>800 points</strong> to unlock the final rank!</li>
+                    <li><strong>Level 1:</strong> Visual Orientation Matching</li>
+                    <li><strong>Level 2:</strong> Word Search Puzzle Grid</li>
+                    <li><strong>Level 3:</strong> Unscramble Hidden Tool Names</li>
+                    <li><strong>Level 4:</strong> Interactive Crossword Fill-in</li>
+                    <li><strong>Level 5:</strong> Drag & Drop Shortcut Keys</li>
                 </ol>
             </div>
             <button class="act-btn" onclick="startGameEngine()">Launch Mission ➜</button>
         </div>
 
-        <!-- GAMEPLAY MATRIX -->
+        <!-- GAMEPLAY PANEL -->
         <div id="gamePanel" class="hidden">
             <div class="hud">
-                <div class="hud-card">📝 Stage: <span id="countHUD">1</span> / 6</div>
-                <div class="hud-card" style="background: #eff6ff; color: var(--word-blue);">⭐ Score: <span id="scoreHUD">0</span></div>
+                <div class="hud-card">📝 Level: <span id="countHUD">1</span> / 5</div>
+                <div class="hud-card" style="background:#eff6ff; color:var(--word-blue);">⭐ Score: <span id="scoreHUD">0</span></div>
+                <div class="hud-card" style="background:#f0fdf4; color:var(--success);">Target: 800</div>
             </div>
 
-            <div id="questionContainer"></div>
+            <div id="questionContainer" style="flex-grow:1; display:flex; flex-direction:column;"></div>
 
-            <div class="ticker-feedback" id="tickerBox">Analyze and select your configuration choice.</div>
+            <div class="ticker-feedback" id="tickerBox">Solve the puzzle challenge to advance!</div>
         </div>
 
-        <!-- PERFORMANCE CARD -->
+        <!-- REPORT / CERTIFICATE PANEL -->
         <div id="reportPanel" class="hidden">
-            <h1 style="color: var(--word-blue); font-size: 2.5rem;">📊 Mission Evaluation</h1>
+            <h1 style="color:var(--word-blue); font-size:2.2rem;">📊 Mission Evaluation</h1>
             <div class="rank-shell"><span id="finalScore">0</span></div>
-            <h2 id="finalRank" style="font-weight: 800; margin-bottom: 10px; color: var(--slate-dark);">Evaluating...</h2>
-            <p id="finalSummary" style="color: #475569; margin-bottom: 30px; line-height: 1.7; font-size: 1.1rem;"></p>
+            <h2 id="finalRank" style="font-weight:800; margin-bottom:8px; color:var(--slate-dark);">Evaluating...</h2>
+            <p id="finalSummary" style="color:#475569; margin-bottom:20px; line-height:1.5; font-size:0.95rem;"></p>
             <button class="act-btn" onclick="location.reload()">Restart Mission 🔄</button>
         </div>
     </div>
 
-    <!-- AUDIO CORE SYSTEMS -->
-    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
-    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
-    
-
     <script>
-        // 5-Second Splash Screen Delay Control
+        /* Audio Synthesizer Engine */
+        class SoundEngine {
+            constructor() { this.ctx = null; }
+            init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+
+            playCorrect() {
+                const audio = document.getElementById("correctSound");
+                if (audio) audio.play().catch(() => this.synthCorrect());
+                else this.synthCorrect();
+            }
+
+            synthCorrect() {
+                this.init(); if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.25);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(now); osc.stop(now + 0.35);
+            }
+
+            playWrong() {
+                const audio = document.getElementById("wrongSound");
+                if (audio) audio.play().catch(() => this.synthWrong());
+                else this.synthWrong();
+            }
+
+            synthWrong() {
+                this.init(); if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, now);
+                osc.frequency.linearRampToValueAtTime(90, now + 0.3);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(now); osc.stop(now + 0.3);
+            }
+        }
+
+        const soundEngine = new SoundEngine();
+
+        /* Splash Screen Timeout - 5 Seconds */
         setTimeout(() => {
             document.getElementById("splash").style.display = "none";
             document.getElementById("appMainframe").classList.remove("hidden");
         }, 5000);
 
-        // Core Lesson Data Sets Mapping Pages 38-49 + New Mechanics
+        /* 5-Level Game Stages */
         const gameStages = [
             {
-                type: "mcq",
-                title: "Which sequence deletes a selection from its original spot and rewrites it in a different place?",
-                options: ["Copy and Paste", "Cut and Paste", "Undo and Redo", "Delete and Backspace"],
-                correct: "Cut and Paste"
+                level: 1,
+                type: "orientation",
+                title: "Level 1: Click the LANDSCAPE Page Orientation Card!",
+                cards: [
+                    { type: "portrait", label: "Portrait (Tall)" },
+                    { type: "landscape", label: "Landscape (Wide)" }
+                ],
+                correct: "landscape"
             },
             {
-                type: "layout",
-                title: "Identify the document page layout below. Which Orientation configuration is this?",
-                layoutClass: "landscape",
-                options: ["Portrait Layout", "Landscape Layout", "Custom Margins", "Column Formatting"],
-                correct: "Landscape Layout"
+                level: 2,
+                type: "wordsearch",
+                title: "Level 2: Find the word 'CUT' in the Letter Grid!",
+                targetWord: "CUT",
+                grid: [
+                    ['C', 'U', 'T', 'X', 'O', 'P'],
+                    ['M', 'A', 'R', 'G', 'I', 'N'],
+                    ['P', 'A', 'S', 'T', 'E', 'S'],
+                    ['F', 'I', 'N', 'D', 'K', 'L']
+                ],
+                targetCoords: ["0-0", "0-1", "0-2"]
             },
             {
+                level: 3,
                 type: "scramble",
-                title: "🔤 Unscramble the Word: Rearrange the letters to find the page edge setting!",
-                scrambled: "GIMRAN",
-                correct: "MARGIN"
+                title: "Level 3: Unscramble the Editing Command!",
+                scrambled: "P S T E A",
+                correct: "PASTE"
             },
             {
-                type: "mcq",
-                title: "While typing, you notice a single bright RED wavy line underneath a word. What type of error is it?",
-                options: ["Grammatical Error", "Spelling Error", "Margin Overflow", "Font Failure"],
-                correct: "Spelling Error"
+                level: 4,
+                type: "crossword",
+                title: "Level 4: Complete the Missing Spell Check Command!",
+                puzzleTemplate: "S_E_L_I_G",
+                missingLetters: ["P", "L", "N"],
+                correct: "SPELLING"
             },
             {
+                level: 5,
                 type: "drag",
-                title: "Catch the correct Shortcut keys! Drag the commands to match their functions.",
+                title: "Level 5: Drag & Drop Shortcut Keys to Match Functions!",
                 matches: [
-                    { label: "Cut Text", key: "Ctrl + X" },
-                    { label: "Undo Action", key: "Ctrl + Z" },
-                    { label: "Spelling Check", key: "F7" }
+                    { label: "Copy Text", key: "Ctrl + C" },
+                    { label: "Paste Text", key: "Ctrl + V" },
+                    { label: "Undo Action", key: "Ctrl + Z" }
                 ]
-            },
-            {
-                type: "scramble",
-                title: "🔤 Unscramble the Word: Rearrange the letters to find the book/tall page setting!",
-                scrambled: "TARTIROP",
-                correct: "PORTRAIT"
             }
         ];
 
-        let currentStageIndex = 0;
+        let currentLevelIndex = 0;
         let score = 0;
         let actionLocked = false;
+        let selectedGridCells = [];
 
         function startGameEngine() {
             document.getElementById("menuPanel").classList.add("hidden");
@@ -180,215 +567,295 @@
 
         function loadStageFrame() {
             actionLocked = false;
-            document.getElementById("countHUD").innerText = currentStageIndex + 1;
+            selectedGridCells = [];
+            document.getElementById("countHUD").innerText = currentLevelIndex + 1;
+            document.getElementById("scoreHUD").innerText = score;
+            
             const container = document.getElementById("questionContainer");
             container.innerHTML = "";
             
-            const stage = gameStages[currentStageIndex];
-            
-            // Build Question Header
+            const stage = gameStages[currentLevelIndex];
+            const card = document.createElement("div");
+            card.className = "game-card";
+
             const titleElem = document.createElement("div");
             titleElem.className = "game-title";
             titleElem.innerText = stage.title;
-            
-            const card = document.createElement("div");
-            card.className = "game-card";
             card.appendChild(titleElem);
 
-            // Conditional Module Render Engine
-            if (stage.type === "mcq") {
-                const grid = document.createElement("div");
-                grid.className = "options-grid";
-                stage.options.forEach(opt => {
-                    const btn = document.createElement("button");
-                    btn.className = "option-btn";
-                    btn.innerText = opt;
-                    btn.onclick = () => verifyChoice(opt, btn);
-                    grid.appendChild(btn);
+            // LEVEL 1: VISUAL ORIENTATION
+            if (stage.type === "orientation") {
+                const box = document.createElement("div");
+                box.className = "orientation-box";
+
+                stage.cards.forEach(c => {
+                    const pCard = document.createElement("div");
+                    pCard.className = `page-card ${c.type}`;
+                    pCard.innerHTML = `<div class="dummy-lines"><div class="dummy-line"></div><div class="dummy-line"></div></div><span style="font-size:0.8rem; font-weight:800; margin-top:8px;">${c.label}</span>`;
+                    pCard.onclick = () => verifyOrientation(c.type);
+                    box.appendChild(pCard);
                 });
-                card.appendChild(grid);
-            } else if (stage.type === "layout") {
-                const graphic = document.createElement("div");
-                graphic.className = `layout-graphic ${stage.layoutClass}`;
-                graphic.innerHTML = `<div class="lines-dummy"><div class="line-d"></div><div class="line-d"></div><div class="line-d" style="width:70%"></div></div>`;
-                card.appendChild(graphic);
+                card.appendChild(box);
+            }
 
-                const grid = document.createElement("div");
-                grid.className = "options-grid";
-                stage.options.forEach(opt => {
-                    const btn = document.createElement("button");
-                    btn.className = "option-btn";
-                    btn.innerText = opt;
-                    btn.onclick = () => verifyChoice(opt, btn);
-                    grid.appendChild(btn);
+            // LEVEL 2: WORD SEARCH GRID
+            else if (stage.type === "wordsearch") {
+                const gridBox = document.createElement("div");
+                gridBox.className = "word-search-grid";
+
+                stage.grid.forEach((row, rIdx) => {
+                    row.forEach((char, cIdx) => {
+                        const cell = document.createElement("div");
+                        cell.className = "grid-cell";
+                        cell.innerText = char;
+                        cell.dataset.coord = `${rIdx}-${cIdx}`;
+                        cell.onclick = () => toggleGridCell(cell, stage.targetCoords);
+                        gridBox.appendChild(cell);
+                    });
                 });
-                card.appendChild(grid);
-            } else if (stage.type === "scramble") {
-                const sBox = document.createElement("div");
-                sBox.className = "scramble-box";
-                sBox.innerText = stage.scrambled;
-                card.appendChild(sBox);
+                card.appendChild(gridBox);
+            }
 
-                const input = document.createElement("input");
-                input.type = "text";
-                input.className = "word-input";
-                input.placeholder = "Type your unscrambled word here...";
-                input.id = "scrambleInput";
-                card.appendChild(input);
+            // LEVEL 3: UNSCRAMBLE
+            else if (stage.type === "scramble") {
+                const display = document.createElement("div");
+                display.className = "scramble-display";
+                display.innerText = stage.scrambled;
+                card.appendChild(display);
 
-                const checkBtn = document.createElement("button");
-                checkBtn.className = "act-btn";
-                checkBtn.innerText = "Submit Answer ⚡";
-                checkBtn.onclick = () => evaluateScramble(input.value.trim().toUpperCase());
-                card.appendChild(checkBtn);
-            } else if (stage.type === "drag") {
-                const dBox = document.createElement("div");
-                dBox.className = "drag-container";
-                
+                const row = document.createElement("div");
+                row.className = "puzzle-input-row";
+                for (let i = 0; i < stage.correct.length; i++) {
+                    const input = document.createElement("input");
+                    input.className = "puzzle-slot";
+                    input.maxLength = 1;
+                    input.id = `scramble_${i}`;
+                    input.oninput = (e) => {
+                        if (e.target.value && i < stage.correct.length - 1) {
+                            document.getElementById(`scramble_${i+1}`).focus();
+                        }
+                    };
+                    row.appendChild(input);
+                }
+                card.appendChild(row);
+
+                const submitBtn = document.createElement("button");
+                submitBtn.className = "act-btn";
+                submitBtn.innerText = "Check Answer ➔";
+                submitBtn.onclick = () => verifyScramble(stage.correct);
+                card.appendChild(submitBtn);
+            }
+
+            // LEVEL 4: CROSSWORD
+            else if (stage.type === "crossword") {
+                const row = document.createElement("div");
+                row.className = "puzzle-input-row";
+                const template = stage.puzzleTemplate.split("");
+
+                template.forEach((char, idx) => {
+                    const input = document.createElement("input");
+                    input.className = "puzzle-slot";
+                    input.maxLength = 1;
+                    if (char !== "_") {
+                        input.value = char;
+                        input.readOnly = true;
+                        input.style.background = "#e2e8f0";
+                    }
+                    input.id = `crossword_${idx}`;
+                    row.appendChild(input);
+                });
+                card.appendChild(row);
+
+                const submitBtn = document.createElement("button");
+                submitBtn.className = "act-btn";
+                submitBtn.innerText = "Verify Word ➔";
+                submitBtn.onclick = () => verifyCrossword(stage.correct);
+                card.appendChild(submitBtn);
+            }
+
+            // LEVEL 5: DRAG & DROP
+            else if (stage.type === "drag") {
+                const dragBox = document.createElement("div");
+                dragBox.className = "drag-container";
+
                 const pool = document.createElement("div");
                 pool.className = "drag-pool";
-                pool.innerText = "Drag these down:";
-                
+
                 const zones = document.createElement("div");
-                zones.className = "drop-zone-container";
+                zones.style.display = "flex";
+                zones.style.flexDirection = "column";
+                zones.style.gap = "8px";
 
-                stage.matches.forEach(m => {
-                    const item = document.createElement("div");
-                    item.className = "drag-item";
-                    item.innerText = m.key;
-                    item.draggable = true;
-                    item.id = `drag-${m.key.replace(/\s+/g, '')}`;
-                    item.ondragstart = (e) => e.dataTransfer.setData("text", e.target.id);
-                    pool.appendChild(item);
+                stage.matches.forEach((m, idx) => {
+                    const chip = document.createElement("div");
+                    chip.className = "drag-chip";
+                    chip.innerText = m.key;
+                    chip.draggable = true;
+                    chip.id = `drag_${idx}`;
+                    chip.ondragstart = (e) => e.dataTransfer.setData("text", m.key);
+                    pool.appendChild(chip);
 
-                    const row = document.createElement("div");
-                    row.className = "drop-row";
-                    row.innerHTML = `<span>${m.label}</span>`;
-                    
+                    const dropRow = document.createElement("div");
+                    dropRow.className = "drop-row";
+                    dropRow.innerHTML = `<span>${m.label}</span>`;
+
                     const box = document.createElement("div");
                     box.className = "drop-box";
                     box.innerText = "Drop Here";
                     box.dataset.correct = m.key;
-                    
                     box.ondragover = (e) => e.preventDefault();
-                    box.ondrop = (e) => handleBoxDrop(e, box);
-                    
-                    row.appendChild(box);
-                    zones.appendChild(row);
+                    box.ondrop = (e) => {
+                        e.preventDefault();
+                        const keyVal = e.dataTransfer.getData("text");
+                        box.innerText = keyVal;
+                        box.style.background = "#eff6ff";
+                    };
+
+                    dropRow.appendChild(box);
+                    zones.appendChild(dropRow);
                 });
-                
-                dBox.appendChild(pool);
-                dBox.appendChild(zones);
-                card.appendChild(dBox);
-                
-                const checkBtn = document.createElement("button");
-                checkBtn.className = "act-btn";
-                checkBtn.style.marginTop = "20px";
-                checkBtn.innerText = "Verify Matches Match!";
-                checkBtn.onclick = () => evaluateDragStage(zones);
-                card.appendChild(checkBtn);
+
+                dragBox.appendChild(pool);
+                dragBox.appendChild(zones);
+                card.appendChild(dragBox);
+
+                const submitBtn = document.createElement("button");
+                submitBtn.className = "act-btn";
+                submitBtn.style.marginTop = "10px";
+                submitBtn.innerText = "Submit Matches ➔";
+                submitBtn.onclick = () => verifyDragMatches(zones);
+                card.appendChild(submitBtn);
             }
 
             container.appendChild(card);
         }
 
-        function verifyChoice(chosen, element) {
+        /* Verification Handlers */
+        function verifyOrientation(selectedType) {
             if (actionLocked) return;
             actionLocked = true;
-            const stage = gameStages[currentStageIndex];
-            const ticker = document.getElementById("tickerBox");
-
-            if (chosen === stage.correct) {
-                score += 200;
-                element.style.background = "#d1fae5";
-                element.style.borderColor = "var(--success)";
-                playSound("correctSound");
-                ticker.className = "ticker-feedback good";
-                ticker.innerText = "🎉 FANTASTIC! Correct Answer.";
-            } else {
-                element.style.background = "#fee2e2";
-                element.style.borderColor = "var(--error)";
-                playSound("wrongSound");
-                ticker.className = "ticker-feedback bad";
-                ticker.innerText = `💥 Oops! The correct answer was: ${stage.correct}`;
-            }
-            updateEngineState();
-        }
-
-        function evaluateScramble(userGuess) {
-            if (actionLocked) return;
-            actionLocked = true;
-            const stage = gameStages[currentStageIndex];
-            const ticker = document.getElementById("tickerBox");
-
-            if (userGuess === stage.correct) {
-                score += 200;
-                playSound("correctSound");
-                ticker.className = "ticker-feedback good";
-                ticker.innerText = `🎉 AMAZING! You successfully unscrambled: ${stage.correct}`;
-            } else {
-                playSound("wrongSound");
-                ticker.className = "ticker-feedback bad";
-                ticker.innerText = `💥 Incorrect! The hidden word was: ${stage.correct}`;
-            }
-            updateEngineState();
-        }
-
-        function handleBoxDrop(e, targetBox) {
-            e.preventDefault();
-            const id = e.dataTransfer.getData("text");
-            const elem = document.getElementById(id);
-            if(elem) {
-                targetBox.innerText = elem.innerText;
-                targetBox.style.background = "#eff6ff";
-            }
-        }
-
-        function evaluateDragStage(zonesContainer) {
-            if (actionLocked) return;
-            actionLocked = true;
-            let currentValid = true;
-            const boxes = zonesContainer.querySelectorAll('.drop-box');
+            const stage = gameStages[currentLevelIndex];
             
-            boxes.forEach(box => {
-                if (box.innerText !== box.dataset.correct) currentValid = false;
+            if (selectedType === stage.correct) {
+                score += 200;
+                soundEngine.playCorrect();
+                updateTicker(true, "🎉 Perfect! Landscape layout identified correctly.");
+            } else {
+                soundEngine.playWrong();
+                updateTicker(false, "💥 Oops! That was Portrait. Landscape is wider!");
+            }
+            advanceStage();
+        }
+
+        function toggleGridCell(cellNode, targetCoords) {
+            if (actionLocked) return;
+            const coord = cellNode.dataset.coord;
+
+            if (selectedGridCells.includes(coord)) {
+                selectedGridCells = selectedGridCells.filter(c => c !== coord);
+                cellNode.classList.remove("selected");
+            } else {
+                selectedGridCells.push(coord);
+                cellNode.classList.add("selected");
+            }
+
+            if (selectedGridCells.length === targetCoords.length) {
+                actionLocked = true;
+                const isMatch = targetCoords.every(c => selectedGridCells.includes(c));
+                if (isMatch) {
+                    score += 200;
+                    soundEngine.playCorrect();
+                    updateTicker(true, "🎉 Word Found! 'CUT' successfully highlighted!");
+                } else {
+                    soundEngine.playWrong();
+                    updateTicker(false, "💥 Incorrect cells selected! Try again next run.");
+                }
+                advanceStage();
+            }
+        }
+
+        function verifyScramble(correctWord) {
+            if (actionLocked) return;
+            actionLocked = true;
+
+            let constructed = "";
+            for (let i = 0; i < correctWord.length; i++) {
+                const val = document.getElementById(`scramble_${i}`).value.toUpperCase();
+                constructed += val;
+            }
+
+            if (constructed === correctWord) {
+                score += 200;
+                soundEngine.playCorrect();
+                updateTicker(true, `🎉 Excellent! You unscrambled: ${correctWord}`);
+            } else {
+                soundEngine.playWrong();
+                updateTicker(false, `💥 Incorrect! The correct word was: ${correctWord}`);
+            }
+            advanceStage();
+        }
+
+        function verifyCrossword(correctWord) {
+            if (actionLocked) return;
+            actionLocked = true;
+
+            let constructed = "";
+            for (let i = 0; i < correctWord.length; i++) {
+                const val = document.getElementById(`crossword_${i}`).value.toUpperCase();
+                constructed += val;
+            }
+
+            if (constructed === correctWord) {
+                score += 200;
+                soundEngine.playCorrect();
+                updateTicker(true, `🎉 Correct! Word completed: ${correctWord}`);
+            } else {
+                soundEngine.playWrong();
+                updateTicker(false, `💥 Wrong spelling! Correct word: ${correctWord}`);
+            }
+            advanceStage();
+        }
+
+        function verifyDragMatches(zonesContainer) {
+            if (actionLocked) return;
+            actionLocked = true;
+
+            let isCorrect = true;
+            const boxes = zonesContainer.querySelectorAll('.drop-box');
+            boxes.forEach(b => {
+                if (b.innerText !== b.dataset.correct) isCorrect = false;
             });
 
-            const ticker = document.getElementById("tickerBox");
-            if (currentValid) {
+            if (isCorrect) {
                 score += 200;
-                playSound("correctSound");
-                ticker.className = "ticker-feedback good";
-                ticker.innerText = "🎉 EXCELLENT! Shortcuts matched perfectly.";
+                soundEngine.playCorrect();
+                updateTicker(true, "🎉 All Shortcuts Matched Perfectly!");
             } else {
-                playSound("wrongSound");
-                ticker.className = "ticker-feedback bad";
-                ticker.innerText = "💥 Some configurations are incorrect! Review your shortcut assignments.";
+                soundEngine.playWrong();
+                updateTicker(false, "💥 Some shortcut assignments were incorrect!");
             }
-            updateEngineState();
+            advanceStage();
         }
 
-        function updateEngineState() {
+        function updateTicker(isGood, message) {
+            const ticker = document.getElementById("tickerBox");
+            ticker.className = `ticker-feedback ${isGood ? 'good' : 'bad'}`;
+            ticker.innerText = message;
             document.getElementById("scoreHUD").innerText = score;
-            currentStageIndex++;
+        }
+
+        function advanceStage() {
             setTimeout(() => {
-                if (currentStageIndex < gameStages.length) {
-                    loadStageFrame();
+                currentLevelIndex++;
+                if (currentLevelIndex < gameStages.length) {
                     const ticker = document.getElementById("tickerBox");
                     ticker.className = "ticker-feedback";
-                    ticker.innerText = "Analyze and select your configuration choice.";
+                    ticker.innerText = "Solve the puzzle challenge to advance!";
+                    loadStageFrame();
                 } else {
                     displayFinalReport();
                 }
-            }, 3000);
-        }
-
-        function playSound(id) {
-            try { 
-                const snd = document.getElementById(id);
-                snd.currentTime = 0;
-                snd.play().catch(()=>{}); 
-            } catch(e){}
+            }, 1800);
         }
 
         function displayFinalReport() {
@@ -398,23 +865,21 @@
 
             let rank = "";
             let msg = "";
-            
-            // "Reach the Point" / Target Checkpoint Verification Logic
-            if(score >= 800) {
-                playSound("clapSound"); // Play big applause sound for reaching target point
-                rank = "🥇 Target Point Cleared: Grandmaster!";
-                msg = `Fantastic! You reached the target limit with ${score} points! You understand text transformations, layout modes, page settings, and shortkeys perfectly.`;
-            } else if(score >= 400) {
-                playSound("correctSound");
-                rank = "🥈 Target Point Missed: Document Editor Pro";
-                msg = `Good try! You finished with ${score} points, but missed our 800-point master target line. Practice word configurations to reach the top level.`;
+
+            if (score >= 800) {
+                soundEngine.playCorrect();
+                if (window.confetti) confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+                rank = "🥇 Target Cleared: Word Master!";
+                msg = `Outstanding! You scored ${score} points and cleared the 800-point target goal across all 5 interactive puzzle levels!`;
             } else {
-                playSound("wrongSound");
-                rank = "🌱 Text Layout Apprentice";
-                msg = `You completed the challenges with ${score} points. Review Chapter 4 of your ICT textbook to master orientations and processing keys!`;
+                soundEngine.playWrong();
+                rank = "🌱 Apprentice Editor";
+                msg = `You completed all 5 levels with ${score} points. Practice orientation settings and editing shortcuts to hit 800 points next run!`;
             }
+
             document.getElementById("finalRank").innerText = rank;
             document.getElementById("finalSummary").innerText = msg;
         }
     </script>
-</body></html>
+</body>
+</html>

@@ -2,222 +2,254 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MS Word Master - Shortcut Matrix Defuser</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@700;800;900&display=swap');
+
         :root {
-            --word-dark-blue: #10316b;
-            --word-classic-blue: #2b579a;
-            --word-interface-gray: #f3f2f1;
-            --scratch-orange: #ffab19;
-            --scratch-green: #2ecc71;
-            --scratch-pink: #ff6680;
-            --dark-terminal: #0b0f19;
+            --word-blue: #2b579a;
+            --word-dark-blue: #1b365d;
+            --word-light-bg: #edf2f7;
+            --card-bg: #ffffff;
+            --accent-gold: #f59e0b;
+            --accent-green: #10b981;
+            --accent-pink: #ef4444;
+            --text-dark: #1e293b;
+            --border-blue: #bfdbfe;
+            --shadow-light: 0 10px 25px -5px rgba(43, 87, 154, 0.15);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Fredoka', 'Segoe UI', Tahoma, sans-serif;
             user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background: #ffffff;
+            background: var(--word-light-bg);
+            background-image: radial-gradient(#93c5fd 1.2px, transparent 1.2px);
+            background-size: 20px 20px;
             min-height: 100vh;
+            min-height: -webkit-fill-available;
+            width: 100vw;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            transition: background 0.5s ease;
+            padding: 10px;
+            color: var(--text-dark);
         }
 
-        body.game-active {
-            background: linear-gradient(135deg, #111827, var(--dark-terminal));
-        }
-
+        /* 5-Second Clean White Splash Screen */
         #splashScreen {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             background: #ffffff;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
-            transition: opacity 0.6s ease;
+            z-index: 99999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
         }
 
         #splashScreen img {
             width: 280px;
-            max-width: 80%;
+            max-width: 80vw;
             animation: pulse 2s infinite ease-in-out;
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.04); }
+            0%, 100% { transform: scale(1); opacity: 0.95; }
+            50% { transform: scale(1.05); opacity: 1; }
         }
 
+        /* App Main Shell */
         .app-window {
-            width: 95vw;
-            max-width: 1100px;
-            height: 88vh;
-            min-height: 620px;
+            width: 100%;
+            max-width: 950px;
+            height: 94vh;
+            max-height: 780px;
             z-index: 10;
-        }
-
-        .welcome-card {
-            background: rgba(255, 255, 255, 0.96);
-            border: 1px solid rgba(255,255,255,0.5);
-            border-radius: 32px;
-            padding: 42px;
-            text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-            max-width: 620px;
-            margin: 0 auto;
-        }
-
-        .welcome-card h1 span {
-            background: linear-gradient(135deg, var(--word-classic-blue), #4a90e2);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-        }
-
-        .matrix-layout {
-            display: grid;
-            grid-template-rows: auto 1fr;
-            height: 100%;
-            gap: 15px;
-        }
-
-        .top-hud {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--word-dark-blue);
-            border: 2px solid #1e4287;
-            padding: 14px 25px;
-            border-radius: 16px;
-            color: white;
-            font-weight: 700;
-        }
-
-        .split-arena {
-            display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 20px;
-            min-height: 0;
-        }
-
-        .terminal-deck {
-            background: #1e293b;
-            border: 2px solid #334155;
-            border-radius: 24px;
-            padding: 24px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            color: white;
+            position: relative;
+        }
+
+        /* Welcome Card Panel */
+        .welcome-card {
+            background: var(--card-bg);
+            border: 3px solid var(--border-blue);
+            border-radius: 28px;
+            padding: clamp(20px, 5vw, 36px);
+            text-align: center;
+            box-shadow: var(--shadow-light);
+            width: 100%;
+            margin: auto;
+        }
+
+        .welcome-card h1 span {
+            background: linear-gradient(135deg, var(--word-blue), #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 900;
+            font-size: clamp(1.8rem, 6vw, 2.5rem);
+        }
+
+        /* Main Game Matrix Layout */
+        .matrix-layout {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            gap: 10px;
+            justify-content: space-between;
+        }
+
+        /* HUD Navbar */
+        .top-hud {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            background: var(--card-bg);
+            border: 2px solid var(--border-blue);
+            padding: 10px 16px;
+            border-radius: 18px;
+            font-weight: 700;
+            font-size: clamp(0.8rem, 3vw, 1rem);
+            align-items: center;
+            text-align: center;
+            box-shadow: var(--shadow-light);
+        }
+
+        .hud-val {
+            color: var(--word-blue);
+            font-weight: 800;
+        }
+
+        .badge-stage {
+            background: #dbeafe;
+            color: var(--word-blue);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        /* Split Arena Container */
+        .split-arena {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 12px;
+            flex-grow: 1;
+            min-height: 0;
+        }
+
+        /* Left Controls Deck */
+        .terminal-deck {
+            background: var(--card-bg);
+            border: 2px solid var(--border-blue);
+            border-radius: 22px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: var(--shadow-light);
         }
 
         .task-descriptor {
-            background: #0f172a;
-            padding: 20px;
-            border-radius: 16px;
-            border-left: 5px solid var(--word-classic-blue);
-            margin-bottom: 15px;
-            min-height: 100px;
+            background: #eff6ff;
+            padding: 12px;
+            border-radius: 14px;
+            border-left: 4px solid var(--word-blue);
+            margin-bottom: 10px;
+            font-size: clamp(0.85rem, 2.8vw, 0.95rem);
+            color: #1e3a8a;
+            font-weight: 600;
         }
 
         .key-input-matrix {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
+            gap: 8px;
             margin-top: auto;
         }
 
         .matrix-key-btn {
-            background: linear-gradient(180deg, #334155, #1e293b);
-            border: 2px solid #475569;
+            background: #ffffff;
+            border: 2px solid var(--border-blue);
             border-radius: 14px;
-            padding: 18px 10px;
-            color: white;
-            font-size: 1rem;
+            padding: 12px 6px;
+            color: var(--word-blue);
+            font-size: clamp(0.8rem, 2.6vw, 0.95rem);
             font-weight: 800;
             cursor: pointer;
             text-align: center;
-            box-shadow: 0 4px 0px #0f172a;
-            transition: all 0.1s ease;
+            box-shadow: 0 4px 0px var(--border-blue);
+            transition: all 0.15s ease;
         }
 
         .matrix-key-btn:active {
-            transform: translateY(4px);
+            transform: translateY(3px);
             box-shadow: 0 0px 0px transparent;
+            background: var(--word-blue);
+            color: #ffffff;
         }
 
-        .matrix-key-btn:hover {
-            border-color: var(--word-classic-blue);
-            background: #27354a;
-        }
-
+        /* Right Word Document Simulator */
         .document-simulator-window {
-            background: var(--word-interface-gray);
-            border: 3px solid #cbd5e1;
-            border-radius: 24px;
+            background: #f8fafc;
+            border: 2px solid var(--border-blue);
+            border-radius: 22px;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            box-shadow: var(--shadow-light);
             position: relative;
         }
 
         .mock-word-header {
-            background: var(--word-classic-blue);
+            background: var(--word-blue);
             color: white;
-            padding: 12px 16px;
-            font-size: 0.85rem;
+            padding: 8px 14px;
+            font-size: 0.75rem;
             font-weight: 700;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .mock-word-quickaccess {
-            display: flex;
-            gap: 10px;
-            font-size: 1rem;
-        }
-
         .mock-document-canvas {
             flex-grow: 1;
-            background: white;
-            margin: 15px;
+            background: #ffffff;
+            margin: 10px;
             border-radius: 12px;
-            border: 1px solid #e0e0e0;
-            padding: 25px;
+            border: 1px solid #e2e8f0;
+            padding: 14px;
             display: flex;
             flex-direction: column;
-        }
-
-        .blinking-cursor-block {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #333333;
-            line-height: 1.6;
+            font-size: 0.85rem;
+            color: #334155;
+            line-height: 1.5;
+            position: relative;
         }
 
         .mock-word-status-bar {
-            background: var(--word-classic-blue);
+            background: var(--word-dark-blue);
             color: white;
-            padding: 8px 15px;
-            font-size: 0.8rem;
+            padding: 6px 12px;
+            font-size: 0.7rem;
             font-weight: 600;
             display: flex;
             justify-content: space-between;
@@ -225,8 +257,8 @@
 
         #activeHighlightPointerIndicator {
             position: absolute;
-            border: 3.5px solid var(--scratch-orange);
-            background: rgba(255, 171, 25, 0.12);
+            border: 3px solid var(--accent-gold);
+            background: rgba(245, 158, 11, 0.15);
             border-radius: 8px;
             pointer-events: none !important;
             transition: all 0.25s ease-out;
@@ -234,20 +266,44 @@
             z-index: 50;
         }
 
+        /* Buttons & Utility */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--word-blue), #3b82f6);
+            color: white;
+            border: none;
+            padding: 14px 36px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(43, 87, 154, 0.3);
+            transition: all 0.25s ease;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        .btn-primary:hover, .btn-primary:active {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(43, 87, 154, 0.5);
+        }
+
+        /* Feedback Popup Shroud */
         .popup-modal-shroud {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(11, 15, 25, 0.9);
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(4px);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 999;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.2s ease;
+            transition: opacity 0.25s ease;
+            padding: 16px;
         }
 
         .popup-modal-shroud.active {
@@ -256,45 +312,41 @@
         }
 
         .popup-modal-card {
-            background: white;
-            border-radius: 24px;
-            padding: 35px;
-            width: 440px;
-            max-width: 90%;
+            background: #ffffff;
+            border: 3px solid var(--border-blue);
+            border-radius: 26px;
+            padding: 24px;
+            width: 100%;
+            max-width: 380px;
             text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
-            transform: scale(0.85);
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
 
-        .popup-modal-shroud.active .popup-modal-card {
-            transform: scale(1);
+        .popup-modal-card p {
+            color: #475569;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            margin: 10px 0 16px 0;
+            font-weight: 600;
         }
 
-        .modal-action-btn {
-            background: var(--word-classic-blue);
-            color: white;
-            border: none;
-            padding: 12px 35px;
-            border-radius: 50px;
-            font-weight: bold;
-            font-size: 1rem;
-            margin-top: 20px;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(43,87,154,0.3);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--word-classic-blue), #4a90e2);
-            color: white;
-            border: none;
-            padding: 14px 36px;
-            border-radius: 30px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            cursor: pointer;
-            box-shadow: 0 6px 20px rgba(43,87,154,0.4);
-            transition: transform 0.2s;
+        /* Mobile Adjustments */
+        @media (max-width: 680px) {
+            .split-arena {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+            }
+            .document-simulator-window {
+                min-height: 180px;
+            }
+            .key-input-matrix {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
+            }
+            .matrix-key-btn {
+                padding: 10px 4px;
+                font-size: 0.75rem;
+            }
         }
 
         .hidden { display: none !important; }
@@ -302,104 +354,172 @@
 </head>
 <body>
 
+    <!-- Audio Elements with Synthesizer Fallback -->
     <audio id="audioCorrect" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
-       <div id="splashScreen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/280x100?text=Innovine+Universal'">
-        
+    <audio id="audioClap" src="assets/clap.mp3" preload="auto"></audio>
+
+    <!-- 5-Second Pure White Splash Screen -->
+    <div id="splashScreen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'100\' viewBox=\'0 0 280 100\'><rect width=\'280\' height=\'100\' rx=\'20\' fill=\'%232b579a\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'26\' font-weight=\'bold\' fill=\'%23ffffff\'>INNOVINE</text></svg>';">
+        <p style="margin-top:16px; font-weight:700; color:#2b579a; letter-spacing:1px; font-size:0.95rem;">MS Word Shortcut Arcade...</p>
     </div>
 
+    <!-- Main Shell Window -->
     <div class="app-window hidden" id="appInterfaceShell">
         
+        <!-- INTRO SCREEN -->
         <div id="introView" class="welcome-card">
-            <img src="assets/innovine-logo.png" alt="Logo" style="max-width:140px; margin-bottom:15px;" onerror="this.style.display='none'">
-            <h1><span>MATRIX DEFUSER</span></h1>
-            <h2 style="color: #64748b; font-size: 1.1rem; margin-bottom: 24px;">Grade 3 Chapter 3 Core Interface Arcade</h2>
-            <p style="text-align: left; line-height: 1.7; color: #475569; margin-bottom: 26px; background: #f1f5f9; padding: 20px; border-radius: 14px; font-size: 0.95rem;">
-                Look at the highlighted zone or workspace request on the right-hand MS Word layout simulator. Click the correct command module key on the left to confirm your choice!
-            </p>
-            <button class="btn-primary" onclick="launchMatrixModule()">Initialize Matrix Link</button>
+            <h1><span>MS WORD MASTER</span></h1>
+            <p style="color: #64748b; font-size: 1rem; margin: 8px 0 20px 0; font-weight: 600;">Grade 3 Chapter 3 Core Interface Arcade</p>
+            <div style="text-align: left; line-height: 1.6; color: #334155; margin-bottom: 24px; background: #eff6ff; padding: 18px; border-radius: 18px; font-size: 0.9rem; border: 2px solid var(--border-blue);">
+                <p style="font-weight:800; color:var(--word-blue); margin-bottom:6px;">🎮 How to Play:</p>
+                <ol style="margin-left:18px;">
+                    <li>Read the objective manual or observe the highlighted zone on the Word layout.</li>
+                    <li>Click the correct command key module on the left panel.</li>
+                    <li>Defuse all 10 target sectors to earn your High Score Certificate!</li>
+                </ol>
+            </div>
+            <button class="btn-primary" onclick="launchMatrixModule()">Launch Arcade ➜</button>
         </div>
 
+        <!-- MAIN GAMEPLAY SCREEN -->
         <div id="gameViewPanel" class="matrix-layout hidden">
             <div class="top-hud">
-                <div>🏆 Matrix Points: <span id="scoreDisplayLabel">0</span></div>
-                <div style="font-size:1.1rem;">🔮 Target Sector: <span id="sectorDisplayLabel">1 / 10</span></div>
-                <div style="background:#2ecc71; padding: 4px 10px; border-radius: 8px;" class="badge-level">Active Node</div>
+                <div>🎯 Score: <span id="scoreDisplayLabel" class="hud-val">0</span></div>
+                <div>⚡ Target: <span id="sectorDisplayLabel" class="hud-val">1 / 10</span></div>
+                <div><span class="badge-stage">Active Node</span></div>
             </div>
 
             <div class="split-arena">
+                <!-- Left Control Deck -->
                 <div class="terminal-deck">
                     <div class="task-descriptor">
-                        <h3 style="color:var(--scratch-orange); margin-bottom:6px; text-transform:uppercase; font-size:0.85rem; letter-spacing:1px;">Active Objective Manual</h3>
-                        <p id="objectiveTextString">Loading sector data...</p>
+                        <div style="color:var(--word-blue); text-transform:uppercase; font-size:0.75rem; font-weight:800; letter-spacing:0.5px; margin-bottom:4px;">Active Objective</div>
+                        <div id="objectiveTextString">Loading sector data...</div>
                     </div>
                     <div class="key-input-matrix" id="keyboardGridMatrixBox"></div>
                 </div>
 
+                <!-- Right Simulator Window -->
                 <div class="document-simulator-window" id="simulationContainerWindow">
                     <div id="activeHighlightPointerIndicator"></div>
                     
                     <div class="mock-word-header" id="wordHeaderTitleBar">
-                        <div class="mock-word-quickaccess" id="quickAccessCluster">💾 ↩️ ↪️</div>
-                        <div id="centralDocumentTitleText">Document1 - Microsoft Word</div>
+                        <div id="quickAccessCluster">💾 ↩️ ↪️</div>
+                        <div id="centralDocumentTitleText">Document1 - Word</div>
                         <div>❌</div>
                     </div>
 
                     <div class="mock-document-canvas" id="mockDocumentCanvasBox">
-                        <div class="blinking-cursor-block" id="pageCanvasContentBlock"></div>
+                        <div id="pageCanvasContentBlock">Loading canvas...</div>
                     </div>
 
                     <div class="mock-word-status-bar" id="wordStatusFooterBar">
                         <div id="statusLeftTally">Page 1 of 1 &nbsp;&nbsp; 0 Words</div>
-                        <div>Print Layout &nbsp; 🔍 100%</div>
+                        <div>Print Layout &nbsp; 100%</div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- FEEDBACK POPUP MODAL -->
         <div class="popup-modal-shroud" id="interactiveGlobalModalShroud">
             <div class="popup-modal-card">
-                <div id="modalIconEmblem" style="font-size:4rem; margin-bottom:12px;">✨</div>
-                <h2 id="modalHeaderTitle" style="font-weight:800; margin-bottom:10px;">Evaluation Feedback</h2>
+                <div id="modalIconEmblem" style="font-size:3.5rem; margin-bottom:6px;">✨</div>
+                <h2 id="modalHeaderTitle" style="font-weight:800; margin-bottom:6px;">Evaluation Feedback</h2>
                 <p id="modalBodyTextString">Filing sector parameters...</p>
-                <button class="modal-action-btn" onclick="dismissMatrixModal()">Next Objective Matrix</button>
+                <button class="btn-primary" style="padding:10px 24px; font-size:1rem;" onclick="dismissMatrixModal()">Next Objective ➔</button>
             </div>
         </div>
 
+        <!-- EVALUATION REPORT CARD -->
         <div id="evaluationReportCard" class="welcome-card hidden">
-            <h1 style="color:var(--scratch-green)">🏆 Word Matrix Fully Defused!</h1>
-            <p style="margin-top:15px; font-size:1.15rem;" id="finalPerformanceReportSummary"></p>
-            <div style="font-size: 4.5rem; margin: 25px 0;">🖥️⚡⌨️🔑</div>
-            <button class="btn-primary" onclick="restartCampaignSession()">Reset Matrix System</button>
+            <h1 style="color:var(--accent-green);">🏆 Word Matrix Defused!</h1>
+            <p style="margin-top:10px; font-size:1.1rem; color:#334155; line-height:1.5;" id="finalPerformanceReportSummary"></p>
+            <div style="font-size: 3.8rem; margin: 20px 0;">🖥️⚡⌨️🔑</div>
+            <button class="btn-primary" onclick="restartCampaignSession()">Reset Arcade 🔄</button>
         </div>
     </div>
 
     <script>
-        // Splash Screen trigger
+        /* Audio Engine with Synthesizer Fallback */
+        class SoundEngine {
+            constructor() { this.ctx = null; }
+            init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+
+            playCorrect() {
+                const audio = document.getElementById("audioCorrect");
+                if (audio) audio.play().catch(() => this.synthCorrect());
+                else this.synthCorrect();
+            }
+
+            synthCorrect() {
+                this.init(); if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.25);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(now); osc.stop(now + 0.35);
+            }
+
+            playWrong() {
+                const audio = document.getElementById("audioWrong");
+                if (audio) audio.play().catch(() => this.synthWrong());
+                else this.synthWrong();
+            }
+
+            synthWrong() {
+                this.init(); if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, now);
+                osc.frequency.linearRampToValueAtTime(90, now + 0.3);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(now); osc.stop(now + 0.3);
+            }
+
+            playClap() {
+                const audio = document.getElementById("audioClap");
+                if (audio) audio.play().catch(() => {});
+            }
+        }
+
+        const soundEngine = new SoundEngine();
+
+        /* Splash Screen Timing - 5 Seconds */
         setTimeout(() => {
             const splashNode = document.getElementById("splashScreen");
-            if(splashNode) {
+            if (splashNode) {
                 splashNode.style.opacity = "0";
                 setTimeout(() => {
-                    splashNode.style.setProperty("display", "none", "important");
-                    document.body.classList.add("game-active");
+                    splashNode.style.display = "none";
                     document.getElementById("appInterfaceShell").classList.remove("hidden");
-                }, 600);
+                }, 500);
             }
-        }, 3000); // Reduced to 3 seconds for faster development testing
+        }, 5000);
 
+        /* Database */
         const sectorDatabase = [
-            { objective: "Identify the very top layout bar that tracks your active file name (e.g., 'Document1') and program window tags.", targetKey: "Title Bar", highlightTarget: "wordHeaderTitleBar", hint: "Fantastic! The Title Bar commands the top boundary of MS Word.", canvasText: "[Top Area Highlighted] System waiting for identification..." },
-            { objective: "Determine the native keyboard macro required to instantiate a brand-new blank document workspace.", targetKey: "Ctrl + N", highlightTarget: "mockDocumentCanvasBox", hint: "Correct! Triggering Ctrl + N initializes a clean document thread.", canvasText: "Creating a completely fresh blank document workspace..." },
-            { objective: "Locate the fast-action tool strip holding ready commands like Save, Undo, and Redo.", targetKey: "Quick Access", highlightTarget: "quickAccessCluster", hint: "Spot on! The Quick Access Toolbar keeps utility buttons anchored on the upper edge.", canvasText: "Looking for the shortcut buttons: Save 💾, Undo ↩️, Redo ↪️" },
-            { objective: "Select the permanent command key macro required to save your project's current text data blocks to disk storage.", targetKey: "Ctrl + S", highlightTarget: "mockDocumentCanvasBox", hint: "Brilliant execution! Ctrl + S saves your binary properties safely.", canvasText: "Writing data safely to computer storage." },
-            { objective: "Identify the popup prompt view field that triggers specifically during your first save event, asking for a custom title string.", targetKey: "Save As Box", highlightTarget: "mockDocumentCanvasBox", hint: "Excellent. The 'Save As' Dialog Box captures document filename registrations.", canvasText: "💾 File Name Prompt: Type your custom filename inside the input box..." },
-            { objective: "Isolate the bottom utility bar line element that tallies active document word counts and page indexes.", targetKey: "Status Bar", highlightTarget: "wordStatusFooterBar", hint: "Perfect! The Status Bar populates the bottom floor line tracking operational metrics.", canvasText: "[Bottom Strip Highlighted] Tracking page tallies and word counts..." },
-            { objective: "Identify the default formatting extension string that MS Word appends onto written files when saving.", targetKey: ".docx tag", highlightTarget: "centralDocumentTitleText", hint: "Correct! Word files save with the distinctive '.docx' filename suffix extensions.", canvasText: "System File saved as: Homework.docx" },
-            { objective: "Select the operational command macro code button used to load pre-existing project document paths into your current view.", targetKey: "Ctrl + O", highlightTarget: "mockDocumentCanvasBox", hint: "Success! Ctrl + O commands the software engine to Open legacy workspaces.", canvasText: "📂 Browsing files... Loading an old document into the workspace." },
-            { objective: "Which command button clears written layout segments sitting directly behind/to the left of your active blinking line pointer?", targetKey: "Backspace", highlightTarget: "mockDocumentCanvasBox", hint: "Amazing. Backspace step-erases strings backwards from the active cursor coordinates.", canvasText: "Typing error letters here| ⬅ Erasing left side strings instantly." },
-            { objective: "What is the automatic placeholder document name generated by Microsoft Word the moment you boot a clean template file?", targetKey: "Document1", highlightTarget: "centralDocumentTitleText", hint: "Incredible! Document1 stands as the universal temporary title before a save override occurs.", canvasText: "Blank template launched. Current Active Title: Document1" }
+            { objective: "Identify the top bar that tracks your file name and program tags.", targetKey: "Title Bar", highlightTarget: "wordHeaderTitleBar", hint: "The Title Bar sits at the top of MS Word.", canvasText: "[Top Highlighted Area] Identifies the active file title..." },
+            { objective: "Which shortcut opens a brand-new blank document workspace?", targetKey: "Ctrl + N", highlightTarget: "mockDocumentCanvasBox", hint: "Ctrl + N creates a new document window.", canvasText: "Creating a fresh blank document workspace..." },
+            { objective: "Locate the fast-action tool cluster with Save, Undo, and Redo.", targetKey: "Quick Access", highlightTarget: "quickAccessCluster", hint: "The Quick Access Toolbar holds fast utility buttons.", canvasText: "Shortcut buttons: Save 💾, Undo ↩️, Redo ↪️" },
+            { objective: "Which command saves your text data safely to storage?", targetKey: "Ctrl + S", highlightTarget: "mockDocumentCanvasBox", hint: "Ctrl + S saves your work quickly.", canvasText: "Writing data safely to computer storage..." },
+            { objective: "Name the dialog box triggered on the first save event to name your file.", targetKey: "Save As Box", highlightTarget: "mockDocumentCanvasBox", hint: "The 'Save As' box captures your custom filename.", canvasText: "💾 Prompt: Type custom filename..." },
+            { objective: "Isolate the bottom bar tallying word count and page numbers.", targetKey: "Status Bar", highlightTarget: "wordStatusFooterBar", hint: "The Status Bar sits at the bottom floor line.", canvasText: "[Bottom Bar] Tracks page counts and word tally..." },
+            { objective: "Identify the default file extension appended onto MS Word files.", targetKey: ".docx tag", highlightTarget: "centralDocumentTitleText", hint: "Word files save with the .docx file extension.", canvasText: "Saved file format: Homework.docx" },
+            { objective: "Which shortcut loads an existing document file into view?", targetKey: "Ctrl + O", highlightTarget: "mockDocumentCanvasBox", hint: "Ctrl + O opens saved documents from disk.", canvasText: "📂 Browsing files to open an old document..." },
+            { objective: "Which key erases characters to the left of the blinking cursor?", targetKey: "Backspace", highlightTarget: "mockDocumentCanvasBox", hint: "Backspace erases text backwards to the left.", canvasText: "Typing error here| ⬅ Erases left characters." },
+            { objective: "What is the default temporary name generated when you start Word?", targetKey: "Document1", highlightTarget: "centralDocumentTitleText", hint: "Document1 is the default temporary title.", canvasText: "Clean template loaded. Default: Document1" }
         ];
 
         const primaryKeyBank = [
@@ -412,15 +532,8 @@
         let runningMatrixScore = 0;
         let matrixSystemLocked = false;
 
-        function playAudioTrack(id) {
-            try {
-                const node = document.getElementById(id);
-                if(node) { node.currentTime = 0; node.play().catch(e => console.log(e)); }
-            } catch(err) { console.log("Audio skipped:", err); }
-        }
-
         function launchMatrixModule() {
-            playAudioTrack("audioCorrect");
+            soundEngine.playCorrect();
             document.getElementById("introView").classList.add("hidden");
             document.getElementById("gameViewPanel").classList.remove("hidden");
             loadSectorObjective();
@@ -430,11 +543,9 @@
             const box = document.getElementById("keyboardGridMatrixBox");
             box.innerHTML = "";
             
-            // Re-fill pool safely ensuring the target key is always forced inside the grid
             let alternativeKeys = primaryKeyBank.filter(k => k !== correctKey);
             alternativeKeys.sort(() => Math.random() - 0.5);
             
-            // Build final display pool containing 8 random wrong keys + 1 guaranteed right key
             let finalSelection = alternativeKeys.slice(0, 8);
             finalSelection.push(correctKey);
             finalSelection.sort(() => Math.random() - 0.5);
@@ -449,7 +560,7 @@
         }
 
         function loadSectorObjective() {
-            matrixSystemLocked = false; // Reset lock at start of stage
+            matrixSystemLocked = false;
             document.getElementById("scoreDisplayLabel").innerText = runningMatrixScore;
             document.getElementById("sectorDisplayLabel").innerText = `${sectorIndex + 1} / 10`;
 
@@ -466,16 +577,16 @@
             const targetNode = document.getElementById(targetId);
             const parentWindow = document.getElementById("simulationContainerWindow");
 
-            if(targetNode && parentWindow) {
+            if (targetNode && parentWindow) {
                 setTimeout(() => {
                     indicator.style.display = "block";
                     const topPos = targetNode.getBoundingClientRect().top - parentWindow.getBoundingClientRect().top;
                     const leftPos = targetNode.getBoundingClientRect().left - parentWindow.getBoundingClientRect().left;
                     
-                    indicator.style.top = `${topPos - 4}px`;
-                    indicator.style.left = `${leftPos - 4}px`;
-                    indicator.style.width = `${targetNode.offsetWidth + 8}px`;
-                    indicator.style.height = `${targetNode.offsetHeight + 8}px`;
+                    indicator.style.top = `${topPos - 2}px`;
+                    indicator.style.left = `${leftPos - 2}px`;
+                    indicator.style.width = `${targetNode.offsetWidth + 4}px`;
+                    indicator.style.height = `${targetNode.offsetHeight + 4}px`;
                 }, 60);
             } else {
                 indicator.style.display = "none";
@@ -497,20 +608,19 @@
             if (clickedKeyName === sectorData.targetKey) {
                 runningMatrixScore += 100;
                 document.getElementById("scoreDisplayLabel").innerText = runningMatrixScore;
-                mIcon.innerText = "🔑🔒";
-                mTitle.innerText = "Sector Override Success!";
-                mTitle.style.color = "#2ecc71";
-                playAudioTrack("audioCorrect");
+                mIcon.innerText = "🔑";
+                mTitle.innerText = "Override Success!";
+                mTitle.style.color = "#10b981";
+                soundEngine.playCorrect();
                 
                 if (typeof confetti !== 'undefined') {
-                    confetti({ particleCount: 40, spread: 60, origin: { y: 0.6 } });
+                    confetti({ particleCount: 35, spread: 50, origin: { y: 0.6 } });
                 }
             } else {
-                mIcon.innerText = "⚠️💥";
-                mTitle.innerText = "Matrix Validation Fault!";
-                mTitle.style.color = "#ff6680";
-                mBody.innerText = `Incorrect sequence module injected. Correct Action: [${sectorData.targetKey}].`;
-                playAudioTrack("audioWrong");
+                mIcon.innerText = "💥";
+                mTitle.innerText = "Validation Fault!";
+                mTitle.style.color = "#ef4444";
+                soundEngine.playWrong();
             }
             
             modalShroud.classList.add("active");
@@ -518,19 +628,17 @@
 
         function dismissMatrixModal() {
             document.getElementById("interactiveGlobalModalShroud").classList.remove("active");
-            
-            // Release the game state completely right here
             matrixSystemLocked = false; 
             
             sectorIndex++;
-            if(sectorIndex < sectorDatabase.length) {
+            if (sectorIndex < sectorDatabase.length) {
                 loadSectorObjective();
             } else {
                 document.getElementById("gameViewPanel").classList.add("hidden");
                 document.getElementById("evaluationReportCard").classList.remove("hidden");
-                playAudioTrack("audioClap");
+                soundEngine.playClap();
                 document.getElementById("finalPerformanceReportSummary").innerHTML = 
-                    `Excellent System Processing! Final Score: <strong>${runningMatrixScore} / 1000 Protocol Points</strong>`;
+                    `Excellent System Processing!<br><br><strong style="color:var(--word-blue); font-size:1.3rem;">Final Score: ${runningMatrixScore} / 1000 Points</strong>`;
             }
         }
 

@@ -255,33 +255,30 @@
             font-weight: 700;
         }
 
-        /* Level 2 - SmartArt Diagram Builder */
+        /* Level 2 - SmartArt Hierarchy & Process Slots */
         .diagram-drop-zone {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
             gap: 8px;
             width: 100%;
             margin: 8px 0;
-            flex-wrap: wrap;
-            min-height: 110px;
         }
 
         .smartart-node-slot {
-            width: clamp(95px, 22vw, 125px);
-            height: clamp(75px, 16vw, 95px);
+            width: 90%;
+            max-width: 380px;
+            height: 48px;
             background: #ffffff;
             border: 3px dashed var(--word-blue);
-            border-radius: 14px;
+            border-radius: 12px;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
+            justify-content: space-between;
             align-items: center;
             font-weight: 800;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #94a3b8;
-            padding: 6px;
-            text-align: center;
+            padding: 0 16px;
             position: relative;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -309,7 +306,7 @@
             border-radius: 12px;
             font-size: 0.85rem;
             font-weight: 800;
-            cursor: grab;
+            cursor: pointer;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: transform 0.15s ease, background-color 0.2s ease;
         }
@@ -320,7 +317,7 @@
             box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
         }
 
-        /* Level 3 - ClipArt Document Canvas */
+        /* Level 3 - ClipArt Document Canvas & Copy Paste Controls */
         .doc-canvas {
             background: #ffffff;
             border: 1px solid #cbd5e1;
@@ -331,15 +328,15 @@
             line-height: 1.5;
             color: #334155;
             position: relative;
-            min-height: 160px;
+            min-height: 170px;
             margin: 8px 0;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             overflow: hidden;
         }
 
         .clipart-item-img {
-            width: 75px;
-            height: 75px;
+            width: 70px;
+            height: 70px;
             object-fit: cover;
             border-radius: 8px;
             position: absolute;
@@ -347,10 +344,37 @@
             transition: border 0.2s ease, box-shadow 0.2s ease;
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
             touch-action: none;
+            border: 2px solid transparent;
         }
 
-        .clipart-item-img:active {
-            cursor: grabbing;
+        .clipart-item-img.selected-active {
+            border-color: #f59e0b !important;
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.8) !important;
+        }
+
+        .clipboard-toolbar {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 6px 0;
+        }
+
+        .clip-btn {
+            background: #ffffff;
+            border: 2px solid var(--border-blue);
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--word-blue);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .clip-btn:hover {
+            background: #eff6ff;
         }
 
         .text-wrap-controls {
@@ -358,7 +382,7 @@
             gap: 6px;
             justify-content: center;
             flex-wrap: wrap;
-            margin-top: 6px;
+            margin-top: 4px;
         }
 
         .wrap-btn {
@@ -412,21 +436,19 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.12);
         }
 
-        /* Dynamic Visual Text Wrapping Modes */
+        /* Text Wrapping Styles */
         .wrap-inline {
             position: relative !important;
             float: none !important;
             display: inline-block !important;
             margin: 0 10px !important;
             vertical-align: middle !important;
-            z-index: 1 !important;
         }
 
         .wrap-square {
             position: relative !important;
             float: left !important;
             margin: 0 12px 8px 0 !important;
-            z-index: 1 !important;
         }
 
         .wrap-tight {
@@ -434,13 +456,11 @@
             float: right !important;
             margin: 0 0 8px 12px !important;
             border-radius: 50% !important;
-            z-index: 1 !important;
         }
 
         .wrap-infront {
             position: absolute !important;
             z-index: 99 !important;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.3) !important;
         }
     </style>
 </head>
@@ -466,9 +486,9 @@
             <div class="briefing">
                 <p style="font-weight:800; margin-bottom:6px; color:var(--slate-dark);">🎮 3 Creative Mini-Game Levels:</p>
                 <ol>
-                    <li><strong>Level 1: WordArt Decorator Studio</strong> – Type your title and apply gradients, 3D shadows, outline strokes, and text curves!</li>
-                    <li><strong>Level 2: SmartArt Diagram Builder</strong> – Arrange process and cycle nodes into diagram shape slots!</li>
-                    <li><strong>Level 3: ClipArt Picture Inserter</strong> – Pick graphics from assets (`1.jpg`, `2.jpg`), insert onto document canvas, drag, and set text wrapping!</li>
+                    <li><strong>Level 1: WordArt Decorator Studio</strong> – Style text with gradients, 3D shadows, gold strokes, and arch curves!</li>
+                    <li><strong>Level 2: SmartArt Graphical Hierarchy</strong> – Arrange situation blocks (School Roles & Computer System Blocks) in order!</li>
+                    <li><strong>Level 3: ClipArt Copy, Paste & Duplicate</strong> – Insert images, select, COPY 📋 & PASTE 📋 duplicates onto the canvas!</li>
                 </ol>
             </div>
             <button class="btn-primary" onclick="launchGameEngine()">Start Arcade ➜</button>
@@ -581,46 +601,49 @@
         ];
         let wordArtSubIndex = 0;
 
-        // Level 2: SmartArt Diagram Tasks
+        // Level 2: SmartArt Graphical Situation Hierarchy Tasks
         const smartArtDiagrams = [
             {
-                title: "SmartArt Task 1: Build Plant Growth Process (Seed ➔ Sprout ➔ Plant ➔ Flower)",
-                nodes: ["Seed 🌱", "Sprout 🌿", "Plant 🪴", "Flower 🌻"],
-                slots: ["Stage 1", "Stage 2", "Stage 3", "Stage 4"]
+                title: "SmartArt Task 1: Build School Leadership Hierarchy (Principal ➔ Teacher ➔ Monitor ➔ Student)",
+                nodes: ["Principal 👑", "Teacher 👩‍🏫", "Class Monitor 🧑‍💼", "Student 🎒"],
+                slots: ["Level 1 (Top Rank)", "Level 2 (Staff)", "Level 3 (Class Leader)", "Level 4 (Learner)"]
             },
             {
-                title: "SmartArt Task 2: Build Water Cycle Diagram (Evaporation ➔ Condensation ➔ Precipitation)",
-                nodes: ["Evaporation ☀️", "Condensation ☁️", "Precipitation 🌧️"],
-                slots: ["Step 1", "Step 2", "Step 3"]
+                title: "SmartArt Task 2: Build Computer System Processing Flow (Input ➔ CPU Processing ➔ Output)",
+                nodes: ["Keyboard / Mouse (Input) ⌨️", "CPU Unit (Processing) 🧠", "Monitor / Printer (Output) 🖥️"],
+                slots: ["Step 1 (Data Entry)", "Step 2 (Execution)", "Step 3 (Result Display)"]
             }
         ];
         let smartArtSubIndex = 0;
         let userDiagramPlacements = [];
 
-        // Level 3: ClipArt Tasks (Using Image Assets)
+        // Level 3: ClipArt Tasks (Image Assets + Copy/Paste Duplication)
         const clipArtTasks = [
             {
-                title: "ClipArt Task 1: Select ClipArt 1 (1.jpg), insert onto canvas, and select 'Tight' text wrapping!",
+                title: "ClipArt Task 1: Insert ClipArt 1 (1.jpg), click 'Copy 📋', then 'Paste 📋' to make a duplicate!",
                 options: [
                     { id: "img1", name: "ClipArt 1", src: "assets/1.jpg", fallbackSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%2310b981"/><text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="20" font-weight="bold">🌳</text></svg>` },
                     { id: "img2", name: "ClipArt 2", src: "assets/2.jpg", fallbackSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 100 100"><rect width="80" height="80" x="10" y="10" rx="10" fill="%233b82f6"/><text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="20" font-weight="bold">💻</text></svg>` }
                 ],
                 targetImgSrc: "assets/1.jpg",
-                targetWrap: "Tight"
+                requireDuplicate: true
             },
             {
-                title: "ClipArt Task 2: Select ClipArt 2 (2.jpg), insert onto canvas, and select 'Square' text wrapping!",
+                title: "ClipArt Task 2: Insert ClipArt 2 (2.jpg), select 'Tight' text wrapping, and duplicate it with Copy & Paste!",
                 options: [
                     { id: "img1", name: "ClipArt 1", src: "assets/1.jpg", fallbackSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%2310b981"/><text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="20" font-weight="bold">🌳</text></svg>` },
                     { id: "img2", name: "ClipArt 2", src: "assets/2.jpg", fallbackSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 100 100"><rect width="80" height="80" x="10" y="10" rx="10" fill="%233b82f6"/><text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="20" font-weight="bold">💻</text></svg>` }
                 ],
                 targetImgSrc: "assets/2.jpg",
-                targetWrap: "Square"
+                targetWrap: "Tight",
+                requireDuplicate: true
             }
         ];
         let clipArtSubIndex = 0;
         let activeSelectedWrap = "";
         let selectedClipArtSrc = "";
+        let copiedClipboardImgSrc = null;
+        let canvasImagesCount = 0;
 
         function launchGameEngine() {
             document.getElementById("menuPanel").classList.add("hidden");
@@ -644,7 +667,7 @@
             }
         }
 
-        /* LEVEL 1: WORDART DECORATOR STUDIO */
+        /* LEVEL 1: WORDART STUDIO */
         function renderWordArtLevel(container) {
             const task = wordArtChallenges[wordArtSubIndex];
             
@@ -805,7 +828,7 @@
             advanceLevelState();
         }
 
-        /* LEVEL 2: SMARTART DIAGRAM BUILDER */
+        /* LEVEL 2: SMARTART GRAPHICAL HIERARCHY */
         function renderSmartArtLevel(container) {
             const task = smartArtDiagrams[smartArtSubIndex];
             userDiagramPlacements = new Array(task.slots.length).fill(null);
@@ -830,16 +853,8 @@
                 const slot = document.createElement("div");
                 slot.className = "smartart-node-slot";
                 slot.id = `smartart_slot_${idx}`;
-                slot.innerHTML = `<span>${sLabel}</span><div style='font-size:0.68rem; margin-top:4px;'>[Tap Node to Place]</div>`;
+                slot.innerHTML = `<span>${sLabel}</span><span style='font-size:0.75rem;'>[Tap Node to Place]</span>`;
                 
-                // HTML5 Drag & Drop Listeners
-                slot.ondragover = (e) => e.preventDefault();
-                slot.ondrop = (e) => {
-                    e.preventDefault();
-                    const nodeText = e.dataTransfer.getData("text/plain");
-                    if (nodeText) placeNodeTextIntoSlot(idx, nodeText);
-                };
-
                 slot.onclick = () => placeSelectedNodeIntoSlot(idx);
                 dropZone.appendChild(slot);
             });
@@ -854,12 +869,6 @@
                 const chip = document.createElement("div");
                 chip.className = "palette-chip";
                 chip.innerText = nodeText;
-                chip.draggable = true;
-                
-                chip.ondragstart = (e) => {
-                    e.dataTransfer.setData("text/plain", nodeText);
-                    selectPaletteNode(chip, nodeText);
-                };
 
                 chip.onclick = () => selectPaletteNode(chip, nodeText);
                 palette.appendChild(chip);
@@ -888,25 +897,16 @@
 
         function placeSelectedNodeIntoSlot(slotIdx) {
             if (!activeSelectedNodeText) return;
-            placeNodeTextIntoSlot(slotIdx, activeSelectedNodeText);
-        }
-
-        function placeNodeTextIntoSlot(slotIdx, nodeText) {
-            userDiagramPlacements[slotIdx] = nodeText;
+            userDiagramPlacements[slotIdx] = activeSelectedNodeText;
 
             const slotNode = document.getElementById(`smartart_slot_${slotIdx}`);
             if (slotNode) {
                 slotNode.className = "smartart-node-slot filled";
-                slotNode.innerText = nodeText;
+                slotNode.innerHTML = `<span><strong>${activeSelectedNodeText}</strong></span><span style="font-size:0.75rem; color:#10b981;">✓ Placed</span>`;
             }
 
             if (activeSelectedChip) {
                 activeSelectedChip.style.display = "none";
-            } else {
-                // Find matching chip if dragged
-                document.querySelectorAll(".palette-chip").forEach(c => {
-                    if (c.innerText === nodeText) c.style.display = "none";
-                });
             }
 
             activeSelectedNodeText = null;
@@ -940,11 +940,16 @@
             advanceLevelState();
         }
 
-        /* LEVEL 3: CLIPART PICTURE INSERTER (ASSETS IMAGE INTEGRATION) */
+        /* LEVEL 3: CLIPART COPY, PASTE & DUPLICATE STUDIO */
+        let activeSelectedCanvasImg = null;
+
         function renderClipArtLevel(container) {
             const task = clipArtTasks[clipArtSubIndex];
             activeSelectedWrap = "";
             selectedClipArtSrc = "";
+            copiedClipboardImgSrc = null;
+            canvasImagesCount = 0;
+            activeSelectedCanvasImg = null;
 
             const audioBtn = document.createElement("button");
             audioBtn.className = "audio-btn";
@@ -959,17 +964,11 @@
             container.appendChild(title);
 
             // ClipArt Gallery Picker
-            const galleryLabel = document.createElement("div");
-            galleryLabel.style.fontSize = "0.78rem";
-            galleryLabel.style.fontWeight = "800";
-            galleryLabel.innerText = "Step 1: Choose ClipArt Image from Assets Gallery:";
-            container.appendChild(galleryLabel);
-
             const galleryRow = document.createElement("div");
             galleryRow.style.display = "flex";
             galleryRow.style.gap = "10px";
             galleryRow.style.justifyContent = "center";
-            galleryRow.style.margin = "6px 0";
+            galleryRow.style.margin = "4px 0";
 
             task.options.forEach(opt => {
                 const gBtn = document.createElement("button");
@@ -978,11 +977,10 @@
                 gBtn.style.alignItems = "center";
                 gBtn.style.gap = "6px";
                 
-                // Image element with dynamic SVG fallback
                 const imgThumb = document.createElement("img");
                 imgThumb.src = opt.src;
-                imgThumb.style.width = "28px";
-                imgThumb.style.height = "28px";
+                imgThumb.style.width = "26px";
+                imgThumb.style.height = "26px";
                 imgThumb.style.borderRadius = "4px";
                 imgThumb.onerror = () => { imgThumb.src = "data:image/svg+xml;utf8," + encodeURIComponent(opt.fallbackSvg); };
 
@@ -998,54 +996,59 @@
             });
             container.appendChild(galleryRow);
 
-            // Document Canvas Simulator
+            // Document Canvas
             const docCanvas = document.createElement("div");
             docCanvas.className = "doc-canvas";
             docCanvas.id = "docCanvasBoard";
             docCanvas.innerHTML = `
-                <p id="docTextPara">Microsoft Word document paragraph simulator. Inserting ClipArt illustrations helps explain story concepts visually to young readers across formatted pages.</p>
+                <p id="docTextPara">Microsoft Word document simulator. Select a graphic, insert it, then use Copy 📋 and Paste 📋 to create duplicates on the page!</p>
                 <br>
-                <p>Computer science textbooks combine formatted text and visual ClipArt graphics to make learning interactive and fun for primary grade students.</p>
-                <img id="clipArtTargetImg" class="clipart-item-img" style="display:none; top:15px; right:15px;" src="" alt="ClipArt">
+                <p>Graphics make textbook documents engaging and easy to understand for primary grade students.</p>
             `;
             container.appendChild(docCanvas);
 
-            // Inserter & Wrapping Controls
-            const ctrlBox = document.createElement("div");
-            ctrlBox.style.display = "flex";
-            ctrlBox.style.flexDirection = "column";
-            ctrlBox.style.gap = "6px";
+            // Clipboard Toolbar (Copy & Paste)
+            const clipBar = document.createElement("div");
+            clipBar.className = "clipboard-toolbar";
 
             const insertBtn = document.createElement("button");
-            insertBtn.className = "btn-primary";
-            insertBtn.style.padding = "8px 20px";
-            insertBtn.style.fontSize = "0.9rem";
-            insertBtn.innerText = `🖼️ Step 2: Insert Selected ClipArt Image`;
-            insertBtn.onclick = () => {
-                if (!selectedClipArtSrc) {
-                    alert("Please select a ClipArt image from Step 1 gallery first!");
-                    return;
+            insertBtn.className = "clip-btn";
+            insertBtn.innerHTML = "🖼️ Insert Image";
+            insertBtn.onclick = () => insertClipArtImageToCanvas(task, docCanvas);
+
+            const copyBtn = document.createElement("button");
+            copyBtn.className = "clip-btn";
+            copyBtn.innerHTML = "📋 Copy";
+            copyBtn.onclick = () => {
+                if (activeSelectedCanvasImg) {
+                    copiedClipboardImgSrc = activeSelectedCanvasImg.src;
+                    soundEngine.playCorrect();
+                    document.getElementById("tickerBox").innerText = "📋 Image copied to clipboard! Now tap 'Paste' to duplicate.";
+                } else {
+                    alert("Please select an image on the document canvas first by tapping it!");
                 }
-                const imgNode = document.getElementById("clipArtTargetImg");
-                if (imgNode) {
-                    imgNode.src = selectedClipArtSrc;
-                    imgNode.onerror = () => {
-                        const opt = task.options.find(o => o.src === selectedClipArtSrc);
-                        if (opt) imgNode.src = "data:image/svg+xml;utf8," + encodeURIComponent(opt.fallbackSvg);
-                    };
-                    imgNode.style.display = "block";
-                    makeImageDraggable(imgNode, docCanvas);
-                }
-                soundEngine.playCorrect();
             };
-            ctrlBox.appendChild(insertBtn);
 
-            const wrapLabel = document.createElement("div");
-            wrapLabel.style.fontSize = "0.78rem";
-            wrapLabel.style.fontWeight = "800";
-            wrapLabel.innerText = "Step 3: Set Text Wrapping Mode:";
-            ctrlBox.appendChild(wrapLabel);
+            const pasteBtn = document.createElement("button");
+            pasteBtn.className = "clip-btn";
+            pasteBtn.innerHTML = "📑 Paste (Duplicate)";
+            pasteBtn.onclick = () => {
+                if (copiedClipboardImgSrc) {
+                    createNewImageElementOnCanvas(copiedClipboardImgSrc, task, docCanvas, true);
+                    soundEngine.playCorrect();
+                    document.getElementById("tickerBox").className = "ticker-feedback good";
+                    document.getElementById("tickerBox").innerText = "🎉 Image duplicated successfully with Copy & Paste!";
+                } else {
+                    alert("Please tap 'Copy' on an image first!");
+                }
+            };
 
+            clipBar.appendChild(insertBtn);
+            clipBar.appendChild(copyBtn);
+            clipBar.appendChild(pasteBtn);
+            container.appendChild(clipBar);
+
+            // Text Wrapping Controls
             const wrapRow = document.createElement("div");
             wrapRow.className = "text-wrap-controls";
 
@@ -1061,44 +1064,82 @@
                 };
                 wrapRow.appendChild(wBtn);
             });
-            ctrlBox.appendChild(wrapRow);
-
-            container.appendChild(ctrlBox);
+            container.appendChild(wrapRow);
 
             const submitBtn = document.createElement("button");
             submitBtn.className = "btn-primary";
             submitBtn.style.marginTop = "6px";
-            submitBtn.innerText = "Apply ClipArt to Document ➔";
+            submitBtn.innerText = "Verify Document Layout ➔";
             submitBtn.onclick = () => evaluateClipArtTask(task);
             container.appendChild(submitBtn);
 
             speakText(task.title);
         }
 
-        function applyTextWrappingStyle(wrapType) {
-            const imgNode = document.getElementById("clipArtTargetImg");
-            const paraNode = document.getElementById("docTextPara");
-            if (!imgNode || !paraNode) return;
+        function insertClipArtImageToCanvas(task, docCanvas) {
+            if (!selectedClipArtSrc) {
+                alert("Please select a ClipArt image from the gallery first!");
+                return;
+            }
+            createNewImageElementOnCanvas(selectedClipArtSrc, task, docCanvas, false);
+            soundEngine.playCorrect();
+        }
 
+        function createNewImageElementOnCanvas(src, task, docCanvas, isDuplicate) {
+            canvasImagesCount++;
+            const imgNode = document.createElement("img");
             imgNode.className = "clipart-item-img";
+            imgNode.src = src;
+            
+            // Random offset for duplicate
+            const offset = isDuplicate ? (canvasImagesCount * 20) : 10;
+            imgNode.style.top = `${15 + offset}px`;
+            imgNode.style.left = `${15 + offset}px`;
+
+            imgNode.onerror = () => {
+                const opt = task.options.find(o => o.src === src);
+                if (opt) imgNode.src = "data:image/svg+xml;utf8," + encodeURIComponent(opt.fallbackSvg);
+            };
+
+            imgNode.onclick = (e) => {
+                e.stopPropagation();
+                document.querySelectorAll(".clipart-item-img").forEach(i => i.classList.remove("selected-active"));
+                imgNode.classList.add("selected-active");
+                activeSelectedCanvasImg = imgNode;
+            };
+
+            makeImageDraggable(imgNode, docCanvas);
+            docCanvas.appendChild(imgNode);
+
+            // Auto select new node
+            document.querySelectorAll(".clipart-item-img").forEach(i => i.classList.remove("selected-active"));
+            imgNode.classList.add("selected-active");
+            activeSelectedCanvasImg = imgNode;
+        }
+
+        function applyTextWrappingStyle(wrapType) {
+            if (!activeSelectedCanvasImg) return;
+            const paraNode = document.getElementById("docTextPara");
+            if (!paraNode) return;
+
+            activeSelectedCanvasImg.className = "clipart-item-img selected-active";
 
             if (wrapType === "In Line with Text") {
-                imgNode.classList.add("wrap-inline");
-                paraNode.insertBefore(imgNode, paraNode.firstChild);
+                activeSelectedCanvasImg.classList.add("wrap-inline");
+                paraNode.insertBefore(activeSelectedCanvasImg, paraNode.firstChild);
             } else if (wrapType === "Square") {
-                imgNode.classList.add("wrap-square");
-                paraNode.insertBefore(imgNode, paraNode.firstChild);
+                activeSelectedCanvasImg.classList.add("wrap-square");
+                paraNode.insertBefore(activeSelectedCanvasImg, paraNode.firstChild);
             } else if (wrapType === "Tight") {
-                imgNode.classList.add("wrap-tight");
-                paraNode.insertBefore(imgNode, paraNode.firstChild);
+                activeSelectedCanvasImg.classList.add("wrap-tight");
+                paraNode.insertBefore(activeSelectedCanvasImg, paraNode.firstChild);
             } else if (wrapType === "In Front of Text") {
-                imgNode.classList.add("wrap-infront");
+                activeSelectedCanvasImg.classList.add("wrap-infront");
             }
         }
 
         function makeImageDraggable(elmnt, container) {
             let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
-            
             elmnt.onmousedown = dragMouseDown;
             elmnt.ontouchstart = dragTouchStart;
 
@@ -1153,24 +1194,22 @@
             if (actionLocked) return;
             actionLocked = true;
 
-            const clipartNode = document.getElementById("clipArtTargetImg");
-            const isInserted = clipartNode && clipartNode.style.display === "block";
-            const isImageCorrect = (selectedClipArtSrc === task.targetImgSrc);
-            const isWrapCorrect = (activeSelectedWrap === task.targetWrap);
+            const hasDuplicate = canvasImagesCount >= 2;
+            const isWrapCorrect = task.targetWrap ? (activeSelectedWrap === task.targetWrap) : true;
 
             const ticker = document.getElementById("tickerBox");
 
-            if (isInserted && isImageCorrect && isWrapCorrect) {
+            if (hasDuplicate && isWrapCorrect) {
                 score += 300;
                 soundEngine.playCorrect();
                 ticker.className = "ticker-feedback good";
-                ticker.innerText = "🎉 GREAT JOB! Correct ClipArt image inserted and wrapped properly!";
-                speakText("ClipArt image inserted and wrapped properly!");
+                ticker.innerText = "🎉 GREAT JOB! ClipArt image duplicated with Copy/Paste and formatted!";
+                speakText("ClipArt image duplicated and formatted properly!");
             } else {
                 soundEngine.playWrong();
                 ticker.className = "ticker-feedback bad";
-                ticker.innerText = "💥 Insertion error! Select the right ClipArt image and requested Text Wrapping.";
-                speakText("Select requested ClipArt image and Text Wrapping.");
+                ticker.innerText = "💥 Task incomplete! Select image, tap 'Copy', then 'Paste' to duplicate.";
+                speakText("Use Copy and Paste to duplicate the image.");
             }
 
             advanceLevelState();
@@ -1185,7 +1224,7 @@
                     } else {
                         currentLevel = 2;
                         document.getElementById("tickerBox").className = "ticker-feedback";
-                        document.getElementById("tickerBox").innerText = "Starting Level 2: SmartArt Diagram Builder!";
+                        document.getElementById("tickerBox").innerText = "Starting Level 2: SmartArt Graphical Hierarchy!";
                         loadCurrentLevel();
                     }
                 } else if (currentLevel === 2) {
@@ -1195,7 +1234,7 @@
                     } else {
                         currentLevel = 3;
                         document.getElementById("tickerBox").className = "ticker-feedback";
-                        document.getElementById("tickerBox").innerText = "Starting Level 3: ClipArt Picture Inserter!";
+                        document.getElementById("tickerBox").innerText = "Starting Level 3: ClipArt Copy, Paste & Duplicate!";
                         loadCurrentLevel();
                     }
                 } else if (currentLevel === 3) {
@@ -1221,11 +1260,11 @@
                 soundEngine.playCorrect();
                 if (window.confetti) confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
                 rank = "🥇 MS Word Graphics Wizard!";
-                msg = `Outstanding performance! You scored ${score} points and cleared the target across WordArt, SmartArt, and ClipArt!`;
+                msg = `Outstanding performance! You scored ${score} points and mastered WordArt, SmartArt hierarchy, and ClipArt Copy-Paste duplication!`;
             } else {
                 soundEngine.playWrong();
                 rank = "🌱 Document Layout Apprentice";
-                msg = `You finished with ${score} points. Review WordArt transforms and SmartArt sequences to hit top rank next run!`;
+                msg = `You finished with ${score} points. Review SmartArt hierarchy and Copy-Paste duplication to hit top rank next run!`;
             }
 
             document.getElementById("finalRank").innerText = rank;

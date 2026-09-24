@@ -197,7 +197,7 @@
             background: #ffffff;
             border: 3px dashed var(--comic-blue);
             border-radius: 14px;
-            min-height: 140px;
+            min-height: 145px;
             padding: 6px;
             display: flex;
             flex-direction: column;
@@ -245,7 +245,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            min-height: 140px;
+            min-height: 145px;
         }
 
         .comic-card-chip.selected {
@@ -256,7 +256,7 @@
 
         .panel-picture-box {
             width: 100%;
-            height: 70px;
+            height: 72px;
             border-radius: 8px;
             background: #f8fafc;
             border: 1px solid #cbd5e1;
@@ -267,10 +267,10 @@
             margin-bottom: 4px;
         }
 
-        .panel-picture-box img {
+        .panel-picture-box svg {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            display: block;
         }
 
         .panel-caption {
@@ -355,7 +355,7 @@
             <div class="briefing">
                 <p style="font-weight:800; margin-bottom:8px; color:var(--slate-dark);">📖 Visual Story Objective:</p>
                 <p>Read the pictures and captions! The comic panels of moral stories are jumbled up.</p>
-                <p style="margin-top:6px;">Tap a picture card, then tap a target panel slot to arrange the full story in order. If you make 2 mistakes, the system will reveal the correct story sequence before moving to the next level!</p>
+                <p style="margin-top:6px;">Tap a picture card, then tap a target panel slot to arrange the full story in order. If you make 2 mistakes, the system will show the correct sequence before moving to the next story!</p>
             </div>
             
             <button class="btn-primary" onclick="launchGameEngine()">Start Level 1 ➜</button>
@@ -463,40 +463,40 @@
             document.getElementById("appMainframe").classList.remove("hidden");
         }, 5000);
 
-        // Story Dataset with Real Photography Assets & Fallbacks
+        // Story Dataset with Guaranteed Reliable Vector Graphics Rendering
         const storiesDeck = [
             {
                 level: 1,
                 title: "Story 1: Leo the Lion & Pip the Mouse",
                 moral: "True strength is shown through kindness, helping others, and working together!",
                 panels: [
-                    { id: 1, caption: "1. Leo the lion thought he was the strongest animal in the jungle.", imgSrc: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23fef3c7"/><text x="50" y="38" font-size="22" text-anchor="middle">🦁💪</text></svg>` },
-                    { id: 2, caption: "2. He loved showing off his loud roar to scare small animals.", imgSrc: "https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23fef3c7"/><text x="50" y="38" font-size="22" text-anchor="middle">🦁🗣️</text></svg>` },
-                    { id: 3, caption: "3. One day, a tiny mouse named Pip accidentally bumped into Leo.", imgSrc: "https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23e0f2fe"/><text x="50" y="38" font-size="22" text-anchor="middle">🦁💥🐭</text></svg>` },
-                    { id: 4, caption: "4. Leo roared angrily, 'I am big and strong, you are weak!'", imgSrc: "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23fee2e2"/><text x="50" y="38" font-size="22" text-anchor="middle">😠🦁🐭</text></svg>` },
-                    { id: 5, caption: "5. Later, Leo walked into a hunter's heavy rope net trap.", imgSrc: "https://images.unsplash.com/photo-1574063413132-355dbfd83e08?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23f1f5f9"/><text x="50" y="38" font-size="22" text-anchor="middle">🦁🕸️</text></svg>` },
-                    { id: 6, caption: "6. Leo cried for help, but no big animals came to save him.", imgSrc: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23e2e8f0"/><text x="50" y="38" font-size="22" text-anchor="middle">😿🕸️</text></svg>` },
-                    { id: 7, caption: "7. Little Pip the mouse saw Leo trapped and ran over quickly.", imgSrc: "https://images.unsplash.com/photo-1503777119540-ce54b422baff?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23ecfdf5"/><text x="50" y="38" font-size="22" text-anchor="middle">🏃🐭🦁</text></svg>` },
-                    { id: 8, caption: "8. Pip used his sharp tiny teeth to chew through the ropes.", imgSrc: "https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23fef3c7"/><text x="50" y="38" font-size="22" text-anchor="middle">🐭✂️🕸️</text></svg>` },
-                    { id: 9, caption: "9. The net broke open, and Leo was freed safely from trap!", imgSrc: "https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23dcfce7"/><text x="50" y="38" font-size="22" text-anchor="middle">🦁🎉🐭</text></svg>` },
-                    { id: 10, caption: "10. Leo thanked Pip humbly, learning kindness matters most.", imgSrc: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23fce7f3"/><text x="50" y="38" font-size="22" text-anchor="middle">🦁❤️🐭</text></svg>` }
+                    { id: 1, caption: "1. Leo the lion thought he was the strongest animal in the jungle.", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fef3c7"/><text x="50" y="38" font-size="22" text-anchor="middle">🦁💪</text></svg>` },
+                    { id: 2, caption: "2. He loved showing off his loud roar to scare small animals.", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fef3c7"/><text x="50" y="38" font-size="22" text-anchor="middle">🦁🗣️💨</text></svg>` },
+                    { id: 3, caption: "3. One day, a tiny mouse named Pip accidentally bumped into Leo.", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#e0f2fe"/><text x="50" y="38" font-size="22" text-anchor="middle">🦁💥🐭</text></svg>` },
+                    { id: 4, caption: "4. Leo roared angrily, 'I am big and strong, you are weak!'", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fee2e2"/><text x="50" y="38" font-size="22" text-anchor="middle">😠🦁🐭</text></svg>` },
+                    { id: 5, caption: "5. Later, Leo walked into a hunter's heavy rope net trap.", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#f1f5f9"/><text x="50" y="38" font-size="22" text-anchor="middle">🦁🕸️</text></svg>` },
+                    { id: 6, caption: "6. Leo cried for help, but no big animals came to save him.", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#e2e8f0"/><text x="50" y="38" font-size="22" text-anchor="middle">😿🕸️❓</text></svg>` },
+                    { id: 7, caption: "7. Little Pip the mouse saw Leo trapped and ran over quickly.", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#ecfdf5"/><text x="50" y="38" font-size="22" text-anchor="middle">🏃🐭🦁</text></svg>` },
+                    { id: 8, caption: "8. Pip used his sharp tiny teeth to chew through the ropes.", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fef3c7"/><text x="50" y="38" font-size="22" text-anchor="middle">🐭✂️🕸️</text></svg>` },
+                    { id: 9, caption: "9. The net broke open, and Leo was freed safely from the trap!", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#dcfce7"/><text x="50" y="38" font-size="22" text-anchor="middle">🦁🎉🐭</text></svg>` },
+                    { id: 10, caption: "10. Leo thanked Pip humbly, learning kindness matters most.", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fce7f3"/><text x="50" y="38" font-size="22" text-anchor="middle">🦁❤️🐭</text></svg>` }
                 ]
             },
             {
                 level: 2,
                 title: "Story 2: Gajraj the Elephant & The Ants",
-                moral: "Never underestimate anyone based on their size. Unity and teamwork conquer big problems!",
+                moral: "Never underestimate anyone based on size. Unity and teamwork conquer big problems!",
                 panels: [
-                    { id: 1, caption: "1. Gajraj the huge elephant felt proud of his massive strength.", imgSrc: "https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23e0f2fe"/><text x="50" y="38" font-size="22" text-anchor="middle">🐘👑</text></svg>` },
-                    { id: 2, caption: "2. He sprayed water playfully, ignoring tiny ant nests nearby.", imgSrc: "https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23e0f2fe"/><text x="50" y="38" font-size="22" text-anchor="middle">🐘💦🐜</text></svg>` },
-                    { id: 3, caption: "3. The ant queen politely asked Gajraj to be mindful of others.", imgSrc: "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23fef3c7"/><text x="50" y="38" font-size="22" text-anchor="middle">👑🐜🐘</text></svg>` },
-                    { id: 4, caption: "4. Gajraj laughed loudly and ignored the small ant's warning.", imgSrc: "https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23fee2e2"/><text x="50" y="38" font-size="22" text-anchor="middle">🐘😂🐜</text></svg>` },
-                    { id: 5, caption: "5. One afternoon, a giant mud boulder blocked Gajraj's path.", imgSrc: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23f1f5f9"/><text x="50" y="38" font-size="22" text-anchor="middle">🐘🪨</text></svg>` },
-                    { id: 6, caption: "6. Gajraj tried pushing alone, but the boulder would not budge.", imgSrc: "https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23e2e8f0"/><text x="50" y="38" font-size="22" text-anchor="middle">🐘💦🪨</text></svg>` },
-                    { id: 7, caption: "7. Hundreds of ants marched together to dig under the boulder.", imgSrc: "https://images.unsplash.com/photo-1581093458791-9f3c3900df4b?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23ecfdf5"/><text x="50" y="38" font-size="22" text-anchor="middle">🐜🐜🪨</text></svg>` },
-                    { id: 8, caption: "8. Together, the ants loosened the soil underneath the rock.", imgSrc: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23fef3c7"/><text x="50" y="38" font-size="22" text-anchor="middle">🪨⚡🐜</text></svg>` },
-                    { id: 9, caption: "9. The heavy boulder rolled away easily, freeing the path!", imgSrc: "https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23dcfce7"/><text x="50" y="38" font-size="22" text-anchor="middle">🐘🎉🐜</text></svg>` },
-                    { id: 10, caption: "10. Gajraj bowed to the ants, learning that unity is strength.", imgSrc: "https://images.unsplash.com/photo-1564760055775-d63b17a55c44?w=300", fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23fce7f3"/><text x="50" y="38" font-size="22" text-anchor="middle">🐘🤝🐜</text></svg>` }
+                    { id: 1, caption: "1. Gajraj the huge elephant felt proud of his massive strength.", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#e0f2fe"/><text x="50" y="38" font-size="22" text-anchor="middle">🐘👑</text></svg>` },
+                    { id: 2, caption: "2. He sprayed water playfully, ignoring tiny ant nests nearby.", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#e0f2fe"/><text x="50" y="38" font-size="22" text-anchor="middle">🐘💦🐜</text></svg>` },
+                    { id: 3, caption: "3. The ant queen politely asked Gajraj to be mindful of others.", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fef3c7"/><text x="50" y="38" font-size="22" text-anchor="middle">👑🐜🐘</text></svg>` },
+                    { id: 4, caption: "4. Gajraj laughed loudly and ignored the small ant's warning.", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fee2e2"/><text x="50" y="38" font-size="22" text-anchor="middle">🐘😂🐜</text></svg>` },
+                    { id: 5, caption: "5. One afternoon, a giant mud boulder blocked Gajraj's path.", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#f1f5f9"/><text x="50" y="38" font-size="22" text-anchor="middle">🐘🪨</text></svg>` },
+                    { id: 6, caption: "6. Gajraj tried pushing alone, but the boulder would not budge.", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#e2e8f0"/><text x="50" y="38" font-size="22" text-anchor="middle">🐘💦🪨</text></svg>` },
+                    { id: 7, caption: "7. Hundreds of ants marched together to dig under the boulder.", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#ecfdf5"/><text x="50" y="38" font-size="22" text-anchor="middle">🐜🐜🪨</text></svg>` },
+                    { id: 8, caption: "8. Together, the ants loosened the soil underneath the rock.", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fef3c7"/><text x="50" y="38" font-size="22" text-anchor="middle">🪨⚡🐜</text></svg>` },
+                    { id: 9, caption: "9. The heavy boulder rolled away easily, freeing the path!", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#dcfce7"/><text x="50" y="38" font-size="22" text-anchor="middle">🐘🎉🐜</text></svg>` },
+                    { id: 10, caption: "10. Gajraj bowed to the ants, learning that unity is strength.", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fce7f3"/><text x="50" y="38" font-size="22" text-anchor="middle">🐘🤝🐜</text></svg>` }
                 ]
             }
         ];
@@ -566,24 +566,10 @@
                 card.className = "comic-card-chip";
                 card.id = `card_chip_${panelObj.id}`;
                 
-                const imgNode = document.createElement("img");
-                imgNode.src = panelObj.imgSrc;
-                imgNode.alt = "Panel Image";
-                imgNode.onerror = () => {
-                    const pBox = card.querySelector(".panel-picture-box");
-                    if (pBox) pBox.innerHTML = panelObj.fallbackSvg;
-                };
-
-                const pBox = document.createElement("div");
-                pBox.className = "panel-picture-box";
-                pBox.appendChild(imgNode);
-
-                const caption = document.createElement("div");
-                caption.className = "panel-caption";
-                caption.innerText = panelObj.caption;
-
-                card.appendChild(pBox);
-                card.appendChild(caption);
+                card.innerHTML = `
+                    <div class="panel-picture-box">${panelObj.graphic}</div>
+                    <div class="panel-caption">${panelObj.caption}</div>
+                `;
 
                 card.onclick = () => selectCardChip(card, panelObj);
                 poolContainer.appendChild(card);
@@ -605,23 +591,11 @@
             const slotNode = document.getElementById(`slot_target_${slotIdx}`);
             slotNode.className = "comic-slot filled";
             
-            const pBox = document.createElement("div");
-            pBox.className = "panel-picture-box";
-            
-            const imgNode = document.createElement("img");
-            imgNode.src = activeSelectedCard.data.imgSrc;
-            imgNode.onerror = () => { pBox.innerHTML = activeSelectedCard.data.fallbackSvg; };
-            pBox.appendChild(imgNode);
-
             slotNode.innerHTML = `
                 <div class="comic-slot-header">Panel ${slotIdx + 1}</div>
+                <div class="panel-picture-box">${activeSelectedCard.data.graphic}</div>
+                <div class="panel-caption">${activeSelectedCard.data.caption}</div>
             `;
-            slotNode.appendChild(pBox);
-
-            const caption = document.createElement("div");
-            caption.className = "panel-caption";
-            caption.innerText = activeSelectedCard.data.caption;
-            slotNode.appendChild(caption);
 
             activeSelectedCard.node.style.display = "none";
             activeSelectedCard = null;
@@ -703,27 +677,12 @@
                 const rCard = document.createElement("div");
                 rCard.className = "reader-panel-card";
 
-                const pBox = document.createElement("div");
-                pBox.className = "panel-picture-box";
-                pBox.style.height = "85px";
-                pBox.style.marginBottom = "8px";
+                rCard.innerHTML = `
+                    <div class="comic-slot-header" style="margin-bottom:6px;">Panel ${panel.id}</div>
+                    <div class="panel-picture-box" style="height:85px; margin-bottom:8px;">${panel.graphic}</div>
+                    <div style="font-size:0.8rem; font-weight:700; color:#1e293b; line-height:1.35;">${panel.caption}</div>
+                `;
 
-                const imgNode = document.createElement("img");
-                imgNode.src = panel.imgSrc;
-                imgNode.onerror = () => { pBox.innerHTML = panel.fallbackSvg; };
-                pBox.appendChild(imgNode);
-
-                rCard.innerHTML = `<div class="comic-slot-header" style="margin-bottom:6px;">Panel ${panel.id}</div>`;
-                rCard.appendChild(pBox);
-
-                const caption = document.createElement("div");
-                caption.style.fontSize = "0.8rem";
-                caption.style.fontWeight = "700";
-                caption.style.color = "#1e293b";
-                caption.style.lineHeight = "1.35";
-                caption.innerText = panel.caption;
-
-                rCard.appendChild(caption);
                 readerContainer.appendChild(rCard);
             });
 

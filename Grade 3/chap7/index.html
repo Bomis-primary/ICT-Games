@@ -2,186 +2,699 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comic Strip Creator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Picture Comic Sequence - The Kind Little Lion</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
         :root {
+            --bg-canvas: #fffbeb;
+            --comic-yellow: #fef08a;
+            --comic-orange: #f97316;
             --comic-blue: #0284c7;
-            --comic-yellow: #facc15;
-            --dark: #0f172a;
+            --comic-purple: #7c3aed;
+            --slate-dark: #1e293b;
+            --success: #10b981;
+            --error: #ef4444;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Comic Sans MS', sans-serif;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Fredoka', 'Segoe UI', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background: #f1f5f9;
-            padding: 15px;
-            text-align: center;
-        }
-
-        h1 { color: var(--comic-blue); margin-bottom: 5px; }
-        p { margin-bottom: 15px; color: #475569; }
-
-        .comic-strip-board {
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
             display: flex;
             justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
+            align-items: center;
+            background: var(--bg-canvas);
+            background-image: radial-gradient(#fde047 1.2px, transparent 1.2px);
+            background-size: 20px 20px;
+            padding: 10px;
+            color: var(--slate-dark);
         }
 
-        .panel {
-            width: 220px;
-            height: 240px;
-            background: white;
-            border: 4px solid var(--dark);
-            border-radius: 12px;
-            padding: 10px;
+        /* 5-SECOND LOGO SPLASH SCREEN */
+        #splashScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            transition: opacity 0.5s ease;
+        }
+
+        #splashScreen img {
+            width: 280px;
+            max-width: 80vw;
+            animation: bounce 1.5s infinite alternate ease-in-out;
+        }
+
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-15px); }
+        }
+
+        /* APP SHELL CONTAINER */
+        .container {
+            width: 100%;
+            max-width: 980px;
+            min-height: 92vh;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: clamp(12px, 3vw, 24px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            border: 6px solid var(--comic-orange);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            position: relative;
-            box-shadow: 4px 4px 0px var(--dark);
         }
 
-        .panel-header {
-            font-weight: bold;
+        .hidden { display: none !important; }
+
+        h1 {
+            font-size: clamp(1.6rem, 4.5vw, 2.3rem);
+            color: var(--comic-purple);
+            margin-bottom: 6px;
+        }
+
+        .mode-badge {
+            display: inline-block;
+            padding: 4px 16px;
+            background: #fef3c7;
+            color: var(--comic-orange);
+            border-radius: 20px;
+            font-weight: 800;
             font-size: 0.85rem;
-            background: var(--comic-yellow);
-            padding: 2px 6px;
-            border-radius: 4px;
-            align-self: flex-start;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            border: 1px solid #fde047;
         }
 
-        .panel-stage {
-            font-size: 3.5rem;
-            margin: 10px 0;
+        .briefing {
+            background: #f0f9ff;
+            padding: 16px;
+            border-radius: 16px;
+            border-left: 6px solid var(--comic-blue);
+            text-align: left;
+            margin-bottom: 16px;
+            font-size: 0.95rem;
+            line-height: 1.6;
         }
 
-        .dialogue-bubble {
-            background: #e0f2fe;
-            border: 2px solid var(--comic-blue);
-            border-radius: 10px;
-            padding: 6px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            min-height: 45px;
-        }
-
-        .toolbar {
-            background: white;
-            max-width: 720px;
+        .btn-primary {
+            background: var(--comic-orange);
+            color: white;
+            border: none;
+            padding: 12px 36px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 6px 15px rgba(249, 115, 22, 0.3);
+            transition: all 0.2s ease;
+            width: 100%;
+            max-width: 300px;
             margin: 0 auto;
-            padding: 15px;
-            border-radius: 15px;
-            border: 3px solid var(--comic-blue);
         }
 
-        .tool-group {
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        /* HUD NAVBAR */
+        .hud-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
             margin-bottom: 10px;
         }
 
-        .tool-title {
-            font-weight: bold;
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-            color: var(--dark);
+        .hud-card {
+            background: var(--slate-dark);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: clamp(0.75rem, 2.8vw, 0.9rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .btn-chip {
-            background: #f8fafc;
-            border: 2px solid #cbd5e1;
-            padding: 6px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            margin: 3px;
-            font-weight: bold;
-        }
-
-        .btn-chip:hover {
-            border-color: var(--comic-blue);
-            background: #e0f2fe;
-        }
-
-        .act-btn {
-            background: var(--comic-blue);
+        .audio-btn {
+            background: var(--comic-purple);
             color: white;
             border: none;
-            padding: 10px 25px;
+            padding: 6px 16px;
             border-radius: 20px;
-            font-weight: bold;
+            font-size: 0.82rem;
+            font-weight: 800;
             cursor: pointer;
-            margin-top: 10px;
+            margin-bottom: 8px;
+            align-self: center;
+        }
+
+        /* WORKSPACE DISPLAY AREA */
+        .workspace-card {
+            background: #fffbeb;
+            border: 3px dashed var(--comic-orange);
+            border-radius: 18px;
+            padding: 12px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-y: auto;
+        }
+
+        /* 12 TARGET SLOTS GRID */
+        .target-slots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
+            margin: 8px 0;
+            width: 100%;
+        }
+
+        .comic-slot {
+            background: #ffffff;
+            border: 3px dashed var(--comic-blue);
+            border-radius: 14px;
+            min-height: 140px;
+            padding: 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .comic-slot.filled {
+            background: #f0f9ff;
+            border-style: solid;
+            box-shadow: 0 4px 10px rgba(2, 132, 199, 0.15);
+        }
+
+        .comic-slot-header {
+            font-size: 0.7rem;
+            font-weight: 800;
+            background: var(--comic-yellow);
+            color: var(--slate-dark);
+            padding: 2px 8px;
+            border-radius: 10px;
+            margin-bottom: 4px;
+        }
+
+        /* JUMBLED PICTURE CARDS POOL */
+        .jumbled-pool {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        .comic-card-chip {
+            background: #ffffff;
+            border: 3px solid var(--slate-dark);
+            border-radius: 14px;
+            padding: 8px;
+            cursor: pointer;
+            box-shadow: 4px 4px 0px var(--slate-dark);
+            transition: transform 0.15s ease, background 0.2s ease;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 140px;
+        }
+
+        .comic-card-chip.selected {
+            background: var(--comic-yellow);
+            transform: scale(1.05);
+            box-shadow: 0 0 12px rgba(249, 115, 22, 0.7);
+        }
+
+        .panel-picture-box {
+            width: 100%;
+            height: 65px;
+            border-radius: 8px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            margin-bottom: 4px;
+        }
+
+        .panel-picture-box svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .panel-caption {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: #334155;
+            line-height: 1.25;
+        }
+
+        /* TICKER FEEDBACK */
+        .ticker-feedback {
+            margin-top: 8px;
+            padding: 10px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: clamp(0.85rem, 3vw, 0.95rem);
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            border-left: 5px solid #cbd5e1;
+        }
+
+        .ticker-feedback.good { background: #ecfdf5; border-left-color: var(--success); color: #065f46; }
+        .ticker-feedback.bad { background: #fef2f2; border-left-color: var(--error); color: #991b1b; }
+
+        /* FINAL COMIC READER VIEW */
+        .comic-reader-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 12px;
+            margin: 12px 0;
+            max-height: 380px;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .reader-panel-card {
+            background: #ffffff;
+            border: 3px solid var(--slate-dark);
+            border-radius: 14px;
+            padding: 10px;
+            box-shadow: 4px 4px 0px var(--comic-blue);
+            text-align: center;
+        }
+
+        .moral-box {
+            background: #fef3c7;
+            border: 3px solid var(--comic-orange);
+            padding: 12px;
+            border-radius: 16px;
+            margin: 10px 0;
+            font-weight: 800;
+            color: #78350f;
+            font-size: 0.95rem;
+            line-height: 1.5;
         }
     </style>
 </head>
 <body>
 
-    <h1>💥 Fun Comic Strip Creator 🎨</h1>
-    <p>Create a 3-Panel Story Algorithm! Pick characters and dialogue for each panel.</p>
+    <!-- Audio Elements -->
+    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 
-    <div class="comic-strip-board">
-        <!-- Panel 1 -->
-        <div class="panel" onclick="selectPanel(1)">
-            <div class="panel-header">PANEL 1 (Start)</div>
-            <div class="panel-stage" id="char_1">🤖</div>
-            <div class="dialogue-bubble" id="text_1">Hello World!</div>
-        </div>
-
-        <!-- Panel 2 -->
-        <div class="panel" onclick="selectPanel(2)">
-            <div class="panel-header">PANEL 2 (Action)</div>
-            <div class="panel-stage" id="char_2">🐱</div>
-            <div class="dialogue-bubble" id="text_2">Let's write code!</div>
-        </div>
-
-        <!-- Panel 3 -->
-        <div class="panel" onclick="selectPanel(3)">
-            <div class="panel-header">PANEL 3 (Ending)</div>
-            <div class="panel-stage" id="char_3">🚀</div>
-            <div class="dialogue-bubble" id="text_3">Mission Complete!</div>
-        </div>
+    <!-- Splash Screen -->
+    <div id="splashScreen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'100\' viewBox=\'0 0 280 100\'><rect width=\'280\' height=\'100\' rx=\'20\' fill=\'%23f97316\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'20\' font-weight=\'bold\' fill=\'%23ffffff\'>PICTURE COMIC STRIP</text></svg>';">
+        <h2 style="margin-top:16px; color:#f97316; font-size:1.3rem;">Loading Picture Comic Studio...</h2>
     </div>
 
-    <div class="toolbar">
-        <div class="tool-title" id="activePanelTitle">Editing Panel 1: Select Character & Speech:</div>
+    <!-- Main Shell App Window -->
+    <div class="container hidden" id="appMainframe">
         
-        <div class="tool-group">
-            <span class="btn-chip" onclick="setChar('🤖')">🤖 Robot</span>
-            <span class="btn-chip" onclick="setChar('🐱')">🐱 Cat</span>
-            <span class="btn-chip" onclick="setChar('🚀')">🚀 Rocket</span>
-            <span class="btn-chip" onclick="setChar('🧙‍♂️')">🧙‍♂️ Wizard</span>
+        <!-- START MENU PANEL -->
+        <div id="menuPanel" style="text-align:center;">
+            <h1>🖼️ Picture Comic Story Sequencer</h1>
+            <div class="mode-badge">Visual Storytelling • Grade 3 ICT</div>
+            
+            <div class="briefing">
+                <p style="font-weight:800; margin-bottom:8px; color:var(--slate-dark);">📖 Visual Story Objective:</p>
+                <p>Look at the pictures and read the captions! The 12 illustrated comic panels of <strong>"Leo the Lion's Moral Journey"</strong> have gotten completely mixed up.</p>
+                <p style="margin-top:6px;">Tap a picture card, then tap a target panel slot to arrange the full story from Panel 1 to Panel 12 in order!</p>
+            </div>
+            
+            <button class="btn-primary" onclick="launchGameEngine()">Start Unscrambling ➜</button>
         </div>
 
-        <div class="tool-group">
-            <span class="btn-chip" onclick="setText('Ready to start algorithm!')">"Ready to start algorithm!"</span>
-            <span class="btn-chip" onclick="setText('Fixing bugs in the code!')">"Fixing bugs in the code!"</span>
-            <span class="btn-chip" onclick="setText('Success! Algorithm finished!')">"Success! Algorithm finished!"</span>
+        <!-- GAMEPLAY PANEL -->
+        <div id="gamePanel" class="hidden" style="display:flex; flex-direction:column; height:100%;">
+            <div class="hud-bar">
+                <div class="hud-card">📖 Panels: <span id="placedCountHUD">0</span> / 12</div>
+                <div class="hud-card" style="background:#eff6ff; color:var(--comic-blue);">⭐ Score: <span id="scoreHUD">0</span></div>
+                <div class="hud-card" style="background:#fef3c7; color:var(--comic-orange);">Attempt: <span id="attemptHUD">1 / 2</span></div>
+            </div>
+
+            <button class="audio-btn" onclick="speakStoryPrompt()">🔊 Listen Story Prompt</button>
+
+            <div class="workspace-card">
+                <div style="font-size:0.82rem; font-weight:800; color:#475569; margin-bottom:4px;">Tap a picture card below, then tap a target slot above to place it:</div>
+
+                <!-- 12 Target Panel Slots -->
+                <div class="target-slots-grid" id="slotsGrid"></div>
+
+                <!-- Jumbled Picture Cards Pool -->
+                <div class="jumbled-pool" id="cardsPool"></div>
+            </div>
+
+            <button class="btn-primary" style="margin-top:8px; padding:10px 28px;" onclick="verifyStorySequence()">Verify Picture Story ➔</button>
+
+            <div class="ticker-feedback" id="tickerBox">Arrange all 12 picture panels into correct chronological order!</div>
         </div>
 
-        <button class="act-btn" onclick="alert('🎉 Great Job! Your Comic Strip Story Algorithm is ready!')">Publish Comic Story 🚀</button>
+        <!-- FINAL COMIC STORY BOOK READER -->
+        <div id="reportPanel" class="hidden">
+            <h1 style="color:var(--comic-purple); font-size:1.8rem;">🎉 Complete Picture Comic Unlocked!</h1>
+            
+            <div class="moral-box">
+                🌟 <strong>Moral Lesson Learned:</strong><br>
+                "True strength is not shown by roaring loud or being big. Real strength is shown through kindness, helping others, and working together!"
+            </div>
+
+            <div class="comic-reader-grid" id="readerGrid"></div>
+
+            <button class="btn-primary" style="margin-top:12px;" onclick="location.reload()">Play Again 🔄</button>
+        </div>
     </div>
 
     <script>
-        let currentPanel = 1;
+        class SoundEngine {
+            constructor() { this.ctx = null; }
+            init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
 
-        function selectPanel(panelNum) {
-            currentPanel = panelNum;
-            document.getElementById("activePanelTitle").innerText = `Editing Panel ${panelNum}: Select Character & Speech:`;
+            playCorrect() {
+                const audio = document.getElementById("correctSound");
+                if (audio) audio.play().catch(() => this.synthCorrect());
+                else this.synthCorrect();
+            }
+
+            synthCorrect() {
+                this.init(); if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.25);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(now); osc.stop(now + 0.35);
+            }
+
+            playWrong() {
+                const audio = document.getElementById("wrongSound");
+                if (audio) audio.play().catch(() => this.synthWrong());
+                else this.synthWrong();
+            }
+
+            synthWrong() {
+                this.init(); if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, now);
+                osc.frequency.linearRampToValueAtTime(90, now + 0.3);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(now); osc.stop(now + 0.3);
+            }
         }
 
-        function setChar(emoji) {
-            document.getElementById(`char_${currentPanel}`).innerText = emoji;
+        const soundEngine = new SoundEngine();
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.95;
+                window.speechSynthesis.speak(utterance);
+            }
         }
 
-        function setText(msg) {
-            document.getElementById(`text_${currentPanel}`).innerText = msg;
+        /* 5-Second Splash Timeout */
+        setTimeout(() => {
+            document.getElementById("splashScreen").style.display = "none";
+            document.getElementById("appMainframe").classList.remove("hidden");
+        }, 5000);
+
+        // 12 Picture Comic Story Dataset with Vector Artwork Graphics
+        const pictureStoryPanels = [
+            {
+                id: 1,
+                caption: "1. Leo the little lion thought he was the strongest in the jungle.",
+                svgGraphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23dcfce7"/><circle cx="50" cy="30" r="18" fill="%23f59e0b"/><circle cx="50" cy="30" r="12" fill="%23fbbf24"/><circle cx="45" cy="26" r="2" fill="%23000"/><circle cx="55" cy="26" r="2" fill="%23000"/><text x="50" y="52" font-size="16" text-anchor="middle">🦁 💪</text></svg>`
+            },
+            {
+                id: 2,
+                caption: "2. He showed off his big roar to scare all small jungle animals.",
+                svgGraphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23fef3c7"/><circle cx="35" cy="30" r="16" fill="%23f59e0b"/><text x="65" y="35" font-size="22" text-anchor="middle">🗣️💨</text><text x="85" y="45" font-size="12">🐰</text></svg>`
+            },
+            {
+                id: 3,
+                caption: "3. One day, a tiny mouse named Pip accidentally bumped into Leo.",
+                svgGraphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23e0f2fe"/><text x="35" y="38" font-size="20">🦁</text><text x="65" y="40" font-size="16">🐭</text><text x="50" y="25" font-size="14" fill="%23ef4444">💥</text></svg>`
+            },
+            {
+                id: 4,
+                caption: "4. Leo roared angrily, 'I am big and strong, you are weak!'",
+                svgGraphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23fee2e2"/><text x="30" y="38" font-size="22">😠🦁</text><text x="70" y="40" font-size="14">🐭💧</text></svg>`
+            },
+            {
+                id: 5,
+                caption: "5. Later that afternoon, Leo walked into a hunter's heavy net trap.",
+                svgGraphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23f1f5f9"/><text x="50" y="40" font-size="22" text-anchor="middle">🦁</text><path d="M 20 10 L 80 50 M 20 50 L 80 10 M 20 30 L 80 30 M 50 10 L 50 50" stroke="%2378350f" stroke-width="2"/></svg>`
+            },
+            {
+                id: 6,
+                caption: "6. Leo struggled and cried for help, but no big animals came.",
+                svgGraphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23e2e8f0"/><text x="50" y="38" font-size="22" text-anchor="middle">😿🕸️</text><text x="20" y="20" font-size="10">❓</text><text x="80" y="20" font-size="10">❓</text></svg>`
+            },
+            {
+                id: 7,
+                caption: "7. Little Pip the mouse saw Leo trapped and ran over quickly.",
+                svgGraphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23ecfdf5"/><text x="35" y="38" font-size="20">🦁🕸️</text><text x="75" y="42" font-size="16">🏃🐭</text></svg>`
+            },
+            {
+                id: 8,
+                caption: "8. Pip used his sharp tiny teeth to chew through the strong ropes.",
+                svgGraphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23fef3c7"/><text x="40" y="38" font-size="18">🐭😬</text><text x="65" y="38" font-size="18">✂️🕸️</text></svg>`
+            },
+            {
+                id: 9,
+                caption: "9. The net broke open, and Leo was freed from the trap!",
+                svgGraphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23dcfce7"/><text x="40" y="38" font-size="22">🦁</text><text x="70" y="38" font-size="16">🐭🎉</text><text x="20" y="30" font-size="12">💥🕸️</text></svg>`
+            },
+            {
+                id: 10,
+                caption: "10. Leo thanked Pip humbly, realizing size does not matter.",
+                svgGraphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23eff6ff"/><text x="40" y="38" font-size="20">🦁</text><text x="65" y="40" font-size="16">🐭</text><text x="52" y="25" font-size="16">🤝</text></svg>`
+            },
+            {
+                id: 11,
+                caption: "11. Leo promised to protect Pip and be kind to everyone.",
+                svgGraphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23fef3c7"/><text x="50" y="38" font-size="22" text-anchor="middle">🦁🐭🌳</text><text x="80" y="25" font-size="14">🛡️</text></svg>`
+            },
+            {
+                id: 12,
+                caption: "12. Leo learned that true strength comes from kindness and love.",
+                svgGraphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="%23fce7f3"/><text x="50" y="38" font-size="22" text-anchor="middle">🦁❤️🐭</text><text x="20" y="22" font-size="12">⭐</text><text x="80" y="22" font-size="12">⭐</text></svg>`
+            }
+        ];
+
+        let userSlotSelections = new Array(12).fill(null);
+        let activeSelectedCard = null;
+        let score = 0;
+        let attemptCount = 1;
+        let actionLocked = false;
+
+        function launchGameEngine() {
+            document.getElementById("menuPanel").classList.add("hidden");
+            document.getElementById("gamePanel").classList.remove("hidden");
+            initializeGameWorkspace();
+        }
+
+        function speakStoryPrompt() {
+            speakText("Look at the pictures and captions! Arrange all 12 comic picture panels in correct order from Panel 1 to Panel 12!");
+        }
+
+        function initializeGameWorkspace() {
+            actionLocked = false;
+            attemptCount = 1;
+            userSlotSelections = new Array(12).fill(null);
+            activeSelectedCard = null;
+
+            document.getElementById("scoreHUD").innerText = score;
+            document.getElementById("attemptHUD").innerText = `${attemptCount} / 2`;
+            document.getElementById("placedCountHUD").innerText = "0";
+
+            renderTargetSlots();
+            renderJumbledCardPool();
+            speakStoryPrompt();
+        }
+
+        function renderTargetSlots() {
+            const slotsContainer = document.getElementById("slotsGrid");
+            slotsContainer.innerHTML = "";
+
+            for (let i = 0; i < 12; i++) {
+                const slot = document.createElement("div");
+                slot.className = "comic-slot";
+                slot.id = `slot_target_${i}`;
+                slot.innerHTML = `
+                    <div class="comic-slot-header">Panel ${i + 1}</div>
+                    <div style="font-size:0.7rem; color:#94a3b8; margin-top:20px;">[Tap Picture Card]</div>
+                `;
+                slot.onclick = () => handleSlotClick(i);
+                slotsContainer.appendChild(slot);
+            }
+        }
+
+        function renderJumbledCardPool() {
+            const poolContainer = document.getElementById("cardsPool");
+            poolContainer.innerHTML = "";
+
+            // Shuffle story panels
+            let shuffledPanels = [...pictureStoryPanels].sort(() => Math.random() - 0.5);
+
+            shuffledPanels.forEach(panelObj => {
+                const card = document.createElement("div");
+                card.className = "comic-card-chip";
+                card.id = `card_chip_${panelObj.id}`;
+                card.innerHTML = `
+                    <div class="panel-picture-box">${panelObj.svgGraphic}</div>
+                    <div class="panel-caption">${panelObj.caption}</div>
+                `;
+                card.onclick = () => selectCardChip(card, panelObj);
+                poolContainer.appendChild(card);
+            });
+        }
+
+        function selectCardChip(cardNode, panelObj) {
+            if (actionLocked) return;
+            document.querySelectorAll(".comic-card-chip").forEach(c => c.classList.remove("selected"));
+            cardNode.classList.add("selected");
+            activeSelectedCard = { node: cardNode, data: panelObj };
+        }
+
+        function handleSlotClick(slotIdx) {
+            if (actionLocked || !activeSelectedCard) return;
+
+            userSlotSelections[slotIdx] = activeSelectedCard.data;
+
+            const slotNode = document.getElementById(`slot_target_${slotIdx}`);
+            slotNode.className = "comic-slot filled";
+            slotNode.innerHTML = `
+                <div class="comic-slot-header">Panel ${slotIdx + 1}</div>
+                <div class="panel-picture-box">${activeSelectedCard.data.svgGraphic}</div>
+                <div class="panel-caption">${activeSelectedCard.data.caption}</div>
+            `;
+
+            // Hide placed card from pool
+            activeSelectedCard.node.style.display = "none";
+            activeSelectedCard = null;
+
+            // Update placed count HUD
+            const filledCount = userSlotSelections.filter(x => x !== null).length;
+            document.getElementById("placedCountHUD").innerText = filledCount;
+        }
+
+        function verifyStorySequence() {
+            if (actionLocked) return;
+
+            const isAllPlaced = userSlotSelections.every(x => x !== null);
+            if (!isAllPlaced) {
+                alert("Please place all 12 picture cards into the panel slots first!");
+                return;
+            }
+
+            let isCorrect = true;
+            userSlotSelections.forEach((placedItem, idx) => {
+                if (placedItem.id !== (idx + 1)) {
+                    isCorrect = false;
+                }
+            });
+
+            const ticker = document.getElementById("tickerBox");
+
+            if (isCorrect) {
+                actionLocked = true;
+                score += (attemptCount === 1) ? 300 : 200;
+                document.getElementById("scoreHUD").innerText = score;
+                soundEngine.playCorrect();
+                ticker.className = "ticker-feedback good";
+                ticker.innerText = "🎉 PERFECT! Picture story arranged in correct moral sequence!";
+                speakText("Perfect picture story sequence!");
+
+                setTimeout(() => {
+                    renderFinalComicReader();
+                }, 2200);
+            } else {
+                if (attemptCount === 1) {
+                    attemptCount = 2;
+                    document.getElementById("attemptHUD").innerText = `${attemptCount} / 2`;
+                    soundEngine.playWrong();
+                    ticker.className = "ticker-feedback bad";
+                    ticker.innerText = "💥 Sequence error! Look at the pictures and captions carefully to order events from start to end.";
+                    speakText("Sequence error. Look at the pictures carefully.");
+                } else {
+                    actionLocked = true;
+                    soundEngine.playWrong();
+                    ticker.className = "ticker-feedback bad";
+                    ticker.innerText = "💥 Attempt limit reached. Unlocking complete moral story!";
+                    speakText("Unlocking complete story.");
+
+                    setTimeout(() => {
+                        renderFinalComicReader();
+                    }, 2500);
+                }
+            }
+        }
+
+        function renderFinalComicReader() {
+            document.getElementById("gamePanel").classList.add("hidden");
+            document.getElementById("reportPanel").classList.remove("hidden");
+
+            if (window.confetti) confetti({ particleCount: 70, spread: 80, origin: { y: 0.6 } });
+
+            const readerContainer = document.getElementById("readerGrid");
+            readerContainer.innerHTML = "";
+
+            pictureStoryPanels.forEach(panel => {
+                const rCard = document.createElement("div");
+                rCard.className = "reader-panel-card";
+                rCard.innerHTML = `
+                    <div class="comic-slot-header" style="margin-bottom:6px;">Panel ${panel.id}</div>
+                    <div class="panel-picture-box" style="height:85px; margin-bottom:8px;">${panel.svgGraphic}</div>
+                    <div style="font-size:0.8rem; font-weight:700; color:#1e293b; line-height:1.35;">${panel.caption}</div>
+                `;
+                readerContainer.appendChild(rCard);
+            });
+
+            speakText("Story completed! True strength comes from kindness and love!");
         }
     </script>
 </body>

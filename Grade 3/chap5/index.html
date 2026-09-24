@@ -3,21 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Excel Spreadsheet Master - Row, Column & Formula Arcade</title>
+    <title>Word Processing Wizard - MS Word-3 Master</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@700;800;900&display=swap');
 
         :root {
-            --excel-green: #107c41;
-            --excel-dark: #0b502a;
-            --excel-light-bg: #f0fdf4;
-            --comic-orange: #ea580c; 
-            --slate-dark: #1e293b;
-            --success: #10b981;
-            --error: #ef4444;
+            --word-blue: #2b579a;
+            --word-dark-blue: #1b365d;
+            --word-light-bg: #edf2f7;
+            --comic-orange: #ea580c;
+            --card-bg: #ffffff;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
             --accent-purple: #8b5cf6;
-            --border-green: #a7f3d0;
+            --border-blue: #bfdbfe;
+            --slate-dark: #1e293b;
         }
 
         * {
@@ -31,21 +32,22 @@
         }
 
         body {
+            background: var(--word-light-bg);
+            background-image: radial-gradient(#93c5fd 1.2px, transparent 1.2px);
+            background-size: 20px 20px;
             min-height: 100vh;
             min-height: -webkit-fill-available;
+            width: 100vw;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: var(--excel-light-bg);
-            background-image: radial-gradient(#86efac 1.2px, transparent 1.2px);
-            background-size: 20px 20px;
-            padding: 10px;
             overflow: hidden;
+            padding: 10px;
             color: var(--slate-dark);
         }
 
-        /* Splash Screen */
-        #splash {
+        /* 5-Second Clean White Splash Screen */
+        #splashScreen {
             position: fixed;
             top: 0;
             left: 0;
@@ -57,68 +59,68 @@
             justify-content: center;
             align-items: center;
             z-index: 99999;
-            transition: opacity 0.5s ease;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
         }
 
-        #splash img {
+        #splashScreen img {
             width: 280px;
             max-width: 80vw;
-            animation: elegantPulse 2s infinite ease-in-out;
+            animation: pulse 2s infinite ease-in-out;
         }
 
-        @keyframes elegantPulse {
+        @keyframes pulse {
             0%, 100% { transform: scale(1); opacity: 0.95; }
             50% { transform: scale(1.05); opacity: 1; }
         }
 
-        /* Main App Container */
-        .container {
+        /* App Container Shell */
+        .app-window {
             width: 100%;
-            max-width: 900px;
-            height: 95vh;
-            max-height: 820px;
-            background: #ffffff;
-            border-radius: 24px;
-            padding: clamp(14px, 3.5vw, 24px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
-            position: relative;
-            border-top: 10px solid var(--excel-green);
-            text-align: center;
+            max-width: 950px;
+            height: 94vh;
+            max-height: 800px;
+            z-index: 10;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            position: relative;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: clamp(12px, 3vw, 22px);
+            border-top: 10px solid var(--word-blue);
+            box-shadow: 0 20px 40px rgba(43, 87, 154, 0.15);
         }
 
         .hidden { display: none !important; }
 
-        .intro-panel h1 {
+        /* Welcome Screen */
+        .welcome-card h1 {
             font-family: 'Outfit', sans-serif;
             font-size: clamp(1.8rem, 5vw, 2.5rem);
-            color: var(--excel-green);
-            margin-bottom: 6px;
+            color: var(--word-blue);
             font-weight: 900;
         }
 
         .mode-badge {
             display: inline-block;
             padding: 4px 16px;
-            background: #ecfdf5;
-            color: var(--excel-green);
+            background: #eff6ff;
+            color: var(--word-blue);
             border-radius: 20px;
             font-weight: 700;
             font-size: 0.85rem;
-            margin-bottom: 14px;
+            margin: 8px 0 16px 0;
             text-transform: uppercase;
-            border: 1px solid var(--border-green);
+            border: 1px solid var(--border-blue);
         }
 
         .briefing {
             background: #f8fafc;
             padding: 16px;
             border-radius: 16px;
-            border-left: 5px solid var(--excel-green);
+            border-left: 5px solid var(--word-blue);
             text-align: left;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             font-size: 0.9rem;
         }
 
@@ -128,33 +130,33 @@
             color: #334155;
         }
 
-        button.act-btn {
-            padding: 12px 36px;
+        .btn-primary {
             background: var(--comic-orange);
             color: white;
-            font-size: 1.1rem;
-            font-weight: 800;
             border: none;
+            padding: 14px 36px;
             border-radius: 50px;
+            font-weight: 800;
+            font-size: 1.1rem;
             cursor: pointer;
             box-shadow: 0 6px 15px rgba(234, 88, 12, 0.3);
             transition: all 0.2s ease;
             width: 100%;
             max-width: 280px;
-            margin: 8px auto 0 auto;
+            margin: 0 auto;
         }
 
-        button.act-btn:hover {
+        .btn-primary:hover, .btn-primary:active {
             transform: translateY(-2px) scale(1.02);
             box-shadow: 0 8px 20px rgba(234, 88, 12, 0.4);
         }
 
-        /* HUD Navbar */
-        .hud {
+        /* Top HUD Navbar */
+        .top-hud {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .hud-card {
@@ -169,135 +171,18 @@
             justify-content: center;
         }
 
-        /* Gameplay Frame */
-        .game-card {
-            background: #f0fdf4;
-            border: 2px dashed var(--excel-green);
+        /* Main Workspace Panel */
+        .workspace-card {
+            background: #f0f7ff;
+            border: 2px dashed var(--word-blue);
+            border-radius: 18px;
             padding: 12px;
-            border-radius: 20px;
             flex-grow: 1;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            align-items: center;
             overflow-y: auto;
-        }
-
-        .game-title {
-            font-size: clamp(0.95rem, 3.2vw, 1.25rem);
-            font-weight: 800;
-            color: var(--slate-dark);
-            margin-bottom: 6px;
-        }
-
-        /* Interactive Excel Sheet Grid */
-        .sheet-container {
-            width: 100%;
-            max-width: 760px;
-            overflow-x: auto;
-            margin: 8px 0;
-            background: #ffffff;
-            border: 2px solid #cbd5e1;
-            border-radius: 12px;
-            padding: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-
-        table.excel-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: clamp(0.75rem, 2.4vw, 0.9rem);
-        }
-
-        table.excel-table th, table.excel-table td {
-            border: 1px solid #cbd5e1;
-            padding: 8px;
-            text-align: center;
-            font-weight: 700;
-            transition: all 0.2s ease;
-        }
-
-        .col-header, .row-header {
-            background: #e2e8f0;
-            color: var(--slate-dark);
-            cursor: pointer;
-        }
-
-        .col-header:hover, .row-header:hover {
-            background: #cbd5e1;
-            color: var(--excel-green);
-        }
-
-        .grid-cell {
-            cursor: pointer;
-            background: #ffffff;
-        }
-
-        .grid-cell:hover {
-            background: #ecfdf5;
-        }
-
-        .selected-highlight {
-            background: #10b981 !important;
-            color: #ffffff !important;
-        }
-
-        .target-cell-active {
-            background: #dcfce7 !important;
-            border: 3px solid var(--excel-green) !important;
-        }
-
-        .sheet-input {
-            width: 100%;
-            max-width: 120px;
-            padding: 6px;
-            border: 2px solid var(--excel-green);
-            border-radius: 6px;
-            text-align: center;
-            font-weight: 800;
-            font-size: 0.9rem;
-            color: var(--excel-green);
-            background: #ffffff;
-        }
-
-        .sheet-input:focus {
-            outline: none;
-            box-shadow: 0 0 8px rgba(16, 124, 65, 0.4);
-        }
-
-        /* Ticker Feedback Bar */
-        .ticker-feedback {
-            margin-top: 6px;
-            padding: 8px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: clamp(0.85rem, 3vw, 0.95rem);
-            min-height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: #f1f5f9;
-            border-left: 5px solid #cbd5e1;
-        }
-
-        .ticker-feedback.good { background: #ecfdf5; border-left-color: var(--success); color: #065f46; }
-        .ticker-feedback.bad { background: #fef2f2; border-left-color: var(--error); color: #991b1b; }
-
-        /* Report Screen Shell */
-        .rank-shell {
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            background: var(--excel-green);
-            color: white;
-            font-size: 2.2rem;
-            font-weight: 900;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 15px auto;
-            border: 4px solid #ffffff;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+            position: relative;
         }
 
         .audio-btn {
@@ -310,6 +195,209 @@
             font-weight: 800;
             cursor: pointer;
             margin-bottom: 6px;
+            align-self: center;
+        }
+
+        /* Level 1 - WordArt Stylizer */
+        .wordart-preview-box {
+            background: #ffffff;
+            border: 2px solid var(--border-blue);
+            border-radius: 16px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
+            overflow: hidden;
+            position: relative;
+        }
+
+        #wordArtTextTarget {
+            font-size: clamp(1.6rem, 5vw, 2.8rem);
+            font-weight: 900;
+            transition: all 0.25s ease;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .control-panel-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
+            width: 100%;
+            margin-top: 6px;
+        }
+
+        .ctrl-group {
+            background: #ffffff;
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid var(--border-blue);
+            text-align: left;
+        }
+
+        .ctrl-group label {
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: var(--word-blue);
+            display: block;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .ctrl-select, .ctrl-color, .ctrl-input {
+            width: 100%;
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        /* Level 2 - SmartArt Diagram Builder */
+        .diagram-drop-zone {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            margin: 10px 0;
+            flex-wrap: wrap;
+            min-height: 120px;
+        }
+
+        .smartart-node-slot {
+            width: clamp(100px, 25vw, 130px);
+            height: clamp(80px, 18vw, 100px);
+            background: #ffffff;
+            border: 3px dashed var(--word-blue);
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-weight: 800;
+            font-size: 0.8rem;
+            color: #94a3b8;
+            padding: 6px;
+            text-align: center;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .smartart-node-slot.filled {
+            background: #eff6ff;
+            border-style: solid;
+            color: var(--word-blue);
+        }
+
+        .node-palette {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .palette-chip {
+            background: var(--word-blue);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.15s ease;
+        }
+
+        .palette-chip:hover {
+            transform: scale(1.05);
+        }
+
+        /* Level 3 - ClipArt Document Canvas */
+        .doc-canvas {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 14px;
+            text-align: left;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: #334155;
+            position: relative;
+            min-height: 160px;
+            margin: 10px 0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .clipart-item {
+            font-size: 2.8rem;
+            position: absolute;
+            cursor: pointer;
+            transition: transform 0.2s ease, width 0.2s ease;
+        }
+
+        .text-wrap-controls {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .wrap-btn {
+            background: #ffffff;
+            border: 2px solid var(--border-blue);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            color: var(--word-blue);
+            cursor: pointer;
+        }
+
+        .wrap-btn.active {
+            background: var(--word-blue);
+            color: white;
+        }
+
+        /* Ticker Feedback Bar */
+        .ticker-feedback {
+            margin-top: 8px;
+            padding: 8px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: clamp(0.85rem, 3vw, 0.95rem);
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            border-left: 5px solid #cbd5e1;
+        }
+
+        .ticker-feedback.good { background: #ecfdf5; border-left-color: var(--accent-green); color: #065f46; }
+        .ticker-feedback.bad { background: #fef2f2; border-left-color: var(--accent-red); color: #991b1b; }
+
+        /* Report Screen Shell */
+        .rank-shell {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: var(--word-blue);
+            color: white;
+            font-size: 2.2rem;
+            font-weight: 900;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px auto;
+            border: 4px solid #ffffff;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
         }
     </style>
 </head>
@@ -320,52 +408,53 @@
     <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 
     <!-- 5-Second Splash Screen -->
-    <div id="splash">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'100\' viewBox=\'0 0 280 100\'><rect width=\'280\' height=\'100\' rx=\'20\' fill=\'%23107c41\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'26\' font-weight=\'bold\' fill=\'%23ffffff\'>INNOVINE</text></svg>';">
+    <div id="splashScreen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'100\' viewBox=\'0 0 280 100\'><rect width=\'280\' height=\'100\' rx=\'20\' fill=\'%232b579a\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'26\' font-weight=\'bold\' fill=\'%23ffffff\'>INNOVINE</text></svg>';">
+        <p style="margin-top:16px; font-weight:700; color:#2b579a; letter-spacing:1px; font-size:0.95rem;">MS Word-3 Master Arcade...</p>
     </div>
 
-    <!-- Main Container -->
-    <div class="container hidden" id="appMainframe">
+    <!-- Main Shell App Window -->
+    <div class="app-window hidden" id="appMainframe">
         
-        <!-- MENU PANEL -->
-        <div id="menuPanel" class="intro-panel">
-            <h1>Excel Spreadsheet Master</h1>
-            <div class="mode-badge">2 Levels: Selection & Formula Calculation</div>
+        <!-- START MENU PANEL -->
+        <div id="menuPanel" class="welcome-card" style="text-align:center;">
+            <h1>Word Processing Wizard</h1>
+            <div class="mode-badge">CBSE Grade 3 ICT Chapter 5</div>
             <div class="briefing">
-                <p style="font-weight:800; margin-bottom:6px; color:var(--slate-dark);">🎮 Game Missions:</p>
+                <p style="font-weight:800; margin-bottom:6px; color:var(--slate-dark);">🎮 3 Creative Mini-Game Levels:</p>
                 <ol>
-                    <li><strong>Level 1 (8 Stages):</strong> Tap requested Rows, Columns, or Individual Cells on the sheet!</li>
-                    <li><strong>Level 2 (7 Stages):</strong> Enter SUM, division, and average formulas to calculate stationery costs!</li>
+                    <li><strong>Level 1: WordArt Decorator Studio</strong> – Type your title and apply gradients, 3D shadows, outline strokes, and text curves!</li>
+                    <li><strong>Level 2: SmartArt Diagram Builder</strong> – Arrange process and cycle nodes into diagram shape slots!</li>
+                    <li><strong>Level 3: ClipArt Picture Inserter</strong> – Pick graphics, insert onto document canvas, and set text wrapping!</li>
                 </ol>
             </div>
-            <button class="act-btn" onclick="startGameEngine()">Launch Mission ➜</button>
+            <button class="btn-primary" onclick="launchGameEngine()">Start Arcade ➜</button>
         </div>
 
-        <!-- GAMEPLAY PANEL -->
-        <div id="gamePanel" class="hidden">
-            <div class="hud">
-                <div class="hud-card">📝 Stage: <span id="stageHUD">L1 - Q1</span></div>
-                <div class="hud-card" style="background:#eff6ff; color:var(--excel-green);">⭐ Score: <span id="scoreHUD">0</span></div>
-                <div class="hud-card" style="background:#f0fdf4; color:var(--success);">Target: 1200</div>
+        <!-- MAIN GAMEPLAY PANEL -->
+        <div id="gamePanel" class="hidden" style="display:flex; flex-direction:column; height:100%;">
+            <div class="top-hud">
+                <div class="hud-card">📝 Level: <span id="levelHUD">1 / 3</span></div>
+                <div class="hud-card" style="background:#eff6ff; color:var(--word-blue);">⭐ Score: <span id="scoreHUD">0</span></div>
+                <div class="hud-card" style="background:#f0fdf4; color:var(--accent-green);">Target: 900</div>
             </div>
 
-            <div id="questionContainer" style="flex-grow:1; display:flex; flex-direction:column;"></div>
+            <div id="workspaceContainer" class="workspace-card"></div>
 
-            <div class="ticker-feedback" id="tickerBox">Tap the requested cell, row, or column to respond!</div>
+            <div class="ticker-feedback" id="tickerBox">Decorate or build your graphic object to proceed!</div>
         </div>
 
-        <!-- REPORT PANEL -->
-        <div id="reportPanel" class="hidden">
-            <h1 style="color:var(--excel-green); font-size:2.2rem;">📊 Mission Evaluation</h1>
+        <!-- PERFORMANCE EVALUATION REPORT -->
+        <div id="reportPanel" class="welcome-card hidden" style="text-align:center;">
+            <h1 style="color:var(--word-blue); font-size:2.2rem;">📊 Master Evaluation</h1>
             <div class="rank-shell"><span id="finalScore">0</span></div>
             <h2 id="finalRank" style="font-weight:800; margin-bottom:8px; color:var(--slate-dark);">Evaluating...</h2>
             <p id="finalSummary" style="color:#475569; margin-bottom:20px; line-height:1.5; font-size:0.95rem;"></p>
-            <button class="act-btn" onclick="location.reload()">Play Again 🔄</button>
+            <button class="btn-primary" onclick="location.reload()">Play Again 🔄</button>
         </div>
     </div>
 
     <script>
-        /* Audio Synthesizer Engine */
         class SoundEngine {
             constructor() { this.ctx = null; }
             init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
@@ -413,7 +502,6 @@
 
         const soundEngine = new SoundEngine();
 
-        /* Speech Assistant */
         function speakText(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
@@ -423,318 +511,546 @@
             }
         }
 
-        /* Splash Screen Timeout - 5 Seconds */
+        /* 5-Second Splash Timeout */
         setTimeout(() => {
-            document.getElementById("splash").style.display = "none";
+            document.getElementById("splashScreen").style.display = "none";
             document.getElementById("appMainframe").classList.remove("hidden");
         }, 5000);
 
-        /* LEVEL 1: 8 SELECTION QUESTIONS */
-        const level1Questions = [
-            { type: "selection", targetType: "column", targetKey: "A", question: "Level 1 - Q1: Click or Tap Header 'A' to select Column A (Stationeries Column)!" },
-            { type: "selection", targetType: "row", targetKey: "2", question: "Level 1 - Q2: Click or Tap Row Number '2' to select Row 2 (Blue Markers Data)!" },
-            { type: "selection", targetType: "cell", targetKey: "C3", question: "Level 1 - Q3: Click or Tap Cell C3 containing Price for Pencils (30)!" },
-            { type: "selection", targetType: "column", targetKey: "B", question: "Level 1 - Q4: Click or Tap Header 'B' to select Column B (Quantity Column)!" },
-            { type: "selection", targetType: "row", targetKey: "4", question: "Level 1 - Q5: Click or Tap Row Number '4' to select Row 4 (Pens Data)!" },
-            { type: "selection", targetType: "cell", targetKey: "A5", question: "Level 1 - Q6: Click or Tap Cell A5 containing the 'Total' label!" },
-            { type: "selection", targetType: "column", targetKey: "C", question: "Level 1 - Q7: Click or Tap Header 'C' to select Column C (Price Column)!" },
-            { type: "selection", targetType: "row", targetKey: "1", question: "Level 1 - Q8: Click or Tap Row Number '1' to select Row 1 (Header Titles)!" }
-        ];
-
-        /* LEVEL 2: 7 FORMULA & CALCULATION QUESTIONS */
-        const level2Questions = [
-            {
-                type: "formula",
-                targetCell: "B5",
-                question: "Level 2 - Q1: Enter the formula or value to calculate Total Quantity in cell B5.",
-                validAnswers: ["=SUM(B2:B4)", "28", "=SUM(B2,B3,B4)", "=B2+B3+B4"],
-                displayCorrect: "=SUM(B2:B4) or 28"
-            },
-            {
-                type: "formula",
-                targetCell: "C5",
-                question: "Level 2 - Q2: Enter the formula or value to calculate Total Price (Rs) in cell C5.",
-                validAnswers: ["=SUM(C2:C4)", "250", "=SUM(C2,C3,C4)", "=C2+C3+C4"],
-                displayCorrect: "=SUM(C2:C4) or 250"
-            },
-            {
-                type: "formula",
-                targetCell: "D2",
-                question: "Level 2 - Q3: Calculate Cost per Blue Marker in D2 (Price ÷ Quantity: C2/B2).",
-                validAnswers: ["=C2/B2", "10"],
-                displayCorrect: "=C2/B2 or 10"
-            },
-            {
-                type: "formula",
-                targetCell: "D3",
-                question: "Level 2 - Q4: Calculate Cost per Pencil in D3 (Price ÷ Quantity: C3/B3).",
-                validAnswers: ["=C3/B3", "5"],
-                displayCorrect: "=C3/B3 or 5"
-            },
-            {
-                type: "formula",
-                targetCell: "D4",
-                question: "Level 2 - Q5: Calculate Cost per Pen in D4 (Price ÷ Quantity: C4/B4).",
-                validAnswers: ["=C4/B4", "10"],
-                displayCorrect: "=C4/B4 or 10"
-            },
-            {
-                type: "formula",
-                targetCell: "D5",
-                question: "Level 2 - Q6: Enter formula to calculate Total Unit Cost in cell D5 (=SUM(D2:D4)).",
-                validAnswers: ["=SUM(D2:D4)", "25", "=SUM(D2,D3,D4)", "=D2+D3+D4"],
-                displayCorrect: "=SUM(D2:D4) or 25"
-            },
-            {
-                type: "formula",
-                targetCell: "E1",
-                question: "Level 2 - Q7: Calculate Average Quantity per Item type in E1 (=B5/3).",
-                validAnswers: ["=B5/3", "9.33", "28/3"],
-                displayCorrect: "=B5/3 or 9.33"
-            }
-        ];
-
         let currentLevel = 1;
-        let l1Index = 0;
-        let l2Index = 0;
         let score = 0;
         let actionLocked = false;
 
-        // Cell Memory
-        let sheetValues = { B5: "", C5: "", D2: "", D3: "", D4: "", D5: "", E1: "" };
+        // Level 1: WordArt Target Challenges
+        const wordArtChallenges = [
+            {
+                title: "WordArt Task 1: Decorate 'INNOVINE' with Curved Transform & 3D Shadow!",
+                text: "INNOVINE",
+                targetTransform: "arc",
+                targetShadow: "3d"
+            },
+            {
+                title: "WordArt Task 2: Style 'SCIENCE' with Gradient Fill & Thick Gold Outline!",
+                text: "SCIENCE",
+                targetFill: "gradient",
+                targetOutline: "thick"
+            }
+        ];
+        let wordArtSubIndex = 0;
 
-        function startGameEngine() {
+        // Level 2: SmartArt Diagram Tasks
+        const smartArtDiagrams = [
+            {
+                title: "SmartArt Task 1: Build Plant Growth Process (Seed ➔ Sprout ➔ Plant ➔ Flower)",
+                nodes: ["Seed 🌱", "Sprout 🌿", "Plant 🪴", "Flower 🌻"],
+                slots: ["Stage 1", "Stage 2", "Stage 3", "Stage 4"]
+            },
+            {
+                title: "SmartArt Task 2: Build Water Cycle Diagram (Evaporation ➔ Condensation ➔ Precipitation)",
+                nodes: ["Evaporation ☀️", "Condensation ☁️", "Precipitation 🌧️"],
+                slots: ["Step 1", "Step 2", "Step 3"]
+            }
+        ];
+        let smartArtSubIndex = 0;
+        let userDiagramPlacements = [];
+
+        // Level 3: ClipArt Tasks
+        const clipArtTasks = [
+            {
+                title: "ClipArt Task 1: Select the Tree 🌳 ClipArt, insert it onto canvas, and select 'Tight' text wrapping!",
+                options: [
+                    { name: "Tree", emoji: "🌳" },
+                    { name: "Sun", emoji: "☀️" },
+                    { name: "Computer", emoji: "💻" }
+                ],
+                targetEmoji: "🌳",
+                targetWrap: "Tight"
+            },
+            {
+                title: "ClipArt Task 2: Select Computer 💻 ClipArt, insert onto canvas, and select 'Square' text wrapping!",
+                options: [
+                    { name: "Tree", emoji: "🌳" },
+                    { name: "Sun", emoji: "☀️" },
+                    { name: "Computer", emoji: "💻" }
+                ],
+                targetEmoji: "💻",
+                targetWrap: "Square"
+            }
+        ];
+        let clipArtSubIndex = 0;
+        let activeSelectedWrap = "";
+        let selectedClipArtEmoji = "";
+
+        function launchGameEngine() {
             document.getElementById("menuPanel").classList.add("hidden");
             document.getElementById("gamePanel").classList.remove("hidden");
-            loadStageFrame();
+            loadCurrentLevel();
         }
 
-        function loadStageFrame() {
+        function loadCurrentLevel() {
             actionLocked = false;
+            document.getElementById("levelHUD").innerText = `${currentLevel} / 3`;
             document.getElementById("scoreHUD").innerText = score;
-            const container = document.getElementById("questionContainer");
+            const container = document.getElementById("workspaceContainer");
             container.innerHTML = "";
 
             if (currentLevel === 1) {
-                document.getElementById("stageHUD").innerText = `L1 - Q${l1Index + 1}/8`;
-                const qData = level1Questions[l1Index];
-                renderSheetCard(container, qData);
+                renderWordArtLevel(container);
             } else if (currentLevel === 2) {
-                document.getElementById("stageHUD").innerText = `L2 - Q${l2Index + 1}/7`;
-                const qData = level2Questions[l2Index];
-                renderSheetCard(container, qData);
+                renderSmartArtLevel(container);
+            } else if (currentLevel === 3) {
+                renderClipArtLevel(container);
             }
         }
 
-        function renderSheetCard(container, qData) {
-            const card = document.createElement("div");
-            card.className = "game-card";
-
-            const title = document.createElement("div");
-            title.className = "game-title";
-            title.innerText = qData.question;
-            card.appendChild(title);
-
+        /* LEVEL 1: WORDART DECORATOR STUDIO */
+        function renderWordArtLevel(container) {
+            const task = wordArtChallenges[wordArtSubIndex];
+            
             const audioBtn = document.createElement("button");
             audioBtn.className = "audio-btn";
-            audioBtn.innerText = "🔊 Listen Prompt";
-            audioBtn.onclick = () => speakText(qData.question);
-            card.appendChild(audioBtn);
+            audioBtn.innerText = "🔊 Listen Task Prompt";
+            audioBtn.onclick = () => speakText(task.title);
+            container.appendChild(audioBtn);
 
-            /* Render Spreadsheet Table */
-            const sheetBox = document.createElement("div");
-            sheetBox.className = "sheet-container";
+            const title = document.createElement("div");
+            title.style.fontWeight = "800";
+            title.style.fontSize = "1rem";
+            title.innerText = task.title;
+            container.appendChild(title);
 
-            sheetBox.innerHTML = `
-                <table class="excel-table">
-                    <thead>
-                        <tr>
-                            <th>Cell</th>
-                            <th class="col-header" onclick="handleSelection('column', 'A')">A</th>
-                            <th class="col-header" onclick="handleSelection('column', 'B')">B</th>
-                            <th class="col-header" onclick="handleSelection('column', 'C')">C</th>
-                            <th class="col-header" onclick="handleSelection('column', 'D')">D</th>
-                            <th class="col-header" onclick="handleSelection('column', 'E')">E</th>
-                        </tr>
-                        <tr>
-                            <th>Header</th>
-                            <th>Stationeries</th>
-                            <th>Quantity</th>
-                            <th>Price(Rs)</th>
-                            <th>Unit Cost</th>
-                            <th>Analysis</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td class="row-header" onclick="handleSelection('row', '1')">1</td>
-                            <td class="grid-cell" id="cell-A1" onclick="handleSelection('cell', 'A1')">Stationeries</td>
-                            <td class="grid-cell" id="cell-B1" onclick="handleSelection('cell', 'B1')">Quantity</td>
-                            <td class="grid-cell" id="cell-C1" onclick="handleSelection('cell', 'C1')">Price(Rs)</td>
-                            <td class="grid-cell" id="cell-D1" onclick="handleSelection('cell', 'D1')">Unit Cost</td>
-                            <td class="grid-cell ${qData.targetCell === 'E1' ? 'target-cell-active' : ''}" id="cell-E1" onclick="handleSelection('cell', 'E1')">
-                                ${qData.targetCell === 'E1' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =B5/3" value="${sheetValues.E1}">` : (sheetValues.E1 || '-')}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="row-header" onclick="handleSelection('row', '2')">2</td>
-                            <td class="grid-cell" id="cell-A2" onclick="handleSelection('cell', 'A2')">Blue Markers</td>
-                            <td class="grid-cell" id="cell-B2" onclick="handleSelection('cell', 'B2')">12</td>
-                            <td class="grid-cell" id="cell-C2" onclick="handleSelection('cell', 'C2')">120</td>
-                            <td class="grid-cell ${qData.targetCell === 'D2' ? 'target-cell-active' : ''}" id="cell-D2" onclick="handleSelection('cell', 'D2')">
-                                ${qData.targetCell === 'D2' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =C2/B2" value="${sheetValues.D2}">` : (sheetValues.D2 || '-')}
-                            </td>
-                            <td class="grid-cell" id="cell-E2">-</td>
-                        </tr>
-                        <tr>
-                            <td class="row-header" onclick="handleSelection('row', '3')">3</td>
-                            <td class="grid-cell" id="cell-A3" onclick="handleSelection('cell', 'A3')">Pencils</td>
-                            <td class="grid-cell" id="cell-B3" onclick="handleSelection('cell', 'B3')">6</td>
-                            <td class="grid-cell" id="cell-C3" onclick="handleSelection('cell', 'C3')">30</td>
-                            <td class="grid-cell ${qData.targetCell === 'D3' ? 'target-cell-active' : ''}" id="cell-D3" onclick="handleSelection('cell', 'D3')">
-                                ${qData.targetCell === 'D3' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =C3/B3" value="${sheetValues.D3}">` : (sheetValues.D3 || '-')}
-                            </td>
-                            <td class="grid-cell" id="cell-E3">-</td>
-                        </tr>
-                        <tr>
-                            <td class="row-header" onclick="handleSelection('row', '4')">4</td>
-                            <td class="grid-cell" id="cell-A4" onclick="handleSelection('cell', 'A4')">Pens</td>
-                            <td class="grid-cell" id="cell-B4" onclick="handleSelection('cell', 'B4')">10</td>
-                            <td class="grid-cell" id="cell-C4" onclick="handleSelection('cell', 'C4')">100</td>
-                            <td class="grid-cell ${qData.targetCell === 'D4' ? 'target-cell-active' : ''}" id="cell-D4" onclick="handleSelection('cell', 'D4')">
-                                ${qData.targetCell === 'D4' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =C4/B4" value="${sheetValues.D4}">` : (sheetValues.D4 || '-')}
-                            </td>
-                            <td class="grid-cell" id="cell-E4">-</td>
-                        </tr>
-                        <tr>
-                            <td class="row-header" onclick="handleSelection('row', '5')">5</td>
-                            <td class="grid-cell" id="cell-A5" onclick="handleSelection('cell', 'A5')">Total</td>
-                            <td class="grid-cell ${qData.targetCell === 'B5' ? 'target-cell-active' : ''}" id="cell-B5" onclick="handleSelection('cell', 'B5')">
-                                ${qData.targetCell === 'B5' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =SUM(B2:B4)" value="${sheetValues.B5}">` : (sheetValues.B5 || '-')}
-                            </td>
-                            <td class="grid-cell ${qData.targetCell === 'C5' ? 'target-cell-active' : ''}" id="cell-C5" onclick="handleSelection('cell', 'C5')">
-                                ${qData.targetCell === 'C5' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =SUM(C2:C4)" value="${sheetValues.C5}">` : (sheetValues.C5 || '-')}
-                            </td>
-                            <td class="grid-cell ${qData.targetCell === 'D5' ? 'target-cell-active' : ''}" id="cell-D5" onclick="handleSelection('cell', 'D5')">
-                                ${qData.targetCell === 'D5' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =SUM(D2:D4)" value="${sheetValues.D5}">` : (sheetValues.D5 || '-')}
-                            </td>
-                            <td class="grid-cell" id="cell-E5">-</td>
-                        </tr>
-                    </tbody>
-                </table>
+            // Live Preview Box
+            const previewBox = document.createElement("div");
+            previewBox.className = "wordart-preview-box";
+            
+            const targetText = document.createElement("div");
+            targetText.id = "wordArtTextTarget";
+            targetText.innerText = task.text;
+            previewBox.appendChild(targetText);
+            container.appendChild(previewBox);
+
+            // Control Panel Grid
+            const ctrlGrid = document.createElement("div");
+            ctrlGrid.className = "control-panel-grid";
+
+            ctrlGrid.innerHTML = `
+                <div class="ctrl-group">
+                    <label>Edit Title Text</label>
+                    <input type="text" id="waTextInput" class="ctrl-input" value="${task.text}" oninput="updateWordArtText()">
+                </div>
+                <div class="ctrl-group">
+                    <label>Font Color</label>
+                    <input type="color" id="waColor" class="ctrl-color" value="#2b579a" onchange="updateWordArtStyle()">
+                </div>
+                <div class="ctrl-group">
+                    <label>Fill Type</label>
+                    <select id="waFill" class="ctrl-select" onchange="updateWordArtStyle()">
+                        <option value="solid">Solid Color</option>
+                        <option value="gradient">Gradient Rainbow</option>
+                    </select>
+                </div>
+                <div class="ctrl-group">
+                    <label>Outline Stroke</label>
+                    <select id="waOutline" class="ctrl-select" onchange="updateWordArtStyle()">
+                        <option value="none">None</option>
+                        <option value="thick">Thick Gold</option>
+                    </select>
+                </div>
+                <div class="ctrl-group">
+                    <label>3D Shadow Effect</label>
+                    <select id="waShadow" class="ctrl-select" onchange="updateWordArtStyle()">
+                        <option value="flat">Flat</option>
+                        <option value="3d">3D Soft Drop Shadow</option>
+                    </select>
+                </div>
+                <div class="ctrl-group">
+                    <label>Curve Transform</label>
+                    <select id="waTransform" class="ctrl-select" onchange="updateWordArtStyle()">
+                        <option value="straight">Straight</option>
+                        <option value="arc">Arch Up Curved</option>
+                    </select>
+                </div>
             `;
+            container.appendChild(ctrlGrid);
 
-            card.appendChild(sheetBox);
+            const submitBtn = document.createElement("button");
+            submitBtn.className = "btn-primary";
+            submitBtn.style.marginTop = "10px";
+            submitBtn.innerText = "Apply WordArt to Document ➔";
+            submitBtn.onclick = () => evaluateWordArtTask(task);
+            container.appendChild(submitBtn);
 
-            if (qData.type === "formula") {
-                const submitBtn = document.createElement("button");
-                submitBtn.className = "act-btn";
-                submitBtn.innerText = "Check Formula ➔";
-                submitBtn.onclick = () => evaluateFormulaStage(qData);
-                card.appendChild(submitBtn);
-            }
-
-            container.appendChild(card);
-            speakText(qData.question);
-
-            if (qData.type === "formula") {
-                setTimeout(() => {
-                    const inp = document.getElementById("activeInput");
-                    if (inp) inp.focus();
-                }, 100);
-            }
+            speakText(task.title);
+            updateWordArtStyle();
         }
 
-        /* Selection Handler */
-        function handleSelection(type, key) {
-            const qData = (currentLevel === 1) ? level1Questions[l1Index] : level2Questions[l2Index];
-            if (qData.type !== "selection" || actionLocked) return;
+        function updateWordArtText() {
+            const inputVal = document.getElementById("waTextInput").value;
+            const target = document.getElementById("wordArtTextTarget");
+            if (target) target.innerText = inputVal || "WORDART";
+        }
 
-            actionLocked = true;
-            const ticker = document.getElementById("tickerBox");
-            const isCorrect = (type === qData.targetType && key === qData.targetKey);
+        function updateWordArtStyle() {
+            const target = document.getElementById("wordArtTextTarget");
+            if (!target) return;
 
-            if (type === "column") {
-                const colMap = { 'A': 2, 'B': 3, 'C': 4, 'D': 5, 'E': 6 };
-                const colIdx = colMap[key];
-                document.querySelectorAll(`table.excel-table tr td:nth-child(${colIdx}), table.excel-table tr th:nth-child(${colIdx})`).forEach(el => el.classList.add("selected-highlight"));
-            } else if (type === "row") {
-                document.querySelectorAll(`table.excel-table tr:nth-child(${key}) td`).forEach(el => el.classList.add("selected-highlight"));
-            } else if (type === "cell") {
-                const cell = document.getElementById(`cell-${key}`);
-                if (cell) cell.classList.add("selected-highlight");
-            }
+            const color = document.getElementById("waColor").value;
+            const fill = document.getElementById("waFill").value;
+            const outline = document.getElementById("waOutline").value;
+            const shadow = document.getElementById("waShadow").value;
+            const transform = document.getElementById("waTransform").value;
 
-            if (isCorrect) {
-                score += 100;
-                soundEngine.playCorrect();
-                ticker.className = "ticker-feedback good";
-                ticker.innerText = `🎉 CORRECT! Selected ${qData.targetType.toUpperCase()} ${qData.targetKey}`;
-                speakText("Correct selection!");
+            if (fill === "gradient") {
+                target.style.background = "linear-gradient(45deg, #f59e0b, #ef4444, #3b82f6)";
+                target.style.webkitBackgroundClip = "text";
+                target.style.webkitTextFillColor = "transparent";
             } else {
-                soundEngine.playWrong();
-                ticker.className = "ticker-feedback bad";
-                ticker.innerText = `💥 Incorrect selection! Needed ${qData.targetType.toUpperCase()} ${qData.targetKey}`;
-                speakText("Incorrect selection.");
+                target.style.background = "none";
+                target.style.webkitBackgroundClip = "border-box";
+                target.style.webkitTextFillColor = color;
+                target.style.color = color;
             }
 
-            advanceGame();
+            if (outline === "thick") {
+                target.style.webkitTextStroke = "2px #f59e0b";
+            } else {
+                target.style.webkitTextStroke = "0px transparent";
+            }
+
+            if (shadow === "3d") {
+                target.style.textShadow = "3px 3px 0px #1b365d, 6px 6px 0px rgba(0,0,0,0.15)";
+            } else {
+                target.style.textShadow = "none";
+            }
+
+            if (transform === "arc") {
+                target.style.transform = "rotate(-4deg) scaleY(1.1)";
+            } else {
+                target.style.transform = "none";
+            }
         }
 
-        /* Formula Verification Handler */
-        function evaluateFormulaStage(qData) {
+        function evaluateWordArtTask(task) {
             if (actionLocked) return;
             actionLocked = true;
 
-            const inp = document.getElementById("activeInput");
-            const rawVal = inp ? inp.value.trim().toUpperCase().replace(/\s+/g, '') : "";
+            const fill = document.getElementById("waFill").value;
+            const outline = document.getElementById("waOutline").value;
+            const shadow = document.getElementById("waShadow").value;
+            const transform = document.getElementById("waTransform").value;
+
+            let isCorrect = true;
+
+            if (task.targetTransform && transform !== task.targetTransform) isCorrect = false;
+            if (task.targetShadow && shadow !== task.targetShadow) isCorrect = false;
+            if (task.targetFill && fill !== task.targetFill) isCorrect = false;
+            if (task.targetOutline && outline !== task.targetOutline) isCorrect = false;
+
             const ticker = document.getElementById("tickerBox");
 
-            const isCorrect = qData.validAnswers.some(ans => ans.toUpperCase().replace(/\s+/g, '') === rawVal);
-
             if (isCorrect) {
-                score += 100;
-                sheetValues[qData.targetCell] = rawVal;
+                score += 300;
                 soundEngine.playCorrect();
                 ticker.className = "ticker-feedback good";
-                ticker.innerText = `🎉 CORRECT! Formula accepted for cell ${qData.targetCell}`;
-                speakText("Correct formula!");
+                ticker.innerText = "🎉 FANTASTIC! WordArt style applied successfully to document!";
+                speakText("WordArt styled and applied perfectly!");
             } else {
-                sheetValues[qData.targetCell] = qData.validAnswers[1];
                 soundEngine.playWrong();
                 ticker.className = "ticker-feedback bad";
-                ticker.innerText = `💥 Incorrect! Correct answer for ${qData.targetCell} is: ${qData.displayCorrect}`;
-                speakText(`Incorrect. The correct answer is ${qData.displayCorrect}`);
+                ticker.innerText = "💥 Style check missed! Make sure to set the requested transform or shadow.";
+                speakText("Style check missed. Review required options.");
             }
 
-            advanceGame();
+            advanceLevelState();
         }
 
-        function advanceGame() {
+        /* LEVEL 2: SMARTART DIAGRAM BUILDER */
+        function renderSmartArtLevel(container) {
+            const task = smartArtDiagrams[smartArtSubIndex];
+            userDiagramPlacements = new Array(task.slots.length).fill(null);
+
+            const audioBtn = document.createElement("button");
+            audioBtn.className = "audio-btn";
+            audioBtn.innerText = "🔊 Listen Task Prompt";
+            audioBtn.onclick = () => speakText(task.title);
+            container.appendChild(audioBtn);
+
+            const title = document.createElement("div");
+            title.style.fontWeight = "800";
+            title.style.fontSize = "0.95rem";
+            title.innerText = task.title;
+            container.appendChild(title);
+
+            // Drop Slots Container
+            const dropZone = document.createElement("div");
+            dropZone.className = "diagram-drop-zone";
+
+            task.slots.forEach((sLabel, idx) => {
+                const slot = document.createElement("div");
+                slot.className = "smartart-node-slot";
+                slot.id = `smartart_slot_${idx}`;
+                slot.innerHTML = `<span>${sLabel}</span><div style='font-size:0.7rem; margin-top:4px;'>[Tap Node to Place]</div>`;
+                slot.onclick = () => placeSelectedNodeIntoSlot(idx, task);
+                dropZone.appendChild(slot);
+            });
+            container.appendChild(dropZone);
+
+            // Palette Node Chips
+            const palette = document.createElement("div");
+            palette.className = "node-palette";
+
+            let shuffledNodes = [...task.nodes].sort(() => Math.random() - 0.5);
+            shuffledNodes.forEach(nodeText => {
+                const chip = document.createElement("div");
+                chip.className = "palette-chip";
+                chip.innerText = nodeText;
+                chip.onclick = () => selectPaletteNode(chip, nodeText);
+                palette.appendChild(chip);
+            });
+            container.appendChild(palette);
+
+            const submitBtn = document.createElement("button");
+            submitBtn.className = "btn-primary";
+            submitBtn.style.marginTop = "10px";
+            submitBtn.innerText = "Verify SmartArt Diagram ➔";
+            submitBtn.onclick = () => evaluateSmartArtDiagram(task);
+            container.appendChild(submitBtn);
+
+            speakText(task.title);
+        }
+
+        let activeSelectedNodeText = null;
+        let activeSelectedChip = null;
+
+        function selectPaletteNode(chipNode, nodeText) {
+            document.querySelectorAll(".palette-chip").forEach(c => c.style.outline = "none");
+            chipNode.style.outline = "3px solid #f59e0b";
+            activeSelectedNodeText = nodeText;
+            activeSelectedChip = chipNode;
+        }
+
+        function placeSelectedNodeIntoSlot(slotIdx, task) {
+            if (!activeSelectedNodeText) return;
+            userDiagramPlacements[slotIdx] = activeSelectedNodeText;
+
+            const slotNode = document.getElementById(`smartart_slot_${slotIdx}`);
+            slotNode.className = "smartart-node-slot filled";
+            slotNode.innerText = activeSelectedNodeText;
+
+            if (activeSelectedChip) {
+                activeSelectedChip.style.display = "none";
+            }
+
+            activeSelectedNodeText = null;
+            activeSelectedChip = null;
+        }
+
+        function evaluateSmartArtDiagram(task) {
+            if (actionLocked) return;
+            actionLocked = true;
+
+            let isCorrect = true;
+            task.nodes.forEach((expectedNode, idx) => {
+                if (userDiagramPlacements[idx] !== expectedNode) isCorrect = false;
+            });
+
+            const ticker = document.getElementById("tickerBox");
+
+            if (isCorrect) {
+                score += 300;
+                soundEngine.playCorrect();
+                ticker.className = "ticker-feedback good";
+                ticker.innerText = "🎉 EXCELLENT! SmartArt diagram process ordered correctly!";
+                speakText("SmartArt diagram ordered correctly!");
+            } else {
+                soundEngine.playWrong();
+                ticker.className = "ticker-feedback bad";
+                ticker.innerText = "💥 Sequence error! Review diagram step order.";
+                speakText("Sequence error. Review diagram step order.");
+            }
+
+            advanceLevelState();
+        }
+
+        /* LEVEL 3: CLIPART PICTURE INSERTER */
+        function renderClipArtLevel(container) {
+            const task = clipArtTasks[clipArtSubIndex];
+            activeSelectedWrap = "";
+            selectedClipArtEmoji = "";
+
+            const audioBtn = document.createElement("button");
+            audioBtn.className = "audio-btn";
+            audioBtn.innerText = "🔊 Listen Task Prompt";
+            audioBtn.onclick = () => speakText(task.title);
+            container.appendChild(audioBtn);
+
+            const title = document.createElement("div");
+            title.style.fontWeight = "800";
+            title.style.fontSize = "0.95rem";
+            title.innerText = task.title;
+            container.appendChild(title);
+
+            // ClipArt Gallery Picker
+            const galleryLabel = document.createElement("div");
+            galleryLabel.style.fontSize = "0.8rem";
+            galleryLabel.style.fontWeight = "800";
+            galleryLabel.innerText = "Step 1: Choose ClipArt from Gallery:";
+            container.appendChild(galleryLabel);
+
+            const galleryRow = document.createElement("div");
+            galleryRow.style.display = "flex";
+            galleryRow.style.gap = "10px";
+            galleryRow.style.justifyContent = "center";
+            galleryRow.style.margin = "6px 0";
+
+            task.options.forEach(opt => {
+                const gBtn = document.createElement("button");
+                gBtn.className = "wrap-btn";
+                gBtn.style.fontSize = "1.2rem";
+                gBtn.innerText = `${opt.emoji} ${opt.name}`;
+                gBtn.onclick = () => {
+                    document.querySelectorAll(".gallery-item-btn").forEach(b => b.classList.remove("active"));
+                    gBtn.classList.add("active");
+                    selectedClipArtEmoji = opt.emoji;
+                };
+                gBtn.classList.add("gallery-item-btn");
+                galleryRow.appendChild(gBtn);
+            });
+            container.appendChild(galleryRow);
+
+            // Document Canvas Simulator
+            const docCanvas = document.createElement("div");
+            docCanvas.className = "doc-canvas";
+            docCanvas.id = "docCanvasBoard";
+            docCanvas.innerHTML = `
+                <p>Microsoft Word document paragraph simulator. Inserting ClipArt illustrations helps explain story concepts visually to young readers.</p>
+                <br>
+                <p>Trees, computers, and sun illustrations make textbook stories engaging and easy to read across formatted pages.</p>
+                <div id="clipArtTargetNode" class="clipart-item" style="display:none; top:20px; right:20px;"></div>
+            `;
+            container.appendChild(docCanvas);
+
+            // Inserter & Wrapping Buttons
+            const ctrlBox = document.createElement("div");
+            ctrlBox.style.display = "flex";
+            ctrlBox.style.flexDirection = "column";
+            ctrlBox.style.gap = "8px";
+
+            const insertBtn = document.createElement("button");
+            insertBtn.className = "btn-primary";
+            insertBtn.style.padding = "8px 20px";
+            insertBtn.style.fontSize = "0.95rem";
+            insertBtn.innerText = `🖼️ Step 2: Insert Selected ClipArt`;
+            insertBtn.onclick = () => {
+                if (!selectedClipArtEmoji) {
+                    alert("Please select a ClipArt graphic from Step 1 first!");
+                    return;
+                }
+                const node = document.getElementById("clipArtTargetNode");
+                if (node) {
+                    node.innerText = selectedClipArtEmoji;
+                    node.style.display = "block";
+                }
+                soundEngine.playCorrect();
+            };
+            ctrlBox.appendChild(insertBtn);
+
+            const wrapLabel = document.createElement("div");
+            wrapLabel.style.fontSize = "0.8rem";
+            wrapLabel.style.fontWeight = "800";
+            wrapLabel.innerText = "Step 3: Set Text Wrapping Mode:";
+            ctrlBox.appendChild(wrapLabel);
+
+            const wrapRow = document.createElement("div");
+            wrapRow.className = "text-wrap-controls";
+
+            ["In Line with Text", "Square", "Tight", "In Front of Text"].forEach(wrapType => {
+                const wBtn = document.createElement("button");
+                wBtn.className = "wrap-btn";
+                wBtn.innerText = wrapType;
+                wBtn.onclick = () => {
+                    document.querySelectorAll(".wrap-type-btn").forEach(b => b.classList.remove("active"));
+                    wBtn.classList.add("active");
+                    activeSelectedWrap = wrapType;
+                };
+                wBtn.classList.add("wrap-type-btn");
+                wrapRow.appendChild(wBtn);
+            });
+            ctrlBox.appendChild(wrapRow);
+
+            container.appendChild(ctrlBox);
+
+            const submitBtn = document.createElement("button");
+            submitBtn.className = "btn-primary";
+            submitBtn.style.marginTop = "8px";
+            submitBtn.innerText = "Apply ClipArt to Document ➔";
+            submitBtn.onclick = () => evaluateClipArtTask(task);
+            container.appendChild(submitBtn);
+
+            speakText(task.title);
+        }
+
+        function evaluateClipArtTask(task) {
+            if (actionLocked) return;
+            actionLocked = true;
+
+            const clipartNode = document.getElementById("clipArtTargetNode");
+            const isInserted = clipartNode && clipartNode.style.display === "block";
+            const isEmojiCorrect = (selectedClipArtEmoji === task.targetEmoji);
+            const isWrapCorrect = (activeSelectedWrap === task.targetWrap);
+
+            const ticker = document.getElementById("tickerBox");
+
+            if (isInserted && isEmojiCorrect && isWrapCorrect) {
+                score += 300;
+                soundEngine.playCorrect();
+                ticker.className = "ticker-feedback good";
+                ticker.innerText = "🎉 GREAT JOB! Correct ClipArt inserted and wrapped properly!";
+                speakText("ClipArt inserted and wrapped properly!");
+            } else {
+                soundEngine.playWrong();
+                ticker.className = "ticker-feedback bad";
+                ticker.innerText = "💥 Insertion error! Choose the right ClipArt graphic and requested Text Wrapping.";
+                speakText("Choose requested ClipArt and Text Wrapping.");
+            }
+
+            advanceLevelState();
+        }
+
+        function advanceLevelState() {
             setTimeout(() => {
                 if (currentLevel === 1) {
-                    l1Index++;
-                    if (l1Index < level1Questions.length) {
-                        loadStageFrame();
+                    wordArtSubIndex++;
+                    if (wordArtSubIndex < wordArtChallenges.length) {
+                        loadCurrentLevel();
                     } else {
                         currentLevel = 2;
-                        const ticker = document.getElementById("tickerBox");
-                        ticker.className = "ticker-feedback";
-                        ticker.innerText = "Level 1 Complete! Starting Level 2: Practical Calculations!";
-                        loadStageFrame();
+                        document.getElementById("tickerBox").className = "ticker-feedback";
+                        document.getElementById("tickerBox").innerText = "Starting Level 2: SmartArt Diagram Builder!";
+                        loadCurrentLevel();
                     }
                 } else if (currentLevel === 2) {
-                    l2Index++;
-                    if (l2Index < level2Questions.length) {
-                        loadStageFrame();
+                    smartArtSubIndex++;
+                    if (smartArtSubIndex < smartArtDiagrams.length) {
+                        loadCurrentLevel();
                     } else {
-                        displayFinalReport();
+                        currentLevel = 3;
+                        document.getElementById("tickerBox").className = "ticker-feedback";
+                        document.getElementById("tickerBox").innerText = "Starting Level 3: ClipArt Picture Inserter!";
+                        loadCurrentLevel();
+                    }
+                } else if (currentLevel === 3) {
+                    clipArtSubIndex++;
+                    if (clipArtSubIndex < clipArtTasks.length) {
+                        loadCurrentLevel();
+                    } else {
+                        displayFinalReportCard();
                     }
                 }
             }, 2200);
         }
 
-        function displayFinalReport() {
+        function displayFinalReportCard() {
             document.getElementById("gamePanel").classList.add("hidden");
             document.getElementById("reportPanel").classList.remove("hidden");
             document.getElementById("finalScore").innerText = score;
@@ -742,20 +1058,20 @@
             let rank = "";
             let msg = "";
 
-            if (score >= 1200) {
+            if (score >= 900) {
                 soundEngine.playCorrect();
-                if (window.confetti) confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
-                rank = "🥇 Excel Spreadsheet Master!";
-                msg = `Outstanding performance! You scored ${score} points across all 15 stages!`;
+                if (window.confetti) confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+                rank = "🥇 MS Word Graphics Wizard!";
+                msg = `Outstanding performance! You scored ${score} points and cleared the 900-point target across WordArt, SmartArt, and ClipArt!`;
             } else {
                 soundEngine.playWrong();
-                rank = "🌱 Data Entry Analyst";
-                msg = `You finished with ${score} points. Review your selection targets and formulas to hit top rank next run!`;
+                rank = "🌱 Document Layout Apprentice";
+                msg = `You finished with ${score} points. Review WordArt transforms and SmartArt sequences to hit top rank next run!`;
             }
 
             document.getElementById("finalRank").innerText = rank;
             document.getElementById("finalSummary").innerText = msg;
-            speakText(`Game completed. Your final rank is ${rank}`);
+            speakText(`Game finished. Your final rank is ${rank}`);
         }
     </script>
 </body>

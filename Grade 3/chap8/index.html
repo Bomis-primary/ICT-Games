@@ -2,187 +2,350 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Robot Code Academy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Robot Code Academy - Grade 3 Coding Arcade</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
         :root {
             --bg-color: #f0f4f8;
             --main-purple: #7c3aed;
+            --purple-hover: #6d28d9;
             --dark-blue: #1e3a8a;
+            --light-blue: #eff6ff;
             --green-success: #10b981;
             --red-error: #ef4444;
+            --yellow-accent: #f59e0b;
+            --slate-dark: #1e293b;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Fredoka', 'Segoe UI', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             min-height: 100vh;
+            min-height: -webkit-fill-available;
             display: flex;
             justify-content: center;
             align-items: center;
             background: var(--bg-color);
-            padding: 15px;
+            background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
+            background-size: 20px 20px;
+            padding: 10px;
+            color: var(--slate-dark);
         }
 
-        /* --- 5-SECOND SPLASH SCREEN --- */
         #splash {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             background: #ffffff;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            z-index: 99999;
+            transition: opacity 0.5s ease;
+        }
+
+        #splash img {
+            width: 180px;
+            max-width: 60vw;
+            animation: bounce 1.5s infinite alternate ease-in-out;
         }
 
         #splash h2 {
             color: var(--main-purple);
-            font-size: 2rem;
+            font-size: clamp(1.4rem, 4vw, 2rem);
             margin-top: 15px;
+            text-align: center;
         }
 
-        #splash img {
-            width: 200px;
-            animation: bounce 1.5s infinite alternate;
+        .loader-bar {
+            width: 220px;
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 20px;
+            margin-top: 20px;
+            overflow: hidden;
+            border: 2px solid var(--main-purple);
+        }
+
+        .loader-progress {
+            width: 0%;
+            height: 100%;
+            background: var(--main-purple);
+            animation: loadProgress 5s linear forwards;
+        }
+
+        @keyframes loadProgress {
+            0% { width: 0%; }
+            100% { width: 100%; }
         }
 
         @keyframes bounce {
             from { transform: translateY(0); }
-            to { transform: translateY(-15px); }
+            to { transform: translateY(-18px); }
         }
 
-        /* --- GAME BOX --- */
         .game-card {
             width: 100%;
-            max-width: 700px;
+            max-width: 780px;
+            min-height: 88vh;
             background: #ffffff;
-            border-radius: 25px;
-            padding: 30px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 24px;
+            padding: clamp(16px, 3.5vw, 28px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
             text-align: center;
             border: 6px solid var(--main-purple);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
         }
 
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
         h1 {
-            font-size: 2.4rem;
+            font-size: clamp(1.6rem, 5vw, 2.3rem);
             color: var(--dark-blue);
-            margin-bottom: 10px;
+            margin-bottom: 6px;
         }
 
         .subtitle {
-            font-size: 1.2rem;
+            font-size: clamp(0.95rem, 3vw, 1.15rem);
             color: var(--main-purple);
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .rules-box {
             background: #f3e8ff;
-            padding: 20px;
-            border-radius: 15px;
+            padding: 16px;
+            border-radius: 16px;
             text-align: left;
-            margin-bottom: 25px;
-            font-size: 1.1rem;
+            margin-bottom: 20px;
+            font-size: clamp(0.9rem, 2.8vw, 1.05rem);
             color: #374151;
             line-height: 1.6;
+            border-left: 6px solid var(--main-purple);
         }
 
         .start-btn {
-            padding: 15px 40px;
+            padding: 14px 38px;
             background: var(--main-purple);
             color: white;
-            font-size: 1.3rem;
+            font-size: 1.25rem;
             font-weight: bold;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 5px 0 #5b21b6;
-            transition: all 0.1s ease;
+            box-shadow: 0 6px 0 #5b21b6;
+            transition: all 0.15s ease;
+            width: 100%;
+            max-width: 280px;
+            margin: 0 auto;
         }
 
         .start-btn:active {
             transform: translateY(4px);
-            box-shadow: 0 1px 0 #5b21b6;
+            box-shadow: 0 2px 0 #5b21b6;
         }
 
-        /* --- PLAY ZONE --- */
         .hud-bar {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-            font-weight: bold;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 14px;
         }
 
         .hud-item {
             background: var(--dark-blue);
             color: white;
-            padding: 8px 20px;
+            padding: 8px 12px;
+            border-radius: 14px;
+            font-weight: bold;
+            font-size: clamp(0.75rem, 2.5vw, 0.95rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .audio-btn {
+            background: var(--main-purple);
+            color: white;
+            border: none;
+            padding: 6px 16px;
             border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 10px;
+            align-self: center;
         }
 
         .puzzle-box {
             background: #f8fafc;
             border: 3px dashed #cbd5e1;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
+            padding: 16px;
+            border-radius: 18px;
+            margin-bottom: 14px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .question-text {
-            font-size: 1.3rem;
+            font-size: clamp(1.05rem, 3.2vw, 1.25rem);
             color: #1f2937;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             font-weight: bold;
         }
 
-        .display-clue {
-            font-size: 1.6rem;
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            display: inline-block;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
-            border: 2px solid #e2e8f0;
-            white-space: pre-line;
+        .drag-target-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .drag-slot {
+            background: #ffffff;
+            border: 3px dashed var(--main-purple);
+            border-radius: 14px;
+            min-height: 90px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .drag-slot.filled {
+            background: #f3e8ff;
+            border-style: solid;
+        }
+
+        .chips-pool {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .drag-chip {
+            background: #ffffff;
+            border: 3px solid var(--dark-blue);
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 3px 3px 0 var(--dark-blue);
+            transition: transform 0.15s ease;
+        }
+
+        .drag-chip.selected {
+            background: var(--yellow-accent);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .dropdown-logic-container {
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            padding: 16px;
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .custom-select {
+            width: 100%;
+            max-width: 280px;
+            padding: 12px;
+            border: 3px solid var(--main-purple);
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--dark-blue);
+            background: #ffffff;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .memory-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .memory-card {
+            aspect-ratio: 1;
+            background: var(--main-purple);
+            color: white;
+            border-radius: 14px;
+            font-size: 1.8rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #5b21b6;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .memory-card.flipped {
+            background: #ffffff;
+            color: var(--slate-dark);
+            border: 3px solid var(--main-purple);
+            box-shadow: none;
+        }
+
+        .memory-card.matched {
+            background: #d1fae5;
+            color: #065f46;
+            border: 3px solid var(--green-success);
+            cursor: default;
         }
 
         .answers-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
+            gap: 10px;
+            margin-top: 10px;
         }
 
         .answer-button {
-            background: white;
+            background: #ffffff;
             border: 3px solid #cbd5e1;
-            padding: 15px;
-            border-radius: 15px;
-            font-size: 1.1rem;
+            padding: 12px;
+            border-radius: 14px;
+            font-size: 0.95rem;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s, background 0.2s;
+            transition: transform 0.15s, background 0.15s;
             color: #374151;
         }
 
-        .answer-button:hover {
-            border-color: var(--main-purple);
-            background: #faf5ff;
-            transform: scale(1.02);
+        .answer-button:active {
+            transform: scale(0.98);
         }
 
         .answer-button.right {
@@ -198,134 +361,219 @@
         }
 
         .alert-box {
-            margin-top: 20px;
-            padding: 15px;
+            margin-top: 10px;
+            padding: 10px 14px;
             border-radius: 12px;
-            font-size: 1.2rem;
+            font-size: 1rem;
             font-weight: bold;
             background: #e2e8f0;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .alert-box.win {
-            background: #d1fae5;
-            color: #065f46;
-        }
+        .alert-box.win { background: #d1fae5; color: #065f46; }
+        .alert-box.lose { background: #fee2e2; color: #991b1b; }
 
-        .alert-box.lose {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        /* --- END PANEL --- */
         .score-circle {
             width: 100px;
             height: 100px;
             background: var(--main-purple);
             color: white;
             border-radius: 50%;
-            font-size: 2rem;
+            font-size: 2.2rem;
             font-weight: bold;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 20px auto;
+            margin: 16px auto;
+            box-shadow: 0 8px 16px rgba(124, 58, 237, 0.3);
         }
 
-        @media (max-width: 500px) {
-            .answers-grid {
-                grid-template-columns: 1fr;
-            }
+        @media (max-width: 480px) {
+            .answers-grid { grid-template-columns: 1fr; }
+            .drag-target-grid { grid-template-columns: 1fr; }
+            .memory-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+            .memory-card { font-size: 1.4rem; }
         }
     </style>
 </head>
 <body>
 
+    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+
     <div id="splash">
-        <img src="assets/innovine-logo.png" alt="🤖" onerror="this.src='https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=150'">
+        <img src="assets/innovine-logo.png" alt="Robot Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'180\' height=\'180\' viewBox=\'0 0 100 100\'><rect width=\'100\' height=\'100\' rx=\'20\' fill=\'%237c3aed\'/><circle cx=\'35\' cy=\'40\' r=\'8\' fill=\'%23ffffff\'/><circle cx=\'65\' cy=\'40\' r=\'8\' fill=\'%23ffffff\'/><rect x=\'30\' y=\'65\' width=\'40\' height=\'10\' rx=\'5\' fill=\'%23ffffff\'/></svg>';">
         <h2>Loading Robot Academy...</h2>
+        <div class="loader-bar"><div class="loader-progress"></div></div>
     </div>
 
     <div class="game-card hidden" id="mainGameCard">
         
+        <!-- START SCREEN -->
         <div id="startScreen">
-            <h1>🤖 Robot Code Challenge</h1>
-            <div class="subtitle">Become a Coding Master! (Grade 3)</div>
+            <h1>🤖 Robot Code Academy</h1>
+            <div class="subtitle">Grade 3 Algorithmic Logic Challenge</div>
             
             <div class="rules-box">
-                <p><strong>How to Play:</strong></p>
-                <p>• Help the little robot figure out the correct order of steps.</p>
-                <p>• Look closely at the clues and choose the right answer card.</p>
-                <p>• Get questions right to earn points and win the <strong>Super Programmer Trophy!</strong></p>
-            </div>
-            <button class="start-btn" onclick="playGame()">Start Game ➜</button>
-        </div>
-
-        <div id="playScreen" class="hidden">
-            <div class="hud-bar">
-                <div class="hud-item">🧩 Question: <span id="qNum">1</span> / 5</div>
-                <div class="hud-item" style="background: var(--main-purple);">⭐ Points: <span id="scoreText">0</span></div>
-            </div>
-
-            <div class="puzzle-box">
-                <div class="question-text" id="qText">Loading question...</div>
-                <div class="display-clue" id="qClue">...</div>
+                <p><strong>🎮 How to Play:</strong></p>
+                <p>• <strong>Level 1:</strong> Tap story chips to sequence code steps in logical order.</p>
+                <p>• <strong>Level 2:</strong> Use code dropdowns to set movement parameters.</p>
+                <p>• <strong>Level 3:</strong> Match code command cards in the Memory Grid.</p>
+                <p>• <strong>Level 4:</strong> Complete pattern loops to earn the <strong>Super Coder Trophy!</strong></p>
             </div>
             
-            <div class="answers-grid" id="choicesBox"></div>
-            <div class="alert-box" id="msgBox">Click an answer to test your code!</div>
+            <button class="start-btn" onclick="playGame()">Start Challenge ➜</button>
         </div>
 
+        <!-- PLAY SCREEN -->
+        <div id="playScreen" class="hidden">
+            <div class="hud-bar">
+                <div class="hud-item">🧩 Q: <span id="qNum">1</span> / 5</div>
+                <div class="hud-item" style="background: var(--main-purple);">⭐ Score: <span id="scoreText">0</span></div>
+                <div class="hud-item" style="background: var(--yellow-accent);">🎯 Type: <span id="levelTypeLabel">Seq</span></div>
+            </div>
+
+            <button class="audio-btn" onclick="readActivePrompt()">🔊 Listen Prompt</button>
+
+            <div class="puzzle-box">
+                <div class="question-text" id="qText">Loading activity...</div>
+                <div id="interactiveArea"></div>
+            </div>
+
+            <div id="actionArea"></div>
+            <div class="alert-box" id="msgBox">Select an answer or arrange blocks to test your code!</div>
+        </div>
+
+        <!-- END SCREEN -->
         <div id="endScreen" class="hidden">
-            <h1>🎉 Mission Complete!</h1>
+            <h1>🎉 Mission Accomplished!</h1>
             <div class="score-circle" id="finalPoints">0</div>
-            <h2 id="badgeTitle" style="margin-bottom: 15px; color: var(--dark-blue);">Calculating...</h2>
-            <p id="badgeSub" style="font-size: 1.1rem; margin-bottom: 25px; color: #4b5563;"></p>
+            <h2 id="badgeTitle" style="margin-bottom: 12px; color: var(--dark-blue);">Calculating Rank...</h2>
+            <p id="badgeSub" style="font-size: 1.05rem; margin-bottom: 22px; color: #4b5563; line-height: 1.5;"></p>
             <button class="start-btn" onclick="location.reload()">Play Again 🔄</button>
         </div>
     </div>
 
-    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
-    <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
-
     <script>
-        // Keep splash screen up for exactly 5 seconds
+        class SoundEngine {
+            constructor() { this.ctx = null; }
+            init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+
+            playCorrect() {
+                const audio = document.getElementById("correctSound");
+                if (audio) audio.play().catch(() => this.synthCorrect());
+                else this.synthCorrect();
+            }
+
+            synthCorrect() {
+                this.init(); if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.22);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(now); osc.stop(now + 0.3);
+            }
+
+            playWrong() {
+                const audio = document.getElementById("wrongSound");
+                if (audio) audio.play().catch(() => this.synthWrong());
+                else this.synthWrong();
+            }
+
+            synthWrong() {
+                this.init(); if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, now);
+                osc.frequency.linearRampToValueAtTime(90, now + 0.28);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.28);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(now); osc.stop(now + 0.28);
+            }
+
+            playFlip() {
+                this.init(); if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(300, now);
+                osc.frequency.exponentialRampToValueAtTime(500, now + 0.08);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(now); osc.stop(now + 0.08);
+            }
+        }
+
+        const soundEngine = new SoundEngine();
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.95;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
         setTimeout(() => {
             document.getElementById("splash").style.display = "none";
             document.getElementById("mainGameCard").classList.remove("hidden");
         }, 5000);
 
-        // Fun, Grade 3 specific logic & code ordering questions
         const questionsList = [
             {
-                question: "Put the steps to get dressed for school in the correct logical order:",
-                clue: "A. Put on your shoes\nB. Put on your socks\nC. Put on your pants",
-                options: ["C ➜ B ➜ A", "A ➜ B ➜ C", "B ➜ A ➜ C", "A ➜ C ➜ B"],
-                answer: "C ➜ B ➜ A"
+                type: "drag_sequence",
+                label: "Sequence",
+                question: "Drag or tap chips to arrange handwashing code in logical order:",
+                chips: ["Put on soap 🧼", "Turn on water 🚰", "Dry with towel 🧺"],
+                correctOrder: ["Turn on water 🚰", "Put on soap 🧼", "Dry with towel 🧺"]
             },
             {
-                question: "A robot wants to wash its hands. What step should it do FIRST?",
-                clue: "🧼 Handwashing Steps:",
-                options: ["Turn on the water", "Dry hands with a towel", "Put on soap", "Scrub fingers together"],
-                answer: "Turn on the water"
+                type: "dropdown_block",
+                label: "Dropdown",
+                question: "Select the correct movement code parameter for the robot:",
+                clueText: "Robot starts at Step 0 ➜ Moves UP 3 steps ➜ Moves DOWN 1 step. Final Step?",
+                options: ["Step 1", "Step 2", "Step 3", "Step 4"],
+                correct: "Step 2"
             },
             {
-                question: "Follow the movement code. Where does the robot finish?",
-                clue: "Start at [0] ➜ Go up 2 steps ➜ Go down 1 step",
-                options: ["At step 1", "At step 2", "At step 3", "At step 0"],
-                answer: "At step 1"
+                type: "memory_match",
+                label: "Memory",
+                question: "Match all 4 pairs of code command cards in the grid!",
+                pairs: [
+                    { symbol: "🔁", label: "Loop" },
+                    { symbol: "⬆️", label: "Move Up" },
+                    { symbol: "🧼", label: "Clean" },
+                    { symbol: "⚡", label: "Power" }
+                ]
             },
             {
-                question: "Help the robot pack its backpack in the right order:",
-                clue: "1. Zip the backpack closed\n2. Open the empty backpack\n3. Put textbooks inside",
-                options: ["2 ➜ 3 ➜ 1", "1 ➜ 2 ➜ 3", "3 ➜ 2 ➜ 1", "2 ➜ 1 ➜ 3"],
-                answer: "2 ➜ 3 ➜ 1"
+                type: "pattern_choice",
+                label: "Pattern",
+                question: "Complete the repeating pattern code sequence:",
+                clueText: "⭐ 🟢 🔺 ⭐ 🟢 ?",
+                options: ["🔺 Triangle", "⭐ Star", "🟢 Circle", "🟦 Square"],
+                correct: "🔺 Triangle"
             },
             {
-                question: "Look at the pattern code. What object completes the loop?",
-                clue: "⭐ 🟢 🔺 ⭐ 🟢 ?",
-                options: ["🔺 Triangle", "⭐ Star", "🟢 Circle", "Square"],
-                answer: "🔺 Triangle"
+                type: "drag_sequence",
+                label: "Sequence",
+                question: "Order the steps to pack a school bag correctly:",
+                chips: ["Zip bag closed 🤐", "Open empty bag 🎒", "Put books inside 📚"],
+                correctOrder: ["Open empty bag 🎒", "Put books inside 📚", "Zip bag closed 🤐"]
             }
         ];
 
@@ -333,9 +581,10 @@
         let activeIndex = 0;
         let score = 0;
         let blockClicks = false;
+        let selectedChip = null;
+        let dragSelections = [];
 
         function playGame() {
-            // Mix questions up each time
             gameDeck = [...questionsList].sort(() => Math.random() - 0.5);
             activeIndex = 0;
             score = 0;
@@ -344,59 +593,269 @@
             document.getElementById("startScreen").classList.add("hidden");
             document.getElementById("playScreen").classList.remove("hidden");
             
-            showQuestion();
+            showCurrentTask();
         }
 
-        function showQuestion() {
+        function readActivePrompt() {
+            const currentQ = gameDeck[activeIndex];
+            speakText(currentQ.question);
+        }
+
+        function showCurrentTask() {
             blockClicks = false;
+            selectedChip = null;
             const currentQ = gameDeck[activeIndex];
             
             document.getElementById("qNum").innerText = activeIndex + 1;
+            document.getElementById("scoreText").innerText = score;
+            document.getElementById("levelTypeLabel").innerText = currentQ.label;
             document.getElementById("qText").innerText = currentQ.question;
-            document.getElementById("qClue").innerText = currentQ.clue;
 
-            const box = document.getElementById("choicesBox");
-            box.innerHTML = "";
-            
-            currentQ.options.forEach(opt => {
-                const btn = document.createElement("button");
-                btn.className = "answer-button";
-                btn.innerText = opt;
-                btn.onclick = () => checkAnswer(opt, btn);
-                box.appendChild(btn);
-            });
+            const area = document.getElementById("interactiveArea");
+            const actions = document.getElementById("actionArea");
+            area.innerHTML = "";
+            actions.innerHTML = "";
 
             const msg = document.getElementById("msgBox");
             msg.className = "alert-box";
-            msg.innerText = "Click an answer to test your code!";
+            msg.innerText = "Follow instructions above to solve the puzzle!";
+
+            speakText(currentQ.question);
+
+            if (currentQ.type === "drag_sequence") {
+                renderDragSequenceLevel(currentQ, area, actions);
+            } else if (currentQ.type === "dropdown_block") {
+                renderDropdownLevel(currentQ, area, actions);
+            } else if (currentQ.type === "memory_match") {
+                renderMemoryLevel(currentQ, area, actions);
+            } else if (currentQ.type === "pattern_choice") {
+                renderPatternLevel(currentQ, area, actions);
+            }
         }
 
-        function checkAnswer(chosen, element) {
+        function renderDragSequenceLevel(q, area, actions) {
+            dragSelections = new Array(q.chips.length).fill(null);
+
+            const grid = document.createElement("div");
+            grid.className = "drag-target-grid";
+
+            for (let i = 0; i < q.chips.length; i++) {
+                const slot = document.createElement("div");
+                slot.className = "drag-slot";
+                slot.id = `slot_${i}`;
+                slot.innerHTML = `<div>Step ${i + 1}</div><div style="font-size:0.75rem; color:#94a3b8;">[Tap to place]</div>`;
+                slot.onclick = () => fillSlot(i, q);
+                grid.appendChild(slot);
+            }
+
+            const pool = document.createElement("div");
+            pool.className = "chips-pool";
+            let shuffled = [...q.chips].sort(() => Math.random() - 0.5);
+
+            shuffled.forEach((text, idx) => {
+                const chip = document.createElement("div");
+                chip.className = "drag-chip";
+                chip.id = `chip_${idx}`;
+                chip.innerText = text;
+                chip.onclick = () => selectChip(chip, text);
+                pool.appendChild(chip);
+            });
+
+            area.appendChild(grid);
+            area.appendChild(pool);
+
+            const verifyBtn = document.createElement("button");
+            verifyBtn.className = "start-btn";
+            verifyBtn.style.maxWidth = "220px";
+            verifyBtn.style.marginTop = "10px";
+            verifyBtn.innerText = "Verify Code ➔";
+            verifyBtn.onclick = () => checkSequenceAnswer(q);
+            actions.appendChild(verifyBtn);
+        }
+
+        function selectChip(node, text) {
             if (blockClicks) return;
+            soundEngine.playFlip();
+            document.querySelectorAll(".drag-chip").forEach(c => c.classList.remove("selected"));
+            node.classList.add("selected");
+            selectedChip = { node: node, text: text };
+        }
+
+        function fillSlot(slotIdx, q) {
+            if (blockClicks || !selectedChip) return;
+            soundEngine.playFlip();
+
+            dragSelections[slotIdx] = selectedChip.text;
+            const slot = document.getElementById(`slot_${slotIdx}`);
+            slot.className = "drag-slot filled";
+            slot.innerHTML = `<div>Step ${slotIdx + 1}</div><div style="color:var(--main-purple);">${selectedChip.text}</div>`;
+
+            selectedChip.node.style.display = "none";
+            selectedChip = null;
+        }
+
+        function checkSequenceAnswer(q) {
+            if (blockClicks) return;
+            if (dragSelections.includes(null)) {
+                alert("Please place all code steps into the slots first!");
+                return;
+            }
+
             blockClicks = true;
+            let isCorrect = true;
 
-            const currentQ = gameDeck[activeIndex];
+            dragSelections.forEach((val, idx) => {
+                if (val !== q.correctOrder[idx]) isCorrect = false;
+            });
+
+            handleAnswerResult(isCorrect, q.correctOrder.join(" ➔ "));
+        }
+
+        function renderDropdownLevel(q, area, actions) {
+            const container = document.createElement("div");
+            container.className = "dropdown-logic-container";
+
+            const clue = document.createElement("div");
+            clue.style.fontWeight = "bold";
+            clue.style.fontSize = "1.05rem";
+            clue.innerText = q.clueText;
+
+            const select = document.createElement("select");
+            select.className = "custom-select";
+            select.id = "dropdownSelect";
+
+            const defaultOpt = document.createElement("option");
+            defaultOpt.value = "";
+            defaultOpt.innerText = "-- Select Parameter --";
+            select.appendChild(defaultOpt);
+
+            q.options.forEach(opt => {
+                const o = document.createElement("option");
+                o.value = opt;
+                o.innerText = opt;
+                select.appendChild(o);
+            });
+
+            container.appendChild(clue);
+            container.appendChild(select);
+            area.appendChild(container);
+
+            const submitBtn = document.createElement("button");
+            submitBtn.className = "start-btn";
+            submitBtn.style.maxWidth = "220px";
+            submitBtn.innerText = "Execute Block ➔";
+            submitBtn.onclick = () => {
+                const val = document.getElementById("dropdownSelect").value;
+                if (!val) { alert("Please select a parameter from the dropdown!"); return; }
+                blockClicks = true;
+                handleAnswerResult(val === q.correct, q.correct);
+            };
+            actions.appendChild(submitBtn);
+        }
+
+        function renderMemoryLevel(q, area, actions) {
+            let cardsData = [];
+            q.pairs.forEach((p, idx) => {
+                cardsData.push({ id: idx, val: p.symbol, type: "sym" });
+                cardsData.push({ id: idx, val: p.label, type: "txt" });
+            });
+
+            cardsData.sort(() => Math.random() - 0.5);
+
+            const grid = document.createElement("div");
+            grid.className = "memory-grid";
+
+            let flippedCards = [];
+            let matchedCount = 0;
+
+            cardsData.forEach((item, index) => {
+                const card = document.createElement("div");
+                card.className = "memory-card";
+                card.innerText = "🤖";
+                card.onclick = () => {
+                    if (blockClicks || card.classList.contains("flipped") || card.classList.contains("matched")) return;
+                    soundEngine.playFlip();
+
+                    card.classList.add("flipped");
+                    card.innerText = item.val;
+                    flippedCards.push({ node: card, data: item });
+
+                    if (flippedCards.length === 2) {
+                        blockClicks = true;
+                        if (flippedCards[0].data.id === flippedCards[1].data.id) {
+                            soundEngine.playCorrect();
+                            flippedCards[0].node.classList.add("matched");
+                            flippedCards[1].node.classList.add("matched");
+                            matchedCount += 2;
+                            flippedCards = [];
+                            blockClicks = false;
+
+                            if (matchedCount === cardsData.length) {
+                                blockClicks = true;
+                                handleAnswerResult(true, "All pairs matched!");
+                            }
+                        } else {
+                            soundEngine.playWrong();
+                            setTimeout(() => {
+                                flippedCards[0].node.classList.remove("flipped");
+                                flippedCards[1].node.classList.remove("flipped");
+                                flippedCards[0].node.innerText = "🤖";
+                                flippedCards[1].node.innerText = "🤖";
+                                flippedCards = [];
+                                blockClicks = false;
+                            }, 900);
+                        }
+                    }
+                };
+                grid.appendChild(card);
+            });
+
+            area.appendChild(grid);
+        }
+
+        function renderPatternLevel(q, area, actions) {
+            const clueBox = document.createElement("div");
+            clueBox.style.fontSize = "1.6rem";
+            clueBox.style.background = "#ffffff";
+            clueBox.style.padding = "12px";
+            clueBox.style.borderRadius = "12px";
+            clueBox.style.border = "2px solid #cbd5e1";
+            clueBox.style.margin = "10px 0";
+            clueBox.innerText = q.clueText;
+
+            area.appendChild(clueBox);
+
+            const grid = document.createElement("div");
+            grid.className = "answers-grid";
+
+            q.options.forEach(opt => {
+                const btn = document.createElement("button");
+                btn.className = "answer-button";
+                btn.innerText = opt;
+                btn.onclick = () => {
+                    if (blockClicks) return;
+                    blockClicks = true;
+                    btn.classList.add(opt === q.correct ? "right" : "wrong");
+                    handleAnswerResult(opt === q.correct, q.correct);
+                };
+                grid.appendChild(btn);
+            });
+
+            area.appendChild(grid);
+        }
+
+        function handleAnswerResult(isCorrect, answerKey) {
             const msg = document.getElementById("msgBox");
-            
-            if (chosen === currentQ.answer) {
-                score += 20;
-                element.classList.add("right");
-                msg.className = "alert-box win";
-                msg.innerText = "🎉 Awesome Job! Your code worked perfectly!";
-                
-                try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
-            } else {
-                element.classList.add("wrong");
-                msg.className = "alert-box lose";
-                msg.innerHTML = `❌ Oops! Correct answer was: <strong>${currentQ.answer}</strong>`;
-                
-                try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
 
-                // Highlight the correct option
-                const buttons = document.querySelectorAll(".answer-button");
-                buttons.forEach(b => {
-                    if(b.innerText === currentQ.answer) b.classList.add("right");
-                });
+            if (isCorrect) {
+                score += 20;
+                soundEngine.playCorrect();
+                msg.className = "alert-box win";
+                msg.innerText = "🎉 Excellent! Code executed successfully!";
+            } else {
+                soundEngine.playWrong();
+                msg.className = "alert-box lose";
+                msg.innerHTML = `❌ Code Bug! Correct Solution: <strong>${answerKey}</strong>`;
             }
 
             document.getElementById("scoreText").innerText = score;
@@ -404,37 +863,50 @@
 
             setTimeout(() => {
                 if (activeIndex < gameDeck.length) {
-                    showQuestion();
+                    showCurrentTask();
                 } else {
-                    showResults();
+                    showFinalResults();
                 }
-            }, 3000);
+            }, 2600);
         }
 
-        function showResults() {
+        function showFinalResults() {
             document.getElementById("playScreen").classList.add("hidden");
             document.getElementById("endScreen").classList.remove("hidden");
             document.getElementById("finalPoints").innerText = score;
-            
-            try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+
+            if (window.confetti) {
+                confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 } });
+            }
 
             let rank = "";
-            let description = "";
+            let desc = "";
 
             if (score >= 80) {
                 rank = "🏆 Master Robot Programmer!";
-                description = "Spectacular! You have perfect algorithmic logic skills. The robots are listening to your instructions perfectly.";
-            } else if (score >= 40) {
+                desc = "Outstanding performance! You have mastered sequence algorithms, dropdown logic, and memory loops.";
+            } else if (score >= 50) {
                 rank = "🥈 Junior Code Expert!";
-                description = "Great job! You found most of the correct paths. Try again to get a perfect score.";
+                desc = "Great job! You solved most coding challenges. Practice once more to reach a 100% score!";
             } else {
-                rank = "🌱 Code Student in Training!";
-                description = "Good practice! Remember to think about what steps come first, second, and last. Let's try one more time!";
+                rank = "🌱 Cadet Coder in Training!";
+                desc = "Good effort! Practice ordering steps and observing patterns to improve your robot coding skills.";
             }
 
             document.getElementById("badgeTitle").innerText = rank;
-            document.getElementById("badgeSub").innerText = description;
+            document.getElementById("badgeSub").innerText = desc;
+            speakText(`${rank}. Your score is ${score} points.`);
         }
     </script>
 </body>
 </html>
+```
+
+### Key Interactive Features:
+1. **Multi-Type Levels**:
+   - **Level 1 & 5**: Drag-and-drop / tap-to-place sequence challenge (handwashing & bag packing).
+   - **Level 2**: Dropdown logic block selector (movement & coordinate step logic).
+   - **Level 3**: Robot Memory Pair Matching game (symbols & text commands).
+   - **Level 4**: Algorithmic pattern completion.
+2. **Mobile Touch Responsive**: Includes custom touch targets, layout queries, fluid grids, and `viewport` locks for mobile devices.
+3. **Sound & Voice Engine**: Built-in Web Audio synthesizers for correct, wrong, flip sounds, SpeechSynthesis read-aloud prompts, and confetti fireworks!

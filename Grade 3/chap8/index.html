@@ -3,19 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Robot Code Academy - Grade 3 Coding Arcade</title>
+    <title>Logical Thinking & Algorithmic Adventure</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
         :root {
-            --bg-color: #f0f4f8;
+            --bg-canvas: #f0f9ff;
             --main-purple: #7c3aed;
             --purple-hover: #6d28d9;
             --dark-blue: #1e3a8a;
-            --light-blue: #eff6ff;
-            --green-success: #10b981;
-            --red-error: #ef4444;
-            --yellow-accent: #f59e0b;
-            --slate-dark: #1e293b;
+            --amber-accent: #f59e0b;
+            --emerald-success: #10b981;
+            --rose-error: #ef4444;
+            --slate-dark: #0f172a;
         }
 
         * {
@@ -34,7 +34,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: var(--bg-color);
+            background: var(--bg-canvas);
             background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
             background-size: 20px 20px;
             padding: 10px;
@@ -62,11 +62,9 @@
             animation: bounce 1.5s infinite alternate ease-in-out;
         }
 
-        #splash h2 {
-            color: var(--main-purple);
-            font-size: clamp(1.4rem, 4vw, 2rem);
-            margin-top: 15px;
-            text-align: center;
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-18px); }
         }
 
         .loader-bar {
@@ -91,14 +89,9 @@
             100% { width: 100%; }
         }
 
-        @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-18px); }
-        }
-
         .game-card {
             width: 100%;
-            max-width: 780px;
+            max-width: 850px;
             min-height: 88vh;
             background: #ffffff;
             border-radius: 24px;
@@ -114,19 +107,6 @@
 
         .hidden { display: none !important; }
 
-        h1 {
-            font-size: clamp(1.6rem, 5vw, 2.3rem);
-            color: var(--dark-blue);
-            margin-bottom: 6px;
-        }
-
-        .subtitle {
-            font-size: clamp(0.95rem, 3vw, 1.15rem);
-            color: var(--main-purple);
-            font-weight: bold;
-            margin-bottom: 16px;
-        }
-
         .rules-box {
             background: #f3e8ff;
             padding: 16px;
@@ -139,7 +119,7 @@
             border-left: 6px solid var(--main-purple);
         }
 
-        .start-btn {
+        .btn-primary {
             padding: 14px 38px;
             background: var(--main-purple);
             color: white;
@@ -155,7 +135,7 @@
             margin: 0 auto;
         }
 
-        .start-btn:active {
+        .btn-primary:active {
             transform: translateY(4px);
             box-shadow: 0 2px 0 #5b21b6;
         }
@@ -164,7 +144,7 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
         .hud-item {
@@ -179,41 +159,9 @@
             justify-content: center;
         }
 
-        .audio-btn {
-            background: var(--main-purple);
-            color: white;
-            border: none;
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin-bottom: 10px;
-            align-self: center;
-        }
-
-        .puzzle-box {
-            background: #f8fafc;
-            border: 3px dashed #cbd5e1;
-            padding: 16px;
-            border-radius: 18px;
-            margin-bottom: 14px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .question-text {
-            font-size: clamp(1.05rem, 3.2vw, 1.25rem);
-            color: #1f2937;
-            margin-bottom: 12px;
-            font-weight: bold;
-        }
-
         .drag-target-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
             gap: 10px;
             margin: 12px 0;
         }
@@ -221,8 +169,8 @@
         .drag-slot {
             background: #ffffff;
             border: 3px dashed var(--main-purple);
-            border-radius: 14px;
-            min-height: 90px;
+            border-radius: 16px;
+            min-height: 110px;
             padding: 8px;
             display: flex;
             flex-direction: column;
@@ -231,6 +179,7 @@
             font-size: 0.85rem;
             font-weight: bold;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
 
         .drag-slot.filled {
@@ -241,7 +190,7 @@
         .chips-pool {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 10px;
             justify-content: center;
             margin-top: 10px;
         }
@@ -250,8 +199,8 @@
             background: #ffffff;
             border: 3px solid var(--dark-blue);
             padding: 10px 14px;
-            border-radius: 12px;
-            font-size: 0.9rem;
+            border-radius: 14px;
+            font-size: 0.88rem;
             font-weight: bold;
             cursor: pointer;
             box-shadow: 3px 3px 0 var(--dark-blue);
@@ -259,55 +208,33 @@
         }
 
         .drag-chip.selected {
-            background: var(--yellow-accent);
+            background: var(--amber-accent);
             color: white;
             transform: scale(1.05);
         }
 
-        .dropdown-logic-container {
-            background: #ffffff;
-            border: 2px solid #cbd5e1;
-            padding: 16px;
-            border-radius: 14px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            align-items: center;
-            margin: 10px 0;
-        }
-
-        .custom-select {
-            width: 100%;
-            max-width: 280px;
-            padding: 12px;
-            border: 3px solid var(--main-purple);
-            border-radius: 14px;
-            font-size: 1rem;
-            font-weight: bold;
-            color: var(--dark-blue);
-            background: #ffffff;
-            outline: none;
-            cursor: pointer;
-        }
-
+        /* MEMORY CARD FLIP STYLING */
         .memory-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin: 10px 0;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 12px 0;
         }
 
         .memory-card {
-            aspect-ratio: 1;
+            min-height: 110px;
             background: var(--main-purple);
             color: white;
-            border-radius: 14px;
-            font-size: 1.8rem;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: bold;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
+            padding: 8px;
             cursor: pointer;
-            box-shadow: 0 4px 0 #5b21b6;
+            box-shadow: 0 5px 0 #5b21b6;
             transition: transform 0.2s ease, background 0.2s ease;
         }
 
@@ -321,46 +248,61 @@
         .memory-card.matched {
             background: #d1fae5;
             color: #065f46;
-            border: 3px solid var(--green-success);
+            border: 3px solid var(--emerald-success);
             cursor: default;
         }
 
-        .answers-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        /* TAB PICKER STYLING */
+        .tab-grid {
+            display: flex;
+            justify-content: center;
             gap: 10px;
-            margin-top: 10px;
+            margin: 12px 0;
+            flex-wrap: wrap;
         }
 
-        .answer-button {
+        .tab-btn {
             background: #ffffff;
-            border: 3px solid #cbd5e1;
-            padding: 12px;
-            border-radius: 14px;
-            font-size: 0.95rem;
+            border: 3px solid var(--dark-blue);
+            padding: 12px 20px;
+            border-radius: 16px;
+            font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.15s, background 0.15s;
-            color: #374151;
+            box-shadow: 3px 3px 0 var(--dark-blue);
         }
 
-        .answer-button:active {
-            transform: scale(0.98);
+        .tab-btn.selected {
+            background: var(--amber-accent);
+            color: white;
         }
 
-        .answer-button.right {
-            background: #d1fae5 !important;
-            border-color: var(--green-success) !important;
-            color: #065f46 !important;
+        /* MAZE STEP FLIPPER STYLING */
+        .maze-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+            margin: 12px auto;
+            max-width: 280px;
         }
 
-        .answer-button.wrong {
-            background: #fee2e2 !important;
-            border-color: var(--red-error) !important;
-            color: #991b1b !important;
+        .maze-cell {
+            aspect-ratio: 1;
+            background: #f1f5f9;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            font-weight: bold;
         }
 
-        .alert-box {
+        .maze-cell.robot { background: #dbeafe; border-color: var(--dark-blue); }
+        .maze-cell.trophy { background: #fef3c7; border-color: var(--amber-accent); }
+        .maze-cell.path { background: #d1fae5; border-color: var(--emerald-success); }
+
+        .ticker-feedback {
             margin-top: 10px;
             padding: 10px 14px;
             border-radius: 12px;
@@ -373,87 +315,66 @@
             justify-content: center;
         }
 
-        .alert-box.win { background: #d1fae5; color: #065f46; }
-        .alert-box.lose { background: #fee2e2; color: #991b1b; }
-
-        .score-circle {
-            width: 100px;
-            height: 100px;
-            background: var(--main-purple);
-            color: white;
-            border-radius: 50%;
-            font-size: 2.2rem;
-            font-weight: bold;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 16px auto;
-            box-shadow: 0 8px 16px rgba(124, 58, 237, 0.3);
-        }
-
-        @media (max-width: 480px) {
-            .answers-grid { grid-template-columns: 1fr; }
-            .drag-target-grid { grid-template-columns: 1fr; }
-            .memory-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
-            .memory-card { font-size: 1.4rem; }
-        }
+        .ticker-feedback.good { background: #d1fae5; color: #065f46; }
+        .ticker-feedback.bad { background: #fee2e2; color: #991b1b; }
+        .ticker-feedback.retry { background: #fffbe3; color: #92400e; }
     </style>
 </head>
 <body>
 
-    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
-
+    <!-- Splash Screen -->
     <div id="splash">
         <img src="assets/innovine-logo.png" alt="Robot Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'180\' height=\'180\' viewBox=\'0 0 100 100\'><rect width=\'100\' height=\'100\' rx=\'20\' fill=\'%237c3aed\'/><circle cx=\'35\' cy=\'40\' r=\'8\' fill=\'%23ffffff\'/><circle cx=\'65\' cy=\'40\' r=\'8\' fill=\'%23ffffff\'/><rect x=\'30\' y=\'65\' width=\'40\' height=\'10\' rx=\'5\' fill=\'%23ffffff\'/></svg>';">
-        <h2>Loading Robot Academy...</h2>
+        <h2>Robot Logic Academy</h2>
         <div class="loader-bar"><div class="loader-progress"></div></div>
     </div>
 
+    <!-- Main Game Window -->
     <div class="game-card hidden" id="mainGameCard">
         
         <!-- START SCREEN -->
         <div id="startScreen">
-            <h1>🤖 Robot Code Academy</h1>
-            <div class="subtitle">Grade 3 Algorithmic Logic Challenge</div>
+            <h1 class="text-3xl font-extrabold text-blue-900 mb-1">🤖 Algorithmic Adventure</h1>
+            <div class="text-purple-700 font-bold mb-4">Grade 3 Logical Thinking Challenges</div>
             
             <div class="rules-box">
-                <p><strong>🎮 How to Play:</strong></p>
-                <p>• <strong>Level 1:</strong> Tap story chips to sequence code steps in logical order.</p>
-                <p>• <strong>Level 2:</strong> Use code dropdowns to set movement parameters.</p>
-                <p>• <strong>Level 3:</strong> Match code command cards in the Memory Grid.</p>
-                <p>• <strong>Level 4:</strong> Complete pattern loops to earn the <strong>Super Coder Trophy!</strong></p>
+                <p><strong>🎮 5 Interactive Logic Levels:</strong></p>
+                <p>• <strong>Level 1:</strong> Drag & Drop Morning Sequence Steps.</p>
+                <p>• <strong>Level 2:</strong> Card Flip Cause & Effect Logic Matching.</p>
+                <p>• <strong>Level 3:</strong> Program IF-THEN Decision Selectors.</p>
+                <p>• <strong>Level 4:</strong> Pattern Code Decoder & Tab Picker.</p>
+                <p>• <strong>Level 5:</strong> Step Flipper Maze Path Execution!</p>
             </div>
             
-            <button class="start-btn" onclick="playGame()">Start Challenge ➜</button>
+            <button class="btn-primary" onclick="playGame()">Start Adventure ➜</button>
         </div>
 
         <!-- PLAY SCREEN -->
         <div id="playScreen" class="hidden">
             <div class="hud-bar">
-                <div class="hud-item">🧩 Q: <span id="qNum">1</span> / 5</div>
-                <div class="hud-item" style="background: var(--main-purple);">⭐ Score: <span id="scoreText">0</span></div>
-                <div class="hud-item" style="background: var(--yellow-accent);">🎯 Type: <span id="levelTypeLabel">Seq</span></div>
+                <div class="hud-item">🧩 Level: <span id="levelHUD">1 / 5</span></div>
+                <div class="hud-item" style="background: var(--main-purple);">⭐ Points: <span id="scoreText">0</span></div>
+                <div class="hud-item" style="background: var(--amber-accent);">Attempt: <span id="attemptHUD">1 / 2</span></div>
             </div>
 
-            <button class="audio-btn" onclick="readActivePrompt()">🔊 Listen Prompt</button>
+            <button class="audio-btn bg-purple-600 text-white px-4 py-1.5 rounded-full font-bold text-sm mb-2 self-center hover:bg-purple-700 transition" onclick="readActivePrompt()">🔊 Listen Instructions</button>
 
-            <div class="puzzle-box">
-                <div class="question-text" id="qText">Loading activity...</div>
+            <div class="bg-slate-50 border-2 border-dashed border-slate-300 p-4 rounded-2xl mb-3 flex-grow flex flex-col justify-center">
+                <div class="text-base font-extrabold text-slate-800 mb-2" id="qText">Loading challenge...</div>
                 <div id="interactiveArea"></div>
             </div>
 
             <div id="actionArea"></div>
-            <div class="alert-box" id="msgBox">Select an answer or arrange blocks to test your code!</div>
+            <div class="ticker-feedback" id="msgBox">Follow instructions to solve the puzzle!</div>
         </div>
 
         <!-- END SCREEN -->
         <div id="endScreen" class="hidden">
-            <h1>🎉 Mission Accomplished!</h1>
-            <div class="score-circle" id="finalPoints">0</div>
-            <h2 id="badgeTitle" style="margin-bottom: 12px; color: var(--dark-blue);">Calculating Rank...</h2>
-            <p id="badgeSub" style="font-size: 1.05rem; margin-bottom: 22px; color: #4b5563; line-height: 1.5;"></p>
-            <button class="start-btn" onclick="location.reload()">Play Again 🔄</button>
+            <h1 class="text-3xl font-extrabold text-blue-900 mb-2">🎉 Mission Accomplished!</h1>
+            <div class="w-24 h-24 bg-purple-600 text-white rounded-full text-3xl font-extrabold flex items-center justify-center mx-auto my-3 shadow-lg" id="finalPoints">0</div>
+            <h2 id="badgeTitle" class="text-xl font-extrabold text-blue-900 mb-2">Calculating Rank...</h2>
+            <p id="badgeSub" class="text-slate-600 text-sm mb-5 leading-relaxed"></p>
+            <button class="btn-primary" onclick="location.reload()">Play Again 🔄</button>
         </div>
     </div>
 
@@ -463,19 +384,13 @@
             init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
 
             playCorrect() {
-                const audio = document.getElementById("correctSound");
-                if (audio) audio.play().catch(() => this.synthCorrect());
-                else this.synthCorrect();
-            }
-
-            synthCorrect() {
                 this.init(); if (!this.ctx) return;
                 const now = this.ctx.currentTime;
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(523.25, now);
-                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.22);
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.25);
                 gain.gain.setValueAtTime(0.3, now);
                 gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
                 osc.connect(gain); gain.connect(this.ctx.destination);
@@ -483,12 +398,6 @@
             }
 
             playWrong() {
-                const audio = document.getElementById("wrongSound");
-                if (audio) audio.play().catch(() => this.synthWrong());
-                else this.synthWrong();
-            }
-
-            synthWrong() {
                 this.init(); if (!this.ctx) return;
                 const now = this.ctx.currentTime;
                 const osc = this.ctx.createOscillator();
@@ -528,88 +437,90 @@
             }
         }
 
+        /* 5-Second Splash Timer */
         setTimeout(() => {
             document.getElementById("splash").style.display = "none";
             document.getElementById("mainGameCard").classList.remove("hidden");
         }, 5000);
 
-        const questionsList = [
-            {
-                type: "drag_sequence",
-                label: "Sequence",
-                question: "Drag or tap chips to arrange handwashing code in logical order:",
-                chips: ["Put on soap 🧼", "Turn on water 🚰", "Dry with towel 🧺"],
-                correctOrder: ["Turn on water 🚰", "Put on soap 🧼", "Dry with towel 🧺"]
-            },
-            {
-                type: "dropdown_block",
-                label: "Dropdown",
-                question: "Select the correct movement code parameter for the robot:",
-                clueText: "Robot starts at Step 0 ➜ Moves UP 3 steps ➜ Moves DOWN 1 step. Final Step?",
-                options: ["Step 1", "Step 2", "Step 3", "Step 4"],
-                correct: "Step 2"
-            },
-            {
-                type: "memory_match",
-                label: "Memory",
-                question: "Match all 4 pairs of code command cards in the grid!",
-                pairs: [
-                    { symbol: "🔁", label: "Loop" },
-                    { symbol: "⬆️", label: "Move Up" },
-                    { symbol: "🧼", label: "Clean" },
-                    { symbol: "⚡", label: "Power" }
-                ]
-            },
-            {
-                type: "pattern_choice",
-                label: "Pattern",
-                question: "Complete the repeating pattern code sequence:",
-                clueText: "⭐ 🟢 🔺 ⭐ 🟢 ?",
-                options: ["🔺 Triangle", "⭐ Star", "🟢 Circle", "🟦 Square"],
-                correct: "🔺 Triangle"
-            },
-            {
-                type: "drag_sequence",
-                label: "Sequence",
-                question: "Order the steps to pack a school bag correctly:",
-                chips: ["Zip bag closed 🤐", "Open empty bag 🎒", "Put books inside 📚"],
-                correctOrder: ["Open empty bag 🎒", "Put books inside 📚", "Zip bag closed 🤐"]
-            }
-        ];
-
-        let gameDeck = [];
-        let activeIndex = 0;
+        let activeLevelIdx = 0;
         let score = 0;
-        let blockClicks = false;
+        let attemptCount = 1;
+        let actionLocked = false;
         let selectedChip = null;
         let dragSelections = [];
 
+        /* Level Dataset Definitions */
+        const levelDataset = [
+            {
+                type: "drag_sequence",
+                title: "Level 1: Sequence Builder",
+                question: "Help Robot clean its room and get ready for school in logical order!",
+                chips: ["Put on school uniform 👕", "Pick up toys 🧸", "Backpack on shoulders 🎒", "Fold blanket 🛏️"],
+                correctOrder: ["Pick up toys 🧸", "Fold blanket 🛏️", "Put on school uniform 👕", "Backpack on shoulders 🎒"]
+            },
+            {
+                type: "memory_cause_effect",
+                title: "Level 2: Cause & Effect Memory Logic",
+                question: "Flip cards and match each Cause with its logical Effect!",
+                pairs: [
+                    { id: 1, cause: "🌧️ Rain falls outside", effect: "☂️ Open an umbrella" },
+                    { id: 2, cause: "☀️ Sun shines brightly", effect: "🍦 Ice cream melts" },
+                    { id: 3, caption: "⚡ Robot battery dies", effect: "🔌 Plug into charger" }
+                ]
+            },
+            {
+                type: "dropdown_if_then",
+                title: "Level 3: Conditional IF-THEN Logic",
+                question: "Program the Robot's Daily Decisions using dropdown choices!",
+                conditions: [
+                    { ifText: "IF Robot feels hungry 🤤 THEN:", options: ["Go to sleep 💤", "Eat battery snack 🔋"], correct: "Eat battery snack 🔋" },
+                    { ifText: "IF traffic light is RED 🔴 THEN:", options: ["Stop immediately 🛑", "Keep walking 🏃"], correct: "Stop immediately 🛑" }
+                ]
+            },
+            {
+                type: "pattern_tab_picker",
+                title: "Level 4: Pattern Code Decoder",
+                question: "Decode the visual code sequence algorithm! Select the tab that completes the pattern:",
+                patternClue: "⭐ 🟢 🔺 ⭐ 🟢 ?",
+                tabs: ["🔺 Triangle", "⭐ Star", "🟢 Circle", "🟦 Square"],
+                correct: "🔺 Triangle"
+            },
+            {
+                type: "maze_step_flipper",
+                title: "Level 5: Step Flipper Maze Navigator",
+                question: "Execute the path algorithm! Tap direction cards to flip and guide Robot 🤖 to the Golden Trophy 🏆:",
+                steps: ["Step 1: Move Right ➡️", "Step 2: Move Down ⬇️", "Step 3: Move Right ➡️"],
+                allOptions: ["Move Right ➡️", "Move Up ⬆️", "Move Down ⬇️", "Move Left ⬅️"]
+            }
+        ];
+
         function playGame() {
-            gameDeck = [...questionsList].sort(() => Math.random() - 0.5);
-            activeIndex = 0;
+            activeLevelIdx = 0;
             score = 0;
-            blockClicks = false;
+            attemptCount = 1;
+            actionLocked = false;
 
             document.getElementById("startScreen").classList.add("hidden");
             document.getElementById("playScreen").classList.remove("hidden");
             
-            showCurrentTask();
+            showCurrentLevel();
         }
 
         function readActivePrompt() {
-            const currentQ = gameDeck[activeIndex];
-            speakText(currentQ.question);
+            const level = levelDataset[activeLevelIdx];
+            speakText(level.question);
         }
 
-        function showCurrentTask() {
-            blockClicks = false;
+        function showCurrentLevel() {
+            actionLocked = false;
             selectedChip = null;
-            const currentQ = gameDeck[activeIndex];
+            const level = levelDataset[activeLevelIdx];
             
-            document.getElementById("qNum").innerText = activeIndex + 1;
+            document.getElementById("levelHUD").innerText = `${activeLevelIdx + 1} / 5`;
             document.getElementById("scoreText").innerText = score;
-            document.getElementById("levelTypeLabel").innerText = currentQ.label;
-            document.getElementById("qText").innerText = currentQ.question;
+            document.getElementById("attemptHUD").innerText = `${attemptCount} / 2`;
+            document.getElementById("qText").innerText = `${level.title}: ${level.question}`;
 
             const area = document.getElementById("interactiveArea");
             const actions = document.getElementById("actionArea");
@@ -617,47 +528,50 @@
             actions.innerHTML = "";
 
             const msg = document.getElementById("msgBox");
-            msg.className = "alert-box";
-            msg.innerText = "Follow instructions above to solve the puzzle!";
+            msg.className = "ticker-feedback";
+            msg.innerText = "Follow instructions above to solve the logic puzzle!";
 
-            speakText(currentQ.question);
+            speakText(level.question);
 
-            if (currentQ.type === "drag_sequence") {
-                renderDragSequenceLevel(currentQ, area, actions);
-            } else if (currentQ.type === "dropdown_block") {
-                renderDropdownLevel(currentQ, area, actions);
-            } else if (currentQ.type === "memory_match") {
-                renderMemoryLevel(currentQ, area, actions);
-            } else if (currentQ.type === "pattern_choice") {
-                renderPatternLevel(currentQ, area, actions);
+            if (level.type === "drag_sequence") {
+                renderLevel1(level, area, actions);
+            } else if (level.type === "memory_cause_effect") {
+                renderLevel2(level, area, actions);
+            } else if (level.type === "dropdown_if_then") {
+                renderLevel3(level, area, actions);
+            } else if (level.type === "pattern_tab_picker") {
+                renderLevel4(level, area, actions);
+            } else if (level.type === "maze_step_flipper") {
+                renderLevel5(level, area, actions);
             }
         }
 
-        function renderDragSequenceLevel(q, area, actions) {
-            dragSelections = new Array(q.chips.length).fill(null);
+        /* LEVEL 1: DRAG & DROP SEQUENCE BUILDER */
+        function renderLevel1(level, area, actions) {
+            dragSelections = new Array(level.chips.length).fill(null);
 
             const grid = document.createElement("div");
             grid.className = "drag-target-grid";
 
-            for (let i = 0; i < q.chips.length; i++) {
+            for (let i = 0; i < level.chips.length; i++) {
                 const slot = document.createElement("div");
                 slot.className = "drag-slot";
                 slot.id = `slot_${i}`;
-                slot.innerHTML = `<div>Step ${i + 1}</div><div style="font-size:0.75rem; color:#94a3b8;">[Tap to place]</div>`;
-                slot.onclick = () => fillSlot(i, q);
+                slot.innerHTML = `<div class="text-xs text-purple-700">Step ${i + 1}</div><div class="text-slate-400 text-xs">[Tap Chip]</div>`;
+                slot.onclick = () => fillSlotL1(i, level);
                 grid.appendChild(slot);
             }
 
             const pool = document.createElement("div");
             pool.className = "chips-pool";
-            let shuffled = [...q.chips].sort(() => Math.random() - 0.5);
+            let shuffled = [...level.chips].sort(() => Math.random() - 0.5);
 
             shuffled.forEach((text, idx) => {
                 const chip = document.createElement("div");
                 chip.className = "drag-chip";
                 chip.id = `chip_${idx}`;
                 chip.innerText = text;
-                chip.onclick = () => selectChip(chip, text);
+                chip.onclick = () => selectChipL1(chip, text);
                 pool.appendChild(chip);
             });
 
@@ -665,145 +579,99 @@
             area.appendChild(pool);
 
             const verifyBtn = document.createElement("button");
-            verifyBtn.className = "start-btn";
-            verifyBtn.style.maxWidth = "220px";
-            verifyBtn.style.marginTop = "10px";
-            verifyBtn.innerText = "Verify Code ➔";
-            verifyBtn.onclick = () => checkSequenceAnswer(q);
+            verifyBtn.className = "btn-primary";
+            verifyBtn.innerText = "Verify Sequence ➔";
+            verifyBtn.onclick = () => checkLevel1(level);
             actions.appendChild(verifyBtn);
         }
 
-        function selectChip(node, text) {
-            if (blockClicks) return;
+        function selectChipL1(node, text) {
+            if (actionLocked) return;
             soundEngine.playFlip();
             document.querySelectorAll(".drag-chip").forEach(c => c.classList.remove("selected"));
             node.classList.add("selected");
             selectedChip = { node: node, text: text };
         }
 
-        function fillSlot(slotIdx, q) {
-            if (blockClicks || !selectedChip) return;
+        function fillSlotL1(slotIdx, level) {
+            if (actionLocked || !selectedChip) return;
             soundEngine.playFlip();
 
             dragSelections[slotIdx] = selectedChip.text;
             const slot = document.getElementById(`slot_${slotIdx}`);
             slot.className = "drag-slot filled";
-            slot.innerHTML = `<div>Step ${slotIdx + 1}</div><div style="color:var(--main-purple);">${selectedChip.text}</div>`;
+            slot.innerHTML = `<div class="text-xs text-purple-700">Step ${slotIdx + 1}</div><div class="text-purple-900 font-bold text-xs mt-1">${selectedChip.text}</div>`;
 
             selectedChip.node.style.display = "none";
             selectedChip = null;
         }
 
-        function checkSequenceAnswer(q) {
-            if (blockClicks) return;
+        function checkLevel1(level) {
+            if (actionLocked) return;
             if (dragSelections.includes(null)) {
-                alert("Please place all code steps into the slots first!");
+                alert("Please place all sequence chips into the slots first!");
                 return;
             }
 
-            blockClicks = true;
             let isCorrect = true;
-
             dragSelections.forEach((val, idx) => {
-                if (val !== q.correctOrder[idx]) isCorrect = false;
+                if (val !== level.correctOrder[idx]) isCorrect = false;
             });
 
-            handleAnswerResult(isCorrect, q.correctOrder.join(" ➔ "));
+            handleResult(isCorrect, level.correctOrder.join(" ➔ "));
         }
 
-        function renderDropdownLevel(q, area, actions) {
-            const container = document.createElement("div");
-            container.className = "dropdown-logic-container";
-
-            const clue = document.createElement("div");
-            clue.style.fontWeight = "bold";
-            clue.style.fontSize = "1.05rem";
-            clue.innerText = q.clueText;
-
-            const select = document.createElement("select");
-            select.className = "custom-select";
-            select.id = "dropdownSelect";
-
-            const defaultOpt = document.createElement("option");
-            defaultOpt.value = "";
-            defaultOpt.innerText = "-- Select Parameter --";
-            select.appendChild(defaultOpt);
-
-            q.options.forEach(opt => {
-                const o = document.createElement("option");
-                o.value = opt;
-                o.innerText = opt;
-                select.appendChild(o);
-            });
-
-            container.appendChild(clue);
-            container.appendChild(select);
-            area.appendChild(container);
-
-            const submitBtn = document.createElement("button");
-            submitBtn.className = "start-btn";
-            submitBtn.style.maxWidth = "220px";
-            submitBtn.innerText = "Execute Block ➔";
-            submitBtn.onclick = () => {
-                const val = document.getElementById("dropdownSelect").value;
-                if (!val) { alert("Please select a parameter from the dropdown!"); return; }
-                blockClicks = true;
-                handleAnswerResult(val === q.correct, q.correct);
-            };
-            actions.appendChild(submitBtn);
-        }
-
-        function renderMemoryLevel(q, area, actions) {
+        /* LEVEL 2: CARD FLIP CAUSE & EFFECT MATCH */
+        function renderLevel2(level, area, actions) {
             let cardsData = [];
-            q.pairs.forEach((p, idx) => {
-                cardsData.push({ id: idx, val: p.symbol, type: "sym" });
-                cardsData.push({ id: idx, val: p.label, type: "txt" });
+            level.pairs.forEach(p => {
+                cardsData.push({ pairId: p.id || Math.random(), label: p.cause, type: "cause" });
+                cardsData.push({ pairId: p.id || Math.random(), label: p.effect, type: "effect" });
             });
-
             cardsData.sort(() => Math.random() - 0.5);
 
             const grid = document.createElement("div");
             grid.className = "memory-grid";
 
             let flippedCards = [];
-            let matchedCount = 0;
+            let matchedPairsCount = 0;
 
-            cardsData.forEach((item, index) => {
+            cardsData.forEach((item) => {
                 const card = document.createElement("div");
                 card.className = "memory-card";
-                card.innerText = "🤖";
+                card.innerText = "❓ Flip Card";
+
                 card.onclick = () => {
-                    if (blockClicks || card.classList.contains("flipped") || card.classList.contains("matched")) return;
+                    if (actionLocked || card.classList.contains("flipped") || card.classList.contains("matched")) return;
                     soundEngine.playFlip();
 
                     card.classList.add("flipped");
-                    card.innerText = item.val;
+                    card.innerText = item.label;
                     flippedCards.push({ node: card, data: item });
 
                     if (flippedCards.length === 2) {
-                        blockClicks = true;
-                        if (flippedCards[0].data.id === flippedCards[1].data.id) {
+                        actionLocked = true;
+                        if (flippedCards[0].data.pairId === flippedCards[1].data.pairId) {
                             soundEngine.playCorrect();
                             flippedCards[0].node.classList.add("matched");
                             flippedCards[1].node.classList.add("matched");
-                            matchedCount += 2;
+                            matchedPairsCount++;
                             flippedCards = [];
-                            blockClicks = false;
+                            actionLocked = false;
 
-                            if (matchedCount === cardsData.length) {
-                                blockClicks = true;
-                                handleAnswerResult(true, "All pairs matched!");
+                            if (matchedPairsCount === level.pairs.length) {
+                                handleResult(true, "All Cause & Effect pairs matched!");
                             }
                         } else {
                             soundEngine.playWrong();
                             setTimeout(() => {
                                 flippedCards[0].node.classList.remove("flipped");
                                 flippedCards[1].node.classList.remove("flipped");
-                                flippedCards[0].node.innerText = "🤖";
-                                flippedCards[1].node.innerText = "🤖";
+                                flippedCards[0].node.innerText = "❓ Flip Card";
+                                flippedCards[1].node.innerText = "❓ Flip Card";
                                 flippedCards = [];
-                                blockClicks = false;
-                            }, 900);
+                                actionLocked = false;
+                            }, 1000);
                         }
                     }
                 };
@@ -813,61 +681,214 @@
             area.appendChild(grid);
         }
 
-        function renderPatternLevel(q, area, actions) {
-            const clueBox = document.createElement("div");
-            clueBox.style.fontSize = "1.6rem";
-            clueBox.style.background = "#ffffff";
-            clueBox.style.padding = "12px";
-            clueBox.style.borderRadius = "12px";
-            clueBox.style.border = "2px solid #cbd5e1";
-            clueBox.style.margin = "10px 0";
-            clueBox.innerText = q.clueText;
+        /* LEVEL 3: DROPDOWN IF-THEN CONDITION SELECTOR */
+        function renderLevel3(level, area, actions) {
+            const container = document.createElement("div");
+            container.className = "flex flex-col gap-3 my-2 text-left";
 
-            area.appendChild(clueBox);
+            level.conditions.forEach((cond, idx) => {
+                const row = document.createElement("div");
+                row.className = "bg-white p-3 border-2 border-slate-200 rounded-xl flex flex-col gap-2";
+                
+                const label = document.createElement("div");
+                label.className = "font-bold text-sm text-blue-950";
+                label.innerText = cond.ifText;
 
-            const grid = document.createElement("div");
-            grid.className = "answers-grid";
+                const select = document.createElement("select");
+                select.className = "p-2 border-2 border-purple-600 rounded-lg text-sm font-bold bg-purple-50 outline-none";
+                select.id = `select_cond_${idx}`;
 
-            q.options.forEach(opt => {
-                const btn = document.createElement("button");
-                btn.className = "answer-button";
-                btn.innerText = opt;
-                btn.onclick = () => {
-                    if (blockClicks) return;
-                    blockClicks = true;
-                    btn.classList.add(opt === q.correct ? "right" : "wrong");
-                    handleAnswerResult(opt === q.correct, q.correct);
-                };
-                grid.appendChild(btn);
+                const defaultOpt = document.createElement("option");
+                defaultOpt.value = "";
+                defaultOpt.innerText = "-- Choose Consequence --";
+                select.appendChild(defaultOpt);
+
+                cond.options.forEach(opt => {
+                    const o = document.createElement("option");
+                    o.value = opt;
+                    o.innerText = opt;
+                    select.appendChild(o);
+                });
+
+                row.appendChild(label);
+                row.appendChild(select);
+                container.appendChild(row);
             });
 
-            area.appendChild(grid);
+            area.appendChild(container);
+
+            const verifyBtn = document.createElement("button");
+            verifyBtn.className = "btn-primary";
+            verifyBtn.innerText = "Execute IF-THEN Code ➔";
+            verifyBtn.onclick = () => {
+                let isCorrect = true;
+                level.conditions.forEach((cond, idx) => {
+                    const val = document.getElementById(`select_cond_${idx}`).value;
+                    if (val !== cond.correct) isCorrect = false;
+                });
+                handleResult(isCorrect, level.conditions.map(c => c.correct).join(" | "));
+            };
+            actions.appendChild(verifyBtn);
         }
 
-        function handleAnswerResult(isCorrect, answerKey) {
+        /* LEVEL 4: PATTERN CODE DECODER & TAB PICKER */
+        function renderLevel4(level, area, actions) {
+            const clueBox = document.createElement("div");
+            clueBox.className = "text-2xl font-black bg-white p-4 rounded-xl border-2 border-slate-300 my-2 shadow-inner";
+            clueBox.innerText = level.patternClue;
+
+            let chosenTab = null;
+
+            const tabGrid = document.createElement("div");
+            tabGrid.className = "tab-grid";
+
+            level.tabs.forEach(tabText => {
+                const btn = document.createElement("button");
+                btn.className = "tab-btn";
+                btn.innerText = tabText;
+                btn.onclick = () => {
+                    if (actionLocked) return;
+                    soundEngine.playFlip();
+                    document.querySelectorAll(".tab-btn").forEach(t => t.classList.remove("selected"));
+                    btn.classList.add("selected");
+                    chosenTab = tabText;
+                };
+                tabGrid.appendChild(btn);
+            });
+
+            area.appendChild(clueBox);
+            area.appendChild(tabGrid);
+
+            const verifyBtn = document.createElement("button");
+            verifyBtn.className = "btn-primary";
+            verifyBtn.innerText = "Verify Pattern ➔";
+            verifyBtn.onclick = () => {
+                if (!chosenTab) { alert("Please select a pattern tab option first!"); return; }
+                handleResult(chosenTab === level.correct, level.correct);
+            };
+            actions.appendChild(verifyBtn);
+        }
+
+        /* LEVEL 5: STEP FLIPPER MAZE NAVIGATOR */
+        function renderLevel5(level, area, actions) {
+            const maze = document.createElement("div");
+            maze.className = "maze-grid";
+            
+            // 4x4 Grid layout
+            const cells = [
+                "🤖", "▫️", "▫️", "▫️",
+                "🟩", "▫️", "▫️", "▫️",
+                "🟩", "🟩", "🏆", "▫️",
+                "▫️", "▫️", "▫️", "▫️"
+            ];
+
+            cells.forEach(item => {
+                const cell = document.createElement("div");
+                cell.className = `maze-cell ${item === '🤖' ? 'robot' : item === '🏆' ? 'trophy' : item === '🟩' ? 'path' : ''}`;
+                cell.innerText = item;
+                maze.appendChild(cell);
+            });
+
+            const stepsContainer = document.createElement("div");
+            stepsContainer.className = "flex flex-col gap-2 my-2";
+
+            let userSteps = new Array(level.steps.length).fill("Select Direction");
+
+            level.steps.forEach((_, idx) => {
+                const stepRow = document.createElement("div");
+                stepRow.className = "flex items-center justify-between bg-white p-2 border-2 border-slate-300 rounded-xl";
+                
+                const label = document.createElement("span");
+                label.className = "font-bold text-xs text-slate-700";
+                label.innerText = `Step ${idx + 1}:`;
+
+                const btn = document.createElement("button");
+                btn.className = "bg-purple-100 text-purple-900 border-2 border-purple-500 text-xs font-extrabold px-3 py-1.5 rounded-lg";
+                btn.innerText = userSteps[idx];
+                
+                let optIdx = 0;
+                btn.onclick = () => {
+                    if (actionLocked) return;
+                    soundEngine.playFlip();
+                    optIdx = (optIdx + 1) % level.allOptions.length;
+                    userSteps[idx] = level.allOptions[optIdx];
+                    btn.innerText = userSteps[idx];
+                };
+
+                stepRow.appendChild(label);
+                stepRow.appendChild(btn);
+                stepsContainer.appendChild(stepRow);
+            });
+
+            area.appendChild(maze);
+            area.appendChild(stepsContainer);
+
+            const verifyBtn = document.createElement("button");
+            verifyBtn.className = "btn-primary";
+            verifyBtn.innerText = "Run Path Algorithm ➔";
+            verifyBtn.onclick = () => {
+                const isCorrect = userSteps[0] === "Move Down ⬇️" && userSteps[1] === "Move Down ⬇️" && userSteps[2] === "Move Right ➡️";
+                handleResult(isCorrect, "Step 1: Move Down ⬇️ | Step 2: Move Down ⬇️ | Step 3: Move Right ➡️");
+            };
+            actions.appendChild(verifyBtn);
+        }
+
+        function handleResult(isCorrect, answerKey) {
+            if (actionLocked) return;
+            actionLocked = true;
+
             const msg = document.getElementById("msgBox");
 
             if (isCorrect) {
-                score += 20;
+                score += (attemptCount === 1) ? 200 : 100;
                 soundEngine.playCorrect();
-                msg.className = "alert-box win";
-                msg.innerText = "🎉 Excellent! Code executed successfully!";
+                tickerStyle("good");
+                msg.innerText = "🎉 PERFECT! Algorithmic logic executed successfully!";
+                speakText("Perfect logic execution!");
+
+                setTimeout(() => {
+                    advanceLevel();
+                }, 2000);
             } else {
-                soundEngine.playWrong();
-                msg.className = "alert-box lose";
-                msg.innerHTML = `❌ Code Bug! Correct Solution: <strong>${answerKey}</strong>`;
-            }
-
-            document.getElementById("scoreText").innerText = score;
-            activeIndex++;
-
-            setTimeout(() => {
-                if (activeIndex < gameDeck.length) {
-                    showCurrentTask();
+                if (attemptCount === 1) {
+                    attemptCount = 2;
+                    soundEngine.playWrong();
+                    tickerStyle("retry");
+                    msg.innerText = "⚠️ Logical error! Retry attempt 2. Review instructions carefully!";
+                    speakText("Logical error. Try your second attempt.");
+                    document.getElementById("attemptHUD").innerText = `${attemptCount} / 2`;
+                    
+                    setTimeout(() => {
+                        actionLocked = false;
+                        showCurrentLevel();
+                    }, 2200);
                 } else {
-                    showFinalResults();
+                    soundEngine.playWrong();
+                    tickerStyle("bad");
+                    msg.innerHTML = `💥 2 Attempts used! Correct Logic: <strong>${answerKey}</strong>`;
+                    speakText("Here is the correct logic answer.");
+
+                    setTimeout(() => {
+                        advanceLevel();
+                    }, 3000);
                 }
-            }, 2600);
+            }
+        }
+
+        function tickerStyle(type) {
+            const msg = document.getElementById("msgBox");
+            msg.className = `ticker-feedback ${type}`;
+        }
+
+        function advanceLevel() {
+            activeLevelIdx++;
+            attemptCount = 1;
+
+            if (activeLevelIdx < levelDataset.length) {
+                showCurrentLevel();
+            } else {
+                showFinalResults();
+            }
         }
 
         function showFinalResults() {
@@ -875,38 +896,26 @@
             document.getElementById("endScreen").classList.remove("hidden");
             document.getElementById("finalPoints").innerText = score;
 
-            if (window.confetti) {
-                confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 } });
-            }
+            if (window.confetti) confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 } });
 
             let rank = "";
             let desc = "";
 
-            if (score >= 80) {
-                rank = "🏆 Master Robot Programmer!";
-                desc = "Outstanding performance! You have mastered sequence algorithms, dropdown logic, and memory loops.";
-            } else if (score >= 50) {
-                rank = "🥈 Junior Code Expert!";
-                desc = "Great job! You solved most coding challenges. Practice once more to reach a 100% score!";
+            if (score >= 800) {
+                rank = "🏆 Master Algorithmic Programmer!";
+                desc = "Sensational work! You solved sequence building, cause & effect matching, IF-THEN decisions, and maze navigation flawlessly!";
+            } else if (score >= 500) {
+                rank = "🥈 Junior Logic Champion!";
+                desc = "Great job! You mastered most coding levels. Practice once more to achieve a 100% score!";
             } else {
-                rank = "🌱 Cadet Coder in Training!";
-                desc = "Good effort! Practice ordering steps and observing patterns to improve your robot coding skills.";
+                rank = "🌱 Cadet Programmer in Training!";
+                desc = "Good effort! Practice re-ordering sequence steps and examining patterns to sharpen your coding logic.";
             }
 
             document.getElementById("badgeTitle").innerText = rank;
             document.getElementById("badgeSub").innerText = desc;
-            speakText(`${rank}. Your score is ${score} points.`);
+            speakText(`${rank}. Your total score is ${score} points!`);
         }
     </script>
 </body>
 </html>
-```
-
-### Key Interactive Features:
-1. **Multi-Type Levels**:
-   - **Level 1 & 5**: Drag-and-drop / tap-to-place sequence challenge (handwashing & bag packing).
-   - **Level 2**: Dropdown logic block selector (movement & coordinate step logic).
-   - **Level 3**: Robot Memory Pair Matching game (symbols & text commands).
-   - **Level 4**: Algorithmic pattern completion.
-2. **Mobile Touch Responsive**: Includes custom touch targets, layout queries, fluid grids, and `viewport` locks for mobile devices.
-3. **Sound & Voice Engine**: Built-in Web Audio synthesizers for correct, wrong, flip sounds, SpeechSynthesis read-aloud prompts, and confetti fireworks!

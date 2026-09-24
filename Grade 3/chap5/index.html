@@ -2,9 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Innovine Solutions - MS Word Smart Wizard Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MS Word & Spreadsheet Wizard Game</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@700;800;900&display=swap');
+
         :root {
             --bg-canvas: #f0fdf4;
             --word-blue: #2b579a; 
@@ -13,477 +16,722 @@
             --success: #10b981;
             --error: #ef4444;
             --accent-purple: #8b5cf6;
+            --excel-green: #107c41;
+            --border-blue: #bfdbfe;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Fredoka', 'Segoe UI', system-ui, sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             min-height: 100vh;
+            min-height: -webkit-fill-available;
             display: flex;
             justify-content: center;
             align-items: center;
             background: var(--bg-canvas);
-            padding: 15px;
-            user-select: none;
+            background-image: radial-gradient(#86efac 1.2px, transparent 1.2px);
+            background-size: 20px 20px;
+            padding: 10px;
+            overflow: hidden;
+            color: var(--slate-dark);
         }
 
-        /* --- STAGE 1: EXCLUSIVE 5-SECOND LOGO SPLASH SCREEN --- */
+        /* Splash Screen */
         #splash {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             background: #ffffff;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            z-index: 99999;
+            transition: opacity 0.5s ease;
         }
 
         #splash img {
-            width: 320px;
-            max-width: 85%;
-            animation: elegantPulse 2.5s infinite ease-in-out;
+            width: 280px;
+            max-width: 80vw;
+            animation: elegantPulse 2s infinite ease-in-out;
         }
 
         @keyframes elegantPulse {
             0%, 100% { transform: scale(1); opacity: 0.95; }
-            50% { transform: scale(1.04); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 1; }
         }
 
-        /* --- STAGE 2: MAIN WORKBOOK CONTAINER FRAME --- */
+        /* Container Framework */
         .container {
             width: 100%;
             max-width: 900px;
+            height: 95vh;
+            max-height: 820px;
             background: #ffffff;
-            border-radius: 20px;
-            padding: 35px;
+            border-radius: 24px;
+            padding: clamp(14px, 3.5vw, 24px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
             position: relative;
-            z-index: 10;
-            text-align: center;
             border-top: 10px solid var(--word-blue);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
         .intro-panel h1 {
-            font-size: 2.5rem;
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
             color: var(--word-blue);
-            margin-bottom: 10px;
-            font-weight: 800;
+            margin-bottom: 6px;
+            font-weight: 900;
         }
 
         .mode-badge {
             display: inline-block;
-            padding: 6px 18px;
+            padding: 4px 16px;
             background: #eff6ff;
             color: var(--word-blue);
             border-radius: 20px;
             font-weight: 700;
-            font-size: 0.9rem;
-            margin-bottom: 25px;
+            font-size: 0.85rem;
+            margin-bottom: 14px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            border: 1px solid #bfdbfe;
+            border: 1px solid var(--border-blue);
         }
 
         .briefing {
             background: #f8fafc;
-            padding: 25px;
-            border-radius: 14px;
-            border-left: 6px solid var(--word-blue);
+            padding: 16px;
+            border-radius: 16px;
+            border-left: 5px solid var(--word-blue);
             text-align: left;
-            margin-bottom: 30px;
+            margin-bottom: 16px;
+            font-size: 0.9rem;
         }
 
         .briefing ol {
-            margin-left: 20px;
-            line-height: 1.8;
+            margin-left: 18px;
+            line-height: 1.6;
             color: #334155;
-            font-size: 1.1rem;
-        }
-
-        .briefing li {
-            margin-bottom: 8px;
         }
 
         button.act-btn {
-            padding: 18px 45px;
+            padding: 12px 36px;
             background: var(--comic-orange);
             color: white;
-            font-size: 1.3rem;
-            font-weight: 700;
+            font-size: 1.1rem;
+            font-weight: 800;
             border: none;
-            border-radius: 12px;
+            border-radius: 50px;
             cursor: pointer;
             box-shadow: 0 6px 15px rgba(234, 88, 12, 0.3);
             transition: all 0.2s ease;
+            width: 100%;
+            max-width: 280px;
+            margin: 8px auto 0 auto;
         }
 
         button.act-btn:hover {
-            background: #ea580c;
-            transform: translateY(-3px);
+            transform: translateY(-2px) scale(1.02);
             box-shadow: 0 8px 20px rgba(234, 88, 12, 0.4);
         }
 
+        /* Top HUD Navbar */
         .hud {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 25px;
-            gap: 15px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 8px;
         }
 
         .hud-card {
             background: var(--slate-dark);
             color: white;
-            padding: 12px 25px;
-            border-radius: 8px;
+            padding: 8px 12px;
+            border-radius: 12px;
             font-weight: 700;
-            font-size: 1.1rem;
+            font-size: clamp(0.75rem, 2.8vw, 0.9rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .target-blueprint-zone {
+        /* Level Container Shell */
+        .game-card {
             background: #f0f7ff;
             border: 2px dashed var(--word-blue);
-            padding: 25px;
-            border-radius: 12px;
-            margin-bottom: 25px;
+            padding: 12px;
+            border-radius: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            overflow-y: auto;
         }
 
-        .blueprint-title {
-            font-size: 1.6rem;
+        .game-title {
+            font-size: clamp(0.95rem, 3.2vw, 1.2rem);
             font-weight: 800;
             color: var(--slate-dark);
-            margin-top: 5px;
+            margin-bottom: 6px;
         }
 
-        .comic-workspace {
+        /* LEVEL 1: MCQs */
+        .options-pool {
             display: flex;
             flex-direction: column;
-            gap: 25px;
-            margin: 25px 0;
+            gap: 10px;
+            width: 100%;
+            max-width: 550px;
+            margin: 10px 0;
         }
 
-        .elements-pool {
-            display: flex;
-            justify-content: center;
-            flex-direction: column;
-            gap: 15px;
-            background: #f1f5f9;
-            padding: 20px;
-            border-radius: 12px;
-            align-items: center;
-            border: 1px dashed #cbd5e1;
-        }
-
-        .story-chunk {
+        .option-btn {
             background: white;
             border: 3px solid #cbd5e1;
-            padding: 16px 24px;
+            padding: 12px 18px;
             border-radius: 12px;
-            cursor: pointer;
             font-weight: 700;
             color: var(--slate-dark);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            transition: all 0.2s ease;
-            width: 100%;
-            max-width: 650px;
-            font-size: 1.2rem;
+            font-size: clamp(0.95rem, 3vw, 1.1rem);
+            cursor: pointer;
             text-align: left;
+            transition: all 0.2s ease;
         }
 
-        .story-chunk:hover {
-            transform: scale(1.02);
+        .option-btn:hover {
             border-color: var(--word-blue);
             background: #eff6ff;
         }
 
-        .ticker-feedback {
-            margin-top: 20px;
-            padding: 20px;
-            border-radius: 8px;
+        /* LEVEL 2: SPREADSHEET PRACTICAL SHEET */
+        .sheet-container {
+            width: 100%;
+            max-width: 650px;
+            overflow-x: auto;
+            margin: 8px 0;
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        table.excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+        }
+
+        table.excel-table th, table.excel-table td {
+            border: 1px solid #cbd5e1;
+            padding: 6px 8px;
             text-align: center;
             font-weight: 700;
-            font-size: 1.2rem;
-            min-height: 65px;
+        }
+
+        table.excel-table th {
+            background: #e2e8f0;
+            color: var(--slate-dark);
+        }
+
+        .cell-label {
             background: #f1f5f9;
-            border-left: 6px solid #cbd5e1;
+            color: var(--word-blue);
+            font-weight: 800;
         }
 
-        .ticker-feedback.good {
-            background: #ecfdf5;
-            border-left-color: var(--success);
-            color: #065f46;
+        .sheet-input {
+            width: 100%;
+            max-width: 110px;
+            padding: 6px;
+            border: 2px solid var(--excel-green);
+            border-radius: 6px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: var(--excel-green);
+            background: #f0fdf4;
         }
 
-        .ticker-feedback.bad {
-            background: #fef2f2;
-            border-left-color: var(--error);
-            color: #991b1b;
+        .sheet-input:focus {
+            outline: none;
+            box-shadow: 0 0 8px rgba(16, 124, 65, 0.4);
         }
 
+        .target-cell-highlight {
+            background: #dcfce7 !important;
+            border: 2px solid var(--excel-green) !important;
+        }
+
+        /* Ticker Feedback Bar */
+        .ticker-feedback {
+            margin-top: 6px;
+            padding: 8px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: clamp(0.85rem, 3vw, 0.95rem);
+            min-height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            border-left: 5px solid #cbd5e1;
+        }
+
+        .ticker-feedback.good { background: #ecfdf5; border-left-color: var(--success); color: #065f46; }
+        .ticker-feedback.bad { background: #fef2f2; border-left-color: var(--error); color: #991b1b; }
+
+        /* Report Screen Shell */
         .rank-shell {
-            width: 140px;
-            height: 140px;
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
             background: var(--word-blue);
             color: white;
-            font-size: 2.5rem;
-            font-weight: 800;
+            font-size: 2.2rem;
+            font-weight: 900;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 20px auto;
-            border: 5px solid #ffffff;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            margin: 15px auto;
+            border: 4px solid #ffffff;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12);
         }
 
-        .audio-prompt-btn {
+        .audio-btn {
             background: var(--accent-purple);
             color: white;
             border: none;
-            padding: 8px 15px;
+            padding: 6px 14px;
             border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: bold;
+            font-size: 0.8rem;
+            font-weight: 800;
             cursor: pointer;
-            margin-bottom: 10px;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
+            margin-bottom: 6px;
         }
     </style>
 </head>
 <body>
 
+    <!-- Audio Elements -->
+    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+
+    <!-- 5-Second Splash Screen -->
     <div id="splash">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'100\' viewBox=\'0 0 280 100\'><rect width=\'280\' height=\'100\' rx=\'20\' fill=\'%232b579a\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'26\' font-weight=\'bold\' fill=\'%23ffffff\'>INNOVINE</text></svg>';">
     </div>
 
+    <!-- Main Container -->
     <div class="container hidden" id="appMainframe">
         
+        <!-- MENU PANEL -->
         <div id="menuPanel" class="intro-panel">
-            <h1>MS Word Smart Wizard</h1>
-            <div class="mode-badge">ICT Game</div>
-            
+            <h1>MS Word & Spreadsheet Master</h1>
+            <div class="mode-badge">Level 1 (Word Concepts) & Level 2 (Spreadsheet Formulas)</div>
             <div class="briefing">
-                <p style="font-weight: 800; margin-bottom: 12px; color: var(--slate-dark); font-size: 1.2rem;">How to Play (Student Friendly & Hands-Free Ready):</p>
+                <p style="font-weight:800; margin-bottom:6px; color:var(--slate-dark);">🎮 Game Missions:</p>
                 <ol>
-                    <li>Listen to or read the **MS Word Mission Question** at the top.</li>
-                    <li>Click on the big button matching the correct tool (**WordArt, SmartArt, or AutoShapes**).</li>
-                    <li>Audio guidance will help you understand each design component!</li>
+                    <li><strong>Level 1:</strong> Identify MS Word Visual Features (WordArt, SmartArt, AutoShapes)</li>
+                    <li><strong>Level 2:</strong> Solve 5 Practical Formula Calculations on the Interactive Stationery Sheet!</li>
                 </ol>
             </div>
-            <button class="act-btn" onclick="startComicEngine()">Start Mission ➜</button>
+            <button class="act-btn" onclick="startGameEngine()">Launch Game ➜</button>
         </div>
 
+        <!-- GAMEPLAY PANEL -->
         <div id="gamePanel" class="hidden">
             <div class="hud">
-                <div class="hud-card">📝 Question: <span id="countHUD">1</span> / 6</div>
-                <div class="hud-card" style="background: #eff6ff; color: var(--word-blue);">⭐ Score: <span id="scoreHUD">0</span></div>
+                <div class="hud-card">📝 Stage: <span id="stageHUD">L1 - Q1</span></div>
+                <div class="hud-card" style="background:#eff6ff; color:var(--word-blue);">⭐ Score: <span id="scoreHUD">0</span></div>
+                <div class="hud-card" style="background:#f0fdf4; color:var(--success);">Target: 800</div>
             </div>
 
-            <div class="target-blueprint-zone">
-                <button class="audio-prompt-btn" onclick="speakCurrentQuestion()">🔊 Listen to Question</button>
-                <div style="font-size: 0.9rem; font-weight: 700; text-transform: uppercase; color: #64748b; letter-spacing: 1px;">Identify the Feature:</div>
-                <div class="blueprint-title" id="blueprintText">Loading Objective...</div>
-            </div>
+            <div id="questionContainer" style="flex-grow:1; display:flex; flex-direction:column;"></div>
 
-            <div style="font-weight: 700; color: #475569; font-size: 1.1rem; margin-bottom: 15px;">Choose the correct option:</div>
-            
-            <div class="comic-workspace">
-                <div class="elements-pool" id="sourceChunksPool">
-                    </div>
-            </div>
-
-            <div class="ticker-feedback" id="tickerBox">Select an element to resolve the query.</div>
+            <div class="ticker-feedback" id="tickerBox">Select or enter your answer to proceed!</div>
         </div>
 
+        <!-- REPORT PANEL -->
         <div id="reportPanel" class="hidden">
-            <h1 style="color: var(--word-blue); font-size: 2.5rem;">📊 Mission Evaluation</h1>
+            <h1 style="color:var(--word-blue); font-size:2.2rem;">📊 Mission Evaluation</h1>
             <div class="rank-shell"><span id="finalScore">0</span></div>
-            <h2 id="finalRank" style="font-weight: 800; margin-bottom: 10px; color: var(--slate-dark);">Calculating Rank...</h2>
-            <p id="finalSummary" style="color: #475569; margin-bottom: 30px; line-height: 1.7; max-width: 620px; margin-left: auto; margin-right: auto; font-size: 1.1rem;"></p>
+            <h2 id="finalRank" style="font-weight:800; margin-bottom:8px; color:var(--slate-dark);">Evaluating...</h2>
+            <p id="finalSummary" style="color:#475569; margin-bottom:20px; line-height:1.5; font-size:0.95rem;"></p>
             <button class="act-btn" onclick="location.reload()">Play Again 🔄</button>
         </div>
     </div>
 
-    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
-    <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
-
     <script>
-        // 5-Second Splash Screen Control
-        setTimeout(() => {
-            document.getElementById("splash").style.display = "none";
-            document.getElementById("appMainframe").classList.remove("hidden");
-            speakText("Welcome to MS Word Smart Wizard Game. Let's learn about WordArt, SmartArt, and AutoShapes!");
-        }, 5000);
+        /* Audio Synthesizer Engine */
+        class SoundEngine {
+            constructor() { this.ctx = null; }
+            init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
 
-        // CBSE Grade 3 Database Mapping Context: Pages 50-56
-        const wordFeatureDatabase = [
-            {
-                question: "Which feature allows you to insert decorative and stylish text with colorful outlines and effects into your document?",
-                correct: "WordArt",
-                options: ["WordArt", "SmartArt", "AutoShapes"]
-            },
-            {
-                question: "Which option helps you instantly draw geometric layouts, basic banners, arrows, stars, and smileys?",
-                correct: "AutoShapes",
-                options: ["WordArt", "SmartArt", "AutoShapes"]
-            },
-            {
-                question: "If you want to create a visually appealing step-by-step process diagram or a family list structure, what tool do you use?",
-                correct: "SmartArt",
-                options: ["WordArt", "SmartArt", "AutoShapes"]
-            },
-            {
-                question: "Rohan wants to highlight his document heading to make it look artistic, curving and shadowed. Which tool is perfect?",
-                correct: "WordArt",
-                options: ["WordArt", "SmartArt", "AutoShapes"]
-            },
-            {
-                question: "You want to create a cyclical chart representing the Water Cycle process for your EVS homework. Which option fits best?",
-                correct: "SmartArt",
-                options: ["WordArt", "SmartArt", "AutoShapes"]
-            },
-            {
-                question: "Which MS Word gallery section hosts the specific 'Callouts' or speech bubbles used to show dialogues in text?",
-                correct: "AutoShapes",
-                options: ["WordArt", "SmartArt", "AutoShapes"]
+            playCorrect() {
+                const audio = document.getElementById("correctSound");
+                if (audio) audio.play().catch(() => this.synthCorrect());
+                else this.synthCorrect();
             }
-        ];
 
-        let challengeDeck = [];
-        let currentChallengeIndex = 0;
-        let runningScore = 0;
-        let structuralLock = false;
+            synthCorrect() {
+                this.init(); if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.25);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(now); osc.stop(now + 0.35);
+            }
 
+            playWrong() {
+                const audio = document.getElementById("wrongSound");
+                if (audio) audio.play().catch(() => this.synthWrong());
+                else this.synthWrong();
+            }
+
+            synthWrong() {
+                this.init(); if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, now);
+                osc.frequency.linearRampToValueAtTime(90, now + 0.3);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(now); osc.stop(now + 0.3);
+            }
+        }
+
+        const soundEngine = new SoundEngine();
+
+        /* Speech Synthesis Assistant */
         function speakText(text) {
             if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel(); // Stop any previous speech
+                window.speechSynthesis.cancel();
                 const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate = 0.95; // Gentle pace for 3rd graders
+                utterance.rate = 0.95;
                 window.speechSynthesis.speak(utterance);
             }
         }
 
-        function speakCurrentQuestion() {
-            if (challengeDeck[currentChallengeIndex]) {
-                speakText(challengeDeck[currentChallengeIndex].question);
+        /* Splash Screen Timing */
+        setTimeout(() => {
+            document.getElementById("splash").style.display = "none";
+            document.getElementById("appMainframe").classList.remove("hidden");
+        }, 5000);
+
+        /* LEVEL 1: Word Processing Questions */
+        const level1Questions = [
+            { question: "Which feature inserts decorative and stylish text with colorful outlines?", correct: "WordArt", options: ["WordArt", "SmartArt", "AutoShapes"] },
+            { question: "Which option helps you draw geometric shapes, banners, arrows, stars, and smileys?", correct: "AutoShapes", options: ["WordArt", "SmartArt", "AutoShapes"] },
+            { question: "Which tool creates visually appealing step-by-step process diagrams or family lists?", correct: "SmartArt", options: ["WordArt", "SmartArt", "AutoShapes"] },
+            { question: "Which gallery hosts callouts or speech bubbles to show text dialogues?", correct: "AutoShapes", options: ["WordArt", "SmartArt", "AutoShapes"] }
+        ];
+
+        /* LEVEL 2: Practical Spreadsheet Questions based on provided Image (A1:C5 Table) */
+        const level2SheetQuestions = [
+            {
+                question: "Question 1: Enter the formula or total value to calculate the Total Quantity in cell B5.",
+                targetCell: "B5",
+                validAnswers: ["=SUM(B2:B4)", "28", "=SUM(B2,B3,B4)", "=B2+B3+B4"],
+                displayCorrect: "=SUM(B2:B4) or 28"
+            },
+            {
+                question: "Question 2: Enter the formula or total value to calculate the Total Price (Rs) in cell C5.",
+                targetCell: "C5",
+                validAnswers: ["=SUM(C2:C4)", "250", "=SUM(C2,C3,C4)", "=C2+C3+C4"],
+                displayCorrect: "=SUM(C2:C4) or 250"
+            },
+            {
+                question: "Question 3: Calculate Cost per Blue Marker in D2 (Price ÷ Quantity: C2/B2).",
+                targetCell: "D2",
+                validAnswers: ["=C2/B2", "10"],
+                displayCorrect: "=C2/B2 or 10"
+            },
+            {
+                question: "Question 4: Calculate Cost per Pencil in D3 (Price ÷ Quantity: C3/B3).",
+                targetCell: "D3",
+                validAnswers: ["=C3/B3", "5"],
+                displayCorrect: "=C3/B3 or 5"
+            },
+            {
+                question: "Question 5: Calculate Cost per Pen in D4 (Price ÷ Quantity: C4/B4).",
+                targetCell: "D4",
+                validAnswers: ["=C4/B4", "10"],
+                displayCorrect: "=C4/B4 or 10"
             }
-        }
+        ];
 
-        function startComicEngine() {
-            challengeDeck = [...wordFeatureDatabase].sort(() => Math.random() - 0.5);
-            currentChallengeIndex = 0;
-            runningScore = 0;
-            structuralLock = false;
+        let currentLevel = 1;
+        let l1Index = 0;
+        let l2Index = 0;
+        let score = 0;
+        let actionLocked = false;
 
+        // Dynamic State Storage for Sheet Cells
+        let sheetValues = {
+            B5: "", C5: "", D2: "", D3: "", D4: ""
+        };
+
+        function startGameEngine() {
             document.getElementById("menuPanel").classList.add("hidden");
             document.getElementById("gamePanel").classList.remove("hidden");
-            
-            loadComicChallengeFrame();
+            loadStageFrame();
         }
 
-        function loadComicChallengeFrame() {
-            const activeData = challengeDeck[currentChallengeIndex];
-            
-            document.getElementById("countHUD").innerText = currentChallengeIndex + 1;
-            document.getElementById("blueprintText").innerText = activeData.question;
-            
-            // Auto voice assistant trigger for accessibility
-            setTimeout(() => { speakCurrentQuestion(); }, 400);
+        function loadStageFrame() {
+            actionLocked = false;
+            document.getElementById("scoreHUD").innerText = score;
+            const container = document.getElementById("questionContainer");
+            container.innerHTML = "";
 
-            const poolContainer = document.getElementById("sourceChunksPool");
-            poolContainer.innerHTML = "";
-            
-            // Generate uniform option selectors
-            activeData.options.forEach((optionText) => {
-                const node = document.createElement("button");
-                node.className = "story-chunk";
-                node.innerText = optionText;
-                node.onclick = () => evaluateChoice(optionText, node);
-                poolContainer.appendChild(node);
-            });
+            if (currentLevel === 1) {
+                document.getElementById("stageHUD").innerText = `L1 - Q${l1Index + 1}`;
+                const qData = level1Questions[l1Index];
+
+                const card = document.createElement("div");
+                card.className = "game-card";
+
+                const title = document.createElement("div");
+                title.className = "game-title";
+                title.innerText = qData.question;
+                card.appendChild(title);
+
+                const audioBtn = document.createElement("button");
+                audioBtn.className = "audio-btn";
+                audioBtn.innerText = "🔊 Listen Question";
+                audioBtn.onclick = () => speakText(qData.question);
+                card.appendChild(audioBtn);
+
+                const pool = document.createElement("div");
+                pool.className = "options-pool";
+
+                qData.options.forEach(opt => {
+                    const btn = document.createElement("button");
+                    btn.className = "option-btn";
+                    btn.innerText = opt;
+                    btn.onclick = () => evaluateL1Choice(opt, btn);
+                    pool.appendChild(btn);
+                });
+
+                card.appendChild(pool);
+                container.appendChild(card);
+                speakText(qData.question);
+
+            } else if (currentLevel === 2) {
+                document.getElementById("stageHUD").innerText = `L2 - Q${l2Index + 1}`;
+                const qData = level2SheetQuestions[l2Index];
+
+                const card = document.createElement("div");
+                card.className = "game-card";
+
+                const title = document.createElement("div");
+                title.className = "game-title";
+                title.innerText = qData.question;
+                card.appendChild(title);
+
+                const audioBtn = document.createElement("button");
+                audioBtn.className = "audio-btn";
+                audioBtn.innerText = "🔊 Listen Prompt";
+                audioBtn.onclick = () => speakText(qData.question);
+                card.appendChild(audioBtn);
+
+                /* Render Table directly matching the image A1:C5 + D1:D5 */
+                const sheetBox = document.createElement("div");
+                sheetBox.className = "sheet-container";
+
+                sheetBox.innerHTML = `
+                    <table class="excel-table">
+                        <thead>
+                            <tr>
+                                <th>Cell</th><th>Stationeries (A)</th>
+                                <th>Cell</th><th>Quantity (B)</th>
+                                <th>Cell</th><th>Price (Rs) (C)</th>
+                                <th>Cell</th><th>Unit Cost (D)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="cell-label">A1</td><td>Stationeries</td>
+                                <td class="cell-label">B1</td><td>Quantity</td>
+                                <td class="cell-label">C1</td><td>Price(Rs)</td>
+                                <td class="cell-label">D1</td><td>Unit Cost</td>
+                            </tr>
+                            <tr>
+                                <td class="cell-label">A2</td><td>Blue Markers</td>
+                                <td class="cell-label">B2</td><td>12</td>
+                                <td class="cell-label">C2</td><td>120</td>
+                                <td class="cell-label ${qData.targetCell === 'D2' ? 'target-cell-highlight' : ''}">D2</td>
+                                <td>${qData.targetCell === 'D2' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =C2/B2" value="${sheetValues.D2}">` : (sheetValues.D2 || '-')}</td>
+                            </tr>
+                            <tr>
+                                <td class="cell-label">A3</td><td>Pencils</td>
+                                <td class="cell-label">B3</td><td>6</td>
+                                <td class="cell-label">C3</td><td>30</td>
+                                <td class="cell-label ${qData.targetCell === 'D3' ? 'target-cell-highlight' : ''}">D3</td>
+                                <td>${qData.targetCell === 'D3' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =C3/B3" value="${sheetValues.D3}">` : (sheetValues.D3 || '-')}</td>
+                            </tr>
+                            <tr>
+                                <td class="cell-label">A4</td><td>Pens</td>
+                                <td class="cell-label">B4</td><td>10</td>
+                                <td class="cell-label">C4</td><td>100</td>
+                                <td class="cell-label ${qData.targetCell === 'D4' ? 'target-cell-highlight' : ''}">D4</td>
+                                <td>${qData.targetCell === 'D4' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =C4/B4" value="${sheetValues.D4}">` : (sheetValues.D4 || '-')}</td>
+                            </tr>
+                            <tr>
+                                <td class="cell-label">A5</td><td><strong>Total</strong></td>
+                                <td class="cell-label ${qData.targetCell === 'B5' ? 'target-cell-highlight' : ''}">B5</td>
+                                <td>${qData.targetCell === 'B5' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =SUM(B2:B4)" value="${sheetValues.B5}">` : (sheetValues.B5 || '-')}</td>
+                                <td class="cell-label ${qData.targetCell === 'C5' ? 'target-cell-highlight' : ''}">C5</td>
+                                <td>${qData.targetCell === 'C5' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =SUM(C2:C4)" value="${sheetValues.C5}">` : (sheetValues.C5 || '-')}</td>
+                                <td class="cell-label">D5</td><td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `;
+
+                card.appendChild(sheetBox);
+
+                const submitBtn = document.createElement("button");
+                submitBtn.className = "act-btn";
+                submitBtn.innerText = "Check Cell Formula ➔";
+                submitBtn.onclick = () => evaluateL2Spreadsheet(qData);
+                card.appendChild(submitBtn);
+
+                container.appendChild(card);
+                speakText(qData.question);
+
+                setTimeout(() => {
+                    const inp = document.getElementById("activeInput");
+                    if (inp) inp.focus();
+                }, 100);
+            }
         }
 
-        function evaluateChoice(selectedText, htmlElement) {
-            if (structuralLock) return;
-            structuralLock = true;
+        function evaluateL1Choice(chosen, btnNode) {
+            if (actionLocked) return;
+            actionLocked = true;
 
-            const targetQuestion = challengeDeck[currentChallengeIndex];
-            const feedbackNode = document.getElementById("tickerBox");
+            const qData = level1Questions[l1Index];
+            const ticker = document.getElementById("tickerBox");
 
-            if (selectedText === targetQuestion.correct) {
-                runningScore += 150;
-                htmlElement.style.background = "#d1fae5";
-                htmlElement.style.borderColor = "var(--success)";
-                
-                try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
-                feedbackNode.className = "ticker-feedback good";
-                feedbackNode.innerHTML = "🎉 CORRECT! Excellent choice.";
-                speakText("Correct answer! Great job!");
+            if (chosen === qData.correct) {
+                score += 100;
+                btnNode.style.background = "#d1fae5";
+                btnNode.style.borderColor = "var(--success)";
+                soundEngine.playCorrect();
+                ticker.className = "ticker-feedback good";
+                ticker.innerText = "🎉 CORRECT! Excellent choice.";
+                speakText("Correct answer!");
             } else {
-                runningScore = Math.max(0, runningScore - 50);
-                htmlElement.style.background = "#fee2e2";
-                htmlElement.style.borderColor = "var(--error)";
-                
-                try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
-                feedbackNode.className = "ticker-feedback bad";
-                feedbackNode.innerHTML = `💥 Oops! The correct tool was: ${targetQuestion.correct}`;
-                speakText(`That was incorrect. The right tool is ${targetQuestion.correct}`);
+                btnNode.style.background = "#fee2e2";
+                btnNode.style.borderColor = "var(--error)";
+                soundEngine.playWrong();
+                ticker.className = "ticker-feedback bad";
+                ticker.innerText = `💥 Incorrect! The correct answer was: ${qData.correct}`;
+                speakText(`Incorrect. The correct answer was ${qData.correct}`);
             }
 
-            document.getElementById("scoreHUD").innerText = runningScore;
-            currentChallengeIndex++;
-
-            setTimeout(() => {
-                structuralLock = false;
-                if (currentChallengeIndex < challengeDeck.length) {
-                    loadComicChallengeFrame();
-                    feedbackNode.className = "ticker-feedback";
-                    feedbackNode.innerHTML = "Select an element to resolve the query.";
-                } else {
-                    displayFinalProjectAudit();
-                }
-            }, 3500);
+            advanceGame();
         }
 
-        function displayFinalProjectAudit() {
+        function evaluateL2Spreadsheet(qData) {
+            if (actionLocked) return;
+            actionLocked = true;
+
+            const inp = document.getElementById("activeInput");
+            const rawVal = inp ? inp.value.trim().toUpperCase().replace(/\s+/g, '') : "";
+            const ticker = document.getElementById("tickerBox");
+
+            // Normalize formula string comparison
+            const isCorrect = qData.validAnswers.some(ans => ans.toUpperCase().replace(/\s+/g, '') === rawVal);
+
+            if (isCorrect) {
+                score += 100;
+                sheetValues[qData.targetCell] = rawVal;
+                soundEngine.playCorrect();
+                ticker.className = "ticker-feedback good";
+                ticker.innerText = `🎉 CORRECT! Formula/Value accepted for cell ${qData.targetCell}`;
+                speakText("Correct formula calculation!");
+            } else {
+                sheetValues[qData.targetCell] = qData.validAnswers[1]; // Store correct value
+                soundEngine.playWrong();
+                ticker.className = "ticker-feedback bad";
+                ticker.innerText = `💥 Incorrect! Correct answer for ${qData.targetCell} is: ${qData.displayCorrect}`;
+                speakText(`Incorrect. The correct formula is ${qData.displayCorrect}`);
+            }
+
+            advanceGame();
+        }
+
+        function advanceGame() {
+            setTimeout(() => {
+                if (currentLevel === 1) {
+                    l1Index++;
+                    if (l1Index < level1Questions.length) {
+                        loadStageFrame();
+                    } else {
+                        currentLevel = 2;
+                        const ticker = document.getElementById("tickerBox");
+                        ticker.className = "ticker-feedback";
+                        ticker.innerText = "Starting Level 2: Practical Spreadsheet Calculations!";
+                        loadStageFrame();
+                    }
+                } else if (currentLevel === 2) {
+                    l2Index++;
+                    if (l2Index < level2SheetQuestions.length) {
+                        loadStageFrame();
+                    } else {
+                        displayFinalReport();
+                    }
+                }
+            }, 2500);
+        }
+
+        function displayFinalReport() {
             document.getElementById("gamePanel").classList.add("hidden");
             document.getElementById("reportPanel").classList.remove("hidden");
-            document.getElementById("finalScore").innerText = runningScore;
-            
-            try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+            document.getElementById("finalScore").innerText = score;
 
-            let rankText = "";
-            let summaryMessage = "";
-            const percentage = (runningScore / 900) * 100;
+            let rank = "";
+            let msg = "";
 
-            if (percentage >= 80) {
-                rankText = "🥇 MS Word Grandmaster";
-                summaryMessage = "Fantastic performance! You completely understand how WordArt, SmartArt, and Shapes work in Microsoft Word.";
-            } else if (percentage >= 50) {
-                rankText = "🥈 Layout Explorer";
-                summaryMessage = "Good attempt! You have a healthy understanding of inserting visual graphics into a document layout.";
+            if (score >= 700) {
+                soundEngine.playCorrect();
+                if (window.confetti) confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+                rank = "🥇 Spreadsheet Grandmaster!";
+                msg = `Outstanding performance! You scored ${score} points and mastered MS Word visual elements and Excel spreadsheet formulas!`;
             } else {
-                rankText = "🌱 Budding Typist";
-                summaryMessage = "Keep practicing! Review pages 50 to 56 in your MS Word chapter, run through the module again and boost your score!";
+                soundEngine.playWrong();
+                rank = "🌱 Apprentice Analyst";
+                msg = `You finished with ${score} points. Review your SUM and division formulas to achieve a top rank on your next attempt!`;
             }
 
-            document.getElementById("finalRank").innerText = rankText;
-            document.getElementById("finalSummary").innerText = summaryMessage;
-            speakText(`Game finished. Your final rank is ${rankText}. ${summaryMessage}`);
+            document.getElementById("finalRank").innerText = rank;
+            document.getElementById("finalSummary").innerText = msg;
+            speakText(`Game finished. Your final rank is ${rank}`);
         }
     </script>
 </body>

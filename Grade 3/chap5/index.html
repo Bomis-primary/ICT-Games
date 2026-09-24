@@ -3,21 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MS Word & Spreadsheet Wizard Game</title>
+    <title>Excel Spreadsheet Master - Row, Column & Formula Arcade</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@700;800;900&display=swap');
 
         :root {
-            --bg-canvas: #f0fdf4;
-            --word-blue: #2b579a; 
+            --excel-green: #107c41;
+            --excel-dark: #0b502a;
+            --excel-light-bg: #f0fdf4;
             --comic-orange: #ea580c; 
             --slate-dark: #1e293b;
             --success: #10b981;
             --error: #ef4444;
             --accent-purple: #8b5cf6;
-            --excel-green: #107c41;
-            --border-blue: #bfdbfe;
+            --border-green: #a7f3d0;
         }
 
         * {
@@ -36,7 +36,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: var(--bg-canvas);
+            background: var(--excel-light-bg);
             background-image: radial-gradient(#86efac 1.2px, transparent 1.2px);
             background-size: 20px 20px;
             padding: 10px;
@@ -71,7 +71,7 @@
             50% { transform: scale(1.05); opacity: 1; }
         }
 
-        /* Container Framework */
+        /* Main App Container */
         .container {
             width: 100%;
             max-width: 900px;
@@ -82,7 +82,7 @@
             padding: clamp(14px, 3.5vw, 24px);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
             position: relative;
-            border-top: 10px solid var(--word-blue);
+            border-top: 10px solid var(--excel-green);
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -94,7 +94,7 @@
         .intro-panel h1 {
             font-family: 'Outfit', sans-serif;
             font-size: clamp(1.8rem, 5vw, 2.5rem);
-            color: var(--word-blue);
+            color: var(--excel-green);
             margin-bottom: 6px;
             font-weight: 900;
         }
@@ -102,21 +102,21 @@
         .mode-badge {
             display: inline-block;
             padding: 4px 16px;
-            background: #eff6ff;
-            color: var(--word-blue);
+            background: #ecfdf5;
+            color: var(--excel-green);
             border-radius: 20px;
             font-weight: 700;
             font-size: 0.85rem;
             margin-bottom: 14px;
             text-transform: uppercase;
-            border: 1px solid var(--border-blue);
+            border: 1px solid var(--border-green);
         }
 
         .briefing {
             background: #f8fafc;
             padding: 16px;
             border-radius: 16px;
-            border-left: 5px solid var(--word-blue);
+            border-left: 5px solid var(--excel-green);
             text-align: left;
             margin-bottom: 16px;
             font-size: 0.9rem;
@@ -149,7 +149,7 @@
             box-shadow: 0 8px 20px rgba(234, 88, 12, 0.4);
         }
 
-        /* Top HUD Navbar */
+        /* HUD Navbar */
         .hud {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -169,10 +169,10 @@
             justify-content: center;
         }
 
-        /* Level Container Shell */
+        /* Gameplay Frame */
         .game-card {
-            background: #f0f7ff;
-            border: 2px dashed var(--word-blue);
+            background: #f0fdf4;
+            border: 2px dashed var(--excel-green);
             padding: 12px;
             border-radius: 20px;
             flex-grow: 1;
@@ -184,80 +184,72 @@
         }
 
         .game-title {
-            font-size: clamp(0.95rem, 3.2vw, 1.2rem);
+            font-size: clamp(0.95rem, 3.2vw, 1.25rem);
             font-weight: 800;
             color: var(--slate-dark);
             margin-bottom: 6px;
         }
 
-        /* LEVEL 1: MCQs */
-        .options-pool {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            width: 100%;
-            max-width: 550px;
-            margin: 10px 0;
-        }
-
-        .option-btn {
-            background: white;
-            border: 3px solid #cbd5e1;
-            padding: 12px 18px;
-            border-radius: 12px;
-            font-weight: 700;
-            color: var(--slate-dark);
-            font-size: clamp(0.95rem, 3vw, 1.1rem);
-            cursor: pointer;
-            text-align: left;
-            transition: all 0.2s ease;
-        }
-
-        .option-btn:hover {
-            border-color: var(--word-blue);
-            background: #eff6ff;
-        }
-
-        /* LEVEL 2: SPREADSHEET PRACTICAL SHEET */
+        /* Interactive Excel Sheet Grid */
         .sheet-container {
             width: 100%;
-            max-width: 650px;
+            max-width: 760px;
             overflow-x: auto;
             margin: 8px 0;
             background: #ffffff;
             border: 2px solid #cbd5e1;
-            border-radius: 10px;
-            padding: 8px;
+            border-radius: 12px;
+            padding: 10px;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
         table.excel-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+            font-size: clamp(0.75rem, 2.4vw, 0.9rem);
         }
 
         table.excel-table th, table.excel-table td {
             border: 1px solid #cbd5e1;
-            padding: 6px 8px;
+            padding: 8px;
             text-align: center;
             font-weight: 700;
+            transition: all 0.2s ease;
         }
 
-        table.excel-table th {
+        .col-header, .row-header {
             background: #e2e8f0;
             color: var(--slate-dark);
+            cursor: pointer;
         }
 
-        .cell-label {
-            background: #f1f5f9;
-            color: var(--word-blue);
-            font-weight: 800;
+        .col-header:hover, .row-header:hover {
+            background: #cbd5e1;
+            color: var(--excel-green);
+        }
+
+        .grid-cell {
+            cursor: pointer;
+            background: #ffffff;
+        }
+
+        .grid-cell:hover {
+            background: #ecfdf5;
+        }
+
+        .selected-highlight {
+            background: #10b981 !important;
+            color: #ffffff !important;
+        }
+
+        .target-cell-active {
+            background: #dcfce7 !important;
+            border: 3px solid var(--excel-green) !important;
         }
 
         .sheet-input {
             width: 100%;
-            max-width: 110px;
+            max-width: 120px;
             padding: 6px;
             border: 2px solid var(--excel-green);
             border-radius: 6px;
@@ -265,17 +257,12 @@
             font-weight: 800;
             font-size: 0.9rem;
             color: var(--excel-green);
-            background: #f0fdf4;
+            background: #ffffff;
         }
 
         .sheet-input:focus {
             outline: none;
             box-shadow: 0 0 8px rgba(16, 124, 65, 0.4);
-        }
-
-        .target-cell-highlight {
-            background: #dcfce7 !important;
-            border: 2px solid var(--excel-green) !important;
         }
 
         /* Ticker Feedback Bar */
@@ -301,7 +288,7 @@
             width: 110px;
             height: 110px;
             border-radius: 50%;
-            background: var(--word-blue);
+            background: var(--excel-green);
             color: white;
             font-size: 2.2rem;
             font-weight: 900;
@@ -334,7 +321,7 @@
 
     <!-- 5-Second Splash Screen -->
     <div id="splash">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'100\' viewBox=\'0 0 280 100\'><rect width=\'280\' height=\'100\' rx=\'20\' fill=\'%232b579a\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'26\' font-weight=\'bold\' fill=\'%23ffffff\'>INNOVINE</text></svg>';">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'100\' viewBox=\'0 0 280 100\'><rect width=\'280\' height=\'100\' rx=\'20\' fill=\'%23107c41\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'26\' font-weight=\'bold\' fill=\'%23ffffff\'>INNOVINE</text></svg>';">
     </div>
 
     <!-- Main Container -->
@@ -342,34 +329,34 @@
         
         <!-- MENU PANEL -->
         <div id="menuPanel" class="intro-panel">
-            <h1>MS Word & Spreadsheet Master</h1>
-            <div class="mode-badge">Level 1 (Word Concepts) & Level 2 (Spreadsheet Formulas)</div>
+            <h1>Excel Spreadsheet Master</h1>
+            <div class="mode-badge">2 Levels: Selection & Formula Calculation</div>
             <div class="briefing">
                 <p style="font-weight:800; margin-bottom:6px; color:var(--slate-dark);">🎮 Game Missions:</p>
                 <ol>
-                    <li><strong>Level 1:</strong> Identify MS Word Visual Features (WordArt, SmartArt, AutoShapes)</li>
-                    <li><strong>Level 2:</strong> Solve 5 Practical Formula Calculations on the Interactive Stationery Sheet!</li>
+                    <li><strong>Level 1 (8 Stages):</strong> Tap requested Rows, Columns, or Individual Cells on the sheet!</li>
+                    <li><strong>Level 2 (7 Stages):</strong> Enter SUM, division, and average formulas to calculate stationery costs!</li>
                 </ol>
             </div>
-            <button class="act-btn" onclick="startGameEngine()">Launch Game ➜</button>
+            <button class="act-btn" onclick="startGameEngine()">Launch Mission ➜</button>
         </div>
 
         <!-- GAMEPLAY PANEL -->
         <div id="gamePanel" class="hidden">
             <div class="hud">
                 <div class="hud-card">📝 Stage: <span id="stageHUD">L1 - Q1</span></div>
-                <div class="hud-card" style="background:#eff6ff; color:var(--word-blue);">⭐ Score: <span id="scoreHUD">0</span></div>
-                <div class="hud-card" style="background:#f0fdf4; color:var(--success);">Target: 800</div>
+                <div class="hud-card" style="background:#eff6ff; color:var(--excel-green);">⭐ Score: <span id="scoreHUD">0</span></div>
+                <div class="hud-card" style="background:#f0fdf4; color:var(--success);">Target: 1200</div>
             </div>
 
             <div id="questionContainer" style="flex-grow:1; display:flex; flex-direction:column;"></div>
 
-            <div class="ticker-feedback" id="tickerBox">Select or enter your answer to proceed!</div>
+            <div class="ticker-feedback" id="tickerBox">Tap the requested cell, row, or column to respond!</div>
         </div>
 
         <!-- REPORT PANEL -->
         <div id="reportPanel" class="hidden">
-            <h1 style="color:var(--word-blue); font-size:2.2rem;">📊 Mission Evaluation</h1>
+            <h1 style="color:var(--excel-green); font-size:2.2rem;">📊 Mission Evaluation</h1>
             <div class="rank-shell"><span id="finalScore">0</span></div>
             <h2 id="finalRank" style="font-weight:800; margin-bottom:8px; color:var(--slate-dark);">Evaluating...</h2>
             <p id="finalSummary" style="color:#475569; margin-bottom:20px; line-height:1.5; font-size:0.95rem;"></p>
@@ -426,7 +413,7 @@
 
         const soundEngine = new SoundEngine();
 
-        /* Speech Synthesis Assistant */
+        /* Speech Assistant */
         function speakText(text) {
             if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
@@ -436,51 +423,74 @@
             }
         }
 
-        /* Splash Screen Timing */
+        /* Splash Screen Timeout - 5 Seconds */
         setTimeout(() => {
             document.getElementById("splash").style.display = "none";
             document.getElementById("appMainframe").classList.remove("hidden");
         }, 5000);
 
-        /* LEVEL 1: Word Processing Questions */
+        /* LEVEL 1: 8 SELECTION QUESTIONS */
         const level1Questions = [
-            { question: "Which feature inserts decorative and stylish text with colorful outlines?", correct: "WordArt", options: ["WordArt", "SmartArt", "AutoShapes"] },
-            { question: "Which option helps you draw geometric shapes, banners, arrows, stars, and smileys?", correct: "AutoShapes", options: ["WordArt", "SmartArt", "AutoShapes"] },
-            { question: "Which tool creates visually appealing step-by-step process diagrams or family lists?", correct: "SmartArt", options: ["WordArt", "SmartArt", "AutoShapes"] },
-            { question: "Which gallery hosts callouts or speech bubbles to show text dialogues?", correct: "AutoShapes", options: ["WordArt", "SmartArt", "AutoShapes"] }
+            { type: "selection", targetType: "column", targetKey: "A", question: "Level 1 - Q1: Click or Tap Header 'A' to select Column A (Stationeries Column)!" },
+            { type: "selection", targetType: "row", targetKey: "2", question: "Level 1 - Q2: Click or Tap Row Number '2' to select Row 2 (Blue Markers Data)!" },
+            { type: "selection", targetType: "cell", targetKey: "C3", question: "Level 1 - Q3: Click or Tap Cell C3 containing Price for Pencils (30)!" },
+            { type: "selection", targetType: "column", targetKey: "B", question: "Level 1 - Q4: Click or Tap Header 'B' to select Column B (Quantity Column)!" },
+            { type: "selection", targetType: "row", targetKey: "4", question: "Level 1 - Q5: Click or Tap Row Number '4' to select Row 4 (Pens Data)!" },
+            { type: "selection", targetType: "cell", targetKey: "A5", question: "Level 1 - Q6: Click or Tap Cell A5 containing the 'Total' label!" },
+            { type: "selection", targetType: "column", targetKey: "C", question: "Level 1 - Q7: Click or Tap Header 'C' to select Column C (Price Column)!" },
+            { type: "selection", targetType: "row", targetKey: "1", question: "Level 1 - Q8: Click or Tap Row Number '1' to select Row 1 (Header Titles)!" }
         ];
 
-        /* LEVEL 2: Practical Spreadsheet Questions based on provided Image (A1:C5 Table) */
-        const level2SheetQuestions = [
+        /* LEVEL 2: 7 FORMULA & CALCULATION QUESTIONS */
+        const level2Questions = [
             {
-                question: "Question 1: Enter the formula or total value to calculate the Total Quantity in cell B5.",
+                type: "formula",
                 targetCell: "B5",
+                question: "Level 2 - Q1: Enter the formula or value to calculate Total Quantity in cell B5.",
                 validAnswers: ["=SUM(B2:B4)", "28", "=SUM(B2,B3,B4)", "=B2+B3+B4"],
                 displayCorrect: "=SUM(B2:B4) or 28"
             },
             {
-                question: "Question 2: Enter the formula or total value to calculate the Total Price (Rs) in cell C5.",
+                type: "formula",
                 targetCell: "C5",
+                question: "Level 2 - Q2: Enter the formula or value to calculate Total Price (Rs) in cell C5.",
                 validAnswers: ["=SUM(C2:C4)", "250", "=SUM(C2,C3,C4)", "=C2+C3+C4"],
                 displayCorrect: "=SUM(C2:C4) or 250"
             },
             {
-                question: "Question 3: Calculate Cost per Blue Marker in D2 (Price ÷ Quantity: C2/B2).",
+                type: "formula",
                 targetCell: "D2",
+                question: "Level 2 - Q3: Calculate Cost per Blue Marker in D2 (Price ÷ Quantity: C2/B2).",
                 validAnswers: ["=C2/B2", "10"],
                 displayCorrect: "=C2/B2 or 10"
             },
             {
-                question: "Question 4: Calculate Cost per Pencil in D3 (Price ÷ Quantity: C3/B3).",
+                type: "formula",
                 targetCell: "D3",
+                question: "Level 2 - Q4: Calculate Cost per Pencil in D3 (Price ÷ Quantity: C3/B3).",
                 validAnswers: ["=C3/B3", "5"],
                 displayCorrect: "=C3/B3 or 5"
             },
             {
-                question: "Question 5: Calculate Cost per Pen in D4 (Price ÷ Quantity: C4/B4).",
+                type: "formula",
                 targetCell: "D4",
+                question: "Level 2 - Q5: Calculate Cost per Pen in D4 (Price ÷ Quantity: C4/B4).",
                 validAnswers: ["=C4/B4", "10"],
                 displayCorrect: "=C4/B4 or 10"
+            },
+            {
+                type: "formula",
+                targetCell: "D5",
+                question: "Level 2 - Q6: Enter formula to calculate Total Unit Cost in cell D5 (=SUM(D2:D4)).",
+                validAnswers: ["=SUM(D2:D4)", "25", "=SUM(D2,D3,D4)", "=D2+D3+D4"],
+                displayCorrect: "=SUM(D2:D4) or 25"
+            },
+            {
+                type: "formula",
+                targetCell: "E1",
+                question: "Level 2 - Q7: Calculate Average Quantity per Item type in E1 (=B5/3).",
+                validAnswers: ["=B5/3", "9.33", "28/3"],
+                displayCorrect: "=B5/3 or 9.33"
             }
         ];
 
@@ -490,10 +500,8 @@
         let score = 0;
         let actionLocked = false;
 
-        // Dynamic State Storage for Sheet Cells
-        let sheetValues = {
-            B5: "", C5: "", D2: "", D3: "", D4: ""
-        };
+        // Cell Memory
+        let sheetValues = { B5: "", C5: "", D2: "", D3: "", D4: "", D5: "", E1: "" };
 
         function startGameEngine() {
             document.getElementById("menuPanel").classList.add("hidden");
@@ -508,121 +516,128 @@
             container.innerHTML = "";
 
             if (currentLevel === 1) {
-                document.getElementById("stageHUD").innerText = `L1 - Q${l1Index + 1}`;
+                document.getElementById("stageHUD").innerText = `L1 - Q${l1Index + 1}/8`;
                 const qData = level1Questions[l1Index];
-
-                const card = document.createElement("div");
-                card.className = "game-card";
-
-                const title = document.createElement("div");
-                title.className = "game-title";
-                title.innerText = qData.question;
-                card.appendChild(title);
-
-                const audioBtn = document.createElement("button");
-                audioBtn.className = "audio-btn";
-                audioBtn.innerText = "🔊 Listen Question";
-                audioBtn.onclick = () => speakText(qData.question);
-                card.appendChild(audioBtn);
-
-                const pool = document.createElement("div");
-                pool.className = "options-pool";
-
-                qData.options.forEach(opt => {
-                    const btn = document.createElement("button");
-                    btn.className = "option-btn";
-                    btn.innerText = opt;
-                    btn.onclick = () => evaluateL1Choice(opt, btn);
-                    pool.appendChild(btn);
-                });
-
-                card.appendChild(pool);
-                container.appendChild(card);
-                speakText(qData.question);
-
+                renderSheetCard(container, qData);
             } else if (currentLevel === 2) {
-                document.getElementById("stageHUD").innerText = `L2 - Q${l2Index + 1}`;
-                const qData = level2SheetQuestions[l2Index];
+                document.getElementById("stageHUD").innerText = `L2 - Q${l2Index + 1}/7`;
+                const qData = level2Questions[l2Index];
+                renderSheetCard(container, qData);
+            }
+        }
 
-                const card = document.createElement("div");
-                card.className = "game-card";
+        function renderSheetCard(container, qData) {
+            const card = document.createElement("div");
+            card.className = "game-card";
 
-                const title = document.createElement("div");
-                title.className = "game-title";
-                title.innerText = qData.question;
-                card.appendChild(title);
+            const title = document.createElement("div");
+            title.className = "game-title";
+            title.innerText = qData.question;
+            card.appendChild(title);
 
-                const audioBtn = document.createElement("button");
-                audioBtn.className = "audio-btn";
-                audioBtn.innerText = "🔊 Listen Prompt";
-                audioBtn.onclick = () => speakText(qData.question);
-                card.appendChild(audioBtn);
+            const audioBtn = document.createElement("button");
+            audioBtn.className = "audio-btn";
+            audioBtn.innerText = "🔊 Listen Prompt";
+            audioBtn.onclick = () => speakText(qData.question);
+            card.appendChild(audioBtn);
 
-                /* Render Table directly matching the image A1:C5 + D1:D5 */
-                const sheetBox = document.createElement("div");
-                sheetBox.className = "sheet-container";
+            /* Render Spreadsheet Table */
+            const sheetBox = document.createElement("div");
+            sheetBox.className = "sheet-container";
 
-                sheetBox.innerHTML = `
-                    <table class="excel-table">
-                        <thead>
-                            <tr>
-                                <th>Cell</th><th>Stationeries (A)</th>
-                                <th>Cell</th><th>Quantity (B)</th>
-                                <th>Cell</th><th>Price (Rs) (C)</th>
-                                <th>Cell</th><th>Unit Cost (D)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="cell-label">A1</td><td>Stationeries</td>
-                                <td class="cell-label">B1</td><td>Quantity</td>
-                                <td class="cell-label">C1</td><td>Price(Rs)</td>
-                                <td class="cell-label">D1</td><td>Unit Cost</td>
-                            </tr>
-                            <tr>
-                                <td class="cell-label">A2</td><td>Blue Markers</td>
-                                <td class="cell-label">B2</td><td>12</td>
-                                <td class="cell-label">C2</td><td>120</td>
-                                <td class="cell-label ${qData.targetCell === 'D2' ? 'target-cell-highlight' : ''}">D2</td>
-                                <td>${qData.targetCell === 'D2' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =C2/B2" value="${sheetValues.D2}">` : (sheetValues.D2 || '-')}</td>
-                            </tr>
-                            <tr>
-                                <td class="cell-label">A3</td><td>Pencils</td>
-                                <td class="cell-label">B3</td><td>6</td>
-                                <td class="cell-label">C3</td><td>30</td>
-                                <td class="cell-label ${qData.targetCell === 'D3' ? 'target-cell-highlight' : ''}">D3</td>
-                                <td>${qData.targetCell === 'D3' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =C3/B3" value="${sheetValues.D3}">` : (sheetValues.D3 || '-')}</td>
-                            </tr>
-                            <tr>
-                                <td class="cell-label">A4</td><td>Pens</td>
-                                <td class="cell-label">B4</td><td>10</td>
-                                <td class="cell-label">C4</td><td>100</td>
-                                <td class="cell-label ${qData.targetCell === 'D4' ? 'target-cell-highlight' : ''}">D4</td>
-                                <td>${qData.targetCell === 'D4' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =C4/B4" value="${sheetValues.D4}">` : (sheetValues.D4 || '-')}</td>
-                            </tr>
-                            <tr>
-                                <td class="cell-label">A5</td><td><strong>Total</strong></td>
-                                <td class="cell-label ${qData.targetCell === 'B5' ? 'target-cell-highlight' : ''}">B5</td>
-                                <td>${qData.targetCell === 'B5' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =SUM(B2:B4)" value="${sheetValues.B5}">` : (sheetValues.B5 || '-')}</td>
-                                <td class="cell-label ${qData.targetCell === 'C5' ? 'target-cell-highlight' : ''}">C5</td>
-                                <td>${qData.targetCell === 'C5' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =SUM(C2:C4)" value="${sheetValues.C5}">` : (sheetValues.C5 || '-')}</td>
-                                <td class="cell-label">D5</td><td>-</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                `;
+            sheetBox.innerHTML = `
+                <table class="excel-table">
+                    <thead>
+                        <tr>
+                            <th>Cell</th>
+                            <th class="col-header" onclick="handleSelection('column', 'A')">A</th>
+                            <th class="col-header" onclick="handleSelection('column', 'B')">B</th>
+                            <th class="col-header" onclick="handleSelection('column', 'C')">C</th>
+                            <th class="col-header" onclick="handleSelection('column', 'D')">D</th>
+                            <th class="col-header" onclick="handleSelection('column', 'E')">E</th>
+                        </tr>
+                        <tr>
+                            <th>Header</th>
+                            <th>Stationeries</th>
+                            <th>Quantity</th>
+                            <th>Price(Rs)</th>
+                            <th>Unit Cost</th>
+                            <th>Analysis</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="row-header" onclick="handleSelection('row', '1')">1</td>
+                            <td class="grid-cell" id="cell-A1" onclick="handleSelection('cell', 'A1')">Stationeries</td>
+                            <td class="grid-cell" id="cell-B1" onclick="handleSelection('cell', 'B1')">Quantity</td>
+                            <td class="grid-cell" id="cell-C1" onclick="handleSelection('cell', 'C1')">Price(Rs)</td>
+                            <td class="grid-cell" id="cell-D1" onclick="handleSelection('cell', 'D1')">Unit Cost</td>
+                            <td class="grid-cell ${qData.targetCell === 'E1' ? 'target-cell-active' : ''}" id="cell-E1" onclick="handleSelection('cell', 'E1')">
+                                ${qData.targetCell === 'E1' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =B5/3" value="${sheetValues.E1}">` : (sheetValues.E1 || '-')}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="row-header" onclick="handleSelection('row', '2')">2</td>
+                            <td class="grid-cell" id="cell-A2" onclick="handleSelection('cell', 'A2')">Blue Markers</td>
+                            <td class="grid-cell" id="cell-B2" onclick="handleSelection('cell', 'B2')">12</td>
+                            <td class="grid-cell" id="cell-C2" onclick="handleSelection('cell', 'C2')">120</td>
+                            <td class="grid-cell ${qData.targetCell === 'D2' ? 'target-cell-active' : ''}" id="cell-D2" onclick="handleSelection('cell', 'D2')">
+                                ${qData.targetCell === 'D2' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =C2/B2" value="${sheetValues.D2}">` : (sheetValues.D2 || '-')}
+                            </td>
+                            <td class="grid-cell" id="cell-E2">-</td>
+                        </tr>
+                        <tr>
+                            <td class="row-header" onclick="handleSelection('row', '3')">3</td>
+                            <td class="grid-cell" id="cell-A3" onclick="handleSelection('cell', 'A3')">Pencils</td>
+                            <td class="grid-cell" id="cell-B3" onclick="handleSelection('cell', 'B3')">6</td>
+                            <td class="grid-cell" id="cell-C3" onclick="handleSelection('cell', 'C3')">30</td>
+                            <td class="grid-cell ${qData.targetCell === 'D3' ? 'target-cell-active' : ''}" id="cell-D3" onclick="handleSelection('cell', 'D3')">
+                                ${qData.targetCell === 'D3' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =C3/B3" value="${sheetValues.D3}">` : (sheetValues.D3 || '-')}
+                            </td>
+                            <td class="grid-cell" id="cell-E3">-</td>
+                        </tr>
+                        <tr>
+                            <td class="row-header" onclick="handleSelection('row', '4')">4</td>
+                            <td class="grid-cell" id="cell-A4" onclick="handleSelection('cell', 'A4')">Pens</td>
+                            <td class="grid-cell" id="cell-B4" onclick="handleSelection('cell', 'B4')">10</td>
+                            <td class="grid-cell" id="cell-C4" onclick="handleSelection('cell', 'C4')">100</td>
+                            <td class="grid-cell ${qData.targetCell === 'D4' ? 'target-cell-active' : ''}" id="cell-D4" onclick="handleSelection('cell', 'D4')">
+                                ${qData.targetCell === 'D4' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =C4/B4" value="${sheetValues.D4}">` : (sheetValues.D4 || '-')}
+                            </td>
+                            <td class="grid-cell" id="cell-E4">-</td>
+                        </tr>
+                        <tr>
+                            <td class="row-header" onclick="handleSelection('row', '5')">5</td>
+                            <td class="grid-cell" id="cell-A5" onclick="handleSelection('cell', 'A5')">Total</td>
+                            <td class="grid-cell ${qData.targetCell === 'B5' ? 'target-cell-active' : ''}" id="cell-B5" onclick="handleSelection('cell', 'B5')">
+                                ${qData.targetCell === 'B5' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =SUM(B2:B4)" value="${sheetValues.B5}">` : (sheetValues.B5 || '-')}
+                            </td>
+                            <td class="grid-cell ${qData.targetCell === 'C5' ? 'target-cell-active' : ''}" id="cell-C5" onclick="handleSelection('cell', 'C5')">
+                                ${qData.targetCell === 'C5' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =SUM(C2:C4)" value="${sheetValues.C5}">` : (sheetValues.C5 || '-')}
+                            </td>
+                            <td class="grid-cell ${qData.targetCell === 'D5' ? 'target-cell-active' : ''}" id="cell-D5" onclick="handleSelection('cell', 'D5')">
+                                ${qData.targetCell === 'D5' ? `<input id="activeInput" class="sheet-input" placeholder="e.g. =SUM(D2:D4)" value="${sheetValues.D5}">` : (sheetValues.D5 || '-')}
+                            </td>
+                            <td class="grid-cell" id="cell-E5">-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
 
-                card.appendChild(sheetBox);
+            card.appendChild(sheetBox);
 
+            if (qData.type === "formula") {
                 const submitBtn = document.createElement("button");
                 submitBtn.className = "act-btn";
-                submitBtn.innerText = "Check Cell Formula ➔";
-                submitBtn.onclick = () => evaluateL2Spreadsheet(qData);
+                submitBtn.innerText = "Check Formula ➔";
+                submitBtn.onclick = () => evaluateFormulaStage(qData);
                 card.appendChild(submitBtn);
+            }
 
-                container.appendChild(card);
-                speakText(qData.question);
+            container.appendChild(card);
+            speakText(qData.question);
 
+            if (qData.type === "formula") {
                 setTimeout(() => {
                     const inp = document.getElementById("activeInput");
                     if (inp) inp.focus();
@@ -630,34 +645,44 @@
             }
         }
 
-        function evaluateL1Choice(chosen, btnNode) {
-            if (actionLocked) return;
+        /* Selection Handler */
+        function handleSelection(type, key) {
+            const qData = (currentLevel === 1) ? level1Questions[l1Index] : level2Questions[l2Index];
+            if (qData.type !== "selection" || actionLocked) return;
+
             actionLocked = true;
-
-            const qData = level1Questions[l1Index];
             const ticker = document.getElementById("tickerBox");
+            const isCorrect = (type === qData.targetType && key === qData.targetKey);
 
-            if (chosen === qData.correct) {
+            if (type === "column") {
+                const colMap = { 'A': 2, 'B': 3, 'C': 4, 'D': 5, 'E': 6 };
+                const colIdx = colMap[key];
+                document.querySelectorAll(`table.excel-table tr td:nth-child(${colIdx}), table.excel-table tr th:nth-child(${colIdx})`).forEach(el => el.classList.add("selected-highlight"));
+            } else if (type === "row") {
+                document.querySelectorAll(`table.excel-table tr:nth-child(${key}) td`).forEach(el => el.classList.add("selected-highlight"));
+            } else if (type === "cell") {
+                const cell = document.getElementById(`cell-${key}`);
+                if (cell) cell.classList.add("selected-highlight");
+            }
+
+            if (isCorrect) {
                 score += 100;
-                btnNode.style.background = "#d1fae5";
-                btnNode.style.borderColor = "var(--success)";
                 soundEngine.playCorrect();
                 ticker.className = "ticker-feedback good";
-                ticker.innerText = "🎉 CORRECT! Excellent choice.";
-                speakText("Correct answer!");
+                ticker.innerText = `🎉 CORRECT! Selected ${qData.targetType.toUpperCase()} ${qData.targetKey}`;
+                speakText("Correct selection!");
             } else {
-                btnNode.style.background = "#fee2e2";
-                btnNode.style.borderColor = "var(--error)";
                 soundEngine.playWrong();
                 ticker.className = "ticker-feedback bad";
-                ticker.innerText = `💥 Incorrect! The correct answer was: ${qData.correct}`;
-                speakText(`Incorrect. The correct answer was ${qData.correct}`);
+                ticker.innerText = `💥 Incorrect selection! Needed ${qData.targetType.toUpperCase()} ${qData.targetKey}`;
+                speakText("Incorrect selection.");
             }
 
             advanceGame();
         }
 
-        function evaluateL2Spreadsheet(qData) {
+        /* Formula Verification Handler */
+        function evaluateFormulaStage(qData) {
             if (actionLocked) return;
             actionLocked = true;
 
@@ -665,7 +690,6 @@
             const rawVal = inp ? inp.value.trim().toUpperCase().replace(/\s+/g, '') : "";
             const ticker = document.getElementById("tickerBox");
 
-            // Normalize formula string comparison
             const isCorrect = qData.validAnswers.some(ans => ans.toUpperCase().replace(/\s+/g, '') === rawVal);
 
             if (isCorrect) {
@@ -673,14 +697,14 @@
                 sheetValues[qData.targetCell] = rawVal;
                 soundEngine.playCorrect();
                 ticker.className = "ticker-feedback good";
-                ticker.innerText = `🎉 CORRECT! Formula/Value accepted for cell ${qData.targetCell}`;
-                speakText("Correct formula calculation!");
+                ticker.innerText = `🎉 CORRECT! Formula accepted for cell ${qData.targetCell}`;
+                speakText("Correct formula!");
             } else {
-                sheetValues[qData.targetCell] = qData.validAnswers[1]; // Store correct value
+                sheetValues[qData.targetCell] = qData.validAnswers[1];
                 soundEngine.playWrong();
                 ticker.className = "ticker-feedback bad";
                 ticker.innerText = `💥 Incorrect! Correct answer for ${qData.targetCell} is: ${qData.displayCorrect}`;
-                speakText(`Incorrect. The correct formula is ${qData.displayCorrect}`);
+                speakText(`Incorrect. The correct answer is ${qData.displayCorrect}`);
             }
 
             advanceGame();
@@ -696,18 +720,18 @@
                         currentLevel = 2;
                         const ticker = document.getElementById("tickerBox");
                         ticker.className = "ticker-feedback";
-                        ticker.innerText = "Starting Level 2: Practical Spreadsheet Calculations!";
+                        ticker.innerText = "Level 1 Complete! Starting Level 2: Practical Calculations!";
                         loadStageFrame();
                     }
                 } else if (currentLevel === 2) {
                     l2Index++;
-                    if (l2Index < level2SheetQuestions.length) {
+                    if (l2Index < level2Questions.length) {
                         loadStageFrame();
                     } else {
                         displayFinalReport();
                     }
                 }
-            }, 2500);
+            }, 2200);
         }
 
         function displayFinalReport() {
@@ -718,20 +742,20 @@
             let rank = "";
             let msg = "";
 
-            if (score >= 700) {
+            if (score >= 1200) {
                 soundEngine.playCorrect();
                 if (window.confetti) confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
-                rank = "🥇 Spreadsheet Grandmaster!";
-                msg = `Outstanding performance! You scored ${score} points and mastered MS Word visual elements and Excel spreadsheet formulas!`;
+                rank = "🥇 Excel Spreadsheet Master!";
+                msg = `Outstanding performance! You scored ${score} points across all 15 stages!`;
             } else {
                 soundEngine.playWrong();
-                rank = "🌱 Apprentice Analyst";
-                msg = `You finished with ${score} points. Review your SUM and division formulas to achieve a top rank on your next attempt!`;
+                rank = "🌱 Data Entry Analyst";
+                msg = `You finished with ${score} points. Review your selection targets and formulas to hit top rank next run!`;
             }
 
             document.getElementById("finalRank").innerText = rank;
             document.getElementById("finalSummary").innerText = msg;
-            speakText(`Game finished. Your final rank is ${rank}`);
+            speakText(`Game completed. Your final rank is ${rank}`);
         }
     </script>
 </body>

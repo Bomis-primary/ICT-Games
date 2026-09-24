@@ -78,7 +78,7 @@
             width: 100%;
             max-width: 950px;
             height: 94vh;
-            max-height: 800px;
+            max-height: 820px;
             z-index: 10;
             display: flex;
             flex-direction: column;
@@ -134,15 +134,15 @@
             background: var(--comic-orange);
             color: white;
             border: none;
-            padding: 14px 36px;
+            padding: 12px 36px;
             border-radius: 50px;
             font-weight: 800;
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             cursor: pointer;
             box-shadow: 0 6px 15px rgba(234, 88, 12, 0.3);
             transition: all 0.2s ease;
             width: 100%;
-            max-width: 280px;
+            max-width: 300px;
             margin: 0 auto;
         }
 
@@ -156,7 +156,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
             gap: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .hud-card {
@@ -203,18 +203,18 @@
             background: #ffffff;
             border: 2px solid var(--border-blue);
             border-radius: 16px;
-            height: 120px;
+            height: 110px;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 10px 0;
+            margin: 8px 0;
             box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);
             overflow: hidden;
             position: relative;
         }
 
         #wordArtTextTarget {
-            font-size: clamp(1.6rem, 5vw, 2.8rem);
+            font-size: clamp(1.6rem, 5vw, 2.6rem);
             font-weight: 900;
             transition: all 0.25s ease;
             text-align: center;
@@ -226,7 +226,7 @@
             grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
             gap: 8px;
             width: 100%;
-            margin-top: 6px;
+            margin-top: 4px;
         }
 
         .ctrl-group {
@@ -260,16 +260,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             width: 100%;
-            margin: 10px 0;
+            margin: 8px 0;
             flex-wrap: wrap;
-            min-height: 120px;
+            min-height: 110px;
         }
 
         .smartart-node-slot {
-            width: clamp(100px, 25vw, 130px);
-            height: clamp(80px, 18vw, 100px);
+            width: clamp(95px, 22vw, 125px);
+            height: clamp(75px, 16vw, 95px);
             background: #ffffff;
             border: 3px dashed var(--word-blue);
             border-radius: 14px;
@@ -291,14 +291,15 @@
             background: #eff6ff;
             border-style: solid;
             color: var(--word-blue);
+            box-shadow: 0 4px 10px rgba(43,87,154,0.15);
         }
 
         .node-palette {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             justify-content: center;
             flex-wrap: wrap;
-            margin-top: 10px;
+            margin-top: 6px;
         }
 
         .palette-chip {
@@ -308,13 +309,15 @@
             border-radius: 12px;
             font-size: 0.85rem;
             font-weight: 800;
-            cursor: pointer;
+            cursor: grab;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.15s ease;
+            transition: transform 0.15s ease, background-color 0.2s ease;
         }
 
-        .palette-chip:hover {
-            transform: scale(1.05);
+        .palette-chip.selected {
+            background: #f59e0b;
+            transform: scale(1.08);
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
         }
 
         /* Level 3 - ClipArt Document Canvas */
@@ -322,111 +325,48 @@
             background: #ffffff;
             border: 1px solid #cbd5e1;
             border-radius: 12px;
-            padding: 14px;
+            padding: 12px;
             text-align: left;
-            font-size: 0.85rem;
-            line-height: 1.6;
+            font-size: 0.82rem;
+            line-height: 1.5;
             color: #334155;
             position: relative;
-            min-height: 180px;
-            margin: 10px 0;
+            min-height: 160px;
+            margin: 8px 0;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             overflow: hidden;
-            user-select: none;
         }
 
-        .clipart-img-node {
-            position: absolute;
-            width: 80px;
-            height: 80px;
+        .clipart-item-img {
+            width: 75px;
+            height: 75px;
             object-fit: cover;
             border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            cursor: move;
-            border: 3px solid var(--word-blue);
-            transition: border-color 0.2s, box-shadow 0.2s, top 0.15s ease, left 0.15s ease;
-            z-index: 5;
-        }
-
-        .clipart-img-node.wrap-inline {
-            position: relative;
-            display: inline-block;
-            vertical-align: middle;
-            margin: 0 8px;
-            top: 0 !important;
-            left: 0 !important;
-            z-index: 1;
-        }
-
-        .clipart-img-node.wrap-square {
-            position: relative;
-            float: left;
-            margin: 0 12px 6px 0;
-            top: 0 !important;
-            left: 0 !important;
-            z-index: 1;
-        }
-
-        .clipart-img-node.wrap-tight {
             position: absolute;
-            z-index: 2;
-            shape-outside: circle(50%);
-            border-radius: 50%;
+            cursor: grab;
+            transition: border 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            touch-action: none;
         }
 
-        .clipart-img-node.wrap-front {
-            position: absolute;
-            z-index: 10;
-            opacity: 0.92;
-            box-shadow: 0 8px 20px rgba(43,87,154,0.35);
-        }
-
-        .gallery-grid {
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            margin: 8px 0;
-        }
-
-        .gallery-card {
-            border: 3px solid var(--border-blue);
-            border-radius: 12px;
-            padding: 6px;
-            background: #ffffff;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-            width: 100px;
-        }
-
-        .gallery-card img {
-            width: 100%;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 6px;
-        }
-
-        .gallery-card.active {
-            border-color: var(--word-blue);
-            background: #eff6ff;
-            transform: scale(1.05);
-            box-shadow: 0 4px 10px rgba(43, 87, 154, 0.2);
+        .clipart-item-img:active {
+            cursor: grabbing;
         }
 
         .text-wrap-controls {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             justify-content: center;
             flex-wrap: wrap;
-            margin-top: 8px;
+            margin-top: 6px;
         }
 
         .wrap-btn {
             background: #ffffff;
             border: 2px solid var(--border-blue);
-            padding: 6px 12px;
+            padding: 6px 10px;
             border-radius: 8px;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 800;
             color: var(--word-blue);
             cursor: pointer;
@@ -439,7 +379,7 @@
 
         /* Ticker Feedback Bar */
         .ticker-feedback {
-            margin-top: 8px;
+            margin-top: 6px;
             padding: 8px;
             border-radius: 10px;
             font-weight: 700;
@@ -471,6 +411,37 @@
             border: 4px solid #ffffff;
             box-shadow: 0 10px 20px rgba(0,0,0,0.12);
         }
+
+        /* Dynamic Visual Text Wrapping Modes */
+        .wrap-inline {
+            position: relative !important;
+            float: none !important;
+            display: inline-block !important;
+            margin: 0 10px !important;
+            vertical-align: middle !important;
+            z-index: 1 !important;
+        }
+
+        .wrap-square {
+            position: relative !important;
+            float: left !important;
+            margin: 0 12px 8px 0 !important;
+            z-index: 1 !important;
+        }
+
+        .wrap-tight {
+            position: relative !important;
+            float: right !important;
+            margin: 0 0 8px 12px !important;
+            border-radius: 50% !important;
+            z-index: 1 !important;
+        }
+
+        .wrap-infront {
+            position: absolute !important;
+            z-index: 99 !important;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.3) !important;
+        }
     </style>
 </head>
 <body>
@@ -479,7 +450,7 @@
     <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 
-    <!-- 5-Second Splash Screen -->
+    <!-- 5-Second Clean White Splash Screen -->
     <div id="splashScreen">
         <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'100\' viewBox=\'0 0 280 100\'><rect width=\'280\' height=\'100\' rx=\'20\' fill=\'%232b579a\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'26\' font-weight=\'bold\' fill=\'%23ffffff\'>INNOVINE</text></svg>';">
         <p style="margin-top:16px; font-weight:700; color:#2b579a; letter-spacing:1px; font-size:0.95rem;">MS Word-3 Master Arcade...</p>
@@ -497,7 +468,7 @@
                 <ol>
                     <li><strong>Level 1: WordArt Decorator Studio</strong> – Type your title and apply gradients, 3D shadows, outline strokes, and text curves!</li>
                     <li><strong>Level 2: SmartArt Diagram Builder</strong> – Arrange process and cycle nodes into diagram shape slots!</li>
-                    <li><strong>Level 3: ClipArt Picture Inserter</strong> – Pick graphics, insert onto document canvas, and set text wrapping!</li>
+                    <li><strong>Level 3: ClipArt Picture Inserter</strong> – Pick graphics from assets (`1.jpg`, `2.jpg`), insert onto document canvas, drag, and set text wrapping!</li>
                 </ol>
             </div>
             <button class="btn-primary" onclick="launchGameEngine()">Start Arcade ➜</button>
@@ -528,31 +499,7 @@
 
     <script>
         class SoundEngine {
-        // Level 3: ClipArt Tasks with assets/1.jpg and assets/2.jpg
-        const clipArtTasks = [
-            {
-                title: "ClipArt Task 1: Select Graphic 1 (assets/1.jpg), insert onto canvas, and select 'Tight' text wrapping!",
-                options: [
-                    { name: "Graphic 1", src: "assets/1.jpg", id: "img1" },
-                    { name: "Graphic 2", src: "assets/2.jpg", id: "img2" }
-                ],
-                targetImgSrc: "assets/1.jpg",
-                targetWrap: "Tight"
-            },
-            {
-                title: "ClipArt Task 2: Select Graphic 2 (assets/2.jpg), insert onto canvas, and select 'Square' text wrapping!",
-                options: [
-                    { name: "Graphic 1", src: "assets/1.jpg", id: "img1" },
-                    { name: "Graphic 2", src: "assets/2.jpg", id: "img2" }
-                ],
-                targetImgSrc: "assets/2.jpg",
-                targetWrap: "Square"
-            }
-        ];
-        let clipArtSubIndex = 0;
-        let activeSelectedWrap = "";
-        let selectedClipArtSrc = "";
-
+            constructor() { this.ctx = null; }
             init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
 
             playCorrect() {
@@ -650,32 +597,30 @@
         let smartArtSubIndex = 0;
         let userDiagramPlacements = [];
 
-        // Level 3: ClipArt Tasks
+        // Level 3: ClipArt Tasks (Using Image Assets)
         const clipArtTasks = [
             {
-                title: "ClipArt Task 1: Select the Tree 🌳 ClipArt, insert it onto canvas, and select 'Tight' text wrapping!",
+                title: "ClipArt Task 1: Select ClipArt 1 (1.jpg), insert onto canvas, and select 'Tight' text wrapping!",
                 options: [
-                    { name: "Tree", emoji: "🌳" },
-                    { name: "Sun", emoji: "☀️" },
-                    { name: "Computer", emoji: "💻" }
+                    { id: "img1", name: "ClipArt 1", src: "assets/1.jpg", fallbackSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%2310b981"/><text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="20" font-weight="bold">🌳</text></svg>` },
+                    { id: "img2", name: "ClipArt 2", src: "assets/2.jpg", fallbackSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 100 100"><rect width="80" height="80" x="10" y="10" rx="10" fill="%233b82f6"/><text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="20" font-weight="bold">💻</text></svg>` }
                 ],
-                targetEmoji: "🌳",
+                targetImgSrc: "assets/1.jpg",
                 targetWrap: "Tight"
             },
             {
-                title: "ClipArt Task 2: Select Computer 💻 ClipArt, insert onto canvas, and select 'Square' text wrapping!",
+                title: "ClipArt Task 2: Select ClipArt 2 (2.jpg), insert onto canvas, and select 'Square' text wrapping!",
                 options: [
-                    { name: "Tree", emoji: "🌳" },
-                    { name: "Sun", emoji: "☀️" },
-                    { name: "Computer", emoji: "💻" }
+                    { id: "img1", name: "ClipArt 1", src: "assets/1.jpg", fallbackSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="%2310b981"/><text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="20" font-weight="bold">🌳</text></svg>` },
+                    { id: "img2", name: "ClipArt 2", src: "assets/2.jpg", fallbackSvg: `<svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 100 100"><rect width="80" height="80" x="10" y="10" rx="10" fill="%233b82f6"/><text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" fill="white" font-size="20" font-weight="bold">💻</text></svg>` }
                 ],
-                targetEmoji: "💻",
+                targetImgSrc: "assets/2.jpg",
                 targetWrap: "Square"
             }
         ];
         let clipArtSubIndex = 0;
         let activeSelectedWrap = "";
-        let selectedClipArtEmoji = "";
+        let selectedClipArtSrc = "";
 
         function launchGameEngine() {
             document.getElementById("menuPanel").classList.add("hidden");
@@ -711,7 +656,7 @@
 
             const title = document.createElement("div");
             title.style.fontWeight = "800";
-            title.style.fontSize = "1rem";
+            title.style.fontSize = "0.95rem";
             title.innerText = task.title;
             container.appendChild(title);
 
@@ -771,7 +716,7 @@
 
             const submitBtn = document.createElement("button");
             submitBtn.className = "btn-primary";
-            submitBtn.style.marginTop = "10px";
+            submitBtn.style.marginTop = "8px";
             submitBtn.innerText = "Apply WordArt to Document ➔";
             submitBtn.onclick = () => evaluateWordArtTask(task);
             container.appendChild(submitBtn);
@@ -885,8 +830,17 @@
                 const slot = document.createElement("div");
                 slot.className = "smartart-node-slot";
                 slot.id = `smartart_slot_${idx}`;
-                slot.innerHTML = `<span>${sLabel}</span><div style='font-size:0.7rem; margin-top:4px;'>[Tap Node to Place]</div>`;
-                slot.onclick = () => placeSelectedNodeIntoSlot(idx, task);
+                slot.innerHTML = `<span>${sLabel}</span><div style='font-size:0.68rem; margin-top:4px;'>[Tap Node to Place]</div>`;
+                
+                // HTML5 Drag & Drop Listeners
+                slot.ondragover = (e) => e.preventDefault();
+                slot.ondrop = (e) => {
+                    e.preventDefault();
+                    const nodeText = e.dataTransfer.getData("text/plain");
+                    if (nodeText) placeNodeTextIntoSlot(idx, nodeText);
+                };
+
+                slot.onclick = () => placeSelectedNodeIntoSlot(idx);
                 dropZone.appendChild(slot);
             });
             container.appendChild(dropZone);
@@ -900,6 +854,13 @@
                 const chip = document.createElement("div");
                 chip.className = "palette-chip";
                 chip.innerText = nodeText;
+                chip.draggable = true;
+                
+                chip.ondragstart = (e) => {
+                    e.dataTransfer.setData("text/plain", nodeText);
+                    selectPaletteNode(chip, nodeText);
+                };
+
                 chip.onclick = () => selectPaletteNode(chip, nodeText);
                 palette.appendChild(chip);
             });
@@ -907,7 +868,7 @@
 
             const submitBtn = document.createElement("button");
             submitBtn.className = "btn-primary";
-            submitBtn.style.marginTop = "10px";
+            submitBtn.style.marginTop = "8px";
             submitBtn.innerText = "Verify SmartArt Diagram ➔";
             submitBtn.onclick = () => evaluateSmartArtDiagram(task);
             container.appendChild(submitBtn);
@@ -919,22 +880,33 @@
         let activeSelectedChip = null;
 
         function selectPaletteNode(chipNode, nodeText) {
-            document.querySelectorAll(".palette-chip").forEach(c => c.style.outline = "none");
-            chipNode.style.outline = "3px solid #f59e0b";
+            document.querySelectorAll(".palette-chip").forEach(c => c.classList.remove("selected"));
+            chipNode.classList.add("selected");
             activeSelectedNodeText = nodeText;
             activeSelectedChip = chipNode;
         }
 
-        function placeSelectedNodeIntoSlot(slotIdx, task) {
+        function placeSelectedNodeIntoSlot(slotIdx) {
             if (!activeSelectedNodeText) return;
-            userDiagramPlacements[slotIdx] = activeSelectedNodeText;
+            placeNodeTextIntoSlot(slotIdx, activeSelectedNodeText);
+        }
+
+        function placeNodeTextIntoSlot(slotIdx, nodeText) {
+            userDiagramPlacements[slotIdx] = nodeText;
 
             const slotNode = document.getElementById(`smartart_slot_${slotIdx}`);
-            slotNode.className = "smartart-node-slot filled";
-            slotNode.innerText = activeSelectedNodeText;
+            if (slotNode) {
+                slotNode.className = "smartart-node-slot filled";
+                slotNode.innerText = nodeText;
+            }
 
             if (activeSelectedChip) {
                 activeSelectedChip.style.display = "none";
+            } else {
+                // Find matching chip if dragged
+                document.querySelectorAll(".palette-chip").forEach(c => {
+                    if (c.innerText === nodeText) c.style.display = "none";
+                });
             }
 
             activeSelectedNodeText = null;
@@ -968,7 +940,7 @@
             advanceLevelState();
         }
 
-        /* LEVEL 3: CLIPART PICTURE INSERTER */
+        /* LEVEL 3: CLIPART PICTURE INSERTER (ASSETS IMAGE INTEGRATION) */
         function renderClipArtLevel(container) {
             const task = clipArtTasks[clipArtSubIndex];
             activeSelectedWrap = "";
@@ -988,46 +960,41 @@
 
             // ClipArt Gallery Picker
             const galleryLabel = document.createElement("div");
-            galleryLabel.style.fontSize = "0.8rem";
+            galleryLabel.style.fontSize = "0.78rem";
             galleryLabel.style.fontWeight = "800";
-            galleryLabel.style.marginTop = "4px";
-            galleryLabel.innerText = "Step 1: Choose ClipArt Picture from Assets:";
+            galleryLabel.innerText = "Step 1: Choose ClipArt Image from Assets Gallery:";
             container.appendChild(galleryLabel);
 
             const galleryRow = document.createElement("div");
-            galleryRow.className = "gallery-grid";
+            galleryRow.style.display = "flex";
+            galleryRow.style.gap = "10px";
+            galleryRow.style.justifyContent = "center";
+            galleryRow.style.margin = "6px 0";
 
-            const fallbackSvg1 = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100' height='100' rx='10' fill='%232b579a'/><circle cx='50' cy='40' r='20' fill='%23f59e0b'/><path d='M20 80 Q50 50 80 80' stroke='%23ffffff' stroke-width='6' fill='none'/><text x='50%' y='92%' dominant-baseline='middle' text-anchor='middle' font-size='12' font-weight='bold' fill='%23ffffff'>Graphic 1</text></svg>`;
-            const fallbackSvg2 = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100' height='100' rx='10' fill='%2310b981'/><polygon points='50,15 80,75 20,75' fill='%23ffffff'/><text x='50%' y='92%' dominant-baseline='middle' text-anchor='middle' font-size='12' font-weight='bold' fill='%23ffffff'>Graphic 2</text></svg>`;
-
-            task.options.forEach((opt, idx) => {
-                const gCard = document.createElement("div");
-                gCard.className = "gallery-card gallery-item-card";
+            task.options.forEach(opt => {
+                const gBtn = document.createElement("button");
+                gBtn.className = "wrap-btn gallery-item-btn";
+                gBtn.style.display = "flex";
+                gBtn.style.alignItems = "center";
+                gBtn.style.gap = "6px";
                 
-                const img = document.createElement("img");
-                img.src = opt.src;
-                img.alt = opt.name;
-                img.onerror = function() {
-                    this.onerror = null;
-                    this.src = (idx === 0) ? fallbackSvg1 : fallbackSvg2;
-                };
+                // Image element with dynamic SVG fallback
+                const imgThumb = document.createElement("img");
+                imgThumb.src = opt.src;
+                imgThumb.style.width = "28px";
+                imgThumb.style.height = "28px";
+                imgThumb.style.borderRadius = "4px";
+                imgThumb.onerror = () => { imgThumb.src = "data:image/svg+xml;utf8," + encodeURIComponent(opt.fallbackSvg); };
 
-                const lbl = document.createElement("div");
-                lbl.style.fontSize = "0.75rem";
-                lbl.style.fontWeight = "800";
-                lbl.style.marginTop = "4px";
-                lbl.innerText = opt.name;
+                gBtn.appendChild(imgThumb);
+                gBtn.appendChild(document.createTextNode(opt.name));
 
-                gCard.appendChild(img);
-                gCard.appendChild(lbl);
-
-                gCard.onclick = () => {
-                    document.querySelectorAll(".gallery-item-card").forEach(c => c.classList.remove("active"));
-                    gCard.classList.add("active");
+                gBtn.onclick = () => {
+                    document.querySelectorAll(".gallery-item-btn").forEach(b => b.classList.remove("active"));
+                    gBtn.classList.add("active");
                     selectedClipArtSrc = opt.src;
                 };
-
-                galleryRow.appendChild(gCard);
+                galleryRow.appendChild(gBtn);
             });
             container.appendChild(galleryRow);
 
@@ -1035,78 +1002,15 @@
             const docCanvas = document.createElement("div");
             docCanvas.className = "doc-canvas";
             docCanvas.id = "docCanvasBoard";
-            
-            const paragraph1 = document.createElement("p");
-            paragraph1.id = "docPara1";
-            paragraph1.innerText = "Microsoft Word document paragraph simulator. Inserting ClipArt illustrations from your computer's assets helps explain story concepts visually to young readers.";
-
-            const paragraph2 = document.createElement("p");
-            paragraph2.id = "docPara2";
-            paragraph2.style.marginTop = "8px";
-            paragraph2.innerText = "Illustrations and ClipArt pictures make textbook stories engaging and easy to read across formatted pages.";
-
-            const insertedImg = document.createElement("img");
-            insertedImg.id = "clipArtTargetImage";
-            insertedImg.className = "clipart-img-node";
-            insertedImg.style.display = "none";
-            insertedImg.style.top = "20px";
-            insertedImg.style.left = "20px";
-
-            // Interactive Drag Logic on Canvas
-            let isDragging = false;
-            let startX, startY, initialLeft, initialTop;
-
-            insertedImg.addEventListener("mousedown", startDrag);
-            insertedImg.addEventListener("touchstart", startDrag, { passive: false });
-
-            function startDrag(e) {
-                if (insertedImg.classList.contains("wrap-inline") || insertedImg.classList.contains("wrap-square")) return;
-                isDragging = true;
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                startX = clientX;
-                startY = clientY;
-                initialLeft = insertedImg.offsetLeft;
-                initialTop = insertedImg.offsetTop;
-
-                document.addEventListener("mousemove", onDrag);
-                document.addEventListener("touchmove", onDrag, { passive: false });
-                document.addEventListener("mouseup", stopDrag);
-                document.addEventListener("touchend", stopDrag);
-            }
-
-            function onDrag(e) {
-                if (!isDragging) return;
-                if (e.cancelable) e.preventDefault();
-                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-                const deltaX = clientX - startX;
-                const deltaY = clientY - startY;
-
-                const maxLeft = docCanvas.clientWidth - insertedImg.clientWidth;
-                const maxTop = docCanvas.clientHeight - insertedImg.clientHeight;
-
-                let newLeft = Math.max(0, Math.min(initialLeft + deltaX, maxLeft));
-                let newTop = Math.max(0, Math.min(initialTop + deltaY, maxTop));
-
-                insertedImg.style.left = `${newLeft}px`;
-                insertedImg.style.top = `${newTop}px`;
-            }
-
-            function stopDrag() {
-                isDragging = false;
-                document.removeEventListener("mousemove", onDrag);
-                document.removeEventListener("touchmove", onDrag);
-                document.removeEventListener("mouseup", stopDrag);
-                document.removeEventListener("touchend", stopDrag);
-            }
-
-            docCanvas.appendChild(paragraph1);
-            docCanvas.appendChild(insertedImg);
-            docCanvas.appendChild(paragraph2);
+            docCanvas.innerHTML = `
+                <p id="docTextPara">Microsoft Word document paragraph simulator. Inserting ClipArt illustrations helps explain story concepts visually to young readers across formatted pages.</p>
+                <br>
+                <p>Computer science textbooks combine formatted text and visual ClipArt graphics to make learning interactive and fun for primary grade students.</p>
+                <img id="clipArtTargetImg" class="clipart-item-img" style="display:none; top:15px; right:15px;" src="" alt="ClipArt">
+            `;
             container.appendChild(docCanvas);
 
-            // Inserter & Wrapping Buttons
+            // Inserter & Wrapping Controls
             const ctrlBox = document.createElement("div");
             ctrlBox.style.display = "flex";
             ctrlBox.style.flexDirection = "column";
@@ -1115,29 +1019,29 @@
             const insertBtn = document.createElement("button");
             insertBtn.className = "btn-primary";
             insertBtn.style.padding = "8px 20px";
-            insertBtn.style.fontSize = "0.95rem";
-            insertBtn.innerText = `🖼️ Step 2: Insert Selected ClipArt`;
+            insertBtn.style.fontSize = "0.9rem";
+            insertBtn.innerText = `🖼️ Step 2: Insert Selected ClipArt Image`;
             insertBtn.onclick = () => {
                 if (!selectedClipArtSrc) {
-                    alert("Please select a ClipArt graphic from Step 1 gallery first!");
+                    alert("Please select a ClipArt image from Step 1 gallery first!");
                     return;
                 }
-                const imgNode = document.getElementById("clipArtTargetImage");
+                const imgNode = document.getElementById("clipArtTargetImg");
                 if (imgNode) {
                     imgNode.src = selectedClipArtSrc;
-                    imgNode.onerror = function() {
-                        this.onerror = null;
-                        this.src = (selectedClipArtSrc === "assets/1.jpg") ? fallbackSvg1 : fallbackSvg2;
+                    imgNode.onerror = () => {
+                        const opt = task.options.find(o => o.src === selectedClipArtSrc);
+                        if (opt) imgNode.src = "data:image/svg+xml;utf8," + encodeURIComponent(opt.fallbackSvg);
                     };
                     imgNode.style.display = "block";
-                    applyTextWrapStyle(activeSelectedWrap || "In Line with Text");
+                    makeImageDraggable(imgNode, docCanvas);
                 }
                 soundEngine.playCorrect();
             };
             ctrlBox.appendChild(insertBtn);
 
             const wrapLabel = document.createElement("div");
-            wrapLabel.style.fontSize = "0.8rem";
+            wrapLabel.style.fontSize = "0.78rem";
             wrapLabel.style.fontWeight = "800";
             wrapLabel.innerText = "Step 3: Set Text Wrapping Mode:";
             ctrlBox.appendChild(wrapLabel);
@@ -1153,7 +1057,7 @@
                     document.querySelectorAll(".wrap-type-btn").forEach(b => b.classList.remove("active"));
                     wBtn.classList.add("active");
                     activeSelectedWrap = wrapType;
-                    applyTextWrapStyle(wrapType);
+                    applyTextWrappingStyle(wrapType);
                 };
                 wrapRow.appendChild(wBtn);
             });
@@ -1163,7 +1067,7 @@
 
             const submitBtn = document.createElement("button");
             submitBtn.className = "btn-primary";
-            submitBtn.style.marginTop = "8px";
+            submitBtn.style.marginTop = "6px";
             submitBtn.innerText = "Apply ClipArt to Document ➔";
             submitBtn.onclick = () => evaluateClipArtTask(task);
             container.appendChild(submitBtn);
@@ -1171,30 +1075,77 @@
             speakText(task.title);
         }
 
-        function applyTextWrapStyle(wrapType) {
-            const imgNode = document.getElementById("clipArtTargetImage");
-            const p1 = document.getElementById("docPara1");
-            const docBoard = document.getElementById("docCanvasBoard");
-            if (!imgNode || imgNode.style.display === "none") return;
+        function applyTextWrappingStyle(wrapType) {
+            const imgNode = document.getElementById("clipArtTargetImg");
+            const paraNode = document.getElementById("docTextPara");
+            if (!imgNode || !paraNode) return;
 
-            imgNode.className = "clipart-img-node";
+            imgNode.className = "clipart-item-img";
 
             if (wrapType === "In Line with Text") {
                 imgNode.classList.add("wrap-inline");
-                p1.insertBefore(imgNode, p1.firstChild);
+                paraNode.insertBefore(imgNode, paraNode.firstChild);
             } else if (wrapType === "Square") {
                 imgNode.classList.add("wrap-square");
-                p1.insertBefore(imgNode, p1.firstChild);
+                paraNode.insertBefore(imgNode, paraNode.firstChild);
             } else if (wrapType === "Tight") {
                 imgNode.classList.add("wrap-tight");
-                docBoard.appendChild(imgNode);
-                imgNode.style.top = "15px";
-                imgNode.style.left = "15px";
+                paraNode.insertBefore(imgNode, paraNode.firstChild);
             } else if (wrapType === "In Front of Text") {
-                imgNode.classList.add("wrap-front");
-                docBoard.appendChild(imgNode);
-                imgNode.style.top = "25px";
-                imgNode.style.left = "60px";
+                imgNode.classList.add("wrap-infront");
+            }
+        }
+
+        function makeImageDraggable(elmnt, container) {
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+            
+            elmnt.onmousedown = dragMouseDown;
+            elmnt.ontouchstart = dragTouchStart;
+
+            function dragMouseDown(e) {
+                e.preventDefault();
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+            }
+
+            function elementDrag(e) {
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+            }
+
+            function dragTouchStart(e) {
+                const touch = e.touches[0];
+                pos3 = touch.clientX;
+                pos4 = touch.clientY;
+                document.ontouchend = closeTouchDrag;
+                document.ontouchmove = touchDrag;
+            }
+
+            function touchDrag(e) {
+                const touch = e.touches[0];
+                pos1 = pos3 - touch.clientX;
+                pos2 = pos4 - touch.clientY;
+                pos3 = touch.clientX;
+                pos4 = touch.clientY;
+                elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+                elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+            }
+
+            function closeTouchDrag() {
+                document.ontouchend = null;
+                document.ontouchmove = null;
             }
         }
 
@@ -1202,24 +1153,24 @@
             if (actionLocked) return;
             actionLocked = true;
 
-            const clipartNode = document.getElementById("clipArtTargetImage");
-            const isInserted = clipartNode && clipartNode.style.display !== "none";
-            const isSrcCorrect = (selectedClipArtSrc === task.targetImgSrc);
+            const clipartNode = document.getElementById("clipArtTargetImg");
+            const isInserted = clipartNode && clipartNode.style.display === "block";
+            const isImageCorrect = (selectedClipArtSrc === task.targetImgSrc);
             const isWrapCorrect = (activeSelectedWrap === task.targetWrap);
 
             const ticker = document.getElementById("tickerBox");
 
-            if (isInserted && isSrcCorrect && isWrapCorrect) {
+            if (isInserted && isImageCorrect && isWrapCorrect) {
                 score += 300;
                 soundEngine.playCorrect();
                 ticker.className = "ticker-feedback good";
-                ticker.innerText = "🎉 GREAT JOB! Correct ClipArt inserted and wrapped properly!";
-                speakText("ClipArt inserted and wrapped properly!");
+                ticker.innerText = "🎉 GREAT JOB! Correct ClipArt image inserted and wrapped properly!";
+                speakText("ClipArt image inserted and wrapped properly!");
             } else {
                 soundEngine.playWrong();
                 ticker.className = "ticker-feedback bad";
-                ticker.innerText = "💥 Insertion error! Choose the right ClipArt image asset and requested Text Wrapping.";
-                speakText("Choose requested ClipArt and Text Wrapping.");
+                ticker.innerText = "💥 Insertion error! Select the right ClipArt image and requested Text Wrapping.";
+                speakText("Select requested ClipArt image and Text Wrapping.");
             }
 
             advanceLevelState();
@@ -1270,7 +1221,7 @@
                 soundEngine.playCorrect();
                 if (window.confetti) confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
                 rank = "🥇 MS Word Graphics Wizard!";
-                msg = `Outstanding performance! You scored ${score} points and cleared the 900-point target across WordArt, SmartArt, and ClipArt!`;
+                msg = `Outstanding performance! You scored ${score} points and cleared the target across WordArt, SmartArt, and ClipArt!`;
             } else {
                 soundEngine.playWrong();
                 rank = "🌱 Document Layout Apprentice";

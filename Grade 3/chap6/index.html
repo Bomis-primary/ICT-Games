@@ -6,27 +6,22 @@
     <title>Innovine Solutions - MS Word Table Architect</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@700;800;900&display=swap');
-
         :root {
-            --bg-canvas: #edf2f7;
+            --bg-canvas: #f8fafc;
             --word-blue: #2b579a;
             --word-dark-blue: #1b365d;
-            --word-light-bg: #eff6ff;
             --accent-gold: #f59e0b;
-            --comic-orange: #ea580c;
             --slate-dark: #1e293b;
             --success: #10b981;
             --error: #ef4444;
-            --accent-purple: #8b5cf6;
-            --border-blue: #bfdbfe;
+            --purple-accent: #8b5cf6;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Fredoka', 'Segoe UI', system-ui, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             user-select: none;
             -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
@@ -35,19 +30,15 @@
         body {
             min-height: 100vh;
             min-height: -webkit-fill-available;
-            width: 100vw;
             display: flex;
             justify-content: center;
             align-items: center;
             background: var(--bg-canvas);
-            background-image: radial-gradient(#93c5fd 1.2px, transparent 1.2px);
-            background-size: 20px 20px;
             padding: 10px;
-            overflow: hidden;
             color: var(--slate-dark);
         }
 
-        /* 5-Second Splash Screen */
+        /* STAGE 1: 5-SECOND LOGO SPLASH SCREEN */
         #splash {
             position: fixed;
             top: 0;
@@ -59,78 +50,67 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 99999;
+            z-index: 9999;
             transition: opacity 0.5s ease;
         }
 
         #splash img {
             width: 280px;
             max-width: 80vw;
-            animation: pulse 2s infinite ease-in-out;
+            animation: elegantPulse 2s infinite ease-in-out;
         }
 
-        @keyframes pulse {
+        @keyframes elegantPulse {
             0%, 100% { transform: scale(1); opacity: 0.95; }
             50% { transform: scale(1.05); opacity: 1; }
         }
 
-        /* Main App Shell Frame */
+        /* MAIN CONTAINER FRAME */
         .container {
             width: 100%;
             max-width: 920px;
-            height: 95vh;
-            max-height: 820px;
+            min-height: 90vh;
             background: #ffffff;
-            border-radius: 24px;
-            padding: clamp(12px, 3vw, 22px);
-            box-shadow: 0 20px 40px rgba(43, 87, 154, 0.15);
+            border-radius: 20px;
+            padding: clamp(14px, 3vw, 28px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
             position: relative;
             z-index: 10;
+            text-align: center;
+            border-top: 10px solid var(--word-blue);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            border-top: 10px solid var(--word-blue);
         }
 
         .hidden { display: none !important; }
 
-        /* Intro Screen Panel */
-        .intro-panel {
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100%;
-            overflow-y: auto;
-        }
-
         .intro-panel h1 {
-            font-family: 'Outfit', sans-serif;
-            font-size: clamp(1.8rem, 5vw, 2.4rem);
-            color: var(--word-blue);
-            font-weight: 900;
+            font-size: clamp(1.6rem, 5vw, 2.3rem);
+            color: var(--slate-dark);
+            margin-bottom: 8px;
+            font-weight: 800;
         }
 
         .mode-badge {
             display: inline-block;
             padding: 4px 16px;
-            background: var(--word-light-bg);
+            background: #edf2f7;
             color: var(--word-blue);
             border-radius: 20px;
             font-weight: 700;
             font-size: 0.85rem;
-            margin: 6px auto 14px auto;
+            margin-bottom: 16px;
             text-transform: uppercase;
-            border: 1px solid var(--border-blue);
         }
 
         .briefing {
-            background: #f8fafc;
+            background: #f0f7ff;
             padding: 16px;
-            border-radius: 16px;
-            border-left: 5px solid var(--word-blue);
+            border-radius: 14px;
+            border-left: 6px solid var(--word-blue);
             text-align: left;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             font-size: 0.9rem;
         }
 
@@ -140,29 +120,63 @@
             color: #334155;
         }
 
-        .act-btn {
-            background: var(--comic-orange);
+        button.act-btn {
+            padding: 14px 36px;
+            background: var(--word-blue);
             color: white;
-            border: none;
-            padding: 12px 36px;
-            border-radius: 50px;
-            font-weight: 800;
             font-size: 1.05rem;
+            font-weight: 700;
+            border: none;
+            border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 6px 15px rgba(234, 88, 12, 0.3);
-            transition: all 0.2s ease;
+            box-shadow: 0 6px 15px rgba(43, 87, 154, 0.3);
+            transition: transform 0.2s, background-color 0.2s;
             width: 100%;
-            max-width: 300px;
+            max-width: 320px;
             margin: 0 auto;
         }
 
-        .act-btn:hover, .act-btn:active {
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: 0 8px 20px rgba(234, 88, 12, 0.4);
+        button.act-btn:active {
+            transform: scale(0.98);
         }
 
+        /* HUD Bar */
+        .hud {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .hud-card {
+            background: var(--slate-dark);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: clamp(0.75rem, 2.8vw, 0.9rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .target-blueprint-zone {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        .blueprint-title {
+            font-size: clamp(1.1rem, 3.8vw, 1.4rem);
+            font-weight: 800;
+            color: var(--word-blue);
+        }
+
+        /* Audio Prompt Button */
         .audio-btn {
-            background: var(--accent-purple);
+            background: var(--purple-accent);
             color: white;
             border: none;
             padding: 6px 14px;
@@ -170,203 +184,137 @@
             font-size: 0.8rem;
             font-weight: 800;
             cursor: pointer;
-            margin-bottom: 6px;
-            align-self: center;
-        }
-
-        /* Top HUD Navbar Strip */
-        .hud {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
             margin-bottom: 8px;
         }
 
-        .hud-card {
-            background: var(--slate-dark);
-            color: white;
-            padding: 8px 10px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: clamp(0.72rem, 2.5vw, 0.88rem);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Target Blueprint Goal Box */
-        .target-blueprint-zone {
-            background: #f0f7ff;
-            border: 2px dashed var(--word-blue);
-            padding: 12px;
-            border-radius: 14px;
-            margin-bottom: 8px;
-            text-align: center;
-        }
-
-        .blueprint-title {
-            font-size: clamp(1rem, 3.5vw, 1.35rem);
-            font-weight: 800;
-            color: var(--word-blue);
-        }
-
-        /* Workspace Core Container */
-        .workspace-card {
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 16px;
-            padding: 12px;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            overflow-y: auto;
-            position: relative;
-        }
-
-        /* Level 1: Matrix Touch Grid */
+        /* Matrix Insertion Core Grid */
         .insertion-matrix-wrapper {
             display: flex;
             justify-content: center;
-            align-items: center;
-            margin: 8px 0;
-            touch-action: none;
+            margin: 10px 0;
         }
 
         .grid-matrix {
             display: grid;
-            grid-template-columns: repeat(5, clamp(42px, 10vw, 55px));
+            grid-template-columns: repeat(5, minmax(42px, 55px));
             gap: 6px;
-            background: #ffffff;
-            padding: 12px;
-            border-radius: 14px;
-            border: 2px solid var(--border-blue);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            background: #f1f5f9;
+            padding: 10px;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            touch-action: none;
         }
 
         .matrix-cell {
-            width: clamp(42px, 10vw, 55px);
-            height: clamp(42px, 10vw, 55px);
-            background: #f1f5f9;
+            aspect-ratio: 1;
+            background: #ffffff;
             border: 2px solid #cbd5e1;
             border-radius: 8px;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: background 0.1s;
         }
 
         .matrix-cell.highlighted {
-            background: #bfdbfe;
-            border-color: var(--word-blue);
+            background: #d9e2ec;
+            border-color: #829ab1;
         }
 
         .matrix-cell.selected-build {
             background: var(--word-blue) !important;
-            border-color: var(--word-dark-blue) !important;
+            border-color: #1e3d70 !important;
         }
 
-        /* Level 2 & 3: Interactive MS Word Document Canvas & Ribbon */
-        .ribbon-toolbar {
+        /* Live Table Workspace Simulator */
+        .table-simulator-container {
+            width: 100%;
+            overflow-x: auto;
+            margin: 12px 0;
+            background: #ffffff;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            min-height: 120px;
             display: flex;
-            gap: 6px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .rendered-table {
+            border-collapse: collapse;
+            margin: 0 auto;
+            background: #ffffff;
+        }
+
+        .rendered-table td {
+            border: 2px solid var(--word-blue);
+            padding: 8px 12px;
+            min-width: 65px;
+            height: 38px;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .rendered-table td input {
+            width: 100%;
+            border: none;
+            outline: none;
+            text-align: center;
+            font-weight: 700;
+            color: var(--word-dark-blue);
+            background: #eff6ff;
+            border-radius: 4px;
+            padding: 4px;
+        }
+
+        /* Action Toolbars */
+        .editor-toolbar {
+            display: flex;
+            gap: 8px;
             justify-content: center;
             flex-wrap: wrap;
-            margin-bottom: 8px;
-            background: #ffffff;
-            padding: 8px;
-            border-radius: 12px;
-            border: 1px solid var(--border-blue);
+            margin: 8px 0;
         }
 
-        .ribbon-btn {
+        .tool-btn {
             background: #ffffff;
-            border: 2px solid var(--border-blue);
-            padding: 6px 12px;
-            border-radius: 10px;
-            font-size: 0.8rem;
-            font-weight: 800;
+            border: 2px solid var(--word-blue);
             color: var(--word-blue);
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 0.82rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             gap: 4px;
-            transition: all 0.15s ease;
         }
 
-        .ribbon-btn:hover, .ribbon-btn:active {
-            background: var(--word-light-bg);
-            transform: scale(1.03);
-        }
-
-        .ribbon-btn.danger {
-            border-color: #fca5a5;
-            color: var(--error);
-        }
-
-        .doc-canvas-table {
-            width: 100%;
-            background: #ffffff;
-            border-collapse: collapse;
-            margin: 8px 0;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .doc-canvas-table td, .doc-canvas-table th {
-            border: 2px solid var(--word-blue);
-            padding: 10px 8px;
-            text-align: center;
-            font-weight: 700;
-            font-size: clamp(0.75rem, 2.8vw, 0.9rem);
-            min-width: 45px;
-            height: 40px;
-            position: relative;
-        }
-
-        .doc-canvas-table th {
+        .tool-btn:active {
             background: var(--word-blue);
-            color: #ffffff;
+            color: white;
         }
 
-        .doc-canvas-table input {
-            width: 100%;
-            height: 100%;
-            border: none;
-            text-align: center;
-            font-weight: 800;
-            font-size: 0.85rem;
-            color: var(--word-dark-blue);
-            background: #eff6ff;
-            border-radius: 4px;
-            outline: 2px solid transparent;
-        }
-
-        .doc-canvas-table input:focus {
-            outline-color: var(--accent-gold);
-            background: #ffffff;
-        }
-
-        /* Ticker Feedback Notification Bar */
+        /* Ticker Feedback */
         .ticker-feedback {
-            margin-top: 6px;
-            padding: 8px 12px;
-            border-radius: 12px;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 10px;
             font-weight: 700;
-            font-size: clamp(0.8rem, 2.8vw, 0.9rem);
-            min-height: 42px;
+            font-size: clamp(0.85rem, 3vw, 0.95rem);
+            min-height: 48px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: #ffffff;
+            background: #f1f5f9;
             border-left: 5px solid #cbd5e1;
-            text-align: center;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
         }
 
         .ticker-feedback.good { background: #ecfdf5; border-left-color: var(--success); color: #065f46; }
         .ticker-feedback.bad { background: #fef2f2; border-left-color: var(--error); color: #991b1b; }
+        .ticker-feedback.retry { background: #fffbe3; border-left-color: var(--accent-gold); color: #92400e; }
 
-        /* Report Terminal Audit */
+        /* Report Screen Shell */
         .rank-shell {
             width: 110px;
             height: 110px;
@@ -386,70 +334,81 @@
 </head>
 <body>
 
-    <!-- Sound Effect Audio Tags with Synthesis Fallbacks -->
+    <!-- Audio Effects -->
     <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
-    <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
 
-    <!-- 5-Second Exclusive Splash Screen -->
+    <!-- Splash Screen -->
     <div id="splash">
         <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'280\' height=\'100\' viewBox=\'0 0 280 100\'><rect width=\'280\' height=\'100\' rx=\'20\' fill=\'%232b579a\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'26\' font-weight=\'bold\' fill=\'%23ffffff\'>INNOVINE</text></svg>';">
-        <p style="margin-top:16px; font-weight:800; color:#2b579a; letter-spacing:1px; font-size:0.95rem;">MS Word: Table Architect</p>
+        <p style="margin-top:16px; font-weight:700; color:#2b579a; letter-spacing:1px; font-size:0.95rem;">MS Word Table Architect...</p>
     </div>
 
-    <!-- Main Shell App Container -->
+    <!-- Main Shell App Window -->
     <div class="container hidden" id="appMainframe">
         
-        <!-- INTRO INSTRUCTIONS PANEL -->
+        <!-- START MENU PANEL -->
         <div id="menuPanel" class="intro-panel">
-            <div>
-                <h1>MS Word: Table Architect</h1>
-                <div class="mode-badge">CBSE Grade 3 ICT Module</div>
-            </div>
+            <h1>MS Word: Table Architect</h1>
+            <div class="mode-badge">CBSE Grade 3 ICT Module</div>
             
             <div class="briefing">
-                <p style="font-weight: 800; margin-bottom: 8px; color: var(--slate-dark); font-size: 0.95rem;">🎮 3 Interactive Master Activities:</p>
+                <p style="font-weight: 800; margin-bottom: 8px; color: var(--slate-dark);">🎮 Table Editing & Construction Tasks:</p>
                 <ol>
-                    <li><strong>Activity 1: Insertion Matrix</strong> – Drag/tap grid cells to construct target table dimensions (Rows ↔️ × Columns ↕️).</li>
-                    <li><strong>Activity 2: Structural Ribbon Operations</strong> – Use MS Word tools (➕ Add Row Below, ⬅️ Add Column Left, ➡️ Add Column Right, ❌ Delete) to edit table structures!</li>
-                    <li><strong>Activity 3: Data Entry & Cell Population</strong> – Click/tap cells to type required text entries into precise table coordinates!</li>
+                    <li><strong>Matrix Grid Insertion</strong> – Select exact Rows ↔️ and Columns ↕️ on the grid.</li>
+                    <li><strong>Table Editing</strong> – Add Rows Below ➕, Add Columns Left/Right ⬅️ ➡️, or Delete.</li>
+                    <li><strong>Data Entry</strong> – Type required headers into table cells ⌨️.</li>
+                    <li><strong>2-Attempt System</strong> – Incorrect inputs give you a hint & 2nd attempt!</li>
                 </ol>
             </div>
             <button class="act-btn" onclick="startTableArchitect()">Initialize Workbench ➜</button>
         </div>
 
         <!-- MAIN GAMEPLAY PANEL -->
-        <div id="gamePanel" class="hidden" style="display:flex; flex-direction:column; height:100%;">
+        <div id="gamePanel" class="hidden">
             <div class="hud">
                 <div class="hud-card">📋 Task: <span id="countHUD">1</span> / 6</div>
-                <div class="hud-card" style="background: var(--word-light-bg); color: var(--word-blue);">⭐ Score: <span id="scoreHUD">0</span></div>
-                <div class="hud-card" style="background:#f0fdf4; color: var(--success);">Target: 600</div>
+                <div class="hud-card" style="background: #edf2f7; color: var(--word-blue);">⭐ Score: <span id="scoreHUD">0</span></div>
+                <div class="hud-card" style="background: #f0fdf4; color: var(--success);">Attempt: <span id="attemptHUD">1 / 2</span></div>
             </div>
 
-            <button class="audio-btn" id="listenPromptBtn" onclick="readCurrentTaskPrompt()">🔊 Listen Task Prompt</button>
+            <button class="audio-btn" onclick="speakCurrentInstruction()">🔊 Listen Instruction Prompt</button>
 
             <div class="target-blueprint-zone">
-                <div style="font-size: 0.72rem; font-weight: 800; text-transform: uppercase; color: #64748b; letter-spacing: 1px;">Objective Blueprint:</div>
                 <div class="blueprint-title" id="blueprintText">Loading Specification...</div>
             </div>
 
-            <div id="workspaceArea" class="workspace-card"></div>
+            <!-- Workspace Type A: Matrix Picker Grid -->
+            <div id="matrixSection">
+                <div style="font-weight: 700; color: #475569; font-size: 0.85rem; margin-bottom: 6px;">Tap or drag over the grid cells to size your table:</div>
+                <div class="insertion-matrix-wrapper">
+                    <div class="grid-matrix" id="insertionGrid"></div>
+                </div>
+            </div>
 
-            <div class="ticker-feedback" id="tickerBox">Perform required table structural actions to complete objective!</div>
+            <!-- Workspace Type B: Interactive Live Table Simulator & Tools -->
+            <div id="tableEditSection" class="hidden">
+                <div class="table-simulator-container">
+                    <table class="rendered-table" id="liveSimTable"></table>
+                </div>
+
+                <div class="editor-toolbar" id="editingToolbar"></div>
+            </div>
+
+            <div class="ticker-feedback" id="tickerBox">Perform the requested table operation above!</div>
         </div>
 
         <!-- PERFORMANCE REPORT PANEL -->
-        <div id="reportPanel" class="hidden" style="text-align:center; padding:10px 0;">
+        <div id="reportPanel" class="hidden">
             <h1 style="color: var(--word-blue); font-size: 2.2rem;">📊 Structural Audit Log</h1>
             <div class="rank-shell"><span id="finalScore">0</span></div>
             <h2 id="finalRank" style="font-weight: 800; margin-bottom: 8px; color: var(--slate-dark);">Evaluating Layouts...</h2>
-            <p id="finalSummary" style="color: #475569; margin-bottom: 20px; line-height: 1.6; font-size: 0.92rem;"></p>
-            <button class="act-btn" onclick="location.reload()">Reboot Studio 🔄</button>
+            <p id="finalSummary" style="color: #475569; margin-bottom: 20px; line-height: 1.6; font-size: 0.95rem;"></p>
+            <button class="act-btn" onclick="location.reload()">Reboot Project Studio 🔄</button>
         </div>
     </div>
 
     <script>
-        /* Web Audio Engine with Audio Element Fallbacks */
         class SoundEngine {
             constructor() { this.ctx = null; }
             init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
@@ -493,12 +452,6 @@
                 osc.connect(gain); gain.connect(this.ctx.destination);
                 osc.start(now); osc.stop(now + 0.3);
             }
-
-            playClap() {
-                const audio = document.getElementById("clapSound");
-                if (audio) audio.play().catch(() => this.synthCorrect());
-                else this.synthCorrect();
-            }
         }
 
         const soundEngine = new SoundEngine();
@@ -512,127 +465,90 @@
             }
         }
 
-        /* 5-Second Exclusive Splash Timeout */
+        /* 5-Second Splash Timeout */
         setTimeout(() => {
             document.getElementById("splash").style.display = "none";
             document.getElementById("appMainframe").classList.remove("hidden");
         }, 5000);
 
-        // Expanded Level Task Specifications
-        const taskDatabase = [
-            // Level 1: Matrix Table Insertion Tasks
+        // Task Database covering Matrix creation, Row Below, Column Left/Right, and Text Entry
+        const activityDeck = [
             {
-                type: "matrix",
-                label: "Activity 1 (Matrix): Insert a Table with 2 Rows and 3 Columns",
+                type: "MATRIX_CREATE",
+                label: "Task 1: Insert a Table with 2 Rows ↔️ and 3 Columns ↕️",
                 targetRows: 2,
                 targetCols: 3,
-                help: "Rows run horizontally ↔️, Columns stand vertically ↕️."
+                hint: "Select 2 rows down and 3 columns across on the matrix grid."
             },
             {
-                type: "matrix",
-                label: "Activity 1 (Matrix): Construct a Table with 4 Rows and 2 Columns",
-                targetRows: 4,
-                targetCols: 2,
-                help: "Drag or tap across 2 columns and down 4 rows."
-            },
-
-            // Level 2: Structural Editing Operations Tasks
-            {
-                type: "editing",
-                label: "Activity 2 (Ribbon Edit): Start with 2 Rows × 2 Columns table. Use 'Add Row Below' ➕ to make it 3 Rows × 2 Columns!",
+                type: "ADD_ROW_BELOW",
+                label: "Task 2: Add 1 Row Below the current 2×2 Table",
                 initialRows: 2,
                 initialCols: 2,
-                targetRows: 3,
-                targetCols: 2,
-                instruction: "Tap '➕ Add Row Below' in the MS Word Ribbon!"
+                expectedRows: 3,
+                expectedCols: 2,
+                hint: "Click the '➕ Add Row Below' button to insert a new horizontal row at the bottom."
             },
             {
-                type: "editing",
-                label: "Activity 2 (Ribbon Edit): Start with 3 Rows × 2 Columns. Use 'Add Column Right' ➡️ to make it 3 Rows × 3 Columns!",
-                initialRows: 3,
+                type: "ADD_COL_RIGHT",
+                label: "Task 3: Add 1 Column to the Right of the 2×2 Table",
+                initialRows: 2,
                 initialCols: 2,
-                targetRows: 3,
-                targetCols: 3,
-                instruction: "Tap '➡️ Add Column Right' in the MS Word Ribbon!"
-            },
-
-            // Level 3: Cell Data Entry Tasks
-            {
-                type: "data_entry",
-                label: "Activity 3 (Data Entry): Type 'Name' into Row 1 Column 1, and 'Roll No' into Row 1 Column 2!",
-                rows: 2,
-                cols: 2,
-                requiredCells: [
-                    { r: 0, c: 0, expected: "Name" },
-                    { r: 0, c: 1, expected: "Roll No" }
-                ]
+                expectedRows: 2,
+                expectedCols: 3,
+                hint: "Click the '➡️ Add Column Right' button to expand the table horizontally."
             },
             {
-                type: "data_entry",
-                label: "Activity 3 (Data Entry): Type 'Score' into Row 1 Column 2, and '100' into Row 2 Column 2!",
-                rows: 2,
-                cols: 2,
-                requiredCells: [
-                    { r: 0, c: 1, expected: "Score" },
-                    { r: 1, c: 1, expected: "100" }
-                ]
+                type: "ADD_COL_LEFT",
+                label: "Task 4: Add 1 Column to the Left of the 2×2 Table",
+                initialRows: 2,
+                initialCols: 2,
+                expectedRows: 2,
+                expectedCols: 3,
+                hint: "Click the '⬅️ Add Column Left' button to insert a vertical column on the left."
+            },
+            {
+                type: "MATRIX_CREATE",
+                label: "Task 5: Insert a 4 Rows ↔️ by 2 Columns ↕️ List Table",
+                targetRows: 4,
+                targetCols: 2,
+                hint: "Select 4 rows down and 2 columns across on the grid."
+            },
+            {
+                type: "ENTER_TEXT",
+                label: "Task 6: Type 'NAME' into Cell (1,1) and 'AGE' into Cell (1,2)",
+                initialRows: 2,
+                initialCols: 2,
+                requiredText: { "0_0": "NAME", "0_1": "AGE" },
+                hint: "Type NAME into top-left cell and AGE into top-right cell, then click Verify!"
             }
         ];
 
-        let currentTaskIndex = 0;
-        let score = 0;
+        let currentActivityIdx = 0;
+        let cumulativeScore = 0;
+        let attemptCount = 1;
         let actionLocked = false;
-        let activeEditingRows = 0;
-        let activeEditingCols = 0;
+        let simCurrentRows = 2;
+        let simCurrentCols = 2;
 
         function startTableArchitect() {
-            currentTaskIndex = 0;
-            score = 0;
-            actionLocked = false;
-
+            currentActivityIdx = 0;
+            cumulativeScore = 0;
             document.getElementById("menuPanel").classList.add("hidden");
             document.getElementById("gamePanel").classList.remove("hidden");
-
+            buildMatrixGridUI();
             loadCurrentTask();
         }
 
-        function loadCurrentTask() {
-            actionLocked = false;
-            document.getElementById("countHUD").innerText = `${currentTaskIndex + 1}`;
-            document.getElementById("scoreHUD").innerText = score;
-
-            const task = taskDatabase[currentTaskIndex];
-            document.getElementById("blueprintText").innerText = task.label;
-
-            const workspace = document.getElementById("workspaceArea");
-            workspace.innerHTML = "";
-
-            if (task.type === "matrix") {
-                renderMatrixActivity(workspace, task);
-            } else if (task.type === "editing") {
-                renderEditingActivity(workspace, task);
-            } else if (task.type === "data_entry") {
-                renderDataEntryActivity(workspace, task);
-            }
-
-            readCurrentTaskPrompt();
+        function speakCurrentInstruction() {
+            const task = activityDeck[currentActivityIdx];
+            if (task) speakText(task.label);
         }
 
-        function readCurrentTaskPrompt() {
-            const task = taskDatabase[currentTaskIndex];
-            speakText(task.label);
-        }
+        function buildMatrixGridUI() {
+            const gridContainer = document.getElementById("insertionGrid");
+            gridContainer.innerHTML = "";
 
-        /* ACTIVITY 1: MATRIX TOUCH TABLE INSERTION */
-        function renderMatrixActivity(workspace, task) {
-            const wrapper = document.createElement("div");
-            wrapper.className = "insertion-matrix-wrapper";
-
-            const grid = document.createElement("div");
-            grid.className = "grid-matrix";
-            grid.id = "matrixGridContainer";
-
-            // Build 5x5 Matrix Grid
             for (let r = 1; r <= 5; r++) {
                 for (let c = 1; c <= 5; c++) {
                     const cell = document.createElement("div");
@@ -640,275 +556,254 @@
                     cell.setAttribute("data-row", r);
                     cell.setAttribute("data-col", c);
 
-                    cell.addEventListener("mouseenter", () => highlightMatrix(r, c));
-                    cell.addEventListener("click", () => commitMatrixSelection(r, c, task));
-
-                    grid.appendChild(cell);
+                    cell.onmouseover = () => highlightMatrix(r, c);
+                    cell.onclick = () => commitMatrixChoice(r, c);
+                    gridContainer.appendChild(cell);
                 }
             }
 
-            // Touch Drag Handling for Mobile Smartphones
-            grid.addEventListener("touchmove", (e) => {
+            // Touch Dragging on Matrix Grid
+            gridContainer.ontouchmove = (e) => {
                 e.preventDefault();
                 const touch = e.touches[0];
-                const targetElem = document.elementFromPoint(touch.clientX, touch.clientY);
-                if (targetElem && targetElem.classList.contains("matrix-cell")) {
-                    const tr = parseInt(targetElem.getAttribute("data-row"));
-                    const tc = parseInt(targetElem.getAttribute("data-col"));
-                    highlightMatrix(tr, tc);
+                const target = document.elementFromPoint(touch.clientX, touch.clientY);
+                if (target && target.classList.contains("matrix-cell")) {
+                    const r = parseInt(target.getAttribute("data-row"));
+                    const c = parseInt(target.getAttribute("data-col"));
+                    highlightMatrix(r, c);
                 }
-            }, { passive: false });
-
-            grid.addEventListener("touchend", (e) => {
-                const highlighted = document.querySelectorAll(".matrix-cell.highlighted");
-                if (highlighted.length > 0) {
-                    const lastCell = highlighted[highlighted.length - 1];
-                    const tr = parseInt(lastCell.getAttribute("data-row"));
-                    const tc = parseInt(lastCell.getAttribute("data-col"));
-                    commitMatrixSelection(tr, tc, task);
-                }
-            });
-
-            grid.addEventListener("mouseleave", () => {
-                if (!actionLocked) {
-                    document.querySelectorAll(".matrix-cell").forEach(c => c.classList.remove("highlighted"));
-                }
-            });
-
-            wrapper.appendChild(grid);
-            workspace.appendChild(wrapper);
+            };
         }
 
         function highlightMatrix(targetR, targetC) {
             if (actionLocked) return;
             document.querySelectorAll(".matrix-cell").forEach(cell => {
-                const cr = parseInt(cell.getAttribute("data-row"));
-                const cc = parseInt(cell.getAttribute("data-col"));
-                if (cr <= targetR && cc <= targetC) {
+                const r = parseInt(cell.getAttribute("data-row"));
+                const c = parseInt(cell.getAttribute("data-col"));
+                if (r <= targetR && c <= targetC) {
                     cell.classList.add("highlighted");
                 } else {
                     cell.classList.remove("highlighted");
                 }
             });
-
-            const ticker = document.getElementById("tickerBox");
-            ticker.className = "ticker-feedback";
-            ticker.innerHTML = `Hover Selection: <strong>${targetR} Row(s) × ${targetC} Column(s)</strong>`;
+            document.getElementById("tickerBox").className = "ticker-feedback";
+            document.getElementById("tickerBox").innerHTML = `Size Preview: <strong>${targetR} Row(s) × ${targetC} Column(s)</strong>`;
         }
 
-        function commitMatrixSelection(r, c, task) {
-            if (actionLocked) return;
-            actionLocked = true;
+        function loadCurrentTask() {
+            actionLocked = false;
+            attemptCount = 1;
+            document.getElementById("countHUD").innerText = currentActivityIdx + 1;
+            document.getElementById("scoreHUD").innerText = cumulativeScore;
+            document.getElementById("attemptHUD").innerText = `${attemptCount} / 2`;
 
-            const isCorrect = (r === task.targetRows && c === task.targetCols);
-            const ticker = document.getElementById("tickerBox");
+            const task = activityDeck[currentActivityIdx];
+            document.getElementById("blueprintText").innerText = task.label;
+            document.getElementById("tickerBox").className = "ticker-feedback";
+            document.getElementById("tickerBox").innerText = "Perform the required operation above!";
+
+            speakText(task.label);
+
+            if (task.type === "MATRIX_CREATE") {
+                document.getElementById("matrixSection").classList.remove("hidden");
+                document.getElementById("tableEditSection").classList.add("hidden");
+                clearMatrixSelection();
+            } else {
+                document.getElementById("matrixSection").classList.add("hidden");
+                document.getElementById("tableEditSection").classList.remove("hidden");
+                simCurrentRows = task.initialRows || 2;
+                simCurrentCols = task.initialCols || 2;
+                renderSimulatedTable(task);
+                buildEditingToolbar(task);
+            }
+        }
+
+        function clearMatrixSelection() {
+            document.querySelectorAll(".matrix-cell").forEach(cell => {
+                cell.classList.remove("highlighted", "selected-build");
+            });
+        }
+
+        function commitMatrixChoice(selectedR, selectedC) {
+            if (actionLocked) return;
+
+            const task = activityDeck[currentActivityIdx];
+            const isCorrect = (selectedR === task.targetRows && selectedC === task.targetCols);
 
             document.querySelectorAll(".matrix-cell").forEach(cell => {
-                const cr = parseInt(cell.getAttribute("data-row"));
-                const cc = parseInt(cell.getAttribute("data-col"));
-                if (cr <= r && cc <= c) {
+                const r = parseInt(cell.getAttribute("data-row"));
+                const c = parseInt(cell.getAttribute("data-col"));
+                if (r <= selectedR && c <= selectedC) {
                     cell.classList.add("selected-build");
                 }
             });
 
-            if (isCorrect) {
-                score += 100;
-                soundEngine.playCorrect();
-                ticker.className = "ticker-feedback good";
-                ticker.innerHTML = `🎉 PERFECT PATTERN! Constructed ${r} Rows × ${c} Columns Table!`;
-                speakText("Perfect pattern constructed!");
-            } else {
-                soundEngine.playWrong();
-                ticker.className = "ticker-feedback bad";
-                ticker.innerHTML = `💥 MISTAKE! Target was ${task.targetRows} Rows × ${task.targetCols} Columns. ${task.help}`;
-                speakText("Review target rows and columns dimensions.");
-            }
-
-            advanceNextTask();
+            handleTaskEvaluation(isCorrect, task);
         }
 
-        /* ACTIVITY 2: STRUCTURAL RIBBON EDITING OPERATIONS */
-        function renderEditingActivity(workspace, task) {
-            activeEditingRows = task.initialRows;
-            activeEditingCols = task.initialCols;
+        function renderSimulatedTable(task) {
+            const table = document.getElementById("liveSimTable");
+            table.innerHTML = "";
 
-            // MS Word Action Ribbon Bar
-            const ribbon = document.createElement("div");
-            ribbon.className = "ribbon-toolbar";
-
-            ribbon.innerHTML = `
-                <button class="ribbon-btn" onclick="executeRibbonEdit('addRow')">➕ Add Row Below</button>
-                <button class="ribbon-btn" onclick="executeRibbonEdit('addColLeft')">⬅️ Add Column Left</button>
-                <button class="ribbon-btn" onclick="executeRibbonEdit('addColRight')">➡️ Add Column Right</button>
-                <button class="ribbon-btn danger" onclick="executeRibbonEdit('delete')">❌ Delete Row</button>
-            `;
-            workspace.appendChild(ribbon);
-
-            // Table Container Shell
-            const tableHost = document.createElement("div");
-            tableHost.id = "interactiveDocTableHost";
-            workspace.appendChild(tableHost);
-
-            renderActiveDocTable();
-
-            const submitBtn = document.createElement("button");
-            submitBtn.className = "act-btn";
-            submitBtn.style.marginTop = "8px";
-            submitBtn.innerText = "Verify Table Structure ➔";
-            submitBtn.onclick = () => evaluateEditingTask(task);
-            workspace.appendChild(submitBtn);
-        }
-
-        function renderActiveDocTable() {
-            const host = document.getElementById("interactiveDocTableHost");
-            if (!host) return;
-
-            let html = `<table class="doc-canvas-table">`;
-            for (let r = 0; r < activeEditingRows; r++) {
-                html += `<tr>`;
-                for (let c = 0; c < activeEditingCols; c++) {
-                    html += `<td>Cell R${r+1}C${c+1}</td>`;
-                }
-                html += `</tr>`;
-            }
-            html += `</table>`;
-            host.innerHTML = html;
-
-            document.getElementById("tickerBox").className = "ticker-feedback";
-            document.getElementById("tickerBox").innerText = `Current Table Size: ${activeEditingRows} Rows × ${activeEditingCols} Columns`;
-        }
-
-        function executeRibbonEdit(action) {
-            if (actionLocked) return;
-
-            if (action === "addRow") {
-                activeEditingRows++;
-            } else if (action === "addColLeft" || action === "addColRight") {
-                activeEditingCols++;
-            } else if (action === "delete") {
-                if (activeEditingRows > 1) activeEditingRows--;
-            }
-
-            soundEngine.playCorrect();
-            renderActiveDocTable();
-        }
-
-        function evaluateEditingTask(task) {
-            if (actionLocked) return;
-            actionLocked = true;
-
-            const isCorrect = (activeEditingRows === task.targetRows && activeEditingCols === task.targetCols);
-            const ticker = document.getElementById("tickerBox");
-
-            if (isCorrect) {
-                score += 100;
-                soundEngine.playCorrect();
-                ticker.className = "ticker-feedback good";
-                ticker.innerText = `🎉 STRUCTURAL EXCELLENCE! Reached target ${activeEditingRows} Rows × ${activeEditingCols} Columns!`;
-                speakText("Table structure verified successfully!");
-            } else {
-                soundEngine.playWrong();
-                ticker.className = "ticker-feedback bad";
-                ticker.innerText = `💥 MISMATCH! Target size was ${task.targetRows} Rows × ${task.targetCols} Columns.`;
-                speakText("Table dimensions do not match objective target.");
-            }
-
-            advanceNextTask();
-        }
-
-        /* ACTIVITY 3: CELL DATA ENTRY & POPULATING */
-        function renderDataEntryActivity(workspace, task) {
-            const table = document.createElement("table");
-            table.className = "doc-canvas-table";
-
-            for (let r = 0; r < task.rows; r++) {
+            for (let r = 0; r < simCurrentRows; r++) {
                 const tr = document.createElement("tr");
-                for (let c = 0; c < task.cols; c++) {
+                for (let c = 0; c < simCurrentCols; c++) {
                     const td = document.createElement("td");
-                    const input = document.createElement("input");
-                    input.type = "text";
-                    input.placeholder = `R${r+1}C${c+1}`;
-                    input.id = `cell_input_${r}_${c}`;
-
-                    td.appendChild(input);
+                    if (task.type === "ENTER_TEXT") {
+                        const input = document.createElement("input");
+                        input.type = "text";
+                        input.id = `cell_input_${r}_${c}`;
+                        input.placeholder = `(${r+1},${c+1})`;
+                        td.appendChild(input);
+                    } else {
+                        td.innerText = `Cell ${r+1},${c+1}`;
+                    }
                     tr.appendChild(td);
                 }
                 table.appendChild(tr);
             }
-            workspace.appendChild(table);
-
-            const submitBtn = document.createElement("button");
-            submitBtn.className = "act-btn";
-            submitBtn.style.marginTop = "8px";
-            submitBtn.innerText = "Check Cell Entries ➔";
-            submitBtn.onclick = () => evaluateDataEntryTask(task);
-            workspace.appendChild(submitBtn);
         }
 
-        function evaluateDataEntryTask(task) {
-            if (actionLocked) return;
-            actionLocked = true;
+        function buildEditingToolbar(task) {
+            const toolbar = document.getElementById("editingToolbar");
+            toolbar.innerHTML = "";
 
-            let allMatch = true;
-            task.requiredCells.forEach(req => {
-                const input = document.getElementById(`cell_input_${req.r}_${req.c}`);
-                const val = input ? input.value.trim().toLowerCase() : "";
-                if (val !== req.expected.toLowerCase()) {
-                    allMatch = false;
-                }
-            });
-
-            const ticker = document.getElementById("tickerBox");
-
-            if (allMatch) {
-                score += 100;
-                soundEngine.playCorrect();
-                ticker.className = "ticker-feedback good";
-                ticker.innerText = "🎉 ACCURATE ENTRY! All requested cell text values typed correctly!";
-                speakText("All cell text values entered correctly!");
-            } else {
-                soundEngine.playWrong();
-                ticker.className = "ticker-feedback bad";
-                ticker.innerText = "💥 TYPO DETECTED! Check requested text entries for target cell coordinates.";
-                speakText("Check your cell entries for spelling errors.");
+            if (task.type === "ENTER_TEXT") {
+                const verifyBtn = document.createElement("button");
+                verifyBtn.className = "tool-btn";
+                verifyBtn.innerHTML = "✓ Verify Cell Text Entry";
+                verifyBtn.onclick = () => verifyTextEntryTask(task);
+                toolbar.appendChild(verifyBtn);
+                return;
             }
 
-            advanceNextTask();
+            // Toolbar Operation Buttons
+            const addRowBtn = document.createElement("button");
+            addRowBtn.className = "tool-btn";
+            addRowBtn.innerHTML = "➕ Add Row Below";
+            addRowBtn.onclick = () => {
+                simCurrentRows++;
+                renderSimulatedTable(task);
+                if (task.type === "ADD_ROW_BELOW") {
+                    handleTaskEvaluation(simCurrentRows === task.expectedRows, task);
+                }
+            };
+
+            const addColLeftBtn = document.createElement("button");
+            addColLeftBtn.className = "tool-btn";
+            addColLeftBtn.innerHTML = "⬅️ Add Column Left";
+            addColLeftBtn.onclick = () => {
+                simCurrentCols++;
+                renderSimulatedTable(task);
+                if (task.type === "ADD_COL_LEFT") {
+                    handleTaskEvaluation(simCurrentCols === task.expectedCols, task);
+                }
+            };
+
+            const addColRightBtn = document.createElement("button");
+            addColRightBtn.className = "tool-btn";
+            addColRightBtn.innerHTML = "➡️ Add Column Right";
+            addColRightBtn.onclick = () => {
+                simCurrentCols++;
+                renderSimulatedTable(task);
+                if (task.type === "ADD_COL_RIGHT") {
+                    handleTaskEvaluation(simCurrentCols === task.expectedCols, task);
+                }
+            };
+
+            toolbar.appendChild(addRowBtn);
+            toolbar.appendChild(addColLeftBtn);
+            toolbar.appendChild(addColRightBtn);
         }
 
-        function advanceNextTask() {
+        function verifyTextEntryTask(task) {
+            if (actionLocked) return;
+
+            let isCorrect = true;
+            for (const [key, val] of Object.entries(task.requiredText)) {
+                const inputNode = document.getElementById(`cell_input_${key}`);
+                if (!inputNode || inputNode.value.trim().toUpperCase() !== val.toUpperCase()) {
+                    isCorrect = false;
+                }
+            }
+
+            handleTaskEvaluation(isCorrect, task);
+        }
+
+        /* 2-ATTEMPT EVALUATION ENGINE */
+        function handleTaskEvaluation(isCorrect, task) {
+            const ticker = document.getElementById("tickerBox");
+
+            if (isCorrect) {
+                actionLocked = true;
+                cumulativeScore += (attemptCount === 1) ? 150 : 100;
+                soundEngine.playCorrect();
+                ticker.className = "ticker-feedback good";
+                ticker.innerHTML = "🎉 EXCELLENT! Operation executed correctly in MS Word!";
+                speakText("Excellent! Correct table operation!");
+                advanceToNextTask();
+            } else {
+                if (attemptCount === 1) {
+                    // Give 2nd Attempt Opportunity
+                    attemptCount = 2;
+                    document.getElementById("attemptHUD").innerText = `${attemptCount} / 2`;
+                    soundEngine.playWrong();
+                    ticker.className = "ticker-feedback retry";
+                    ticker.innerHTML = `⚠️ <strong>Try Again!</strong> ${task.hint}`;
+                    speakText("Try again. Read the hint provided on screen.");
+                    
+                    if (task.type === "MATRIX_CREATE") {
+                        clearMatrixSelection();
+                    } else if (task.type !== "ENTER_TEXT") {
+                        simCurrentRows = task.initialRows;
+                        simCurrentCols = task.initialCols;
+                        renderSimulatedTable(task);
+                    }
+                } else {
+                    // Second attempt failed - proceed with explanation
+                    actionLocked = true;
+                    soundEngine.playWrong();
+                    ticker.className = "ticker-feedback bad";
+                    ticker.innerHTML = `💥 Attempt limit reached. Move to next task! Rule: ${task.hint}`;
+                    speakText("Moving to next task.");
+                    advanceToNextTask();
+                }
+            }
+        }
+
+        function advanceToNextTask() {
             setTimeout(() => {
-                currentTaskIndex++;
-                if (currentTaskIndex < taskDatabase.length) {
+                currentActivityIdx++;
+                if (currentActivityIdx < activityDeck.length) {
                     loadCurrentTask();
                 } else {
-                    displayFinalReportCard();
+                    renderFinalSummaryAudit();
                 }
-            }, 2300);
+            }, 2500);
         }
 
-        function displayFinalReportCard() {
+        function renderFinalSummaryAudit() {
             document.getElementById("gamePanel").classList.add("hidden");
             document.getElementById("reportPanel").classList.remove("hidden");
-            document.getElementById("finalScore").innerText = score;
-
-            soundEngine.playClap();
+            document.getElementById("finalScore").innerText = cumulativeScore;
 
             let rank = "";
             let summary = "";
 
-            if (score >= 500) {
-                if (window.confetti) confetti({ particleCount: 70, spread: 80, origin: { y: 0.6 } });
-                rank = "🥇 Master Table Architect!";
-                summary = `Outstanding score! You earned ${score} points and mastered MS Word table grid insertion, structural editing, and cell data entry!`;
+            if (cumulativeScore >= 700) {
+                soundEngine.playCorrect();
+                if (window.confetti) confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+                rank = "🥇 Master Document Table Architect!";
+                summary = `Outstanding score of ${cumulativeScore} points! You mastered grid creation, row/column additions, and table text entries in MS Word!`;
             } else {
-                rank = "🌱 Table Design Apprentice";
-                summary = `You finished with ${score} points. Review horizontal rows and vertical column definitions to secure top rank next time!`;
+                soundEngine.playWrong();
+                rank = "🌱 Table Formatting Apprentice";
+                summary = `You scored ${cumulativeScore} points. Practice adding rows, columns, and selecting matrix coordinates to reach top rank!`;
             }
 
             document.getElementById("finalRank").innerText = rank;
             document.getElementById("finalSummary").innerText = summary;
-            speakText(`Game completed! Your final rank is ${rank}`);
+            speakText(`Game completed. Your rank is ${rank}`);
         }
     </script>
 </body>

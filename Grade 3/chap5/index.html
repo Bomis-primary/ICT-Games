@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Word Processing Wizard</title>
+    <title>Word Processing Wizard - MS Word-3 Master</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Outfit:wght@700;800;900&display=swap');
@@ -328,17 +328,89 @@
             line-height: 1.6;
             color: #334155;
             position: relative;
-            min-height: 160px;
+            min-height: 180px;
             margin: 10px 0;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             overflow: hidden;
+            user-select: none;
         }
 
-        .clipart-item {
-            font-size: 2.8rem;
+        .clipart-img-node {
             position: absolute;
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            cursor: move;
+            border: 3px solid var(--word-blue);
+            transition: border-color 0.2s, box-shadow 0.2s, top 0.15s ease, left 0.15s ease;
+            z-index: 5;
+        }
+
+        .clipart-img-node.wrap-inline {
+            position: relative;
+            display: inline-block;
+            vertical-align: middle;
+            margin: 0 8px;
+            top: 0 !important;
+            left: 0 !important;
+            z-index: 1;
+        }
+
+        .clipart-img-node.wrap-square {
+            position: relative;
+            float: left;
+            margin: 0 12px 6px 0;
+            top: 0 !important;
+            left: 0 !important;
+            z-index: 1;
+        }
+
+        .clipart-img-node.wrap-tight {
+            position: absolute;
+            z-index: 2;
+            shape-outside: circle(50%);
+            border-radius: 50%;
+        }
+
+        .clipart-img-node.wrap-front {
+            position: absolute;
+            z-index: 10;
+            opacity: 0.92;
+            box-shadow: 0 8px 20px rgba(43,87,154,0.35);
+        }
+
+        .gallery-grid {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin: 8px 0;
+        }
+
+        .gallery-card {
+            border: 3px solid var(--border-blue);
+            border-radius: 12px;
+            padding: 6px;
+            background: #ffffff;
             cursor: pointer;
-            transition: transform 0.2s ease, width 0.2s ease;
+            transition: all 0.2s ease;
+            text-align: center;
+            width: 100px;
+        }
+
+        .gallery-card img {
+            width: 100%;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .gallery-card.active {
+            border-color: var(--word-blue);
+            background: #eff6ff;
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(43, 87, 154, 0.2);
         }
 
         .text-wrap-controls {
@@ -456,7 +528,31 @@
 
     <script>
         class SoundEngine {
-            constructor() { this.ctx = null; }
+        // Level 3: ClipArt Tasks with assets/1.jpg and assets/2.jpg
+        const clipArtTasks = [
+            {
+                title: "ClipArt Task 1: Select Graphic 1 (assets/1.jpg), insert onto canvas, and select 'Tight' text wrapping!",
+                options: [
+                    { name: "Graphic 1", src: "assets/1.jpg", id: "img1" },
+                    { name: "Graphic 2", src: "assets/2.jpg", id: "img2" }
+                ],
+                targetImgSrc: "assets/1.jpg",
+                targetWrap: "Tight"
+            },
+            {
+                title: "ClipArt Task 2: Select Graphic 2 (assets/2.jpg), insert onto canvas, and select 'Square' text wrapping!",
+                options: [
+                    { name: "Graphic 1", src: "assets/1.jpg", id: "img1" },
+                    { name: "Graphic 2", src: "assets/2.jpg", id: "img2" }
+                ],
+                targetImgSrc: "assets/2.jpg",
+                targetWrap: "Square"
+            }
+        ];
+        let clipArtSubIndex = 0;
+        let activeSelectedWrap = "";
+        let selectedClipArtSrc = "";
+
             init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
 
             playCorrect() {
@@ -876,7 +972,7 @@
         function renderClipArtLevel(container) {
             const task = clipArtTasks[clipArtSubIndex];
             activeSelectedWrap = "";
-            selectedClipArtEmoji = "";
+            selectedClipArtSrc = "";
 
             const audioBtn = document.createElement("button");
             audioBtn.className = "audio-btn";
@@ -894,27 +990,44 @@
             const galleryLabel = document.createElement("div");
             galleryLabel.style.fontSize = "0.8rem";
             galleryLabel.style.fontWeight = "800";
-            galleryLabel.innerText = "Step 1: Choose ClipArt from Gallery:";
+            galleryLabel.style.marginTop = "4px";
+            galleryLabel.innerText = "Step 1: Choose ClipArt Picture from Assets:";
             container.appendChild(galleryLabel);
 
             const galleryRow = document.createElement("div");
-            galleryRow.style.display = "flex";
-            galleryRow.style.gap = "10px";
-            galleryRow.style.justifyContent = "center";
-            galleryRow.style.margin = "6px 0";
+            galleryRow.className = "gallery-grid";
 
-            task.options.forEach(opt => {
-                const gBtn = document.createElement("button");
-                gBtn.className = "wrap-btn";
-                gBtn.style.fontSize = "1.2rem";
-                gBtn.innerText = `${opt.emoji} ${opt.name}`;
-                gBtn.onclick = () => {
-                    document.querySelectorAll(".gallery-item-btn").forEach(b => b.classList.remove("active"));
-                    gBtn.classList.add("active");
-                    selectedClipArtEmoji = opt.emoji;
+            const fallbackSvg1 = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100' height='100' rx='10' fill='%232b579a'/><circle cx='50' cy='40' r='20' fill='%23f59e0b'/><path d='M20 80 Q50 50 80 80' stroke='%23ffffff' stroke-width='6' fill='none'/><text x='50%' y='92%' dominant-baseline='middle' text-anchor='middle' font-size='12' font-weight='bold' fill='%23ffffff'>Graphic 1</text></svg>`;
+            const fallbackSvg2 = `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'><rect width='100' height='100' rx='10' fill='%2310b981'/><polygon points='50,15 80,75 20,75' fill='%23ffffff'/><text x='50%' y='92%' dominant-baseline='middle' text-anchor='middle' font-size='12' font-weight='bold' fill='%23ffffff'>Graphic 2</text></svg>`;
+
+            task.options.forEach((opt, idx) => {
+                const gCard = document.createElement("div");
+                gCard.className = "gallery-card gallery-item-card";
+                
+                const img = document.createElement("img");
+                img.src = opt.src;
+                img.alt = opt.name;
+                img.onerror = function() {
+                    this.onerror = null;
+                    this.src = (idx === 0) ? fallbackSvg1 : fallbackSvg2;
                 };
-                gBtn.classList.add("gallery-item-btn");
-                galleryRow.appendChild(gBtn);
+
+                const lbl = document.createElement("div");
+                lbl.style.fontSize = "0.75rem";
+                lbl.style.fontWeight = "800";
+                lbl.style.marginTop = "4px";
+                lbl.innerText = opt.name;
+
+                gCard.appendChild(img);
+                gCard.appendChild(lbl);
+
+                gCard.onclick = () => {
+                    document.querySelectorAll(".gallery-item-card").forEach(c => c.classList.remove("active"));
+                    gCard.classList.add("active");
+                    selectedClipArtSrc = opt.src;
+                };
+
+                galleryRow.appendChild(gCard);
             });
             container.appendChild(galleryRow);
 
@@ -922,19 +1035,82 @@
             const docCanvas = document.createElement("div");
             docCanvas.className = "doc-canvas";
             docCanvas.id = "docCanvasBoard";
-            docCanvas.innerHTML = `
-                <p>Microsoft Word document paragraph simulator. Inserting ClipArt illustrations helps explain story concepts visually to young readers.</p>
-                <br>
-                <p>Trees, computers, and sun illustrations make textbook stories engaging and easy to read across formatted pages.</p>
-                <div id="clipArtTargetNode" class="clipart-item" style="display:none; top:20px; right:20px;"></div>
-            `;
+            
+            const paragraph1 = document.createElement("p");
+            paragraph1.id = "docPara1";
+            paragraph1.innerText = "Microsoft Word document paragraph simulator. Inserting ClipArt illustrations from your computer's assets helps explain story concepts visually to young readers.";
+
+            const paragraph2 = document.createElement("p");
+            paragraph2.id = "docPara2";
+            paragraph2.style.marginTop = "8px";
+            paragraph2.innerText = "Illustrations and ClipArt pictures make textbook stories engaging and easy to read across formatted pages.";
+
+            const insertedImg = document.createElement("img");
+            insertedImg.id = "clipArtTargetImage";
+            insertedImg.className = "clipart-img-node";
+            insertedImg.style.display = "none";
+            insertedImg.style.top = "20px";
+            insertedImg.style.left = "20px";
+
+            // Interactive Drag Logic on Canvas
+            let isDragging = false;
+            let startX, startY, initialLeft, initialTop;
+
+            insertedImg.addEventListener("mousedown", startDrag);
+            insertedImg.addEventListener("touchstart", startDrag, { passive: false });
+
+            function startDrag(e) {
+                if (insertedImg.classList.contains("wrap-inline") || insertedImg.classList.contains("wrap-square")) return;
+                isDragging = true;
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                startX = clientX;
+                startY = clientY;
+                initialLeft = insertedImg.offsetLeft;
+                initialTop = insertedImg.offsetTop;
+
+                document.addEventListener("mousemove", onDrag);
+                document.addEventListener("touchmove", onDrag, { passive: false });
+                document.addEventListener("mouseup", stopDrag);
+                document.addEventListener("touchend", stopDrag);
+            }
+
+            function onDrag(e) {
+                if (!isDragging) return;
+                if (e.cancelable) e.preventDefault();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                const deltaX = clientX - startX;
+                const deltaY = clientY - startY;
+
+                const maxLeft = docCanvas.clientWidth - insertedImg.clientWidth;
+                const maxTop = docCanvas.clientHeight - insertedImg.clientHeight;
+
+                let newLeft = Math.max(0, Math.min(initialLeft + deltaX, maxLeft));
+                let newTop = Math.max(0, Math.min(initialTop + deltaY, maxTop));
+
+                insertedImg.style.left = `${newLeft}px`;
+                insertedImg.style.top = `${newTop}px`;
+            }
+
+            function stopDrag() {
+                isDragging = false;
+                document.removeEventListener("mousemove", onDrag);
+                document.removeEventListener("touchmove", onDrag);
+                document.removeEventListener("mouseup", stopDrag);
+                document.removeEventListener("touchend", stopDrag);
+            }
+
+            docCanvas.appendChild(paragraph1);
+            docCanvas.appendChild(insertedImg);
+            docCanvas.appendChild(paragraph2);
             container.appendChild(docCanvas);
 
             // Inserter & Wrapping Buttons
             const ctrlBox = document.createElement("div");
             ctrlBox.style.display = "flex";
             ctrlBox.style.flexDirection = "column";
-            ctrlBox.style.gap = "8px";
+            ctrlBox.style.gap = "6px";
 
             const insertBtn = document.createElement("button");
             insertBtn.className = "btn-primary";
@@ -942,14 +1118,19 @@
             insertBtn.style.fontSize = "0.95rem";
             insertBtn.innerText = `🖼️ Step 2: Insert Selected ClipArt`;
             insertBtn.onclick = () => {
-                if (!selectedClipArtEmoji) {
-                    alert("Please select a ClipArt graphic from Step 1 first!");
+                if (!selectedClipArtSrc) {
+                    alert("Please select a ClipArt graphic from Step 1 gallery first!");
                     return;
                 }
-                const node = document.getElementById("clipArtTargetNode");
-                if (node) {
-                    node.innerText = selectedClipArtEmoji;
-                    node.style.display = "block";
+                const imgNode = document.getElementById("clipArtTargetImage");
+                if (imgNode) {
+                    imgNode.src = selectedClipArtSrc;
+                    imgNode.onerror = function() {
+                        this.onerror = null;
+                        this.src = (selectedClipArtSrc === "assets/1.jpg") ? fallbackSvg1 : fallbackSvg2;
+                    };
+                    imgNode.style.display = "block";
+                    applyTextWrapStyle(activeSelectedWrap || "In Line with Text");
                 }
                 soundEngine.playCorrect();
             };
@@ -966,14 +1147,14 @@
 
             ["In Line with Text", "Square", "Tight", "In Front of Text"].forEach(wrapType => {
                 const wBtn = document.createElement("button");
-                wBtn.className = "wrap-btn";
+                wBtn.className = "wrap-btn wrap-type-btn";
                 wBtn.innerText = wrapType;
                 wBtn.onclick = () => {
                     document.querySelectorAll(".wrap-type-btn").forEach(b => b.classList.remove("active"));
                     wBtn.classList.add("active");
                     activeSelectedWrap = wrapType;
+                    applyTextWrapStyle(wrapType);
                 };
-                wBtn.classList.add("wrap-type-btn");
                 wrapRow.appendChild(wBtn);
             });
             ctrlBox.appendChild(wrapRow);
@@ -990,18 +1171,45 @@
             speakText(task.title);
         }
 
+        function applyTextWrapStyle(wrapType) {
+            const imgNode = document.getElementById("clipArtTargetImage");
+            const p1 = document.getElementById("docPara1");
+            const docBoard = document.getElementById("docCanvasBoard");
+            if (!imgNode || imgNode.style.display === "none") return;
+
+            imgNode.className = "clipart-img-node";
+
+            if (wrapType === "In Line with Text") {
+                imgNode.classList.add("wrap-inline");
+                p1.insertBefore(imgNode, p1.firstChild);
+            } else if (wrapType === "Square") {
+                imgNode.classList.add("wrap-square");
+                p1.insertBefore(imgNode, p1.firstChild);
+            } else if (wrapType === "Tight") {
+                imgNode.classList.add("wrap-tight");
+                docBoard.appendChild(imgNode);
+                imgNode.style.top = "15px";
+                imgNode.style.left = "15px";
+            } else if (wrapType === "In Front of Text") {
+                imgNode.classList.add("wrap-front");
+                docBoard.appendChild(imgNode);
+                imgNode.style.top = "25px";
+                imgNode.style.left = "60px";
+            }
+        }
+
         function evaluateClipArtTask(task) {
             if (actionLocked) return;
             actionLocked = true;
 
-            const clipartNode = document.getElementById("clipArtTargetNode");
-            const isInserted = clipartNode && clipartNode.style.display === "block";
-            const isEmojiCorrect = (selectedClipArtEmoji === task.targetEmoji);
+            const clipartNode = document.getElementById("clipArtTargetImage");
+            const isInserted = clipartNode && clipartNode.style.display !== "none";
+            const isSrcCorrect = (selectedClipArtSrc === task.targetImgSrc);
             const isWrapCorrect = (activeSelectedWrap === task.targetWrap);
 
             const ticker = document.getElementById("tickerBox");
 
-            if (isInserted && isEmojiCorrect && isWrapCorrect) {
+            if (isInserted && isSrcCorrect && isWrapCorrect) {
                 score += 300;
                 soundEngine.playCorrect();
                 ticker.className = "ticker-feedback good";
@@ -1010,7 +1218,7 @@
             } else {
                 soundEngine.playWrong();
                 ticker.className = "ticker-feedback bad";
-                ticker.innerText = "💥 Insertion error! Choose the right ClipArt graphic and requested Text Wrapping.";
+                ticker.innerText = "💥 Insertion error! Choose the right ClipArt image asset and requested Text Wrapping.";
                 speakText("Choose requested ClipArt and Text Wrapping.");
             }
 

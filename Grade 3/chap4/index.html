@@ -420,7 +420,7 @@
 </head>
 <body>
 
-    <!-- Exclusive Audio Elements -->
+    <!-- Audio Elements -->
     <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 
@@ -559,7 +559,7 @@
                     "MARGIN": ["1-0", "1-1", "1-2", "1-3", "1-4", "1-5"],
                     "PASTE": ["2-0", "2-1", "2-2", "2-3", "2-4"],
                     "COPY": ["3-0", "3-1", "3-2", "3-3"],
-                    "PRINT": ["0-3", "0-4", "0-5", "0-6", "0-7"]
+                    "PRINT": ["0-4", "0-5", "0-6", "0-7", "1-7"] // P-R-I-N-T across row 0 & 1
                 }
             },
             {
@@ -699,7 +699,7 @@
                 card.appendChild(submitBtn);
             }
 
-            // LEVEL 4: MULTI CROSSWORD (CORRECTED FIT)
+            // LEVEL 4: MULTI CROSSWORD
             else if (stage.type === "crossword_multi") {
                 renderSubCrossword(card, stage);
             }
@@ -788,7 +788,6 @@
                 input.className = "puzzle-slot";
                 input.maxLength = 1;
                 
-                // If index is inside preset, fill and lock it
                 if (p.preset.includes(idx)) {
                     input.value = char;
                     input.readOnly = true;
@@ -846,7 +845,6 @@
                 cellNode.classList.add("selected");
             }
 
-            // Check if selected cells match any word coordinates
             for (let word in stage.wordCoords) {
                 if (!clearedWordsInLevel2.includes(word)) {
                     const coords = stage.wordCoords[word];
@@ -855,7 +853,6 @@
                         clearedWordsInLevel2.push(word);
                         document.getElementById(`badge_${word}`).classList.add("cleared");
                         
-                        // Highlight found cells in green
                         coords.forEach(c => {
                             const node = document.querySelector(`[data-coord='${c}']`);
                             if (node) { node.classList.remove("selected"); node.classList.add("found"); }

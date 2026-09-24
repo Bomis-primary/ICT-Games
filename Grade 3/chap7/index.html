@@ -197,7 +197,7 @@
             background: #ffffff;
             border: 3px dashed var(--comic-blue);
             border-radius: 14px;
-            min-height: 155px;
+            min-height: 145px;
             padding: 6px;
             display: flex;
             flex-direction: column;
@@ -245,7 +245,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: space-between;
-            min-height: 155px;
+            min-height: 145px;
         }
 
         .comic-card-chip.selected {
@@ -256,7 +256,7 @@
 
         .panel-picture-box {
             width: 100%;
-            height: 80px;
+            height: 75px;
             border-radius: 8px;
             background: #f8fafc;
             border: 1px solid #cbd5e1;
@@ -265,14 +265,12 @@
             align-items: center;
             overflow: hidden;
             margin-bottom: 4px;
-            position: relative;
         }
 
         .panel-picture-box img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
         }
 
         .panel-picture-box svg {
@@ -342,6 +340,7 @@
 </head>
 <body>
 
+    <!-- Audio Elements -->
     <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 
@@ -361,11 +360,11 @@
             
             <div class="briefing">
                 <p style="font-weight:800; margin-bottom:8px; color:var(--slate-dark);">📖 Visual Story Objective:</p>
-                <p>Look at the real story photos and read the captions carefully! The story cards are completely jumbled up without panel numbers.</p>
-                <p style="margin-top:6px;">Tap a picture card, then tap a target slot to arrange the story in correct order. You have 2 attempts before the correct solution is revealed!</p>
+                <p>Read the story captions and look at the picture cards carefully! The comic cards are jumbled up without panel numbers.</p>
+                <p style="margin-top:6px;">Tap a picture card, then tap a target slot to arrange the full story in correct sequence order! If your first attempt is wrong, all slots will be reset so you can try again.</p>
             </div>
             
-            <button class="btn-primary" onclick="launchGameEngine()">Start Story 1 ➜</button>
+            <button class="btn-primary" onclick="launchGameEngine()">Start Level 1 ➜</button>
         </div>
 
         <!-- GAMEPLAY PANEL -->
@@ -390,7 +389,7 @@
 
             <button class="btn-primary" style="margin-top:8px; padding:10px 28px;" onclick="verifyStorySequence()">Verify Story Sequence ➔</button>
 
-            <div class="ticker-feedback" id="tickerBox">Read captions and examine photographs to arrange cards in correct order!</div>
+            <div class="ticker-feedback" id="tickerBox">Read captions and arrange story cards in correct sequence!</div>
         </div>
 
         <!-- FINAL STORYBOOK READER PANEL -->
@@ -470,140 +469,40 @@
             document.getElementById("appMainframe").classList.remove("hidden");
         }, 5000);
 
-        // Story Datasets with Real High-Resolution Photography and Resilient SVG Fallback Graphics
+        // Story Dataset: Story 1 (Lion & Mouse) and Story 2 (Rabbit & Tortoise)
         const storiesDeck = [
             {
                 level: 1,
                 title: "Story 1: Leo the Lion & Pip the Mouse",
                 moral: "True strength is shown through kindness, helping others, and working together!",
                 panels: [
-                    { 
-                        id: 1, 
-                        caption: "Leo the lion thought he was the strongest animal in the jungle.", 
-                        imgSrc: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#fef3c7"/><text x="50" y="38" font-size="24" text-anchor="middle">🦁💪</text></svg>` 
-                    },
-                    { 
-                        id: 2, 
-                        caption: "He loved showing off his loud roar to scare small jungle animals.", 
-                        imgSrc: "https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#fef3c7"/><text x="50" y="38" font-size="24" text-anchor="middle">🦁🗣️💨</text></svg>` 
-                    },
-                    { 
-                        id: 3, 
-                        caption: "One day, a tiny mouse named Pip accidentally bumped into Leo.", 
-                        imgSrc: "https://images.unsplash.com/photo-1425082661705-1834bfd09dca?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#e0f2fe"/><text x="50" y="38" font-size="24" text-anchor="middle">🦁💥🐭</text></svg>` 
-                    },
-                    { 
-                        id: 4, 
-                        caption: "Leo roared angrily, 'I am big and strong, you are weak!'", 
-                        imgSrc: "https://images.unsplash.com/photo-1614027164847-1b28cfe1df60?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#fee2e2"/><text x="50" y="38" font-size="24" text-anchor="middle">😠🦁🐭</text></svg>` 
-                    },
-                    { 
-                        id: 5, 
-                        caption: "Later, Leo walked into a hunter's heavy rope net trap.", 
-                        imgSrc: "https://images.unsplash.com/photo-1574063413132-355dbfd83e08?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#f1f5f9"/><text x="50" y="38" font-size="24" text-anchor="middle">🦁🕸️</text></svg>` 
-                    },
-                    { 
-                        id: 6, 
-                        caption: "Leo cried for help, but no big animals came to save him.", 
-                        imgSrc: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#e2e8f0"/><text x="50" y="38" font-size="24" text-anchor="middle">😿🕸️❓</text></svg>` 
-                    },
-                    { 
-                        id: 7, 
-                        caption: "Little Pip the mouse saw Leo trapped and ran over quickly.", 
-                        imgSrc: "https://images.unsplash.com/photo-1503777119540-ce54b422baff?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#ecfdf5"/><text x="50" y="38" font-size="24" text-anchor="middle">🏃🐭🦁</text></svg>` 
-                    },
-                    { 
-                        id: 8, 
-                        caption: "Pip used his sharp tiny teeth to chew through the ropes.", 
-                        imgSrc: "https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#fef3c7"/><text x="50" y="38" font-size="24" text-anchor="middle">🐭✂️🕸️</text></svg>` 
-                    },
-                    { 
-                        id: 9, 
-                        caption: "The net broke open, and Leo was freed safely from the trap!", 
-                        imgSrc: "https://images.unsplash.com/photo-1517849845537-4d257902454a?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#dcfce7"/><text x="50" y="38" font-size="24" text-anchor="middle">🦁🎉🐭</text></svg>` 
-                    },
-                    { 
-                        id: 10, 
-                        caption: "Leo thanked Pip humbly, learning kindness matters most.", 
-                        imgSrc: "https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#fce7f3"/><text x="50" y="38" font-size="24" text-anchor="middle">🦁❤️🐭</text></svg>` 
-                    }
+                    { id: 1, caption: "Leo the lion thought he was the strongest animal in the jungle.", imgSrc: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fef3c7"/><text x="50" y="38" font-size="24" text-anchor="middle">🦁💪</text></svg>` },
+                    { id: 2, caption: "He loved showing off his loud roar to scare small jungle animals.", imgSrc: "https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fef3c7"/><text x="50" y="38" font-size="24" text-anchor="middle">🦁🗣️💨</text></svg>` },
+                    { id: 3, caption: "One day, a tiny mouse named Pip accidentally bumped into Leo.", imgSrc: "https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#e0f2fe"/><text x="50" y="38" font-size="24" text-anchor="middle">🦁💥🐭</text></svg>` },
+                    { id: 4, caption: "Leo roared angrily, 'I am big and strong, you are weak!'", imgSrc: "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fee2e2"/><text x="50" y="38" font-size="24" text-anchor="middle">😠🦁🐭</text></svg>` },
+                    { id: 5, caption: "Later, Leo walked into a hunter's heavy rope net trap.", imgSrc: "https://images.unsplash.com/photo-1574063413132-355dbfd83e08?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#f1f5f9"/><text x="50" y="38" font-size="24" text-anchor="middle">🦁🕸️</text></svg>` },
+                    { id: 6, caption: "Leo cried for help, but no big animals came to save him.", imgSrc: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#e2e8f0"/><text x="50" y="38" font-size="24" text-anchor="middle">😿🕸️❓</text></svg>` },
+                    { id: 7, caption: "Little Pip the mouse saw Leo trapped and ran over quickly.", imgSrc: "https://images.unsplash.com/photo-1503777119540-ce54b422baff?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#ecfdf5"/><text x="50" y="38" font-size="24" text-anchor="middle">🏃🐭🦁</text></svg>` },
+                    { id: 8, caption: "Pip used his sharp tiny teeth to chew through the ropes.", imgSrc: "https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fef3c7"/><text x="50" y="38" font-size="24" text-anchor="middle">🐭✂️🕸️</text></svg>` },
+                    { id: 9, caption: "The net broke open, and Leo was freed safely from the trap!", imgSrc: "https://images.unsplash.com/photo-1534188753412-3e26d0d618d6?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#dcfce7"/><text x="50" y="38" font-size="24" text-anchor="middle">🦁🎉🐭</text></svg>` },
+                    { id: 10, caption: "Leo thanked Pip humbly, learning kindness matters most.", imgSrc: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fce7f3"/><text x="50" y="38" font-size="24" text-anchor="middle">🦁❤️🐭</text></svg>` }
                 ]
             },
             {
                 level: 2,
-                title: "Story 2: Speedy the Rabbit & Slowy the Tortoise",
+                title: "Story 2: The Rabbit & The Tortoise",
                 moral: "Slow and steady wins the race. Never boast or look down on others!",
                 panels: [
-                    { 
-                        id: 1, 
-                        caption: "Speedy the proud rabbit always bragged how fast he could run.", 
-                        imgSrc: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#fef3c7"/><text x="50" y="38" font-size="24" text-anchor="middle">🐰⚡</text></svg>` 
-                    },
-                    { 
-                        id: 2, 
-                        caption: "He laughed at Slowy the tortoise for moving so slowly.", 
-                        imgSrc: "https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#fee2e2"/><text x="50" y="38" font-size="24" text-anchor="middle">🐰😂🐢</text></svg>` 
-                    },
-                    { 
-                        id: 3, 
-                        caption: "Slowy challenged Speedy to a big running race in the forest.", 
-                        imgSrc: "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#e0f2fe"/><text x="50" y="38" font-size="24" text-anchor="middle">🐢🏁🐰</text></svg>` 
-                    },
-                    { 
-                        id: 4, 
-                        caption: "When the race started, Speedy zoomed far ahead with ease.", 
-                        imgSrc: "https://images.unsplash.com/photo-1518796745738-41048802f99a?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#ecfdf5"/><text x="50" y="38" font-size="24" text-anchor="middle">🐰💨🏃</text></svg>` 
-                    },
-                    { 
-                        id: 5, 
-                        caption: "Feeling foolishly confident, Speedy took a nap under a shady tree.", 
-                        imgSrc: "https://images.unsplash.com/photo-1591154669695-5f2a8d20c089?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#f1f5f9"/><text x="50" y="38" font-size="24" text-anchor="middle">😴🐰🌳</text></svg>` 
-                    },
-                    { 
-                        id: 6, 
-                        caption: "Slowy kept walking step by step without stopping once.", 
-                        imgSrc: "https://images.unsplash.com/photo-1508455715215-0f0c0f823a0c?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#ecfdf5"/><text x="50" y="38" font-size="24" text-anchor="middle">🐢🐾🚶</text></svg>` 
-                    },
-                    { 
-                        id: 7, 
-                        caption: "Slowy walked right past the sleeping rabbit quietly.", 
-                        imgSrc: "https://images.unsplash.com/photo-1559214362-c68a91b22e1b?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#fef3c7"/><text x="50" y="38" font-size="24" text-anchor="middle">🐢🚶😴🐰</text></svg>` 
-                    },
-                    { 
-                        id: 8, 
-                        caption: "Speedy woke up suddenly and saw Slowy near the finish line!", 
-                        imgSrc: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#fee2e2"/><text x="50" y="38" font-size="24" text-anchor="middle">😱🐰⚡</text></svg>` 
-                    },
-                    { 
-                        id: 9, 
-                        caption: "Slowy crossed the finish line first and won the great race!", 
-                        imgSrc: "https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#dcfce7"/><text x="50" y="38" font-size="24" text-anchor="middle">🏆🐢🏁</text></svg>` 
-                    },
-                    { 
-                        id: 10, 
-                        caption: "Speedy learned that slow and steady work always succeeds.", 
-                        imgSrc: "https://images.unsplash.com/photo-1518495973542-4542c06a5843?auto=format&fit=crop&w=400&q=80", 
-                        fallbackSvg: `<svg viewBox="0 0 100 60"><rect width="100" height="60" fill="#fce7f3"/><text x="50" y="38" font-size="24" text-anchor="middle">🤝🐢🐰</text></svg>` 
-                    }
+                    { id: 1, caption: "The proud rabbit always bragged how fast he could run.", imgSrc: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fef3c7"/><text x="50" y="38" font-size="24" text-anchor="middle">🐰⚡</text></svg>` },
+                    { id: 2, caption: "He laughed at the tortoise for moving so slowly.", imgSrc: "https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fee2e2"/><text x="50" y="38" font-size="24" text-anchor="middle">🐰😂🐢</text></svg>` },
+                    { id: 3, caption: "The tortoise challenged the rabbit to a big running race in the forest.", imgSrc: "https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#e0f2fe"/><text x="50" y="38" font-size="24" text-anchor="middle">🐢🏁🐰</text></svg>` },
+                    { id: 4, caption: "When the race started, the rabbit zoomed far ahead with ease.", imgSrc: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#ecfdf5"/><text x="50" y="38" font-size="24" text-anchor="middle">🐰💨🏃</text></svg>` },
+                    { id: 5, caption: "Feeling foolishly confident, the rabbit took a nap under a shady tree.", imgSrc: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#f1f5f9"/><text x="50" y="38" font-size="24" text-anchor="middle">😴🐰🌳</text></svg>` },
+                    { id: 6, caption: "The tortoise kept walking step by step without stopping once.", imgSrc: "https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#ecfdf5"/><text x="50" y="38" font-size="24" text-anchor="middle">🐢🐾🚶</text></svg>` },
+                    { id: 7, caption: "The tortoise walked right past the sleeping rabbit quietly.", imgSrc: "https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fef3c7"/><text x="50" y="38" font-size="24" text-anchor="middle">🐢🚶😴🐰</text></svg>` },
+                    { id: 8, caption: "The rabbit woke up suddenly and saw the tortoise near the finish line!", imgSrc: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fee2e2"/><text x="50" y="38" font-size="24" text-anchor="middle">😱🐰⚡</text></svg>` },
+                    { id: 9, caption: "The tortoise crossed the finish line first and won the great race!", imgSrc: "https://images.unsplash.com/photo-1437622368342-7a3d73a34c8f?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#dcfce7"/><text x="50" y="38" font-size="24" text-anchor="middle">🏆🐢🏁</text></svg>` },
+                    { id: 10, caption: "The rabbit learned that slow and steady work always succeeds.", imgSrc: "https://images.unsplash.com/photo-1585110396000-c9ffd4e4b308?w=300", graphic: `<svg viewBox="0 0 100 60"><rect width="100" height="60" rx="6" fill="#fce7f3"/><text x="50" y="38" font-size="24" text-anchor="middle">🤝🐢🐰</text></svg>` }
                 ]
             }
         ];
@@ -628,7 +527,6 @@
 
         function initializeLevel() {
             actionLocked = false;
-            attemptCount = 1;
             activeSelectedCard = null;
 
             const story = storiesDeck[currentLevelIdx];
@@ -638,7 +536,7 @@
             document.getElementById("scoreHUD").innerText = score;
             document.getElementById("attemptHUD").innerText = `${attemptCount} / 2`;
             document.getElementById("tickerBox").className = "ticker-feedback";
-            document.getElementById("tickerBox").innerText = "Read captions and examine photographs to arrange cards in correct order!";
+            document.getElementById("tickerBox").innerText = "Read captions and arrange story cards in correct sequence!";
 
             renderTargetSlots(story);
             renderJumbledCardPool(story);
@@ -662,21 +560,6 @@
             });
         }
 
-        function createPictureBox(panelObj) {
-            const pBox = document.createElement("div");
-            pBox.className = "panel-picture-box";
-
-            const img = document.createElement("img");
-            img.src = panelObj.imgSrc;
-            img.alt = "Story Scene";
-            img.onerror = function() {
-                pBox.innerHTML = panelObj.fallbackSvg;
-            };
-
-            pBox.appendChild(img);
-            return pBox;
-        }
-
         function renderJumbledCardPool(story) {
             const poolContainer = document.getElementById("cardsPool");
             poolContainer.innerHTML = "";
@@ -688,7 +571,15 @@
                 card.className = "comic-card-chip";
                 card.id = `card_chip_${panelObj.id}`;
                 
-                const pBox = createPictureBox(panelObj);
+                const pBox = document.createElement("div");
+                pBox.className = "panel-picture-box";
+
+                const imgNode = document.createElement("img");
+                imgNode.src = panelObj.imgSrc;
+                imgNode.alt = "Story Scene";
+                imgNode.onerror = () => { pBox.innerHTML = panelObj.graphic; };
+                pBox.appendChild(imgNode);
+
                 const caption = document.createElement("div");
                 caption.className = "panel-caption";
                 caption.innerText = panelObj.caption;
@@ -716,11 +607,18 @@
             const slotNode = document.getElementById(`slot_target_${slotIdx}`);
             slotNode.className = "comic-slot filled";
             
+            const pBox = document.createElement("div");
+            pBox.className = "panel-picture-box";
+
+            const imgNode = document.createElement("img");
+            imgNode.src = activeSelectedCard.data.imgSrc;
+            imgNode.alt = "Story Scene";
+            imgNode.onerror = () => { pBox.innerHTML = activeSelectedCard.data.graphic; };
+            pBox.appendChild(imgNode);
+
             slotNode.innerHTML = `
                 <div class="comic-slot-header">Step ${slotIdx + 1} Slot</div>
             `;
-            
-            const pBox = createPictureBox(activeSelectedCard.data);
             slotNode.appendChild(pBox);
 
             const caption = document.createElement("div");
@@ -732,6 +630,7 @@
             activeSelectedCard = null;
         }
 
+        /* 2-ATTEMPT & AUTOMATIC SOLUTION REVEAL ENGINE */
         function verifyStorySequence() {
             if (actionLocked) return;
 
@@ -765,13 +664,18 @@
                 }, 2200);
             } else {
                 if (attemptCount === 1) {
+                    // RESET BOARD ON FIRST FAIL FOR SECOND ATTEMPT
                     attemptCount = 2;
-                    document.getElementById("attemptHUD").innerText = `${attemptCount} / 2`;
                     soundEngine.playWrong();
                     ticker.className = "ticker-feedback retry";
-                    ticker.innerText = "⚠️ Sequence error! Read captions carefully and try your 2nd attempt!";
-                    speakText("Sequence error. Try your second attempt.");
+                    ticker.innerText = "⚠️ Sequence error! Slots reset. Read captions carefully for your 2nd attempt!";
+                    speakText("Sequence error. Board reset for your second attempt.");
+
+                    setTimeout(() => {
+                        initializeLevel();
+                    }, 2000);
                 } else {
+                    // Attempt 2 Failed: System reveals correct sequence automatically
                     actionLocked = true;
                     soundEngine.playWrong();
                     ticker.className = "ticker-feedback bad";
@@ -801,15 +705,22 @@
             const readerContainer = document.getElementById("readerGrid");
             readerContainer.innerHTML = "";
 
-            story.panels.forEach((panel, i) => {
+            story.panels.forEach(panel => {
                 const rCard = document.createElement("div");
                 rCard.className = "reader-panel-card";
 
-                rCard.innerHTML = `<div class="comic-slot-header" style="margin-bottom:6px;">Sequence Step ${i + 1}</div>`;
-                
-                const pBox = createPictureBox(panel);
+                const pBox = document.createElement("div");
+                pBox.className = "panel-picture-box";
                 pBox.style.height = "85px";
                 pBox.style.marginBottom = "8px";
+
+                const imgNode = document.createElement("img");
+                imgNode.src = panel.imgSrc;
+                imgNode.alt = "Story Scene";
+                imgNode.onerror = () => { pBox.innerHTML = panel.graphic; };
+                pBox.appendChild(imgNode);
+
+                rCard.innerHTML = `<div class="comic-slot-header" style="margin-bottom:6px;">Sequence Step</div>`;
                 rCard.appendChild(pBox);
 
                 const caption = document.createElement("div");
@@ -837,6 +748,7 @@
             document.getElementById("reportPanel").classList.add("hidden");
             if (currentLevelIdx < storiesDeck.length - 1) {
                 currentLevelIdx++;
+                attemptCount = 1;
                 document.getElementById("gamePanel").classList.remove("hidden");
                 initializeLevel();
             } else {

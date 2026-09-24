@@ -2,33 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Internet Speed Racers</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Internet Speed Racers - Moral & Tech Arcade</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
         :root {
             --bg-color: #0f172a;
-            --track-gray: #334155;
+            --track-asphalt: #1e293b;
+            --lane-yellow: #facc15;
             --player-blue: #38bdf8;
-            --rival-red: #ef4444;
+            --rival-red: #f43f5e;
             --text-light: #f8fafc;
-            --accent-yellow: #f59e0b;
+            --accent-gold: #fbbf24;
+            --success-green: #10b981;
+            --purple-arcade: #8b5cf6;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI', sans-serif;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Fredoka', 'Segoe UI', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: var(--bg-color);
+            background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 100%);
             color: var(--text-light);
-            padding: 15px;
+            padding: clamp(8px, 2vw, 15px);
+            overflow-x: hidden;
         }
 
         /* --- 5-SECOND SPLASH SCREEN --- */
@@ -36,76 +45,88 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
             background: #ffffff;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
+            transition: opacity 0.5s ease;
         }
 
         #splash h2 {
-            color: #1e3a8a;
-            font-size: 2rem;
+            color: var(--purple-arcade);
+            font-size: clamp(1.4rem, 4vw, 2.2rem);
             margin-top: 15px;
+            font-weight: 900;
         }
 
         #splash img {
-            width: 220px;
-            animation: drive 2s infinite ease-in-out;
+            width: 240px;
+            max-width: 80vw;
+            animation: driveBounce 1.2s infinite ease-in-out alternate;
         }
 
-        @keyframes drive {
-            0%, 100% { transform: translateX(-10px); }
-            50% { transform: translateX(10px); }
+        @keyframes driveBounce {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-15px) scale(1.05); }
         }
 
-        /* --- MAIN CONTAINER --- */
+        /* --- MAIN APP SHELL --- */
         .game-container {
             width: 100%;
-            max-width: 755px;
-            background: #1e293b;
-            border-radius: 25px;
-            padding: 30px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            max-width: 820px;
+            background: rgba(30, 41, 59, 0.95);
+            border-radius: 28px;
+            padding: clamp(14px, 3vw, 24px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 20px rgba(139, 92, 246, 0.3);
             text-align: center;
-            border: 5px solid var(--accent-yellow);
+            border: 6px solid var(--accent-gold);
+            position: relative;
+            backdrop-filter: blur(10px);
         }
 
-        .hidden {
-            display: none !important;
-        }
+        .hidden { display: none !important; }
 
         h1 {
-            font-size: 2.5rem;
-            color: var(--accent-yellow);
-            text-shadow: 2px 2px 0px #000;
-            margin-bottom: 10px;
+            font-size: clamp(1.8rem, 5vw, 2.8rem);
+            color: var(--accent-gold);
+            text-shadow: 3px 3px 0px #000, 0 0 15px rgba(251, 191, 36, 0.5);
+            margin-bottom: 6px;
         }
 
         .intro-box {
-            background: #0f172a;
-            padding: 20px;
-            border-radius: 15px;
+            background: rgba(15, 23, 42, 0.8);
+            padding: 16px;
+            border-radius: 18px;
             text-align: left;
-            margin: 20px 0;
-            border-left: 5px solid var(--player-blue);
+            margin: 16px 0;
+            border-left: 6px solid var(--player-blue);
             line-height: 1.6;
+            font-size: clamp(0.95rem, 2.8vw, 1.1rem);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
         }
 
         .start-btn {
-            padding: 15px 45px;
-            background: var(--accent-yellow);
+            padding: 14px 40px;
+            background: linear-gradient(185deg, #fde047 0%, var(--accent-gold) 100%);
             color: #000;
-            font-size: 1.4rem;
-            font-weight: bold;
+            font-size: clamp(1.1rem, 3.5vw, 1.4rem);
+            font-weight: 900;
             border: none;
             border-radius: 50px;
             cursor: pointer;
-            box-shadow: 0 6px 0 #b45309;
-            transition: all 0.1s;
+            box-shadow: 0 6px 0 #b45309, 0 10px 20px rgba(245, 158, 11, 0.4);
+            transition: all 0.15s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+            display: inline-block;
         }
 
         .start-btn:active {
@@ -113,43 +134,132 @@
             box-shadow: 0 2px 0 #b45309;
         }
 
-        /* --- VISUAL RACING TRACK --- */
+        /* --- DASHBOARD HUD --- */
+        .hud-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .hud-card {
+            background: #0f172a;
+            border: 2px solid #334155;
+            padding: 8px 12px;
+            border-radius: 14px;
+            font-weight: 800;
+            font-size: clamp(0.75rem, 2.5vw, 0.95rem);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+        }
+
+        /* --- ANIMATED 3D-STYLE RACING TRACK --- */
         .race-track {
-            background: var(--track-gray);
-            padding: 15px;
-            border-radius: 15px;
-            margin: 20px 0;
-            border: 4px dashed #64748b;
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+            padding: 15px 10px;
+            border-radius: 20px;
+            margin: 12px 0;
+            border: 4px solid #475569;
             position: relative;
             overflow: hidden;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8);
+        }
+
+        .track-decor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            display: flex;
+            justify-content: space-around;
+            opacity: 0.15;
+            font-size: 1.5rem;
         }
 
         .lane {
             display: flex;
             align-items: center;
-            height: 50px;
+            height: 60px;
             position: relative;
-            border-bottom: 2px dashed #475569;
+            border-bottom: 3px dashed var(--lane-yellow);
         }
 
         .lane:last-child {
             border-bottom: none;
         }
 
-        .car {
-            font-size: 2rem;
+        .lane-label {
             position: absolute;
-            left: 0%;
-            transition: left 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            margin-left: 10px;
+            left: 8px;
+            top: 4px;
+            color: #94a3b8;
+            font-size: 0.68rem;
+            font-weight: 900;
+            letter-spacing: 1px;
+            z-index: 2;
+            background: rgba(15, 23, 42, 0.7);
+            padding: 2px 6px;
+            border-radius: 6px;
+        }
+
+        .car-wrapper {
+            position: absolute;
+            left: 5%;
+            transition: left 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.4s ease;
+            z-index: 5;
+            display: flex;
+            align-items: center;
+        }
+
+        .car {
+            font-size: clamp(2rem, 6vw, 2.6rem);
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5));
+            transition: transform 0.3s ease;
+        }
+
+        .car-wrapper.boost .car {
+            animation: nitroShake 0.15s infinite alternate;
+        }
+
+        .car-wrapper.reverse .car {
+            transform: scaleX(-1);
+            filter: drop-shadow(0 0 10px #ef4444);
+        }
+
+        @keyframes nitroShake {
+            0% { transform: translateY(0) scale(1.1); }
+            100% { transform: translateY(-3px) scale(1.15); }
+        }
+
+        .exhaust-flame {
+            position: absolute;
+            right: 100%;
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .car-wrapper.boost .exhaust-flame {
+            opacity: 1;
+            animation: flameFlicker 0.1s infinite alternate;
+        }
+
+        @keyframes flameFlicker {
+            from { opacity: 0.7; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1.3); }
         }
 
         .finish-line {
             position: absolute;
-            right: 40px;
+            right: 35px;
             top: 0;
             bottom: 0;
-            width: 15px;
+            width: 20px;
             background: repeating-linear-gradient(
                 0deg,
                 #fff,
@@ -157,175 +267,289 @@
                 #000 10px,
                 #000 20px
             );
+            border-left: 2px solid var(--accent-gold);
+            border-right: 2px solid var(--accent-gold);
+            z-index: 3;
+            box-shadow: 0 0 10px rgba(255,255,255,0.5);
         }
 
-        /* --- QUIZ ELEMENT DESIGN --- */
-        .quiz-box {
-            background: #0f172a;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
+        /* --- POPPING QUESTION MODAL --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            background: rgba(15, 23, 42, 0.75);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 15px;
+            backdrop-filter: blur(6px);
+        }
+
+        .quiz-card-pop {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            border: 4px solid var(--purple-arcade);
+            border-radius: 24px;
+            padding: clamp(16px, 4vw, 24px);
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.8), 0 0 30px rgba(139, 92, 246, 0.4);
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5) translateY(50px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .question-badge {
+            display: inline-block;
+            background: var(--purple-arcade);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            text-transform: uppercase;
         }
 
         .question-text {
-            font-size: 1.3rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #cbd5e1;
+            font-size: clamp(1.05rem, 3.2vw, 1.3rem);
+            font-weight: 800;
+            margin-bottom: 18px;
+            color: #f8fafc;
+            line-height: 1.4;
         }
 
         .options-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 10px;
         }
 
         .option-btn {
             background: #334155;
             color: white;
             border: 3px solid #475569;
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 1.1rem;
-            font-weight: bold;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: clamp(0.9rem, 2.7vw, 1.05rem);
+            font-weight: 700;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
+            transition: all 0.2s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 52px;
         }
 
         .option-btn:hover {
             background: #475569;
-            border-color: var(--accent-yellow);
-            transform: scale(1.02);
+            border-color: var(--accent-gold);
+            transform: translateY(-2px);
         }
 
         .option-btn.correct {
-            background: #10b981 !important;
-            border-color: #059669 !important;
+            background: #065f46 !important;
+            border-color: var(--success-green) !important;
+            color: #a7f3d0 !important;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.6);
         }
 
         .option-btn.wrong {
-            background: #ef4444 !important;
-            border-color: #dc2626 !important;
+            background: #881337 !important;
+            border-color: var(--rival-red) !important;
+            color: #fecdd3 !important;
+            box-shadow: 0 0 15px rgba(244, 63, 94, 0.6);
         }
 
+        /* --- TICKER / FEEDBACK BAR --- */
         .feedback-bar {
-            margin-top: 15px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            min-height: 30px;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
+            font-weight: 800;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #0f172a;
+            border: 2px solid #334155;
+            transition: all 0.3s ease;
         }
 
-        /* --- RESULTS --- */
+        /* --- RESULTS SCREEN --- */
         .trophy {
-            font-size: 4rem;
-            margin-bottom: 15px;
-            animation: bounce 1s infinite alternate;
+            font-size: clamp(3.5rem, 10vw, 5rem);
+            margin-bottom: 10px;
+            animation: bounce 1.2s infinite alternate ease-in-out;
         }
 
         @keyframes bounce {
             from { transform: translateY(0); }
-            to { transform: translateY(-10px); }
-        }
-
-        @media (max-width: 550px) {
-            .options-grid {
-                grid-template-columns: 1fr;
-            }
+            to { transform: translateY(-15px); }
         }
     </style>
 </head>
 <body>
 
-    <!-- --- STAGE 1: EXCLUSIVE 5-SECOND LOGO SPLASH SCREEN --- -->
+    <!-- STAGE 1: EXCLUSIVE 5-SECOND LOGO SPLASH SCREEN -->
     <div id="splash">
-        <img src="assets/innovine-logo.png" alt="🏎️" onerror="this.src='https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=150'">
+        <img src="assets/innovine-logo.png" alt="🏎️" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'240\' height=\'100\' viewBox=\'0 0 240 100\'><rect width=\'240\' height=\'100\' rx=\'20\' fill=\'%238b5cf6\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'20\' font-weight=\'bold\' fill=\'%23ffffff\'>SPEED RACERS</text></svg>';">
         <h2>Loading Internet Speed Racers...</h2>
     </div>
 
-    <!-- --- STAGE 2: MAIN GAME CARD --- -->
+    <!-- STAGE 2: MAIN GAME CONTAINER -->
     <div class="game-container hidden" id="mainframe">
         
         <!-- INTRO SCREEN -->
         <div id="introPanel">
-            <h1>🌐 Internet Speed Racers</h1>
-            <p style="font-size: 1.2rem; color: #94a3b8;">Learn about the Internet and win the grand race!</p>
+            <h1>🏎️ Internet Speed Racers</h1>
+            <p style="font-size: clamp(0.95rem, 3vw, 1.15rem); color: #cbd5e1; font-weight:700;">Grade 3 • Intro to Internet & Online Safety</p>
             
             <div class="intro-box">
-                <p><strong>🏁 Race Directions:</strong></p>
-                <p>• You are the <strong>Blue Car (🚙)</strong>. The rival computer is the <strong>Red Car (🚗)</strong>.</p>
-                <p>• Answer questions about how the Internet works to fuel your engine and move forward.</p>
-                <p>• Get the answers right to reach the finish line first and win the Championship!</p>
+                <p><strong>🏁 Grand Prix Instructions:</strong></p>
+                <p>• You drive the <strong>Blue Turbo Car (🚙)</strong> against the rival <strong>Red Racer (🏎️)</strong>!</p>
+                <p>• Correct answers activate your <strong>Nitro Boost 🚀</strong> to zoom forward!</p>
+                <p>• Incorrect answers trigger <strong>Braking Screeches 🛑</strong> causing your car to slide backward while the rival speeds ahead!</p>
             </div>
             <button class="start-btn" onclick="startRaceGame()">Start Engine ➜</button>
         </div>
 
         <!-- PLAYING FIELD SCREEN -->
         <div id="playPanel" class="hidden">
-            
+            <!-- HUD BAR -->
+            <div class="hud-bar">
+                <div class="hud-card">⭐ Checkpoint: <span id="qHUD">1 / 5</span></div>
+                <div class="hud-card" style="color:var(--player-blue);">🏎️ Distance: <span id="distHUD">5%</span></div>
+                <div class="hud-card" style="color:var(--accent-gold);">🏆 Score: <span id="scoreHUD">0</span></div>
+            </div>
+
             <!-- LIVE ANIMATED TRACK -->
             <div class="race-track">
+                <div class="track-decor">🌴 🏁 🌴 🏁 🌴</div>
                 <div class="finish-line"></div>
                 
                 <div class="lane">
-                    <span style="position:absolute; left:5px; color:#94a3b8; font-size:0.8rem;">YOU</span>
-                    <div class="car" id="playerCar">🚙</div>
+                    <span class="lane-label">YOU (PLAYER)</span>
+                    <div class="car-wrapper" id="playerCarWrap">
+                        <span class="exhaust-flame">🔥</span>
+                        <div class="car" id="playerCar">🚙</div>
+                    </div>
                 </div>
                 <div class="lane">
-                    <span style="position:absolute; left:5px; color:#94a3b8; font-size:0.8rem;">RIVAL</span>
-                    <div class="car" id="rivalCar">🚗</div>
+                    <span class="lane-label">RIVAL COMPUTER</span>
+                    <div class="car-wrapper" id="rivalCarWrap">
+                        <span class="exhaust-flame">🔥</span>
+                        <div class="car" id="rivalCar">🏎️</div>
+                    </div>
                 </div>
             </div>
 
-            <!-- QUEST ZONE -->
-            <div class="quiz-box">
+            <div class="feedback-bar" id="feedbackText">Ready... Set... Go! Hit the Gas!</div>
+        </div>
+
+        <!-- POPPING QUESTION MODAL -->
+        <div class="modal-overlay hidden" id="quizModal">
+            <div class="quiz-card-pop">
+                <div class="question-badge">Checkpoint Challenge</div>
                 <div class="question-text" id="questionField">Loading challenge text...</div>
                 <div class="options-grid" id="choicesField"></div>
             </div>
-            
-            <div class="feedback-bar" id="feedbackText">Ready... Set... Go!</div>
         </div>
 
         <!-- PODIUM REPORT SCREEN -->
         <div id="reportPanel" class="hidden">
             <div class="trophy" id="resultEmoji">🏆</div>
             <h1 id="resultTitle">You Won!</h1>
-            <p id="resultDesc" style="font-size: 1.2rem; color: #cbd5e1; margin-bottom: 30px; line-height: 1.6;"></p>
+            <p id="resultDesc" style="font-size: clamp(0.95rem, 3vw, 1.15rem); color: #cbd5e1; margin-bottom: 24px; line-height: 1.6;"></p>
             <button class="start-btn" onclick="location.reload()">Race Again 🔄</button>
         </div>
     </div>
 
-    <!-- AUDIO FILES MAPPED EXACTLY TO GUIDELINES -->
-    <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
-    <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
-
     <script>
-        /* Keep logo screen running for exactly 5000ms */
+        /* Web Audio API Synthesizer for Arcade Sounds */
+        class SoundEngine {
+            constructor() { this.ctx = null; }
+            init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+
+            playNitro() {
+                this.init(); if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(600, now + 0.4);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(now); osc.stop(now + 0.4);
+            }
+
+            playBrake() {
+                this.init(); if (!this.ctx) return;
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(500, now);
+                osc.frequency.linearRampToValueAtTime(120, now + 0.35);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(now); osc.stop(now + 0.35);
+            }
+        }
+
+        const soundEngine = new SoundEngine();
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.rate = 0.95;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        /* Splash Screen 5-Second Timeout */
         setTimeout(() => {
-            document.getElementById("splash").style.display = "none";
-            document.getElementById("mainframe").classList.remove("hidden");
+            document.getElementById("splash").style.opacity = "0";
+            setTimeout(() => {
+                document.getElementById("splash").style.display = "none";
+                document.getElementById("mainframe").classList.remove("hidden");
+            }, 500);
         }, 5000);
 
         /* Grade 3: Introduction to Internet Question Database */
         const internetQuizDeck = [
             {
                 question: "What is the Internet?",
-                options: ["A network connecting computers worldwide", "A type of video game console", "A special computer screen", "A machine that cleans rooms"],
+                options: ["A network connecting computers worldwide", "A video game console", "A special computer screen", "A machine that cleans rooms"],
                 answer: "A network connecting computers worldwide"
             },
             {
                 question: "Which tool do you open to visit web pages like Google?",
-                options: ["A Web Browser (like Chrome)", "A Calculator", "MS Paint", "The Power Button"],
+                options: ["A Web Browser (like Chrome)", "A Calculator", "MS Paint", "The Power Switch"],
                 answer: "A Web Browser (like Chrome)"
             },
             {
                 question: "What does 'Wi-Fi' do?",
-                options: ["Connects devices to the internet without wires", "Cleans up computer dust", "Makes games load instantly without electricity", "Saves battery power"],
-                answer: "Connects devices to the internet without wires"
+                options: ["Connects devices wirelessly to the internet", "Cleans computer dust", "Loads games without electricity", "Saves battery power"],
+                answer: "Connects devices wirelessly to the internet"
             },
             {
-                question: "What should you do if an unknown link pops up while browsing?",
-                options: ["Ask a parent or teacher first", "Click it immediately to see what it is", "Send it to all your friends", "Type your home address into it"],
+                question: "What should you do if an unknown link pops up online?",
+                options: ["Ask a parent or teacher first", "Click it immediately", "Send it to all friends", "Type your home address"],
                 answer: "Ask a parent or teacher first"
             },
             {
@@ -337,42 +561,51 @@
 
         let questions = [];
         let itemIndex = 0;
-        let playerProgress = 0; // percentage position 0-80
-        let rivalProgress = 0;
+        let playerProgress = 5; // percentage 5% to 75%
+        let rivalProgress = 5;
+        let score = 0;
         let turnLocked = false;
 
         function startRaceGame() {
             questions = [...internetQuizDeck].sort(() => Math.random() - 0.5);
             itemIndex = 0;
-            playerProgress = 0;
-            rivalProgress = 0;
+            playerProgress = 5;
+            rivalProgress = 5;
+            score = 0;
             turnLocked = false;
 
             document.getElementById("introPanel").classList.add("hidden");
             document.getElementById("playPanel").classList.remove("hidden");
             
-            updateCarPositions();
-            loadNextTrackQuestion();
+            updateTrackHUD();
+            setTimeout(triggerCheckpointModal, 1000);
         }
 
-        function loadNextTrackQuestion() {
+        function triggerCheckpointModal() {
+            if (itemIndex >= questions.length) {
+                finishChampionshipRace();
+                return;
+            }
+
             turnLocked = false;
             const currentItem = questions[itemIndex];
             
+            document.getElementById("qHUD").innerText = `${itemIndex + 1} / ${questions.length}`;
             document.getElementById("questionField").innerText = currentItem.question;
-            document.getElementById("feedbackText").style.color = "var(--text-light)";
-            document.getElementById("feedbackText").innerText = "Keep focus! Fuel your racing car.";
 
             const grid = document.getElementById("choicesField");
             grid.innerHTML = "";
 
-            currentItem.options.forEach(opt => {
+            currentItem.options.forEach((opt, idx) => {
                 const btn = document.createElement("button");
                 btn.className = "option-btn";
-                btn.innerText = opt;
+                btn.innerHTML = `<span style="color:var(--accent-gold); font-weight:900;">${String.fromCharCode(65 + idx)}.</span> ${opt}`;
                 btn.onclick = () => submitRaceChoice(opt, btn);
                 grid.appendChild(btn);
             });
+
+            document.getElementById("quizModal").classList.remove("hidden");
+            speakText(currentItem.question);
         }
 
         function submitRaceChoice(pickedValue, buttonNode) {
@@ -380,51 +613,71 @@
             turnLocked = true;
 
             const currentItem = questions[itemIndex];
+            const pWrap = document.getElementById("playerCarWrap");
+            const rWrap = document.getElementById("rivalCarWrap");
             const infoText = document.getElementById("feedbackText");
 
             if (pickedValue === currentItem.answer) {
-                // Player goes forward by 16% increments
-                playerProgress += 17;
+                // CORRECT: Player moves FORWARD (+15%)
+                score += 200;
+                playerProgress = Math.min(playerProgress + 15, 75);
                 buttonNode.classList.add("correct");
-                infoText.style.color = "#10b981";
-                infoText.innerText = "🚀 Great Answer! Nitro Boost activated!";
                 
-                try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
-            } else {
-                // Rival moves forward instead
-                rivalProgress += 17;
-                buttonNode.classList.add("wrong");
-                infoText.style.color = "var(--rival-red)";
-                infoText.innerHTML = `❌ Wrong choice! Rival gained ground.`;
-                
-                try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
+                pWrap.classList.add("boost");
+                pWrap.classList.remove("reverse");
+                soundEngine.playNitro();
 
-                // Highlight correct option instantly
-                const btns = document.querySelectorAll(".option-btn");
-                btns.forEach(b => {
-                    if (b.innerText === currentItem.answer) b.classList.add("correct");
+                infoText.style.color = "#a7f3d0";
+                infoText.innerText = "🚀 NITRO BOOST! Your car zoomed forward!";
+                speakText("Nitro Boost! Great job!");
+
+            } else {
+                // INCORRECT: Player slides BACKWARD (-8%), Rival moves FORWARD (+15%)
+                playerProgress = Math.max(playerProgress - 8, 5);
+                rivalProgress = Math.min(rivalProgress + 15, 75);
+                buttonNode.classList.add("wrong");
+
+                pWrap.classList.add("reverse");
+                pWrap.classList.remove("boost");
+                rWrap.classList.add("boost");
+                soundEngine.playBrake();
+
+                infoText.style.color = "#fecdd3";
+                infoText.innerText = "🛑 BRAKES SCREECH! Your car slipped backward!";
+                speakText("Brake screech! Slipping backward.");
+
+                // Highlight correct answer
+                document.querySelectorAll(".option-btn").forEach(b => {
+                    if (b.innerText.includes(currentItem.answer)) b.classList.add("correct");
                 });
             }
 
-            updateCarPositions();
-            itemIndex++;
+            updateTrackHUD();
 
             setTimeout(() => {
-                if (itemIndex < questions.length && playerProgress < 80 && rivalProgress < 80) {
-                    loadNextTrackQuestion();
+                document.getElementById("quizModal").classList.add("hidden");
+                pWrap.classList.remove("boost", "reverse");
+                rWrap.classList.remove("boost");
+                
+                itemIndex++;
+                if (itemIndex < questions.length && playerProgress < 75 && rivalProgress < 75) {
+                    setTimeout(triggerCheckpointModal, 1200);
                 } else {
                     finishChampionshipRace();
                 }
-            }, 3000);
+            }, 2000);
         }
 
-        function updateCarPositions() {
-            document.getElementById("playerCar").style.left = playerProgress + "%";
-            document.getElementById("rivalCar").style.left = rivalProgress + "%";
+        function updateTrackHUD() {
+            document.getElementById("playerCarWrap").style.left = playerProgress + "%";
+            document.getElementById("rivalCarWrap").style.left = rivalProgress + "%";
+            document.getElementById("distHUD").innerText = playerProgress + "%";
+            document.getElementById("scoreHUD").innerText = score;
         }
 
         function finishChampionshipRace() {
             document.getElementById("playPanel").classList.add("hidden");
+            document.getElementById("quizModal").classList.add("hidden");
             document.getElementById("reportPanel").classList.remove("hidden");
 
             const title = document.getElementById("resultTitle");
@@ -432,14 +685,19 @@
             const emoji = document.getElementById("resultEmoji");
 
             if (playerProgress >= rivalProgress) {
-                title.innerText = "🥇 Champion Finish!";
+                title.innerText = "🥇 Grand Prix Winner!";
                 emoji.innerText = "🏆";
-                desc.innerText = "Fantastic driving! You mastered basic internet networks, safety laws, and browsers to sweep the gold cup!";
-                try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+                desc.innerText = "Spectacular driving! You mastered internet safety and browsers to claim the Champion Gold Trophy!";
+                speakText("Grand Prix Winner! You claimed the Gold Trophy!");
+                
+                if (window.confetti) {
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                }
             } else {
-                title.innerText = "🥈 Second Place Finish!";
-                emoji.innerText = "🏁";
-                desc.innerText = "The rival car crossed the finish line first this time! Refresh your online web facts and hit the gas pedal again.";
+                title.innerText = "🥈 Runner-Up Finish!";
+                emoji.innerText = "🏎️";
+                desc.innerText = "Nice attempt! The rival car passed the finish line first this time. Practice your web safety facts and try again!";
+                speakText("Runner up finish! Practice your web safety facts and try again.");
             }
         }
     </script>

@@ -125,7 +125,7 @@
             letter-spacing: 1px;
             width: 100%;
             max-width: 320px;
-            margin: 0 auto;
+            margin: 10px auto 0;
             display: inline-block;
         }
 
@@ -137,22 +137,22 @@
         /* --- DASHBOARD HUD --- */
         .hud-bar {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
             margin-bottom: 12px;
         }
 
         .hud-card {
             background: #0f172a;
             border: 2px solid #334155;
-            padding: 8px 12px;
+            padding: 8px 6px;
             border-radius: 14px;
             font-weight: 800;
-            font-size: clamp(0.75rem, 2.5vw, 0.95rem);
+            font-size: clamp(0.7rem, 2.2vw, 0.9rem);
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 4px;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
         }
 
@@ -296,7 +296,7 @@
             border-radius: 24px;
             padding: clamp(16px, 4vw, 24px);
             width: 100%;
-            max-width: 600px;
+            max-width: 620px;
             box-shadow: 0 25px 50px rgba(0,0,0,0.8), 0 0 30px rgba(139, 92, 246, 0.4);
             animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             text-align: center;
@@ -320,7 +320,7 @@
         }
 
         .question-text {
-            font-size: clamp(1.05rem, 3.2vw, 1.3rem);
+            font-size: clamp(1.05rem, 3.2vw, 1.25rem);
             font-weight: 800;
             margin-bottom: 18px;
             color: #f8fafc;
@@ -339,7 +339,7 @@
             border: 3px solid #475569;
             padding: 12px 16px;
             border-radius: 16px;
-            font-size: clamp(0.9rem, 2.7vw, 1.05rem);
+            font-size: clamp(0.88rem, 2.6vw, 1.02rem);
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -401,9 +401,13 @@
 </head>
 <body>
 
+    <!-- AUDIO ASSETS -->
+    <audio id="audioCorrect" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
+
     <!-- STAGE 1: EXCLUSIVE 5-SECOND LOGO SPLASH SCREEN -->
     <div id="splash">
-        <img src="assets/innovine-logo.png" alt="🏎️" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'240\' height=\'100\' viewBox=\'0 0 240 100\'><rect width=\'240\' height=\'100\' rx=\'20\' fill=\'%238b5cf6\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'20\' font-weight=\'bold\' fill=\'%23ffffff\'>SPEED RACERS</text></svg>';">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'240\' height=\'100\' viewBox=\'0 0 240 100\'><rect width=\'240\' height=\'100\' rx=\'20\' fill=\'%238b5cf6\'/><text x=\'50%\' y=\'55%\' dominant-baseline=\'middle\' text-anchor=\'middle\' font-size=\'20\' font-weight=\'bold\' fill=\'%23ffffff\'>SPEED RACERS</text></svg>';">
         <h2>Loading Internet Speed Racers...</h2>
     </div>
 
@@ -413,24 +417,25 @@
         <!-- INTRO SCREEN -->
         <div id="introPanel">
             <h1>🏎️ Internet Speed Racers</h1>
-            <p style="font-size: clamp(0.95rem, 3vw, 1.15rem); color: #cbd5e1; font-weight:700;">Grade 3 • Intro to Internet & Online Safety</p>
+            <p style="font-size: clamp(0.95rem, 3vw, 1.15rem); color: #cbd5e1; font-weight:700;">Grade 3 • Interactive Internet & Online Safety Arcade</p>
             
             <div class="intro-box">
-                <p><strong>🏁 Grand Prix Instructions:</strong></p>
-                <p>• You drive the <strong>Blue Turbo Car (🚙)</strong> against the rival <strong>Red Racer (🏎️)</strong>!</p>
-                <p>• Correct answers activate your <strong>Nitro Boost 🚀</strong> to zoom forward!</p>
-                <p>• Incorrect answers trigger <strong>Braking Screeches 🛑</strong> causing your car to slide backward while the rival speeds ahead!</p>
+                <p><strong>🏁 Race Rules & Levels:</strong></p>
+                <p>• Drive your <strong>Blue Turbo Car (🚙)</strong> to victory through 3 unique levels!</p>
+                <p>• Solve practical internet challenges to trigger <strong>Nitro Boosts 🚀</strong>.</p>
+                <p>• Incorrect answers trigger <strong>Brakes 🛑</strong>, moving you backward while your rival speeds ahead!</p>
             </div>
-            <button class="start-btn" onclick="startRaceGame()">Start Engine ➜</button>
+            <button class="start-btn" onclick="startRaceGame()">Start Race ➜</button>
         </div>
 
         <!-- PLAYING FIELD SCREEN -->
         <div id="playPanel" class="hidden">
             <!-- HUD BAR -->
             <div class="hud-bar">
-                <div class="hud-card">⭐ Checkpoint: <span id="qHUD">1 / 5</span></div>
-                <div class="hud-card" style="color:var(--player-blue);">🏎️ Distance: <span id="distHUD">5%</span></div>
-                <div class="hud-card" style="color:var(--accent-gold);">🏆 Score: <span id="scoreHUD">0</span></div>
+                <div class="hud-card" style="color:var(--purple-arcade);">🎮 <span id="levelHUD">Lvl 1</span></div>
+                <div class="hud-card">⭐ <span id="qHUD">1 / 4</span></div>
+                <div class="hud-card" style="color:var(--player-blue);">🏎️ <span id="distHUD">5%</span></div>
+                <div class="hud-card" style="color:var(--accent-gold);">🏆 <span id="scoreHUD">0</span></div>
             </div>
 
             <!-- LIVE ANIMATED TRACK -->
@@ -460,7 +465,7 @@
         <!-- POPPING QUESTION MODAL -->
         <div class="modal-overlay hidden" id="quizModal">
             <div class="quiz-card-pop">
-                <div class="question-badge">Checkpoint Challenge</div>
+                <div class="question-badge" id="levelBadge">Level 1 Activity</div>
                 <div class="question-text" id="questionField">Loading challenge text...</div>
                 <div class="options-grid" id="choicesField"></div>
             </div>
@@ -470,115 +475,148 @@
         <div id="reportPanel" class="hidden">
             <div class="trophy" id="resultEmoji">🏆</div>
             <h1 id="resultTitle">You Won!</h1>
-            <p id="resultDesc" style="font-size: clamp(0.95rem, 3vw, 1.15rem); color: #cbd5e1; margin-bottom: 24px; line-height: 1.6;"></p>
-            <button class="start-btn" onclick="location.reload()">Race Again 🔄</button>
+            <p id="resultDesc" style="font-size: clamp(0.95rem, 3vw, 1.15rem); color: #cbd5e1; margin-bottom: 20px; line-height: 1.6;"></p>
+            <button class="start-btn" id="nextLevelBtn" onclick="nextLevelAction()">Next Level 🚀</button>
         </div>
     </div>
 
     <script>
-        /* Web Audio API Synthesizer for Arcade Sounds */
-        class SoundEngine {
-            constructor() { this.ctx = null; }
-            init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
-
-            playNitro() {
-                this.init(); if (!this.ctx) return;
-                const now = this.ctx.currentTime;
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(150, now);
-                osc.frequency.exponentialRampToValueAtTime(600, now + 0.4);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
-                osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(now); osc.stop(now + 0.4);
-            }
-
-            playBrake() {
-                this.init(); if (!this.ctx) return;
-                const now = this.ctx.currentTime;
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(500, now);
-                osc.frequency.linearRampToValueAtTime(120, now + 0.35);
-                gain.gain.setValueAtTime(0.3, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-                osc.connect(gain); gain.connect(this.ctx.destination);
-                osc.start(now); osc.stop(now + 0.35);
-            }
-        }
-
-        const soundEngine = new SoundEngine();
-
-        function speakText(text) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate = 0.95;
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-
-        /* Splash Screen 5-Second Timeout */
+        /* Hide Splash Screen after 5 seconds */
         setTimeout(() => {
-            document.getElementById("splash").style.opacity = "0";
+            const splash = document.getElementById("splash");
+            splash.style.opacity = "0";
             setTimeout(() => {
-                document.getElementById("splash").style.display = "none";
+                splash.style.display = "none";
                 document.getElementById("mainframe").classList.remove("hidden");
             }, 500);
         }, 5000);
 
-        /* Grade 3: Introduction to Internet Question Database */
-        const internetQuizDeck = [
+        /* Multi-Level Activity-Based Question Database */
+        const levelsData = [
             {
-                question: "What is the Internet?",
-                options: ["A network connecting computers worldwide", "A video game console", "A special computer screen", "A machine that cleans rooms"],
-                answer: "A network connecting computers worldwide"
+                level: 1,
+                name: "Level 1: Novice Track",
+                questions: [
+                    {
+                        question: "Activity: Look at these website addresses. Which one is safe and secure for browsing?",
+                        options: ["https://www.schoolsite.com 🔒", "http://free-toys-now.unknown.net", "http://123-click-here-win.com", "http://secret-passwords-get.biz"],
+                        answer: "https://www.schoolsite.com 🔒"
+                    },
+                    {
+                        question: "Activity: Your laptop lost connection while searching for homework notes. What should you check first?",
+                        options: ["Check if Wi-Fi is connected 📶", "Buy a brand new laptop", "Turn off the house lights", "Paint the computer monitor"],
+                        answer: "Check if Wi-Fi is connected 📶"
+                    },
+                    {
+                        question: "Activity: You want to visit a website you use every day. Where do you type its full web address?",
+                        options: ["In the Address Bar at the top 🌐", "In the computer recycle bin", "Inside Microsoft Paint", "In the calculator screen"],
+                        answer: "In the Address Bar at the top 🌐"
+                    },
+                    {
+                        question: "Activity: A bright button pops up saying: 'YOU WON A FREE CAR! CLICK HERE!'. What is the safest action?",
+                        options: ["Close it and tell an adult 🛑", "Click it 10 times fast", "Enter your home address", "Send it to all your classmates"],
+                        answer: "Close it and tell an adult 🛑"
+                    }
+                ]
             },
             {
-                question: "Which tool do you open to visit web pages like Google?",
-                options: ["A Web Browser (like Chrome)", "A Calculator", "MS Paint", "The Power Switch"],
-                answer: "A Web Browser (like Chrome)"
+                level: 2,
+                name: "Level 2: Pro Circuit",
+                questions: [
+                    {
+                        question: "Activity: Help Alex build a strong password for a school account. Which password is the strongest?",
+                        options: ["Tr@in$2026! 🔐", "123456", "password", "alex123"],
+                        answer: "Tr@in$2026! 🔐"
+                    },
+                    {
+                        question: "Activity: You are writing an online message to a school classmate. Which message demonstrates good Netiquette?",
+                        options: ["'Hi Rahul, can you share page 12 homework?' 😊", "'GIVE ME ANSWERS NOW!!!'", "'You are terrible at games!'", "'Secret code 999111000!'"],
+                        answer: "'Hi Rahul, can you share page 12 homework?' 😊"
+                    },
+                    {
+                        question: "Activity: Someone you do NOT know sends a chat request online asking for your real school name. What do you do?",
+                        options: ["Ignore & inform a teacher/parent 🛡️", "Tell them your full address", "Send a photo of your school ID", "Meet them at the park"],
+                        answer: "Ignore & inform a teacher/parent 🛡️"
+                    },
+                    {
+                        question: "Activity: A webpage is loading very slowly with missing pictures. What action should you try first?",
+                        options: ["Click the Refresh / Reload button 🔄", "Smash the keyboard", "Delete all your files", "Unplug the monitor"],
+                        answer: "Click the Refresh / Reload button 🔄"
+                    }
+                ]
             },
             {
-                question: "What does 'Wi-Fi' do?",
-                options: ["Connects devices wirelessly to the internet", "Cleans computer dust", "Loads games without electricity", "Saves battery power"],
-                answer: "Connects devices wirelessly to the internet"
-            },
-            {
-                question: "What should you do if an unknown link pops up online?",
-                options: ["Ask a parent or teacher first", "Click it immediately", "Send it to all friends", "Type your home address"],
-                answer: "Ask a parent or teacher first"
-            },
-            {
-                question: "What does 'WWW' stand for in a website address?",
-                options: ["World Wide Web", "World Wide Windows", "Word Wave Website", "Working Web Wire"],
-                answer: "World Wide Web"
+                level: 3,
+                name: "Level 3: Grand Prix Championship",
+                questions: [
+                    {
+                        question: "Activity: You find a great picture online for a school project. What is the correct way to use it?",
+                        options: ["Give credit to the owner/source 📝", "Claim you drew it yourself", "Sell it to your friends for money", "Delete the website original source"],
+                        answer: "Give credit to the owner/source 📝"
+                    },
+                    {
+                        question: "Activity: You receive an email from 'Prize-Winner-Jackpot' asking for your parent's card details. What type of attack is this?",
+                        options: ["A Phishing Scam 🎣", "A helpful software update", "A safe message from school", "A computer speed booster"],
+                        answer: "A Phishing Scam 🎣"
+                    },
+                    {
+                        question: "Activity: You finished using a shared computer in the school lab. What must you do before leaving?",
+                        options: ["Log out of your account completely 🚪", "Leave all accounts signed in", "Change the desktop wallpaper to a prank", "Hide the mouse"],
+                        answer: "Log out of your account completely 🚪"
+                    },
+                    {
+                        question: "Activity: What is your 'Digital Footprint'?",
+                        options: ["The mark or record left by your online activity 👣", "Dust on your keyboard keys", "A plastic pad for your mouse", "The sound your computer speaker makes"],
+                        answer: "The mark or record left by your online activity 👣"
+                    }
+                ]
             }
         ];
 
+        let currentLevelIdx = 0;
         let questions = [];
         let itemIndex = 0;
-        let playerProgress = 5; // percentage 5% to 75%
+        let playerProgress = 5;
         let rivalProgress = 5;
         let score = 0;
         let turnLocked = false;
 
+        function playSound(type) {
+            try {
+                if (type === 'correct') {
+                    const audio = document.getElementById("audioCorrect");
+                    audio.currentTime = 0;
+                    audio.play().catch(e => console.log("Audio play blocked:", e));
+                } else if (type === 'wrong') {
+                    const audio = document.getElementById("audioWrong");
+                    audio.currentTime = 0;
+                    audio.play().catch(e => console.log("Audio play blocked:", e));
+                }
+            } catch (e) {
+                console.log("Audio file playback error:", e);
+            }
+        }
+
         function startRaceGame() {
-            questions = [...internetQuizDeck].sort(() => Math.random() - 0.5);
+            currentLevelIdx = 0;
+            score = 0;
+            loadLevel(currentLevelIdx);
+        }
+
+        function loadLevel(lvlIndex) {
+            const currentLevelData = levelsData[lvlIndex];
+            questions = [...currentLevelData.questions].sort(() => Math.random() - 0.5);
             itemIndex = 0;
             playerProgress = 5;
             rivalProgress = 5;
-            score = 0;
             turnLocked = false;
 
             document.getElementById("introPanel").classList.add("hidden");
+            document.getElementById("reportPanel").classList.add("hidden");
             document.getElementById("playPanel").classList.remove("hidden");
             
             updateTrackHUD();
-            setTimeout(triggerCheckpointModal, 1000);
+            setTimeout(triggerCheckpointModal, 800);
         }
 
         function triggerCheckpointModal() {
@@ -590,6 +628,8 @@
             turnLocked = false;
             const currentItem = questions[itemIndex];
             
+            document.getElementById("levelHUD").innerText = `Lvl ${currentLevelIdx + 1}`;
+            document.getElementById("levelBadge").innerText = levelsData[currentLevelIdx].name;
             document.getElementById("qHUD").innerText = `${itemIndex + 1} / ${questions.length}`;
             document.getElementById("questionField").innerText = currentItem.question;
 
@@ -605,7 +645,6 @@
             });
 
             document.getElementById("quizModal").classList.remove("hidden");
-            speakText(currentItem.question);
         }
 
         function submitRaceChoice(pickedValue, buttonNode) {
@@ -618,35 +657,31 @@
             const infoText = document.getElementById("feedbackText");
 
             if (pickedValue === currentItem.answer) {
-                // CORRECT: Player moves FORWARD (+15%)
-                score += 200;
-                playerProgress = Math.min(playerProgress + 15, 75);
+                // CORRECT ANSWER
+                score += 250;
+                playerProgress = Math.min(playerProgress + 18, 75);
                 buttonNode.classList.add("correct");
                 
                 pWrap.classList.add("boost");
                 pWrap.classList.remove("reverse");
-                soundEngine.playNitro();
+                playSound('correct');
 
                 infoText.style.color = "#a7f3d0";
-                infoText.innerText = "🚀 NITRO BOOST! Your car zoomed forward!";
-                speakText("Nitro Boost! Great job!");
-
+                infoText.innerText = "🚀 NITRO BOOST! Excellent choice!";
             } else {
-                // INCORRECT: Player slides BACKWARD (-8%), Rival moves FORWARD (+15%)
+                // INCORRECT ANSWER
                 playerProgress = Math.max(playerProgress - 8, 5);
-                rivalProgress = Math.min(rivalProgress + 15, 75);
+                rivalProgress = Math.min(rivalProgress + 18, 75);
                 buttonNode.classList.add("wrong");
 
                 pWrap.classList.add("reverse");
                 pWrap.classList.remove("boost");
                 rWrap.classList.add("boost");
-                soundEngine.playBrake();
+                playSound('wrong');
 
                 infoText.style.color = "#fecdd3";
                 infoText.innerText = "🛑 BRAKES SCREECH! Your car slipped backward!";
-                speakText("Brake screech! Slipping backward.");
 
-                // Highlight correct answer
                 document.querySelectorAll(".option-btn").forEach(b => {
                     if (b.innerText.includes(currentItem.answer)) b.classList.add("correct");
                 });
@@ -661,11 +696,11 @@
                 
                 itemIndex++;
                 if (itemIndex < questions.length && playerProgress < 75 && rivalProgress < 75) {
-                    setTimeout(triggerCheckpointModal, 1200);
+                    setTimeout(triggerCheckpointModal, 1000);
                 } else {
                     finishChampionshipRace();
                 }
-            }, 2000);
+            }, 1800);
         }
 
         function updateTrackHUD() {
@@ -683,21 +718,37 @@
             const title = document.getElementById("resultTitle");
             const desc = document.getElementById("resultDesc");
             const emoji = document.getElementById("resultEmoji");
+            const nextBtn = document.getElementById("nextLevelBtn");
 
-            if (playerProgress >= rivalProgress) {
-                title.innerText = "🥇 Grand Prix Winner!";
+            const playerWon = playerProgress >= rivalProgress;
+
+            if (playerWon) {
+                title.innerText = `🥇 ${levelsData[currentLevelIdx].name} Passed!`;
                 emoji.innerText = "🏆";
-                desc.innerText = "Spectacular driving! You mastered internet safety and browsers to claim the Champion Gold Trophy!";
-                speakText("Grand Prix Winner! You claimed the Gold Trophy!");
+                desc.innerText = `Awesome driving! You scored ${score} points and mastered the safety challenges!`;
                 
                 if (window.confetti) {
                     confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
                 }
+
+                if (currentLevelIdx < levelsData.length - 1) {
+                    nextBtn.innerText = "Next Level 🚀";
+                    nextBtn.onclick = () => {
+                        currentLevelIdx++;
+                        loadLevel(currentLevelIdx);
+                    };
+                } else {
+                    title.innerText = "👑 Grand Champion Overall!";
+                    desc.innerText = `Congratulations! You beat all 3 levels with a total score of ${score} points! You are an Internet Safety Superstar!`;
+                    nextBtn.innerText = "Replay Grand Prix 🔄";
+                    nextBtn.onclick = () => location.reload();
+                }
             } else {
-                title.innerText = "🥈 Runner-Up Finish!";
+                title.innerText = "🥈 Rival Won This Race!";
                 emoji.innerText = "🏎️";
-                desc.innerText = "Nice attempt! The rival car passed the finish line first this time. Practice your web safety facts and try again!";
-                speakText("Runner up finish! Practice your web safety facts and try again.");
+                desc.innerText = "The rival car reached the finish line first! Review your digital citizenship skills and try this level again.";
+                nextBtn.innerText = "Retry Level 🔄";
+                nextBtn.onclick = () => loadLevel(currentLevelIdx);
             }
         }
     </script>

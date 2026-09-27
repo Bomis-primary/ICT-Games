@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SBL Circuit Lab! ⚡</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.min.js"></script>
     <style>
         :root {
             --bg-color: #f0f4f8;
@@ -15,6 +16,7 @@
             --accent-yellow: #ffeb3b;
             --wire-color: #37474f;
             --slate-dark: #1e293b;
+            --purple-arcade: #8b5cf6;
         }
 
         * {
@@ -81,7 +83,6 @@
             50% { transform: scale(1.03); opacity: 1; }
         }
 
-        /* Vector Logo Fallback if assets/innovine-logo.png is missing */
         .innovine-fallback {
             display: flex;
             align-items: center;
@@ -129,10 +130,7 @@
             transform: rotate(-25deg);
         }
 
-        .innovine-text-block {
-            text-align: left;
-        }
-
+        .innovine-text-block { text-align: left; }
         .innovine-title {
             font-size: 2.2rem;
             font-weight: 800;
@@ -140,7 +138,6 @@
             letter-spacing: 2px;
             line-height: 1;
         }
-
         .innovine-sub {
             font-size: 1.1rem;
             font-weight: 600;
@@ -180,16 +177,42 @@
             padding: clamp(10px, 2.5vw, 20px);
         }
 
+        /* HEADER & NAVIGATION */
+        .header-bar {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .home-btn {
+            background: var(--purple-arcade);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            cursor: pointer;
+            box-shadow: 0 4px 0 #6d28d9;
+            transition: all 0.2s;
+        }
+
+        .home-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #6d28d9;
+        }
+
         .game-title {
-            font-size: clamp(1.2rem, 4vw, 1.8rem);
+            font-size: clamp(1.1rem, 3.5vw, 1.6rem);
             color: var(--dark-green);
-            margin: 2px 0;
             font-weight: bold;
             text-align: center;
         }
 
         .instructions {
-            font-size: clamp(0.85rem, 2.8vw, 1.15rem);
+            font-size: clamp(0.85rem, 2.8vw, 1.1rem);
             background: #fff3e0;
             padding: 8px 16px;
             border-radius: 12px;
@@ -198,12 +221,13 @@
             font-weight: bold;
             color: #e65100;
             width: 100%;
+            margin-bottom: 8px;
         }
 
         /* Circuit Board Display */
         .circuit-board {
             width: 100%;
-            height: clamp(220px, 38vh, 290px);
+            height: clamp(220px, 36vh, 280px);
             background: var(--light-green);
             border: 4px solid var(--border-green);
             border-radius: 16px;
@@ -342,10 +366,33 @@
             transform: translateX(-50%) scale(1.05);
         }
 
-        #status-message {
-            font-size: clamp(1rem, 3.5vw, 1.4rem);
+        /* Quiz Panel for Advanced Missions */
+        .quiz-panel {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .quiz-btn {
+            background: #334155;
+            color: white;
+            border: 3px solid #475569;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: clamp(0.9rem, 2.8vw, 1.05rem);
             font-weight: bold;
-            min-height: 40px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s;
+        }
+
+        .quiz-btn:hover { background: #475569; border-color: var(--accent-yellow); }
+
+        #status-message {
+            font-size: clamp(1rem, 3.5vw, 1.3rem);
+            font-weight: bold;
+            min-height: 38px;
             text-align: center;
             display: flex;
             align-items: center;
@@ -392,9 +439,15 @@
     <!-- PAGE 2: MAIN GAME WRAPPER -->
     <div id="game-wrapper">
         <div id="game-container">
-            <div class="game-title">⚡ SBL Circuit Lab Challenge! 💡</div>
+            <div class="header-bar">
+                <button class="home-btn" onclick="resetToHome()">🏠 Home</button>
+                <div class="game-title">⚡ SBL Circuit Lab Challenge! 💡</div>
+                <div style="font-weight:bold; color:var(--dark-green);" id="mission-tracker">Mission 1/4</div>
+            </div>
+
             <div class="instructions" id="instruction-text">Mission 1: Click or tap the switch to CLOSE the loop and turn on the light!</div>
 
+            <!-- Interactive Circuit Board -->
             <div class="circuit-board" id="circuitBoardNode">
                 <svg class="wire-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
                     <path d="M 18 45 L 35 45" stroke="#37474f" stroke-width="2.5" fill="none"/>
@@ -422,13 +475,16 @@
                 </div>
             </div>
 
-            <!-- Material Deck -->
-            <div class="item-deck" id="item-deck" style="visibility: hidden;">
+            <!-- Material Deck for Mission 2 -->
+            <div class="item-deck" id="item-deck" style="display: none;">
                 <div class="draggable-item" draggable="true" id="item-metal" data-conductor="true">🔑 Iron Key</div>
                 <div class="draggable-item" draggable="true" id="item-plastic" data-conductor="false">🧸 Plastic Toy</div>
                 <div class="draggable-item" draggable="true" id="item-coin" data-conductor="true">🪙 Copper Coin</div>
                 <div class="draggable-item" draggable="true" id="item-eraser" data-conductor="false">✏️ Rubber Eraser</div>
             </div>
+
+            <!-- Quiz Panel for Missions 3 & 4 -->
+            <div class="quiz-panel hidden" id="quiz-panel"></div>
 
             <div id="status-message"></div>
         </div>
@@ -486,7 +542,9 @@
         const circuitSwitch = document.getElementById('circuit-switch');
         const dropZone = document.getElementById('drop-zone');
         const itemDeck = document.getElementById('item-deck');
+        const quizPanel = document.getElementById('quiz-panel');
         const statusMsg = document.getElementById('status-message');
+        const tracker = document.getElementById('mission-tracker');
 
         const audioClap = document.getElementById('audio-clap');
         const audioCorrect = document.getElementById('audio-correct');
@@ -514,7 +572,7 @@
             }
         }
 
-        // 5-Second Transition Control from Splash to Game
+        // 5-Second Splash Transition
         setTimeout(() => {
             splashScreen.style.opacity = '0';
             gameWrapper.style.opacity = '1';
@@ -524,13 +582,28 @@
             }, 800); 
         }, 5000);
 
-        function setupMission1() {
-            currentMission = 1;
-            circuitSwitch.style.display = "block";
-            dropZone.style.display = "none";
+        function resetToHome() {
+            setupMission1();
         }
 
-        // Mission 1 Switch Mechanic
+        /* --- MISSION 1: SWITCH --- */
+        function setupMission1() {
+            currentMission = 1;
+            tracker.innerText = "Mission 1/4";
+            switchStateClosed = false;
+            
+            instructionText.innerText = "Mission 1: Click or tap the switch to CLOSE the loop and turn on the light!";
+            circuitSwitch.style.display = "block";
+            circuitSwitch.innerHTML = "OFF<br>❌ (Open)";
+            circuitSwitch.style.background = "#cfd8dc";
+            
+            dropZone.style.display = "none";
+            itemDeck.style.display = "none";
+            quizPanel.classList.add("hidden");
+            lightBulb.classList.remove('bulb-lit');
+            statusMsg.innerText = "";
+        }
+
         function toggleSwitch() {
             if (currentMission !== 1) return;
 
@@ -548,7 +621,7 @@
 
                 setTimeout(() => {
                     setupMission2();
-                }, 3500);
+                }, 2500);
 
             } else {
                 circuitSwitch.innerHTML = "OFF<br>❌ (Open)";
@@ -558,16 +631,21 @@
             }
         }
 
-        // Mission 2 Conductivity Mechanic
+        /* --- MISSION 2: CONDUCTORS --- */
         function setupMission2() {
             currentMission = 2;
+            tracker.innerText = "Mission 2/4";
             lightBulb.classList.remove('bulb-lit');
             statusMsg.innerText = "";
             statusMsg.className = "";
             
             circuitSwitch.style.display = "none"; 
             dropZone.style.display = "flex";      
-            itemDeck.style.visibility = "visible"; 
+            dropZone.innerText = "Drop item here!";
+            dropZone.style.background = "#fafafa";
+            
+            itemDeck.style.display = "flex"; 
+            document.querySelectorAll('.draggable-item').forEach(i => i.style.visibility = "visible");
             
             instructionText.innerText = "Mission 2: Drag or tap a Conductor (Metal) into the gap to light the bulb!";
             initializeDragAndDrop();
@@ -587,32 +665,108 @@
                 statusMsg.className = "success-text";
                 
                 playSound('correct');
-                draggedElement.style.visibility = "hidden"; 
+                draggedElement.style.visibility = "hidden";
+
+                setTimeout(() => {
+                    setupMission3();
+                }, 2800);
+
             } else {
                 lightBulb.classList.remove('bulb-lit');
-                statusMsg.innerText = "Oops! Insulators block electricity! ❌";
+                statusMsg.innerText = "Oops! Insulators block electricity! Try again! ❌";
                 statusMsg.className = "fail-text";
-                
                 playSound('wrong');
             }
         }
 
+        /* --- MISSION 3: SAFETY / SHORT CIRCUIT --- */
+        function setupMission3() {
+            currentMission = 3;
+            tracker.innerText = "Mission 3/4";
+            lightBulb.classList.remove('bulb-lit');
+            dropZone.style.display = "none";
+            itemDeck.style.display = "none";
+            statusMsg.innerText = "";
+
+            instructionText.innerText = "Mission 3: What happens if a wire directly connects the + and - battery terminals without a bulb?";
+            quizPanel.classList.remove("hidden");
+            quizPanel.innerHTML = `
+                <button class="quiz-btn" onclick="answerMission3(true)">⚠️ It causes a Short Circuit (Overheating & Danger)!</button>
+                <button class="quiz-btn" onclick="answerMission3(false)">💡 The room lights up brighter automatically.</button>
+            `;
+        }
+
+        function answerMission3(isCorrect) {
+            if (isCorrect) {
+                statusMsg.innerText = "Correct! Short circuits bypass loads and overheat wires! ⚡⚠️";
+                statusMsg.className = "success-text";
+                playSound('correct');
+                setTimeout(() => {
+                    setupMission4();
+                }, 2800);
+            } else {
+                statusMsg.innerText = "Incorrect! Direct connection without resistance causes short circuits! 🛑";
+                statusMsg.className = "fail-text";
+                playSound('wrong');
+            }
+        }
+
+        /* --- MISSION 4: SERIES VS PARALLEL --- */
+        function setupMission4() {
+            currentMission = 4;
+            tracker.innerText = "Mission 4/4";
+            statusMsg.innerText = "";
+
+            instructionText.innerText = "Mission 4: In a Parallel Circuit, if one bulb burns out, what happens to the others?";
+            quizPanel.innerHTML = `
+                <button class="quiz-btn" onclick="answerMission4(true)">💡 The other bulbs stay lit!</button>
+                <button class="quiz-btn" onclick="answerMission4(false)">❌ All bulbs turn off instantly.</button>
+            `;
+        }
+
+        function answerMission4(isCorrect) {
+            if (isCorrect) {
+                statusMsg.innerText = "Outstanding! Parallel circuits provide multiple current paths! 🏆";
+                statusMsg.className = "success-text";
+                lightBulb.classList.add('bulb-lit');
+                playSound('correct');
+
+                if (window.confetti) {
+                    confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 } });
+                }
+
+                setTimeout(() => {
+                    showLabCompletion();
+                }, 3000);
+            } else {
+                statusMsg.innerText = "Try again! Parallel pathways operate independently! 💡";
+                statusMsg.className = "fail-text";
+                playSound('wrong');
+            }
+        }
+
+        /* --- FINAL LAB COMPLETION --- */
+        function showLabCompletion() {
+            quizPanel.classList.add("hidden");
+            instructionText.innerText = "🎉 Congratulations! You are an Official SBL Circuit Master!";
+            statusMsg.innerText = "Lab Completed Successfully! Click '🏠 Home' to replay.";
+            statusMsg.className = "success-text";
+        }
+
+        /* --- DRAG & DROP CONTROLLERS --- */
         function initializeDragAndDrop() {
             const items = document.querySelectorAll('.draggable-item');
             let activeTouchItem = null;
 
             items.forEach(item => {
-                // Desktop HTML5 Drag
                 item.addEventListener('dragstart', (e) => {
                     e.dataTransfer.setData('text/plain', e.target.id);
                 });
 
-                // Tap-to-Place Support
                 item.addEventListener('click', () => {
                     if (currentMission === 2) handleItemEvaluation(item);
                 });
 
-                // Mobile Touch Drag Mechanics
                 item.addEventListener('touchstart', (e) => {
                     activeTouchItem = item;
                 }, { passive: true });
@@ -644,7 +798,6 @@
                 });
             });
 
-            // Desktop Drag Over / Drop Handlers
             dropZone.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 dropZone.classList.add('gap-hover');

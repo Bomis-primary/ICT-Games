@@ -2,729 +2,767 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>STEM Robot Adventure</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>STEM Ch 1: Robot Navigation Adventure</title>
+<!-- Canvas Confetti Library -->
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Comic Sans MS',sans-serif;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
 }
 
-body{
-background:url('assets/robot-bg.jpg');
-background-size:cover;
-background-position:center;
-background-repeat:no-repeat;
-background-attachment:fixed;
-min-height:100vh;
-overflow-x:hidden;
-color:white;
-transition:1s;
+body {
+    background: linear-gradient(135deg, #bae6fd, #e0f2fe, #fbc2eb);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    overflow-x: hidden;
 }
 
-.overlay{
-background:rgba(0,0,0,0.35);
-min-height:100vh;
-padding:15px;
-backdrop-filter:blur(2px);
+/* --- BRANDING SPLASH SCREEN (Strict 5 Seconds) --- */
+#brand-splash {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    z-index: 10000;
+    transition: opacity 0.5s ease;
 }
 
-.container{
-max-width:1200px;
-margin:auto;
-padding-bottom:120px;
+#brand-splash img {
+    max-width: 65%;
+    max-height: 60vh;
+    object-fit: contain;
 }
 
-.logo{
-width:140px;
-display:block;
-margin:auto;
-margin-bottom:10px;
+.loading-track {
+    width: 60%;
+    max-width: 250px;
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #cbd5e1;
 }
 
-h1{
-text-align:center;
-font-size:46px;
-margin-bottom:10px;
-color:#FFD700;
-text-shadow:2px 2px 8px black;
+.loading-bar-fill {
+    width: 100%;
+    height: 100%;
+    background: #0284c7;
+    transform: translateX(-100%);
+    animation: loadProgress 4.5s forwards linear;
 }
 
-.topbar{
-display:flex;
-justify-content:center;
-gap:25px;
-flex-wrap:wrap;
-font-size:22px;
-margin-bottom:15px;
-background:rgba(255,255,255,0.15);
-padding:12px;
-border-radius:20px;
-backdrop-filter:blur(5px);
+@keyframes loadProgress {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0%); }
 }
 
-/* ROBOT DESTINATION TRACK */
-.destination-track {
-background: rgba(0, 0, 0, 0.4);
-border: 2px solid rgba(255, 255, 255, 0.3);
-border-radius: 20px;
-padding: 12px 20px;
-margin-bottom: 20px;
-display: flex;
-align-items: center;
-justify-content: space-between;
-position: relative;
+.screen {
+    display: none;
+    background: rgba(255, 255, 255, 0.98);
+    width: 95%;
+    max-width: 1000px;
+    padding: 25px;
+    border-radius: 30px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.18);
+    text-align: center;
+    animation: popUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin: auto;
+    border: 4px solid #38bdf8;
 }
 
-.track-line {
-position: absolute;
-top: 50%;
-left: 60px;
-right: 60px;
-height: 6px;
-background: #475569;
-z-index: 1;
-transform: translateY(-50%);
-border-radius: 3px;
+@keyframes popUp {
+    0% { transform: scale(0.95); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
 }
 
-.track-fill {
-height: 100%;
-width: 0%;
-background: linear-gradient(90deg, #00e5ff, #00ff95);
-border-radius: 3px;
-transition: width 0.5s ease;
+.screen.active {
+    display: block;
 }
 
-.robot-avatar {
-font-size: 38px;
-position: absolute;
-top: 50%;
-left: 40px;
-transform: translate(-50%, -50%);
-z-index: 2;
-transition: left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+h1 {
+    color: #0284c7;
+    font-size: clamp(24px, 5vw, 34px);
+    margin-bottom: 12px;
 }
 
-.destination-flag {
-font-size: 38px;
-z-index: 2;
-position: relative;
+p.subtitle {
+    font-size: clamp(16px, 3.5vw, 20px);
+    color: #475569;
+    margin-bottom: 18px;
 }
 
-.card{
-background:rgba(255,255,255,0.18);
-padding:20px;
-border-radius:25px;
-backdrop-filter:blur(10px);
-border:2px solid rgba(255,255,255,0.2);
+.btn {
+    background: #0284c7;
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    border-radius: 40px;
+    font-size: clamp(16px, 3.8vw, 20px);
+    font-weight: bold;
+    cursor: pointer;
+    margin: 8px;
+    transition: 0.2s ease;
+    box-shadow: 0 5px 0 #0369a1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
 }
 
-#question{
-font-size:28px;
-margin-bottom:20px;
-text-align:center;
+.btn:hover {
+    transform: scale(1.03);
+    background: #0369a1;
 }
 
-#options{
-display:flex;
-flex-direction:row;
-justify-content:center;
-align-items:center;
-gap:20px;
-flex-wrap:wrap;
-margin-top:20px;
+.btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #0369a1;
 }
 
-.questionImage{
-width:200px;
-height:200px;
-object-fit:contain;
-background:white;
-padding:10px;
-border-radius:20px;
-cursor:pointer;
-transition:0.3s;
-box-shadow:0 5px 15px rgba(0,0,0,0.3);
+/* HUD PANEL */
+.hud-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f0f9ff;
+    border: 3px dashed #0284c7;
+    border-radius: 20px;
+    padding: 10px 25px;
+    margin-bottom: 15px;
+    font-size: clamp(16px, 3.8vw, 22px);
+    font-weight: bold;
+    color: #0369a1;
 }
 
-.questionImage:hover{
-transform:scale(1.08);
-background:#fff59d;
+/* GAME LAYOUT GRID & CONTROLS */
+.game-flex-container {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    margin-top: 15px;
 }
 
-.optionBtn{
-padding:15px 25px;
-font-size:22px;
-border:none;
-border-radius:15px;
-cursor:pointer;
-margin:10px;
-font-weight:bold;
-background:linear-gradient(135deg,#ffeb3b,#ff9800);
-color:black;
-transition:0.3s;
+/* GRID BOARD */
+.grid-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    background: #dbeafe;
+    padding: 12px;
+    border-radius: 24px;
+    border: 4px solid #93c5fd;
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1 / 1;
 }
 
-.optionBtn:hover{
-transform:scale(1.05);
+.grid-cell {
+    background: #ffffff;
+    border-radius: 14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.dragArea{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:30px;
-flex-wrap:wrap;
-margin-top:25px;
+.grid-cell.wall {
+    background: #fecaca;
+    border: 2px solid #fca5a5;
 }
 
-.dragItem{
-padding:18px 25px;
-background:linear-gradient(135deg,#00e5ff,#00ff95);
-border-radius:15px;
-font-size:24px;
-cursor:grab;
-color:black;
-font-weight:bold;
+.grid-cell.wall::after {
+    content: "🧱";
+    font-size: 32px;
 }
 
-.dropBox{
-width:260px;
-height:110px;
-border:4px dashed #fff;
-border-radius:20px;
-display:flex;
-justify-content:center;
-align-items:center;
-font-size:22px;
-background:rgba(255,255,255,0.2);
+.battery-entity {
+    font-size: 36px;
+    animation: pulseBattery 1.5s infinite alternate;
 }
 
-.feedback{
-font-size:28px;
-font-weight:bold;
-margin-top:20px;
-text-align:center;
+@keyframes pulseBattery {
+    0% { transform: scale(0.9); }
+    100% { transform: scale(1.1); }
 }
 
-.nextArea{
-position:fixed;
-bottom:0;
-left:0;
-width:100%;
-background:rgba(0,0,0,0.7);
-padding:10px;
-text-align:center;
-z-index:999;
+/* VECTOR ROBOT CHARACTER */
+.vector-robot {
+    width: 75%;
+    height: 75%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
 }
 
-#nextBtn{
-padding:15px 45px;
-font-size:24px;
-border:none;
-border-radius:15px;
-background:linear-gradient(135deg,#00ff95,#00c853);
-color:white;
-display:none;
-cursor:pointer;
-font-weight:bold;
+.robot-head {
+    width: 42px;
+    height: 34px;
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+    border: 3px solid #0369a1;
+    border-radius: 12px 12px 8px 8px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 0 #075985;
 }
 
-.finalScreen{
-display:none;
-background:rgba(255,255,255,0.95);
-color:black;
-padding:30px;
-border-radius:25px;
-text-align:center;
-margin-top:30px;
+.robot-head::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    width: 4px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 2px;
 }
 
-.playBtn{
-padding:15px 30px;
-font-size:22px;
-background:#2196F3;
-color:white;
-border:none;
-border-radius:15px;
-cursor:pointer;
-margin-top:20px;
+.robot-head::after {
+    content: '';
+    position: absolute;
+    top: -12px;
+    width: 8px;
+    height: 8px;
+    background: #f59e0b;
+    border-radius: 50%;
 }
 
-@media(max-width:768px){
-
-.questionImage{
-width:140px;
-height:140px;
+.robot-eyes {
+    display: flex;
+    gap: 8px;
 }
 
-#options{
-gap:10px;
+.robot-eye {
+    width: 8px;
+    height: 8px;
+    background: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.optionBtn{
-font-size:18px;
-padding:12px 18px;
+.robot-eye::after {
+    content: '';
+    width: 4px;
+    height: 4px;
+    background: #0f172a;
+    border-radius: 50%;
 }
 
-h1{
-font-size:32px;
+.robot-pointer {
+    position: absolute;
+    top: -16px;
+    font-size: 14px;
+    color: #2563eb;
+    font-weight: 900;
 }
 
-#question{
-font-size:22px;
+/* CONTROL PANEL */
+.controls-panel {
+    background: #f8fafc;
+    border: 3px solid #cbd5e1;
+    border-radius: 24px;
+    padding: 18px;
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
+.control-group-title {
+    font-weight: bold;
+    color: #334155;
+    font-size: 15px;
+    text-align: left;
+    margin-top: 4px;
 }
 
+.ctrl-btn-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.ctrl-btn {
+    width: 100%;
+    padding: 12px;
+    border-radius: 16px;
+    border: none;
+    font-size: clamp(14px, 3.2vw, 16px);
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+    transition: 0.15s ease;
+}
+
+.ctrl-btn.forward { background: #0284c7; box-shadow: 0 4px 0 #0369a1; grid-column: span 2; }
+.ctrl-btn.turn-left { background: #9333ea; box-shadow: 0 4px 0 #6b21a8; }
+.ctrl-btn.turn-right { background: #f59e0b; box-shadow: 0 4px 0 #d97706; }
+.ctrl-btn.turn-180 { background: #ec4899; box-shadow: 0 4px 0 #be185d; grid-column: span 2; }
+.ctrl-btn.reset-pos { background: #ef4444; box-shadow: 0 4px 0 #b91c1c; grid-column: span 2; }
+
+.ctrl-btn:active {
+    transform: translateY(3px);
+    box-shadow: none;
+}
+
+.feedback {
+    font-size: clamp(18px, 4vw, 24px);
+    font-weight: bold;
+    min-height: 38px;
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.hint-banner {
+    display: none;
+    background: #fef3c7;
+    border: 2px solid #f59e0b;
+    border-radius: 16px;
+    padding: 10px;
+    color: #92400e;
+    font-weight: bold;
+    font-size: 15px;
+    margin-top: 5px;
+}
+
+.instructions-box {
+    background: #e0f2fe;
+    border: 3px dashed #0284c7;
+    border-radius: 20px;
+    padding: 20px;
+    margin: 15px auto;
+    text-align: left;
+    max-width: 600px;
+}
+
+.instruction-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    font-size: clamp(15px, 3.5vw, 18px);
+    color: #1e293b;
+    font-weight: bold;
+}
+
+.final-score {
+    font-size: clamp(50px, 10vw, 75px);
+    font-weight: bold;
+    color: #0284c7;
+    margin: 15px 0;
+}
+
+/* SHAKE ANIMATION FOR CRASHES */
+.shake-grid {
+    animation: shakeBoard 0.3s ease-in-out;
+}
+
+@keyframes shakeBoard {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-8px); }
+    40% { transform: translateX(8px); }
+    60% { transform: translateX(-5px); }
+    80% { transform: translateX(5px); }
+}
 </style>
 </head>
 
 <body>
 
-<div class="overlay">
+<!-- AUDIO ENGINE EMBEDS -->
+<audio id="snd-correct" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="snd-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="snd-clap" src="assets/clap.mp3" preload="auto"></audio>
 
-<div class="container">
-
-<img src="assets/innovine-logo.png" class="logo" onerror="this.style.display='none'">
-
-<h1>🚀 STEM Robot Adventure</h1>
-
-<div class="topbar">
-<div>⭐ Score: <span id="score">0</span></div>
-<div>🏆 Badges: <span id="badges">0</span></div>
-<div>⏰ <span id="timer">40</span>s</div>
+<!-- 1. INDIVIDUAL BRANDING SPLASH SCREEN (Strict 5 Seconds) -->
+<div id="brand-splash">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/320x100?text=Innovine+Solutions'">
+    <div class="loading-track">
+        <div class="loading-bar-fill"></div>
+    </div>
 </div>
 
-<!-- ROBOT DESTINATION TRACK -->
-<div class="destination-track">
-<div class="track-line"><div class="track-fill" id="trackFill"></div></div>
-<div class="robot-avatar" id="robotAvatar">🤖</div>
-<div style="width: 100%;"></div>
-<div class="destination-flag">🎯</div>
+<!-- 2. GAME INSTRUCTION SCREEN (Page 2) -->
+<div id="instructionScreen" class="screen">
+    <h1>🧭 Welcome STEM Explorer!</h1>
+    <p class="subtitle">Chapter 1: Real-Time Robot Navigation</p>
+
+    <div class="instructions-box">
+        <div class="instruction-item">
+            <span>🤖</span>
+            <span><strong>Objective:</strong> Steer the vector robot to reach the Battery pack!</span>
+        </div>
+        <div class="instruction-item">
+            <span>🧱</span>
+            <span><strong>Obstacles:</strong> Don't crash into brick walls or screen edges!</span>
+        </div>
+        <div class="instruction-item">
+            <span>📐</span>
+            <span><strong>Degrees & Turns:</strong> Rotate 90° Left/Right or 180° to face the right direction.</span>
+        </div>
+        <div class="instruction-item">
+            <span>⚡</span>
+            <span><strong>Real-Time Controls:</strong> Tap buttons to move the robot immediately!</span>
+        </div>
+    </div>
+    <button class="btn" onclick="startGame()">🚀 Start Mission</button>
 </div>
 
-<div class="card" id="gameCard">
+<!-- 3. GAMEPLAY SCREEN -->
+<div id="gameScreen" class="screen">
+    <div class="hud-bar">
+        <div>🌟 Level: <span id="lvlDisplay">1 / 5</span></div>
+        <div>🏆 Score: <span id="scoreDisplay">0</span></div>
+    </div>
 
-<h2 id="question"></h2>
+    <h2 style="color: #0369a1; font-size: clamp(18px, 4vw, 22px); margin-bottom: 5px;">
+        Heading: <span id="headingDisplay">0° (UP)</span>
+    </h2>
 
-<div id="imageArea"></div>
+    <div class="game-flex-container">
+        <!-- 4x4 NAVIGATION GRID -->
+        <div class="grid-board" id="gridBoard"></div>
 
-<div id="options"></div>
+        <!-- DIRECTIONAL & DEGREE CONTROLS -->
+        <div class="controls-panel">
+            <div class="control-group-title">1. Movement Command:</div>
+            <button class="ctrl-btn forward" onclick="moveForwardStep()">⬆️ Move Forward 1 Step</button>
 
-<div class="feedback" id="feedback"></div>
+            <div class="control-group-title">2. Rotation & Angle Commands:</div>
+            <div class="ctrl-btn-grid">
+                <button class="ctrl-btn turn-left" onclick="rotateRobot(-90)">↩️ Turn 90° Left</button>
+                <button class="ctrl-btn turn-right" onclick="rotateRobot(90)">↪️ Turn 90° Right</button>
+                <button class="ctrl-btn turn-180" onclick="rotateRobot(180)">🔄 U-Turn (180° Spin)</button>
+            </div>
 
+            <div class="control-group-title">3. Stage Tools:</div>
+            <button class="ctrl-btn reset-pos" onclick="resetRobotPosition()">🔄 Reset Robot Position</button>
+
+            <!-- AUTO-SOLUTION HINT BANNER -->
+            <div class="hint-banner" id="hintBanner"></div>
+        </div>
+    </div>
+    <div class="feedback" id="feedbackMsg"></div>
 </div>
 
-<div class="finalScreen" id="finalScreen">
+<!-- 4. VICTORY / FINAL SCORE SCREEN -->
+<div id="victoryScreen" class="screen">
+    <h1>🎉 Mission Accomplished!</h1>
+    <p class="subtitle">You navigated the Vector Robot through all 5 STEM challenges!</p>
+    <div class="final-score" id="finalScoreDisplay">250</div>
+    <p style="font-size: 20px; font-weight: bold; color: #0369a1; margin-bottom: 15px;">STEM Master Coder 🏆</p>
 
-<h1 id="finalHeader">🎉 Robot Reached Destination!</h1>
-
-<h2 id="finalScore" style="margin: 15px 0;"></h2>
-
-<h2 id="rank"></h2>
-
-<button onclick="location.reload()" class="playBtn">
-Play Again
-</button>
-
+    <button class="btn" onclick="resetGame()">🔄 Play Again</button>
 </div>
-
-</div>
-
-<div class="nextArea">
-<button id="nextBtn">Next ➜</button>
-</div>
-
-<audio id="correctSound" src="assets/correct-1.mp3" preload="auto"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 
 <script>
-
-const questions=[
-
-{
-type:"image",
-question:"Click the Science picture",
-options:[
-"assets/science.PNG",
-"assets/mathematics.PNG",
-"assets/technology.PNG"
-],
-answer:"assets/science.PNG"
-},
-
-{
-type:"drag",
-question:"Drag COMMAND into the box",
-drag:"COMMAND"
-},
-
-{
-type:"truefalse",
-question:"Robots follow commands.",
-options:["True","False"],
-answer:"True",
-image:"assets/robots.PNG"
-},
-
-{
-type:"list",
-question:"Choose the subject using numbers",
-options:[
-"Mathematics",
-"Science",
-"Technology"
-],
-answer:"Mathematics",
-image:"assets/mathematics.PNG"
-},
-
-{
-type:"image",
-question:"Click the Technology picture",
-options:[
-"assets/technology.PNG",
-"assets/education.PNG",
-"assets/science.PNG"
-],
-answer:"assets/technology.PNG"
-},
-
-{
-type:"drag",
-question:"Drag ROBOTICS into the box",
-drag:"ROBOTICS"
-},
-
-{
-type:"truefalse",
-question:"Technology means tools and gadgets.",
-options:["True","False"],
-answer:"True",
-image:"assets/technology.PNG"
-},
-
-{
-type:"list",
-question:"Choose the subject solving problems",
-options:[
-"Engineering",
-"Entertainment",
-"Communication"
-],
-answer:"Engineering",
-image:"assets/engineering.PNG"
-},
-
-{
-type:"image",
-question:"Click the Mathematics picture",
-options:[
-"assets/mathematics.PNG",
-"assets/education.PNG",
-"assets/science.PNG"
-],
-answer:"assets/mathematics.PNG"
-},
-
-{
-type:"truefalse",
-question:"Robots help humans.",
-options:["True","False"],
-answer:"True",
-image:"assets/helper-robot.PNG"
-}
-
+// 5 LEVEL CONFIGURATIONS WITH AUTOMATIC SOLUTIONS
+const levels = [
+    {
+        robotStart: { r: 0, c: 0, dir: 0 }, // dir: 0=UP(0°), 1=RIGHT(90°), 2=DOWN(180°), 3=LEFT(270°)
+        battery: { r: 2, c: 3 },
+        walls: [{r: 0, c: 2}, {r: 0, c: 3}, {r: 1, c: 0}, {r: 1, c: 2}, {r: 1, c: 3}, {r: 2, c: 0}, {r: 3, c: 0}, {r: 3, c: 1}, {r: 3, c: 2}, {r: 3, c: 3}],
+        autoSteps: [{type:'rot', val:90}, {type:'move'}, {type:'rot', val:90}, {type:'move'}, {type:'move'}, {type:'rot', val:-90}, {type:'move'}, {type:'move'}]
+    },
+    {
+        robotStart: { r: 3, c: 0, dir: 1 },
+        battery: { r: 0, c: 3 },
+        walls: [{r: 1, c: 1}, {r: 1, c: 2}, {r: 2, c: 1}, {r: 2, c: 3}],
+        autoSteps: [{type:'move'}, {type:'move'}, {type:'move'}, {type:'rot', val:-90}, {type:'move'}, {type:'move'}, {type:'move'}]
+    },
+    {
+        robotStart: { r: 0, c: 0, dir: 2 },
+        battery: { r: 3, c: 3 },
+        walls: [{r: 0, c: 1}, {r: 1, c: 3}, {r: 2, c: 0}, {r: 2, c: 2}],
+        autoSteps: [{type:'move'}, {type:'rot', val:-90}, {type:'move'}, {type:'move'}, {type:'rot', val:90}, {type:'move'}, {type:'move'}, {type:'rot', val:-90}, {type:'move'}]
+    },
+    {
+        robotStart: { r: 3, c: 3, dir: 3 },
+        battery: { r: 0, c: 0 },
+        walls: [{r: 1, c: 0}, {r: 1, c: 1}, {r: 2, c: 2}, {r: 3, c: 1}],
+        autoSteps: [{type:'move'}, {type:'rot', val:90}, {type:'move'}, {type:'rot', val:-90}, {type:'move'}, {type:'rot', val:90}, {type:'move'}, {type:'move'}]
+    },
+    {
+        robotStart: { r: 2, c: 0, dir: 1 },
+        battery: { r: 1, c: 2 },
+        walls: [{r: 0, c: 1}, {r: 2, c: 1}, {r: 3, c: 2}, {r: 2, c: 3}],
+        autoSteps: [{type:'move'}, {type:'rot', val:-90}, {type:'move'}, {type:'rot', val:90}, {type:'move'}]
+    }
 ];
 
-const backgrounds=[
-"assets/robot-bg.jpg",
-"assets/robot-bg1.jpg"
-];
+let currentLvl = 0;
+let score = 0;
+let attemptCount = 0;
+let robotState = { r: 0, c: 0, dir: 0 };
+let isBusy = false;
 
-let current=0;
-let score=0;
-let badges=0;
-let timer;
-let time=40;
-let attemptsLeft=2;
-
-const question=document.getElementById('question');
-const options=document.getElementById('options');
-const imageArea=document.getElementById('imageArea');
-const feedback=document.getElementById('feedback');
-
-function startTimer(){
-
-clearInterval(timer);
-
-time=40;
-
-document.getElementById('timer').innerHTML=time;
-
-timer=setInterval(()=>{
-
-time--;
-
-document.getElementById('timer').innerHTML=time;
-
-if(time<=0){
-
-clearInterval(timer);
-
-feedback.innerHTML="⏰ Time Up";
-
-document.getElementById('nextBtn').style.display='inline-block';
-
+// SCREEN CONTROLLER
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
 }
 
-},1000);
-
-}
-
-function updateRobotPosition(){
-const percentage = (current / questions.length);
-const trackWidth = document.querySelector('.destination-track').offsetWidth - 100;
-const leftPos = 40 + (percentage * trackWidth);
-
-document.getElementById('robotAvatar').style.left = leftPos + 'px';
-document.getElementById('trackFill').style.width = (percentage * 100) + '%';
-}
-
-function showQuestion(){
-
-startTimer();
-attemptsLeft=2;
-updateRobotPosition();
-
-document.body.style.background=
-`url('${backgrounds[current % 2]}')`;
-
-document.body.style.backgroundSize='cover';
-document.body.style.backgroundPosition='center';
-
-const q=questions[current];
-
-question.innerHTML=q.question;
-
-options.innerHTML='';
-imageArea.innerHTML='';
-feedback.innerHTML='';
-
-document.getElementById('nextBtn').style.display='none';
-
-if(q.image){
-
-imageArea.innerHTML=
-`<img src="${q.image}" class="questionImage">`;
-
-}
-
-if(q.type==="truefalse"){
-
-q.options.forEach(opt=>{
-
-const btn=document.createElement('button');
-
-btn.className='optionBtn';
-
-btn.innerHTML=opt;
-
-btn.onclick=()=>check(opt===q.answer);
-
-options.appendChild(btn);
-
+// STRICT 5-SECOND SPLASH SCREEN ENGINE
+window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        const splash = document.getElementById('brand-splash');
+        if (splash) {
+            splash.style.opacity = '0';
+            setTimeout(() => {
+                splash.style.display = 'none';
+                showScreen('instructionScreen');
+            }, 500);
+        }
+    }, 5000);
 });
 
+function unlockAudio() {
+    ['snd-correct', 'snd-wrong', 'snd-clap'].forEach(id => {
+        const snd = document.getElementById(id);
+        if (snd) snd.load();
+    });
 }
 
-if(q.type==="image"){
-
-q.options.forEach(opt=>{
-
-const img=document.createElement('img');
-
-img.src=opt;
-
-img.className='questionImage';
-
-img.onclick=()=>check(opt===q.answer);
-
-options.appendChild(img);
-
-});
-
+function playAudioTrack(id) {
+    const track = document.getElementById(id);
+    if (track) {
+        track.currentTime = 0;
+        track.play().catch(e => console.log('Audio stream deferred until user click.'));
+    }
 }
 
-if(q.type==="drag"){
-
-const area=document.createElement('div');
-
-area.className='dragArea';
-
-const drag=document.createElement('div');
-
-drag.className='dragItem';
-
-drag.innerHTML=q.drag;
-
-drag.draggable=true;
-
-drag.addEventListener('dragstart',e=>{
-e.dataTransfer.setData('text',q.drag);
-});
-
-const drop=document.createElement('div');
-
-drop.className='dropBox';
-
-drop.innerHTML='Drop Here';
-
-drop.addEventListener('dragover',e=>e.preventDefault());
-
-drop.addEventListener('drop',()=>{
-
-check(true);
-
-drop.innerHTML=q.drag;
-
-});
-
-area.appendChild(drag);
-area.appendChild(drop);
-
-options.appendChild(area);
-
+function startGame() {
+    unlockAudio();
+    currentLvl = 0;
+    score = 0;
+    showScreen('gameScreen');
+    loadLevel();
 }
 
-if(q.type==="list"){
-const select=document.createElement('select');
-select.className='optionBtn';
+function loadLevel() {
+    isBusy = false;
+    attemptCount = 0;
+    document.getElementById('feedbackMsg').innerText = '';
+    document.getElementById('hintBanner').style.display = 'none';
+    document.getElementById('lvlDisplay').innerText = `${currentLvl + 1} / ${levels.length}`;
+    document.getElementById('scoreDisplay').innerText = score;
 
-q.options.forEach(opt=>{
-select.innerHTML+=`<option>${opt}</option>`;
-});
+    const lvlData = levels[currentLvl];
+    robotState = { ...lvlData.robotStart };
 
-const btn=document.createElement('button');
-btn.className='optionBtn';
-btn.innerHTML='Submit';
-
-btn.onclick=()=>{
-check(select.value===q.answer);
-};
-
-options.appendChild(select);
-options.appendChild(btn);
+    updateHeadingLabel();
+    renderBoard();
 }
 
+function updateHeadingLabel() {
+    const dirNames = ["0° (UP)", "90° (RIGHT)", "180° (DOWN)", "270° (LEFT)"];
+    document.getElementById('headingDisplay').innerText = dirNames[robotState.dir];
 }
 
-function check(isCorrect){
-if(isCorrect){
-correct();
-}else{
-wrong();
-}
-}
+function renderBoard() {
+    const lvlData = levels[currentLvl];
+    const board = document.getElementById('gridBoard');
+    board.innerHTML = '';
 
-function correct(){
+    for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 4; c++) {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell';
 
-clearInterval(timer);
+            // Wall check
+            const isWall = lvlData.walls.some(w => w.r === r && w.c === c);
+            if (isWall) {
+                cell.classList.add('wall');
+            }
 
-feedback.innerHTML="✅ Correct Step!";
-feedback.style.color='#00ff95';
+            // Battery check
+            if (lvlData.battery.r === r && lvlData.battery.c === c) {
+                cell.innerHTML = '<div class="battery-entity">🔋</div>';
+            }
 
-score++;
-badges++;
+            // Robot render
+            if (robotState.r === r && robotState.c === c) {
+                const rotationDeg = robotState.dir * 90;
+                cell.innerHTML = `
+                    <div class="vector-robot" style="transform: rotate(${rotationDeg}deg)">
+                        <div class="robot-pointer">▲</div>
+                        <div class="robot-head">
+                            <div class="robot-eyes">
+                                <div class="robot-eye"></div>
+                                <div class="robot-eye"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
 
-document.getElementById('score').innerHTML=score;
-document.getElementById('badges').innerHTML=badges;
-
-document.getElementById('nextBtn').style.display='inline-block';
-
-}
-
-function wrong(){
-
-attemptsLeft--;
-
-if(attemptsLeft > 0){
-feedback.innerHTML=`❌ Wrong! You have ${attemptsLeft} try left.`;
-feedback.style.color='#ffeb3b';
-} else {
-clearInterval(timer);
-feedback.innerHTML="❌ Out of tries!";
-feedback.style.color='red';
-document.getElementById('nextBtn').style.display='inline-block';
-}
-
-}
-
-document.getElementById('nextBtn').onclick=()=>{
-
-current++;
-
-if(current<questions.length){
-showQuestion();
-}else{
-// Move robot to destination flag on final question
-current = questions.length;
-updateRobotPosition();
-showFinal();
+            board.appendChild(cell);
+        }
+    }
 }
 
-};
-
-function showFinal(){
-
-document.getElementById('gameCard').style.display='none';
-document.getElementById('nextBtn').style.display='none';
-document.getElementById('finalScreen').style.display='block';
-
-document.getElementById('finalScore').innerHTML=
-`⭐ Your Score: ${score}/10`;
-
-let rank='';
-
-if(score===10){
-rank='🏆 CHAMPION ROBOTICIST!';
-}else if(score>=7){
-rank='👍 EXCELLENT ENGINEER!';
-}else if(score>=4){
-rank='🙂 GOOD ATTEMPT!';
-}else{
-rank='📘 BEGINNER EXPLORER';
+// REAL-TIME ROTATION COMMAND
+function rotateRobot(deg, isAuto = false) {
+    if (isBusy && !isAuto) return;
+    
+    const steps = deg / 90;
+    robotState.dir = (robotState.dir + steps + 400) % 4;
+    
+    updateHeadingLabel();
+    renderBoard();
 }
 
-document.getElementById('rank').innerHTML=rank;
+// REAL-TIME STEP FORWARD COMMAND
+function moveForwardStep(isAuto = false) {
+    if (isBusy && !isAuto) return;
 
-// Play sound ONLY at destination step
-if(score >= 5){
-document.getElementById('finalHeader').innerHTML = "🎉 Robot Reached Destination!";
-document.getElementById('correctSound').play();
-confetti({
-particleCount:400,
-spread:160
-});
-} else {
-document.getElementById('finalHeader').innerHTML = "⚠️ Destination Not Reached!";
-document.getElementById('wrongSound').play();
+    let dr = 0, dc = 0;
+    if (robotState.dir === 0) dr = -1;
+    else if (robotState.dir === 1) dc = 1;
+    else if (robotState.dir === 2) dr = 1;
+    else if (robotState.dir === 3) dc = -1;
+
+    const targetR = robotState.r + dr;
+    const targetC = robotState.c + dc;
+
+    const lvlData = levels[currentLvl];
+    const isWall = lvlData.walls.some(w => w.r === targetR && w.c === targetC);
+
+    if (targetR >= 0 && targetR < 4 && targetC >= 0 && targetC < 4 && !isWall) {
+        // Valid step forward
+        robotState.r = targetR;
+        robotState.c = targetC;
+        renderBoard();
+        checkTargetReached();
+    } else {
+        // Collision occurred - play wrong sound
+        playAudioTrack('snd-wrong');
+        const board = document.getElementById('gridBoard');
+        board.classList.add('shake-grid');
+        setTimeout(() => board.classList.remove('shake-grid'), 300);
+
+        handleFailedAttempt('❌ 💥 Beep! Obstacle or Edge Collision!');
+    }
 }
 
+function checkTargetReached() {
+    const lvlData = levels[currentLvl];
+    if (robotState.r === lvlData.battery.r && robotState.c === lvlData.battery.c) {
+        isBusy = true;
+        // Reached destination: Play correct sound
+        playAudioTrack('snd-correct');
+        score += 50;
+        document.getElementById('scoreDisplay').innerText = score;
+        document.getElementById('feedbackMsg').innerHTML = '🎉 🌟 Target Reached! Powered Up! 🔋';
+        document.getElementById('feedbackMsg').style.color = '#15803d';
+
+        confetti({ particleCount: 50, spread: 60, origin: { y: 0.7 } });
+
+        setTimeout(() => {
+            currentLvl++;
+            if (currentLvl < levels.length) {
+                loadLevel();
+            } else {
+                triggerVictory();
+            }
+        }, 1600);
+    }
 }
 
-showQuestion();
+function resetRobotPosition() {
+    if (isBusy) return;
+    const lvlData = levels[currentLvl];
+    robotState = { ...lvlData.robotStart };
+    document.getElementById('feedbackMsg').innerText = '';
+    updateHeadingLabel();
+    renderBoard();
+}
 
+// 3-ATTEMPT AUTO HELPER
+function handleFailedAttempt(msgText) {
+    attemptCount++;
+    document.getElementById('feedbackMsg').innerHTML = msgText;
+    document.getElementById('feedbackMsg').style.color = '#b91c1c';
+
+    if (attemptCount >= 3) {
+        isBusy = true;
+        const hintBox = document.getElementById('hintBanner');
+        hintBox.style.display = 'block';
+        hintBox.innerHTML = `💡 AI Assistant: Auto-solving stage...`;
+
+        // Reset to start and auto-navigate
+        const lvlData = levels[currentLvl];
+        robotState = { ...lvlData.robotStart };
+        updateHeadingLabel();
+        renderBoard();
+
+        let stepIndex = 0;
+        const autoInterval = setInterval(() => {
+            if (stepIndex >= lvlData.autoSteps.length) {
+                clearInterval(autoInterval);
+                isBusy = false;
+                checkTargetReached();
+                return;
+            }
+
+            const action = lvlData.autoSteps[stepIndex];
+            if (action.type === 'rot') {
+                rotateRobot(action.val, true);
+            } else if (action.type === 'move') {
+                moveForwardStep(true);
+            }
+
+            stepIndex++;
+        }, 600);
+    }
+}
+
+function triggerVictory() {
+    showScreen('victoryScreen');
+    document.getElementById('finalScoreDisplay').innerText = score;
+    // Victory screen: Play applause/clap sound once
+    playAudioTrack('snd-clap');
+    confetti({ particleCount: 180, spread: 100, origin: { y: 0.6 } });
+}
+
+function resetGame() {
+    startGame();
+}
 </script>
-
 </body>
 </html>

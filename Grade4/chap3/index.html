@@ -642,15 +642,6 @@ function triggerClapSound() {
     else { audioSynth.playCorrect(); }
 }
 
-function speak(text) {
-    if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        let msg = new SpeechSynthesisUtterance(text);
-        msg.rate = 0.95;
-        window.speechSynthesis.speak(msg);
-    }
-}
-
 /* 5-CATEGORY QUESTION BANK BASED ON PAGES 22 TO 44 */
 const pptQuestions = {
     level1: [
@@ -789,8 +780,6 @@ function startGame(levelKey) {
 
     document.getElementById("levelHUD").innerText = currentLevelName;
 
-    speak(`Welcome to ${currentLevelName}! Let's solve the presentation questions.`);
-
     startTimer();
     loadQuestionCard();
 }
@@ -870,8 +859,6 @@ function loadQuestionCard() {
             deckArea.appendChild(btn);
         });
     }
-
-    speak(item.q);
 }
 
 /* Drag & Drop Handlers */

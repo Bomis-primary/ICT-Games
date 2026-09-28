@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Computer Memory Interactive Studio</title>
+<title>ICT Grade 4: Computer Memory Interactive Studio</title>
 
 <style>
 :root {
-    --primary: #8b5cf6;
-    --primary-dark: #6d28d9;
+    --primary: #0284c7;
+    --primary-dark: #0369a1;
     --success: #10b981;
     --danger: #ef4444;
     --dark: #0f172a;
     --light: #f8fafc;
-    --panel-bg: rgba(255, 255, 255, 0.96);
+    --panel-bg: rgba(255, 255, 255, 0.98);
     --accent-orange: #f97316;
 }
 
@@ -24,7 +24,6 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     user-select: none;
     -webkit-user-select: none;
-    -webkit-tap-highlight-color: transparent;
     touch-action: manipulation;
 }
 
@@ -41,10 +40,10 @@ body {
 }
 
 body.game-mode {
-    background: linear-gradient(135deg, #c084fc, #6366f1, #1e1b4b);
+    background: linear-gradient(135deg, #38bdf8, #818cf8, #1e1b4b);
 }
 
-/* Background Particles */
+/* Background Animated Bubbles */
 .bg-particles {
     position: absolute;
     width: 100%;
@@ -60,7 +59,7 @@ body.game-mode .bg-particles { display: block; }
 
 .particle {
     position: absolute;
-    background: rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 50%;
     animation: floatUp linear infinite;
 }
@@ -108,7 +107,7 @@ body.game-mode .bg-particles { display: block; }
 
 @keyframes elegantPulse {
     0%, 100% { transform: scale(1); opacity: 0.95; }
-    50% { transform: scale(1.03); opacity: 1; }
+    50% { transform: scale(1.04); opacity: 1; }
 }
 
 .innovine-fallback {
@@ -167,7 +166,7 @@ body.game-mode .bg-particles { display: block; }
     margin-top: 4px;
 }
 
-/* CONTAINER SHELL */
+/* MAIN CONTAINER */
 .container {
     width: 96vw;
     max-width: 860px;
@@ -195,7 +194,7 @@ body.game-mode .bg-particles { display: block; }
     font-weight: 800;
 }
 
-/* LEVEL SELECTION CARDS */
+/* LEVEL SELECTION GRID */
 .level-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -216,7 +215,7 @@ body.game-mode .bg-particles { display: block; }
 .level-card:hover {
     border-color: var(--primary);
     transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.2);
+    box-shadow: 0 8px 20px rgba(2, 132, 199, 0.2);
 }
 
 .level-card h3 {
@@ -231,7 +230,7 @@ body.game-mode .bg-particles { display: block; }
     line-height: 1.3;
 }
 
-/* GAMEPLAY HUD & QUESTION CARD */
+/* GAMEPLAY HUD */
 .hud-bar {
     background: var(--panel-bg);
     padding: 12px 20px;
@@ -261,7 +260,7 @@ body.game-mode .bg-particles { display: block; }
 }
 
 .level-indicator {
-    background: #f3e8ff;
+    background: #e0f2fe;
     color: var(--primary-dark);
     padding: 6px 14px;
     border-radius: 20px;
@@ -290,11 +289,52 @@ body.game-mode .bg-particles { display: block; }
     object-fit: cover;
 }
 
-.memory-svg-art {
-    font-size: 4rem;
+.memory-art-emoji {
+    font-size: 4.5rem;
 }
 
-/* DROP-DOWN SELECT BOX */
+/* DRAG & DROP UI COMPONENTS */
+.drag-container {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.draggable-item {
+    background: #0284c7;
+    color: white;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: grab;
+    box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+    transition: transform 0.2s ease;
+}
+
+.draggable-item:active { cursor: grabbing; transform: scale(0.95); }
+
+.dropzone-box {
+    margin: 15px auto;
+    width: 100%;
+    max-width: 380px;
+    padding: 20px;
+    border: 3px dashed #0284c7;
+    border-radius: 16px;
+    background: #f0f9ff;
+    color: #0369a1;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+}
+
+.dropzone-box.drag-over {
+    background: #bae6fd;
+    border-style: solid;
+}
+
+/* DROP-DOWN SELECT BOX UI */
 .select-wrapper {
     margin: 20px 0;
     text-align: left;
@@ -322,17 +362,17 @@ body.game-mode .bg-particles { display: block; }
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     transition: all 0.2s ease;
     appearance: none;
-    background-image: url("data:image/svg+xml;utf8,<svg fill='%238b5cf6' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-image: url("data:image/svg+xml;utf8,<svg fill='%230284c7' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
     background-repeat: no-repeat;
     background-position: right 14px center;
 }
 
 .custom-dropdown:focus {
     border-color: var(--primary-dark);
-    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2);
+    box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.2);
 }
 
-/* ACTION BUTTONS */
+/* BUTTONS & FEEDBACK */
 .action-btn {
     padding: 14px 32px;
     border: none;
@@ -342,12 +382,12 @@ body.game-mode .bg-particles { display: block; }
     font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 6px 18px rgba(139,92,246,0.35);
+    box-shadow: 0 6px 18px rgba(2,132,199,0.35);
     transition: all 0.2s ease;
     width: 100%;
 }
 
-.action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(139,92,246,0.45); }
+.action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(2,132,199,0.45); }
 
 .feedback-msg {
     margin-top: 15px;
@@ -366,7 +406,7 @@ body.game-mode .bg-particles { display: block; }
 
 <div class="bg-particles" id="matrixBg"></div>
 
-<!-- PAGE 1: SPLASH INTRO LOGO (5 Seconds) -->
+<!-- PAGE 1: 5-SECOND INNOVINE LOGO SPLASH SCREEN -->
 <div id="splash">
     <div class="splash-logo-wrap">
         <img src="assets/innovine-logo.png" alt="Innovine Solutions Logo" onerror="this.onerror=null; this.style.display='none'; document.getElementById('vectorFallback').classList.remove('hidden');">
@@ -389,34 +429,34 @@ body.game-mode .bg-particles { display: block; }
 
     <!-- LEVEL SELECTION SCREEN -->
     <div id="introView" class="card-panel intro-card">
-        <h1><span>COMPUTER MEMORY STUDIO</span></h1>
-        <p style="color: #64748b; font-size: 0.95rem; margin: 10px 0 20px;">Master primary memory, secondary drives, cache levels, and units of digital storage!</p>
+        <h1><span>ICT GRADE 4: COMPUTER MEMORY</span></h1>
+        <p style="color: #64748b; font-size: 0.95rem; margin: 10px 0 20px;">Based on Textbook Chapter 2 (Pages 14–21)</p>
         
         <div class="level-grid">
-            <div class="level-card" onclick="startGame('easy')">
-                <h3>🟢 Level 1: Beginner</h3>
-                <p>Primary Memory Basics (RAM &amp; ROM)</p>
+            <div class="level-card" onclick="startGame('level1')">
+                <h3>🟢 Level 1: Primary Memory (Drag & Drop)</h3>
+                <p>Identify RAM, ROM & Boot Program basics</p>
             </div>
-            <div class="level-card" onclick="startGame('medium')">
-                <h3>🟡 Level 2: Intermediate</h3>
-                <p>Magnetic &amp; Secondary Storage Drives</p>
+            <div class="level-card" onclick="startGame('level2')">
+                <h3>🟡 Level 2: Secondary Devices (Dropdown)</h3>
+                <p>Hard Drives, CD/DVD, Pen Drives & Data Cards</p>
             </div>
-            <div class="level-card" onclick="startGame('hard')">
-                <h3>🔴 Level 3: Advanced</h3>
-                <p>Cache Architecture &amp; CPU Registers</p>
+            <div class="level-card" onclick="startGame('level3')">
+                <h3>🔴 Level 3: Optical Media Types (Dropdown)</h3>
+                <p>Differentiate between CD-R, CD-RW, DVD-R & DVD-RW</p>
             </div>
-            <div class="level-card" onclick="startGame('expert')">
-                <h3>🟣 Level 4: Expert</h3>
-                <p>Flash Drives, Optical Discs &amp; SSDs</p>
+            <div class="level-card" onclick="startGame('level4')">
+                <h3>🟣 Level 4: Binary & Memory Units (Dropdown)</h3>
+                <p>Bits, Bytes, Kilobytes, Megabytes & Gigabytes</p>
             </div>
-            <div class="level-card" onclick="startGame('master')">
-                <h3>🔥 Level 5: Master</h3>
-                <p>Digital Memory Units (Bytes to Terabytes)</p>
+            <div class="level-card" onclick="startGame('level5')">
+                <h3>🔥 Level 5: Practical Scenarios (Drag & Drop)</h3>
+                <p>Real-life problem solving & capacity comparisons</p>
             </div>
         </div>
     </div>
 
-    <!-- GAMEPLAY SCREEN WITH DROP-DOWN SELECTION -->
+    <!-- GAMEPLAY SCREEN -->
     <div id="playView" class="card-panel hidden">
         <div class="hud-bar">
             <div class="level-indicator" id="levelHUD">Level 1</div>
@@ -425,26 +465,34 @@ body.game-mode .bg-particles { display: block; }
         </div>
 
         <div class="memory-img-box" id="imageContainer">
-            <!-- Dynamic Vector or Image Rendered Here -->
+            <!-- Dynamic Image or Visual Art -->
         </div>
 
         <h2 style="font-size: 1.15rem; color: var(--dark); margin-bottom: 15px;" id="questionText">Loading memory question...</h2>
 
-        <div class="select-wrapper">
-            <label class="select-label" for="answerDropdown">Select the correct memory classification:</label>
+        <!-- INTERACTIVE DRAG AND DROP AREA (For Level 1 & 5) -->
+        <div id="dragDropArea" class="hidden">
+            <div class="drag-container" id="draggableOptions"></div>
+            <div class="dropzone-box" id="dropTarget" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="handleDrop(event)">
+                🎯 Drag & Drop the correct answer box here
+            </div>
+        </div>
+
+        <!-- INTERACTIVE DROPDOWN AREA (For Level 2, 3 & 4) -->
+        <div id="dropdownArea" class="select-wrapper hidden">
+            <label class="select-label" for="answerDropdown">Select the correct option:</label>
             <select class="custom-dropdown" id="answerDropdown">
                 <option value="" disabled selected>-- Choose Answer --</option>
             </select>
+            <button class="action-btn" style="margin-top:15px;" onclick="submitDropdownAnswer()">Submit Answer ➔</button>
         </div>
-
-        <button class="action-btn" id="submitBtn" onclick="submitAnswer()">Submit Answer ➔</button>
 
         <div class="feedback-msg" id="feedbackText"></div>
     </div>
 
-    <!-- END GAME / PODIUM REPORT SCREEN -->
+    <!-- REPORT SCREEN -->
     <div id="reportView" class="card-panel hidden">
-        <h1 style="font-size:2rem; margin-bottom:12px;">🎉 Memory Challenge Completed!</h1>
+        <h1 style="font-size:2rem; margin-bottom:12px;">🎉 Challenge Completed!</h1>
         <p style="font-size:1.1rem; color:#475569; margin-bottom:20px;" id="finalScoreText">Your Final Score: 0</p>
         <div style="font-size:4rem; margin-bottom:20px;" id="trophyIcon">🏆</div>
         <button class="action-btn" onclick="restartStudio()">Try Another Level 🔄</button>
@@ -452,7 +500,7 @@ body.game-mode .bg-particles { display: block; }
 
 </div>
 
-<!-- AUDIO CORE MAPPED TO REPOSITORY ASSETS -->
+<!-- AUDIO CORE (Fallback Web Audio Synthesizer included) -->
 <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
@@ -509,7 +557,7 @@ try {
     }
 } catch(e){}
 
-/* Automatic 5-Second Splash Screen Driver */
+/* 5-Second Splash Driver */
 setTimeout(() => {
     const splash = document.getElementById("splash");
     splash.style.opacity = '0';
@@ -524,42 +572,29 @@ setTimeout(() => {
 function stopAllAudio() {
     ['correctSound', 'wrongSound', 'clapSound'].forEach(id => {
         const a = document.getElementById(id);
-        if (a) {
-            a.pause();
-            a.currentTime = 0;
-            a.loop = false;
-        }
+        if (a) { a.pause(); a.currentTime = 0; }
     });
 }
 
 function triggerCorrectSound() {
     stopAllAudio();
     const audio = document.getElementById("correctSound");
-    if (audio) {
-        audio.play().catch(() => audioSynth.playCorrect());
-    } else {
-        audioSynth.playCorrect();
-    }
+    if (audio) { audio.play().catch(() => audioSynth.playCorrect()); }
+    else { audioSynth.playCorrect(); }
 }
 
 function triggerWrongSound() {
     stopAllAudio();
     const audio = document.getElementById("wrongSound");
-    if (audio) {
-        audio.play().catch(() => audioSynth.playWrong());
-    } else {
-        audioSynth.playWrong();
-    }
+    if (audio) { audio.play().catch(() => audioSynth.playWrong()); }
+    else { audioSynth.playWrong(); }
 }
 
 function triggerClapSound() {
     stopAllAudio();
     const audio = document.getElementById("clapSound");
-    if (audio) {
-        audio.play().catch(() => audioSynth.playCorrect());
-    } else {
-        audioSynth.playCorrect();
-    }
+    if (audio) { audio.play().catch(() => audioSynth.playCorrect()); }
+    else { audioSynth.playCorrect(); }
 }
 
 function speak(text) {
@@ -571,86 +606,96 @@ function speak(text) {
     }
 }
 
-/* 5-LEVEL IMAGE-BASED QUESTION DATABASE */
+/* 5-LEVEL QUESTION BANK BASED STRICTLY ON PAGES 14 TO 21 */
 const memoryLevels = {
-    easy: [
+    level1: [
         {
-            q: "Which type of temporary volatile memory stick is shown in the image below?",
+            type: "drag",
+            q: "Which volatile primary memory chip loses its contents when power is switched off?",
             art: "⚡",
             img: "https://images.unsplash.com/photo-1562976540-1502c2145186?w=400",
             o: ["RAM (Random Access Memory)", "ROM (Read Only Memory)", "Hard Disk Drive"],
             a: "RAM (Random Access Memory)"
         },
         {
-            q: "Identify this non-volatile chip containing permanent startup instructions (BIOS):",
+            type: "drag",
+            q: "Which non-volatile chip holds the essential 'boot up' program for the computer?",
             art: "💾",
             img: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400",
-            o: ["RAM Stick", "ROM (Read Only Memory)", "USB Flash Drive"],
+            o: ["ROM (Read Only Memory)", "RAM (Random Access Memory)", "Pen Drive"],
             a: "ROM (Read Only Memory)"
         }
     ],
-    medium: [
+    level2: [
         {
-            q: "What type of high-capacity magnetic storage drive is illustrated below?",
-            art: "💽",
-            img: "https://images.unsplash.com/photo-1531492746076-161ca9bcad58?w=400",
-            o: ["Hard Disk Drive (HDD)", "Cache Memory", "Virtual RAM"],
-            a: "Hard Disk Drive (HDD)"
-        },
-        {
-            q: "What does 'RAM' stand for in computer hardware systems?",
-            art: "🧠",
-            img: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=400",
-            o: ["Random Access Memory", "Read Access Memory", "Rapid Action Memory"],
-            a: "Random Access Memory"
-        }
-    ],
-    hard: [
-        {
-            q: "Identify the ultra-fast memory buffer integrated directly on the CPU die:",
-            art: "🚀",
-            img: "https://images.unsplash.com/photo-1555680202-c86f0e12f086?w=400",
-            o: ["Cache Memory", "Solid State Drive", "Optical Disc"],
-            a: "Cache Memory"
-        },
-        {
-            q: "Which memory registers hold active data currently processing inside CPU arithmetic units?",
-            art: "⚙️",
-            img: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=400",
-            o: ["CPU Registers / Cache", "External Hard Disk", "USB Flash Drive"],
-            a: "CPU Registers / Cache"
-        }
-    ],
-    expert: [
-        {
-            q: "Identify this portable, solid-state flash memory device:",
+            type: "dropdown",
+            q: "Identify this portable secondary storage device also called a flash drive or thumb-drive:",
             art: "🔌",
             img: "https://images.unsplash.com/photo-1544652478-6653e09f18a2?w=400",
-            o: ["USB Flash Drive (Pen Drive)", "Floppy Disk", "RAM Module"],
-            a: "USB Flash Drive (Pen Drive)"
+            o: ["Pen Drive", "Internal Hard Drive", "CD-ROM"],
+            a: "Pen Drive"
         },
         {
-            q: "What type of modern solid-state drive uses flash memory for high-speed storage?",
-            art: "⚡",
-            img: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=400",
-            o: ["Solid State Drive (SSD)", "Magnetic Tape", "Compact Disc (CD)"],
-            a: "Solid State Drive (SSD)"
+            type: "dropdown",
+            q: "Which compact storage device is widely used in modern mobile phones and cameras?",
+            art: "📱",
+            img: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=400",
+            o: ["Data Card", "Internal Hard Drive", "DVD-ROM"],
+            a: "Data Card"
         }
     ],
-    master: [
+    level3: [
         {
-            q: "How many Megabytes (MB) make up exactly 1 Gigabyte (GB)?",
-            art: "📊",
-            img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400",
-            o: ["1024 MB", "1000 MB", "512 MB"],
-            a: "1024 MB"
+            type: "dropdown",
+            q: "Which re-writable optical disc allows data to be burnt AND erased for re-use?",
+            art: "💿",
+            img: "https://images.unsplash.com/photo-1531492746076-161ca9bcad58?w=400",
+            o: ["CD-RW / DVD-RW", "CD-R / DVD-R", "CD-ROM"],
+            a: "CD-RW / DVD-RW"
         },
         {
-            q: "What is the smallest unit of digital computer memory representing a 0 or 1?",
+            type: "dropdown",
+            q: "How much data capacity can a standard DVD-ROM disc hold?",
+            art: "📀",
+            img: "https://images.unsplash.com/photo-1531492746076-161ca9bcad58?w=400",
+            o: ["4.7 GB", "700 MB", "1 TB"],
+            a: "4.7 GB"
+        }
+    ],
+    level4: [
+        {
+            type: "dropdown",
+            q: "The computer binary language consists of which two digits?",
             art: "🔢",
+            img: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400",
+            o: ["0 and 1", "1 and 2", "0 and 10"],
+            a: "0 and 1"
+        },
+        {
+            type: "dropdown",
+            q: "According to memory measurement units, how many bytes equal 1 KB (Kilobyte)?",
+            art: "📊",
             img: "https://images.unsplash.com/photo-1518770660439-4636190af475?w=400",
-            o: ["Bit", "Byte", "Nibble"],
-            a: "Bit"
+            o: ["1024 bytes", "1000 bytes", "8 bytes"],
+            a: "1024 bytes"
+        }
+    ],
+    level5: [
+        {
+            type: "drag",
+            q: "HOTs Practical Question: Amit wants to copy a movie to a disc for his friend. Which medium should he choose?",
+            art: "🎬",
+            img: "https://images.unsplash.com/photo-1531492746076-161ca9bcad58?w=400",
+            o: ["DVD-ROM / DVD-R", "RAM Chip", "Internal ROM"],
+            a: "DVD-ROM / DVD-R"
+        },
+        {
+            type: "drag",
+            q: "Practical Scenario: Rahil bought a laptop with 16 GB RAM. How many bytes of RAM can it hold?",
+            art: "💻",
+            img: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400",
+            o: ["16 Billion Bytes", "16 Million Bytes", "16 Thousand Bytes"],
+            a: "16 Billion Bytes"
         }
     ]
 };
@@ -664,11 +709,11 @@ let currentLevelName = "Level 1";
 
 function startGame(levelKey) {
     const levelTitles = {
-        easy: "Level 1: Beginner",
-        medium: "Level 2: Intermediate",
-        hard: "Level 3: Advanced",
-        expert: "Level 4: Expert",
-        master: "Level 5: Master"
+        level1: "Level 1: Primary Memory (Drag & Drop)",
+        level2: "Level 2: Secondary Devices (Dropdown)",
+        level3: "Level 3: Optical Media (Dropdown)",
+        level4: "Level 4: Binary & Memory Units",
+        level5: "Level 5: Practical Scenarios (HOTs)"
     };
 
     currentLevelName = levelTitles[levelKey] || "Level 1";
@@ -683,7 +728,7 @@ function startGame(levelKey) {
 
     document.getElementById("levelHUD").innerText = currentLevelName;
 
-    speak(`Welcome to ${currentLevelName}! Select the correct memory option from the drop down menu.`);
+    speak(`Welcome to ${currentLevelName}! Let's solve the memory questions.`);
 
     startTimer();
     loadQuestionCard();
@@ -695,9 +740,7 @@ function startTimer() {
     timerInterval = setInterval(() => {
         timeLeft--;
         document.getElementById("timerHUD").innerText = `⏱️ Time: ${timeLeft}s`;
-        if (timeLeft <= 0) {
-            finishGame();
-        }
+        if (timeLeft <= 0) { finishGame(); }
     }, 1000);
 }
 
@@ -707,55 +750,101 @@ function loadQuestionCard() {
         return;
     }
 
-    const currentItem = activeQuestions[currentIndex];
-    document.getElementById("questionText").innerText = currentItem.q;
+    const item = activeQuestions[currentIndex];
+    document.getElementById("questionText").innerText = item.q;
     document.getElementById("feedbackText").innerText = "";
     document.getElementById("feedbackText").className = "feedback-msg";
     document.getElementById("scoreHUD").innerText = `⭐ Score: ${currentScore}`;
 
-    // Render Image or SVG Art Fallback
+    // Render Image or Visual Art
     const imgBox = document.getElementById("imageContainer");
-    imgBox.innerHTML = `<img src="${currentItem.img}" alt="Memory Hardware" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\'memory-svg-art\\'>${currentItem.art}</span>';">`;
+    imgBox.innerHTML = `<img src="${item.img}" alt="Computer Memory" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\'memory-art-emoji\\'>${item.art}</span>';">`;
 
-    // Populate Dropdown Select Box
-    const select = document.getElementById("answerDropdown");
-    select.innerHTML = `<option value="" disabled selected>-- Choose Answer --</option>`;
+    const dragArea = document.getElementById("dragDropArea");
+    const dropArea = document.getElementById("dropdownArea");
 
-    currentItem.o.forEach(opt => {
-        const optionNode = document.createElement("option");
-        optionNode.value = opt;
-        optionNode.innerText = opt;
-        select.appendChild(optionNode);
-    });
+    if (item.type === "drag") {
+        dragArea.classList.remove("hidden");
+        dropArea.classList.add("hidden");
 
-    speak(currentItem.q);
+        const container = document.getElementById("draggableOptions");
+        container.innerHTML = "";
+        item.o.forEach((opt, idx) => {
+            let div = document.createElement("div");
+            div.className = "draggable-item";
+            div.innerText = opt;
+            div.draggable = true;
+            div.id = "drag-" + idx;
+            div.ondragstart = (e) => e.dataTransfer.setData("text", opt);
+            container.appendChild(div);
+        });
+
+        document.getElementById("dropTarget").innerText = "🎯 Drag & Drop the correct answer box here";
+    } else {
+        dragArea.classList.add("hidden");
+        dropArea.classList.remove("hidden");
+
+        const select = document.getElementById("answerDropdown");
+        select.innerHTML = `<option value="" disabled selected>-- Choose Answer --</option>`;
+        item.o.forEach(opt => {
+            const optionNode = document.createElement("option");
+            optionNode.value = opt;
+            optionNode.innerText = opt;
+            select.appendChild(optionNode);
+        });
+    }
+
+    speak(item.q);
 }
 
-function submitAnswer() {
-    const select = document.getElementById("answerDropdown");
-    const chosenVal = select.value;
-    const currentItem = activeQuestions[currentIndex];
-    const feedback = document.getElementById("feedbackText");
+/* Drag & Drop Event Handlers */
+function allowDrop(ev) {
+    ev.preventDefault();
+    document.getElementById("dropTarget").classList.add("drag-over");
+}
 
-    if (!chosenVal) {
+function leaveDrop(ev) {
+    document.getElementById("dropTarget").classList.remove("drag-over");
+}
+
+function handleDrop(ev) {
+    ev.preventDefault();
+    document.getElementById("dropTarget").classList.remove("drag-over");
+    const draggedText = ev.dataTransfer.getData("text");
+    evaluateAnswer(draggedText);
+}
+
+/* Dropdown Submit Handler */
+function submitDropdownAnswer() {
+    const select = document.getElementById("answerDropdown");
+    const val = select.value;
+    if (!val) {
+        const feedback = document.getElementById("feedbackText");
         feedback.innerText = "⚠️ Please select an answer from the drop-down list first!";
         feedback.className = "feedback-msg wrong";
         return;
     }
+    evaluateAnswer(val);
+}
 
-    if (chosenVal === currentItem.a) {
+/* Common Evaluation Engine */
+function evaluateAnswer(selectedVal) {
+    const item = activeQuestions[currentIndex];
+    const feedback = document.getElementById("feedbackText");
+
+    if (selectedVal === item.a) {
         currentScore += 100;
         triggerCorrectSound();
-        feedback.innerText = "✓ Correct Answer! Excellent!";
+        feedback.innerText = "✓ Correct Answer! Well done!";
         feedback.className = "feedback-msg correct";
     } else {
         triggerWrongSound();
-        feedback.innerText = `✗ Incorrect. Correct answer: ${currentItem.a}`;
+        feedback.innerText = `✗ Incorrect. Correct answer: ${item.a}`;
         feedback.className = "feedback-msg wrong";
     }
 
     currentIndex++;
-    setTimeout(loadQuestionCard, 1500);
+    setTimeout(loadQuestionCard, 1600);
 }
 
 function finishGame() {

@@ -2,17 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Font-Tastic Rescue: Presentation Design Lab</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Presentation Design Lab: Font-Tastic Rescue!</title>
 
 <style>
 :root {
-    --space-dark: #0b0f19;
-    --panel-bg: rgba(255, 255, 255, 0.96);
-    --primary-neon: #38bdf8; /* Space Blue */
-    --accent-purple: #818cf8;
-    --success-green: #4ade80;
-    --danger-red: #f87171;
+    --space-dark: #0f172a;
+    --panel-bg: rgba(255, 255, 255, 0.98);
+    --primary-neon: #0284c7;
+    --primary-dark: #0369a1;
+    --accent-purple: #6366f1;
+    --success-green: #10b981;
+    --danger-red: #ef4444;
 }
 
 * {
@@ -21,24 +22,27 @@
     box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
 }
 
 body {
     background: #ffffff;
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    overflow-x: hidden;
     position: relative;
     transition: background 0.5s ease;
 }
 
 body.game-mode {
-    background: linear-gradient(135deg, #0f172a, #1e1b4b, #2e1065);
+    background: linear-gradient(135deg, #0f172a, #1e1b4b, #311b92);
 }
 
-/* Space Stars Generator Particles */
+/* Background Particle FX */
 .bg-particles {
     position: absolute;
     width: 100%;
@@ -54,7 +58,7 @@ body.game-mode .bg-particles { display: block; }
 
 .star {
     position: absolute;
-    background: #ffffff;
+    background: rgba(255, 255, 255, 0.4);
     border-radius: 50%;
     animation: twinkle linear infinite;
 }
@@ -64,48 +68,124 @@ body.game-mode .bg-particles { display: block; }
     100% { transform: translateY(-10vh) scale(1); opacity: 0; }
 }
 
-/* Required 5-Second Pure White Splash Screen */
+/* PAGE 1: 5-SECOND PURE WHITE SPLASH SCREEN WITH INNOVINE LOGO */
 #splash {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
     background: #ffffff;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 9999;
-}
-#splash img {
-    width: 280px;
-    max-width: 80%;
-    animation: pulse 2s infinite ease-in-out;
-}
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.04); }
+    transition: opacity 0.8s ease-out;
+    padding: 20px;
 }
 
-/* Main UI Shell Wrapper */
+.splash-logo-wrap {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.splash-logo-wrap img {
+    width: 100%;
+    max-width: 360px;
+    height: auto;
+    max-height: 50vh;
+    object-fit: contain;
+    animation: elegantPulse 2.5s infinite ease-in-out;
+}
+
+@keyframes elegantPulse {
+    0%, 100% { transform: scale(1); opacity: 0.95; }
+    50% { transform: scale(1.04); opacity: 1; }
+}
+
+.innovine-fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+.innovine-symbol {
+    position: relative;
+    width: 50px;
+    height: 90px;
+}
+.innovine-pencil {
+    width: 12px;
+    height: 70px;
+    background: #475569;
+    position: absolute;
+    left: 19px;
+    top: 10px;
+    border-radius: 2px;
+}
+.innovine-pencil::before {
+    content: '';
+    position: absolute;
+    top: -12px;
+    left: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 12px solid #f97316;
+}
+.innovine-ribbon {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50px;
+    height: 90px;
+    border: 8px solid #dc2626;
+    border-left: transparent;
+    border-bottom: transparent;
+    border-radius: 50%;
+    transform: rotate(-25deg);
+}
+.innovine-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #1e293b;
+    letter-spacing: 2px;
+    line-height: 1;
+}
+.innovine-sub {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1e293b;
+    letter-spacing: 6px;
+    margin-top: 4px;
+}
+
+/* MAIN APPLICATION CONTAINER SHELL */
 .container {
-    width: 95vw;
-    max-width: 950px;
-    height: 88vh;
-    min-height: 580px;
+    width: 96vw;
+    max-width: 900px;
+    min-height: 85vh;
     z-index: 2;
+    display: flex;
+    flex-direction: column;
 }
 
-.intro-card {
+.card-panel {
     background: var(--panel-bg);
-    padding: 40px;
-    border-radius: 32px;
+    border-radius: 28px;
+    padding: clamp(20px, 4vw, 36px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+    border: 3px solid var(--primary-neon);
     text-align: center;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.5);
-    max-width: 650px;
-    margin: 0 auto;
-    border: 2px solid rgba(56, 189, 248, 0.2);
+    margin: auto;
+    width: 100%;
 }
+
 .intro-card h1 span {
     background: linear-gradient(135deg, var(--primary-neon), #4f46e5);
     -webkit-background-clip: text;
@@ -113,480 +193,751 @@ body.game-mode .bg-particles { display: block; }
     font-weight: 800;
 }
 
-/* Game Interface Grid Splitting Dashboard and Status Panel */
-.game-layout {
+/* LEVEL SELECTION GRID */
+.level-grid {
     display: grid;
-    grid-template-rows: auto 1fr auto;
-    height: 100%;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 15px;
+    margin: 20px 0;
 }
 
-.control-header {
+.level-card {
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    border-radius: 18px;
+    padding: 18px 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.level-card:hover {
+    border-color: var(--primary-neon);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(2, 132, 199, 0.2);
+}
+
+.level-card h3 {
+    color: var(--space-dark);
+    margin-bottom: 6px;
+    font-size: 1rem;
+}
+
+.level-card p {
+    font-size: 0.82rem;
+    color: #64748b;
+    line-height: 1.3;
+}
+
+/* GAMEPLAY HUD */
+.hud-bar {
+    background: var(--panel-bg);
+    padding: 12px 20px;
+    border-radius: 16px;
+    margin-bottom: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(15, 23, 42, 0.7);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    padding: 12px 24px;
-    border-radius: 16px;
-    color: white;
-    font-weight: bold;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    font-weight: 800;
 }
 
-/* Fuel Meter Component Visuals */
-.fuel-system {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(0,0,0,0.3);
-    padding: 6px 15px;
+.timer-pill {
+    background: #fee2e2;
+    color: var(--danger-red);
+    padding: 6px 14px;
     border-radius: 20px;
-    border: 1px solid #334155;
-    min-width: 240px;
-}
-.fuel-track {
-    flex-grow: 1;
-    height: 14px;
-    background: #1e293b;
-    border-radius: 7px;
-    overflow: hidden;
-    position: relative;
-    border: 1px solid #475569;
-}
-.fuel-fill {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #f43f5e, #eab308, #22c55e);
-    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 0.9rem;
 }
 
-/* Center Interactive Simulator Frame split into Bug-Viewer and Options Grid */
-.stage-arena {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 15px;
-    height: 100%;
-    min-height: 0; /* Prevents overflow in flex/grid items */
+.score-pill {
+    background: #d1fae5;
+    color: #065f46;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.9rem;
 }
 
-/* The Glitched Presentation Slide Frame simulate bad design styles dynamically */
-.glitch-slide-monitor {
+.level-indicator {
+    background: #e0f2fe;
+    color: var(--primary-dark);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+/* IMAGE / SLIDE MONITOR BOX */
+.slide-monitor-box {
+    width: 100%;
+    max-width: 460px;
+    height: 210px;
+    margin: 0 auto 15px;
+    border-radius: 20px;
     background: #ffffff;
-    border: 8px solid #475569;
-    border-radius: 24px;
-    padding: 25px;
+    border: 4px solid #475569;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    text-align: center;
+    justify-content: center;
+    padding: 15px;
+    overflow: hidden;
     position: relative;
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.1), 0 10px 30px rgba(0,0,0,0.3);
-    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
 }
 
-/* Dynamic Class Changes driven by JavaScript state rules */
-.crime-contrast { background: #ffffff !important; color: #facc15 !important; } /* Light yellow on white text crime */
-.crime-size { font-size: 8px !important; color: #000 !important; }
-.crime-crowd { padding: 5px !important; font-size: 11px !important; line-height: 1.1 !important; color: #1e293b !important; text-align: justify !important; }
-.crime-font { font-family: 'Impact', 'Arial Black', sans-serif !important; color: #ec4899 !important; transform: skewX(-15deg); }
+.slide-monitor-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
 
-/* Workspace Selection Panel Grid */
+.slide-emoji-art {
+    font-size: 4rem;
+}
+
+/* INTERACTIVE FORMATS: DRAG & DROP */
+.drag-container {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 15px 0;
+    flex-wrap: wrap;
+}
+
+.draggable-item {
+    background: var(--primary-neon);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: grab;
+    box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3);
+    transition: transform 0.2s ease;
+}
+
+.draggable-item:active { cursor: grabbing; transform: scale(0.95); }
+
+.dropzone-box {
+    margin: 15px auto;
+    width: 100%;
+    max-width: 420px;
+    padding: 18px;
+    border: 3px dashed var(--primary-neon);
+    border-radius: 16px;
+    background: #f0f9ff;
+    color: #0369a1;
+    font-weight: 700;
+    font-size: 0.95rem;
+    transition: background 0.3s ease;
+}
+
+.dropzone-box.drag-over {
+    background: #bae6fd;
+    border-style: solid;
+}
+
+/* INTERACTIVE FORMATS: DROPDOWN MENU */
+.select-wrapper {
+    margin: 15px 0;
+    text-align: left;
+}
+
+.select-label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: var(--space-dark);
+    margin-bottom: 8px;
+}
+
+.custom-dropdown {
+    width: 100%;
+    padding: 14px 18px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--space-dark);
+    background: #ffffff;
+    border: 2px solid var(--primary-neon);
+    border-radius: 14px;
+    outline: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='%230284c7' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+}
+
+/* INTERACTIVE FORMATS: MULTI-OPTION BUTTON DECK */
 .workspace-deck {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    justify-content: center;
+    gap: 10px;
+    margin: 15px 0;
 }
+
 .fix-option-btn {
-    background: var(--panel-bg);
+    background: #ffffff;
     border: 2px solid #cbd5e1;
-    border-radius: 16px;
-    padding: 16px 20px;
+    border-radius: 14px;
+    padding: 12px 18px;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 12px;
     text-align: left;
     transition: all 0.2s ease;
 }
+
 .fix-option-btn:hover {
-    transform: translateX(-5px);
     border-color: var(--primary-neon);
-    box-shadow: 0 5px 15px rgba(56, 189, 248, 0.2);
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
 }
-.fix-option-btn .badge-num {
+
+.badge-num {
     background: #f1f5f9;
     color: #475569;
     font-weight: 800;
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.9rem;
-}
-.fix-option-btn h4 {
-    font-size: 1rem;
-    color: #0f172a;
-    font-weight: 700;
-    margin-bottom: 2px;
-}
-.fix-option-btn p {
-    font-size: 0.8rem;
-    color: #64748b;
-    font-weight: 500;
+    font-size: 0.85rem;
 }
 
-/* Space Engine Feedback Notification Banner */
-.feedback-shelf {
-    background: rgba(15, 23, 42, 0.85);
-    border: 1px solid #334155;
-    padding: 14px;
-    border-radius: 14px;
-    text-align: center;
-    color: #94a3b8;
-    font-weight: 600;
-    font-size: 0.95rem;
-}
-.feedback-shelf.success { border-color: var(--success-green); color: var(--success-green); }
-.feedback-shelf.error { border-color: var(--danger-red); color: var(--danger-red); }
-
-/* Core Operations Button styles */
+/* BUTTONS & FEEDBACK */
 .action-btn {
-    padding: 14px 40px;
+    padding: 14px 32px;
     border: none;
-    border-radius: 35px;
-    background: linear-gradient(135deg, var(--primary-neon), var(--accent-purple));
+    border-radius: 30px;
+    background: linear-gradient(135deg, var(--primary-neon), var(--primary-dark));
     color: white;
-    font-size: 1.1rem;
+    font-size: 1rem;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 6px 20px rgba(56, 189, 248, 0.3);
+    box-shadow: 0 6px 18px rgba(2,132,199,0.35);
     transition: all 0.2s ease;
+    width: 100%;
 }
-.action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(56, 189, 248, 0.45); }
+
+.action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(2,132,199,0.45); }
+
+.feedback-msg {
+    margin-top: 15px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    min-height: 28px;
+}
+
+.feedback-msg.correct { color: var(--success-green); }
+.feedback-msg.wrong { color: var(--danger-red); }
 
 .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<div class="bg-particles" id="spaceStarsContainer"></div>
+<div class="bg-particles" id="starField"></div>
 
+<!-- PAGE 1: 5-SECOND PURE WHITE SPLASH SCREEN -->
 <div id="splash">
-    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'">
+    <div class="splash-logo-wrap">
+        <img src="assets/innovine-logo.png" alt="Innovine Solutions Logo" onerror="this.onerror=null; this.style.display='none'; document.getElementById('vectorFallback').classList.remove('hidden');">
+        
+        <div id="vectorFallback" class="innovine-fallback hidden">
+            <div class="innovine-symbol">
+                <div class="innovine-pencil"></div>
+                <div class="innovine-ribbon"></div>
+            </div>
+            <div>
+                <div class="innovine-title">INNOVINE</div>
+                <div class="innovine-sub">SOLUTIONS</div>
+            </div>
+        </div>
+    </div>
 </div>
 
+<!-- PAGE 2: MAIN APPLICATION HUB -->
 <div class="container hidden" id="gameApp">
 
-    <div id="introView" class="intro-card">
-        <img src="assets/innovine-logo.png" alt="Logo" style="max-width:140px; margin-bottom:15px;" onerror="this.style.display='none'">
-        <h1><span>FONT-TASTIC RESCUE!</span></h1>
-        <h2 style="color: #64748b; font-size: 1.1rem; margin-bottom: 24px;">PowerPoint Mission Control Lab</h2>
-        <p style="text-align: left; line-height: 1.7; color: #475569; margin-bottom: 26px; background: #f1f5f9; padding: 20px; border-radius: 14px; font-size: 0.95rem;">
-            <b>Emergency Alert Design Doctor!</b> A malicious computer virus has modified our Mars Rocket presentation slides with awful formatting layout crimes! The astronauts can't read the launch instructions!
-            <br><br>
-            Examine the broken slides inside the monitor terminal, use your expert PowerPoint knowledge to pick the right design repair tool, and fill up the rocket's fuel cells for liftoff!
-        </p>
-        <button class="action-btn" onclick="startGame()">Initiate System Patch</button>
-    </div>
-
-    <div id="gameView" class="game-layout hidden">
+    <!-- LEVEL SELECTION SCREEN -->
+    <div id="introView" class="card-panel intro-card">
+        <h1><span>PRESENTATION DESIGN LAB</span></h1>
+        <p style="color: #64748b; font-size: 0.95rem; margin: 10px 0 20px;">Based on ICT Grade 4 Textbook Chapters 3 &amp; 4 (Pages 22–44)</p>
         
-        <div class="control-header">
-            <div>🚀 Locked Slide Circuit: <span id="slideCounter">1</span> / 5</div>
-            <div class="fuel-system">
-                <span>🔋 Fuel Status:</span>
-                <div class="fuel-track">
-                    <div class="fuel-fill" id="fuelMeterBar"></div>
-                </div>
+        <div class="level-grid">
+            <div class="level-card" onclick="startGame('level1')">
+                <h3>🟢 Category 1: PowerPoint Basics (Dropdown)</h3>
+                <p>Identify Placeholders, Ribbons, Tabs &amp; Office Button</p>
+            </div>
+            <div class="level-card" onclick="startGame('level2')">
+                <h3>🟡 Category 2: Text Formatting (Drag &amp; Drop)</h3>
+                <p>Fix Font styles, Bullets, Alignment &amp; Keyboard Shortcuts</p>
+            </div>
+            <div class="level-card" onclick="startGame('level3')">
+                <h3>🔴 Category 3: Inserting Objects (Click-to-Fix)</h3>
+                <p>Resize Pictures, Add Text Boxes &amp; Custom Shapes</p>
+            </div>
+            <div class="level-card" onclick="startGame('level4')">
+                <h3>🟣 Category 4: Presentation Views &amp; Transitions</h3>
+                <p>Normal View, Slide Sorter, Transitions &amp; Timings</p>
+            </div>
+            <div class="level-card" onclick="startGame('level5')">
+                <h3>🔥 Category 5: Custom Animations (Activity Lab)</h3>
+                <p>Entrance, Emphasis, Exit &amp; Motion Path Effects</p>
             </div>
         </div>
-
-        <div class="stage-arena">
-            <div class="glitched-monitor-frame" style="position: relative; height: 100%;">
-                <div class="glitch-slide-monitor" id="slideCanvas">
-                    <h2 id="slideHeadline" style="margin-bottom:10px; font-weight:800;">Slide Title Label</h2>
-                    <p id="slideParagraph" style="font-weight:600;">Slide details information snippet block layout.</p>
-                </div>
-            </div>
-
-            <div class="workspace-deck">
-                <div class="fix-option-btn" onclick="applyDesignFix(0)">
-                    <div class="badge-num">1</div>
-                    <div>
-                        <h4 id="fixTitle0">Fix Configuration Alpha</h4>
-                        <p id="fixDesc0">Workspace patch option description block.</p>
-                    </div>
-                </div>
-                <div class="fix-option-btn" onclick="applyDesignFix(1)">
-                    <div class="badge-num">2</div>
-                    <div>
-                        <h4 id="fixTitle1">Fix Configuration Beta</h4>
-                        <p id="fixDesc1">Workspace patch option description block.</p>
-                    </div>
-                </div>
-                <div class="fix-option-btn" onclick="applyDesignFix(2)">
-                    <div class="badge-num">3</div>
-                    <div>
-                        <h4 id="fixTitle2">Fix Configuration Gamma</h4>
-                        <p id="fixDesc2">Workspace patch option description block.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="feedback-shelf" id="systemTerminalMessage">Awaiting presentation fix command instructions matrix...</div>
-
     </div>
 
-    <div id="finishView" class="intro-card hidden">
-        <h1 style="font-size:2.2rem; margin-bottom:15px;" id="endHeader">🚀 Rocket Liftoff Confirmed!</h1>
-        <p style="font-size:1.1rem; color:#475569; line-height:1.7; margin-bottom:15px;" id="victoryMessage">
-            Outstanding slide repair maneuvers! The rocket crew read your beautifully reformatted slides effortlessly and zoomed straight past orbit safely!
-        </p>
-        <div style="font-size:2rem; font-weight:800; color:var(--accent-purple); margin-bottom:20px;" id="finalFuelBox">Fuel Cells: 0%</div>
-        <div style="font-size:4.5rem; margin-bottom:24px; animation: bounce 2s infinite;" id="rocketEmoji">🚀🌌🛸</div>
-        <button class="action-btn" onclick="restartMission()">Repair Alternative Deck</button>
+    <!-- GAMEPLAY SCREEN -->
+    <div id="playView" class="card-panel hidden">
+        <div class="hud-bar">
+            <div class="level-indicator" id="levelHUD">Category 1</div>
+            <div class="timer-pill" id="timerHUD">⏱️ Time: 30s</div>
+            <div class="score-pill" id="scoreHUD">⭐ Score: 0</div>
+        </div>
+
+        <!-- IMAGE DISPLAY MONITOR -->
+        <div class="slide-monitor-box" id="imageContainer">
+            <!-- Dynamic Image / Vector Canvas -->
+        </div>
+
+        <h2 style="font-size: 1.1rem; color: var(--space-dark); margin-bottom: 15px;" id="questionText">Loading presentation question...</h2>
+
+        <!-- INTERACTIVE FORMAT 1: DRAG & DROP -->
+        <div id="dragDropArea" class="hidden">
+            <div class="drag-container" id="draggableOptions"></div>
+            <div class="dropzone-box" id="dropTarget" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="handleDrop(event)">
+                🎯 Drag &amp; Drop the correct tool box here
+            </div>
+        </div>
+
+        <!-- INTERACTIVE FORMAT 2: DROPDOWN MENU -->
+        <div id="dropdownArea" class="select-wrapper hidden">
+            <label class="select-label" for="answerDropdown">Select the correct PowerPoint feature:</label>
+            <select class="custom-dropdown" id="answerDropdown">
+                <option value="" disabled selected>-- Choose Option --</option>
+            </select>
+            <button class="action-btn" style="margin-top:15px;" onclick="submitDropdownAnswer()">Submit Answer ➔</button>
+        </div>
+
+        <!-- INTERACTIVE FORMAT 3: MULTI-OPTION BUTTON DECK -->
+        <div id="deckArea" class="workspace-deck hidden">
+            <!-- Dynamic Buttons Rendered Here -->
+        </div>
+
+        <div class="feedback-msg" id="feedbackText"></div>
+    </div>
+
+    <!-- REPORT SCREEN -->
+    <div id="reportView" class="card-panel hidden">
+        <h1 style="font-size:2rem; margin-bottom:12px;">🎉 Presentation Lab Completed!</h1>
+        <p style="font-size:1.1rem; color:#475569; margin-bottom:20px;" id="finalScoreText">Your Final Score: 0</p>
+        <div style="font-size:4rem; margin-bottom:20px;" id="trophyIcon">🏆</div>
+        <button class="action-btn" onclick="restartStudio()">Try Another Category 🔄</button>
     </div>
 
 </div>
 
+<!-- AUDIO CORE -->
 <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
 
 <script>
-/* Digital Starfield Background Particles Particle Vector Engine */
+class WebAudioSynth {
+    constructor() { this.ctx = null; }
+    init() { if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+
+    playCorrect() {
+        this.init(); if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, now);
+        osc.frequency.exponentialRampToValueAtTime(880.00, now + 0.3);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(now); osc.stop(now + 0.35);
+    }
+
+    playWrong() {
+        this.init(); if (!this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, now);
+        osc.frequency.linearRampToValueAtTime(110, now + 0.3);
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+        osc.connect(gain); gain.connect(this.ctx.destination);
+        osc.start(now); osc.stop(now + 0.3);
+    }
+}
+
+const audioSynth = new WebAudioSynth();
+
+/* Background Particles Generator */
 try {
-    const starField = document.getElementById("spaceStarsContainer");
-    for(let i=0; i<30; i++) {
-        let star = document.createElement("div");
-        star.classList.add("star");
-        star.style.left = Math.random()*100 + "%";
-        star.style.top = Math.random()*100 + "%";
-        star.style.animationDuration = (Math.random()*4+5) + "s";
-        star.style.animationDelay = Math.random()*2 + "s";
-        let targetSize = Math.random()*4+2;
-        star.style.width = targetSize + "px";
-        star.style.height = targetSize + "px";
-        starField.appendChild(star);
+    const bg = document.getElementById("starField");
+    for(let i=0; i<25; i++) {
+        let p = document.createElement("div");
+        p.classList.add("star");
+        p.style.left = Math.random()*100 + "%";
+        p.style.top = Math.random()*100 + "%";
+        p.style.animationDuration = (Math.random()*5+6) + "s";
+        p.style.animationDelay = Math.random()*2 + "s";
+        let sz = Math.random()*4+2;
+        p.style.width = sz + "px";
+        p.style.height = sz + "px";
+        bg.appendChild(p);
     }
 } catch(e){}
 
-/* Required 5-Second Pure White Delay Transitions Sequencer Framework */
+/* Automatic 5-Second Splash Driver */
 setTimeout(() => {
-    document.getElementById("splash").style.setProperty("display", "none", "important");
-    document.body.classList.add("game-mode");
-    document.getElementById("gameApp").classList.remove("hidden");
+    const splash = document.getElementById("splash");
+    splash.style.opacity = '0';
+    setTimeout(() => {
+        splash.style.setProperty("display", "none", "important");
+        document.body.classList.add("game-mode");
+        document.getElementById("gameApp").classList.remove("hidden");
+    }, 800);
 }, 5000);
 
-/* Sound Driver Fallback Engine Interface */
-function playAudioSafely(id) {
-    try {
-        const sound = document.getElementById(id);
-        if (sound) {
-            sound.currentTime = 0;
-            sound.play().catch(e => console.log("Audio pipeline muted by context container framework handles."));
-        }
-    } catch(e) {}
+/* Audio Controls */
+function stopAllAudio() {
+    ['correctSound', 'wrongSound', 'clapSound'].forEach(id => {
+        const a = document.getElementById(id);
+        if (a) { a.pause(); a.currentTime = 0; }
+    });
 }
 
-/* Design Crime Question Dataset Matrix Arrays */
-const missionScenarios = [
-    {
-        headline: "WELCOME TO MARS!",
-        paragraph: "Learn about the red planet atmosphere parameters and space module conditions.",
-        crimeClass: "crime-contrast",
-        correctIndex: 1, // Fix Background Contrast
-        explain: "Great fix! Light yellow words on a white layout are impossible to read. High contrast backgrounds keep text highly legible!",
-        options: [
-            { title: "Shrink Font Scale", desc: "Decrease font size down to 8pt value" },
-            { title: "Fix Contrast Color", desc: "Switch to Dark Blue text on White background" },
-            { title: "Apply Shimmer Sound", desc: "Play loud explosion noise trigger clips" }
-        ]
-    },
-    {
-        headline: "⚠️ ENGINE DANGER WARNING SYSTEM",
-        paragraph: "If the nuclear fuel grid expands past threshold lines immediately clear the exhaust vector chambers to secure the hull infrastructure nodes.",
-        crimeClass: "crime-size",
-        correctIndex: 0, // Make Text Large
-        explain: "Brilliant! Important warning alerts on slides should always use Large, clear headings so everyone sees them instantly!",
-        options: [
-            { title: "Maximize Text Font", desc: "Increase slide text sizing up to 36pt" },
-            { title: "Add 4 More Pictures", desc: "Crowd the frame space with vector stickers" },
-            { title: "Convert to Lavender Theme", desc: "Change canvas borders to pastel colors" }
-        ]
-    },
-    {
-        headline: "🚀 Emergency Evacuation Protocol Guide Procedures Checklist Matrix Systems Module",
-        paragraph: "Step 1: Unhook connection line belts. Step 2: Grab primary oxygen helmet tanks from overhead secondary storage bins. Step 3: Run directly to airlock hatch levers. Step 4: Secure physical safety seals. Step 5: Press illuminated green cockpit escape triggers right away.",
-        crimeClass: "crime-crowd",
-        correctIndex: 2, // Bullet Points Layout
-        explain: "Fantastic! Huge walls of squished paragraph rows are terrifying to read. Bulleted short lists organize layout information cleanly!",
-        options: [
-            { title: "Add Crazy Text Rotation", desc: "Spin all paragraph blocks upside down" },
-            { title: "Hide the Heading Title", desc: "Remove top presentation label text blocks" },
-            { title: "Apply Bulleted List Fix", desc: "Break information down into short Bullet Points" }
-        ]
-    },
-    {
-        headline: "👽 ALIEN RADAR DATA TRANSMISSION",
-        paragraph: "Deep signal patterns detected moving through asteroid belt quadrant 7.",
-        crimeClass: "crime-font",
-        correctIndex: 0, // Clear Readable Font Style
-        explain: "Perfect work! Wild, jagged decorative fonts are fine for art, but standard clean fonts like Arial or Calibri are best for regular presentation text reading!",
-        options: [
-            { title: "Change to Arial Font", desc: "Apply a clean, clear, standard font face" },
-            { title: "Add Rainbow Glitter", desc: "Make text flash 12 flashing glowing color shifts" },
-            { title: "Delete Heading Labels", desc: "Clear titles from the presentation tracker frame" }
-        ]
-    },
-    {
-        headline: "THANK YOU CREW!",
-        paragraph: "Safe travels back to planet Earth base camp.",
-        crimeClass: "crime-contrast", // Bad starting appearance context
-        correctIndex: 1, // Insert Multimedia Clip
-        explain: "Splendid choice! A great closing slide looks wonderful when adding an Image, Graphic, or Illustration asset alongside text labels!",
-        options: [
-            { title: "Duplicate Text Paragraphs", desc: "Copy the same words 4 extra times" },
-            { title: "Insert Space Graphics", desc: "Add a crisp, high-quality picture illustration of Earth" },
-            { title: "Turn Text Sizing Tiny", desc: "Make the closing letters invisible to read" }
-        ]
+function triggerCorrectSound() {
+    stopAllAudio();
+    const audio = document.getElementById("correctSound");
+    if (audio) { audio.play().catch(() => audioSynth.playCorrect()); }
+    else { audioSynth.playCorrect(); }
+}
+
+function triggerWrongSound() {
+    stopAllAudio();
+    const audio = document.getElementById("wrongSound");
+    if (audio) { audio.play().catch(() => audioSynth.playWrong()); }
+    else { audioSynth.playWrong(); }
+}
+
+function triggerClapSound() {
+    stopAllAudio();
+    const audio = document.getElementById("clapSound");
+    if (audio) { audio.play().catch(() => audioSynth.playCorrect()); }
+    else { audioSynth.playCorrect(); }
+}
+
+function speak(text) {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        let msg = new SpeechSynthesisUtterance(text);
+        msg.rate = 0.95;
+        window.speechSynthesis.speak(msg);
     }
-];
+}
 
-let roundIndex = 0;
-let correctFixesCount = 0;
-let blockInteraction = false;
+/* 5-CATEGORY QUESTION BANK BASED ON PAGES 22 TO 44 */
+const pptQuestions = {
+    level1: [
+        {
+            type: "dropdown",
+            q: "What are the boxes with dashed/dotted outlines on a slide called?",
+            art: "🖼️",
+            img: "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=400",
+            o: ["Placeholders", "Thumbnails", "Quick Access Buttons"],
+            a: "Placeholders"
+        },
+        {
+            type: "dropdown",
+            q: "Which button allows you to Create, Open, Save, and Print presentations?",
+            art: "🔘",
+            img: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400",
+            o: ["Office Button", "Status Bar", "View Tab"],
+            a: "Office Button"
+        }
+    ],
+    level2: [
+        {
+            type: "drag",
+            q: "Which keyboard shortcut key starts a full Slide Show from the beginning?",
+            art: "⌨️",
+            img: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400",
+            o: ["F5", "Ctrl + S", "Alt + Shift"],
+            a: "F5"
+        },
+        {
+            type: "drag",
+            q: "What key combination can you press to save your presentation file quickly?",
+            art: "💾",
+            img: "https://images.unsplash.com/photo-1544652478-6653e09f18a2?w=400",
+            o: ["Ctrl + S", "F5", "Shift + Enter"],
+            a: "Ctrl + S"
+        }
+    ],
+    level3: [
+        {
+            type: "deck",
+            q: "How do you resize an inserted picture on a slide cleanly?",
+            art: "📐",
+            img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400",
+            o: [
+                { title: "Drag Sizing Handles", desc: "Drag the white circular dots around the selected picture borders" },
+                { title: "Press Backspace Key", desc: "Press Backspace twice to shrink image size" },
+                { title: "Double Click Status Bar", desc: "Click the status bar zoom slider repeatedly" }
+            ],
+            a: "Drag Sizing Handles"
+        },
+        {
+            type: "deck",
+            q: "Where do you click to add custom shapes like circles, arrows, and stars?",
+            art: "⭐",
+            img: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400",
+            o: [
+                { title: "Insert Tab ➔ Shapes Button", desc: "Found in the Illustrations group on the Insert tab" },
+                { title: "Review Tab ➔ Spelling", desc: "Found under grammar check options" },
+                { title: "Office Button ➔ Close", desc: "Found inside the main application menu" }
+            ],
+            a: "Insert Tab ➔ Shapes Button"
+        }
+    ],
+    level4: [
+        {
+            type: "dropdown",
+            q: "Which PowerPoint view displays all slides in miniature form to rearrange them easily?",
+            art: "📊",
+            img: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400",
+            o: ["Slide Sorter View", "Normal View", "Notes Page View"],
+            a: "Slide Sorter View"
+        },
+        {
+            type: "dropdown",
+            q: "What is the name of the special effect that decides how a whole slide appears when transitioning?",
+            art: "🎬",
+            img: "https://images.unsplash.com/photo-1536240478700-b869070f9279?w=400",
+            o: ["Slide Transition", "Custom Animation", "WordArt Effect"],
+            a: "Slide Transition"
+        }
+    ],
+    level5: [
+        {
+            type: "deck",
+            q: "Which Custom Animation category is used to set how an object appears on the slide?",
+            art: "✨",
+            img: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400",
+            o: [
+                { title: "Entrance Effects", desc: "Examples include Blinds, Fly In, and Circle" },
+                { title: "Exit Effects", desc: "Examples include Fly Out, Wipe, and Box" },
+                { title: "Motion Paths", desc: "Makes objects follow custom lines or loops" }
+            ],
+            a: "Entrance Effects"
+        },
+        {
+            type: "deck",
+            q: "Activity Lab: How do you make slides advance automatically after 5 seconds?",
+            art: "⏱️",
+            img: "https://images.unsplash.com/photo-1508962914676-134849a727f0?w=400",
+            o: [
+                { title: "Animations ➔ Advance Slide ➔ Automatically After", desc: "Check 'Automatically after' and set the time to 5 seconds" },
+                { title: "Press Alt + F4 Keys", desc: "Instantly closes the current PowerPoint window" },
+                { title: "Home Tab ➔ Delete Slide", desc: "Removes the slide from presentation deck" }
+            ],
+            a: "Animations ➔ Advance Slide ➔ Automatically After"
+        }
+    ]
+};
 
-function startGame() {
-    playAudioSafely("correctSound");
+let activeQuestions = [];
+let currentIndex = 0;
+let currentScore = 0;
+let timerInterval = null;
+let timeLeft = 30;
+let currentLevelName = "Category 1";
+
+function startGame(levelKey) {
+    const levelTitles = {
+        level1: "Category 1: PowerPoint Basics",
+        level2: "Category 2: Text Formatting & Shortcuts",
+        level3: "Category 3: Pictures, Text Boxes & Shapes",
+        level4: "Category 4: Slide Sorter & Transitions",
+        level5: "Category 5: Custom Animations & Timings"
+    };
+
+    currentLevelName = levelTitles[levelKey] || "Category 1";
+    activeQuestions = [...pptQuestions[levelKey]].sort(() => Math.random() - 0.5);
+    currentIndex = 0;
+    currentScore = 0;
+    timeLeft = 30;
+
     document.getElementById("introView").classList.add("hidden");
-    document.getElementById("gameView").classList.remove("hidden");
-    roundIndex = 0;
-    correctFixesCount = 0;
-    loadMissionSlide();
+    document.getElementById("reportView").classList.add("hidden");
+    document.getElementById("playView").classList.remove("hidden");
+
+    document.getElementById("levelHUD").innerText = currentLevelName;
+
+    speak(`Welcome to ${currentLevelName}! Let's solve the presentation questions.`);
+
+    startTimer();
+    loadQuestionCard();
 }
 
-function loadMissionSlide() {
-    blockInteraction = false;
-    document.getElementById("slideCounter").innerText = roundIndex + 1;
-    
-    // Refresh visual progress bar calculated cleanly
-    let fuelPercentage = (correctFixesCount / missionScenarios.length) * 100;
-    document.getElementById("fuelMeterBar").style.width = fuelPercentage + "%";
-    
-    const data = missionScenarios[roundIndex];
-    
-    // Set text elements inside simulated PPT slide node canvas frame
-    const canvas = document.getElementById("slideCanvas");
-    const headline = document.getElementById("slideHeadline");
-    const para = document.getElementById("slideParagraph");
-    
-    headline.innerText = data.headline;
-    para.innerText = data.paragraph;
-    
-    // Reset canvas system styles and apply current design crime class
-    canvas.className = "glitch-slide-monitor " + data.crimeClass;
-    
-    // Pull multi-choice options blocks texts mapping loops arrays
-    for (let i = 0; i < 3; i++) {
-        document.getElementById(`fixTitle${i}`).innerText = data.options[i].title;
-        document.getElementById(`fixDesc${i}`).innerText = data.options[i].desc;
+function startTimer() {
+    clearInterval(timerInterval);
+    document.getElementById("timerHUD").innerText = `⏱️ Time: ${timeLeft}s`;
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timerHUD").innerText = `⏱️ Time: ${timeLeft}s`;
+        if (timeLeft <= 0) { finishGame(); }
+    }, 1000);
+}
+
+function loadQuestionCard() {
+    if (currentIndex >= activeQuestions.length) {
+        finishGame();
+        return;
     }
-    
-    const terminal = document.getElementById("systemTerminalMessage");
-    terminal.className = "feedback-shelf";
-    terminal.innerText = "Scan the monitor frame above and trigger a presentation formatting repair tool!";
+
+    const item = activeQuestions[currentIndex];
+    document.getElementById("questionText").innerText = item.q;
+    document.getElementById("feedbackText").innerText = "";
+    document.getElementById("feedbackText").className = "feedback-msg";
+    document.getElementById("scoreHUD").innerText = `⭐ Score: ${currentScore}`;
+
+    // Render Visual Art Box
+    const imgBox = document.getElementById("imageContainer");
+    imgBox.innerHTML = `<img src="${item.img}" alt="PowerPoint Lab" onerror="this.onerror=null; this.parentElement.innerHTML='<span class=\\'slide-emoji-art\\'>${item.art}</span>';">`;
+
+    const dragArea = document.getElementById("dragDropArea");
+    const dropArea = document.getElementById("dropdownArea");
+    const deckArea = document.getElementById("deckArea");
+
+    dragArea.classList.add("hidden");
+    dropArea.classList.add("hidden");
+    deckArea.classList.add("hidden");
+
+    if (item.type === "drag") {
+        dragArea.classList.remove("hidden");
+        const container = document.getElementById("draggableOptions");
+        container.innerHTML = "";
+        item.o.forEach((opt, idx) => {
+            let div = document.createElement("div");
+            div.className = "draggable-item";
+            div.innerText = opt;
+            div.draggable = true;
+            div.id = "drag-" + idx;
+            div.ondragstart = (e) => e.dataTransfer.setData("text", opt);
+            container.appendChild(div);
+        });
+        document.getElementById("dropTarget").innerText = "🎯 Drag & Drop the correct tool box here";
+    } else if (item.type === "dropdown") {
+        dropArea.classList.remove("hidden");
+        const select = document.getElementById("answerDropdown");
+        select.innerHTML = `<option value="" disabled selected>-- Choose Option --</option>`;
+        item.o.forEach(opt => {
+            const optionNode = document.createElement("option");
+            optionNode.value = opt;
+            optionNode.innerText = opt;
+            select.appendChild(optionNode);
+        });
+    } else if (item.type === "deck") {
+        deckArea.classList.remove("hidden");
+        deckArea.innerHTML = "";
+        item.o.forEach((optObj, idx) => {
+            let btn = document.createElement("div");
+            btn.className = "fix-option-btn";
+            btn.onclick = () => evaluateAnswer(optObj.title);
+            btn.innerHTML = `
+                <div class="badge-num">${idx + 1}</div>
+                <div>
+                    <h4 style="font-size:0.95rem; color:#0f172a;">${optObj.title}</h4>
+                    <p style="font-size:0.8rem; color:#64748b;">${optObj.desc}</p>
+                </div>
+            `;
+            deckArea.appendChild(btn);
+        });
+    }
+
+    speak(item.q);
 }
 
-function applyDesignFix(chosenIndex) {
-    if (blockInteraction) return;
-    blockInteraction = true;
-    
-    const data = missionScenarios[roundIndex];
-    const terminal = document.getElementById("systemTerminalMessage");
-    const canvas = document.getElementById("slideCanvas");
-    
-    if (chosenIndex === data.correctIndex) {
-        correctFixesCount++;
-        let currentFuel = (correctFixesCount / missionScenarios.length) * 100;
-        document.getElementById("fuelMeterBar").style.width = currentFuel + "%";
-        
-        playAudioSafely("correctSound");
-        
-        // Instant visual confirmation styling fix on the slide canvas monitor frame!
-        canvas.className = "glitch-slide-monitor"; 
-        canvas.style.background = "#e0f2fe"; // Clean pleasant blue sky color style patch
-        canvas.style.color = "#0369a1";
-        canvas.style.fontSize = "1rem";
-        canvas.style.fontFamily = "sans-serif";
-        canvas.style.transform = "none";
-        
-        terminal.className = "feedback-shelf success";
-        terminal.innerHTML = `🛡️ System Patched: ${data.explain}`;
+/* Drag & Drop Handlers */
+function allowDrop(ev) {
+    ev.preventDefault();
+    document.getElementById("dropTarget").classList.add("drag-over");
+}
+
+function leaveDrop(ev) {
+    document.getElementById("dropTarget").classList.remove("drag-over");
+}
+
+function handleDrop(ev) {
+    ev.preventDefault();
+    document.getElementById("dropTarget").classList.remove("drag-over");
+    const draggedText = ev.dataTransfer.getData("text");
+    evaluateAnswer(draggedText);
+}
+
+/* Dropdown Submit Handler */
+function submitDropdownAnswer() {
+    const select = document.getElementById("answerDropdown");
+    const val = select.value;
+    if (!val) {
+        const feedback = document.getElementById("feedbackText");
+        feedback.innerText = "⚠️ Please select an answer from the drop-down menu first!";
+        feedback.className = "feedback-msg wrong";
+        return;
+    }
+    evaluateAnswer(val);
+}
+
+/* Common Evaluation Engine */
+function evaluateAnswer(selectedVal) {
+    const item = activeQuestions[currentIndex];
+    const feedback = document.getElementById("feedbackText");
+
+    if (selectedVal === item.a) {
+        currentScore += 100;
+        triggerCorrectSound();
+        feedback.innerText = "✓ Correct! Excellent presentation design skills!";
+        feedback.className = "feedback-msg correct";
     } else {
-        playAudioSafely("wrongSound");
-        
-        // Add shaking visual indication response to bad entries
-        canvas.style.transform = "scale(0.95)";
-        setTimeout(() => canvas.style.transform = "scale(1)", 150);
-        
-        terminal.className = "feedback-shelf error";
-        terminal.innerHTML = `⚠️ Engine Mismatch Splutter! That action didn't solve the active presentation design crime. Try again on the next node circuitry!`;
+        triggerWrongSound();
+        feedback.innerText = `✗ Incorrect. Correct answer: ${item.a}`;
+        feedback.className = "feedback-msg wrong";
     }
-    
-    // Hold frame lock for 4 seconds allowing Grade 4 reading tracks completion paces
-    setTimeout(() => {
-        // Clear runtime manual inline fixes styling rules injected above
-        canvas.style.background = "";
-        canvas.style.color = "";
-        canvas.style.fontSize = "";
-        canvas.style.fontFamily = "";
-        canvas.style.transform = "";
-        
-        roundIndex++;
-        if (roundIndex < missionScenarios.length) {
-            loadMissionSlide();
-        } else {
-            concludeMission();
-        }
-    }, 4000);
+
+    currentIndex++;
+    setTimeout(loadQuestionCard, 1600);
 }
 
-function concludeMission() {
-    playAudioSafely("clapSound");
-    document.getElementById("gameView").classList.add("hidden");
-    document.getElementById("finishView").classList.remove("hidden");
-    
-    let endPercentage = Math.round((correctFixesCount / missionScenarios.length) * 100);
-    document.getElementById("finalFuelBox").innerText = `Fuel Cells Charged: ${endPercentage}%`;
-    
-    const header = document.getElementById("endHeader");
-    const msg = document.getElementById("victoryMessage");
-    const emoji = document.getElementById("rocketEmoji");
-    
-    if (correctFixesCount >= 4) {
-        header.innerText = "🚀 Rocket Liftoff Successful!";
-        msg.innerText = "🏆 Master Design Commander! Your formatting adjustments fixed contrast visibility, layout sizing rules, and element spacing perfectly. The mission is salvaging deep space tracking databases cleanly!";
-        emoji.innerText = "🚀🌟🪐🛸";
-    } else {
-        header.innerText = "💥 Engine Power Insufficient!";
-        msg.innerText = "👍 Mission Completed! The rocket launched but ran low on power in upper stratospheres. Remember: Presentations need clear dark text on bright slides, clean standard fonts, and neat bullet lists to succeed!";
-        emoji.innerText = "🚀💨⚠️";
-    }
+function finishGame() {
+    clearInterval(timerInterval);
+    stopAllAudio();
+    triggerClapSound();
+
+    document.getElementById("playView").classList.add("hidden");
+    document.getElementById("reportView").classList.remove("hidden");
+    document.getElementById("finalScoreText").innerText = `${currentLevelName} Completed! Final Score: ${currentScore}`;
 }
 
-function restartMission() {
-    playAudioSafely("correctSound");
-    document.getElementById("finishView").classList.add("hidden");
-    document.getElementById("gameView").classList.remove("hidden");
-    roundIndex = 0;
-    correctFixesCount = 0;
-    loadMissionSlide();
+function restartStudio() {
+    stopAllAudio();
+    document.getElementById("reportView").classList.add("hidden");
+    document.getElementById("introView").classList.remove("hidden");
 }
 </script>
 </body>

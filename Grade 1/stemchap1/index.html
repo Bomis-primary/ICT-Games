@@ -50,7 +50,7 @@ margin-bottom:10px;
 
 h1{
 text-align:center;
-font-size:50px;
+font-size:46px;
 margin-bottom:10px;
 color:#FFD700;
 text-shadow:2px 2px 8px black;
@@ -61,7 +61,7 @@ display:flex;
 justify-content:center;
 gap:25px;
 flex-wrap:wrap;
-font-size:24px;
+font-size:22px;
 margin-bottom:15px;
 background:rgba(255,255,255,0.15);
 padding:12px;
@@ -69,20 +69,54 @@ border-radius:20px;
 backdrop-filter:blur(5px);
 }
 
-.progressBox{
-width:100%;
-height:22px;
-background:#222;
-border-radius:20px;
-overflow:hidden;
-margin-bottom:20px;
+/* ROBOT DESTINATION TRACK */
+.destination-track {
+background: rgba(0, 0, 0, 0.4);
+border: 2px solid rgba(255, 255, 255, 0.3);
+border-radius: 20px;
+padding: 12px 20px;
+margin-bottom: 20px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+position: relative;
 }
 
-.progress{
-height:100%;
-width:0%;
-background:linear-gradient(to right,#00e5ff,#00ff95);
-transition:0.5s;
+.track-line {
+position: absolute;
+top: 50%;
+left: 60px;
+right: 60px;
+height: 6px;
+background: #475569;
+z-index: 1;
+transform: translateY(-50%);
+border-radius: 3px;
+}
+
+.track-fill {
+height: 100%;
+width: 0%;
+background: linear-gradient(90deg, #00e5ff, #00ff95);
+border-radius: 3px;
+transition: width 0.5s ease;
+}
+
+.robot-avatar {
+font-size: 38px;
+position: absolute;
+top: 50%;
+left: 40px;
+transform: translate(-50%, -50%);
+z-index: 2;
+transition: left 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4));
+}
+
+.destination-flag {
+font-size: 38px;
+z-index: 2;
+position: relative;
 }
 
 .card{
@@ -94,7 +128,7 @@ border:2px solid rgba(255,255,255,0.2);
 }
 
 #question{
-font-size:30px;
+font-size:28px;
 margin-bottom:20px;
 text-align:center;
 }
@@ -110,8 +144,8 @@ margin-top:20px;
 }
 
 .questionImage{
-width:220px;
-height:220px;
+width:200px;
+height:200px;
 object-fit:contain;
 background:white;
 padding:10px;
@@ -164,18 +198,18 @@ font-weight:bold;
 
 .dropBox{
 width:260px;
-height:130px;
+height:110px;
 border:4px dashed #fff;
 border-radius:20px;
 display:flex;
 justify-content:center;
 align-items:center;
-font-size:24px;
+font-size:22px;
 background:rgba(255,255,255,0.2);
 }
 
 .feedback{
-font-size:30px;
+font-size:28px;
 font-weight:bold;
 margin-top:20px;
 text-align:center;
@@ -242,7 +276,7 @@ padding:12px 18px;
 }
 
 h1{
-font-size:34px;
+font-size:32px;
 }
 
 #question{
@@ -260,7 +294,7 @@ font-size:22px;
 
 <div class="container">
 
-<img src="assets/innovine-logo.png" class="logo">
+<img src="assets/innovine-logo.png" class="logo" onerror="this.style.display='none'">
 
 <h1>🚀 STEM Robot Adventure</h1>
 
@@ -270,8 +304,12 @@ font-size:22px;
 <div>⏰ <span id="timer">40</span>s</div>
 </div>
 
-<div class="progressBox">
-<div class="progress" id="progress"></div>
+<!-- ROBOT DESTINATION TRACK -->
+<div class="destination-track">
+<div class="track-line"><div class="track-fill" id="trackFill"></div></div>
+<div class="robot-avatar" id="robotAvatar">🤖</div>
+<div style="width: 100%;"></div>
+<div class="destination-flag">🎯</div>
 </div>
 
 <div class="card" id="gameCard">
@@ -288,9 +326,9 @@ font-size:22px;
 
 <div class="finalScreen" id="finalScreen">
 
-<h1>🎉 Great Job!</h1>
+<h1 id="finalHeader">🎉 Robot Reached Destination!</h1>
 
-<h2 id="finalScore"></h2>
+<h2 id="finalScore" style="margin: 15px 0;"></h2>
 
 <h2 id="rank"></h2>
 
@@ -306,8 +344,8 @@ Play Again
 <button id="nextBtn">Next ➜</button>
 </div>
 
-<audio id="correctSound" src="assets/correct-1.mp3"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3"></audio>
+<audio id="correctSound" src="assets/correct-1.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 
 <script>
 
@@ -418,6 +456,7 @@ let score=0;
 let badges=0;
 let timer;
 let time=40;
+let attemptsLeft=2;
 
 const question=document.getElementById('question');
 const options=document.getElementById('options');
@@ -452,9 +491,20 @@ document.getElementById('nextBtn').style.display='inline-block';
 
 }
 
+function updateRobotPosition(){
+const percentage = (current / questions.length);
+const trackWidth = document.querySelector('.destination-track').offsetWidth - 100;
+const leftPos = 40 + (percentage * trackWidth);
+
+document.getElementById('robotAvatar').style.left = leftPos + 'px';
+document.getElementById('trackFill').style.width = (percentage * 100) + '%';
+}
+
 function showQuestion(){
 
 startTimer();
+attemptsLeft=2;
+updateRobotPosition();
 
 document.body.style.background=
 `url('${backgrounds[current % 2]}')`;
@@ -471,9 +521,6 @@ imageArea.innerHTML='';
 feedback.innerHTML='';
 
 document.getElementById('nextBtn').style.display='none';
-
-document.getElementById('progress').style.width=
-((current)/questions.length)*100+'%';
 
 if(q.image){
 
@@ -546,7 +593,7 @@ drop.addEventListener('dragover',e=>e.preventDefault());
 
 drop.addEventListener('drop',()=>{
 
-correct();
+check(true);
 
 drop.innerHTML=q.drag;
 
@@ -572,11 +619,7 @@ btn.className='optionBtn';
 btn.innerHTML='Submit';
 
 btn.onclick=()=>{
-if(select.value===q.answer){
-correct();
-}else{
-wrong();
-}
+check(select.value===q.answer);
 };
 
 options.appendChild(select);
@@ -585,8 +628,8 @@ options.appendChild(btn);
 
 }
 
-function check(ans){
-if(ans){
+function check(isCorrect){
+if(isCorrect){
 correct();
 }else{
 wrong();
@@ -597,15 +640,8 @@ function correct(){
 
 clearInterval(timer);
 
-feedback.innerHTML="✅ Correct";
+feedback.innerHTML="✅ Correct Step!";
 feedback.style.color='#00ff95';
-
-document.getElementById('correctSound').play();
-
-confetti({
-particleCount:250,
-spread:120
-});
 
 score++;
 badges++;
@@ -619,14 +655,17 @@ document.getElementById('nextBtn').style.display='inline-block';
 
 function wrong(){
 
+attemptsLeft--;
+
+if(attemptsLeft > 0){
+feedback.innerHTML=`❌ Wrong! You have ${attemptsLeft} try left.`;
+feedback.style.color='#ffeb3b';
+} else {
 clearInterval(timer);
-
-feedback.innerHTML="❌ Wrong";
+feedback.innerHTML="❌ Out of tries!";
 feedback.style.color='red';
-
-document.getElementById('wrongSound').play();
-
 document.getElementById('nextBtn').style.display='inline-block';
+}
 
 }
 
@@ -637,6 +676,9 @@ current++;
 if(current<questions.length){
 showQuestion();
 }else{
+// Move robot to destination flag on final question
+current = questions.length;
+updateRobotPosition();
 showFinal();
 }
 
@@ -645,7 +687,7 @@ showFinal();
 function showFinal(){
 
 document.getElementById('gameCard').style.display='none';
-
+document.getElementById('nextBtn').style.display='none';
 document.getElementById('finalScreen').style.display='block';
 
 document.getElementById('finalScore').innerHTML=
@@ -654,21 +696,29 @@ document.getElementById('finalScore').innerHTML=
 let rank='';
 
 if(score===10){
-rank='🏆 CHAMPION';
+rank='🏆 CHAMPION ROBOTICIST!';
 }else if(score>=7){
-rank='👍 EXCELLENT';
+rank='👍 EXCELLENT ENGINEER!';
 }else if(score>=4){
-rank='🙂 NEED TO IMPROVE';
+rank='🙂 GOOD ATTEMPT!';
 }else{
-rank='📘 BEGINNER';
+rank='📘 BEGINNER EXPLORER';
 }
 
 document.getElementById('rank').innerHTML=rank;
 
+// Play sound ONLY at destination step
+if(score >= 5){
+document.getElementById('finalHeader').innerHTML = "🎉 Robot Reached Destination!";
+document.getElementById('correctSound').play();
 confetti({
-particleCount:500,
-spread:180
+particleCount:400,
+spread:160
 });
+} else {
+document.getElementById('finalHeader').innerHTML = "⚠️ Destination Not Reached!";
+document.getElementById('wrongSound').play();
+}
 
 }
 

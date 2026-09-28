@@ -44,7 +44,7 @@ body.game-mode {
     background: linear-gradient(135deg, #c084fc, #6366f1, #1e1b4b);
 }
 
-/* Cosmic Design Background Particles */
+/* Cosmic Background Particles */
 .bg-particles {
     position: absolute;
     width: 100%;
@@ -168,7 +168,7 @@ body.game-mode .bg-particles { display: block; }
     margin-top: 4px;
 }
 
-/* --- PAGE 2: MAIN GAME CONTAINER --- */
+/* --- MAIN APP CONTAINER --- */
 .container {
     width: 96vw;
     max-width: 1180px;
@@ -227,7 +227,7 @@ body.game-mode .bg-particles { display: block; }
     transition: width 0.4s ease;
 }
 
-/* Studio Layout */
+/* Studio Layout (PAGE 2) */
 .studio-layout {
     display: grid;
     grid-template-columns: minmax(300px, 360px) 1fr;
@@ -434,7 +434,6 @@ body.game-mode .bg-particles { display: block; }
 .ss-bubbles { background: radial-gradient(circle, #ec4899, #6366f1, #0f172a); animation: bubbleHue 4s infinite alternate linear; }
 .ss-text { background: #000000; font-family: 'Courier New', Courier, monospace; }
 .ss-text marquee { width: 85%; }
-.ss-blank { background: #000000; }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes bubbleHue { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } }
@@ -464,40 +463,86 @@ body.game-mode .bg-particles { display: block; }
     font-weight: 700;
 }
 
-/* Quiz Box Layout */
-.quiz-box {
-    background: #ffffff;
-    border-radius: 14px;
-    padding: 12px;
-    border: 2px solid var(--primary);
-    margin-top: 5px;
+/* PAGE 3: EXCLUSIVE QUIZ SCREEN LAYOUT */
+.quiz-screen-card {
+    background: var(--panel-bg);
+    border-radius: 28px;
+    padding: clamp(20px, 4vw, 36px);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    max-width: 680px;
+    margin: auto;
+    border: 3px solid var(--primary);
+    text-align: center;
 }
-.quiz-q {
-    font-size: 0.82rem;
+
+.quiz-badge {
+    display: inline-block;
+    background: #f3e8ff;
+    color: var(--primary-dark);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-weight: 800;
+    font-size: 0.85rem;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.quiz-q-title {
+    font-size: clamp(1.1rem, 3.2vw, 1.35rem);
     font-weight: 800;
     color: var(--dark);
-    margin-bottom: 8px;
+    margin-bottom: 20px;
+    line-height: 1.4;
 }
-.quiz-opt {
-    display: block;
+
+.quiz-opt-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 25px;
+}
+
+.quiz-opt-btn {
     width: 100%;
     text-align: left;
-    padding: 8px 10px;
-    margin-bottom: 6px;
-    border-radius: 8px;
-    border: 1px solid #cbd5e1;
-    background: #f8fafc;
-    font-size: 0.78rem;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 2px solid #cbd5e1;
+    background: #ffffff;
+    font-size: clamp(0.9rem, 2.8vw, 1rem);
     font-weight: 700;
+    color: #334155;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
-.quiz-opt.correct { background: #d1fae5; border-color: var(--success); color: #065f46; }
-.quiz-opt.wrong { background: #fee2e2; border-color: var(--danger); color: #991b1b; }
+
+.quiz-opt-btn:hover {
+    border-color: var(--primary);
+    background: #f8fafc;
+    transform: translateY(-2px);
+}
+
+.quiz-opt-btn.correct {
+    background: #d1fae5 !important;
+    border-color: var(--success) !important;
+    color: #065f46 !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.quiz-opt-btn.wrong {
+    background: #fee2e2 !important;
+    border-color: var(--danger) !important;
+    color: #991b1b !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
 
 /* Action Buttons */
 .action-btn {
-    padding: 12px 30px;
+    padding: 14px 32px;
     border: none;
     border-radius: 30px;
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
@@ -507,6 +552,7 @@ body.game-mode .bg-particles { display: block; }
     cursor: pointer;
     box-shadow: 0 6px 18px rgba(139,92,246,0.35);
     transition: all 0.2s ease;
+    width: 100%;
 }
 .action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(139,92,246,0.45); }
 
@@ -535,22 +581,24 @@ body.game-mode .bg-particles { display: block; }
     </div>
 </div>
 
-<!-- PAGE 2: MAIN INTERACTIVE STUDIO CONTAINER -->
+<!-- MAIN APPLICATION HUB -->
 <div class="container hidden" id="gameApp">
 
+    <!-- INTRO MENU CARD -->
     <div id="introView" class="intro-card">
         <h1><span>DESKTOP MAKEOVER STUDIO</span></h1>
         <h2 style="color: #64748b; font-size: 1rem; margin: 10px 0 20px;">Grade 4 • System Interface Sandbox</h2>
         <p style="text-align: left; line-height: 1.6; color: #475569; margin-bottom: 24px; background: #f1f5f9; padding: 16px; border-radius: 14px; font-size: 0.9rem;">
-            Welcome System Designer! Customise your desktop OS by changing wallpapers, arranging icon scales, testing screensavers, and answering desktop identification questions!
+            Welcome System Designer! Complete hands-on personalization tasks in the Sandbox, lock your layout, and then unlock the Identification Quiz stage!
         </p>
         <button class="action-btn" onclick="launchSimulator()">Boot Customizer Studio ➜</button>
     </div>
 
+    <!-- PAGE 2: DESKTOP MAKEOVER STUDIO (Sections 1, 2, 3) -->
     <div id="studioView" class="studio-layout hidden">
         
         <div class="control-panel">
-            <h2 style="font-size: 1.1rem; color: var(--dark); font-weight: 800; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">Design &amp; Quiz Core</h2>
+            <h2 style="font-size: 1.1rem; color: var(--dark); font-weight: 800; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px;">Design Core</h2>
             
             <div class="panel-section">
                 <h3>1. Wallpaper Stencils (Drag or Click)</h3>
@@ -580,24 +628,16 @@ body.game-mode .bg-particles { display: block; }
                 </div>
             </div>
 
-            <div class="panel-section">
-                <h3>4. Identify Desktop Options Quiz ❓</h3>
-                <div class="quiz-box">
-                    <div class="quiz-q" id="quizQuestionText">Loading question...</div>
-                    <div id="quizOptionsContainer"></div>
-                </div>
-            </div>
-
-            <button class="action-btn" style="margin-top:auto; font-size:0.9rem; padding:10px;" onclick="finishDesign()">Lock Design Layout 🔒</button>
+            <button class="action-btn" style="margin-top:auto; font-size:0.9rem; padding:12px;" onclick="goToQuizStage()">Lock Design Layout &amp; Proceed ➜</button>
         </div>
 
         <div style="display:flex; flex-direction:column; gap:10px; height:100%;">
             <div class="hud-bar">
-                <span style="font-size:0.85rem; font-weight:800; color:#475569;">⭐ System XP Progress:</span>
+                <span style="font-size:0.85rem; font-weight:800; color:#475569;">⭐ Studio Progress:</span>
                 <div class="progress-track">
                     <div class="progress-fill" id="xpBar"></div>
                 </div>
-                <span style="font-size:0.85rem; font-weight:800; color:var(--primary);" id="xpText">0 / 4 Tasks</span>
+                <span style="font-size:0.85rem; font-weight:800; color:var(--primary);" id="xpText">Stage 1 of 2</span>
             </div>
 
             <div class="display-workspace">
@@ -640,18 +680,27 @@ body.game-mode .bg-particles { display: block; }
 
     </div>
 
+    <!-- PAGE 3: DEDICATED IDENTIFY DESKTOP OPTIONS QUIZ -->
+    <div id="quizView" class="quiz-screen-card hidden">
+        <div class="quiz-badge">STAGE 2: IDENTIFICATION QUIZ ❓</div>
+        <div class="quiz-q-title" id="quizQuestionText">Loading challenge question...</div>
+        <div class="quiz-opt-grid" id="quizOptionsContainer"></div>
+        <button class="action-btn hidden" id="nextQuizBtn" onclick="nextQuizQuestion()">Next Question ➔</button>
+    </div>
+
+    <!-- PAGE 4: PODIUM REPORT & CERTIFICATE CARD -->
     <div id="finishView" class="intro-card hidden">
-        <h1 style="font-size:2rem; margin-bottom:12px;">🎉 Configuration Lock Deployed!</h1>
+        <h1 style="font-size:2rem; margin-bottom:12px;">🎉 Personalization Mastered!</h1>
         <p style="font-size:1rem; color:#475569; line-height:1.6; margin-bottom:20px;">
-            Outstanding! You successfully identified and customized all major desktop components: wallpaper backgrounds, icon layouts and sizes, screensaver triggers, and desktop settings!
+            Outstanding! You successfully completed both the interactive desktop design studio and identified all essential personalization properties!
         </p>
-        <div style="font-size:3.5rem; margin-bottom:20px;">🎨🛠️💻</div>
+        <div style="font-size:3.5rem; margin-bottom:20px;">🏆🎨💻</div>
         <button class="action-btn" onclick="restartStudio()">Reboot Sandbox Studio 🔄</button>
     </div>
 
 </div>
 
-<!-- AUDIO CORE MAPPED TO REPOSITORY ASSETS (NO CONTINUOUS LOOP) -->
+<!-- AUDIO CORE MAPPED TO REPOSITORY ASSETS -->
 <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
@@ -692,7 +741,7 @@ class WebAudioSynth {
 
 const audioSynth = new WebAudioSynth();
 
-/* Background Float Particles Generator */
+/* Background Particles */
 try {
     const bg = document.getElementById("matrixBg");
     for(let i=0; i<20; i++) {
@@ -733,7 +782,7 @@ function updateClock() {
     document.getElementById("liveSysClock").innerText = `${hours}:${minutes} ${ampm}`;
 }
 
-// Single Trigger Sound Functions
+// Single-Trigger Audio Helpers
 function triggerCorrectSound() {
     const audio = document.getElementById("correctSound");
     if (audio) {
@@ -767,16 +816,6 @@ function triggerClapSound() {
     }
 }
 
-let tasksDone = new Set();
-
-function markTaskProgress(taskId) {
-    tasksDone.add(taskId);
-    const count = tasksDone.size;
-    const pct = Math.min((count / 4) * 100, 100);
-    document.getElementById("xpBar").style.width = pct + "%";
-    document.getElementById("xpText").innerText = `${count} / 4 Tasks`;
-}
-
 /* Identification Quiz Deck */
 const desktopQuizDeck = [
     {
@@ -785,68 +824,98 @@ const desktopQuizDeck = [
         ans: "Desktop Wallpaper"
     },
     {
-        q: "What feature turns on when the computer is left idle to save power?",
+        q: "What feature turns on when the computer is left idle to save power or prevent screen wear?",
         opts: ["Screen Saver", "Recycle Bin", "File Explorer", "Start Menu"],
         ans: "Screen Saver"
     },
     {
-        q: "Which option allows you to change how large desktop icons appear?",
+        q: "Which setting allows you to alter how large desktop icons appear?",
         opts: ["Icon Scale / Size", "Wallpaper Stencil", "Time Zone", "Mouse Pointer Speed"],
         ans: "Icon Scale / Size"
     },
     {
-        q: "What view mode displays icons in detailed vertical rows?",
+        q: "What layout mode displays icons in detailed vertical rows with labels?",
         opts: ["List View", "Grid View", "Wallpaper Mode", "Full Screen"],
         ans: "List View"
     }
 ];
 
 let currentQuizIdx = 0;
+let quizAnswered = false;
 
 function renderQuizQuestion() {
+    quizAnswered = false;
+    document.getElementById("nextQuizBtn").classList.add("hidden");
+
     const item = desktopQuizDeck[currentQuizIdx];
-    document.getElementById("quizQuestionText").innerText = item.q;
+    document.getElementById("quizQuestionText").innerText = `Q${currentQuizIdx + 1}. ${item.q}`;
     const container = document.getElementById("quizOptionsContainer");
     container.innerHTML = "";
 
     item.opts.forEach(opt => {
         const btn = document.createElement("button");
-        btn.className = "quiz-opt";
-        btn.innerText = opt;
+        btn.className = "quiz-opt-btn";
+        btn.innerHTML = `<span>${opt}</span><span class="indicator"></span>`;
         btn.onclick = () => checkQuizAnswer(opt, btn, item.ans);
         container.appendChild(btn);
     });
 }
 
 function checkQuizAnswer(selectedOpt, btnNode, correctAns) {
+    if (quizAnswered) return;
+    quizAnswered = true;
+
     if (selectedOpt === correctAns) {
         btnNode.classList.add("correct");
+        btnNode.querySelector(".indicator").innerText = "✓";
         triggerCorrectSound();
-        markTaskProgress("quiz");
-        setTimeout(() => {
-            currentQuizIdx = (currentQuizIdx + 1) % desktopQuizDeck.length;
-            renderQuizQuestion();
-        }, 1200);
     } else {
         btnNode.classList.add("wrong");
+        btnNode.querySelector(".indicator").innerText = "✗";
         triggerWrongSound();
+
+        // Highlight correct option
+        document.querySelectorAll(".quiz-opt-btn").forEach(b => {
+            if (b.innerText.includes(correctAns)) {
+                b.classList.add("correct");
+                b.querySelector(".indicator").innerText = "✓";
+            }
+        });
+    }
+
+    document.getElementById("nextQuizBtn").classList.remove("hidden");
+}
+
+function nextQuizQuestion() {
+    currentQuizIdx++;
+    if (currentQuizIdx < desktopQuizDeck.length) {
+        renderQuizQuestion();
+    } else {
+        finishDesign();
     }
 }
 
-/* Simulation Core Controller Systems */
+/* Flow Controls */
 function launchSimulator() {
     triggerCorrectSound();
     document.getElementById("introView").classList.add("hidden");
     document.getElementById("studioView").classList.remove("hidden");
-    renderQuizQuestion();
     setupDragAndDrop();
+}
+
+function goToQuizStage() {
+    triggerCorrectSound();
+    document.getElementById("studioView").classList.add("hidden");
+    document.getElementById("quizView").classList.remove("hidden");
+    currentQuizIdx = 0;
+    renderQuizQuestion();
 }
 
 function setWallpaper(className, btnId) {
     triggerCorrectSound();
     const scr = document.getElementById("desktopScreen");
     scr.className = "virtual-desktop " + className;
-    markTaskProgress("wallpaper");
+    document.getElementById("xpBar").style.width = "33%";
 }
 
 function setIconSize(sizeClass, btnId) {
@@ -854,7 +923,7 @@ function setIconSize(sizeClass, btnId) {
     const box = document.getElementById("desktopIconBox");
     box.className = "icon-grid " + sizeClass;
     updateActiveButtonInGroup(['szSmall', 'szMed', 'szLarge'], btnId);
-    markTaskProgress("icons");
+    document.getElementById("xpBar").style.width = "66%";
 }
 
 function setIconLayout(layoutClass, btnId) {
@@ -862,7 +931,7 @@ function setIconLayout(layoutClass, btnId) {
     const box = document.getElementById("desktopIconBox");
     box.className = "icon-grid " + layoutClass;
     updateActiveButtonInGroup(['layoutGrid', 'layoutList'], btnId);
-    markTaskProgress("icons");
+    document.getElementById("xpBar").style.width = "66%";
 }
 
 function activateScreensaver(className, message) {
@@ -877,7 +946,7 @@ function activateScreensaver(className, message) {
         content.innerHTML = message;
     }
     overlay.classList.remove("hidden");
-    markTaskProgress("saver");
+    document.getElementById("xpBar").style.width = "100%";
 }
 
 function wakeSystem() {
@@ -926,22 +995,19 @@ function setupDragAndDrop() {
 
 function finishDesign() {
     triggerClapSound();
-    document.getElementById("studioView").classList.add("hidden");
+    document.getElementById("quizView").classList.add("hidden");
     document.getElementById("finishView").classList.remove("hidden");
 }
 
 function restartStudio() {
     triggerCorrectSound();
-    tasksDone.clear();
     currentQuizIdx = 0;
     document.getElementById("xpBar").style.width = "0%";
-    document.getElementById("xpText").innerText = "0 / 4 Tasks";
     document.getElementById("finishView").classList.add("hidden");
     document.getElementById("studioView").classList.remove("hidden");
     setWallpaper('wp-aurora', 'wp1');
     setIconSize('icons-medium', 'szMed');
     setIconLayout('icons-grid', 'layoutGrid');
-    renderQuizQuestion();
     wakeSystem();
 }
 </script>

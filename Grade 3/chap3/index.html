@@ -436,8 +436,12 @@
 
             playCorrect() {
                 const audio = document.getElementById("audioCorrect");
-                if (audio) audio.play().catch(() => this.synthCorrect());
-                else this.synthCorrect();
+                if (audio) {
+                    audio.currentTime = 0;
+                    audio.play().catch(() => this.synthCorrect());
+                } else {
+                    this.synthCorrect();
+                }
             }
 
             synthCorrect() {
@@ -456,8 +460,12 @@
 
             playWrong() {
                 const audio = document.getElementById("audioWrong");
-                if (audio) audio.play().catch(() => this.synthWrong());
-                else this.synthWrong();
+                if (audio) {
+                    audio.currentTime = 0;
+                    audio.play().catch(() => this.synthWrong());
+                } else {
+                    this.synthWrong();
+                }
             }
 
             synthWrong() {
@@ -476,7 +484,10 @@
 
             playClap() {
                 const audio = document.getElementById("audioClap");
-                if (audio) audio.play().catch(() => {});
+                if (audio) {
+                    audio.currentTime = 0;
+                    audio.play().catch(() => {});
+                }
             }
         }
 
@@ -519,7 +530,7 @@
         let matrixSystemLocked = false;
 
         function launchMatrixModule() {
-            soundEngine.playCorrect();
+            // Sound removed here on game start as requested
             document.getElementById("introView").classList.add("hidden");
             document.getElementById("gameViewPanel").classList.remove("hidden");
             loadSectorObjective();
@@ -600,7 +611,9 @@
                 ticker.className = "in-game-ticker correct";
                 ticker.innerText = "🎉 Correct!";
 
+                // Correct answer sound trigger
                 soundEngine.playCorrect();
+
                 if (typeof confetti !== 'undefined') {
                     confetti({ particleCount: 35, spread: 50, origin: { y: 0.6 } });
                 }
@@ -618,6 +631,7 @@
                 ticker.className = "in-game-ticker wrong";
                 ticker.innerText = `💥 Wrong! Correct Answer: [${sectorData.targetKey}]`;
 
+                // Wrong answer sound trigger
                 soundEngine.playWrong();
             }
 

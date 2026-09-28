@@ -741,7 +741,7 @@ class WebAudioSynth {
 
 const audioSynth = new WebAudioSynth();
 
-/* Background Particles */
+/* Background Float Particles */
 try {
     const bg = document.getElementById("matrixBg");
     for(let i=0; i<20; i++) {
@@ -782,12 +782,22 @@ function updateClock() {
     document.getElementById("liveSysClock").innerText = `${hours}:${minutes} ${ampm}`;
 }
 
-// Single-Trigger Audio Helpers
+// Strictly Single Burst Sound Helpers
+function stopAllAudio() {
+    ['correctSound', 'wrongSound', 'clapSound'].forEach(id => {
+        const a = document.getElementById(id);
+        if (a) {
+            a.pause();
+            a.currentTime = 0;
+            a.loop = false;
+        }
+    });
+}
+
 function triggerCorrectSound() {
+    stopAllAudio();
     const audio = document.getElementById("correctSound");
     if (audio) {
-        audio.loop = false;
-        audio.currentTime = 0;
         audio.play().catch(() => audioSynth.playCorrect());
     } else {
         audioSynth.playCorrect();
@@ -795,10 +805,9 @@ function triggerCorrectSound() {
 }
 
 function triggerWrongSound() {
+    stopAllAudio();
     const audio = document.getElementById("wrongSound");
     if (audio) {
-        audio.loop = false;
-        audio.currentTime = 0;
         audio.play().catch(() => audioSynth.playWrong());
     } else {
         audioSynth.playWrong();
@@ -806,10 +815,9 @@ function triggerWrongSound() {
 }
 
 function triggerClapSound() {
+    stopAllAudio();
     const audio = document.getElementById("clapSound");
     if (audio) {
-        audio.loop = false;
-        audio.currentTime = 0;
         audio.play().catch(() => audioSynth.playCorrect());
     } else {
         audioSynth.playCorrect();
@@ -874,7 +882,7 @@ function checkQuizAnswer(selectedOpt, btnNode, correctAns) {
         btnNode.querySelector(".indicator").innerText = "✗";
         triggerWrongSound();
 
-        // Highlight correct option
+        // Highlight correct choice
         document.querySelectorAll(".quiz-opt-btn").forEach(b => {
             if (b.innerText.includes(correctAns)) {
                 b.classList.add("correct");

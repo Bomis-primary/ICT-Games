@@ -547,6 +547,8 @@ body.game-mode .bg-particles { display: block; }
 <!-- AUDIO CORE -->
 <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
+
 <script>
 class WebAudioSynth {
     constructor() { this.ctx = null; }
@@ -753,6 +755,7 @@ const pptQuestions = {
 let activeQuestions = [];
 let currentIndex = 0;
 let currentScore = 0;
+let attemptsLeft = 2; // Track remaining attempts for current question
 let timerInterval = null;
 let timeLeft = 30;
 let currentLevelName = "Category 1";
@@ -798,6 +801,7 @@ function loadQuestionCard() {
         return;
     }
 
+    attemptsLeft = 2; // Reset attempts to 2 for the new question
     const item = activeQuestions[currentIndex];
     document.getElementById("questionText").innerText = item.q;
     document.getElementById("feedbackText").innerText = "";
@@ -889,24 +893,36 @@ function submitDropdownAnswer() {
     evaluateAnswer(val);
 }
 
-/* Common Evaluation Engine */
+/* Common Evaluation Engine with 2 Attempts System */
 function evaluateAnswer(selectedVal) {
     const item = activeQuestions[currentIndex];
     const feedback = document.getElementById("feedbackText");
 
     if (selectedVal === item.a) {
-        currentScore += 100;
+        // Award full points if correct on 1st try, half points on 2nd try
+        const scoreBonus = attemptsLeft === 2 ? 100 : 50;
+        currentScore += scoreBonus;
         triggerCorrectSound();
-        feedback.innerText = "✓ Correct! Excellent presentation design skills!";
+        feedback.innerText = `✓ Correct! (+${scoreBonus} pts)`;
         feedback.className = "feedback-msg correct";
-    } else {
-        triggerWrongSound();
-        feedback.innerText = `✗ Incorrect. Correct answer: ${item.a}`;
-        feedback.className = "feedback-msg wrong";
-    }
 
-    currentIndex++;
-    setTimeout(loadQuestionCard, 1600);
+        currentIndex++;
+        setTimeout(loadQuestionCard, 1500);
+    } else {
+        attemptsLeft--;
+        triggerWrongSound();
+
+        if (attemptsLeft > 0) {
+            feedback.innerText = `✗ Incorrect! You have ${attemptsLeft} try remaining. Give it another shot!`;
+            feedback.className = "feedback-msg wrong";
+        } else {
+            feedback.innerText = `✗ Out of attempts! The correct answer was: ${item.a}`;
+            feedback.className = "feedback-msg wrong";
+
+            currentIndex++;
+            setTimeout(loadQuestionCard, 2000);
+        }
+    }
 }
 
 function finishGame() {

@@ -163,27 +163,35 @@ body.active-game {
     width: 100%;
     max-width: 320px;
     height: 170px;
-    background: #e2e8f0;
-    border-radius: 12px;
+    background: linear-gradient(135deg, #e0f2fe, #dbeafe);
+    border-radius: 14px;
     margin-bottom: 15px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    border: 2px dashed #94a3b8;
+    border: 3px solid #93c5fd;
     position: relative;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.card-image-box {
+    font-size: 3.5rem;
+    margin-bottom: 4px;
 }
 
 .asset-overlay-badge {
     position: absolute;
     bottom: 8px;
     right: 8px;
-    background: rgba(15, 23, 42, 0.8);
+    background: rgba(15, 23, 42, 0.85);
     color: white;
-    padding: 3px 8px;
+    padding: 4px 10px;
     font-size: 0.75rem;
-    border-radius: 6px;
-    font-weight: 600;
+    border-radius: 8px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
 /* CHOICES DECK */
@@ -342,9 +350,9 @@ body.active-game {
     <div id="menuView" class="panel-card">
         <img src="assets/innovine-logo.png" alt="Innovine" style="max-width: 140px; margin-bottom: 15px;" onerror="this.style.display='none'">
         <h1>Presentation Studio Lab</h1>
-        <h3 style="color:#64748b; margin-bottom: 20px;">MS PowerPoint Chapter 4 Workspace Simulator</h3>
+        <h3 style="color:#64748b; margin-bottom: 20px;">Interactive Slide Creation Arcade</h3>
         <p>
-            Become a master slide creator! Complete 10 interactive challenge levels across 3 unique game styles: Ribbon Tool Selector, Drag & Drop Formatting Studio, and Keyboard Shortcuts.
+            Become a master slide creator! Complete 10 interactive visual challenge levels across 3 unique game styles: Ribbon Tool Selector, Drag &amp; Drop Formatting Studio, and Keyboard Shortcuts.
         </p>
         <button class="btn-action" onclick="initiateChallenge()">Launch Studio Workshop 🚀</button>
     </div>
@@ -354,13 +362,14 @@ body.active-game {
         <div class="status-bar">
             <div>📋 Task Module: <span id="nodeCounter">1</span> / 10</div>
             <div class="game-type-badge" id="gameTypeLabel">Ribbon Tool Selector</div>
-            <div class="score-badge">Score: <span id="scoreDisplay">0</span></div>
+            <div class="score-badge">Level: <span id="levelDisplay">1</span></div>
         </div>
 
         <div class="workspace">
             <div class="ppt-screen" id="canvasView">
                 <div class="slide-visual-preview" id="visualFrame">
-                    <span style="color:#64748b; font-weight:600; font-size: 2.5rem;" id="visualFallbackText">🎵</span>
+                    <div class="card-image-box" id="visualFallbackText">🎵</div>
+                    <div id="visualSubTag" style="font-weight:700; color:#1e40af; font-size:0.85rem;">MEDIA TOOL SET</div>
                     <div class="asset-overlay-badge" id="slideBadge">Insert -&gt; Audio</div>
                 </div>
                 <h3 id="targetHeadline">Slide Element Target Title</h3>
@@ -398,9 +407,9 @@ body.active-game {
 
     <!-- EVALUATION / SUMMARY VIEW -->
     <div id="endView" class="panel-card hidden">
-        <h1 id="endHeaderTitle">Workshop Evaluation Complete!</h1>
-        <p id="endEvaluationDesc" style="margin-top: 15px; font-size: 1.05rem; color: #475569;"></p>
-        <h2 style="font-size: 3rem; color: var(--accent); margin: 20px 0;" id="finalScoreLabel">0 / 1000</h2>
+        <h1 id="endHeaderTitle">🏆 Master Presentation Engineer!</h1>
+        <p id="endEvaluationDesc" style="margin-top: 18px; font-size: 1.15rem; color: #475569; line-height:1.6;"></p>
+        <div style="font-size: 4rem; margin: 25px 0;">✨🖥️🎨⚡</div>
         <button class="btn-action" onclick="resetChallengeLoop()">Restart Studio Workshop 🔄</button>
     </div>
 
@@ -409,6 +418,8 @@ body.active-game {
 <!-- AUDIO EMBEDS -->
 <audio id="soundCorrect" src="assets/correct.mp3" preload="auto"></audio>
 <audio id="soundWrong" src="assets/wrong.mp3" preload="auto"></audio>
+<audio id="soundClap" src="assets/clap.mp3" preload="auto"></audio>
+
 <script>
 /* 5-Second Delay Splash Controller */
 setTimeout(() => {
@@ -434,7 +445,7 @@ function playAudioTrack(elementId) {
     } catch(ex) {}
 }
 
-/* 10 LEVEL PUZZLE MATRIX - 3 GAME STYLES */
+/* 10 LEVEL VISUAL QUESTION MATRIX - 3 GAME STYLES */
 const puzzleMatrix = [
     // STYLE 1: Ribbon Tool Selector (Levels 1-4)
     {
@@ -444,6 +455,7 @@ const puzzleMatrix = [
         caption: "Embed an audio track that loops in the background during your entire presentation deck.",
         badge: "Insert -> Audio",
         icon: "🎵",
+        subTag: "BACKGROUND MUSIC TRACK",
         correct: 1,
         choices: ["Home Tab -> Paragraph Styles", "Insert Tab -> Audio option", "Animations Tab -> Custom Actions"]
     },
@@ -454,6 +466,7 @@ const puzzleMatrix = [
         caption: "Apply a motion transition effect that plays automatically when switching between slides.",
         badge: "Transitions Tab",
         icon: "🎴",
+        subTag: "PAGE SWITCH MOTION",
         correct: 0,
         choices: ["Transitions Tab -> Transition to This Slide", "Insert Tab -> SmartArt Layout", "Review Tab -> Comments Wizard"]
     },
@@ -464,6 +477,7 @@ const puzzleMatrix = [
         caption: "Set a heading text placeholder to fly into the slide during the presentation.",
         badge: "Animations Tab",
         icon: "⭐",
+        subTag: "OBJECT ENTRANCE EFFECT",
         correct: 2,
         choices: ["Design Tab -> Page Setup", "Slide Show Tab -> Rehearse Timings", "Animations Tab -> Entrance Effect"]
     },
@@ -474,6 +488,7 @@ const puzzleMatrix = [
         caption: "Add an external MP4 video file onto your presentation slide canvas.",
         badge: "Insert -> Video",
         icon: "🎬",
+        subTag: "MOVIE MEDIA CLIP",
         correct: 0,
         choices: ["Insert Tab -> Video tool", "View Tab -> Handout Master", "Home Tab -> Clipboard paste"]
     },
@@ -486,6 +501,7 @@ const puzzleMatrix = [
         caption: "Which feature adds interactive buttons to jump between slides or open web links during a slideshow?",
         badge: "Action Buttons",
         icon: "🔘",
+        subTag: "SLIDE LINK BUTTONS",
         correct: "Action Buttons",
         dragOptions: ["Action Buttons", "WordArt", "Slide Sorter"]
     },
@@ -496,6 +512,7 @@ const puzzleMatrix = [
         caption: "Which tool transforms standard text into stylized, colorful, curved decorative text headings?",
         badge: "WordArt",
         icon: "🎨",
+        subTag: "STYLIZED TEXT GRAPHICS",
         correct: "WordArt",
         dragOptions: ["WordArt", "Text Box", "Header & Footer"]
     },
@@ -506,6 +523,7 @@ const puzzleMatrix = [
         caption: "Which view allows you to modify background colors, fonts, and logos across ALL slides at once?",
         badge: "Slide Master",
         icon: "🖼️",
+        subTag: "GLOBAL SLIDE DESIGN",
         correct: "Slide Master",
         dragOptions: ["Slide Master", "Reading View", "Slide Show View"]
     },
@@ -518,6 +536,7 @@ const puzzleMatrix = [
         caption: "Which keyboard shortcut key starts the full-screen presentation from Slide 1?",
         badge: "Keyboard Shortcut",
         icon: "🖥️",
+        subTag: "FULLSCREEN RUN: SLIDE 1",
         correct: 1,
         choices: ["Press Ctrl + M", "Press F5 Key", "Press Shift + F5"]
     },
@@ -528,6 +547,7 @@ const puzzleMatrix = [
         caption: "You edited Slide 4 and want to test the slideshow starting right from Slide 4.",
         badge: "Current Slide Run",
         icon: "⚡",
+        subTag: "RUN FROM ACTIVE PAGE",
         correct: 2,
         choices: ["Press F5 Key", "Press Alt + F4", "Press Shift + F5"]
     },
@@ -538,20 +558,19 @@ const puzzleMatrix = [
         caption: "What key combination creates a new slide in your active presentation deck?",
         badge: "New Slide",
         icon: "➕",
+        subTag: "CREATE NEW SLIDE PAGE",
         correct: 0,
         choices: ["Press Ctrl + M", "Press Ctrl + N", "Press Ctrl + S"]
     }
 ];
 
 let roundCounter = 0;
-let userScore = 0;
 let transitionBlocker = false;
 
 function initiateChallenge() {
     document.getElementById("menuView").classList.add("hidden");
     document.getElementById("gameView").classList.remove("hidden");
     roundCounter = 0;
-    userScore = 0;
     renderPuzzleNode();
 }
 
@@ -559,7 +578,7 @@ function renderPuzzleNode() {
     transitionBlocker = false;
     
     document.getElementById("nodeCounter").innerText = roundCounter + 1;
-    document.getElementById("scoreDisplay").innerText = userScore;
+    document.getElementById("levelDisplay").innerText = roundCounter + 1;
 
     const currentPuzzle = puzzleMatrix[roundCounter];
     
@@ -568,6 +587,7 @@ function renderPuzzleNode() {
     document.getElementById("targetCaption").innerText = currentPuzzle.caption;
     document.getElementById("slideBadge").innerText = currentPuzzle.badge;
     document.getElementById("visualFallbackText").innerText = currentPuzzle.icon;
+    document.getElementById("visualSubTag").innerText = currentPuzzle.subTag;
 
     const monitor = document.getElementById("canvasView");
     monitor.className = "ppt-screen";
@@ -628,7 +648,7 @@ function evaluateChoice(selectedIdx) {
     evaluateAnswer(selectedIdx);
 }
 
-/* Evaluation Engine without Mid-Game Toast Dialog */
+/* Evaluation Engine without Final Score Display */
 function evaluateAnswer(selectedVal) {
     if (transitionBlocker) return;
     transitionBlocker = true;
@@ -644,9 +664,6 @@ function evaluateAnswer(selectedVal) {
     }
 
     if (isCorrect) {
-        userScore += 100;
-        document.getElementById("scoreDisplay").innerText = userScore;
-        
         // Correct Sound Triggered Strictly on Right Answer
         playAudioTrack("soundCorrect");
 
@@ -695,24 +712,14 @@ function renderSummaryDashboard() {
     document.getElementById("gameView").classList.add("hidden");
     document.getElementById("endView").classList.remove("hidden");
 
-    document.getElementById("finalScoreLabel").innerText = `${userScore} / 1000 Points`;
-    const titleText = document.getElementById("endHeaderTitle");
-    const descText = document.getElementById("endEvaluationDesc");
-
-    if (userScore >= 800) {
-        titleText.innerText = "🏆 Master Presentation Engineer!";
-        descText.innerText = "Exceptional layout mastery! You know exactly how to coordinate slide background tracks, apply transition motion states, drag formatting elements, and run presentation views correctly.";
-    } else {
-        titleText.innerText = "👍 Classroom Presentation Designer!";
-        descText.innerText = "Great job finishing the lab! Try refreshing your familiarity with the Insert, Animations, and Transitions ribbons to target a full 1000-point score next time.";
-    }
+    document.getElementById("endHeaderTitle").innerText = "🏆 Master Presentation Engineer!";
+    document.getElementById("endEvaluationDesc").innerText = "Exceptional layout mastery! You know exactly how to coordinate slide background tracks, apply transition motion states, drag formatting elements, and run presentation views correctly.";
 }
 
 function resetChallengeLoop() {
     document.getElementById("endView").classList.add("hidden");
     document.getElementById("gameView").classList.remove("hidden");
     roundCounter = 0;
-    userScore = 0;
     renderPuzzleNode();
 }
 </script>

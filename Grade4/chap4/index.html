@@ -67,7 +67,7 @@ body.active-game {
     width: 92vw;
     max-width: 950px;
     height: 88vh;
-    min-height: 600px;
+    min-height: 580px;
     z-index: 10;
 }
 
@@ -98,9 +98,9 @@ body.active-game {
 /* Grid Arena Layout Split for Slides and Actions */
 .game-grid {
     display: grid;
-    grid-template-rows: auto 1fr auto;
+    grid-template-rows: auto 1fr;
     height: 100%;
-    gap: 12px;
+    gap: 15px;
 }
 
 .status-bar {
@@ -162,7 +162,7 @@ body.active-game {
 .slide-visual-preview {
     width: 100%;
     max-width: 320px;
-    height: 160px;
+    height: 170px;
     background: #e2e8f0;
     border-radius: 12px;
     margin-bottom: 15px;
@@ -186,11 +186,11 @@ body.active-game {
     font-weight: 600;
 }
 
-/* GAME STYLE 1 & 3: CHOICES DECK */
+/* CHOICES DECK */
 .choices-deck {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
     justify-content: center;
 }
 
@@ -198,7 +198,7 @@ body.active-game {
     background: #ffffff;
     border: 2px solid #cbd5e1;
     border-radius: 14px;
-    padding: 14px;
+    padding: 16px;
     cursor: pointer;
     font-weight: 600;
     color: #334155;
@@ -215,6 +215,18 @@ body.active-game {
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
 }
 
+.choice-row.correct-flash {
+    background: #dcfce7 !important;
+    border-color: var(--success) !important;
+    color: #14532d !important;
+}
+
+.choice-row.wrong-flash {
+    background: #fee2e2 !important;
+    border-color: var(--danger) !important;
+    color: #7f1d1d !important;
+}
+
 .index-dot {
     background: #f1f5f9;
     min-width: 28px;
@@ -228,11 +240,11 @@ body.active-game {
     font-weight: 700;
 }
 
-/* GAME STYLE 2: DRAG AND DROP AREA */
+/* DRAG AND DROP AREA */
 .drag-drop-area {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 14px;
     justify-content: center;
     align-items: center;
     width: 100%;
@@ -248,42 +260,41 @@ body.active-game {
 .drag-item {
     background: var(--primary);
     color: white;
-    padding: 10px 16px;
+    padding: 12px 18px;
     border-radius: 12px;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     cursor: grab;
     box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
 }
 
 .drop-target-box {
     width: 100%;
-    padding: 22px;
+    padding: 26px;
     border: 3px dashed var(--primary);
     border-radius: 16px;
     background: #eff6ff;
     color: #1e40af;
     font-weight: 700;
     text-align: center;
-    transition: background 0.2s;
+    transition: all 0.2s;
 }
 
 .drop-target-box.drag-over {
     background: #bfdbfe;
 }
 
-.toast-tray {
-    background: rgba(15, 23, 42, 0.9);
-    border: 1px solid #334155;
-    color: #94a3b8;
-    padding: 12px;
-    border-radius: 12px;
-    text-align: center;
-    font-weight: 600;
-    font-size: 0.95rem;
+.drop-target-box.correct-flash {
+    background: #dcfce7 !important;
+    border-color: var(--success) !important;
+    color: #14532d !important;
 }
-.toast-tray.correct { border-color: var(--success); color: #4ade80; }
-.toast-tray.wrong { border-color: var(--danger); color: #f87171; }
+
+.drop-target-box.wrong-flash {
+    background: #fee2e2 !important;
+    border-color: var(--danger) !important;
+    color: #7f1d1d !important;
+}
 
 .btn-action {
     background: linear-gradient(135deg, var(--primary), #1d4ed8);
@@ -360,15 +371,15 @@ body.active-game {
             <div id="interactiveArea">
                 <!-- MULTI CHOICE DECK (Game Styles 1 & 3) -->
                 <div class="choices-deck" id="choicesDeck">
-                    <div class="choice-row" onclick="evaluateChoice(0)">
+                    <div class="choice-row" id="optBtn0" onclick="evaluateChoice(0)">
                         <div class="index-dot">A</div>
                         <span id="labelOpt0">Option Row Selection Placeholder</span>
                     </div>
-                    <div class="choice-row" onclick="evaluateChoice(1)">
+                    <div class="choice-row" id="optBtn1" onclick="evaluateChoice(1)">
                         <div class="index-dot">B</div>
                         <span id="labelOpt1">Option Row Selection Placeholder</span>
                     </div>
-                    <div class="choice-row" onclick="evaluateChoice(2)">
+                    <div class="choice-row" id="optBtn2" onclick="evaluateChoice(2)">
                         <div class="index-dot">C</div>
                         <span id="labelOpt2">Option Row Selection Placeholder</span>
                     </div>
@@ -383,8 +394,6 @@ body.active-game {
                 </div>
             </div>
         </div>
-
-        <div class="toast-tray" id="consoleMessage">Analyze the presentation slide task and map the correct solution setup!</div>
     </div>
 
     <!-- EVALUATION / SUMMARY VIEW -->
@@ -422,7 +431,7 @@ function playAudioTrack(elementId) {
         const targetAudio = document.getElementById(elementId);
         if (targetAudio) {
             targetAudio.currentTime = 0;
-            targetAudio.play().catch(err => console.log("Audio waiting for user click interaction."));
+            targetAudio.play().catch(err => console.log("Audio waiting for user interaction context."));
         }
     } catch(ex) {}
 }
@@ -438,7 +447,6 @@ const puzzleMatrix = [
         badge: "Insert -> Audio",
         icon: "🎵",
         correct: 1,
-        hint: "Audio is inserted via the Media group under the Insert Tab.",
         choices: ["Home Tab -> Paragraph Styles", "Insert Tab -> Audio option", "Animations Tab -> Custom Actions"]
     },
     {
@@ -449,7 +457,6 @@ const puzzleMatrix = [
         badge: "Transitions Tab",
         icon: "🎴",
         correct: 0,
-        hint: "Slide Transitions control page-switching animations.",
         choices: ["Transitions Tab -> Transition to This Slide", "Insert Tab -> SmartArt Layout", "Review Tab -> Comments Wizard"]
     },
     {
@@ -460,7 +467,6 @@ const puzzleMatrix = [
         badge: "Animations Tab",
         icon: "⭐",
         correct: 2,
-        hint: "Individual slide elements are animated via the Animations Tab.",
         choices: ["Design Tab -> Page Setup", "Slide Show Tab -> Rehearse Timings", "Animations Tab -> Entrance Effect"]
     },
     {
@@ -471,7 +477,6 @@ const puzzleMatrix = [
         badge: "Insert -> Video",
         icon: "🎬",
         correct: 0,
-        hint: "Digital videos are inserted from the Media group on the Insert Tab.",
         choices: ["Insert Tab -> Video tool", "View Tab -> Handout Master", "Home Tab -> Clipboard paste"]
     },
 
@@ -484,7 +489,6 @@ const puzzleMatrix = [
         badge: "Action Buttons",
         icon: "🔘",
         correct: "Action Buttons",
-        hint: "Action Buttons can be drawn onto slides from Insert -> Shapes -> Action Buttons.",
         dragOptions: ["Action Buttons", "WordArt", "Slide Sorter"]
     },
     {
@@ -495,7 +499,6 @@ const puzzleMatrix = [
         badge: "WordArt",
         icon: "🎨",
         correct: "WordArt",
-        hint: "WordArt is located under the Text group on the Insert Tab.",
         dragOptions: ["WordArt", "Text Box", "Header & Footer"]
     },
     {
@@ -506,7 +509,6 @@ const puzzleMatrix = [
         badge: "Slide Master",
         icon: "🖼️",
         correct: "Slide Master",
-        hint: "Slide Master is located under the View Tab in Master Views.",
         dragOptions: ["Slide Master", "Reading View", "Slide Show View"]
     },
 
@@ -519,7 +521,6 @@ const puzzleMatrix = [
         badge: "Keyboard Shortcut",
         icon: "🖥️",
         correct: 1,
-        hint: "Pressing F5 starts the slideshow from the very first slide.",
         choices: ["Press Ctrl + M", "Press F5 Key", "Press Shift + F5"]
     },
     {
@@ -530,7 +531,6 @@ const puzzleMatrix = [
         badge: "Current Slide Run",
         icon: "⚡",
         correct: 2,
-        hint: "Shift + F5 launches the slideshow from the currently active slide.",
         choices: ["Press F5 Key", "Press Alt + F4", "Press Shift + F5"]
     },
     {
@@ -541,18 +541,15 @@ const puzzleMatrix = [
         badge: "New Slide",
         icon: "➕",
         correct: 0,
-        hint: "Ctrl + M inserts a new blank slide immediately.",
         choices: ["Press Ctrl + M", "Press Ctrl + N", "Press Ctrl + S"]
     }
 ];
 
 let roundCounter = 0;
 let userScore = 0;
-let attemptsLeft = 2;
 let transitionBlocker = false;
 
 function initiateChallenge() {
-    // Audio on button start removed as requested
     document.getElementById("menuView").classList.add("hidden");
     document.getElementById("gameView").classList.remove("hidden");
     roundCounter = 0;
@@ -562,7 +559,6 @@ function initiateChallenge() {
 
 function renderPuzzleNode() {
     transitionBlocker = false;
-    attemptsLeft = 2; // Reset attempt limit per level
     
     document.getElementById("nodeCounter").innerText = roundCounter + 1;
     document.getElementById("scoreDisplay").innerText = userScore;
@@ -586,11 +582,17 @@ function renderPuzzleNode() {
         dragDropDeck.classList.add("hidden");
 
         for (let i = 0; i < 3; i++) {
+            const btn = document.getElementById(`optBtn${i}`);
+            btn.className = "choice-row";
             document.getElementById(`labelOpt${i}`).innerText = currentPuzzle.choices[i];
         }
     } else if (currentPuzzle.type === "drag") {
         choicesDeck.classList.add("hidden");
         dragDropDeck.classList.remove("hidden");
+
+        const dropTarget = document.getElementById("dropTarget");
+        dropTarget.className = "drop-target-box";
+        dropTarget.innerText = "🎯 Drag & Drop the correct feature module here";
 
         const dragContainer = document.getElementById("dragContainer");
         dragContainer.innerHTML = "";
@@ -604,13 +606,7 @@ function renderPuzzleNode() {
             div.ondragstart = (e) => e.dataTransfer.setData("text", optText);
             dragContainer.appendChild(div);
         });
-
-        document.getElementById("dropTarget").innerText = "🎯 Drag & Drop the correct feature module here";
     }
-
-    const consoleMessage = document.getElementById("consoleMessage");
-    consoleMessage.className = "toast-tray";
-    consoleMessage.innerText = "Select the correct tab path configuration tool to proceed with the slide build.";
 }
 
 /* Drag & Drop Handlers */
@@ -634,12 +630,12 @@ function evaluateChoice(selectedIdx) {
     evaluateAnswer(selectedIdx);
 }
 
-/* Evaluation Engine with Sound Triggers for Right/Wrong Answers */
+/* Evaluation Engine without Mid-Game Toast Dialog */
 function evaluateAnswer(selectedVal) {
     if (transitionBlocker) return;
+    transitionBlocker = true;
 
     const currentPuzzle = puzzleMatrix[roundCounter];
-    const consoleMessage = document.getElementById("consoleMessage");
     const monitor = document.getElementById("canvasView");
 
     let isCorrect = false;
@@ -650,39 +646,39 @@ function evaluateAnswer(selectedVal) {
     }
 
     if (isCorrect) {
-        transitionBlocker = true;
-        const scoreBonus = attemptsLeft === 2 ? 100 : 50;
-        userScore += scoreBonus;
+        userScore += 100;
         document.getElementById("scoreDisplay").innerText = userScore;
         
-        // Correct Sound Triggered Strictly on True Answer
+        // Correct Sound Triggered Strictly on Right Answer
         playAudioTrack("soundCorrect");
 
-        monitor.classList.add("anim-success-pulse");
-        consoleMessage.className = "toast-tray correct";
-        consoleMessage.innerHTML = `🌟 Success (+${scoreBonus} pts): ${currentPuzzle.hint}`;
+        if (currentPuzzle.type === "choice") {
+            document.getElementById(`optBtn${selectedVal}`).classList.add("correct-flash");
+        } else {
+            const dropTarget = document.getElementById("dropTarget");
+            dropTarget.classList.add("correct-flash");
+            dropTarget.innerText = `✓ Correct! [${selectedVal}]`;
+        }
 
-        setTimeout(nextQuestion, 1800);
+        monitor.classList.add("anim-success-pulse");
+        setTimeout(nextQuestion, 1200);
     } else {
-        attemptsLeft--;
-        
         // Wrong Sound Triggered Strictly on Incorrect Answer
         playAudioTrack("soundWrong");
         
         monitor.classList.add("anim-shake");
-        setTimeout(() => monitor.classList.remove("anim-shake"), 400);
 
-        if (attemptsLeft > 0) {
-            consoleMessage.className = "toast-tray wrong";
-            consoleMessage.innerHTML = `❌ Incorrect! You have 1 try remaining. Give it another shot!`;
+        if (currentPuzzle.type === "choice") {
+            document.getElementById(`optBtn${selectedVal}`).classList.add("wrong-flash");
+            // Immediately highlight the correct answer in green so student learns
+            document.getElementById(`optBtn${currentPuzzle.correct}`).classList.add("correct-flash");
         } else {
-            transitionBlocker = true;
-            let correctText = currentPuzzle.type === "choice" ? currentPuzzle.choices[currentPuzzle.correct] : currentPuzzle.correct;
-            consoleMessage.className = "toast-tray wrong";
-            consoleMessage.innerHTML = `❌ Out of tries! Correct Solution: [${correctText}]`;
-
-            setTimeout(nextQuestion, 2200);
+            const dropTarget = document.getElementById("dropTarget");
+            dropTarget.classList.add("wrong-flash");
+            dropTarget.innerText = `✗ Correct Answer: [${currentPuzzle.correct}]`;
         }
+
+        setTimeout(nextQuestion, 1800);
     }
 }
 

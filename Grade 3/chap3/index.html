@@ -3,17 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MS Word Chapter 3 Interactive Arcade</title>
+<title>MS Word Interactive Studio Lab</title>
 <style>
 :root {
-    --space-dark: #0f172a;
+    --word-blue: #2b579a;
+    --word-dark: #1b365d;
+    --word-light: #f3f4f6;
     --card-bg: #ffffff;
-    --primary: #2563eb;
-    --primary-dark: #1d4ed8;
-    --accent: #d97706;
     --success: #16a34a;
     --danger: #dc2626;
-    --text-dark: #1e293b;
+    --accent: #d97706;
 }
 
 * {
@@ -67,10 +66,10 @@ body.active-game {
 }
 
 .main-container {
-    width: 92vw;
-    max-width: 950px;
-    height: 88vh;
-    min-height: 580px;
+    width: 95vw;
+    max-width: 1000px;
+    height: 90vh;
+    min-height: 600px;
     z-index: 10;
 }
 
@@ -87,7 +86,7 @@ body.active-game {
 
 .panel-card h1 {
     font-size: 2.2rem;
-    color: var(--primary);
+    color: var(--word-blue);
     margin-bottom: 10px;
 }
 
@@ -98,161 +97,228 @@ body.active-game {
     margin-bottom: 25px;
 }
 
-/* Grid Arena Layout Split for Slides and Actions */
 .game-grid {
     display: grid;
     grid-template-rows: auto 1fr;
     height: 100%;
-    gap: 15px;
+    gap: 12px;
 }
 
 .status-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(30, 41, 59, 0.85);
-    padding: 12px 25px;
+    background: rgba(30, 41, 59, 0.9);
+    padding: 10px 20px;
     border-radius: 14px;
     color: #ffffff;
     font-weight: 700;
     border: 1px solid #334155;
 }
 
-.score-badge {
+.badge {
     background: var(--accent);
-    padding: 4px 14px;
-    border-radius: 20px;
-}
-
-.game-type-badge {
-    background: #3b82f6;
     padding: 4px 12px;
     border-radius: 20px;
     font-size: 0.85rem;
 }
 
-.workspace {
-    display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
-    gap: 15px;
-    height: 100%;
-    min-height: 0;
-}
-
-/* MS Word Interactive Simulator Screen Frame */
-.ppt-screen {
-    background: #f8fafc;
-    border: 5px solid #475569;
-    border-radius: 18px;
-    box-shadow: inset 0 0 20px rgba(0,0,0,0.08);
+/* REAL MS WORD SIMULATOR CONTAINER */
+.word-simulator-window {
+    background: #e2e8f0;
+    border: 3px solid #64748b;
+    border-radius: 16px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 18px;
-    position: relative;
-    text-align: center;
     overflow: hidden;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
 }
 
-.ppt-screen h3 {
-    font-size: 1.35rem;
+.word-top-bar {
+    background: var(--word-blue);
+    color: white;
+    padding: 8px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.office-btn {
+    width: 32px;
+    height: 32px;
+    background: radial-gradient(circle, #f97316, #ea580c);
+    border-radius: 50%;
+    border: 2px solid white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+.quick-access-bar {
+    display: flex;
+    gap: 8px;
+    margin-left: 10px;
+}
+
+.qa-icon {
+    width: 26px;
+    height: 26px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.qa-icon:hover {
+    background: rgba(255,255,255,0.4);
+}
+
+.word-ribbon {
+    background: #f1f5f9;
+    border-bottom: 2px solid #cbd5e1;
+    padding: 8px 15px;
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.ribbon-tab {
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #334155;
+    cursor: pointer;
+}
+
+.ribbon-tab.active {
+    background: #ffffff;
+    color: var(--word-blue);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.ribbon-tools-group {
+    display: flex;
+    gap: 10px;
+    background: #ffffff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+}
+
+.tool-button {
+    padding: 6px 10px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.tool-button:hover {
+    background: #e2e8f0;
+    border-color: var(--word-blue);
+}
+
+/* SIMULATED WORD DOCUMENT PAGE */
+.word-doc-canvas {
+    flex: 1;
+    background: #94a3b8;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    overflow-y: auto;
+}
+
+.paper-page {
+    background: #ffffff;
+    width: 100%;
+    max-width: 650px;
+    min-height: 260px;
+    padding: 30px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    border-radius: 4px;
+    position: relative;
+}
+
+.doc-text-sample {
+    font-size: 1.05rem;
+    line-height: 1.8;
     color: #1e293b;
+}
+
+.selectable-word {
+    padding: 2px 4px;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.selectable-word.highlighted {
+    background: #3b82f6 !important;
+    color: #ffffff !important;
+}
+
+.word-status-bar {
+    background: #f1f5f9;
+    border-top: 1px solid #cbd5e1;
+    padding: 6px 15px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+}
+
+/* PROMPT TASK BANNER */
+.task-banner {
+    background: #eff6ff;
+    border: 2px solid #93c5fd;
+    border-radius: 12px;
+    padding: 12px 20px;
+    color: #1e40af;
+    font-weight: 700;
+    font-size: 1rem;
+    text-align: center;
     margin-bottom: 10px;
 }
 
-/* Visual Image Element Frame */
-.slide-visual-preview {
-    width: 100%;
-    max-width: 320px;
-    height: 170px;
-    background: linear-gradient(135deg, #e0f2fe, #dbeafe);
-    border-radius: 14px;
-    margin-bottom: 15px;
+.keyboard-sim-deck {
     display: flex;
-    flex-direction: column;
+    gap: 10px;
     justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    border: 3px solid #93c5fd;
-    position: relative;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-top: 10px;
 }
 
-.card-image-box {
-    font-size: 3.5rem;
-    margin-bottom: 4px;
-}
-
-.asset-overlay-badge {
-    position: absolute;
-    bottom: 8px;
-    right: 8px;
-    background: rgba(15, 23, 42, 0.85);
-    color: white;
-    padding: 4px 10px;
-    font-size: 0.75rem;
-    border-radius: 8px;
-    font-weight: 700;
-    letter-spacing: 0.5px;
-}
-
-/* CHOICES DECK */
-.choices-deck {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    justify-content: center;
-}
-
-.choice-row {
+.key-cap {
     background: #ffffff;
     border: 2px solid #cbd5e1;
-    border-radius: 14px;
-    padding: 16px;
-    cursor: pointer;
-    font-weight: 600;
-    color: #334155;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    text-align: left;
-}
-
-.choice-row:hover {
-    border-color: var(--primary);
-    transform: translateX(-4px);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-}
-
-.choice-row.correct-flash {
-    background: #dcfce7 !important;
-    border-color: var(--success) !important;
-    color: #14532d !important;
-}
-
-.choice-row.wrong-flash {
-    background: #fee2e2 !important;
-    border-color: var(--danger) !important;
-    color: #7f1d1d !important;
-}
-
-.index-dot {
-    background: #f1f5f9;
-    min-width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    color: #64748b;
+    border-bottom-width: 4px;
+    border-radius: 8px;
+    padding: 8px 16px;
     font-weight: 700;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: #334155;
+}
+
+.key-cap:active {
+    border-bottom-width: 2px;
+    transform: translateY(2px);
 }
 
 .btn-action {
-    background: linear-gradient(135deg, var(--primary), #1d4ed8);
+    background: linear-gradient(135deg, var(--word-blue), #1d4ed8);
     color: white;
     border: none;
     padding: 12px 36px;
@@ -261,28 +327,27 @@ body.active-game {
     font-size: 1.05rem;
     cursor: pointer;
     box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
-    transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.btn-action:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 7px 20px rgba(37, 99, 235, 0.45);
 }
 
 .hidden { display: none !important; }
 
-.anim-success-pulse { animation: successPulse 0.5s ease-in-out; }
-.anim-shake { animation: mistakeShake 0.4s ease-in-out; }
-
-@keyframes successPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.03); border-color: var(--success); }
-    100% { transform: scale(1); }
+.correct-glow {
+    border-color: var(--success) !important;
+    background: #dcfce7 !important;
+    box-shadow: 0 0 12px var(--success) !important;
 }
+
+.wrong-glow {
+    border-color: var(--danger) !important;
+    background: #fee2e2 !important;
+    box-shadow: 0 0 12px var(--danger) !important;
+}
+
+.anim-shake { animation: mistakeShake 0.4s ease-in-out; }
 
 @keyframes mistakeShake {
     0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-6px); border-color: var(--danger); }
+    20%, 60% { transform: translateX(-6px); }
     40%, 80% { transform: translateX(6px); }
 }
 </style>
@@ -299,58 +364,86 @@ body.active-game {
     <!-- MENU VIEW -->
     <div id="menuView" class="panel-card">
         <img src="assets/innovine-logo.png" alt="Innovine" style="max-width: 140px; margin-bottom: 15px;" onerror="this.style.display='none'">
-        <h1>Word Processing Studio</h1>
-        <h3 style="color:#64748b; margin-bottom: 20px;">Interactive Knowledge Arcade</h3>
+        <h1>MS Word Interactive Studio</h1>
+        <h3 style="color:#64748b; margin-bottom: 20px;">Hands-On Software Simulator Arcade</h3>
         <p>
-            Master word processing in MS Word! Solve 10 visual challenge questions about component tools, text selections, shortcuts, and file management.
+            Perform actual actions on a simulated MS Word 2007 window! Complete 10 interactive tasks by clicking ribbon buttons, tool icons, document text, and shortcut keys.
         </p>
-        <button class="btn-action" onclick="initiateChallenge()">Launch Studio Workshop 🚀</button>
+        <button class="btn-action" onclick="initiateChallenge()">Launch Interactive Lab 🚀</button>
     </div>
 
     <!-- GAMEPLAY VIEW -->
     <div id="gameView" class="game-grid hidden">
         <div class="status-bar">
             <div>📋 Task Module: <span id="nodeCounter">1</span> / 10</div>
-            <div class="game-type-badge" id="gameTypeLabel">MS Word Basics</div>
-            <div class="score-badge">Attempts Left: <span id="attemptsDisplay">2</span></div>
+            <div class="badge" id="moduleTitle">MS Word Simulator</div>
+            <div class="badge" style="background:#0284c7;">Attempts Left: <span id="attemptsDisplay">2</span></div>
         </div>
 
-        <div class="workspace">
-            <div class="ppt-screen" id="canvasView">
-                <div class="slide-visual-preview" id="visualFrame">
-                    <div class="card-image-box" id="visualFallbackText">📝</div>
-                    <div id="visualSubTag" style="font-weight:700; color:#1e40af; font-size:0.85rem;">WORD PROCESSING</div>
-                    <div class="asset-overlay-badge" id="slideBadge">MS Word 2007</div>
+        <div class="task-banner" id="instructionTaskText">
+            Task Instruction Header
+        </div>
+
+        <!-- SIMULATED MS WORD WORKSPACE FRAME -->
+        <div class="word-simulator-window" id="wordWindow">
+            <div class="word-top-bar">
+                <div style="display:flex; align-items:center;">
+                    <div class="office-btn" id="officeButton" onclick="handleElementClick('office-btn')">W</div>
+                    <div class="quick-access-bar" id="qaGroup">
+                        <div class="qa-icon" id="qaSave" onclick="handleElementClick('qa-save')" title="Save (Ctrl+S)">💾</div>
+                        <div class="qa-icon" id="qaUndo" onclick="handleElementClick('qa-undo')" title="Undo">↩️</div>
+                        <div class="qa-icon" id="qaRedo" onclick="handleElementClick('qa-redo')" title="Redo">↪️</div>
+                    </div>
                 </div>
-                <h3 id="targetHeadline">Question Title</h3>
-                <p id="targetCaption" style="color: #64748b; font-size: 0.9rem; line-height:1.4;"></p>
+                <div style="font-size:0.85rem; font-weight:700;">Document1 - Microsoft Word</div>
+                <div style="display:flex; gap:8px;">
+                    <span>🗕</span><span>🗖</span><span id="winCloseBtn" style="cursor:pointer;" onclick="handleElementClick('win-close')">❌</span>
+                </div>
             </div>
 
-            <!-- INTERACTIVE OPTION DECK -->
-            <div id="interactiveArea">
-                <div class="choices-deck" id="choicesDeck">
-                    <div class="choice-row" id="optBtn0" onclick="evaluateChoice(0)">
-                        <div class="index-dot">A</div>
-                        <span id="labelOpt0">Option A</span>
-                    </div>
-                    <div class="choice-row" id="optBtn1" onclick="evaluateChoice(1)">
-                        <div class="index-dot">B</div>
-                        <span id="labelOpt1">Option B</span>
-                    </div>
-                    <div class="choice-row" id="optBtn2" onclick="evaluateChoice(2)">
-                        <div class="index-dot">C</div>
-                        <span id="labelOpt2">Option C</span>
-                    </div>
+            <!-- RIBBON TABS -->
+            <div class="word-ribbon">
+                <div class="ribbon-tab active" id="tabHome" onclick="handleElementClick('tab-home')">Home</div>
+                <div class="ribbon-tab" id="tabInsert" onclick="handleElementClick('tab-insert')">Insert</div>
+                <div class="ribbon-tab" id="tabLayout" onclick="handleElementClick('tab-layout')">Page Layout</div>
+                
+                <div class="ribbon-tools-group">
+                    <button class="tool-button" id="btnNewDoc" onclick="handleElementClick('btn-new')">📄 New</button>
+                    <button class="tool-button" id="btnOpenDoc" onclick="handleElementClick('btn-open')">📂 Open</button>
+                    <button class="tool-button" id="btnSaveDoc" onclick="handleElementClick('btn-save')">💾 Save</button>
                 </div>
             </div>
+
+            <!-- DOCUMENT CANVAS -->
+            <div class="word-doc-canvas">
+                <div class="paper-page" id="paperPage">
+                    <p class="doc-text-sample" id="documentContent">
+                        A <span class="selectable-word" id="targetWord" onclick="handleElementClick('target-word')">word processor</span> is an application software used to create, edit, save, and print text documents.
+                    </p>
+                </div>
+            </div>
+
+            <!-- WORD STATUS BAR -->
+            <div class="word-status-bar" id="wordStatusBar" onclick="handleElementClick('status-bar')">
+                <div>Page 1 of 1 &nbsp;|&nbsp; Words: 18</div>
+                <div>100% 🔍</div>
+            </div>
+        </div>
+
+        <!-- KEYBOARD SHORTCUT INTERACTIVE DOCK -->
+        <div class="keyboard-sim-deck" id="keyboardDeck">
+            <button class="key-cap" onclick="handleElementClick('key-ctrl-s')">Ctrl + S</button>
+            <button class="key-cap" onclick="handleElementClick('key-ctrl-a')">Ctrl + A</button>
+            <button class="key-cap" onclick="handleElementClick('key-ctrl-o')">Ctrl + O</button>
+            <button class="key-cap" onclick="handleElementClick('key-ctrl-f4')">Ctrl + F4</button>
         </div>
     </div>
 
-    <!-- EVALUATION VIEW -->
+    <!-- SUMMARY / EVALUATION VIEW -->
     <div id="endView" class="panel-card hidden">
-        <h1 id="endHeaderTitle">🏆 Word Processing Master!</h1>
+        <h1>🏆 Master Presentation &amp; Word Engineer!</h1>
         <p id="endEvaluationDesc" style="margin-top: 18px; font-size: 1.15rem; color: #475569; line-height:1.6;"></p>
-        <div style="font-size: 4rem; margin: 25px 0;">📝💾📄✨</div>
+        <div style="font-size: 4rem; margin: 25px 0;">✨📝🖥️💾</div>
         <button class="btn-action" onclick="resetChallengeLoop()">Restart Studio Workshop 🔄</button>
     </div>
 
@@ -359,7 +452,7 @@ body.active-game {
 <!-- AUDIO EMBEDS -->
 <audio id="soundCorrect" src="assets/correct.mp3" preload="auto"></audio>
 <audio id="soundWrong" src="assets/wrong.mp3" preload="auto"></audio>
-
+<audio id="soundClap" src="assets/clap.mp3" preload="auto"></audio>
 
 <script>
 /* 5-Second Delay Splash Controller */
@@ -375,118 +468,67 @@ setTimeout(() => {
     }
 }, 5000);
 
-/* Audio Track Player */
 function playAudioTrack(elementId) {
     try {
         const targetAudio = document.getElementById(elementId);
         if (targetAudio) {
             targetAudio.currentTime = 0;
-            targetAudio.play().catch(err => console.log("Audio waiting for click."));
+            targetAudio.play().catch(err => console.log("Audio waiting for user click."));
         }
     } catch(ex) {}
 }
 
-/* 10 CHAPTER 3 QUESTIONS MATRIX (From Pg 28-37 of Textbook) */
-const puzzleMatrix = [
+/* 10 INTERACTIVE SIMULATOR TASKS (Chapter 3 Pages 28-37) */
+const simulatorTasks = [
     {
-        typeName: "Word Processing Basics",
-        title: "Word Processing Definition",
-        caption: "What is the process of creating, editing, saving, and printing a document using a word processor called?",
-        badge: "Page 29",
-        icon: "📄",
-        subTag: "DOCUMENT WORKFLOW",
-        correct: 1,
-        choices: ["Spreadsheet Calculations", "Word Processing", "Desktop Publishing"]
+        instruction: "🎯 Click the round Office Button located in the upper-left corner.",
+        targetId: "office-btn",
+        highlightElement: "officeButton"
     },
     {
-        typeName: "MS Word Components",
-        title: "Office Button Location",
-        caption: "Which button located in the upper-left corner contains options like New, Open, Save, and Print?",
-        badge: "Page 31",
-        icon: "⭕",
-        subTag: "TOP-LEFT MENU",
-        correct: 0,
-        choices: ["Office Button", "Status Bar", "Horizontal Ruler"]
+        instruction: "🎯 Click on the Quick Access Toolbar Save icon.",
+        targetId: "qa-save",
+        highlightElement: "qaSave"
     },
     {
-        typeName: "MS Word Components",
-        title: "Quick Access Toolbar",
-        caption: "Where are the most frequently used buttons like Save, Undo, and Redo located?",
-        badge: "Page 31",
-        icon: "💾",
-        subTag: "QUICK TOOLBAR",
-        correct: 2,
-        choices: ["Status Bar", "Document Area", "Quick Access Toolbar"]
+        instruction: "🎯 Double-click directly on the highlighted text 'word processor' to select it.",
+        targetId: "target-word",
+        highlightElement: "targetWord"
     },
     {
-        typeName: "Text Selection Techniques",
-        title: "Selecting a Word",
-        caption: "How do you quickly select a single word in an MS Word document?",
-        badge: "Page 33",
-        icon: "🖱️",
-        subTag: "MOUSE TECHNIQUE",
-        correct: 0,
-        choices: ["Double-click on the word", "Hold Shift key and press Enter", "Click on the Status Bar"]
+        instruction: "🎯 Click the shortcut key to SELECT ENTIRE TEXT in the document.",
+        targetId: "key-ctrl-a",
+        highlightElement: "key-ctrl-a"
     },
     {
-        typeName: "Text Selection Techniques",
-        title: "Selecting Entire Document",
-        caption: "Which keyboard shortcut selects the entire text in a document at once?",
-        badge: "Page 33",
-        icon: "⌨️",
-        subTag: "KEYBOARD SHORTCUT",
-        correct: 1,
-        choices: ["Ctrl + S", "Ctrl + A", "Ctrl + N"]
+        instruction: "🎯 Click the shortcut key to SAVE the current file.",
+        targetId: "key-ctrl-s",
+        highlightElement: "key-ctrl-s"
     },
     {
-        typeName: "Deleting Text",
-        title: "Backspace vs Delete Key",
-        caption: "Which key deletes text located to the left side of the blinking cursor?",
-        badge: "Page 33",
-        icon: "⌫",
-        subTag: "KEYBOARD DELETION",
-        correct: 2,
-        choices: ["Delete Key", "Spacebar", "Backspace Key"]
+        instruction: "🎯 Click on the 'Save' button in the ribbon toolbar.",
+        targetId: "btn-save",
+        highlightElement: "btnSaveDoc"
     },
     {
-        typeName: "Saving Documents",
-        title: "Saving File Shortcut",
-        caption: "Which shortcut key combination is used to save the active file in MS Word?",
-        badge: "Page 33",
-        icon: "💾",
-        subTag: "FILE MANAGEMENT",
-        correct: 0,
-        choices: ["Ctrl + S", "Ctrl + O", "Ctrl + F4"]
+        instruction: "🎯 Click the shortcut key used to OPEN an existing saved file.",
+        targetId: "key-ctrl-o",
+        highlightElement: "key-ctrl-o"
     },
     {
-        typeName: "Opening Documents",
-        title: "Opening Saved File",
-        caption: "What is the keyboard shortcut to open an existing document in MS Word?",
-        badge: "Page 35",
-        icon: "📂",
-        subTag: "OPEN FILE",
-        correct: 1,
-        choices: ["Ctrl + N", "Ctrl + O", "Alt + F4"]
+        instruction: "🎯 Click on the Status Bar located at the bottom of the MS Word window.",
+        targetId: "status-bar",
+        highlightElement: "wordStatusBar"
     },
     {
-        typeName: "Closing Documents",
-        title: "Closing Active File",
-        caption: "Which shortcut key closes the currently open document in MS Word?",
-        badge: "Page 35",
-        icon: "❌",
-        subTag: "CLOSE FILE",
-        correct: 2,
-        choices: ["Ctrl + S", "Ctrl + A", "Ctrl + F4"]
+        instruction: "🎯 Click the shortcut key combination used to CLOSE the active document file.",
+        targetId: "key-ctrl-f4",
+        highlightElement: "key-ctrl-f4"
     },
     {
-        typeName: "File Format Knowledge",
-        title: "Default File Extension",
-        caption: "What is the default file extension for a saved document in MS Word?",
-        badge: "Page 35",
-        icon: "🏷️",
-        subTag: "FILE EXTENSION",
-        correct: 0,
-        choices: [".doc or .docx", ".bmp or .txt", ".exe or .png"]
+        instruction: "🎯 Click the Close (❌) window button at the top right corner to exit MS Word.",
+        targetId: "win-close",
+        highlightElement: "winCloseBtn"
     }
 ];
 
@@ -498,75 +540,67 @@ function initiateChallenge() {
     document.getElementById("menuView").classList.add("hidden");
     document.getElementById("gameView").classList.remove("hidden");
     roundCounter = 0;
-    renderPuzzleNode();
+    renderTaskNode();
 }
 
-function renderPuzzleNode() {
+function renderTaskNode() {
     transitionBlocker = false;
     attemptsLeft = 2;
-    
+
     document.getElementById("nodeCounter").innerText = roundCounter + 1;
     document.getElementById("attemptsDisplay").innerText = attemptsLeft;
 
-    const currentPuzzle = puzzleMatrix[roundCounter];
-    
-    document.getElementById("gameTypeLabel").innerText = currentPuzzle.typeName;
-    document.getElementById("targetHeadline").innerText = currentPuzzle.title;
-    document.getElementById("targetCaption").innerText = currentPuzzle.caption;
-    document.getElementById("slideBadge").innerText = currentPuzzle.badge;
-    document.getElementById("visualFallbackText").innerText = currentPuzzle.icon;
-    document.getElementById("visualSubTag").innerText = currentPuzzle.subTag;
+    const currentTask = simulatorTasks[roundCounter];
+    document.getElementById("instructionTaskText").innerText = currentTask.instruction;
 
-    const monitor = document.getElementById("canvasView");
-    monitor.className = "ppt-screen";
-
-    for (let i = 0; i < 3; i++) {
-        const btn = document.getElementById(`optBtn${i}`);
-        btn.className = "choice-row";
-        document.getElementById(`labelOpt${i}`).innerText = currentPuzzle.choices[i];
-    }
+    // Reset visual highlights
+    document.querySelectorAll('.correct-glow, .wrong-glow').forEach(el => {
+        el.classList.remove('correct-glow', 'wrong-glow');
+    });
+    document.getElementById('targetWord').classList.remove('highlighted');
 }
 
-function evaluateChoice(selectedIdx) {
+function handleElementClick(clickedId) {
     if (transitionBlocker) return;
 
-    const currentPuzzle = puzzleMatrix[roundCounter];
-    const monitor = document.getElementById("canvasView");
+    const currentTask = simulatorTasks[roundCounter];
 
-    let isCorrect = (selectedIdx === currentPuzzle.correct);
-
-    if (isCorrect) {
+    if (clickedId === currentTask.targetId) {
         transitionBlocker = true;
         playAudioTrack("soundCorrect");
 
-        document.getElementById(`optBtn${selectedIdx}`).classList.add("correct-flash");
-        monitor.classList.add("anim-success-pulse");
-        setTimeout(nextQuestion, 1200);
+        if (clickedId === 'target-word') {
+            document.getElementById('targetWord').classList.add('highlighted');
+        }
+
+        const targetEl = document.getElementById(currentTask.highlightElement);
+        if (targetEl) targetEl.classList.add('correct-glow');
+
+        setTimeout(nextTask, 1200);
     } else {
         attemptsLeft--;
         playAudioTrack("soundWrong");
         document.getElementById("attemptsDisplay").innerText = attemptsLeft;
 
-        monitor.classList.add("anim-shake");
-        setTimeout(() => monitor.classList.remove("anim-shake"), 400);
-
-        const btn = document.getElementById(`optBtn${selectedIdx}`);
-        btn.classList.add("wrong-flash");
-        setTimeout(() => btn.classList.remove("wrong-flash"), 800);
+        const windowBox = document.getElementById("wordWindow");
+        windowBox.classList.add("anim-shake");
+        setTimeout(() => windowBox.classList.remove("anim-shake"), 400);
 
         if (attemptsLeft <= 0) {
             transitionBlocker = true;
-            // Highlight correct answer in green on 2nd wrong attempt
-            document.getElementById(`optBtn${currentPuzzle.correct}`).classList.add("correct-flash");
-            setTimeout(nextQuestion, 1800);
+            // On second wrong attempt, highlight the target element in green so user learns
+            const targetEl = document.getElementById(currentTask.highlightElement);
+            if (targetEl) targetEl.classList.add('correct-glow');
+
+            setTimeout(nextTask, 1800);
         }
     }
 }
 
-function nextQuestion() {
+function nextTask() {
     roundCounter++;
-    if (roundCounter < puzzleMatrix.length) {
-        renderPuzzleNode();
+    if (roundCounter < simulatorTasks.length) {
+        renderTaskNode();
     } else {
         renderSummaryDashboard();
     }
@@ -577,15 +611,14 @@ function renderSummaryDashboard() {
     document.getElementById("gameView").classList.add("hidden");
     document.getElementById("endView").classList.remove("hidden");
 
-    document.getElementById("endHeaderTitle").innerText = "🏆 Word Processing Master!";
-    document.getElementById("endEvaluationDesc").innerText = "Fantastic job! You have demonstrated great understanding of MS Word components, text selection techniques, shortcuts, and file saving operations.";
+    document.getElementById("endEvaluationDesc").innerText = "Outstanding! You demonstrated full practical command over the MS Word interface, toolbar components, text selection methods, and keyboard shortcuts.";
 }
 
 function resetChallengeLoop() {
     document.getElementById("endView").classList.add("hidden");
     document.getElementById("gameView").classList.remove("hidden");
     roundCounter = 0;
-    renderPuzzleNode();
+    renderTaskNode();
 }
 </script>
 

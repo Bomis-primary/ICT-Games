@@ -154,18 +154,18 @@
         /* Top HUD Navbar */
         .hud {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 8px;
             margin-bottom: 10px;
         }
 
         .hud-card {
             background: var(--slate-dark);
             color: white;
-            padding: 8px 14px;
+            padding: 8px 10px;
             border-radius: 12px;
             font-weight: 700;
-            font-size: clamp(0.8rem, 3vw, 0.95rem);
+            font-size: clamp(0.75rem, 2.5vw, 0.9rem);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -192,7 +192,7 @@
             margin-bottom: 6px;
         }
 
-        /* LEVEL 1: TEXT ALIGNMENT & ORIENTATION CARDS */
+        /* LEVEL 1: TEXT ALIGNMENT CARDS */
         .alignment-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -221,11 +221,21 @@
             transform: translateY(-2px);
         }
 
+        .align-card.reveal-correct {
+            border-color: var(--success) !important;
+            background: #dcfce7 !important;
+        }
+
+        .align-card.flash-wrong {
+            border-color: var(--error) !important;
+            background: #fee2e2 !important;
+        }
+
         .align-icon {
             font-size: 1.8rem;
         }
 
-        /* LEVEL 2: MULTI-DIRECTIONAL 8x8 WORD SEARCH GRID */
+        /* LEVEL 2: 8x8 WORD SEARCH GRID */
         .word-search-grid {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
@@ -387,6 +397,7 @@
 
         .ticker-feedback.good { background: #ecfdf5; border-left-color: var(--success); color: #065f46; }
         .ticker-feedback.bad { background: #fef2f2; border-left-color: var(--error); color: #991b1b; }
+        .ticker-feedback.warn { background: #fffbebf1; border-left-color: var(--comic-orange); color: #b45309; }
 
         /* Report Screen Shell */
         .rank-shell {
@@ -411,6 +422,7 @@
     <!-- Audio Elements -->
     <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
     <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+    <audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
 
     <!-- 5-Second Splash Screen -->
     <div id="splash">
@@ -428,7 +440,7 @@
                 <p style="font-weight:800; margin-bottom:6px; color:var(--slate-dark);">🎮 5 STEM Challenge Levels:</p>
                 <ol>
                     <li><strong>Level 1:</strong> Text Alignment & Layout Tools</li>
-                    <li><strong>Level 2:</strong> Multi-Directional Word Search (PRINT, FORMAT, FONT, MARGIN, ALIGN, BOLD)</li>
+                    <li><strong>Level 2:</strong> Non-Overlapping Word Search (PRINT, FORMAT, FONT, MARGIN, ALIGN, BOLD)</li>
                     <li><strong>Level 3:</strong> Unscramble Font Formatting Attributes</li>
                     <li><strong>Level 4:</strong> Interactive Crossword Fill-ins</li>
                     <li><strong>Level 5:</strong> Formatting Shortcut Keys Matching</li>
@@ -442,6 +454,7 @@
             <div class="hud">
                 <div class="hud-card">📝 Level: <span id="countHUD">1</span> / 5</div>
                 <div class="hud-card" style="background:#eff6ff; color:var(--word-blue);">⭐ Score: <span id="scoreHUD">0</span></div>
+                <div class="hud-card" style="background:#fff7ed; color:var(--comic-orange);">🎯 Attempt: <span id="attemptHUD">1</span> / 2</div>
                 <div class="hud-card" style="background:#f0fdf4; color:var(--success);">Target: 800</div>
             </div>
 
@@ -505,6 +518,11 @@
                 osc.connect(gain); gain.connect(this.ctx.destination);
                 osc.start(now); osc.stop(now + 0.3);
             }
+
+            playClap() {
+                const audio = document.getElementById("clapSound");
+                if (audio) audio.play().catch(() => {});
+            }
         }
 
         const soundEngine = new SoundEngine();
@@ -515,7 +533,7 @@
             document.getElementById("appMainframe").classList.remove("hidden");
         }, 5000);
 
-        /* 5-Level Game Stages Data */
+        /* 5-Level Game Stages Data with Fixed Non-Overlapping Word Search */
         const gameStages = [
             {
                 level: 1,
@@ -532,25 +550,25 @@
             {
                 level: 2,
                 type: "wordsearch",
-                title: "Level 2: Find ALL 6 Words (Horizontal, Vertical & Diagonal)!",
-                targetWords: ["PRINT", "FORMAT", "FONT", "MARGIN", "ALIGN", "BOLD"],
+                title: "Level 2: Find ALL 6 Words in the Grid!",
+                targetWords: ["PRINT", "MARGIN", "FORMAT", "BOLD", "ALIGN", "FONT"],
                 grid: [
-                    ['P', 'R', 'I', 'N', 'T', 'X', 'Y', 'Z'], // PRINT horizontal (Row 0)
-                    ['M', 'A', 'R', 'G', 'I', 'N', 'A', 'B'], // MARGIN diagonal starting at 1-0
-                    ['F', 'O', 'R', 'M', 'A', 'T', 'L', 'C'], // FORMAT vertical starting at 2-0
-                    ['O', 'X', 'B', 'O', 'L', 'D', 'I', 'D'], // BOLD horizontal at 3-2
-                    ['N', 'Y', 'A', 'Z', 'W', 'Q', 'G', 'E'],
-                    ['T', 'A', 'L', 'I', 'G', 'N', 'N', 'F'], // ALIGN horizontal at 5-1
-                    ['K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R'],
-                    ['S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+                    ['P', 'R', 'I', 'N', 'T', 'X', 'Y', 'Z'], // Row 0: PRINT (0-0 to 0-4)
+                    ['M', 'A', 'R', 'G', 'I', 'N', 'A', 'B'], // Row 1: MARGIN (1-0 to 1-5)
+                    ['F', 'O', 'R', 'M', 'A', 'T', 'L', 'C'], // Row 2: FORMAT (2-0 to 2-5)
+                    ['X', 'Y', 'B', 'O', 'L', 'D', 'I', 'D'], // Row 3: BOLD (3-2 to 3-5)
+                    ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I'], // Row 4: Random distractor letters
+                    ['A', 'L', 'I', 'G', 'N', 'Z', 'K', 'J'], // Row 5: ALIGN ONCE ONLY (5-0 to 5-4)
+                    ['F', 'O', 'N', 'T', 'S', 'V', 'W', 'X'], // Row 6: FONT ONCE ONLY (6-0 to 6-3)
+                    ['S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']  // Row 7: Filler row
                 ],
                 wordCoords: {
-                    "PRINT": ["0-0", "0-1", "0-2", "0-3", "0-4"], // Straight Horizontal Row 0
-                    "MARGIN": ["1-0", "1-1", "1-2", "1-3", "1-4", "1-5"], // Horizontal Row 1
-                    "FORMAT": ["2-0", "2-1", "2-2", "2-3", "2-4", "2-5"], // Horizontal Row 2
-                    "FONT": ["2-0", "3-0", "4-0", "5-0"], // Vertical Down Column 0
-                    "BOLD": ["3-2", "3-3", "3-4", "3-5"], // Horizontal Row 3
-                    "ALIGN": ["5-1", "5-2", "5-3", "5-4", "5-5"] // Horizontal Row 5
+                    "PRINT": ["0-0", "0-1", "0-2", "0-3", "0-4"],
+                    "MARGIN": ["1-0", "1-1", "1-2", "1-3", "1-4", "1-5"],
+                    "FORMAT": ["2-0", "2-1", "2-2", "2-3", "2-4", "2-5"],
+                    "BOLD": ["3-2", "3-3", "3-4", "3-5"],
+                    "ALIGN": ["5-0", "5-1", "5-2", "5-3", "5-4"],
+                    "FONT": ["6-0", "6-1", "6-2", "6-3"]
                 }
             },
             {
@@ -565,9 +583,9 @@
                 type: "crossword_multi",
                 title: "Level 4: Complete the Word Processing Concepts!",
                 puzzles: [
-                    { hint: "1. Font Style & Size Controls:", template: "F O R M A T", correct: "FORMAT", preset: [0,2,4] }, // F _ R _ T
-                    { hint: "2. Block Text Structure:", template: "P A R A G R A P H", correct: "PARAGRAPH", preset: [0,2,4,6] }, // P _ R _ G _ A _ H
-                    { hint: "3. Grammar & Proofing Tool:", template: "S P E L L I N G", correct: "SPELLING", preset: [0,1,2,3,4,6] } // S P E L L _ I _ G
+                    { hint: "1. Font Style & Size Controls:", template: "F O R M A T", correct: "FORMAT", preset: [0,2,4] },
+                    { hint: "2. Block Text Structure:", template: "P A R A G R A P H", correct: "PARAGRAPH", preset: [0,2,4,6] },
+                    { hint: "3. Grammar & Proofing Tool:", template: "S P E L L I N G", correct: "SPELLING", preset: [0,1,2,3,4,6] }
                 ]
             },
             {
@@ -584,6 +602,7 @@
 
         let currentLevelIndex = 0;
         let score = 0;
+        let attemptsLeft = 2;
         let actionLocked = false;
         let selectedGridCells = [];
         let clearedWordsInLevel2 = [];
@@ -597,12 +616,14 @@
 
         function loadStageFrame() {
             actionLocked = false;
+            attemptsLeft = 2;
             selectedGridCells = [];
             clearedWordsInLevel2 = [];
             currentCrosswordSubIndex = 0;
 
             document.getElementById("countHUD").innerText = currentLevelIndex + 1;
             document.getElementById("scoreHUD").innerText = score;
+            document.getElementById("attemptHUD").innerText = attemptsLeft;
             
             const container = document.getElementById("questionContainer");
             container.innerHTML = "";
@@ -624,8 +645,9 @@
                 stage.cards.forEach(c => {
                     const aCard = document.createElement("div");
                     aCard.className = "align-card";
+                    aCard.id = `card_${c.id}`;
                     aCard.innerHTML = `<div class="align-icon">${c.icon}</div><span style="font-size:0.85rem; font-weight:800;">${c.label}</span>`;
-                    aCard.onclick = () => verifyAlignmentChoice(c.id);
+                    aCard.onclick = () => verifyAlignmentChoice(c.id, aCard);
                     grid.appendChild(aCard);
                 });
                 card.appendChild(grid);
@@ -807,21 +829,35 @@
             submitBtn.onclick = () => verifySubCrossword(p.correct, stage, cardNode);
         }
 
-        /* Verification Handlers */
-        function verifyAlignmentChoice(selectedId) {
+        /* Verification Handlers with 2-Attempt Logic & Sound Engine */
+        function verifyAlignmentChoice(selectedId, cardNode) {
             if (actionLocked) return;
-            actionLocked = true;
             const stage = gameStages[currentLevelIndex];
             
             if (selectedId === stage.correct) {
+                actionLocked = true;
                 score += 200;
                 soundEngine.playCorrect();
+                cardNode.classList.add("reveal-correct");
                 updateTicker(true, "🎉 Perfect! Center Alignment card selected.");
+                advanceStage();
             } else {
+                attemptsLeft--;
                 soundEngine.playWrong();
-                updateTicker(false, "💥 Incorrect! Center Alignment centers text between margins.");
+                document.getElementById("attemptHUD").innerText = attemptsLeft;
+
+                cardNode.classList.add("flash-wrong");
+                setTimeout(() => cardNode.classList.remove("flash-wrong"), 600);
+
+                if (attemptsLeft > 0) {
+                    updateTicker("warn", "⚠️ Incorrect! Try again! (1 attempt left)");
+                } else {
+                    actionLocked = true;
+                    document.getElementById(`card_${stage.correct}`).classList.add("reveal-correct");
+                    updateTicker(false, "💥 Incorrect! Center Alignment centers text between margins.");
+                    advanceStage();
+                }
             }
-            advanceStage();
         }
 
         function toggleGridCell(cellNode, stage) {
@@ -866,7 +902,6 @@
 
         function verifyScramble(correctWord) {
             if (actionLocked) return;
-            actionLocked = true;
 
             let constructed = "";
             for (let i = 0; i < correctWord.length; i++) {
@@ -875,14 +910,27 @@
             }
 
             if (constructed === correctWord) {
+                actionLocked = true;
                 score += 200;
                 soundEngine.playCorrect();
                 updateTicker(true, `🎉 Excellent! You unscrambled: ${correctWord}`);
+                advanceStage();
             } else {
+                attemptsLeft--;
                 soundEngine.playWrong();
-                updateTicker(false, `💥 Incorrect! The correct word was: ${correctWord}`);
+                document.getElementById("attemptHUD").innerText = attemptsLeft;
+
+                if (attemptsLeft > 0) {
+                    updateTicker("warn", "⚠️ Incorrect unscramble! Try again! (1 attempt left)");
+                } else {
+                    actionLocked = true;
+                    for (let i = 0; i < correctWord.length; i++) {
+                        document.getElementById(`scramble_${i}`).value = correctWord[i];
+                    }
+                    updateTicker(false, `💥 Out of attempts! The correct word was: ${correctWord}`);
+                    advanceStage();
+                }
             }
-            advanceStage();
         }
 
         function verifySubCrossword(correctWord, stage, cardNode) {
@@ -898,6 +946,8 @@
                 soundEngine.playCorrect();
                 updateTicker(true, `🎉 Correct! Puzzle ${currentCrosswordSubIndex + 1} Cleared: ${correctWord}`);
                 currentCrosswordSubIndex++;
+                attemptsLeft = 2;
+                document.getElementById("attemptHUD").innerText = attemptsLeft;
 
                 if (currentCrosswordSubIndex < stage.puzzles.length) {
                     renderSubCrossword(cardNode, stage);
@@ -908,14 +958,36 @@
                     advanceStage();
                 }
             } else {
+                attemptsLeft--;
                 soundEngine.playWrong();
-                updateTicker(false, `💥 Wrong spelling! Try again!`);
+                document.getElementById("attemptHUD").innerText = attemptsLeft;
+
+                if (attemptsLeft > 0) {
+                    updateTicker("warn", "⚠️ Wrong spelling! Try again! (1 attempt left)");
+                } else {
+                    for (let i = 0; i < correctWord.length; i++) {
+                        document.getElementById(`cw_slot_${i}`).value = correctWord[i];
+                    }
+                    updateTicker(false, `💥 Revealing answer: ${correctWord}`);
+                    
+                    setTimeout(() => {
+                        currentCrosswordSubIndex++;
+                        attemptsLeft = 2;
+                        document.getElementById("attemptHUD").innerText = attemptsLeft;
+
+                        if (currentCrosswordSubIndex < stage.puzzles.length) {
+                            renderSubCrossword(cardNode, stage);
+                        } else {
+                            actionLocked = true;
+                            advanceStage();
+                        }
+                    }, 1400);
+                }
             }
         }
 
         function verifyDragMatches(zonesContainer) {
             if (actionLocked) return;
-            actionLocked = true;
 
             let isCorrect = true;
             const boxes = zonesContainer.querySelectorAll('.drop-box');
@@ -924,19 +996,37 @@
             });
 
             if (isCorrect) {
+                actionLocked = true;
                 score += 200;
                 soundEngine.playCorrect();
                 updateTicker(true, "🎉 All Shortcuts Matched Perfectly!");
+                advanceStage();
             } else {
+                attemptsLeft--;
                 soundEngine.playWrong();
-                updateTicker(false, "💥 Some shortcut assignments were incorrect!");
+                document.getElementById("attemptHUD").innerText = attemptsLeft;
+
+                if (attemptsLeft > 0) {
+                    updateTicker("warn", "⚠️ Some shortcut assignments were incorrect! Try again!");
+                } else {
+                    actionLocked = true;
+                    boxes.forEach(b => {
+                        b.innerText = b.dataset.correct;
+                        b.style.background = "#dcfce7";
+                    });
+                    updateTicker(false, "💥 Out of attempts! Revealed correct matches.");
+                    advanceStage();
+                }
             }
-            advanceStage();
         }
 
-        function updateTicker(isGood, message) {
+        function updateTicker(type, message) {
             const ticker = document.getElementById("tickerBox");
-            ticker.className = `ticker-feedback ${isGood ? 'good' : 'bad'}`;
+            if (type === true) ticker.className = 'ticker-feedback good';
+            else if (type === false) ticker.className = 'ticker-feedback bad';
+            else if (type === 'warn') ticker.className = 'ticker-feedback warn';
+            else ticker.className = 'ticker-feedback';
+
             ticker.innerText = message;
             document.getElementById("scoreHUD").innerText = score;
         }
@@ -965,6 +1055,7 @@
 
             if (score >= 800) {
                 soundEngine.playCorrect();
+                soundEngine.playClap();
                 if (window.confetti) confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
                 rank = "🥇 Target Cleared: Word Master!";
                 msg = `Outstanding! You scored ${score} points and cleared the 800-point target goal across all 5 interactive puzzle levels!`;

@@ -3,15 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PowerPoint Presentation Wizard</title>
+<title>MS Word Chapter 3 Interactive Arcade</title>
 <style>
 :root {
     --space-dark: #0f172a;
     --card-bg: #ffffff;
     --primary: #2563eb;
+    --primary-dark: #1d4ed8;
     --accent: #d97706;
     --success: #16a34a;
     --danger: #dc2626;
+    --text-dark: #1e293b;
 }
 
 * {
@@ -42,8 +44,8 @@ body.active-game {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background: #ffffff;
     display: flex;
     justify-content: center;
@@ -52,8 +54,9 @@ body.active-game {
     opacity: 1;
     transition: opacity 0.5s ease;
 }
+
 #splashScreen img {
-    width: 250px;
+    width: 260px;
     max-width: 80%;
     animation: floating 2.5s infinite ease-in-out;
 }
@@ -136,7 +139,7 @@ body.active-game {
     min-height: 0;
 }
 
-/* PPT Interactive Simulator Screen Frame */
+/* MS Word Interactive Simulator Screen Frame */
 .ppt-screen {
     background: #f8fafc;
     border: 5px solid #475569;
@@ -158,7 +161,7 @@ body.active-game {
     margin-bottom: 10px;
 }
 
-/* Simulated Graphic Image Element Frame */
+/* Visual Image Element Frame */
 .slide-visual-preview {
     width: 100%;
     max-width: 320px;
@@ -248,62 +251,6 @@ body.active-game {
     font-weight: 700;
 }
 
-/* DRAG AND DROP AREA */
-.drag-drop-area {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
-
-.drag-items-container {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.drag-item {
-    background: var(--primary);
-    color: white;
-    padding: 12px 18px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 0.95rem;
-    cursor: grab;
-    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
-}
-
-.drop-target-box {
-    width: 100%;
-    padding: 26px;
-    border: 3px dashed var(--primary);
-    border-radius: 16px;
-    background: #eff6ff;
-    color: #1e40af;
-    font-weight: 700;
-    text-align: center;
-    transition: all 0.2s;
-}
-
-.drop-target-box.drag-over {
-    background: #bfdbfe;
-}
-
-.drop-target-box.correct-flash {
-    background: #dcfce7 !important;
-    border-color: var(--success) !important;
-    color: #14532d !important;
-}
-
-.drop-target-box.wrong-flash {
-    background: #fee2e2 !important;
-    border-color: var(--danger) !important;
-    color: #7f1d1d !important;
-}
-
 .btn-action {
     background: linear-gradient(135deg, var(--primary), #1d4ed8);
     color: white;
@@ -316,6 +263,7 @@ body.active-game {
     box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
     transition: transform 0.2s, box-shadow 0.2s;
 }
+
 .btn-action:hover {
     transform: translateY(-2px);
     box-shadow: 0 7px 20px rgba(37, 99, 235, 0.45);
@@ -331,6 +279,7 @@ body.active-game {
     50% { transform: scale(1.03); border-color: var(--success); }
     100% { transform: scale(1); }
 }
+
 @keyframes mistakeShake {
     0%, 100% { transform: translateX(0); }
     20%, 60% { transform: translateX(-6px); border-color: var(--danger); }
@@ -340,8 +289,9 @@ body.active-game {
 </head>
 <body>
 
+<!-- 1. SPLASH SCREEN (Strict 5 Seconds) -->
 <div id="splashScreen">
-    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'">
+    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.src='https://via.placeholder.com/260x90?text=Innovine+Solutions'">
 </div>
 
 <div class="main-container hidden" id="appFrame">
@@ -349,10 +299,10 @@ body.active-game {
     <!-- MENU VIEW -->
     <div id="menuView" class="panel-card">
         <img src="assets/innovine-logo.png" alt="Innovine" style="max-width: 140px; margin-bottom: 15px;" onerror="this.style.display='none'">
-        <h1>Presentation Studio Lab</h1>
-        <h3 style="color:#64748b; margin-bottom: 20px;">Interactive Slide Creation Arcade</h3>
+        <h1>Word Processing Studio</h1>
+        <h3 style="color:#64748b; margin-bottom: 20px;">Interactive Knowledge Arcade</h3>
         <p>
-            Become a master slide creator! Complete 10 interactive visual challenge levels across 3 unique game styles: Ribbon Tool Selector, Drag &amp; Drop Formatting Studio, and Keyboard Shortcuts.
+            Master word processing in MS Word! Solve 10 visual challenge questions about component tools, text selections, shortcuts, and file management.
         </p>
         <button class="btn-action" onclick="initiateChallenge()">Launch Studio Workshop 🚀</button>
     </div>
@@ -361,55 +311,46 @@ body.active-game {
     <div id="gameView" class="game-grid hidden">
         <div class="status-bar">
             <div>📋 Task Module: <span id="nodeCounter">1</span> / 10</div>
-            <div class="game-type-badge" id="gameTypeLabel">Ribbon Tool Selector</div>
-            <div class="score-badge">Level: <span id="levelDisplay">1</span></div>
+            <div class="game-type-badge" id="gameTypeLabel">MS Word Basics</div>
+            <div class="score-badge">Attempts Left: <span id="attemptsDisplay">2</span></div>
         </div>
 
         <div class="workspace">
             <div class="ppt-screen" id="canvasView">
                 <div class="slide-visual-preview" id="visualFrame">
-                    <div class="card-image-box" id="visualFallbackText">🎵</div>
-                    <div id="visualSubTag" style="font-weight:700; color:#1e40af; font-size:0.85rem;">MEDIA TOOL SET</div>
-                    <div class="asset-overlay-badge" id="slideBadge">Insert -&gt; Audio</div>
+                    <div class="card-image-box" id="visualFallbackText">📝</div>
+                    <div id="visualSubTag" style="font-weight:700; color:#1e40af; font-size:0.85rem;">WORD PROCESSING</div>
+                    <div class="asset-overlay-badge" id="slideBadge">MS Word 2007</div>
                 </div>
-                <h3 id="targetHeadline">Slide Element Target Title</h3>
+                <h3 id="targetHeadline">Question Title</h3>
                 <p id="targetCaption" style="color: #64748b; font-size: 0.9rem; line-height:1.4;"></p>
             </div>
 
-            <!-- INTERACTIVE CONTROL DECK -->
+            <!-- INTERACTIVE OPTION DECK -->
             <div id="interactiveArea">
-                <!-- MULTI CHOICE DECK (Game Styles 1 & 3) -->
                 <div class="choices-deck" id="choicesDeck">
                     <div class="choice-row" id="optBtn0" onclick="evaluateChoice(0)">
                         <div class="index-dot">A</div>
-                        <span id="labelOpt0">Option Row Selection Placeholder</span>
+                        <span id="labelOpt0">Option A</span>
                     </div>
                     <div class="choice-row" id="optBtn1" onclick="evaluateChoice(1)">
                         <div class="index-dot">B</div>
-                        <span id="labelOpt1">Option Row Selection Placeholder</span>
+                        <span id="labelOpt1">Option B</span>
                     </div>
                     <div class="choice-row" id="optBtn2" onclick="evaluateChoice(2)">
                         <div class="index-dot">C</div>
-                        <span id="labelOpt2">Option Row Selection Placeholder</span>
-                    </div>
-                </div>
-
-                <!-- DRAG & DROP DECK (Game Style 2) -->
-                <div class="drag-drop-area hidden" id="dragDropDeck">
-                    <div class="drag-items-container" id="dragContainer"></div>
-                    <div class="drop-target-box" id="dropTarget" ondragover="allowDrop(event)" ondragleave="leaveDrop(event)" ondrop="handleDrop(event)">
-                        🎯 Drag &amp; Drop the correct feature module here
+                        <span id="labelOpt2">Option C</span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- EVALUATION / SUMMARY VIEW -->
+    <!-- EVALUATION VIEW -->
     <div id="endView" class="panel-card hidden">
-        <h1 id="endHeaderTitle">🏆 Master Presentation Engineer!</h1>
+        <h1 id="endHeaderTitle">🏆 Word Processing Master!</h1>
         <p id="endEvaluationDesc" style="margin-top: 18px; font-size: 1.15rem; color: #475569; line-height:1.6;"></p>
-        <div style="font-size: 4rem; margin: 25px 0;">✨🖥️🎨⚡</div>
+        <div style="font-size: 4rem; margin: 25px 0;">📝💾📄✨</div>
         <button class="btn-action" onclick="resetChallengeLoop()">Restart Studio Workshop 🔄</button>
     </div>
 
@@ -418,7 +359,7 @@ body.active-game {
 <!-- AUDIO EMBEDS -->
 <audio id="soundCorrect" src="assets/correct.mp3" preload="auto"></audio>
 <audio id="soundWrong" src="assets/wrong.mp3" preload="auto"></audio>
-<audio id="soundClap" src="assets/clap.mp3" preload="auto"></audio>
+
 
 <script>
 /* 5-Second Delay Splash Controller */
@@ -440,132 +381,117 @@ function playAudioTrack(elementId) {
         const targetAudio = document.getElementById(elementId);
         if (targetAudio) {
             targetAudio.currentTime = 0;
-            targetAudio.play().catch(err => console.log("Audio waiting for user interaction context."));
+            targetAudio.play().catch(err => console.log("Audio waiting for click."));
         }
     } catch(ex) {}
 }
 
-/* 10 LEVEL VISUAL QUESTION MATRIX - 3 GAME STYLES */
+/* 10 CHAPTER 3 QUESTIONS MATRIX (From Pg 28-37 of Textbook) */
 const puzzleMatrix = [
-    // STYLE 1: Ribbon Tool Selector (Levels 1-4)
     {
-        type: "choice",
-        typeName: "Ribbon Tool Selector",
-        title: "Adding Background Audio",
-        caption: "Embed an audio track that loops in the background during your entire presentation deck.",
-        badge: "Insert -> Audio",
-        icon: "🎵",
-        subTag: "BACKGROUND MUSIC TRACK",
+        typeName: "Word Processing Basics",
+        title: "Word Processing Definition",
+        caption: "What is the process of creating, editing, saving, and printing a document using a word processor called?",
+        badge: "Page 29",
+        icon: "📄",
+        subTag: "DOCUMENT WORKFLOW",
         correct: 1,
-        choices: ["Home Tab -> Paragraph Styles", "Insert Tab -> Audio option", "Animations Tab -> Custom Actions"]
+        choices: ["Spreadsheet Calculations", "Word Processing", "Desktop Publishing"]
     },
     {
-        type: "choice",
-        typeName: "Ribbon Tool Selector",
-        title: "Flipping Slides Smoothly",
-        caption: "Apply a motion transition effect that plays automatically when switching between slides.",
-        badge: "Transitions Tab",
-        icon: "🎴",
-        subTag: "PAGE SWITCH MOTION",
+        typeName: "MS Word Components",
+        title: "Office Button Location",
+        caption: "Which button located in the upper-left corner contains options like New, Open, Save, and Print?",
+        badge: "Page 31",
+        icon: "⭕",
+        subTag: "TOP-LEFT MENU",
         correct: 0,
-        choices: ["Transitions Tab -> Transition to This Slide", "Insert Tab -> SmartArt Layout", "Review Tab -> Comments Wizard"]
+        choices: ["Office Button", "Status Bar", "Horizontal Ruler"]
     },
     {
-        type: "choice",
-        typeName: "Ribbon Tool Selector",
-        title: "Animate Title Object",
-        caption: "Set a heading text placeholder to fly into the slide during the presentation.",
-        badge: "Animations Tab",
-        icon: "⭐",
-        subTag: "OBJECT ENTRANCE EFFECT",
+        typeName: "MS Word Components",
+        title: "Quick Access Toolbar",
+        caption: "Where are the most frequently used buttons like Save, Undo, and Redo located?",
+        badge: "Page 31",
+        icon: "💾",
+        subTag: "QUICK TOOLBAR",
         correct: 2,
-        choices: ["Design Tab -> Page Setup", "Slide Show Tab -> Rehearse Timings", "Animations Tab -> Entrance Effect"]
+        choices: ["Status Bar", "Document Area", "Quick Access Toolbar"]
     },
     {
-        type: "choice",
-        typeName: "Ribbon Tool Selector",
-        title: "Embedding Video Snippets",
-        caption: "Add an external MP4 video file onto your presentation slide canvas.",
-        badge: "Insert -> Video",
-        icon: "🎬",
-        subTag: "MOVIE MEDIA CLIP",
+        typeName: "Text Selection Techniques",
+        title: "Selecting a Word",
+        caption: "How do you quickly select a single word in an MS Word document?",
+        badge: "Page 33",
+        icon: "🖱️",
+        subTag: "MOUSE TECHNIQUE",
         correct: 0,
-        choices: ["Insert Tab -> Video tool", "View Tab -> Handout Master", "Home Tab -> Clipboard paste"]
-    },
-
-    // STYLE 2: Drag & Drop Formatting Studio (Levels 5-7)
-    {
-        type: "drag",
-        typeName: "Drag & Drop Studio",
-        title: "Interactive Navigation Buttons",
-        caption: "Which feature adds interactive buttons to jump between slides or open web links during a slideshow?",
-        badge: "Action Buttons",
-        icon: "🔘",
-        subTag: "SLIDE LINK BUTTONS",
-        correct: "Action Buttons",
-        dragOptions: ["Action Buttons", "WordArt", "Slide Sorter"]
+        choices: ["Double-click on the word", "Hold Shift key and press Enter", "Click on the Status Bar"]
     },
     {
-        type: "drag",
-        typeName: "Drag & Drop Studio",
-        title: "Decorative Styled Text",
-        caption: "Which tool transforms standard text into stylized, colorful, curved decorative text headings?",
-        badge: "WordArt",
-        icon: "🎨",
-        subTag: "STYLIZED TEXT GRAPHICS",
-        correct: "WordArt",
-        dragOptions: ["WordArt", "Text Box", "Header & Footer"]
-    },
-    {
-        type: "drag",
-        typeName: "Drag & Drop Studio",
-        title: "Master Template Design",
-        caption: "Which view allows you to modify background colors, fonts, and logos across ALL slides at once?",
-        badge: "Slide Master",
-        icon: "🖼️",
-        subTag: "GLOBAL SLIDE DESIGN",
-        correct: "Slide Master",
-        dragOptions: ["Slide Master", "Reading View", "Slide Show View"]
-    },
-
-    // STYLE 3: HOTs & Keyboard Shortcuts (Levels 8-10)
-    {
-        type: "choice",
-        typeName: "Shortcut & HOTs Challenge",
-        title: "Start Slide Show from Beginning",
-        caption: "Which keyboard shortcut key starts the full-screen presentation from Slide 1?",
-        badge: "Keyboard Shortcut",
-        icon: "🖥️",
-        subTag: "FULLSCREEN RUN: SLIDE 1",
+        typeName: "Text Selection Techniques",
+        title: "Selecting Entire Document",
+        caption: "Which keyboard shortcut selects the entire text in a document at once?",
+        badge: "Page 33",
+        icon: "⌨️",
+        subTag: "KEYBOARD SHORTCUT",
         correct: 1,
-        choices: ["Press Ctrl + M", "Press F5 Key", "Press Shift + F5"]
+        choices: ["Ctrl + S", "Ctrl + A", "Ctrl + N"]
     },
     {
-        type: "choice",
-        typeName: "Shortcut & HOTs Challenge",
-        title: "Start Slide Show from Current Slide",
-        caption: "You edited Slide 4 and want to test the slideshow starting right from Slide 4.",
-        badge: "Current Slide Run",
-        icon: "⚡",
-        subTag: "RUN FROM ACTIVE PAGE",
+        typeName: "Deleting Text",
+        title: "Backspace vs Delete Key",
+        caption: "Which key deletes text located to the left side of the blinking cursor?",
+        badge: "Page 33",
+        icon: "⌫",
+        subTag: "KEYBOARD DELETION",
         correct: 2,
-        choices: ["Press F5 Key", "Press Alt + F4", "Press Shift + F5"]
+        choices: ["Delete Key", "Spacebar", "Backspace Key"]
     },
     {
-        type: "choice",
-        typeName: "Shortcut & HOTs Challenge",
-        title: "Insert New Slide Shortcut",
-        caption: "What key combination creates a new slide in your active presentation deck?",
-        badge: "New Slide",
-        icon: "➕",
-        subTag: "CREATE NEW SLIDE PAGE",
+        typeName: "Saving Documents",
+        title: "Saving File Shortcut",
+        caption: "Which shortcut key combination is used to save the active file in MS Word?",
+        badge: "Page 33",
+        icon: "💾",
+        subTag: "FILE MANAGEMENT",
         correct: 0,
-        choices: ["Press Ctrl + M", "Press Ctrl + N", "Press Ctrl + S"]
+        choices: ["Ctrl + S", "Ctrl + O", "Ctrl + F4"]
+    },
+    {
+        typeName: "Opening Documents",
+        title: "Opening Saved File",
+        caption: "What is the keyboard shortcut to open an existing document in MS Word?",
+        badge: "Page 35",
+        icon: "📂",
+        subTag: "OPEN FILE",
+        correct: 1,
+        choices: ["Ctrl + N", "Ctrl + O", "Alt + F4"]
+    },
+    {
+        typeName: "Closing Documents",
+        title: "Closing Active File",
+        caption: "Which shortcut key closes the currently open document in MS Word?",
+        badge: "Page 35",
+        icon: "❌",
+        subTag: "CLOSE FILE",
+        correct: 2,
+        choices: ["Ctrl + S", "Ctrl + A", "Ctrl + F4"]
+    },
+    {
+        typeName: "File Format Knowledge",
+        title: "Default File Extension",
+        caption: "What is the default file extension for a saved document in MS Word?",
+        badge: "Page 35",
+        icon: "🏷️",
+        subTag: "FILE EXTENSION",
+        correct: 0,
+        choices: [".doc or .docx", ".bmp or .txt", ".exe or .png"]
     }
 ];
 
 let roundCounter = 0;
-let attemptsLeft = 2; // Allows 2 attempts per question
+let attemptsLeft = 2;
 let transitionBlocker = false;
 
 function initiateChallenge() {
@@ -577,10 +503,10 @@ function initiateChallenge() {
 
 function renderPuzzleNode() {
     transitionBlocker = false;
-    attemptsLeft = 2; // Reset attempt limit per question
+    attemptsLeft = 2;
     
     document.getElementById("nodeCounter").innerText = roundCounter + 1;
-    document.getElementById("levelDisplay").innerText = roundCounter + 1;
+    document.getElementById("attemptsDisplay").innerText = attemptsLeft;
 
     const currentPuzzle = puzzleMatrix[roundCounter];
     
@@ -594,120 +520,44 @@ function renderPuzzleNode() {
     const monitor = document.getElementById("canvasView");
     monitor.className = "ppt-screen";
 
-    const choicesDeck = document.getElementById("choicesDeck");
-    const dragDropDeck = document.getElementById("dragDropDeck");
-
-    if (currentPuzzle.type === "choice") {
-        choicesDeck.classList.remove("hidden");
-        dragDropDeck.classList.add("hidden");
-
-        for (let i = 0; i < 3; i++) {
-            const btn = document.getElementById(`optBtn${i}`);
-            btn.className = "choice-row";
-            document.getElementById(`labelOpt${i}`).innerText = currentPuzzle.choices[i];
-        }
-    } else if (currentPuzzle.type === "drag") {
-        choicesDeck.classList.add("hidden");
-        dragDropDeck.classList.remove("hidden");
-
-        const dropTarget = document.getElementById("dropTarget");
-        dropTarget.className = "drop-target-box";
-        dropTarget.innerText = "🎯 Drag & Drop the correct feature module here";
-
-        const dragContainer = document.getElementById("dragContainer");
-        dragContainer.innerHTML = "";
-        
-        currentPuzzle.dragOptions.forEach((optText, idx) => {
-            let div = document.createElement("div");
-            div.className = "drag-item";
-            div.innerText = optText;
-            div.draggable = true;
-            div.id = "dragItem-" + idx;
-            div.ondragstart = (e) => e.dataTransfer.setData("text", optText);
-            dragContainer.appendChild(div);
-        });
+    for (let i = 0; i < 3; i++) {
+        const btn = document.getElementById(`optBtn${i}`);
+        btn.className = "choice-row";
+        document.getElementById(`labelOpt${i}`).innerText = currentPuzzle.choices[i];
     }
 }
 
-/* Drag & Drop Handlers */
-function allowDrop(ev) {
-    ev.preventDefault();
-    document.getElementById("dropTarget").classList.add("drag-over");
-}
-
-function leaveDrop(ev) {
-    document.getElementById("dropTarget").classList.remove("drag-over");
-}
-
-function handleDrop(ev) {
-    ev.preventDefault();
-    document.getElementById("dropTarget").classList.remove("drag-over");
-    const draggedText = ev.dataTransfer.getData("text");
-    evaluateAnswer(draggedText);
-}
-
 function evaluateChoice(selectedIdx) {
-    evaluateAnswer(selectedIdx);
-}
-
-/* Evaluation Engine with 2 Tries Allowance */
-function evaluateAnswer(selectedVal) {
     if (transitionBlocker) return;
 
     const currentPuzzle = puzzleMatrix[roundCounter];
     const monitor = document.getElementById("canvasView");
 
-    let isCorrect = false;
-    if (currentPuzzle.type === "choice") {
-        isCorrect = (selectedVal === currentPuzzle.correct);
-    } else if (currentPuzzle.type === "drag") {
-        isCorrect = (selectedVal === currentPuzzle.correct);
-    }
+    let isCorrect = (selectedIdx === currentPuzzle.correct);
 
     if (isCorrect) {
         transitionBlocker = true;
-        // Correct Sound Triggered Strictly on Right Answer
         playAudioTrack("soundCorrect");
 
-        if (currentPuzzle.type === "choice") {
-            document.getElementById(`optBtn${selectedVal}`).classList.add("correct-flash");
-        } else {
-            const dropTarget = document.getElementById("dropTarget");
-            dropTarget.classList.add("correct-flash");
-            dropTarget.innerText = `✓ Correct! [${selectedVal}]`;
-        }
-
+        document.getElementById(`optBtn${selectedIdx}`).classList.add("correct-flash");
         monitor.classList.add("anim-success-pulse");
         setTimeout(nextQuestion, 1200);
     } else {
         attemptsLeft--;
-        // Wrong Sound Triggered Strictly on Incorrect Answer
         playAudioTrack("soundWrong");
-        
+        document.getElementById("attemptsDisplay").innerText = attemptsLeft;
+
         monitor.classList.add("anim-shake");
         setTimeout(() => monitor.classList.remove("anim-shake"), 400);
 
-        if (currentPuzzle.type === "choice") {
-            const btn = document.getElementById(`optBtn${selectedVal}`);
-            btn.classList.add("wrong-flash");
-            setTimeout(() => btn.classList.remove("wrong-flash"), 800);
-        } else {
-            const dropTarget = document.getElementById("dropTarget");
-            dropTarget.classList.add("wrong-flash");
-            setTimeout(() => dropTarget.classList.remove("wrong-flash"), 800);
-        }
+        const btn = document.getElementById(`optBtn${selectedIdx}`);
+        btn.classList.add("wrong-flash");
+        setTimeout(() => btn.classList.remove("wrong-flash"), 800);
 
         if (attemptsLeft <= 0) {
             transitionBlocker = true;
-            // On second wrong attempt, reveal the correct answer in green before advancing
-            if (currentPuzzle.type === "choice") {
-                document.getElementById(`optBtn${currentPuzzle.correct}`).classList.add("correct-flash");
-            } else {
-                const dropTarget = document.getElementById("dropTarget");
-                dropTarget.classList.add("correct-flash");
-                dropTarget.innerText = `✗ Correct Answer: [${currentPuzzle.correct}]`;
-            }
-
+            // Highlight correct answer in green on 2nd wrong attempt
+            document.getElementById(`optBtn${currentPuzzle.correct}`).classList.add("correct-flash");
             setTimeout(nextQuestion, 1800);
         }
     }
@@ -723,13 +573,12 @@ function nextQuestion() {
 }
 
 function renderSummaryDashboard() {
-    // Sound on final report
     playAudioTrack("soundClap");
     document.getElementById("gameView").classList.add("hidden");
     document.getElementById("endView").classList.remove("hidden");
 
-    document.getElementById("endHeaderTitle").innerText = "🏆 Master Presentation Engineer!";
-    document.getElementById("endEvaluationDesc").innerText = "Exceptional layout mastery! You know exactly how to coordinate slide background tracks, apply transition motion states, drag formatting elements, and run presentation views correctly.";
+    document.getElementById("endHeaderTitle").innerText = "🏆 Word Processing Master!";
+    document.getElementById("endEvaluationDesc").innerText = "Fantastic job! You have demonstrated great understanding of MS Word components, text selection techniques, shortcuts, and file saving operations.";
 }
 
 function resetChallengeLoop() {

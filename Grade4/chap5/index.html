@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Grid Explorer: Spreadsheet Treasure Hunt Lab</title>
 <style>
 :root {
@@ -20,16 +20,20 @@
     box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
     background: #ffffff;
     min-height: 100vh;
+    min-height: -webkit-fill-available;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
     position: relative;
+    padding: 8px;
     transition: background 0.4s ease;
 }
 
@@ -42,8 +46,8 @@ body.active-game {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background: #ffffff;
     display: flex;
     justify-content: center;
@@ -53,8 +57,8 @@ body.active-game {
     transition: opacity 0.5s ease;
 }
 #splashScreen img {
-    width: 240px;
-    max-width: 80%;
+    width: 220px;
+    max-width: 75vw;
     animation: bounceFloating 2.5s infinite ease-in-out;
 }
 
@@ -64,69 +68,77 @@ body.active-game {
 }
 
 .main-container {
-    width: 95vw;
-    max-width: 1000px;
-    height: 88vh;
-    min-height: 620px;
+    width: 100%;
+    max-width: 900px;
+    height: 96vh;
+    max-height: 820px;
     z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 /* Informational Main Menu */
 .panel-card {
     background: #ffffff;
-    padding: 40px;
-    border-radius: 24px;
+    padding: clamp(20px, 5vw, 36px);
+    border-radius: 20px;
     text-align: center;
     box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    max-width: 640px;
+    max-width: 600px;
     margin: 0 auto;
     border: 3px solid #e2e8f0;
+    width: 100%;
 }
 
 .panel-card h1 {
-    font-size: 2.2rem;
+    font-size: clamp(1.5rem, 5vw, 2.2rem);
     color: var(--excel-green);
-    margin-bottom: 12px;
+    margin-bottom: 8px;
 }
 
 .panel-card p {
     color: #475569;
-    font-size: 1.05rem;
-    line-height: 1.6;
-    margin-bottom: 25px;
+    font-size: clamp(0.88rem, 3vw, 1.05rem);
+    line-height: 1.5;
+    margin-bottom: 20px;
 }
 
 /* Master Grid Area Screen Dashboard */
 .game-grid {
-    display: grid;
-    grid-template-rows: auto auto 1fr auto;
+    display: flex;
+    flex-direction: column;
     height: 100%;
-    gap: 12px;
+    gap: 8px;
+    justify-content: space-between;
 }
 
 .status-bar {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(15, 23, 42, 0.9);
-    padding: 12px 25px;
+    background: rgba(15, 23, 42, 0.95);
+    padding: 8px 12px;
     border-radius: 12px;
     color: #ffffff;
     font-weight: 700;
+    font-size: clamp(0.75rem, 2.8vw, 0.95rem);
     border: 1px solid #334155;
+    gap: 6px;
+    flex-wrap: wrap;
 }
 
 .score-badge {
     background: #d97706;
-    padding: 4px 14px;
+    padding: 3px 10px;
     border-radius: 20px;
 }
 
 /* Simulated Spreadsheet Formula/Name Bar Row */
 .excel-formula-bar {
     display: grid;
-    grid-template-columns: 100px 1fr;
-    gap: 8px;
+    grid-template-columns: minmax(65px, 85px) 1fr;
+    gap: 6px;
     background: #ffffff;
     border: 2px solid #cbd5e1;
     border-radius: 8px;
@@ -136,62 +148,79 @@ body.active-game {
 .name-box {
     background: #f1f5f9;
     border-right: 2px solid #cbd5e1;
-    padding: 8px;
+    padding: 6px 4px;
     font-weight: 700;
     text-align: center;
     color: var(--excel-green);
     cursor: pointer;
+    font-size: clamp(0.8rem, 2.5vw, 0.95rem);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .formula-display {
-    padding: 8px 12px;
+    padding: 6px 10px;
     font-weight: 600;
     color: #475569;
     background: #fff;
+    font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Interactive Grid Canvas Workspace Frame */
 .spreadsheet-workspace {
     background: #ffffff;
-    border: 4px solid #475569;
+    border: 3px solid #475569;
     border-radius: 14px;
-    padding: 15px;
+    padding: 10px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    flex-grow: 1;
     min-height: 0;
 }
 
 .mission-text-box {
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
 }
 
 .mission-text-box h3 {
-    font-size: 1.3rem;
+    font-size: clamp(1rem, 3.8vw, 1.25rem);
     color: var(--text-main);
-    margin-bottom: 4px;
+    margin-bottom: 2px;
+}
+
+.mission-text-box p {
+    font-size: clamp(0.78rem, 2.8vw, 0.92rem);
 }
 
 /* Dynamic CSS Grid for the Worksheet Table */
 .worksheet-grid-canvas {
     display: grid;
-    grid-template-columns: 50px repeat(4, 1fr);
-    grid-template-rows: 35px repeat(4, 1fr);
+    grid-template-columns: clamp(35px, 10vw, 48px) repeat(4, 1fr);
+    grid-template-rows: clamp(30px, 7vw, 36px) repeat(4, 1fr);
     gap: 1px;
     background: var(--grid-border);
     border: 2px solid #94a3b8;
     border-radius: 6px;
     overflow: hidden;
-    height: 75%;
+    flex-grow: 1;
+    min-height: 220px;
 }
 
 .grid-head, .grid-row-label, .grid-cell {
     display: flex;
     justify-content: center;
     align-items: center;
-    font-weight: 600;
-    font-size: 1.05rem;
+    font-weight: 700;
+    font-size: clamp(0.85rem, 3.2vw, 1.1rem);
+    touch-action: manipulation;
 }
 
 .grid-head {
@@ -200,8 +229,8 @@ body.active-game {
     cursor: pointer;
 }
 
-.grid-head:hover {
-    background: #e2e8f0;
+.grid-head:active {
+    background: #cbd5e1;
 }
 
 .grid-row-label {
@@ -211,8 +240,8 @@ body.active-game {
     cursor: pointer;
 }
 
-.grid-row-label:hover {
-    background: #e2e8f0;
+.grid-row-label:active {
+    background: #cbd5e1;
 }
 
 .grid-cell {
@@ -220,9 +249,11 @@ body.active-game {
     color: var(--text-main);
     cursor: pointer;
     transition: all 0.15s ease;
+    text-align: center;
+    padding: 2px;
 }
 
-.grid-cell:hover {
+.grid-cell:active {
     background: #f0fdf4;
 }
 
@@ -242,16 +273,22 @@ body.active-game {
     background: #fef3c7;
     color: #b45309;
     font-weight: 700;
+    font-size: clamp(0.72rem, 2.6vw, 0.95rem);
 }
 
 .toast-tray {
-    background: rgba(15, 23, 42, 0.9);
+    background: rgba(15, 23, 42, 0.95);
     border: 1px solid #334155;
     color: #94a3b8;
-    padding: 12px;
-    border-radius: 12px;
+    padding: 8px 12px;
+    border-radius: 10px;
     text-align: center;
     font-weight: 600;
+    font-size: clamp(0.75rem, 2.8vw, 0.9rem);
+    min-height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .toast-tray.correct { border-color: #16a34a; color: #16a34a; }
 .toast-tray.wrong { border-color: #dc2626; color: #dc2626; }
@@ -261,17 +298,17 @@ body.active-game {
     background: linear-gradient(135deg, var(--excel-green), var(--excel-green-dark));
     color: white;
     border: none;
-    padding: 12px 36px;
+    padding: 10px 28px;
     border-radius: 30px;
     font-weight: 700;
-    font-size: 1.05rem;
+    font-size: clamp(0.9rem, 3vw, 1.05rem);
     cursor: pointer;
-    box-shadow: 0 5px 15px rgba(16, 124, 65, 0.3);
+    box-shadow: 0 4px 12px rgba(16, 124, 65, 0.3);
     transition: transform 0.2s, box-shadow 0.2s;
+    touch-action: manipulation;
 }
-.btn-action:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 7px 20px rgba(16, 124, 65, 0.45);
+.btn-action:active {
+    transform: scale(0.98);
 }
 
 .hidden { display: none !important; }
@@ -287,8 +324,8 @@ body.active-game {
 }
 @keyframes errorShake {
     0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-6px); }
-    40%, 80% { transform: translateX(6px); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
 }
 </style>
 </head>
@@ -301,9 +338,9 @@ body.active-game {
 <div class="main-container hidden" id="appFrame">
 
     <div id="menuView" class="panel-card">
-        <img src="assets/innovine-logo.png" alt="Innovine" style="max-width: 130px; margin-bottom: 12px;" onerror="this.style.display='none'">
+        <img src="assets/innovine-logo.png" alt="Innovine" style="max-width: 120px; margin-bottom: 10px;" onerror="this.style.display='none'">
         <h1>Grid Explorer Expedition</h1>
-        <h3 style="color:#64748b; margin-bottom: 18px;">Spreadsheet Cells &amp; AutoSum Explorer (10 Levels)</h3>
+        <h3 style="color:#64748b; margin-bottom: 14px; font-size: clamp(0.9rem, 3.2vw, 1.1rem);">Spreadsheet Cells &amp; AutoSum Explorer (10 Levels)</h3>
         <p>
             Welcome, Adventurer! Explore rows, columns, cell references, headers, and formula bar properties inside a worksheet grid across 10 interactive map challenges!
         </p>
@@ -312,20 +349,20 @@ body.active-game {
 
     <div id="gameView" class="game-grid hidden">
         <div class="status-bar">
-            <div>🧭 Map Level: <span id="nodeCounter">1</span> / 10</div>
-            <div class="score-badge">Treasure Points: <span id="scoreDisplay">0</span></div>
-            <div style="background:#0284c7; padding:4px 12px; border-radius:20px;">Attempts: <span id="attemptsDisplay">2</span></div>
+            <div>🧭 Level: <span id="nodeCounter">1</span>/10</div>
+            <div class="score-badge">Points: <span id="scoreDisplay">0</span></div>
+            <div style="background:#0284c7; padding:2px 8px; border-radius:12px;">Attempts: <span id="attemptsDisplay">2</span></div>
         </div>
 
         <div class="excel-formula-bar">
             <div class="name-box" id="nameBoxDisplay" onclick="elementClicked('NAMEBOX')">A1</div>
-            <div class="formula-display" id="formulaBarDisplay">Formula Bar: Click a cell to inspect details...</div>
+            <div class="formula-display" id="formulaBarDisplay">Formula Bar: Tap cell to inspect...</div>
         </div>
 
         <div class="spreadsheet-workspace" id="workspaceWindow">
             <div class="mission-text-box">
                 <h3 id="missionHeadline">Mission Header Title</h3>
-                <p id="missionObjectiveText" style="color: #64748b; font-size: 0.95rem; font-weight: 500;"></p>
+                <p id="missionObjectiveText" style="color: #64748b; font-weight: 500;"></p>
             </div>
 
             <div class="worksheet-grid-canvas" id="gridContainer">
@@ -361,13 +398,13 @@ body.active-game {
             </div>
         </div>
 
-        <div class="toast-tray" id="consoleNotice">Analyze the row and column coordinates to locate the correct cell block!</div>
+        <div class="toast-tray" id="consoleNotice">Study the worksheet layout. Tap the matching target!</div>
     </div>
 
     <div id="endView" class="panel-card hidden">
         <h1>Expedition Complete!</h1>
-        <p id="endSummaryDesc" style="margin-top: 12px; font-size: 1.1rem; color: #475569;"></p>
-        <h2 style="font-size: 3rem; color: #d97706; margin: 20px 0;" id="finalPointsLabel">0 Points</h2>
+        <p id="endSummaryDesc" style="margin-top: 8px; color: #475569;"></p>
+        <h2 style="font-size: clamp(2rem, 6vw, 3rem); color: #d97706; margin: 15px 0;" id="finalPointsLabel">0 Points</h2>
         <button class="btn-action" onclick="resetGameLoop()">Restart Grid Safari 🔄</button>
     </div>
 
@@ -378,15 +415,17 @@ body.active-game {
 <audio id="soundClap" src="assets/clap.mp3" preload="auto"></audio>
 
 <script>
-/* Required 5-Second Delay Controller Modules */
+/* 5-Second Delay Splash Controller */
 setTimeout(() => {
     const splash = document.getElementById("splashScreen");
-    splash.style.opacity = "0";
-    setTimeout(() => {
-        splash.style.setProperty("display", "none", "important");
-        document.body.classList.add("active-game");
-        document.getElementById("appFrame").classList.remove("hidden");
-    }, 500);
+    if (splash) {
+        splash.style.opacity = "0";
+        setTimeout(() => {
+            splash.style.setProperty("display", "none", "important");
+            document.body.classList.add("active-game");
+            document.getElementById("appFrame").classList.remove("hidden");
+        }, 500);
+    }
 }, 5000);
 
 /* Audio Tracking Handler */
@@ -395,7 +434,7 @@ function playAudio(elementId) {
         const audioNode = document.getElementById(elementId);
         if (audioNode) {
             audioNode.currentTime = 0;
-            audioNode.play().catch(e => console.log("Audio waiting for user interaction."));
+            audioNode.play().catch(e => console.log("Audio waiting for touch action."));
         }
     } catch (err) {}
 }
@@ -404,27 +443,27 @@ function playAudio(elementId) {
 const levelMatrix = [
     {
         headline: "Level 1: Locate the Crown Artifact",
-        objective: "An ancient crown is hidden in the worksheet. Click on the intersecting square where Column B meets Row 3.",
+        objective: "An ancient crown is hidden in the worksheet. Tap the intersecting cell where Column B meets Row 3.",
         targetKey: "B3",
         domId: "cell-B3",
-        formulaText: "=CELL(\"content\", B3) -> Contains King's Crown 👑",
+        formulaText: "=CELL(\"content\", B3) -> King's Crown 👑",
         hint: "Cross Column B vertically with Row 3."
     },
     {
         headline: "Level 2: Select Column Header C",
-        objective: "To select an entire vertical column, click directly on the Column Header letter 'C' at the top.",
+        objective: "To select an entire vertical column, tap directly on Column Header 'C' at the top.",
         targetKey: "HEAD-C",
         domId: "head-C",
         formulaText: "Selected Entire Column C (C1:C4)",
-        hint: "Click the letter 'C' at the top header row of the grid."
+        hint: "Tap letter 'C' at the top header row."
     },
     {
         headline: "Level 3: Secret Map Coordinate",
-        objective: "The navigation route map is stored in the grid. Click on the cell identified by address D3.",
+        objective: "The navigation route map is stored in the grid. Tap the cell identified by address D3.",
         targetKey: "D3",
         domId: "cell-D3",
         formulaText: "=FIND_ASSET(\"Secret Map\", D3) 🗺️",
-        hint: "Move to Column D and slide down to Row label 3."
+        hint: "Move to Column D and down to Row 3."
     },
     {
         headline: "Level 4: Identify Highest Value Number",
@@ -432,39 +471,39 @@ const levelMatrix = [
         targetKey: "B4",
         domId: "cell-B4",
         formulaText: "Value Data Entry = 100 Gold Coins",
-        hint: "Find the cell with number '100' at Column B, Row 4."
+        hint: "Find number '100' at Column B, Row 4."
     },
     {
         headline: "Level 5: Inspect Column C, Row 1",
-        objective: "Gems were logged here. Click exact address C1 to inspect its input value inside the Formula Bar.",
+        objective: "Gems were logged here. Tap exact address C1 to inspect its input value inside the Formula Bar.",
         targetKey: "C1",
         domId: "cell-C1",
         formulaText: "Value Data Entry = 50 Rubies",
-        hint: "Go straight to Column C and click Row 1."
+        hint: "Go to Column C and tap Row 1."
     },
     {
         headline: "Level 6: Select Row Label 2",
-        objective: "To select a complete horizontal row across the grid, click on the Row Header number '2' on the left.",
+        objective: "To select a complete horizontal row, tap on Row Header number '2' on the left side.",
         targetKey: "ROW-2",
         domId: "row-2",
         formulaText: "Selected Entire Row 2 (A2:D2)",
-        hint: "Click the number '2' on the left gray row label column."
+        hint: "Tap number '2' on the left gray row label column."
     },
     {
-        headline: "Level 7: Locate the Active Cell Name Box",
-        objective: "Which UI box displays the address of the currently selected cell? Click on the Name Box in the top left.",
+        headline: "Level 7: Locate Active Cell Name Box",
+        objective: "Which UI box displays the address of the selected cell? Tap on the Name Box in the top left.",
         targetKey: "NAMEBOX",
         domId: "nameBoxDisplay",
-        formulaText: "Name Box Component -> Shows Active Cell Address",
-        hint: "Click the box at top-left displaying 'A1'."
+        formulaText: "Name Box -> Shows Active Cell Address",
+        hint: "Tap the box at top-left displaying 'A1'."
     },
     {
-        headline: "Level 8: Find the Diamond Gem Cell",
-        objective: "Locate and click the cell containing the Diamond Gem at Column A, Row 1.",
+        headline: "Level 8: Find Diamond Gem Cell",
+        objective: "Locate and tap the cell containing the Diamond Gem at Column A, Row 1.",
         targetKey: "A1",
         domId: "cell-A1",
         formulaText: "=CELL(\"content\", A1) -> Rare Diamond 💎",
-        hint: "Click the top-leftmost data cell A1."
+        hint: "Tap the top-leftmost cell A1."
     },
     {
         headline: "Level 9: Inspect Gem Count Data",
@@ -472,15 +511,15 @@ const levelMatrix = [
         targetKey: "A2",
         domId: "cell-A2",
         formulaText: "Value Data Entry = 30 Emeralds",
-        hint: "Click cell A2 under the diamond gem."
+        hint: "Tap cell A2 under the diamond gem."
     },
     {
-        headline: "Level 10: Invoke the AutoSum Calculation!",
-        objective: "Calculate the total treasure value fast! Click on the '∑ AutoSum' button located in cell D4.",
+        headline: "Level 10: Invoke AutoSum Calculation!",
+        objective: "Calculate total treasure value fast! Tap the '∑ AutoSum' button located in cell D4.",
         targetKey: "D4",
         domId: "cell-D4",
-        formulaText: "=SUM(B1, C1, A2, C2, A3, C3, B4, C4) -> Grand Total Computed!",
-        hint: "Click the yellow cell labeled with AutoSum in Column D."
+        formulaText: "=SUM(B1:C4) -> Grand Total Computed!",
+        hint: "Tap yellow cell with AutoSum in Column D."
     }
 ];
 
@@ -517,7 +556,7 @@ function loadLevelNode() {
 
     const noticeBox = document.getElementById("consoleNotice");
     noticeBox.className = "toast-tray";
-    noticeBox.innerText = "Study the worksheet layout. Click the target matching box or element!";
+    noticeBox.innerText = "Study the layout. Tap the target matching box or element!";
 }
 
 function elementClicked(clickedKey) {
@@ -527,12 +566,11 @@ function elementClicked(clickedKey) {
     const noticeBox = document.getElementById("consoleNotice");
     const workspaceFrame = document.getElementById("workspaceWindow");
 
-    // Display selected name box reference if clicking standard cell
+    // Display selected name box reference if tapping standard cell
     if (clickedKey.length === 2 && !clickedKey.includes("-")) {
         document.getElementById("nameBoxDisplay").innerText = clickedKey;
     }
 
-    // Highlight clicked element
     document.querySelectorAll(".active-selected").forEach(el => el.classList.remove("active-selected"));
     const clickedEl = document.getElementById(levelData.domId);
 
@@ -546,12 +584,12 @@ function elementClicked(clickedKey) {
         playAudio("soundCorrect");
         workspaceFrame.classList.add("anim-pulse");
         noticeBox.className = "toast-tray correct";
-        noticeBox.innerText = `🌟 Brilliant! Target ${clickedKey} verified successfully.`;
+        noticeBox.innerText = `🌟 Brilliant! Target ${clickedKey} verified.`;
 
         setTimeout(() => {
             workspaceFrame.classList.remove("anim-pulse");
             nextLevel();
-        }, 1500);
+        }, 1400);
     } else {
         attemptsLeft--;
         document.getElementById("attemptsDisplay").innerText = attemptsLeft;
@@ -562,18 +600,17 @@ function elementClicked(clickedKey) {
 
         if (attemptsLeft > 0) {
             noticeBox.className = "toast-tray warn";
-            noticeBox.innerText = `⚠️ Mismatch! Hint: ${levelData.hint} (1 attempt left)`;
+            noticeBox.innerText = `⚠️ Mismatch! Hint: ${levelData.hint} (1 try left)`;
         } else {
             dynamicBlocker = true;
             noticeBox.className = "toast-tray wrong";
-            noticeBox.innerText = `❌ Incorrect! Correct target was highlighted.`;
+            noticeBox.innerText = `❌ Incorrect! Correct target highlighted.`;
 
-            // Highlight target in yellow on 2nd wrong attempt
             if (clickedEl) clickedEl.classList.add("target-highlight");
 
             setTimeout(() => {
                 nextLevel();
-            }, 2000);
+            }, 1800);
         }
     }
 }

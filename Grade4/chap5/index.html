@@ -66,8 +66,8 @@ body.active-game {
 .main-container {
     width: 95vw;
     max-width: 1000px;
-    height: 85vh;
-    min-height: 600px;
+    height: 88vh;
+    min-height: 620px;
     z-index: 10;
 }
 
@@ -78,7 +78,7 @@ body.active-game {
     border-radius: 24px;
     text-align: center;
     box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    max-width: 620px;
+    max-width: 640px;
     margin: 0 auto;
     border: 3px solid #e2e8f0;
 }
@@ -140,6 +140,7 @@ body.active-game {
     font-weight: 700;
     text-align: center;
     color: var(--excel-green);
+    cursor: pointer;
 }
 
 .formula-display {
@@ -163,13 +164,13 @@ body.active-game {
 
 .mission-text-box {
     text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .mission-text-box h3 {
     font-size: 1.3rem;
     color: var(--text-main);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 /* Dynamic CSS Grid for the Worksheet Table */
@@ -196,12 +197,22 @@ body.active-game {
 .grid-head {
     background: #f1f5f9;
     color: #475569;
+    cursor: pointer;
+}
+
+.grid-head:hover {
+    background: #e2e8f0;
 }
 
 .grid-row-label {
     background: #f1f5f9;
     color: #475569;
     border-right: 1px solid var(--grid-border);
+    cursor: pointer;
+}
+
+.grid-row-label:hover {
+    background: #e2e8f0;
 }
 
 .grid-cell {
@@ -216,10 +227,15 @@ body.active-game {
 }
 
 /* Selection Highlight States */
-.grid-cell.active-selected {
-    outline: 3px solid var(--active-cell);
+.grid-cell.active-selected, .grid-head.active-selected, .grid-row-label.active-selected, .name-box.active-selected {
+    outline: 3px solid var(--active-cell) !important;
     outline-offset: -3px;
-    background: #eff6ff;
+    background: #eff6ff !important;
+}
+
+.target-highlight {
+    background: #fef08a !important;
+    border: 2px solid #eab308 !important;
 }
 
 .grid-cell.sum-target-btn {
@@ -239,6 +255,7 @@ body.active-game {
 }
 .toast-tray.correct { border-color: #16a34a; color: #16a34a; }
 .toast-tray.wrong { border-color: #dc2626; color: #dc2626; }
+.toast-tray.warn { border-color: #d97706; color: #d97706; }
 
 .btn-action {
     background: linear-gradient(135deg, var(--excel-green), var(--excel-green-dark));
@@ -286,21 +303,22 @@ body.active-game {
     <div id="menuView" class="panel-card">
         <img src="assets/innovine-logo.png" alt="Innovine" style="max-width: 130px; margin-bottom: 12px;" onerror="this.style.display='none'">
         <h1>Grid Explorer Expedition</h1>
-        <h3 style="color:#64748b; margin-bottom: 18px;">Spreadsheet Cells & AutoSum Explorer</h3>
+        <h3 style="color:#64748b; margin-bottom: 18px;">Spreadsheet Cells &amp; AutoSum Explorer (10 Levels)</h3>
         <p>
-            Welcome, Adventurer! Explore rows, columns, and cell references inside a worksheet grid. Click intersecting addresses, input findings, and use the AutoSum modifier to map your total points.
+            Welcome, Adventurer! Explore rows, columns, cell references, headers, and formula bar properties inside a worksheet grid across 10 interactive map challenges!
         </p>
-        <button class="btn-action" onclick="launchGame()">Start Grid Safari</button>
+        <button class="btn-action" onclick="launchGame()">Start Grid Safari 🚀</button>
     </div>
 
     <div id="gameView" class="game-grid hidden">
         <div class="status-bar">
-            <div>🧭 Map Level: <span id="nodeCounter">1</span> / 5</div>
+            <div>🧭 Map Level: <span id="nodeCounter">1</span> / 10</div>
             <div class="score-badge">Treasure Points: <span id="scoreDisplay">0</span></div>
+            <div style="background:#0284c7; padding:4px 12px; border-radius:20px;">Attempts: <span id="attemptsDisplay">2</span></div>
         </div>
 
         <div class="excel-formula-bar">
-            <div class="name-box" id="nameBoxDisplay">A1</div>
+            <div class="name-box" id="nameBoxDisplay" onclick="elementClicked('NAMEBOX')">A1</div>
             <div class="formula-display" id="formulaBarDisplay">Formula Bar: Click a cell to inspect details...</div>
         </div>
 
@@ -312,34 +330,34 @@ body.active-game {
 
             <div class="worksheet-grid-canvas" id="gridContainer">
                 <div class="grid-head"></div>
-                <div class="grid-head">A</div>
-                <div class="grid-head">B</div>
-                <div class="grid-head">C</div>
-                <div class="grid-head">D</div>
+                <div class="grid-head" id="head-A" onclick="elementClicked('HEAD-A')">A</div>
+                <div class="grid-head" id="head-B" onclick="elementClicked('HEAD-B')">B</div>
+                <div class="grid-head" id="head-C" onclick="elementClicked('HEAD-C')">C</div>
+                <div class="grid-head" id="head-D" onclick="elementClicked('HEAD-D')">D</div>
 
-                <div class="grid-row-label">1</div>
-                <div class="grid-cell" id="cell-A1" onclick="cellClicked('A', 1)">💎</div>
-                <div class="grid-cell" id="cell-B1" onclick="cellClicked('B', 1)">10</div>
-                <div class="grid-cell" id="cell-C1" onclick="cellClicked('C', 1)">50</div>
-                <div class="grid-cell" id="cell-D1" onclick="cellClicked('D', 1)">🪙</div>
+                <div class="grid-row-label" id="row-1" onclick="elementClicked('ROW-1')">1</div>
+                <div class="grid-cell" id="cell-A1" onclick="elementClicked('A1')">💎</div>
+                <div class="grid-cell" id="cell-B1" onclick="elementClicked('B1')">10</div>
+                <div class="grid-cell" id="cell-C1" onclick="elementClicked('C1')">50</div>
+                <div class="grid-cell" id="cell-D1" onclick="elementClicked('D1')">🪙</div>
 
-                <div class="grid-row-label">2</div>
-                <div class="grid-cell" id="cell-A2" onclick="cellClicked('A', 2)">30</div>
-                <div class="grid-cell" id="cell-B2" onclick="cellClicked('B', 2)">📜</div>
-                <div class="grid-cell" id="cell-C2" onclick="cellClicked('C', 2)">15</div>
-                <div class="grid-cell" id="cell-D2" onclick="cellClicked('D', 2)">40</div>
+                <div class="grid-row-label" id="row-2" onclick="elementClicked('ROW-2')">2</div>
+                <div class="grid-cell" id="cell-A2" onclick="elementClicked('A2')">30</div>
+                <div class="grid-cell" id="cell-B2" onclick="elementClicked('B2')">📜</div>
+                <div class="grid-cell" id="cell-C2" onclick="elementClicked('C2')">15</div>
+                <div class="grid-cell" id="cell-D2" onclick="elementClicked('D2')">40</div>
 
-                <div class="grid-row-label">3</div>
-                <div class="grid-cell" id="cell-A3" onclick="cellClicked('A', 3)">25</div>
-                <div class="grid-cell" id="cell-B3" onclick="cellClicked('B', 3)">👑</div>
-                <div class="grid-cell" id="cell-C3" onclick="cellClicked('C', 3)">80</div>
-                <div class="grid-cell" id="cell-D3" onclick="cellClicked('D', 3)">🗺️</div>
+                <div class="grid-row-label" id="row-3" onclick="elementClicked('ROW-3')">3</div>
+                <div class="grid-cell" id="cell-A3" onclick="elementClicked('A3')">25</div>
+                <div class="grid-cell" id="cell-B3" onclick="elementClicked('B3')">👑</div>
+                <div class="grid-cell" id="cell-C3" onclick="elementClicked('C3')">80</div>
+                <div class="grid-cell" id="cell-D3" onclick="elementClicked('D3')">🗺️</div>
 
-                <div class="grid-row-label">4</div>
-                <div class="grid-cell" id="cell-A4" onclick="cellClicked('A', 4)">✨</div>
-                <div class="grid-cell" id="cell-B4" onclick="cellClicked('B', 4)">100</div>
-                <div class="grid-cell" id="cell-C4" onclick="cellClicked('C', 4)">20</div>
-                <div class="grid-cell sum-target-btn" id="cell-D4" onclick="cellClicked('D', 4)">∑ AutoSum</div>
+                <div class="grid-row-label" id="row-4" onclick="elementClicked('ROW-4')">4</div>
+                <div class="grid-cell" id="cell-A4" onclick="elementClicked('A4')">✨</div>
+                <div class="grid-cell" id="cell-B4" onclick="elementClicked('B4')">100</div>
+                <div class="grid-cell" id="cell-C4" onclick="elementClicked('C4')">20</div>
+                <div class="grid-cell sum-target-btn" id="cell-D4" onclick="elementClicked('D4')">∑ AutoSum</div>
             </div>
         </div>
 
@@ -350,7 +368,7 @@ body.active-game {
         <h1>Expedition Complete!</h1>
         <p id="endSummaryDesc" style="margin-top: 12px; font-size: 1.1rem; color: #475569;"></p>
         <h2 style="font-size: 3rem; color: #d97706; margin: 20px 0;" id="finalPointsLabel">0 Points</h2>
-        <button class="btn-action" onclick="resetGameLoop()">Restart Grid Safari</button>
+        <button class="btn-action" onclick="resetGameLoop()">Restart Grid Safari 🔄</button>
     </div>
 
 </div>
@@ -377,52 +395,98 @@ function playAudio(elementId) {
         const audioNode = document.getElementById(elementId);
         if (audioNode) {
             audioNode.currentTime = 0;
-            audioNode.play().catch(e => console.log("Audio muted via browser parameters."));
+            audioNode.play().catch(e => console.log("Audio waiting for user interaction."));
         }
     } catch (err) {}
 }
 
-/* Chapter 5 Task Matrices */
+/* 10 CHAPTER 5 TASK MATRICES */
 const levelMatrix = [
     {
-        headline: "Locate the Crown Artifact",
+        headline: "Level 1: Locate the Crown Artifact",
         objective: "An ancient crown is hidden in the worksheet. Click on the intersecting square where Column B meets Row 3.",
-        targetCell: "B3",
-        formulaText: "=CELL(\"content\", B3) -> Contains King's Crown",
-        hint: "Look for the letter B column header and cross it vertically with Row 3."
+        targetKey: "B3",
+        domId: "cell-B3",
+        formulaText: "=CELL(\"content\", B3) -> Contains King's Crown 👑",
+        hint: "Cross Column B vertically with Row 3."
     },
     {
-        headline: "Find the Secret Map Coordinate",
-        objective: "The navigation route is stored in the grid. Click on the Active Cell identified by the reference address D3.",
-        targetCell: "D3",
-        formulaText: "=FIND_ASSET(\"Secret Map\", D3)",
+        headline: "Level 2: Select Column Header C",
+        objective: "To select an entire vertical column, click directly on the Column Header letter 'C' at the top.",
+        targetKey: "HEAD-C",
+        domId: "head-C",
+        formulaText: "Selected Entire Column C (C1:C4)",
+        hint: "Click the letter 'C' at the top header row of the grid."
+    },
+    {
+        headline: "Level 3: Secret Map Coordinate",
+        objective: "The navigation route map is stored in the grid. Click on the cell identified by address D3.",
+        targetKey: "D3",
+        domId: "cell-D3",
+        formulaText: "=FIND_ASSET(\"Secret Map\", D3) 🗺️",
         hint: "Move to Column D and slide down to Row label 3."
     },
     {
-        headline: "Identify the Highest Value Number",
-        objective: "Locate the cell block in Column B, Row 4 to check the numeric gold coin deposit count.",
-        targetCell: "B4",
+        headline: "Level 4: Identify Highest Value Number",
+        objective: "Locate the cell in Column B, Row 4 containing the largest integer gold deposit (100).",
+        targetKey: "B4",
+        domId: "cell-B4",
         formulaText: "Value Data Entry = 100 Gold Coins",
-        hint: "The box contains the integer 100 at the intersection of B and 4."
+        hint: "Find the cell with number '100' at Column B, Row 4."
     },
     {
-        headline: "Inspect Column C, Row 1",
-        objective: "Archaeologists logged gems here. Click the exact address C1 to display its input data inside the Formula Bar.",
-        targetCell: "C1",
+        headline: "Level 5: Inspect Column C, Row 1",
+        objective: "Gems were logged here. Click exact address C1 to inspect its input value inside the Formula Bar.",
+        targetKey: "C1",
+        domId: "cell-C1",
         formulaText: "Value Data Entry = 50 Rubies",
-        hint: "Go straight to Column C and click the very first row box underneath it."
+        hint: "Go straight to Column C and click Row 1."
     },
     {
-        headline: "Invoke the AutoSum Calculation!",
-        objective: "Let's calculate the total treasure fast. Find and click on the '∑ AutoSum' shortcut button inside cell D4.",
-        targetCell: "D4",
-        formulaText: "=SUM(B1, C1, A2, C2, A3, C3, B4, C4) -> Computing Grand Total...",
-        hint: "Click the yellow cell labeled with the AutoSum symbol in Column D."
+        headline: "Level 6: Select Row Label 2",
+        objective: "To select a complete horizontal row across the grid, click on the Row Header number '2' on the left.",
+        targetKey: "ROW-2",
+        domId: "row-2",
+        formulaText: "Selected Entire Row 2 (A2:D2)",
+        hint: "Click the number '2' on the left gray row label column."
+    },
+    {
+        headline: "Level 7: Locate the Active Cell Name Box",
+        objective: "Which UI box displays the address of the currently selected cell? Click on the Name Box in the top left.",
+        targetKey: "NAMEBOX",
+        domId: "nameBoxDisplay",
+        formulaText: "Name Box Component -> Shows Active Cell Address",
+        hint: "Click the box at top-left displaying 'A1'."
+    },
+    {
+        headline: "Level 8: Find the Diamond Gem Cell",
+        objective: "Locate and click the cell containing the Diamond Gem at Column A, Row 1.",
+        targetKey: "A1",
+        domId: "cell-A1",
+        formulaText: "=CELL(\"content\", A1) -> Rare Diamond 💎",
+        hint: "Click the top-leftmost data cell A1."
+    },
+    {
+        headline: "Level 9: Inspect Gem Count Data",
+        objective: "Locate the numeric value '30' located at Column A, Row 2.",
+        targetKey: "A2",
+        domId: "cell-A2",
+        formulaText: "Value Data Entry = 30 Emeralds",
+        hint: "Click cell A2 under the diamond gem."
+    },
+    {
+        headline: "Level 10: Invoke the AutoSum Calculation!",
+        objective: "Calculate the total treasure value fast! Click on the '∑ AutoSum' button located in cell D4.",
+        targetKey: "D4",
+        domId: "cell-D4",
+        formulaText: "=SUM(B1, C1, A2, C2, A3, C3, B4, C4) -> Grand Total Computed!",
+        hint: "Click the yellow cell labeled with AutoSum in Column D."
     }
 ];
 
 let activeIndex = 0;
 let scorePoints = 0;
+let attemptsLeft = 2;
 let dynamicBlocker = false;
 
 function launchGame() {
@@ -436,69 +500,91 @@ function launchGame() {
 
 function loadLevelNode() {
     dynamicBlocker = false;
+    attemptsLeft = 2;
+
     document.getElementById("nodeCounter").innerText = activeIndex + 1;
     document.getElementById("scoreDisplay").innerText = scorePoints;
+    document.getElementById("attemptsDisplay").innerText = attemptsLeft;
 
     const levelData = levelMatrix[activeIndex];
     document.getElementById("missionHeadline").innerText = levelData.headline;
     document.getElementById("missionObjectiveText").innerText = levelData.objective;
     
-    // Clear old layout tracking selections
-    const cells = document.querySelectorAll(".grid-cell");
-    cells.forEach(c => c.classList.remove("active-selected"));
+    // Clear old visual selection highlights
+    document.querySelectorAll(".active-selected, .target-highlight").forEach(el => {
+        el.classList.remove("active-selected", "target-highlight");
+    });
 
     const noticeBox = document.getElementById("consoleNotice");
     noticeBox.className = "toast-tray";
-    noticeBox.innerText = "Study the worksheet layout. Click the target matching box coordinates!";
+    noticeBox.innerText = "Study the worksheet layout. Click the target matching box or element!";
 }
 
-function cellClicked(col, row) {
+function elementClicked(clickedKey) {
     if (dynamicBlocker) return;
-    
-    const clickAddress = `${col}${row}`;
-    document.getElementById("nameBoxDisplay").innerText = clickAddress;
-    
-    // Highlight the clicked active cell box layout
-    const cells = document.querySelectorAll(".grid-cell");
-    cells.forEach(c => c.classList.remove("active-selected"));
-    
-    const targetedElement = document.getElementById(`cell-${clickAddress}`);
-    if (targetedElement) targetedElement.classList.add("active-selected");
 
     const levelData = levelMatrix[activeIndex];
     const noticeBox = document.getElementById("consoleNotice");
     const workspaceFrame = document.getElementById("workspaceWindow");
 
-    dynamicBlocker = true;
+    // Display selected name box reference if clicking standard cell
+    if (clickedKey.length === 2 && !clickedKey.includes("-")) {
+        document.getElementById("nameBoxDisplay").innerText = clickedKey;
+    }
 
-    if (clickAddress === levelData.targetCell) {
+    // Highlight clicked element
+    document.querySelectorAll(".active-selected").forEach(el => el.classList.remove("active-selected"));
+    const clickedEl = document.getElementById(levelData.domId);
+
+    if (clickedKey === levelData.targetKey) {
+        dynamicBlocker = true;
         scorePoints += 100;
         document.getElementById("scoreDisplay").innerText = scorePoints;
         document.getElementById("formulaBarDisplay").innerText = levelData.formulaText;
-        playAudio("soundCorrect");
+        if (clickedEl) clickedEl.classList.add("active-selected");
 
+        playAudio("soundCorrect");
         workspaceFrame.classList.add("anim-pulse");
         noticeBox.className = "toast-tray correct";
-        noticeBox.innerText = `🌟 Brilliant! Cell reference address ${clickAddress} verified successfully.`;
+        noticeBox.innerText = `🌟 Brilliant! Target ${clickedKey} verified successfully.`;
+
+        setTimeout(() => {
+            workspaceFrame.classList.remove("anim-pulse");
+            nextLevel();
+        }, 1500);
     } else {
-        document.getElementById("formulaBarDisplay").innerText = `ERROR: Invalid cell address entry at ${clickAddress}`;
+        attemptsLeft--;
+        document.getElementById("attemptsDisplay").innerText = attemptsLeft;
         playAudio("soundWrong");
 
         workspaceFrame.classList.add("anim-shake");
-        noticeBox.className = "toast-tray wrong";
-        noticeBox.innerText = `❌ Grid Mismatch! Hint: ${levelData.hint}`;
-    }
+        setTimeout(() => workspaceFrame.classList.remove("anim-shake"), 400);
 
-    // Standard transition timeout sequence 
-    setTimeout(() => {
-        workspaceFrame.classList.remove("anim-pulse", "anim-shake");
-        activeIndex++;
-        if (activeIndex < levelMatrix.length) {
-            loadLevelNode();
+        if (attemptsLeft > 0) {
+            noticeBox.className = "toast-tray warn";
+            noticeBox.innerText = `⚠️ Mismatch! Hint: ${levelData.hint} (1 attempt left)`;
         } else {
-            renderSummaryView();
+            dynamicBlocker = true;
+            noticeBox.className = "toast-tray wrong";
+            noticeBox.innerText = `❌ Incorrect! Correct target was highlighted.`;
+
+            // Highlight target in yellow on 2nd wrong attempt
+            if (clickedEl) clickedEl.classList.add("target-highlight");
+
+            setTimeout(() => {
+                nextLevel();
+            }, 2000);
         }
-    }, 3000);
+    }
+}
+
+function nextLevel() {
+    activeIndex++;
+    if (activeIndex < levelMatrix.length) {
+        loadLevelNode();
+    } else {
+        renderSummaryView();
+    }
 }
 
 function renderSummaryView() {
@@ -506,13 +592,13 @@ function renderSummaryView() {
     document.getElementById("gameView").classList.add("hidden");
     document.getElementById("endView").classList.remove("hidden");
 
-    document.getElementById("finalPointsLabel").innerText = `${scorePoints} / 500 Points`;
+    document.getElementById("finalPointsLabel").innerText = `${scorePoints} / 1000 Points`;
     const descText = document.getElementById("endSummaryDesc");
 
-    if (scorePoints >= 400) {
-        descText.innerText = "Outstanding Worksheet Navigator! You have completely mastered cell references, columns, rows, active tracking states, and formula bar properties perfectly.";
+    if (scorePoints >= 800) {
+        descText.innerText = "Outstanding Master Navigator! You have completely mastered cell references, columns, rows, headers, active tracking states, and formula bar properties!";
     } else {
-        descText.innerText = "Terrific try on the grid safari! Review the layout intersection points between alphabetic columns and numbered rows to grab a flawless score next time.";
+        descText.innerText = "Great try on the grid safari! Practice identifying the intersection between alphabetic columns and numbered rows to grab a higher score next time.";
     }
 }
 

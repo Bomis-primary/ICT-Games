@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Internet & Netiquette Interactive Lab </title>
+<title>Internet & Netiquette Interactive Lab - Grade 4</title>
 
 <style>
 :root {
@@ -22,6 +22,7 @@
     box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -32,7 +33,7 @@ body {
     align-items: center;
     overflow-x: hidden;
     position: relative;
-    padding: 20px;
+    padding: 12px;
 }
 
 /* Splash Screen */
@@ -49,51 +50,60 @@ body {
     align-items: center;
     z-index: 9999;
     transition: opacity 0.5s ease;
+    padding: 20px;
+    text-align: center;
 }
 #splash h1 {
-    font-size: 2.2rem;
+    font-size: clamp(1.5rem, 5vw, 2.2rem);
     color: #1e3a8a;
     margin-top: 15px;
 }
 
 .container {
     width: 100%;
-    max-width: 1000px;
+    max-width: 1050px;
     background: var(--panel-bg);
-    border-radius: 24px;
-    padding: 30px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    border-radius: 20px;
+    padding: clamp(16px, 4vw, 30px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
     z-index: 2;
 }
 
 .header {
     text-align: center;
-    margin-bottom: 25px;
+    margin-bottom: 20px;
     border-bottom: 2px solid #e2e8f0;
-    padding-bottom: 15px;
+    padding-bottom: 12px;
 }
 
 .header h1 {
     color: #1e3a8a;
-    font-size: 2rem;
+    font-size: clamp(1.4rem, 4.5vw, 2rem);
 }
 
 .header p {
     color: #64748b;
-    font-size: 1rem;
-    margin-top: 5px;
+    font-size: clamp(0.85rem, 2.5vw, 1rem);
+    margin-top: 4px;
 }
 
-/* Tab Navigation */
+/* Scrollable Responsive Navigation Tabs */
 .nav-tabs {
     display: flex;
-    gap: 10px;
-    margin-bottom: 25px;
-    justify-content: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+}
+
+.nav-tabs::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
 }
 
 .tab-btn {
-    padding: 12px 20px;
+    padding: 10px 14px;
     border: none;
     background: #e2e8f0;
     color: #334155;
@@ -101,6 +111,9 @@ body {
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.2s ease;
+    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .tab-btn.active {
@@ -114,22 +127,23 @@ body {
     background: #f8fafc;
     border: 2px solid #e2e8f0;
     border-radius: 16px;
-    padding: 24px;
-    margin-bottom: 20px;
+    padding: clamp(14px, 3.5vw, 24px);
+    margin-bottom: 15px;
 }
 
 .activity-title {
-    font-size: 1.2rem;
+    font-size: clamp(1.05rem, 3.2vw, 1.2rem);
     color: #0f172a;
     margin-bottom: 15px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
+    font-weight: 800;
 }
 
 /* Controls & Form Elements */
 .form-group {
-    margin-bottom: 18px;
+    margin-bottom: 16px;
 }
 
 label {
@@ -137,6 +151,8 @@ label {
     font-weight: 600;
     color: #334155;
     margin-bottom: 8px;
+    font-size: clamp(0.85rem, 2.6vw, 0.98rem);
+    line-height: 1.4;
 }
 
 select {
@@ -144,9 +160,10 @@ select {
     padding: 12px;
     border-radius: 10px;
     border: 2px solid #cbd5e1;
-    font-size: 1rem;
+    font-size: clamp(0.85rem, 2.5vw, 1rem);
     background: white;
     outline: none;
+    touch-action: manipulation;
 }
 
 select:focus {
@@ -161,77 +178,87 @@ select:focus {
 
 .radio-option {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
     background: white;
-    padding: 12px 16px;
+    padding: 12px;
     border-radius: 10px;
     border: 2px solid #cbd5e1;
     cursor: pointer;
     font-weight: 600;
     color: #334155;
+    font-size: clamp(0.82rem, 2.5vw, 0.95rem);
+    line-height: 1.4;
     transition: all 0.2s;
 }
 
-.radio-option:hover {
+.radio-option:hover, .radio-option:active {
     border-color: var(--primary);
     background: #eff6ff;
 }
 
 .radio-option input[type="radio"] {
-    width: 18px;
-    height: 18px;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    flex-shrink: 0;
     accent-color: var(--primary);
 }
 
 /* Action Buttons */
 .check-btn {
+    width: 100%;
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
     border: none;
-    padding: 12px 28px;
-    font-size: 1rem;
+    padding: 14px 20px;
+    font-size: clamp(0.95rem, 3vw, 1.05rem);
     font-weight: 700;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
     margin-top: 10px;
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     transition: transform 0.2s;
+    touch-action: manipulation;
 }
 
-.check-btn:hover {
-    transform: translateY(-2px);
+.check-btn:active {
+    transform: scale(0.98);
 }
 
 /* Interactive Sandbox Screen */
 .desktop-simulator {
     background: #0f172a;
     border-radius: 16px;
-    padding: 20px;
+    padding: 16px;
     color: white;
-    min-height: 200px;
+    min-height: 180px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     position: relative;
     border: 4px solid #475569;
+    margin-top: 10px;
 }
 
 .avatar {
-    font-size: 4rem;
-    margin-bottom: 10px;
+    font-size: clamp(3rem, 10vw, 4rem);
+    margin-bottom: 8px;
     transition: transform 0.3s ease;
 }
 
 .bubble {
     background: white;
     color: #0f172a;
-    padding: 12px 20px;
+    padding: 10px 16px;
     border-radius: 12px;
     font-weight: 700;
     text-align: center;
-    max-width: 80%;
+    width: 100%;
+    max-width: 90%;
+    font-size: clamp(0.8rem, 2.6vw, 0.95rem);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
 
 /* Feedback Overlay */
@@ -242,6 +269,7 @@ select:focus {
     font-weight: 700;
     display: none;
     text-align: center;
+    font-size: clamp(0.85rem, 2.5vw, 0.95rem);
 }
 
 .feedback-box.correct {
@@ -265,72 +293,74 @@ select:focus {
 
 <!-- Splash Screen -->
 <div id="splash">
-    <div style="font-size: 5rem;">🌐🛡️</div>
+    <div style="font-size: clamp(3.5rem, 12vw, 5rem);">🌐🛡️</div>
     <h1>Netiquette & Safety Lab</h1>
-    <p style="color: #64748b; margin-top: 5px;">Grade 4 ICT Simulation</p>
+    <p style="color: #64748b; margin-top: 5px;">Grade 4 ICT Interactive Master Module</p>
 </div>
 
 <div class="container hidden" id="mainApp">
     
     <div class="header">
-        <h1>🌐 Internet & Netiquette Interactive Hub</h1>
-        <p>Grade 4 - Chapter 8 Learning & Practice Module</p>
+        <h1>🌐 Internet & Netiquette Hub</h1>
+        <p>Grade 4 ICT - Chapter 8 & 9 Multi-Level Game Studio</p>
     </div>
 
-    <!-- Mode Selector Tabs -->
+    <!-- Scrollable Tab Navigation -->
     <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('tab1')">1. Dropdown Netiquette Rules</button>
-        <button class="tab-btn" onclick="switchTab('tab2')">2. Radio Quiz Safety Choice</button>
-        <button class="tab-btn" onclick="switchTab('tab3')">3. Cyber Shield Simulator</button>
+        <button class="tab-btn active" onclick="switchTab('tab1', this)">Level 1: Netiquette Rules</button>
+        <button class="tab-btn" onclick="switchTab('tab2', this)">Level 2: Safety Decisions</button>
+        <button class="tab-btn" onclick="switchTab('tab3', this)">Level 3: Live Sandbox</button>
+        <button class="tab-btn" onclick="switchTab('tab4', this)">Level 4: E-mail Etiquette</button>
+        <button class="tab-btn" onclick="switchTab('tab5', this)">Level 5: Web Search Master</button>
     </div>
 
-    <!-- TAB 1: Dropdown Selection Activity -->
+    <!-- LEVEL 1: Dropdown Selection Activity -->
     <div id="tab1" class="tab-content">
         <div class="activity-card">
             <div class="activity-title">
-                <span>📋</span> Complete the Safety Rules (Select from Dropdown)
+                <span>📋</span> Level 1: Complete Netiquette Rules
             </div>
             
             <div class="form-group">
-                <label for="dd1">1. Information traveling over the internet must follow set rules called _________[cite: 212]:</label>
+                <label for="dd1">1. Information traveling over the internet must follow set rules called:</label>
                 <select id="dd1">
                     <option value="">-- Choose Option --</option>
-                    <option value="wrong">Web Browsers[cite: 213]</option>
-                    <option value="correct">Protocols[cite: 212]</option>
-                    <option value="wrong">Search Engines[cite: 213]</option>
+                    <option value="wrong">Web Browsers</option>
+                    <option value="correct">Protocols</option>
+                    <option value="wrong">Search Engines</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="dd2">2. When communicating with people online, always typing in ALL CAPS looks like _________[cite: 216]:</label>
+                <label for="dd2">2. Typing an entire message in ALL CAPS online looks like:</label>
                 <select id="dd2">
                     <option value="">-- Choose Option --</option>
                     <option value="wrong">Whispering</option>
-                    <option value="correct">SHOUTING[cite: 216]</option>
+                    <option value="correct">SHOUTING</option>
                     <option value="wrong">Singing</option>
                 </select>
             </div>
 
             <div class="form-group">
-                <label for="dd3">3. Software used to view web pages like Google Chrome or Mozilla Firefox is called a _________[cite: 213]:</label>
+                <label for="dd3">3. Software used to view web pages like Google Chrome or Mozilla Firefox is called a:</label>
                 <select id="dd3">
                     <option value="">-- Choose Option --</option>
-                    <option value="correct">Web Browser[cite: 213]</option>
-                    <option value="wrong">Modem[cite: 213]</option>
-                    <option value="wrong">Protocol[cite: 212]</option>
+                    <option value="correct">Web Browser</option>
+                    <option value="wrong">Modem</option>
+                    <option value="wrong">Protocol</option>
                 </select>
             </div>
 
-            <button class="check-btn" onclick="checkDropdowns()">Verify Choices</button>
+            <button class="check-btn" onclick="checkDropdowns()">Verify Choices 🏁</button>
             <div id="ddFeedback" class="feedback-box"></div>
         </div>
     </div>
 
-    <!-- TAB 2: Radio Button Safety Quiz -->
+    <!-- LEVEL 2: Radio Button Safety Quiz -->
     <div id="tab2" class="tab-content hidden">
         <div class="activity-card">
             <div class="activity-title">
-                <span>🛡️</span> Cyber Safety Decision Activity
+                <span>🛡️</span> Level 2: Cyber Safety Decisions
             </div>
 
             <div class="form-group">
@@ -340,46 +370,46 @@ select:focus {
                         <input type="radio" name="q1" value="wrong"> Share it immediately so you can make new friends.
                     </label>
                     <label class="radio-option">
-                        <input type="radio" name="q1" value="correct"> Do NOT give personal information and inform your parents/teachers[cite: 214].
+                        <input type="radio" name="q1" value="correct"> Do NOT give personal information and inform your parents/teachers immediately.
                     </label>
                     <label class="radio-option">
-                        <input type="radio" name="q1" value="wrong"> Send a picture of your house instead.
+                        <input type="radio" name="q1" value="wrong"> Send a picture of your school instead.
                     </label>
                 </div>
             </div>
 
             <div class="form-group">
-                <label>Scenario 2: A stranger asks to meet you in person somewhere outside[cite: 214].</label>
+                <label>Scenario 2: A stranger met on an online gaming site asks to meet you alone in person.</label>
                 <div class="radio-group">
                     <label class="radio-option">
-                        <input type="radio" name="q2" value="wrong"> Go meet them alone after school.
+                        <input type="radio" name="q2" value="wrong"> Agree to meet them alone after school.
                     </label>
                     <label class="radio-option">
-                        <input type="radio" name="q2" value="correct"> Never agree to meet someone met online without checking with parents[cite: 214].
+                        <input type="radio" name="q2" value="correct"> Never agree to meet someone met online without checking with parents.
                     </label>
                 </div>
             </div>
 
-            <button class="check-btn" onclick="checkRadioQuiz()">Submit Safety Decisions</button>
+            <button class="check-btn" onclick="checkRadioQuiz()">Submit Safety Decisions 🏁</button>
             <div id="radioFeedback" class="feedback-box"></div>
         </div>
     </div>
 
-    <!-- TAB 3: Interactive Cyber Shield Simulator -->
+    <!-- LEVEL 3: Interactive Cyber Shield Simulator -->
     <div id="tab3" class="tab-content hidden">
         <div class="activity-card">
             <div class="activity-title">
-                <span>🎮</span> Live Netiquette Sandbox Test
+                <span>🎮</span> Level 3: Live Netiquette Sandbox Test
             </div>
-            <p style="color: #64748b; margin-bottom: 15px;">Test how your decisions affect your avatar's network environment in real-time!</p>
+            <p style="color: #64748b; margin-bottom: 12px; font-size: clamp(0.82rem, 2.5vw, 0.95rem);">Test how your decisions affect your avatar's network environment in real-time!</p>
             
             <div class="form-group">
                 <label for="simAction">Choose an Action to Execute:</label>
                 <select id="simAction" onchange="runSimulation()">
-                    <option value="kind">Say Kind Words to Classmates online 😊[cite: 216]</option>
-                    <option value="pass">Share your password with online friends 🚨[cite: 214]</option>
-                    <option value="report">Block & Report uncomfortable messages 🚫[cite: 214]</option>
-                    <option value="caps">TYPE ENTIRE MESSAGE IN ALL CAPS 📢[cite: 216]</option>
+                    <option value="kind">Say Kind Words to Classmates online 😊</option>
+                    <option value="pass">Share your password with online friends 🚨</option>
+                    <option value="report">Block & Report uncomfortable messages 🚫</option>
+                    <option value="caps">TYPE ENTIRE MESSAGE IN ALL CAPS 📢</option>
                 </select>
             </div>
 
@@ -390,10 +420,76 @@ select:focus {
         </div>
     </div>
 
+    <!-- LEVEL 4: E-mail Etiquette Builder (Chapter 9) -->
+    <div id="tab4" class="tab-content hidden">
+        <div class="activity-card">
+            <div class="activity-title">
+                <span>✉️</span> Level 4: E-mail Etiquette & Structure
+            </div>
+
+            <div class="form-group">
+                <label for="em1">1. What should always be included in the 'Subject' line of an e-mail?</label>
+                <select id="em1">
+                    <option value="">-- Select Option --</option>
+                    <option value="wrong">Your complete home address</option>
+                    <option value="correct">A short headline explaining the topic of the e-mail</option>
+                    <option value="wrong">Random emojis only</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>2. You receive an e-mail with an attached file from an unknown stranger. What is the safest action?</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="em_q2" value="wrong"> Click and open the attachment immediately.
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="em_q2" value="correct"> Do not open or download attachments from unknown strangers (they may contain a virus).
+                    </label>
+                </div>
+            </div>
+
+            <button class="check-btn" onclick="checkEmailEtiquette()">Validate E-mail Rules 🏁</button>
+            <div id="emailFeedback" class="feedback-box"></div>
+        </div>
+    </div>
+
+    <!-- LEVEL 5: Web Search & Browsing Master (Chapter 8) -->
+    <div id="tab5" class="tab-content hidden">
+        <div class="activity-card">
+            <div class="activity-title">
+                <span>🔍</span> Level 5: Search Engines & Web Browsing
+            </div>
+
+            <div class="form-group">
+                <label for="web1">1. Google, Bing, and Yahoo are examples of special websites known as:</label>
+                <select id="web1">
+                    <option value="">-- Choose Option --</option>
+                    <option value="correct">Search Engines</option>
+                    <option value="wrong">Email Services</option>
+                    <option value="wrong">Hardware Modems</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="web2">2. What allows you to view a saved web page when your computer is offline?</label>
+                <select id="web2">
+                    <option value="">-- Choose Option --</option>
+                    <option value="wrong">Typing in ALL CAPS</option>
+                    <option value="correct">Saving the web page in your browser using 'Save As'</option>
+                    <option value="wrong">Disconnecting the monitor</option>
+                </select>
+            </div>
+
+            <button class="check-btn" onclick="checkWebSearch()">Check Search Mastery 🏁</button>
+            <div id="webFeedback" class="feedback-box"></div>
+        </div>
+    </div>
+
 </div>
 
 <script>
-/* 5-Second Splash Screen Driver */
+/* Splash Screen Driver */
 setTimeout(() => {
     const splash = document.getElementById("splash");
     splash.style.opacity = "0";
@@ -403,49 +499,54 @@ setTimeout(() => {
     }, 500);
 }, 5000);
 
-/* Sound Effects Engine (Web Audio API Synthesizer) */
-const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+/* Web Audio Synthesizer */
+let audioCtx = null;
 
 function playSound(type) {
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
-    
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
+    try {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+            audioCtx.resume();
+        }
+        
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
 
-    if (type === 'correct') {
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
-        osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.5);
-    } else if (type === 'wrong') {
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
-        osc.frequency.setValueAtTime(174.61, audioCtx.currentTime + 0.15); // F3
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.4);
-    }
+        if (type === 'correct') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+            osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.5);
+        } else if (type === 'wrong') {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+            osc.frequency.setValueAtTime(174.61, audioCtx.currentTime + 0.15); // F3
+            gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.4);
+        }
+    } catch(e) {}
 }
 
 /* Tab Navigation Functionality */
-function switchTab(tabId) {
+function switchTab(tabId, btn) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
     
     document.getElementById(tabId).classList.remove('hidden');
-    event.currentTarget.classList.add('active');
+    btn.classList.add('active');
 }
 
-/* Activity 1: Dropdown Checker */
+/* Level 1: Dropdown Checker */
 function checkDropdowns() {
     const v1 = document.getElementById("dd1").value;
     const v2 = document.getElementById("dd2").value;
@@ -455,7 +556,7 @@ function checkDropdowns() {
     if (v1 === 'correct' && v2 === 'correct' && v3 === 'correct') {
         playSound('correct');
         fb.className = "feedback-box correct";
-        fb.innerText = "🎉 Excellent! All protocol and browser rules selected correctly!";
+        fb.innerText = "🎉 Excellent! Level 1 Passed - All netiquette rules selected correctly!";
     } else {
         playSound('wrong');
         fb.className = "feedback-box wrong";
@@ -463,7 +564,7 @@ function checkDropdowns() {
     }
 }
 
-/* Activity 2: Radio Quiz Checker */
+/* Level 2: Radio Quiz Checker */
 function checkRadioQuiz() {
     const q1 = document.querySelector('input[name="q1"]:checked');
     const q2 = document.querySelector('input[name="q2"]:checked');
@@ -472,14 +573,14 @@ function checkRadioQuiz() {
     if (!q1 || !q2) {
         playSound('wrong');
         fb.className = "feedback-box wrong";
-        fb.innerText = "⚠️️ Please answer all scenario questions before submitting.";
+        fb.innerText = "⚠️ Please answer all scenario questions before submitting.";
         return;
     }
 
     if (q1.value === 'correct' && q2.value === 'correct') {
         playSound('correct');
         fb.className = "feedback-box correct";
-        fb.innerText = "🌟 Great job! You know how to keep your personal information completely safe online!";
+        fb.innerText = "🌟 Great job! Level 2 Passed - You know how to keep your personal information completely safe online!";
     } else {
         playSound('wrong');
         fb.className = "feedback-box wrong";
@@ -487,7 +588,7 @@ function checkRadioQuiz() {
     }
 }
 
-/* Activity 3: Interactive Simulation Driver */
+/* Level 3: Interactive Simulation Driver */
 function runSimulation() {
     const action = document.getElementById("simAction").value;
     const avatar = document.getElementById("simAvatar");
@@ -511,7 +612,7 @@ function runSimulation() {
             break;
         case 'report':
             playSound('correct');
-            avatar.innerText = "🛡️";
+            avatar.innerText = "🛡️️";
             avatar.style.transform = "scale(1.2)";
             bubble.innerText = "Defense Active! Immediately tell a teacher or parent if uncomfortable.";
             desktop.style.borderColor = "#10b981";
@@ -523,6 +624,47 @@ function runSimulation() {
             bubble.innerText = "WAIT! Typing in ALL CAPS looks like SHOUTING online!";
             desktop.style.borderColor = "#f59e0b";
             break;
+    }
+}
+
+/* Level 4: E-mail Etiquette Checker */
+function checkEmailEtiquette() {
+    const em1 = document.getElementById("em1").value;
+    const em_q2 = document.querySelector('input[name="em_q2"]:checked');
+    const fb = document.getElementById("emailFeedback");
+
+    if (!em1 || !em_q2) {
+        playSound('wrong');
+        fb.className = "feedback-box wrong";
+        fb.innerText = "⚠️ Please answer all questions in Level 4.";
+        return;
+    }
+
+    if (em1 === 'correct' && em_q2.value === 'correct') {
+        playSound('correct');
+        fb.className = "feedback-box correct";
+        fb.innerText = "🎉 Level 4 Complete! You mastered E-mail Etiquette and virus protection rules!";
+    } else {
+        playSound('wrong');
+        fb.className = "feedback-box wrong";
+        fb.innerText = "❌ Incorrect choice! Remember to summarize topics in subject lines and avoid unknown attachments.";
+    }
+}
+
+/* Level 5: Web Search Checker */
+function checkWebSearch() {
+    const web1 = document.getElementById("web1").value;
+    const web2 = document.getElementById("web2").value;
+    const fb = document.getElementById("webFeedback");
+
+    if (web1 === 'correct' && web2 === 'correct') {
+        playSound('correct');
+        fb.className = "feedback-box correct";
+        fb.innerText = "🏆 Congratulations! You have completed Level 5 and mastered Internet & Netiquette!";
+    } else {
+        playSound('wrong');
+        fb.className = "feedback-box wrong";
+        fb.innerText = "❌ Review Search Engines and offline saving options before retrying!";
     }
 }
 </script>

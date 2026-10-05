@@ -137,6 +137,8 @@ body.game-active {
 .lvl-4 { background: var(--scratch-pink); }
 .lvl-5 { background: var(--scratch-green); }
 .lvl-6 { background: #e11d48; }
+.lvl-7 { background: #059669; }
+.lvl-8 { background: #0284c7; }
 
 .workbench-grid {
     display: grid;
@@ -264,6 +266,8 @@ body.game-active .stage-preview {
 }
 
 .stage-preview.bg-space { background-color: #111432; background-image: radial-gradient(white 1px, transparent 0); background-size: 20px 20px; }
+.stage-preview.bg-jungle { background-color: #064e3b; background-image: radial-gradient(#10b981 1px, transparent 0); background-size: 24px 24px; }
+.stage-preview.bg-ocean { background-color: #0c4a6e; background-image: radial-gradient(#38bdf8 1px, transparent 0); background-size: 22px 22px; }
 
 .sprite-actor {
     font-size: clamp(3rem, 8vw, 4.5rem);
@@ -324,7 +328,6 @@ body.game-active .stage-preview {
 <audio id="audioCorrect" src="assets/correct.mp3" preload="auto"></audio>
 <audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
 
-
 <div id="splashScreen">
     <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'">
     <p style="margin-top:16px; font-weight:600; color:#64748b; font-size:0.9rem;">Loading Interactive Programming...</p>
@@ -337,7 +340,7 @@ body.game-active .stage-preview {
         <h1><span>SCRATCH STORY STUDIO</span></h1>
         <h2 style="color: #64748b; font-size: clamp(0.9rem, 3vw, 1.1rem); margin-bottom: 18px;">Interactive Animation Engine</h2>
         <p style="text-align: left; line-height: 1.5; color: #475569; margin-bottom: 20px; background: #f1f5f9; padding: 16px; border-radius: 12px; font-size: clamp(0.85rem, 2.8vw, 0.95rem);">
-            Welcome, Script Animator! Assemble story scripts inside a dynamic Scratch block environment. Drag or tap script blocks to configure movement pipelines, costumes, backdrops, and triggers to command your active cat hero across 6 storytelling scenes!
+            Welcome, Script Animator! Assemble story scripts inside a dynamic Scratch block environment. Drag or tap script blocks to configure movement pipelines, costumes, backdrops, and triggers to command your active hero across 8 storytelling scenes!
         </p>
         <button class="btn-primary" onclick="launchSimulator()">Boot Customizer Module 🚀</button>
     </div>
@@ -359,7 +362,7 @@ body.game-active .stage-preview {
             <div class="column-board" style="background: rgba(255,255,255,0.02)">
                 <div style="display:flex; justify-content:space-between; align-items:center;" class="board-header">
                     <span>Script Workspace Track</span>
-                    <button onclick="clearWorkspaceTrack()" style="background:#ef4444; color:white; border:none; padding:2px 8px; border-radius:8px; font-size:0.7rem; cursor:pointer;">Reset</button>
+                    <button onclick="clearWorkspaceTrack()" style="background:#ef4444; color:white; border:none; padding:2px 8px; border-radius:8px; font-size:0.7rem; cursor:pointer;">Reset Track</button>
                 </div>
                 <div class="script-dropzone" id="scriptDockWorkspace" ondragover="allowDropBlockTrack(event)" ondragleave="clearDragOverState(event)" ondrop="handleDropBlockTrack(event)"></div>
                 
@@ -408,7 +411,7 @@ setTimeout(() => {
     }
 }, 5000);
 
-/* 6 STORY SCENE MATRICES */
+/* 8 STORY SCENE MATRICES */
 const stageCampaignDatabase = {
     1: {
         title: "Scene 1: Start Adventure",
@@ -498,7 +501,7 @@ const stageCampaignDatabase = {
         }
     },
     5: {
-        title: "Scene 5: Special Effects",
+        title: "Scene 5: Special Visual Effects",
         difficulty: "Scene 5",
         badgeClass: "lvl-5",
         instructions: "Apply visual fx! Order: When Up Arrow Pressed ➔ Change Color Effect by 25 ➔ Change Size by 20",
@@ -542,6 +545,60 @@ const stageCampaignDatabase = {
                 sprite.style.opacity = "1";
             }, 2000);
         }
+    },
+    7: {
+        title: "Scene 7: Jungle Expedition Discovery",
+        difficulty: "Scene 7",
+        badgeClass: "lvl-7",
+        instructions: "Explore the jungle! Order: When Stage Clicked ➔ Switch Backdrop to Jungle ➔ Say 'I found a rare parrot!'",
+        targetSequence: ["stage_click", "bg_jungle", "say_parrot"],
+        paletteBlocks: [
+            { id: "bg_jungle", text: "🌴 Switch Backdrop to Jungle", category: "cat-looks" },
+            { id: "stage_click", text: "🏞️ When Stage Clicked", category: "cat-events" },
+            { id: "say_parrot", text: "💬 Say 'I found a rare parrot!'", category: "cat-looks" },
+            { id: "sound_wrong_jungle", text: "🔊 Play Sound 'Drum'", category: "cat-sound" }
+        ],
+        hint: "Event trigger 'When Stage Clicked' goes first.",
+        actionEffect: () => {
+            const sprite = document.getElementById("catSpriteElement");
+            const bubble = document.getElementById("speechBubble");
+            const stage = document.getElementById("stageCanvas");
+            stage.className = "stage-preview bg-jungle";
+            sprite.innerText = "🦜";
+            bubble.innerText = "I found a rare parrot! 🌴";
+            bubble.style.display = "block";
+            setTimeout(() => { 
+                bubble.style.display = "none"; 
+                sprite.innerText = "🐱";
+            }, 2500);
+        }
+    },
+    8: {
+        title: "Scene 8: Underwater Treasure Search",
+        difficulty: "Scene 8",
+        badgeClass: "lvl-8",
+        instructions: "Dive deep into the sea! Order: When Down Arrow Pressed ➔ Switch Backdrop to Ocean ➔ Say 'Found a Golden Chest!'",
+        targetSequence: ["arrow_down", "bg_ocean", "say_chest"],
+        paletteBlocks: [
+            { id: "arrow_down", text: "⬇️ When Down Arrow Pressed", category: "cat-events" },
+            { id: "say_chest", text: "💬 Say 'Found a Golden Chest!'", category: "cat-looks" },
+            { id: "bg_ocean", text: "🌊 Switch Backdrop to Ocean", category: "cat-looks" },
+            { id: "spin_wrong", text: "🔄 Turn 360 Degrees", category: "cat-motion" }
+        ],
+        hint: "Start with 'When Down Arrow Pressed'.",
+        actionEffect: () => {
+            const sprite = document.getElementById("catSpriteElement");
+            const bubble = document.getElementById("speechBubble");
+            const stage = document.getElementById("stageCanvas");
+            stage.className = "stage-preview bg-ocean";
+            sprite.innerText = "💎";
+            bubble.innerText = "Found a Golden Chest! 🪙";
+            bubble.style.display = "block";
+            setTimeout(() => { 
+                bubble.style.display = "none"; 
+                sprite.innerText = "🐱";
+            }, 2500);
+        }
     }
 };
 
@@ -557,14 +614,14 @@ function triggerLocalAudioNode(elementId) {
         const audioNode = document.getElementById(elementId);
         if(audioNode) {
             audioNode.currentTime = 0;
-            audioNode.play().catch(err => console.log("Audio waiting for interaction."));
+            audioNode.play().catch(err => console.log("Audio playback blocked."));
         }
     } catch(e) {}
 }
 
 function fireConfettiCelebration() {
     if(window.confetti) {
-        confetti({ particleCount: 40, spread: 60, origin: { y: 0.7 } });
+        confetti({ particleCount: 45, spread: 65, origin: { y: 0.7 } });
     }
 }
 
@@ -739,18 +796,21 @@ function executeBlocksPipeline() {
     } else {
         attemptsLeft--;
         document.getElementById("attemptsDisplay").innerText = attemptsLeft;
+        
+        // Strict wrong audio trigger on any mismatch
         triggerLocalAudioNode("audioWrong");
 
         if(attemptsLeft > 0) {
-            consoleBox.innerText = `⚠️ Mismatch! Hint: ${stageData.hint} (1 attempt left)`;
+            consoleBox.innerText = `⚠️ Mismatch! Hint: ${stageData.hint} (1 attempt remaining. Retry now!)`;
+            clearWorkspaceTrack();
         } else {
             interactionActiveLock = true;
-            consoleBox.innerText = "❌ Scene Failed! Reviewing correct script order.";
+            consoleBox.innerText = "❌ Attempt failed! Reviewing correct step order below...";
             displayCorrectionSolution(stageData, false);
 
             setTimeout(() => {
                 advancePlatformSequence();
-            }, 3800);
+            }, 4200);
         }
     }
 }
@@ -763,9 +823,8 @@ function advancePlatformSequence() {
         document.getElementById("gameViewPanel").classList.add("hidden");
         document.getElementById("evaluationReportCard").classList.remove("hidden");
         
-        triggerLocalAudioNode("audioClap");
         document.getElementById("finalPerformanceReportSummary").innerHTML = 
-            `Outstanding Coding Logic! You completed all 6 interactive story scenes.<br><br><strong>Final Score: ${systemAccumulatedScore} / 600 Logic Points</strong>`;
+            `Outstanding Coding Logic! You completed all 8 interactive story scenes.<br><br><strong>Final Score: ${systemAccumulatedScore} / 800 Logic Points</strong>`;
     }
 }
 

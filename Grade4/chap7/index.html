@@ -398,6 +398,59 @@ body.game-active .stage-preview {
 </div>
 
 <script>
+/* Web Audio Synthesizer for Meow & Drum Sound Effects */
+let audioCtx = null;
+
+function playSynthesizedMeow() {
+    try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        
+        const now = audioCtx.currentTime;
+        osc.frequency.setValueAtTime(400, now);
+        osc.frequency.exponentialRampToValueAtTime(750, now + 0.15);
+        osc.frequency.exponentialRampToValueAtTime(300, now + 0.5);
+        
+        gain.gain.setValueAtTime(0.01, now);
+        gain.gain.linearRampToValueAtTime(0.3, now + 0.1);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+        
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        osc.start(now);
+        osc.stop(now + 0.5);
+    } catch(e) {}
+}
+
+function playSynthesizedDrum() {
+    try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        
+        const now = audioCtx.currentTime;
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.exponentialRampToValueAtTime(0.01, now + 0.4);
+        
+        gain.gain.setValueAtTime(0.6, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+        
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        osc.start(now);
+        osc.stop(now + 0.4);
+    } catch(e) {}
+}
+
 /* 5-Second Delay Splash Screen */
 setTimeout(() => {
     const splashNode = document.getElementById("splashScreen");
@@ -477,6 +530,7 @@ const stageCampaignDatabase = {
         ],
         hint: "Start with 'When This Sprite Clicked'.",
         actionEffect: () => {
+            playSynthesizedMeow();
             const sprite = document.getElementById("catSpriteElement");
             sprite.innerText = "🦁";
             sprite.style.transform = "scale(1.3)";
@@ -574,6 +628,7 @@ const stageCampaignDatabase = {
         ],
         hint: "Event trigger 'When Stage Clicked' goes first.",
         actionEffect: () => {
+            playSynthesizedDrum();
             const sprite = document.getElementById("catSpriteElement");
             const bubble = document.getElementById("speechBubble");
             const stage = document.getElementById("stageCanvas");
@@ -641,7 +696,6 @@ function fireConfettiCelebration() {
     }
 }
 
-/* Boot simulator directly without playing any sounds */
 function launchSimulator() {
     document.getElementById("introView").classList.add("hidden");
     document.getElementById("gameViewPanel").classList.remove("hidden");
@@ -739,7 +793,6 @@ function clearWorkspaceTrack() {
     });
 }
 
-/* Renders all 4 step items in exact order */
 function displayCorrectionSolution(stageData, isCorrect) {
     const titleBox = document.getElementById("correctionHUDTitle");
     const solutionDock = document.getElementById("correctionSolutionDock");
@@ -800,14 +853,10 @@ function executeBlocksPipeline() {
         document.getElementById("scoreDisplayLabel").innerText = systemAccumulatedScore;
         consoleBox.innerText = "✅ Script Compiled! Rendering animation stage output...";
         
-        // Strictly trigger correct sound ONLY upon verified correct sequence submission
         triggerAudio("audioCorrect");
         fireConfettiCelebration();
         
-        // Output stage visual effect
         stageData.actionEffect();
-
-        // Render all 4 correct steps
         displayCorrectionSolution(stageData, true);
 
         setTimeout(() => {
@@ -818,7 +867,6 @@ function executeBlocksPipeline() {
         attemptsLeft--;
         document.getElementById("attemptsDisplay").innerText = attemptsLeft;
         
-        // Strictly trigger wrong sound on failure
         triggerAudio("audioWrong");
 
         if(attemptsLeft > 0) {

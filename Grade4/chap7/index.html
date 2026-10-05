@@ -411,7 +411,7 @@ setTimeout(() => {
     }
 }, 5000);
 
-/* 8 STORY SCENE MATRICES (Each scene contains a full 4-step sequence) */
+/* 8 STORY SCENE MATRICES */
 const stageCampaignDatabase = {
     1: {
         title: "Scene 1: Start Adventure",
@@ -630,7 +630,7 @@ function triggerAudio(elementId) {
         const audioNode = document.getElementById(elementId);
         if(audioNode) {
             audioNode.currentTime = 0;
-            audioNode.play().catch(err => console.log("Audio playback waiting for gesture."));
+            audioNode.play().catch(err => console.log("Audio playback blocked."));
         }
     } catch(e) {}
 }
@@ -641,8 +641,8 @@ function fireConfettiCelebration() {
     }
 }
 
+/* Boot simulator directly without playing any sounds */
 function launchSimulator() {
-    triggerAudio("audioCorrect");
     document.getElementById("introView").classList.add("hidden");
     document.getElementById("gameViewPanel").classList.remove("hidden");
     setupCurrentStageParameters();
@@ -739,7 +739,7 @@ function clearWorkspaceTrack() {
     });
 }
 
-/* Render all 4 step items in exact order */
+/* Renders all 4 step items in exact order */
 function displayCorrectionSolution(stageData, isCorrect) {
     const titleBox = document.getElementById("correctionHUDTitle");
     const solutionDock = document.getElementById("correctionSolutionDock");
@@ -800,11 +800,11 @@ function executeBlocksPipeline() {
         document.getElementById("scoreDisplayLabel").innerText = systemAccumulatedScore;
         consoleBox.innerText = "✅ Script Compiled! Rendering animation stage output...";
         
-        // Strictly play correct audio
+        // Strictly trigger correct sound ONLY upon verified correct sequence submission
         triggerAudio("audioCorrect");
         fireConfettiCelebration();
         
-        // Execute output stage visual effect
+        // Output stage visual effect
         stageData.actionEffect();
 
         // Render all 4 correct steps
@@ -818,7 +818,7 @@ function executeBlocksPipeline() {
         attemptsLeft--;
         document.getElementById("attemptsDisplay").innerText = attemptsLeft;
         
-        // Strictly play wrong audio on failure
+        // Strictly trigger wrong sound on failure
         triggerAudio("audioWrong");
 
         if(attemptsLeft > 0) {

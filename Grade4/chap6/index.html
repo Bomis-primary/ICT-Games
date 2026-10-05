@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Pivot Director's Cut - Timeline Lab</title>
 <style>
 :root {
@@ -11,6 +11,7 @@
     --studio-dark: #0f172a;
     --pivot-blue: #2563eb;
     --bg-canvas: #f8fafc;
+    --success: #16a34a;
 }
 
 * {
@@ -19,16 +20,20 @@
     box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     user-select: none;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
     background: #ffffff;
     min-height: 100vh;
+    min-height: -webkit-fill-available;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
     position: relative;
+    padding: 8px;
     transition: background 0.4s ease;
 }
 
@@ -41,17 +46,20 @@ body.active-studio {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background: #ffffff;
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.5s ease;
 }
+
 #splashScreen img {
     width: 240px;
-    max-width: 80%;
+    max-width: 75vw;
     animation: bounceFloating 2s infinite ease-in-out;
 }
 
@@ -61,70 +69,76 @@ body.active-studio {
 }
 
 .main-container {
-    width: 95vw;
+    width: 100%;
     max-width: 950px;
-    height: 88vh;
-    min-height: 620px;
+    height: 96vh;
+    max-height: 840px;
     z-index: 10;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 /* Introduction Main Menu Card */
 .panel-card {
     background: #ffffff;
-    padding: 40px;
-    border-radius: 28px;
+    padding: clamp(20px, 5vw, 36px);
+    border-radius: 24px;
     text-align: center;
     box-shadow: 0 25px 60px rgba(0,0,0,0.4);
     max-width: 620px;
     margin: 0 auto;
     border: 3px solid #e2e8f0;
+    width: 100%;
 }
 
 .panel-card h1 {
-    font-size: 2.4rem;
+    font-size: clamp(1.6rem, 5vw, 2.4rem);
     color: var(--pivot-blue);
-    margin-bottom: 12px;
+    margin-bottom: 10px;
 }
 
 .panel-card p {
     color: #475569;
-    font-size: 1.05rem;
-    line-height: 1.6;
-    margin-bottom: 25px;
+    font-size: clamp(0.88rem, 3vw, 1.05rem);
+    line-height: 1.5;
+    margin-bottom: 20px;
 }
 
 /* Game Interface Layout Grid */
 .game-grid {
-    display: grid;
-    grid-template-rows: auto auto 1fr auto;
+    display: flex;
+    flex-direction: column;
     height: 100%;
-    gap: 15px;
+    gap: 10px;
+    justify-content: space-between;
 }
 
 /* Pivot Timeline Filmstrip Bar Mockup */
 .timeline-filmstrip {
     background: #1e293b;
     border: 2px solid #334155;
-    border-radius: 14px;
-    padding: 10px;
+    border-radius: 12px;
+    padding: 8px 12px;
     display: flex;
-    gap: 10px;
+    gap: 8px;
     align-items: center;
     overflow-x: auto;
 }
 
 .timeline-label {
     color: #94a3b8;
-    font-size: 0.85rem;
+    font-size: clamp(0.72rem, 2.5vw, 0.85rem);
     font-weight: 700;
     text-transform: uppercase;
-    padding: 0 10px;
+    padding-right: 8px;
     border-right: 2px solid #334155;
+    white-space: nowrap;
 }
 
 .film-frame {
-    width: 65px;
-    height: 45px;
+    min-width: 48px;
+    height: 38px;
     background: #475569;
     border-radius: 6px;
     border: 2px dashed #64748b;
@@ -132,7 +146,7 @@ body.active-studio {
     justify-content: center;
     align-items: center;
     color: #94a3b8;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: bold;
     transition: all 0.3s ease;
 }
@@ -153,9 +167,17 @@ body.active-studio {
 /* Studio Workbench Area Split */
 .studio-workbench {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 12px;
+    flex-grow: 1;
     min-height: 0;
+}
+
+@media (max-width: 680px) {
+    .studio-workbench {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 180px;
+    }
 }
 
 .left-control-deck {
@@ -163,29 +185,30 @@ body.active-studio {
     flex-direction: column;
     justify-content: space-between;
     background: rgba(255, 255, 255, 0.95);
-    padding: 20px;
-    border-radius: 18px;
+    padding: 14px;
+    border-radius: 16px;
     border: 2px solid #e2e8f0;
+    overflow-y: auto;
 }
 
 .stunt-briefing h3 {
-    font-size: 1.3rem;
+    font-size: clamp(1rem, 3.5vw, 1.25rem);
     color: #0f172a;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
 }
 
 .tool-actions-box {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-top: 15px;
+    gap: 8px;
+    margin-top: 10px;
 }
 
 .action-row-btn {
     background: #f8fafc;
     border: 2px solid #cbd5e1;
-    padding: 14px;
-    border-radius: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
     text-align: left;
     font-weight: 600;
     color: #334155;
@@ -193,80 +216,93 @@ body.active-studio {
     transition: all 0.2s ease;
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 2px;
+    font-size: clamp(0.8rem, 2.6vw, 0.92rem);
 }
 
-.action-row-btn:hover {
-    border-color: var(--pivot-blue);
-    background: #f0fdf4;
-    transform: translateX(4px);
+.action-row-btn:active {
+    transform: scale(0.98);
 }
 
 .action-row-btn .tool-tag {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
     color: #64748b;
     font-weight: 700;
 }
 
+.action-row-btn.correct-flash {
+    background: #dcfce7 !important;
+    border-color: var(--success) !important;
+    color: #14532d !important;
+}
+
+.action-row-btn.wrong-flash {
+    background: #fee2e2 !important;
+    border-color: var(--pivot-red) !important;
+    color: #7f1d1d !important;
+}
+
 /* Stickman Visual Canvas Monitor */
 .preview-canvas {
     background: var(--bg-canvas);
-    border: 4px solid #475569;
-    border-radius: 18px;
+    border: 3px solid #475569;
+    border-radius: 16px;
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
     box-shadow: inset 0 0 30px rgba(0,0,0,0.05);
+    overflow: hidden;
 }
 
 /* Pure CSS Stickman Model with Dynamic Posing */
 .stickman-mesh {
     position: relative;
-    width: 120px;
-    height: 220px;
+    width: 100px;
+    height: 180px;
     transition: all 0.5s ease;
 }
 
 .pivot-head {
-    width: 44px;
-    height: 44px;
+    width: 36px;
+    height: 36px;
     border: 4px solid #1e293b;
     border-radius: 50%;
     position: absolute;
     top: 10px;
-    left: 38px;
+    left: 32px;
     transition: all 0.4s ease;
 }
 
 .pivot-spine {
     width: 4px;
-    height: 70px;
+    height: 60px;
     background: #1e293b;
     position: absolute;
-    top: 54px;
-    left: 58px;
+    top: 46px;
+    left: 48px;
+    transition: all 0.4s ease;
 }
 
-/* Handles Graphic Indicators overlaying the mesh */
+/* Handles Graphic Indicators */
 .handle {
     width: 10px;
     height: 10px;
     border-radius: 50%;
     position: absolute;
 }
-.handle-orange { background: var(--pivot-orange); top: 115px; left: 55px; }
-.handle-red-left { background: var(--pivot-red); top: 65px; left: 25px; transition: all 0.4s ease; }
-.handle-red-right { background: var(--pivot-red); top: 65px; left: 85px; transition: all 0.4s ease; }
+.handle-orange { background: var(--pivot-orange); top: 98px; left: 45px; }
+.handle-red-left { background: var(--pivot-red); top: 55px; left: 20px; transition: all 0.4s ease; }
+.handle-red-right { background: var(--pivot-red); top: 55px; left: 70px; transition: all 0.4s ease; }
 
 /* Dynamic Frame Pose Transformation Classes */
-.pose-wave .handle-red-right { top: 20px; left: 95px; }
+.pose-wave .handle-red-right { top: 15px; left: 80px; }
 .pose-wave .pivot-head { transform: rotate(15deg); }
 
-.pose-kick .handle-red-left { top: 140px; left: -5px; }
+.pose-kick .handle-red-left { top: 120px; left: -10px; }
 
-.pose-jump { transform: translateY(-40px); }
+.pose-jump { transform: translateY(-30px); }
 
 .pose-flip { animation: completeRoll 0.8s infinite linear; }
 @keyframes completeRoll {
@@ -274,33 +310,53 @@ body.active-studio {
     100% { transform: rotate(360deg); }
 }
 
+.pose-thick .pivot-spine { width: 10px; }
+.pose-thick .pivot-head { border-width: 8px; }
+
+.pose-dual { filter: drop-shadow(-35px 0px 0px #3b82f6); }
+
+.pose-bg { background-color: #e2e8f0; }
+
 .toast-tray {
-    background: rgba(15, 23, 42, 0.9);
+    background: rgba(15, 23, 42, 0.95);
     border: 1px solid #334155;
     color: #94a3b8;
-    padding: 12px;
-    border-radius: 12px;
+    padding: 8px 12px;
+    border-radius: 10px;
     text-align: center;
     font-weight: 600;
+    font-size: clamp(0.75rem, 2.8vw, 0.9rem);
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 .toast-tray.correct { border-color: #16a34a; color: #16a34a; }
 .toast-tray.wrong { border-color: #dc2626; color: #dc2626; }
+.toast-tray.warn { border-color: #d97706; color: #d97706; }
 
 .btn-action {
     background: linear-gradient(135deg, var(--pivot-blue), #1d4ed8);
     color: white;
     border: none;
-    padding: 12px 36px;
+    padding: 10px 28px;
     border-radius: 30px;
     font-weight: 700;
-    font-size: 1.05rem;
+    font-size: clamp(0.9rem, 3vw, 1.05rem);
     cursor: pointer;
-    box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
     transition: transform 0.2s;
 }
-.btn-action:hover { transform: translateY(-2px); }
+.btn-action:active { transform: scale(0.98); }
 
 .hidden { display: none !important; }
+
+.anim-shake { animation: errorShake 0.4s ease-in-out; }
+@keyframes errorShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
 </style>
 </head>
 <body>
@@ -312,13 +368,13 @@ body.active-studio {
 <div class="main-container hidden" id="appFrame">
 
     <div id="menuView" class="panel-card">
-        <img src="assets/innovine-logo.png" alt="Innovine" style="max-width: 140px; margin-bottom: 15px;" onerror="this.style.display='none'">
+        <img src="assets/innovine-logo.png" alt="Innovine" style="max-width: 120px; margin-bottom: 12px;" onerror="this.style.display='none'">
         <h1>Pivot Timeline Director</h1>
-        <h3 style="color:#64748b; margin-bottom: 20px;">Chapter 6: Frame-by-Frame Stunt Simulator</h3>
+        <h3 style="color:#64748b; margin-bottom: 16px; font-size: clamp(0.9rem, 3.2vw, 1.1rem);">Chapter 6: Frame-by-Frame Stunt Simulator (8 Levels)</h3>
         <p>
-            Welcome to the movie set! Sticky McFlapperson needs to perform stunt tricks. Instead of taking a quiz, your job is to choose the correct animation technique to **stamp new frames** onto the master timeline. Build the frames correctly to watch your full movie run at high speed!
+            Welcome to the movie set! Sticky McFlapperson needs to perform stunt tricks across 8 scenes. Choose the correct animation tools to **stamp new frames** onto the timeline deck!
         </p>
-        <button class="btn-action" onclick="startStudioDeck()">Open Timeline Board</button>
+        <button class="btn-action" onclick="startStudioDeck()">Open Timeline Board 🎬</button>
     </div>
 
     <div id="gameView" class="game-grid hidden">
@@ -329,14 +385,21 @@ body.active-studio {
             <div class="film-frame" id="frame-2">F2</div>
             <div class="film-frame" id="frame-3">F3</div>
             <div class="film-frame" id="frame-4">F4</div>
+            <div class="film-frame" id="frame-5">F5</div>
+            <div class="film-frame" id="frame-6">F6</div>
+            <div class="film-frame" id="frame-7">F7</div>
+            <div class="film-frame" id="frame-8">F8</div>
         </div>
 
         <div class="studio-workbench" id="workbenchContainer">
             <div class="left-control-deck">
                 <div class="stunt-briefing">
-                    <span style="color:var(--pivot-blue); font-weight:800; font-size:0.9rem; text-transform:uppercase;" id="stuntNumberLabel">Stunt Sequence 1</span>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                        <span style="color:var(--pivot-blue); font-weight:800; font-size:0.85rem; text-transform:uppercase;" id="stuntNumberLabel">Stunt Sequence 1</span>
+                        <span style="background:#0284c7; color:white; padding:2px 8px; border-radius:12px; font-weight:700; font-size:0.75rem;">Attempts: <span id="attemptsDisplay">2</span></span>
+                    </div>
                     <h3 id="stuntTitle">Stunt Briefing Title</h3>
-                    <p id="stuntDescription" style="color: #64748b; font-size: 0.95rem; line-height: 1.4;"></p>
+                    <p id="stuntDescription" style="color: #64748b; font-size: 0.88rem; line-height: 1.35;"></p>
                 </div>
 
                 <div class="tool-actions-box" id="actionsWrapper"></div>
@@ -353,27 +416,27 @@ body.active-studio {
             </div>
         </div>
 
-        <div class="toast-tray" id="consoleNotice">Select an animation command row to construct your frame track timeline matrix...</div>
+        <div class="toast-tray" id="consoleNotice">Select an animation command row to construct your frame track timeline...</div>
     </div>
 
     <div id="endView" class="panel-card hidden">
         <h1>🎬 Action! Roll Camera!</h1>
-        <p style="margin-top: 12px; font-size: 1.1rem; color: #475569;">
-            Your timeline setup values compiled seamlessly. Watch Sticky execute your customized movement coordinates live inside the editing deck below!
+        <p style="margin-top: 10px; font-size: 1rem; color: #475569;">
+            Your timeline setup compiled seamlessly! Watch Sticky execute your movement coordinates live inside the editing deck!
         </p>
         
-        <div class="preview-canvas" style="height:200px; margin:20px auto; max-width:300px; background:#fff; border:3px solid var(--pivot-blue);">
+        <div class="preview-canvas" style="height:170px; margin:15px auto; max-width:280px; background:#fff; border:3px solid var(--pivot-blue);">
             <div class="stickman-mesh pose-flip" style="transform: scale(0.85);">
                 <div class="pivot-head"></div>
                 <div class="pivot-spine"></div>
                 <div class="handle handle-orange"></div>
-                <div class="handle handle-red-left" style="top:30px; left:15px;"></div>
-                <div class="handle handle-red-right" style="top:30px; left:95px;"></div>
+                <div class="handle handle-red-left" style="top:25px; left:10px;"></div>
+                <div class="handle handle-red-right" style="top:25px; left:75px;"></div>
             </div>
         </div>
 
-        <h2 style="font-size: 2.2rem; color: #16a34a; margin-bottom: 20px;" id="finalScoreLabel">Production Score: 400</h2>
-        <button class="btn-action" onclick="resetStudioDeckLoop()">Animate Another Scene</button>
+        <h2 style="font-size: clamp(1.8rem, 5vw, 2.2rem); color: #16a34a; margin-bottom: 15px;" id="finalScoreLabel">Production Score: 800 Points</h2>
+        <button class="btn-action" onclick="resetStudioDeckLoop()">Animate Another Scene 🔄</button>
     </div>
 
 </div>
@@ -383,15 +446,17 @@ body.active-studio {
 <audio id="soundClap" src="assets/clap.mp3" preload="auto"></audio>
 
 <script>
-/* Required 5-Second Pure White Delay System Sequencer Framework */
+/* 5-Second Delay Splash Controller */
 setTimeout(() => {
     const splash = document.getElementById("splashScreen");
-    splash.style.opacity = "0";
-    setTimeout(() => {
-        splash.style.setProperty("display", "none", "important");
-        document.body.classList.add("active-studio");
-        document.getElementById("appFrame").classList.remove("hidden");
-    }, 500);
+    if (splash) {
+        splash.style.opacity = "0";
+        setTimeout(() => {
+            splash.style.setProperty("display", "none", "important");
+            document.body.classList.add("active-studio");
+            document.getElementById("appFrame").classList.remove("hidden");
+        }, 500);
+    }
 }, 5000);
 
 function playAudioTrack(id) {
@@ -399,17 +464,17 @@ function playAudioTrack(id) {
         const audio = document.getElementById(id);
         if (audio) {
             audio.currentTime = 0;
-            audio.play().catch(e => console.log("Audio contexts locked."));
+            audio.play().catch(e => console.log("Audio waiting for touch action."));
         }
     } catch(err) {}
 }
 
-/* Chapter 6 Pivot Timeline-Building Structural Datasets */
+/* 8 CHAPTER 6 PIVOT TIMELINE DATASETS */
 const stuntMatrix = [
     {
         label: "Stunt Sequence 1",
         title: "The High-Five Wave Pose",
-        desc: "Sticky wants to start the movie by raising his right hand up to wave at the camera lens frame. Choose the correct action tool:",
+        desc: "Sticky wants to start the movie by raising his right arm up to wave at the camera. Choose the correct action tool:",
         pose: "pose-wave",
         correctIndex: 0,
         options: [
@@ -417,51 +482,112 @@ const stuntMatrix = [
             { title: "Drag the Orange Origin Handle downwards", tag: "Origin Tool" },
             { title: "Click the background load option box", tag: "Background Master" }
         ],
-        explain: "Awesome move! Red handles rotate individual arm and leg segments around their hinge points."
+        explain: "Red handles rotate individual arm and leg segments around their joint hinges.",
+        hint: "Red joint handles rotate individual limb segments."
     },
     {
         label: "Stunt Sequence 2",
-        title: "The Flying Kung-Fu Kick",
-        desc: "Now, stamp a dynamic second frame into the deck. Sticky must extend his left leg forward to execute a karate mid-air strike.",
+        title: "The Flying Karate Kick",
+        desc: "Next frame! Sticky must extend his left leg forward to execute a karate mid-air strike.",
         pose: "pose-kick",
         correctIndex: 1,
         options: [
             { title: "Delete the active frame from the timeline entirely", tag: "Timeline Editor" },
             { title: "Rotate the left lower leg segment via its Red Handle dot", tag: "Pivot Joints Tool" },
-            { title: "Save the current project configuration immediately as a .piv file", tag: "File Saving Menu" }
+            { title: "Save the current project configuration immediately", tag: "File Saving Menu" }
         ],
-        explain: "Perfect adjustment! Modifying the leg joints segment creates a crisp action pose frame."
+        explain: "Modifying the leg joint segment creates a crisp action pose frame.",
+        hint: "Use the red joint handle on the leg segment to extend it."
     },
     {
         label: "Stunt Sequence 3",
-        title: "The Rocket Rocket Jump",
-        desc: "Next frame action! Sticky must leap completely into the upper atmosphere layer. Choose the correct method to slide his full body weight upwards together:",
+        title: "The Rocket Jump",
+        desc: "Sticky must leap completely into the air! Choose the correct method to slide his entire body upwards:",
         pose: "pose-jump",
         correctIndex: 2,
         options: [
             { title: "Twirl both red arm joint segments simultaneously", tag: "Joints Matrix" },
-            { title: "Add an extra graphic line layer using the layout pencil tool", tag: "Drawing Tool Options" },
+            { title: "Add an extra line layer using the layout pencil tool", tag: "Drawing Tool Options" },
             { title: "Pull the Orange Origin Handle vertically upwards", tag: "Origin Handle Tool" }
         ],
-        explain: "Superb execution! The single center orange origin handle moves the entire character mesh cleanly across your stage canvas workspace frame."
+        explain: "The orange origin handle moves the entire figure cleanly across the canvas.",
+        hint: "Orange handle controls the central position of the whole figure."
     },
     {
         label: "Stunt Sequence 4",
+        title: "Heavyweight Power Up",
+        desc: "Sticky wants to thicken his outline to appear stronger! How do you increase line thickness?",
+        pose: "pose-thick",
+        correctIndex: 1,
+        options: [
+            { title: "Click the Add Frame button 5 times", tag: "Timeline Editor" },
+            { title: "Adjust the Figure Thickness control in the left panel", tag: "Figure Controls" },
+            { title: "Change the project Frame Rate (FPS) slider", tag: "Animation Speed" }
+        ],
+        explain: "The Figure Thickness tool changes segment line width for the selected figure.",
+        hint: "Look for the Figure Thickness control in the figure options."
+    },
+    {
+        label: "Stunt Sequence 5",
+        title: "Summon Stunt Partner",
+        desc: "Sticky needs a stunt buddy on stage! How do you add another stick figure to the scene?",
+        pose: "pose-dual",
+        correctIndex: 0,
+        options: [
+            { title: "Click the 'Add Figure' button in the control panel", tag: "Figure Creation" },
+            { title: "Drag the orange handle off the screen frame", tag: "Origin Tool" },
+            { title: "Press the Play Animation button", tag: "Playback Bar" }
+        ],
+        explain: "Add Figure inserts another figure onto the active canvas stage.",
+        hint: "The 'Add Figure' button introduces new characters."
+    },
+    {
+        label: "Stunt Sequence 6",
+        title: "Set Movie Background",
+        desc: "Set the movie scene on a stage background! How do you import a background image?",
+        pose: "pose-bg",
+        correctIndex: 2,
+        options: [
+            { title: "Double-click on the stickman head circle", tag: "Figure Editor" },
+            { title: "Rotate the red arm handles in a circle", tag: "Joints Matrix" },
+            { title: "Go to File -> Load Background image", tag: "File Menu" }
+        ],
+        explain: "File -> Load Background imports images into your animation backdrop.",
+        hint: "Background images are loaded from the File menu."
+    },
+    {
+        label: "Stunt Sequence 7",
         title: "The Grand Finale Backflip",
-        desc: "Final frame sequence! To complete his performance, Sticky needs to loop into an infinite acrobatic rolling backflip motion pattern.",
+        desc: "To complete his performance, Sticky needs to perform an acrobatic backflip!",
         pose: "pose-flip",
         correctIndex: 0,
         options: [
-            { title: "Click 'Add Frame' multiple times while tweaking positional rotation values", tag: "Timeline Compilation" },
-            { title: "Close the workspace application window tracking screen layout", tag: "Session Manager" },
-            { title: "Invert the full workspace application background card upside down", tag: "Canvas Editor" }
+            { title: "Click 'Add Frame' after slight body rotation adjustments", tag: "Timeline Compilation" },
+            { title: "Close the workspace application window", tag: "Session Manager" },
+            { title: "Invert the entire monitor screen display", tag: "Canvas Editor" }
         ],
-        explain: "Magnificent director mastery! Adding consecutive frames with minor positional shifts makes animations appear fluid and high-quality!"
+        explain: "Adding consecutive frames with minor positional shifts makes motion fluid!",
+        hint: "Frame-by-frame animation requires capturing small movements."
+    },
+    {
+        label: "Stunt Sequence 8",
+        title: "Adjust Movie Playback Speed",
+        desc: "Final step! How do you make your finished animation play smoother and faster?",
+        pose: "pose-jump",
+        correctIndex: 1,
+        options: [
+            { title: "Delete all saved frames from the timeline", tag: "Timeline Editor" },
+            { title: "Increase the Frame Rate (FPS) slider control", tag: "Playback Settings" },
+            { title: "Change the stick figure line color to red", tag: "Color Palette" }
+        ],
+        explain: "Increasing FPS (Frames Per Second) speeds up playback and smooths movement!",
+        hint: "FPS slider controls the speed of playback."
     }
 ];
 
 let levelIndex = 0;
 let productionScore = 0;
+let attemptsLeft = 2;
 let panelBlocker = false;
 
 function startStudioDeck() {
@@ -471,8 +597,7 @@ function startStudioDeck() {
     levelIndex = 0;
     productionScore = 0;
     
-    // Clear old filmstrip stamped frames tracking arrays
-    for (let i = 1; i <= 4; i++) {
+    for (let i = 1; i <= 8; i++) {
         document.getElementById(`frame-${i}`).classList.remove("stamped");
     }
     
@@ -481,23 +606,25 @@ function startStudioDeck() {
 
 function loadStuntNode() {
     panelBlocker = false;
+    attemptsLeft = 2;
+
+    document.getElementById("attemptsDisplay").innerText = attemptsLeft;
     const currentStunt = stuntMatrix[levelIndex];
     
     document.getElementById("stuntNumberLabel").innerText = currentStunt.label;
     document.getElementById("stuntTitle").innerText = currentStunt.title;
     document.getElementById("stuntDescription").innerText = currentStunt.desc;
     
-    // Reset structural character pose rules dynamically
     const actor = document.getElementById("stickmanActor");
     actor.className = "stickman-mesh";
 
-    // Rebuild option button lists layout elements
     const wrapper = document.getElementById("actionsWrapper");
     wrapper.innerHTML = "";
     
     currentStunt.options.forEach((opt, idx) => {
         const btn = document.createElement("button");
         btn.className = "action-row-btn";
+        btn.id = `optBtn_${idx}`;
         btn.innerHTML = `<span class="tool-tag">${opt.tag}</span><span>${opt.title}</span>`;
         btn.onclick = () => registerDirectorChoice(idx);
         wrapper.appendChild(btn);
@@ -505,12 +632,11 @@ function loadStuntNode() {
 
     const noticeBox = document.getElementById("consoleNotice");
     noticeBox.className = "toast-tray";
-    noticeBox.innerText = "Construct consecutive frames to assemble your short film timeline sequence.";
+    noticeBox.innerText = "Construct consecutive frames to assemble your timeline sequence.";
 }
 
 function registerDirectorChoice(chosenIdx) {
     if (panelBlocker) return;
-    panelBlocker = true;
 
     const currentStunt = stuntMatrix[levelIndex];
     const noticeBox = document.getElementById("consoleNotice");
@@ -518,41 +644,60 @@ function registerDirectorChoice(chosenIdx) {
     const workbench = document.getElementById("workbenchContainer");
 
     if (chosenIdx === currentStunt.correctIndex) {
+        panelBlocker = true;
         productionScore += 100;
         playAudioTrack("soundCorrect");
         
-        // Apply interactive aesthetic transformations instantly onto the stick figure canvas mesh!
+        document.getElementById(`optBtn_${chosenIdx}`).classList.add("correct-flash");
         actor.classList.add(currentStunt.pose);
         
-        // Stamp and illuminate the corresponding timeline frame thumbnail indicator bubble
         const targetFrameDot = document.getElementById(`frame-${levelIndex + 1}`);
         if(targetFrameDot) targetFrameDot.classList.add("stamped");
         
         noticeBox.className = "toast-tray correct";
         noticeBox.innerHTML = `🌟 Frame Compiled: ${currentStunt.explain}`;
-    } else {
-        playAudioTrack("soundWrong");
-        workbench.classList.add("anim-shake");
-        noticeBox.className = "toast-tray wrong";
-        noticeBox.innerHTML = `⚠️ Frame Dropped! That action does not execute this movement type inside Pivot. Proceeding to next level scene configuration circuit.`;
-    }
 
-    setTimeout(() => {
-        workbench.classList.remove("anim-shake");
-        levelIndex++;
-        if (levelIndex < stuntMatrix.length) {
-            loadStuntNode();
+        setTimeout(nextStunt, 1500);
+    } else {
+        attemptsLeft--;
+        document.getElementById("attemptsDisplay").innerText = attemptsLeft;
+        playAudioTrack("soundWrong");
+
+        const btn = document.getElementById(`optBtn_${chosenIdx}`);
+        btn.classList.add("wrong-flash");
+        setTimeout(() => btn.classList.remove("wrong-flash"), 600);
+
+        workbench.classList.add("anim-shake");
+        setTimeout(() => workbench.classList.remove("anim-shake"), 400);
+
+        if (attemptsLeft > 0) {
+            noticeBox.className = "toast-tray warn";
+            noticeBox.innerHTML = `⚠️ Hint: ${currentStunt.hint} (1 attempt left)`;
         } else {
-            concludeStudioSession();
+            panelBlocker = true;
+            document.getElementById(`optBtn_${currentStunt.correctIndex}`).classList.add("correct-flash");
+            noticeBox.className = "toast-tray wrong";
+            noticeBox.innerHTML = `❌ Frame Dropped! Correct tool highlighted.`;
+
+            setTimeout(nextStunt, 1800);
         }
-    }, 3200);
+    }
+}
+
+function nextStunt() {
+    levelIndex++;
+    if (levelIndex < stuntMatrix.length) {
+        loadStuntNode();
+    } else {
+        concludeStudioSession();
+    }
 }
 
 function concludeStudioSession() {
     playAudioTrack("soundClap");
     document.getElementById("gameView").classList.add("hidden");
     document.getElementById("endView").classList.remove("hidden");
-    document.getElementById("finalScoreLabel").innerText = `Production Score: ${productionScore} Points`;
+    document.getElementById("finalScoreLabel").innerText = `Production Score: ${productionScore} / 800 Points`;
 }
 
 function resetStudioDeckLoop() {

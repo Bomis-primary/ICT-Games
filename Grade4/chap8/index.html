@@ -3,19 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Internet & Netiquette Simulation Hub</title>
+<title>Internet & Netiquette Interactive Lab - Grade 4</title>
 
 <style>
 :root {
-    --primary: #4c97ff;
-    --primary-dark: #1a66cc;
+    --primary: #3b82f6;
+    --primary-dark: #1d4ed8;
     --success: #10b981;
     --danger: #ef4444;
     --dark: #0f172a;
     --light: #f8fafc;
-    --panel-bg: rgba(255, 255, 255, 0.96);
-    --scratch-orange: #ffab19;
-    --scratch-purple: #9966ff;
+    --panel-bg: rgba(255, 255, 255, 0.98);
 }
 
 * {
@@ -27,47 +25,17 @@
 }
 
 body {
-    background: #ffffff;
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6, #93c5fd);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
+    overflow-x: hidden;
     position: relative;
-    transition: background 0.5s ease;
+    padding: 20px;
 }
 
-body.game-mode {
-    background: linear-gradient(135deg, #60a5fa, #3b82f6, #1e3a8a);
-}
-
-/* Cosmic Design Background Particles */
-.bg-particles {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    overflow: hidden;
-    z-index: 1;
-    pointer-events: none;
-    display: none;
-}
-body.game-mode .bg-particles { display: block; }
-
-.particle {
-    position: absolute;
-    background: rgba(255, 255, 255, 0.25);
-    border-radius: 50%;
-    animation: floatUp linear infinite;
-}
-@keyframes floatUp {
-    0% { transform: translateY(110vh) scale(0.5); opacity: 0; }
-    10% { opacity: 1; }
-    100% { transform: translateY(-20vh) scale(1.2); opacity: 0; }
-}
-
-/* Required 5-Second Pure White Splash Screen with requested Logo Layout */
+/* Splash Screen */
 #splash {
     position: fixed;
     top: 0;
@@ -80,438 +48,482 @@ body.game-mode .bg-particles { display: block; }
     justify-content: center;
     align-items: center;
     z-index: 9999;
+    transition: opacity 0.5s ease;
 }
-#splash img {
-    width: 280px;
-    max-width: 80%;
-    animation: pulse 2s infinite ease-in-out;
-}
-@keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.04); }
+#splash h1 {
+    font-size: 2.2rem;
+    color: #1e3a8a;
+    margin-top: 15px;
 }
 
-/* Interactive Board Setup */
 .container {
-    width: 95vw;
-    max-width: 1140px;
-    height: 85vh;
-    min-height: 580px;
+    width: 100%;
+    max-width: 1000px;
+    background: var(--panel-bg);
+    border-radius: 24px;
+    padding: 30px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
     z-index: 2;
 }
 
-.intro-card {
-    background: var(--panel-bg);
-    padding: 42px;
-    border-radius: 32px;
+.header {
     text-align: center;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    max-width: 620px;
-    margin: 0 auto;
-    border: 1px solid rgba(255,255,255,0.5);
-}
-.intro-card h1 span {
-    background: linear-gradient(135deg, var(--primary-dark), #1e3a8a);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: 800;
+    margin-bottom: 25px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 15px;
 }
 
-/* Live Studio Grid Layout */
-.studio-layout {
-    display: grid;
-    grid-template-columns: 350px 1fr;
-    gap: 24px;
-    height: 100%;
+.header h1 {
+    color: #1e3a8a;
+    font-size: 2rem;
 }
 
-/* Design Control Center Dashboard Panel */
-.control-panel {
-    background: var(--panel-bg);
-    border-radius: 24px;
-    padding: 24px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+.header p {
+    color: #64748b;
+    font-size: 1rem;
+    margin-top: 5px;
+}
+
+/* Tab Navigation */
+.nav-tabs {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-    overflow-y: auto;
-    border: 1px solid rgba(255,255,255,0.6);
-}
-.panel-section {
-    background: #f1f5f9;
-    padding: 16px;
-    border-radius: 16px;
-    border: 1px solid #e2e8f0;
-}
-.panel-section h3 {
-    font-size: 0.9rem;
-    color: #475569;
-    margin-bottom: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    gap: 10px;
+    margin-bottom: 25px;
+    justify-content: center;
 }
 
-/* Interactive Option Tools Grid */
-.option-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 8px;
-}
-.tool-btn {
-    background: #ffffff;
-    border: 2px solid #cbd5e1;
-    padding: 12px 14px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 0.85rem;
-    cursor: pointer;
-    text-align: left;
+.tab-btn {
+    padding: 12px 20px;
+    border: none;
+    background: #e2e8f0;
     color: #334155;
+    font-weight: 700;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* Card Sections */
+.activity-card {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.activity-title {
+    font-size: 1.2rem;
+    color: #0f172a;
+    margin-bottom: 15px;
     display: flex;
     align-items: center;
     gap: 10px;
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.tool-btn:hover {
+
+/* Controls & Form Elements */
+.form-group {
+    margin-bottom: 18px;
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 2px solid #cbd5e1;
+    font-size: 1rem;
+    background: white;
+    outline: none;
+}
+
+select:focus {
+    border-color: var(--primary);
+}
+
+.radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.radio-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 2px solid #cbd5e1;
+    cursor: pointer;
+    font-weight: 600;
+    color: #334155;
+    transition: all 0.2s;
+}
+
+.radio-option:hover {
     border-color: var(--primary);
     background: #eff6ff;
-    transform: translateY(-1px);
 }
-.tool-btn.active {
-    background: var(--primary);
+
+.radio-option input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary);
+}
+
+/* Action Buttons */
+.check-btn {
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
-    border-color: var(--primary-dark);
-    box-shadow: 0 4px 10px rgba(76, 151, 255, 0.25);
+    border: none;
+    padding: 12px 28px;
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    transition: transform 0.2s;
 }
 
-/* Virtual Display Hardware Shell Monitor Workspace */
-.display-workspace {
-    background: #1e293b;
-    border-radius: 28px;
-    border: 14px solid #475569;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+.check-btn:hover {
+    transform: translateY(-2px);
 }
 
-/* Real-Time Updating Netiquette Canvas */
-.virtual-desktop {
-    flex: 1;
-    position: relative;
-    background-color: #0f172a;
-    background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px);
-    background-size: 24px 24px;
-    transition: all 0.4s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+/* Interactive Sandbox Screen */
+.desktop-simulator {
+    background: #0f172a;
+    border-radius: 16px;
     padding: 20px;
+    color: white;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border: 4px solid #475569;
 }
 
-/* Cyber Safety Character Profile Node Component */
-.sprite-actor {
-    font-size: 5rem;
-    margin-bottom: 15px;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s;
+.avatar {
+    font-size: 4rem;
+    margin-bottom: 10px;
+    transition: transform 0.3s ease;
 }
 
-.speech-bubble {
+.bubble {
     background: white;
     color: #0f172a;
-    padding: 14px 20px;
-    border-radius: 16px;
+    padding: 12px 20px;
+    border-radius: 12px;
     font-weight: 700;
-    font-size: 1rem;
+    text-align: center;
     max-width: 80%;
-    text-align: center;
-    border: 3px solid var(--primary);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-    position: relative;
 }
 
-/* Interactive Live Warning Overlays */
-.alert-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 50;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    font-size: 2rem;
-    font-weight: 800;
-    animation: fadeIn 0.3s ease;
-    text-align: center;
-    padding: 30px;
-}
-.ss-block { background: rgba(239, 68, 68, 0.95); backdrop-filter: blur(8px); }
-.ss-shield { background: rgba(16, 185, 129, 0.95); backdrop-filter: blur(8px); }
-
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-/* Simulated Interactive OS Taskbar Layout */
-.virtual-taskbar {
-    height: 46px;
-    background: rgba(15, 23, 42, 0.9);
-    backdrop-filter: blur(12px);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 16px;
-    border-top: 1px solid rgba(255,255,255,0.12);
-}
-.start-btn {
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white;
-    padding: 6px 16px;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 800;
-}
-.taskbar-clock {
-    color: #f1f5f9;
-    font-size: 0.85rem;
+/* Feedback Overlay */
+.feedback-box {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 10px;
     font-weight: 700;
+    display: none;
+    text-align: center;
 }
 
-/* Global Action Command Mechanics Buttons */
-.action-btn {
-    padding: 14px 36px;
-    border: none;
-    border-radius: 35px;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 6px 18px rgba(76,151,255,0.35);
-    transition: all 0.2s ease;
+.feedback-box.correct {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #10b981;
+    display: block;
 }
-.action-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(76,151,255,0.45); }
+
+.feedback-box.wrong {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #ef4444;
+    display: block;
+}
 
 .hidden { display: none !important; }
 </style>
 </head>
 <body>
 
-<div class="bg-particles" id="matrixBg"></div>
-
+<!-- Splash Screen -->
 <div id="splash">
-    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none'">
+    <div style="font-size: 5rem;">🌐🛡️</div>
+    <h1>Netiquette & Safety Lab</h1>
+    <p style="color: #64748b; margin-top: 5px;">Grade 4 ICT Simulation</p>
 </div>
 
-<div class="container hidden" id="gameApp">
-
-    <div id="introView" class="intro-card">
-        <img src="assets/innovine-logo.png" alt="Logo" style="max-width:140px; margin-bottom:15px;" onerror="this.style.display='none'">
-        <h1><span>NETIQUETTE LAB STUDIO</span></h1>
-        <h2 style="color: #64748b; font-size: 1.1rem; margin-bottom: 24px;">Grade 4 Chapter 8 Simulation</h2>
-        <p style="text-align: left; line-height: 1.7; color: #475569; margin-bottom: 26px; background: #f1f5f9; padding: 20px; border-radius: 14px; font-size: 0.95rem;">
-            Welcome, Cyber Citizen! Today you are working inside a live Internet & Safety framework sandbox. Select rules inside the Netiquette tool core matrix to configure proper messaging standards, protect secure passwords, manage online privacy controls, and immediately deploy simulated defense algorithms!
-        </p>
-        <button class="action-btn" onclick="launchSimulator()">Boot Netiquette Module</button>
+<div class="container hidden" id="mainApp">
+    
+    <div class="header">
+        <h1>🌐 Internet & Netiquette Interactive Hub</h1>
+        <p>Grade 4 - Chapter 8 Learning & Practice Module</p>
     </div>
 
-    <div id="studioView" class="studio-layout hidden">
-        
-        <div class="control-panel">
-            <h2 style="font-size: 1.2rem; color: var(--dark); font-weight: 800; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">Safety Controls</h2>
-            
-            <div class="panel-section">
-                <h3>1. Online Messaging Rules</h3>
-                <div class="option-grid">
-                    <button class="tool-btn active" id="msg1" onclick="triggerNetiquetteAction('kind', 'msg1')"><span>💬</span> Say Kind Words</button>
-                    <button class="tool-btn" id="msg2" onclick="triggerNetiquetteAction('caps', 'msg2')"><span>🔠</span> Type in ALL CAPS</button>
-                </div>
-            </div>
-
-            <div class="panel-section">
-                <h3>2. Password Security Profiles</h3>
-                <div class="option-grid">
-                    <button class="tool-btn" id="pass1" onclick="triggerNetiquetteAction('secret', 'pass1')"><span>🔒</span> Keep Password Secret</button>
-                    <button class="tool-btn" id="pass2" onclick="triggerNetiquetteAction('share', 'pass2')"><span>📢</span> Share with Friends</button>
-                </div>
-            </div>
-
-            <div class="panel-section">
-                <h3>3. Stranger Interactions Loop</h3>
-                <div class="option-grid">
-                    <button class="tool-btn" id="st1" onclick="triggerNetiquetteAction('report', 'st1')"><span>🚫</span> Block and Report</button>
-                    <button class="tool-btn" id="st2" onclick="triggerNetiquetteAction('meet', 'st2')"><span>🤝</span> Meet Alone</button>
-                </div>
-            </div>
-
-            <button class="action-btn" style="margin-top:auto; font-size:0.95rem; padding:12px;" onclick="finishDesign()">Lock Security Layout</button>
-        </div>
-
-        <div class="display-workspace">
-            
-            <div class="virtual-desktop" id="desktopScreen">
-                
-                <div class="sprite-actor" id="avatarIcon">🤖</div>
-                <div class="speech-bubble" id="avatarBubble">Welcome to the safe internet network zone! Adjust the tools on the left to test netiquette rules.</div>
-
-                <div id="safetyOverlay" class="alert-overlay hidden" onclick="dismissOverlayAlert()">
-                    <span id="overlayContent"></span>
-                </div>
-
-            </div>
-
-            <div class="virtual-taskbar">
-                <div class="start-btn">⊞ CyberStart</div>
-                <div class="taskbar-clock" id="liveSysClock">12:00 PM</div>
-            </div>
-
-        </div>
-
+    <!-- Mode Selector Tabs -->
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('tab1')">1. Dropdown Netiquette Rules</button>
+        <button class="tab-btn" onclick="switchTab('tab2')">2. Radio Quiz Safety Choice</button>
+        <button class="tab-btn" onclick="switchTab('tab3')">3. Cyber Shield Simulator</button>
     </div>
 
-    <div id="finishView" class="intro-card hidden">
-        <h1 style="font-size:2.2rem; margin-bottom:15px;">🎉 Citizenship Lock Deployed!</h1>
-        <p style="font-size:1.1rem; color:#475569; line-height:1.7; margin-bottom:26px;">
-            Perfect! You successfully managed all netiquette profiles: establishing proper conversational safety, enforcing strong structural access protocols, and deploying alert response systems!
-        </p>
-        <div style="font-size:4.2rem; margin-bottom:24px; letter-spacing: 10px;">🛡️💻🌟</div>
-        <button class="action-btn" onclick="restartStudio()">Reboot Netiquette Studio</button>
+    <!-- TAB 1: Dropdown Selection Activity -->
+    <div id="tab1" class="tab-content">
+        <div class="activity-card">
+            <div class="activity-title">
+                <span>📋</span> Complete the Safety Rules (Select from Dropdown)
+            </div>
+            
+            <div class="form-group">
+                <label for="dd1">1. Information traveling over the internet must follow set rules called _________[cite: 212]:</label>
+                <select id="dd1">
+                    <option value="">-- Choose Option --</option>
+                    <option value="wrong">Web Browsers[cite: 213]</option>
+                    <option value="correct">Protocols[cite: 212]</option>
+                    <option value="wrong">Search Engines[cite: 213]</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="dd2">2. When communicating with people online, always typing in ALL CAPS looks like _________[cite: 216]:</label>
+                <select id="dd2">
+                    <option value="">-- Choose Option --</option>
+                    <option value="wrong">Whispering</option>
+                    <option value="correct">SHOUTING[cite: 216]</option>
+                    <option value="wrong">Singing</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="dd3">3. Software used to view web pages like Google Chrome or Mozilla Firefox is called a _________[cite: 213]:</label>
+                <select id="dd3">
+                    <option value="">-- Choose Option --</option>
+                    <option value="correct">Web Browser[cite: 213]</option>
+                    <option value="wrong">Modem[cite: 213]</option>
+                    <option value="wrong">Protocol[cite: 212]</option>
+                </select>
+            </div>
+
+            <button class="check-btn" onclick="checkDropdowns()">Verify Choices</button>
+            <div id="ddFeedback" class="feedback-box"></div>
+        </div>
+    </div>
+
+    <!-- TAB 2: Radio Button Safety Quiz -->
+    <div id="tab2" class="tab-content hidden">
+        <div class="activity-card">
+            <div class="activity-title">
+                <span>🛡️</span> Cyber Safety Decision Activity
+            </div>
+
+            <div class="form-group">
+                <label>Scenario 1: An unknown online account messages asking for your home address and school name. What do you do?</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="q1" value="wrong"> Share it immediately so you can make new friends.
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="q1" value="correct"> Do NOT give personal information and inform your parents/teachers[cite: 214].
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="q1" value="wrong"> Send a picture of your house instead.
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Scenario 2: A stranger asks to meet you in person somewhere outside[cite: 214].</label>
+                <div class="radio-group">
+                    <label class="radio-option">
+                        <input type="radio" name="q2" value="wrong"> Go meet them alone after school.
+                    </label>
+                    <label class="radio-option">
+                        <input type="radio" name="q2" value="correct"> Never agree to meet someone met online without checking with parents[cite: 214].
+                    </label>
+                </div>
+            </div>
+
+            <button class="check-btn" onclick="checkRadioQuiz()">Submit Safety Decisions</button>
+            <div id="radioFeedback" class="feedback-box"></div>
+        </div>
+    </div>
+
+    <!-- TAB 3: Interactive Cyber Shield Simulator -->
+    <div id="tab3" class="tab-content hidden">
+        <div class="activity-card">
+            <div class="activity-title">
+                <span>🎮</span> Live Netiquette Sandbox Test
+            </div>
+            <p style="color: #64748b; margin-bottom: 15px;">Test how your decisions affect your avatar's network environment in real-time!</p>
+            
+            <div class="form-group">
+                <label for="simAction">Choose an Action to Execute:</label>
+                <select id="simAction" onchange="runSimulation()">
+                    <option value="kind">Say Kind Words to Classmates online 😊[cite: 216]</option>
+                    <option value="pass">Share your password with online friends 🚨[cite: 214]</option>
+                    <option value="report">Block & Report uncomfortable messages 🚫[cite: 214]</option>
+                    <option value="caps">TYPE ENTIRE MESSAGE IN ALL CAPS 📢[cite: 216]</option>
+                </select>
+            </div>
+
+            <div class="desktop-simulator" id="simDesktop">
+                <div class="avatar" id="simAvatar">🤖</div>
+                <div class="bubble" id="simBubble">Select an action above to run simulation test!</div>
+            </div>
+        </div>
     </div>
 
 </div>
-
-<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
-<audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
 
 <script>
-/* Aesthetic Background Float Particle Generator Engine */
-try {
-    const bg = document.getElementById("matrixBg");
-    for(let i=0; i<25; i++) {
-        let p = document.createElement("div");
-        p.classList.add("particle");
-        p.style.left = Math.random()*100 + "%";
-        p.style.top = Math.random()*100 + "%";
-        p.style.animationDuration = (Math.random()*6+8) + "s";
-        p.style.animationDelay = Math.random()*3 + "s";
-        p.style.width = (Math.random()*6+4) + "px";
-        p.style.height = p.style.width;
-        bg.appendChild(p);
-    }
-} catch(e){}
-
-/* Automatic 5-Second Pure White Screen Transition Driver */
+/* 5-Second Splash Screen Driver */
 setTimeout(() => {
-    document.getElementById("splash").style.setProperty("display", "none", "important");
-    document.body.classList.add("game-mode");
-    document.getElementById("gameApp").classList.remove("hidden");
-    updateClock();
-    setInterval(updateClock, 60000);
+    const splash = document.getElementById("splash");
+    splash.style.opacity = "0";
+    setTimeout(() => {
+        splash.style.display = "none";
+        document.getElementById("mainApp").classList.remove("hidden");
+    }, 500);
 }, 5000);
 
-/* Custom System Clock Simulation Tool */
-function updateClock() {
-    const now = new Date();
-    let hours = now.getHours();
-    let minutes = now.getMinutes();
-    const ampm = hours >= 12 ? 'PM' : 'AM';
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    minutes = minutes < 10 ? '0' + minutes : minutes;
-    document.getElementById("liveSysClock").innerText = `${hours}:${minutes} ${ampm}`;
-}
+/* Sound Effects Engine (Web Audio API Synthesizer) */
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-/* Bulletproof Intercept Asynchronous Audio Processing Layer */
-function playAudioSafely(id) {
-    try {
-        const audio = document.getElementById(id);
-        if (audio) {
-            audio.currentTime = 0;
-            audio.play().catch(err => {
-                console.log("Browser protection engine bypass active for audio element.");
-            });
-        }
-    } catch(e) {}
-}
+function playSound(type) {
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
 
-/* Game Core Module Operations Mapping Engine */
-function launchSimulator() {
-    playAudioSafely("correctSound");
-    document.getElementById("introView").classList.add("hidden");
-    document.getElementById("studioView").classList.remove("hidden");
-}
-
-function triggerNetiquetteAction(actionKey, btnId) {
-    const avatar = document.getElementById("avatarIcon");
-    const bubble = document.getElementById("avatarBubble");
-    const overlay = document.getElementById("safetyOverlay");
-    const overlayContent = document.getElementById("overlayContent");
-
-    // Manage clear selection array mappings
-    const allButtons = ['msg1', 'msg2', 'pass1', 'pass2', 'st1', 'st2'];
-    allButtons.forEach(id => document.getElementById(id).classList.remove("active"));
-    document.getElementById(btnId).classList.add("active");
-
-    switch(actionKey) {
-        case 'kind':
-            playAudioSafely("correctSound");
-            avatar.style.transform = "scale(1.2) rotate(5deg)";
-            bubble.innerText = "Be Kind Online! Politeness builds safe and supportive digital spaces. 😊";
-            break;
-        case 'caps':
-            playAudioSafely("wrongSound");
-            avatar.style.transform = "scale(0.9)";
-            bubble.innerText = "WAIT! TYPING IN ALL CAPS LOOKS LIKE SHOUTING ONLINE! 📢 Let's type carefully.";
-            break;
-        case 'secret':
-            playAudioSafely("correctSound");
-            overlay.className = "alert-overlay ss-shield";
-            overlayContent.innerHTML = "🔒 PASSWORD SHIELD ACTIVATED!<br><span style='font-size:1.2rem; font-weight:500;'>Keeping passwords secure protects your online personal data.</span>";
-            overlay.classList.remove("hidden");
-            break;
-        case 'share':
-            playAudioSafely("wrongSound");
-            overlay.className = "alert-overlay ss-block";
-            overlayContent.innerHTML = "🚨 SECURITY WARNING!<br><span style='font-size:1.2rem; font-weight:500;'>Never share passwords with friends. Keep profiles private!</span>";
-            overlay.classList.remove("hidden");
-            break;
-        case 'report':
-            playAudioSafely("correctSound");
-            overlay.className = "alert-overlay ss-shield";
-            overlayContent.innerHTML = "🚫 DEFENSE ENGINE OPERATIONAL!<br><span style='font-size:1.2rem; font-weight:500;'>Smart move! Always tell a teacher or parent immediately if strangers contact you.</span>";
-            overlay.classList.remove("hidden");
-            break;
-        case 'meet':
-            playAudioSafely("wrongSound");
-            overlay.className = "alert-overlay ss-block";
-            overlayContent.innerHTML = "❌ DANGEROUS DISCOVERY!<br><span style='font-size:1.2rem; font-weight:500;'>Critical Cyber Risk. Never agree to meet a stranger alone online.</span>";
-            overlay.classList.remove("hidden");
-            break;
+    if (type === 'correct') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+        osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.5);
+    } else if (type === 'wrong') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
+        osc.frequency.setValueAtTime(174.61, audioCtx.currentTime + 0.15); // F3
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.4);
     }
 }
 
-function dismissOverlayAlert() {
-    playAudioSafely("wrongSound"); // Plays specialized dismiss click frequency sound
-    document.getElementById("safetyOverlay").classList.add("hidden");
-    document.getElementById("avatarIcon").style.transform = "none";
+/* Tab Navigation Functionality */
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById(tabId).classList.remove('hidden');
+    event.currentTarget.classList.add('active');
 }
 
-function finishDesign() {
-    playAudioSafely("clapSound");
-    document.getElementById("studioView").classList.add("hidden");
-    document.getElementById("finishView").classList.remove("hidden");
+/* Activity 1: Dropdown Checker */
+function checkDropdowns() {
+    const v1 = document.getElementById("dd1").value;
+    const v2 = document.getElementById("dd2").value;
+    const v3 = document.getElementById("dd3").value;
+    const fb = document.getElementById("ddFeedback");
+
+    if (v1 === 'correct' && v2 === 'correct' && v3 === 'correct') {
+        playSound('correct');
+        fb.className = "feedback-box correct";
+        fb.innerText = "🎉 Excellent! All protocol and browser rules selected correctly!";
+    } else {
+        playSound('wrong');
+        fb.className = "feedback-box wrong";
+        fb.innerText = "❌ Some answers are incorrect or incomplete. Please review your choices!";
+    }
 }
 
-function restartStudio() {
-    playAudioSafely("correctSound");
-    document.getElementById("finishView").classList.add("hidden");
-    document.getElementById("studioView").classList.remove("hidden");
-    triggerNetiquetteAction('kind', 'msg1');
-    dismissOverlayAlert();
+/* Activity 2: Radio Quiz Checker */
+function checkRadioQuiz() {
+    const q1 = document.querySelector('input[name="q1"]:checked');
+    const q2 = document.querySelector('input[name="q2"]:checked');
+    const fb = document.getElementById("radioFeedback");
+
+    if (!q1 || !q2) {
+        playSound('wrong');
+        fb.className = "feedback-box wrong";
+        fb.innerText = "⚠️️ Please answer all scenario questions before submitting.";
+        return;
+    }
+
+    if (q1.value === 'correct' && q2.value === 'correct') {
+        playSound('correct');
+        fb.className = "feedback-box correct";
+        fb.innerText = "🌟 Great job! You know how to keep your personal information completely safe online!";
+    } else {
+        playSound('wrong');
+        fb.className = "feedback-box wrong";
+        fb.innerText = "🚨 Cyber Risk Warning! Never share personal information or meet online strangers!";
+    }
+}
+
+/* Activity 3: Interactive Simulation Driver */
+function runSimulation() {
+    const action = document.getElementById("simAction").value;
+    const avatar = document.getElementById("simAvatar");
+    const bubble = document.getElementById("simBubble");
+    const desktop = document.getElementById("simDesktop");
+
+    switch(action) {
+        case 'kind':
+            playSound('correct');
+            avatar.innerText = "😊";
+            avatar.style.transform = "scale(1.2)";
+            bubble.innerText = "Politeness builds a safe and friendly community!";
+            desktop.style.borderColor = "#10b981";
+            break;
+        case 'pass':
+            playSound('wrong');
+            avatar.innerText = "🚨";
+            avatar.style.transform = "scale(0.9)";
+            bubble.innerText = "WARNING! Never share passwords with anyone! Keep accounts secure.";
+            desktop.style.borderColor = "#ef4444";
+            break;
+        case 'report':
+            playSound('correct');
+            avatar.innerText = "🛡️";
+            avatar.style.transform = "scale(1.2)";
+            bubble.innerText = "Defense Active! Immediately tell a teacher or parent if uncomfortable.";
+            desktop.style.borderColor = "#10b981";
+            break;
+        case 'caps':
+            playSound('wrong');
+            avatar.innerText = "📢";
+            avatar.style.transform = "scale(0.9)";
+            bubble.innerText = "WAIT! Typing in ALL CAPS looks like SHOUTING online!";
+            desktop.style.borderColor = "#f59e0b";
+            break;
+    }
 }
 </script>
 </body>

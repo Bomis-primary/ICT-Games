@@ -25,7 +25,6 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-/* Bright Animated Vibrant Background */
 body {
     background: linear-gradient(135deg, #2563eb 0%, #06b6d4 50%, #3b82f6 100%);
     min-height: 100vh;
@@ -107,7 +106,6 @@ body::before {
     font-size: clamp(1.3rem, 4vw, 1.8rem);
 }
 
-/* Score Header Badge */
 .score-badge {
     display: flex;
     justify-content: space-between;
@@ -122,7 +120,6 @@ body::before {
     font-size: clamp(0.85rem, 2.5vw, 1rem);
 }
 
-/* Navigation Tabs */
 .nav-tabs {
     display: flex;
     gap: 8px;
@@ -153,7 +150,6 @@ body::before {
     box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
 }
 
-/* GAME 1: MAZE RUNNER STYLES */
 .maze-container {
     position: relative;
     width: 100%;
@@ -199,7 +195,6 @@ canvas {
 }
 .dbtn:active { background: #1d4ed8; transform: scale(0.95); }
 
-/* GAME 2: DRAG AND DROP STYLES */
 .drag-stage {
     display: flex;
     flex-direction: column;
@@ -251,7 +246,6 @@ canvas {
     margin-bottom: 8px;
 }
 
-/* GAME 3: BOSS BATTLE STYLES */
 .boss-card {
     background: #eff6ff;
     border: 2px solid #3b82f6;
@@ -308,7 +302,6 @@ canvas {
 
 .action-btn:active { background: #dbeafe; }
 
-/* GAME 4: MATCH CARDS STYLES (Fixed Orientation) */
 .memory-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -334,7 +327,6 @@ canvas {
     line-height: 1.2;
 }
 
-/* Flipped State with Right-Side Up Text */
 .card-flip.flipped {
     background: #2563eb;
     color: #ffffff !important;
@@ -347,7 +339,6 @@ canvas {
     color: #ffffff !important;
 }
 
-/* Common UI */
 .btn-main {
     width: 100%;
     background: linear-gradient(135deg, var(--primary), #1d4ed8);
@@ -380,16 +371,12 @@ canvas {
 </head>
 <body>
 
-<!-- Audio Assets -->
-<audio id="audioCorrect" src="assets/correct.mp3" preload="auto"></audio>
-<audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
-
 <!-- Splash Screen -->
-<div id="splash">
+<div id="splash" onclick="startGameHub()">
     <div style="font-size: 4rem;">⚡🌐🛡️</div>
     <h1>Cyber Navigator</h1>
     <p style="color: #64748b; margin-top: 5px; font-weight: 600;">Grade 4 Chapter 8 Arcade Lab</p>
-    <button class="btn-main" style="width: 180px; margin-top: 20px;" onclick="startGameHub()">PLAY NOW 🚀</button>
+    <button class="btn-main" id="playBtn" style="width: 180px; margin-top: 20px;">PLAY NOW 🚀</button>
 </div>
 
 <div class="container hidden" id="mainApp">
@@ -485,22 +472,23 @@ canvas {
 </div>
 
 <script>
-/* Audio Asset Controller with Web Audio Synthesizer Fallback */
 let audioCtx = null;
+let gameStarted = false;
+
+function startGameHub() {
+    if (gameStarted) return;
+    gameStarted = true;
+
+    const splash = document.getElementById("splash");
+    splash.style.opacity = "0";
+    setTimeout(() => {
+        splash.style.display = "none";
+        document.getElementById("mainApp").classList.remove("hidden");
+        initMazeGame();
+    }, 300);
+}
 
 function playSoundAsset(isCorrect) {
-    const audioEl = isCorrect ? document.getElementById("audioCorrect") : document.getElementById("audioWrong");
-    
-    if (audioEl) {
-        audioEl.currentTime = 0;
-        let promise = audioEl.play();
-        if (promise !== undefined) {
-            promise.catch(() => {
-                playSynthSound(isCorrect ? 'correct' : 'wrong');
-            });
-            return;
-        }
-    }
     playSynthSound(isCorrect ? 'correct' : 'wrong');
 }
 
@@ -508,3 +496,229 @@ function playSynthSound(type) {
     try {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (audioCtx.state === 'suspended') audioCtx.resume();
+        
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (type === 'correct') {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+            osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.4);
+        } else {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(140, audioCtx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        }
+    } catch(e){}
+}
+
+let score = 0;
+function addScore(pts) {
+    score += pts;
+    document.getElementById("totalScore").innerText = score;
+}
+
+function switchGame(tabId, btn) {
+    document.querySelectorAll('.game-tab').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById(tabId).classList.remove('hidden');
+    if (btn) btn.classList.add('active');
+
+    if(tabId === 'g1') {
+        document.getElementById("levelBadge").innerText = "Game 1: Network Maze";
+        initMazeGame();
+    } else if(tabId === 'g2') {
+        document.getElementById("levelBadge").innerText = "Game 2: Web Sorter";
+        initDragDrop();
+    } else if(tabId === 'g3') {
+        document.getElementById("levelBadge").innerText = "Game 3: Troll Battle";
+        initBossBattle();
+    }
+}
+
+function switchTabMatch(tabId, btn) {
+    switchGame(tabId, btn);
+    document.getElementById("levelBadge").innerText = "Game 4: Cyber Match";
+    initMatchGame();
+}
+
+/* GAME 1: MAZE ENGINE */
+const mazeGrid = [
+    [0, 0, 1, 0, 0],
+    [1, 0, 1, 0, 1],
+    [0, 0, 0, 0, 0],
+    [0, 1, 1, 1, 0],
+    [0, 0, 0, 1, 2]
+];
+let player = { x: 0, y: 0 };
+
+function initMazeGame() {
+    player = { x: 0, y: 0 };
+    drawMaze();
+}
+
+function drawMaze() {
+    const canvas = document.getElementById("mazeCanvas");
+    if(!canvas) return;
+    const ctx = canvas.getContext("2d");
+    const size = 60;
+    ctx.clearRect(0, 0, 300, 300);
+
+    for(let r = 0; r < 5; r++) {
+        for(let c = 0; c < 5; c++) {
+            if(mazeGrid[r][c] === 1) {
+                ctx.fillStyle = "#fee2e2";
+                ctx.fillRect(c*size, r*size, size-2, size-2);
+                ctx.fillStyle = "#ef4444";
+                ctx.font = "22px Segoe UI";
+                ctx.fillText("👾", c*size+18, r*size+38);
+            } else if(mazeGrid[r][c] === 2) {
+                ctx.fillStyle = "#d1fae5";
+                ctx.fillRect(c*size, r*size, size-2, size-2);
+                ctx.fillStyle = "#10b981";
+                ctx.font = "22px Segoe UI";
+                ctx.fillText("🏁", c*size+18, r*size+38);
+            } else {
+                ctx.fillStyle = "#f1f5f9";
+                ctx.fillRect(c*size, r*size, size-2, size-2);
+            }
+        }
+    }
+
+    ctx.fillStyle = "#f59e0b";
+    ctx.beginPath();
+    ctx.arc(player.x*size + 30, player.y*size + 30, 18, 0, Math.PI*2);
+    ctx.fill();
+}
+
+function movePlayer(dx, dy) {
+    let nx = player.x + dx;
+    let ny = player.y + dy;
+
+    if(nx >= 0 && nx < 5 && ny >= 0 && ny < 5) {
+        if(mazeGrid[ny][nx] !== 1) {
+            player.x = nx;
+            player.y = ny;
+            drawMaze();
+
+            if(mazeGrid[ny][nx] === 2) {
+                playSoundAsset(true);
+                addScore(40);
+                showG1Feedback("🎉 Maze Solved! Data Packet arrived at destination safely!", true);
+            }
+        } else {
+            playSoundAsset(false);
+            showG1Feedback("👾 Watch out! Malware blocked your packet path!", false);
+        }
+    }
+}
+
+function showG1Feedback(msg, isCorrect) {
+    const fb = document.getElementById("g1Feedback");
+    fb.className = isCorrect ? "feedback-msg correct" : "feedback-msg wrong";
+    fb.innerText = msg;
+}
+
+/* GAME 2: WEB SORTER ENGINE */
+function initDragDrop() {
+    const draggables = document.querySelectorAll('.draggable-item');
+    const dropZones = document.querySelectorAll('.drop-zone');
+
+    draggables.forEach(item => {
+        item.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', item.id);
+        });
+    });
+
+    dropZones.forEach(zone => {
+        zone.addEventListener('dragover', (e) => e.preventDefault());
+        zone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const itemId = e.dataTransfer.getData('text/plain');
+            const draggedEl = document.getElementById(itemId);
+            if(draggedEl) zone.appendChild(draggedEl);
+        });
+    });
+}
+
+function checkDragDrop() {
+    const zones = document.querySelectorAll('.drop-zone');
+    let correctCount = 0;
+
+    zones.forEach(zone => {
+        const targetCategory = zone.getAttribute('data-target');
+        const items = zone.querySelectorAll('.draggable-item');
+        items.forEach(item => {
+            if(item.getAttribute('data-cat') === targetCategory) correctCount++;
+        });
+    });
+
+    const fb = document.getElementById("g2Feedback");
+    if(correctCount === 5) {
+        playSoundAsset(true);
+        addScore(50);
+        fb.className = "feedback-msg correct";
+        fb.innerText = "🌟 Great job! All Web Browsers, Search Engines, and URLs are perfectly sorted!";
+    } else {
+        playSoundAsset(false);
+        fb.className = "feedback-msg wrong";
+        fb.innerText = "❌ Some items are in the wrong box. Review your categories and try again!";
+    }
+}
+
+/* GAME 3: BOSS BATTLE ENGINE */
+const bossQuestions = [
+    {
+        quote: '"I am typing my entire email in ALL CAPS to you!"',
+        options: [
+            { text: "Remind them typing ALL CAPS looks like SHOUTING online.", correct: true },
+            { text: "Shout back in ALL CAPS too.", correct: false }
+        ]
+    },
+    {
+        quote: '"Give me your game password so I can give you free coins!"',
+        options: [
+            { text: "Share your password right away.", correct: false },
+            { text: "Refuse! Never share passwords with anyone online.", correct: true }
+        ]
+    }
+];
+
+let bossStep = 0;
+let bossHP = 100;
+
+function initBossBattle() {
+    bossStep = 0;
+    bossHP = 100;
+    document.getElementById("hpBar").style.width = "100%";
+    loadBossQuestion();
+}
+
+function loadBossQuestion() {
+    if(bossStep >= bossQuestions.length) {
+        document.getElementById("bossTitle").innerText = "🏆 Cyber Troll Defeated!";
+        document.getElementById("bossQuote").innerText = "You have mastered Netiquette and Cyber Safety!";
+        document.getElementById("bossOptions").innerHTML = "";
+        playSoundAsset(true);
+        addScore(50);
+        return;
+    }
+
+    const current = bossQuestions[bossStep];
+    document.getElementById("bossQuote").innerText = current.quote;
+    const container = document.getElementById("bossOptions");
+    container.innerHTML = "";
+
+    current.options.forEach

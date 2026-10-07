@@ -36,49 +36,30 @@ body {
     position: relative;
 }
 
-body::before {
-    content: "";
-    position: absolute;
-    width: 200%;
-    height: 200%;
-    background-image: 
-        linear-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.2) 1px, transparent 1px);
-    background-size: 30px 30px;
-    transform: perspective(500px) rotateX(60deg);
-    animation: gridMove 12s linear infinite;
-    z-index: 0;
-}
-
-@keyframes gridMove {
-    0% { transform: perspective(500px) rotateX(45deg) translateY(0); }
-    100% { transform: perspective(500px) rotateX(45deg) translateY(30px); }
-}
-
-/* Splash Screen */
+/* Splash Overlay */
 #splash {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background: #ffffff;
     color: #1e3a8a;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
-    transition: opacity 0.5s ease;
+    z-index: 99999;
+    transition: opacity 0.4s ease, visibility 0.4s ease;
     padding: 20px;
     text-align: center;
+    cursor: pointer;
 }
 
 #splash h1 {
     font-size: clamp(2rem, 7vw, 3rem);
     color: #1d4ed8;
     margin-top: 15px;
-    text-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
 }
 
 .container {
@@ -89,7 +70,6 @@ body::before {
     border-radius: 20px;
     padding: clamp(14px, 3.5vw, 24px);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-    backdrop-filter: blur(12px);
     z-index: 2;
     color: #0f172a;
 }
@@ -168,7 +148,6 @@ canvas {
     background: #ffffff;
     max-width: 100%;
     border-radius: 12px;
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
 }
 
 .dpad {
@@ -191,9 +170,7 @@ canvas {
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
 }
-.dbtn:active { background: #1d4ed8; transform: scale(0.95); }
 
 .drag-stage {
     display: flex;
@@ -221,8 +198,6 @@ canvas {
     font-weight: 700;
     cursor: grab;
     font-size: 0.85rem;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    touch-action: none;
 }
 
 .drop-zones {
@@ -255,15 +230,7 @@ canvas {
     text-align: center;
 }
 
-.boss-avatar {
-    font-size: 3.8rem;
-    animation: pulse 1.5s infinite alternate;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    100% { transform: scale(1.1); }
-}
+.boss-avatar { font-size: 3.8rem; }
 
 .boss-hp {
     width: 100%;
@@ -300,8 +267,6 @@ canvas {
     text-align: left;
 }
 
-.action-btn:active { background: #dbeafe; }
-
 .memory-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -323,19 +288,15 @@ canvas {
     cursor: pointer;
     padding: 6px;
     color: transparent;
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
-    line-height: 1.2;
 }
 
 .card-flip.flipped {
     background: #2563eb;
     color: #ffffff !important;
-    border-color: #1d4ed8;
 }
 
 .card-flip.matched {
     background: #10b981;
-    border-color: #059669;
     color: #ffffff !important;
 }
 
@@ -350,7 +311,6 @@ canvas {
     border-radius: 10px;
     cursor: pointer;
     margin-top: 10px;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
 .feedback-msg {
@@ -372,14 +332,14 @@ canvas {
 <body>
 
 <!-- Splash Screen -->
-<div id="splash" onclick="startGameHub()">
+<div id="splash">
     <div style="font-size: 4rem;">⚡🌐🛡️</div>
     <h1>Cyber Navigator</h1>
     <p style="color: #64748b; margin-top: 5px; font-weight: 600;">Grade 4 Chapter 8 Arcade Lab</p>
-    <button class="btn-main" id="playBtn" style="width: 180px; margin-top: 20px;">PLAY NOW 🚀</button>
+    <button class="btn-main" id="playNowBtn" style="width: 180px; margin-top: 20px;">PLAY NOW 🚀</button>
 </div>
 
-<div class="container hidden" id="mainApp">
+<div class="container" id="mainApp">
     
     <div class="header">
         <h1>🎮 Arcade Lab</h1>
@@ -412,14 +372,14 @@ canvas {
                 <button class="dbtn" onclick="movePlayer(1, 0)">►</button>
             </div>
         </div>
-        <p style="text-align:center; font-size: 0.82rem; color:#64748b; margin-top:6px; font-weight: 600;">Navigate your data packet 🟡 through Modem & ISP to reach Goal 🏁! Avoid Malware 👾!</p>
+        <p style="text-align:center; font-size: 0.82rem; color:#64748b; margin-top:6px; font-weight: 600;">Navigate your data packet 🟡 to Goal 🏁! Avoid Malware 👾!</p>
         <div id="g1Feedback" class="feedback-msg"></div>
     </div>
 
     <!-- GAME 2: WEB SORTER DRAG & DROP -->
     <div id="g2" class="game-tab hidden">
         <div class="drag-stage">
-            <p style="font-size: 0.85rem; font-weight: 700; color: #334155;">Drag each item into its correct Chapter 8 category:</p>
+            <p style="font-size: 0.85rem; font-weight: 700; color: #334155;">Drag each item into its correct category:</p>
             
             <div class="item-pool" id="itemPool">
                 <div class="draggable-item" draggable="true" id="i1" data-cat="browser">Google Chrome</div>
@@ -475,24 +435,33 @@ canvas {
 let audioCtx = null;
 let gameStarted = false;
 
-function startGameHub() {
+// Universal function to dismiss splash screen
+function closeSplash() {
     if (gameStarted) return;
     gameStarted = true;
 
     const splash = document.getElementById("splash");
-    splash.style.opacity = "0";
-    setTimeout(() => {
-        splash.style.display = "none";
-        document.getElementById("mainApp").classList.remove("hidden");
-        initMazeGame();
-    }, 300);
+    if (splash) {
+        splash.style.opacity = "0";
+        splash.style.visibility = "hidden";
+        setTimeout(() => { splash.style.display = "none"; }, 400);
+    }
+    initMazeGame();
 }
+
+// Bind direct event listeners
+document.addEventListener("DOMContentLoaded", () => {
+    const splash = document.getElementById("splash");
+    const playBtn = document.getElementById("playNowBtn");
+    
+    if (splash) splash.addEventListener("click", closeSplash);
+    if (playBtn) playBtn.addEventListener("click", closeSplash);
+
+    // Safety fallback: Automatically clear splash screen after 2.5 seconds
+    setTimeout(closeSplash, 2500);
+});
 
 function playSoundAsset(isCorrect) {
-    playSynthSound(isCorrect ? 'correct' : 'wrong');
-}
-
-function playSynthSound(type) {
     try {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -502,15 +471,14 @@ function playSynthSound(type) {
         osc.connect(gain);
         gain.connect(audioCtx.destination);
 
-        if (type === 'correct') {
+        if (isCorrect) {
             osc.type = 'sine';
             osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
             osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
-            osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
             gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.4);
+            osc.stop(audioCtx.currentTime + 0.3);
         } else {
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(200, audioCtx.currentTime);
@@ -721,4 +689,87 @@ function loadBossQuestion() {
     const container = document.getElementById("bossOptions");
     container.innerHTML = "";
 
-    current.options.forEach
+    current.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "action-btn";
+        btn.innerText = opt.text;
+        btn.onclick = () => attackBoss(opt.correct);
+        container.appendChild(btn);
+    });
+}
+
+function attackBoss(isCorrect) {
+    const fb = document.getElementById("g3Feedback");
+    if(isCorrect) {
+        playSoundAsset(true);
+        bossHP -= 50;
+        document.getElementById("hpBar").style.width = bossHP + "%";
+        fb.className = "feedback-msg correct";
+        fb.innerText = "💥 Direct Hit! Perfect Netiquette Defense!";
+        bossStep++;
+        setTimeout(loadBossQuestion, 1000);
+    } else {
+        playSoundAsset(false);
+        fb.className = "feedback-msg wrong";
+        fb.innerText = "🚨 Attack Missed! That violates Cyber Safety rules!";
+    }
+}
+
+/* GAME 4: MATCH ENGINE */
+const cardsData = [
+    { id: 1, text: "ALL CAPS", pair: "SHOUTING" },
+    { id: 2, text: "SHOUTING", pair: "ALL CAPS" },
+    { id: 3, text: "URL", pair: "Web Address" },
+    { id: 4, text: "Web Address", pair: "URL" },
+    { id: 5, text: "Google", pair: "Search Engine" },
+    { id: 6, text: "Search Engine", pair: "Google" },
+    { id: 7, text: "Ctrl + S", pair: "Save Webpage" },
+    { id: 8, text: "Save Webpage", pair: "Ctrl + S" }
+];
+
+let selectedCards = [];
+
+function initMatchGame() {
+    const grid = document.getElementById("memoryGrid");
+    grid.innerHTML = "";
+    selectedCards = [];
+    
+    const shuffled = [...cardsData].sort(() => Math.random() - 0.5);
+
+    shuffled.forEach((c) => {
+        const card = document.createElement("div");
+        card.className = "card-flip";
+        card.dataset.text = c.text;
+        card.dataset.pair = c.pair;
+        card.innerText = c.text;
+        card.onclick = () => flipCard(card);
+        grid.appendChild(card);
+    });
+}
+
+function flipCard(card) {
+    if (selectedCards.length < 2 && !card.classList.contains("flipped")) {
+        card.classList.add("flipped");
+        selectedCards.push(card);
+
+        if (selectedCards.length === 2) {
+            if (selectedCards[0].dataset.pair === selectedCards[1].dataset.text) {
+                playSoundAsset(true);
+                selectedCards[0].classList.add("matched");
+                selectedCards[1].classList.add("matched");
+                selectedCards = [];
+                addScore(25);
+            } else {
+                playSoundAsset(false);
+                setTimeout(() => {
+                    selectedCards[0].classList.remove("flipped");
+                    selectedCards[1].classList.remove("flipped");
+                    selectedCards = [];
+                }, 800);
+            }
+        }
+    }
+}
+</script>
+</body>
+</html>

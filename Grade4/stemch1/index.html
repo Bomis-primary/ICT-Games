@@ -3,12 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Tinkercad: Circuit Wiring Terminal</title>
+<title>Tinkercad: Circuit Lab Adventure</title>
 <style>
 :root {
-    --breadboard-bg: #e2e8f0;
-    --terminal-strip: #f8fafc;
-    --panel-dark: #0f172a;
+    --bg-dark: #0f172a;
+    --card-bg: #1e293b;
     --accent-blue: #0284c7;
     --accent-cyan: #38bdf8;
     --success-green: #10b981;
@@ -30,9 +29,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #090d16;
-    padding: 10px;
-    overflow-x: hidden;
+    background: var(--bg-dark);
+    padding: 12px;
     color: white;
 }
 
@@ -63,19 +61,19 @@ body {
 
 .container {
     width: 100%;
-    max-width: 900px;
-    background: rgba(15, 23, 42, 0.95);
+    max-width: 850px;
+    background: var(--card-bg);
     border: 3px solid var(--accent-cyan);
     border-radius: 20px;
-    padding: 18px;
-    box-shadow: 0 0 35px rgba(56, 189, 248, 0.35);
+    padding: 20px;
+    box-shadow: 0 0 35px rgba(56, 189, 248, 0.25);
     position: relative;
     z-index: 10;
 }
 
 .hidden { display: none !important; }
 
-/* HUD Top Bar */
+/* HUD Header Bar */
 .hud-bar {
     display: flex;
     justify-content: space-between;
@@ -84,7 +82,7 @@ body {
     border: 1px solid #334155;
     padding: 10px 16px;
     border-radius: 12px;
-    margin-bottom: 12px;
+    margin-bottom: 15px;
     font-weight: 800;
     font-size: clamp(0.85rem, 2.5vw, 1rem);
 }
@@ -96,41 +94,39 @@ body {
     border-radius: 6px;
 }
 
-/* Navigation Tabs */
+/* Level Navigation Tabs */
 .nav-tabs {
     display: flex;
-    gap: 8px;
-    margin-bottom: 15px;
-    overflow-x: auto;
-    padding-bottom: 6px;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
 .tab-btn {
-    padding: 8px 14px;
+    flex: 1;
+    padding: 10px;
     border: none;
     background: rgba(255, 255, 255, 0.1);
     color: #cbd5e1;
-    font-weight: 700;
+    font-weight: 800;
     border-radius: 10px;
     cursor: pointer;
-    font-size: 0.85rem;
-    white-space: nowrap;
-    flex-shrink: 0;
+    font-size: 0.9rem;
+    transition: all 0.2s;
 }
 
 .tab-btn.active {
     background: var(--accent-blue);
     color: white;
-    box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
 }
 
-/* Common Feedback Ticker Box */
+/* Common Feedback Box */
 .feedback-box {
-    margin-top: 12px;
-    padding: 12px;
+    margin-top: 15px;
+    padding: 14px;
     border-radius: 10px;
     font-weight: 700;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     min-height: 52px;
     display: flex;
     align-items: center;
@@ -145,109 +141,74 @@ body {
 .feedback-box.wrong { background: #991b1b; color: #fecaca; }
 .feedback-box.warning { background: #92400e; color: #fef08a; }
 
-/* LEVEL 1: BREADBOARD TERMINAL SIMULATOR */
-.breadboard-chassis {
-    background: var(--breadboard-bg);
+/* LEVEL 1: CIRCUIT BUILDER */
+.circuit-board {
+    background: #e2e8f0;
     border: 4px solid #cbd5e1;
     border-radius: 16px;
     padding: 20px;
-    margin-bottom: 15px;
-    position: relative;
-    box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);
-}
-
-.terminal-header {
-    background: #1e293b;
-    color: #38bdf8;
-    padding: 10px 14px;
-    border-radius: 10px;
-    font-size: 0.95rem;
-    font-weight: 800;
-    margin-bottom: 15px;
+    color: #0f172a;
     text-align: center;
+    margin-bottom: 15px;
 }
 
-.breadboard-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    min-height: 120px;
-}
-
-.terminal-row {
-    background: var(--terminal-strip);
-    border: 2px solid #94a3b8;
-    border-radius: 8px;
-    height: 38px;
-    width: 100%;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0 10px;
-}
-
-.plug-hole {
-    width: 14px;
-    height: 14px;
-    background: #475569;
-    border-radius: 30%;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
-}
-
-.led-indicator {
-    width: 30px;
-    height: 30px;
+.led-light {
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     background: #64748b;
     border: 3px solid #334155;
-    margin: 0 auto 10px;
-    transition: all 0.3s ease;
+    margin: 0 auto 15px;
+    transition: all 0.3s;
 }
 
-.led-indicator.active {
+.led-light.active {
     background: #10b981;
-    box-shadow: 0 0 20px #10b981, 0 0 40px #10b981;
+    box-shadow: 0 0 25px #10b981, 0 0 50px #10b981;
     border-color: #a7f3d0;
 }
 
-.wire-choice-container {
+.scenario-title {
+    font-weight: 800;
+    font-size: 1.05rem;
+    margin-bottom: 15px;
+    color: #1e293b;
+}
+
+.choice-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
 }
 
-.wire-choice-btn {
+.choice-btn {
     background: #ffffff;
     border: 2px solid #cbd5e1;
-    padding: 14px;
+    padding: 16px;
     border-radius: 12px;
     font-weight: 800;
-    font-size: 0.95rem;
+    font-size: 1rem;
     color: #1e293b;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s;
 }
 
-.wire-choice-btn:hover {
+.choice-btn:hover {
     border-color: var(--accent-blue);
-    background: #f1f5f9;
+    background: #f8fafc;
     transform: translateY(-2px);
 }
 
-/* LEVEL 2: MATCH CARDS */
-.memory-grid {
+/* LEVEL 2: COMPONENT PAIR MATCHING */
+.match-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
-    margin-top: 10px;
 }
 
-.card-flip {
-    height: 85px;
-    background: #1e293b;
+.match-card {
+    height: 90px;
+    background: #0f172a;
     border: 2px solid var(--accent-cyan);
     border-radius: 12px;
     display: flex;
@@ -257,152 +218,76 @@ body {
     font-weight: 800;
     text-align: center;
     cursor: pointer;
-    padding: 6px;
+    padding: 8px;
     color: transparent;
-    transition: background 0.2s, color 0.2s;
+    transition: all 0.2s;
 }
 
-.card-flip.flipped {
+.match-card.flipped {
     background: var(--accent-blue);
     color: #ffffff !important;
 }
 
-.card-flip.matched {
+.match-card.matched {
     background: #10b981;
     border-color: #a7f3d0;
     color: #ffffff !important;
 }
 
-/* LEVEL 3: TROLL BATTLE */
-.boss-card {
-    background: rgba(15, 23, 42, 0.8);
+/* LEVEL 3: TRUE / FALSE INSPECTOR */
+.inspector-card {
+    background: #0f172a;
     border: 2px solid var(--accent-cyan);
     border-radius: 16px;
     padding: 20px;
     text-align: center;
+    margin-bottom: 15px;
 }
 
-.boss-avatar { font-size: 3.5rem; margin-bottom: 8px; }
-
-.boss-hp {
-    width: 100%;
-    background: #334155;
-    height: 16px;
-    border-radius: 8px;
-    overflow: hidden;
-    margin: 12px 0;
-}
-
-.hp-fill {
-    height: 100%;
-    width: 100%;
-    background: var(--error-red);
-    transition: width 0.3s;
-}
-
-.boss-options {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-.tf-btn {
-    padding: 14px;
-    border: none;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 800;
-    color: white;
-    cursor: pointer;
-}
-
-.btn-true { background: linear-gradient(135deg, #10b981, #059669); }
-.btn-false { background: linear-gradient(135deg, #ef4444, #dc2626); }
-
-/* LEVEL 4: DRAG & DROP */
-.drag-stage {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.item-pool {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-    min-height: 70px;
-    background: rgba(15, 23, 42, 0.6);
-    border: 2px solid #334155;
-    padding: 10px;
-    border-radius: 12px;
-}
-
-.draggable-item {
-    background: var(--accent-blue);
-    color: white;
-    padding: 8px 14px;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: grab;
-    font-size: 0.85rem;
-    touch-action: none;
-}
-
-.drop-zones {
+.tf-controls {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
 }
 
-.drop-zone {
-    background: rgba(15, 23, 42, 0.8);
-    border: 2px dashed var(--accent-cyan);
+.tf-btn {
+    padding: 16px;
+    border: none;
     border-radius: 12px;
-    padding: 12px;
-    min-height: 120px;
-    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: white;
+    cursor: pointer;
+    transition: transform 0.1s;
 }
 
-.act-btn-main {
-    width: 100%;
+.tf-btn:active { transform: scale(0.96); }
+.btn-true { background: linear-gradient(135deg, #10b981, #059669); }
+.btn-false { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+/* Action Button */
+.act-btn {
+    width: 200px;
     padding: 14px;
-    background: linear-gradient(135deg, #0284c7, #0369a1);
+    background: var(--accent-blue);
     color: white;
     font-size: 1rem;
     font-weight: 800;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    margin-top: 10px;
-}
-
-/* Final Report Screen */
-.report-panel h2 { color: var(--accent-cyan); font-size: 1.8rem; margin-bottom: 10px; }
-.score-circle {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: var(--accent-blue);
-    color: white;
-    font-size: 2rem;
-    font-weight: 800;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 15px auto;
-    border: 4px solid var(--accent-cyan);
+    margin: 20px auto 0;
+    display: block;
 }
 </style>
 </head>
 <body>
 
-<!-- Audio Elements -->
+<!-- Sound Elements -->
 <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 
-<!-- 5-Second Exclusive Splash Screen -->
+<!-- 5-Second Splash Screen -->
 <div id="splash">
     <img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
@@ -410,111 +295,74 @@ body {
 <div class="container hidden" id="appMainframe">
     
     <div class="hud-bar">
-        <div id="levelBadge">Level 1: Wiring Terminal</div>
+        <div id="levelBadge">Level 1: Circuit Builder</div>
         <div>Attempts: <span class="badge-attempt" id="attemptBadge">2 / 2</span></div>
         <div>🏆 Total Score: <span id="scoreVal">0</span></div>
     </div>
 
     <!-- Navigation Tabs -->
     <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchLevel(1, this)">Lvl 1: Terminal 🔌</button>
-        <button class="tab-btn" onclick="switchLevel(2, this)">Lvl 2: Circuit Match 🧠</button>
-        <button class="tab-btn" onclick="switchLevel(3, this)">Lvl 3: Troll Battle 👾</button>
-        <button class="tab-btn" onclick="switchLevel(4, this)">Lvl 4: Sorter ⚡</button>
+        <button class="tab-btn active" id="tab1">Lvl 1: Wiring 🔌</button>
+        <button class="tab-btn" id="tab2">Lvl 2: Matcher 🧠</button>
+        <button class="tab-btn" id="tab3">Lvl 3: Inspector 🔍</button>
     </div>
 
-    <!-- LEVEL 1: BREADBOARD TERMINAL SIMULATOR -->
+    <!-- LEVEL 1: CIRCUIT BUILDER -->
     <div id="lvl1" class="level-tab">
-        <div class="breadboard-chassis">
-            <div class="led-indicator" id="ledLight"></div>
-            <div class="terminal-header" id="terminalGoalText">Loading schematic...</div>
-            
-            <div class="breadboard-grid">
-                <div class="terminal-row"><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div></div>
-                <div class="terminal-row"><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div></div>
-            </div>
+        <div class="circuit-board">
+            <div class="led-light" id="ledLight"></div>
+            <div class="scenario-title" id="scenarioText">Loading schematic...</div>
         </div>
 
-        <div class="wire-choice-container" id="wireChoices">
-            <button class="wire-choice-btn" onclick="connectWire(0)" id="btnOptA">Option A</button>
-            <button class="wire-choice-btn" onclick="connectWire(1)" id="btnOptB">Option B</button>
+        <div class="choice-grid">
+            <button class="choice-btn" onclick="submitLvl1(0)" id="optA">Option A</button>
+            <button class="choice-btn" onclick="submitLvl1(1)" id="optB">Option B</button>
         </div>
 
         <div class="feedback-box" id="fbLvl1">
-            Analyze the circuit requirement and select the correct component wire link!
+            Choose the correct wiring connection to safely complete the circuit!
         </div>
     </div>
 
-    <!-- LEVEL 2: CIRCUIT MATCH -->
+    <!-- LEVEL 2: COMPONENT MATCHING -->
     <div id="lvl2" class="level-tab hidden">
-        <p style="text-align:center; font-weight:700; font-size:0.9rem; color:#cbd5e1;">Match Tinkercad components with their electrical functions:</p>
-        <div class="memory-grid" id="memoryGrid"></div>
-        <div class="feedback-box" id="fbLvl2">Click cards to find matching pairs!</div>
+        <p style="text-align:center; font-weight:700; margin-bottom:12px; color:#cbd5e1;">Match the Tinkercad components with their electrical functions:</p>
+        <div class="match-grid" id="matchGrid"></div>
+        <div class="feedback-box" id="fbLvl2">Click cards to reveal and pair them!</div>
     </div>
 
-    <!-- LEVEL 3: TROLL BOSS BATTLE -->
+    <!-- LEVEL 3: TRUE / FALSE INSPECTOR -->
     <div id="lvl3" class="level-tab hidden">
-        <div class="boss-card">
-            <div class="boss-avatar">👾</div>
-            <h3 id="bossTitle">Circuit Troll Appears!</h3>
-            <p id="bossQuote" style="font-size: 0.95rem; color: #38bdf8; margin-top: 6px; font-weight: 700;">"I connect LEDs directly to batteries without resistors!"</p>
-            
-            <div class="boss-hp">
-                <div class="hp-fill" id="hpBar"></div>
-            </div>
-
-            <p style="font-size:0.85rem; color:#94a3b8; margin-top:10px;">Is this behavior Correct or Incorrect Circuit Design?</p>
-            <div class="boss-options">
-                <button class="tf-btn btn-true" onclick="attackBoss(true)">✅ CORRECT</button>
-                <button class="tf-btn btn-false" onclick="attackBoss(false)">❌ INCORRECT</button>
-            </div>
+        <div class="inspector-card">
+            <h3 style="color:#f59e0b; margin-bottom:8px;">🔍 Circuit Inspection Case:</h3>
+            <p id="inspectorText" style="font-size:1.1rem; font-weight:700; line-height:1.5;">Loading inspection scenario...</p>
         </div>
-        <div class="feedback-box" id="fbLvl3">Defeat the Circuit Troll by calling out dangerous wiring habits!</div>
+
+        <div class="tf-controls">
+            <button class="tf-btn btn-true" onclick="submitLvl3(true)">✅ TRUE / SAFE</button>
+            <button class="tf-btn btn-false" onclick="submitLvl3(false)">❌ FALSE / FAULT</button>
+        </div>
+
+        <div class="feedback-box" id="fbLvl3">Is this Tinkercad setup safe or faulty?</div>
     </div>
 
-    <!-- LEVEL 4: DRAG AND DROP -->
-    <div id="lvl4" class="level-tab hidden">
-        <div class="drag-stage">
-            <p style="font-size: 0.9rem; font-weight: 700; text-align:center;">Drag each component into its correct functional zone:</p>
-            
-            <div class="item-pool" id="itemPool">
-                <div class="draggable-item" draggable="true" id="di1" data-cat="power">9V Battery</div>
-                <div class="draggable-item" draggable="true" id="di2" data-cat="safety">Resistor</div>
-                <div class="draggable-item" draggable="true" id="di3" data-cat="power">LED Light</div>
-                <div class="draggable-item" draggable="true" id="di4" data-cat="safety">Push Button</div>
-            </div>
-
-            <div class="drop-zones">
-                <div class="drop-zone" data-target="power">
-                    <h4 style="color:#10b981;">⚡ Power & Light</h4>
-                </div>
-                <div class="drop-zone" data-target="safety">
-                    <h4 style="color:#38bdf8;">🛡️ Control & Safety</h4>
-                </div>
-            </div>
-            
-            <button class="act-btn-main" onclick="checkDragDrop()">Submit Categorization 🏁</button>
-            <div class="feedback-box" id="fbLvl4">Drag items into the Power/Light or Control/Safety boxes!</div>
-        </div>
-    </div>
-
-    <!-- Final Report Screen -->
-    <div id="reportPanel" class="hidden report-panel" style="text-align:center;">
-        <h2>📊 Tinkercad Systems Audit</h2>
-        <div class="score-circle"><span id="finalScore">0</span></div>
-        <h3 id="finalRank" style="color:#f59e0b; margin-bottom:10px;">Evaluating...</h3>
-        <p id="finalSummary" style="color:#cbd5e1; font-size:0.9rem; line-height:1.5; max-width:550px; margin:0 auto;"></p>
-        <button class="act-btn-main" style="width:200px; margin:20px auto 0;" onclick="location.reload()">Reboot Mission 🔄</button>
+    <!-- Final Score Report Screen -->
+    <div id="reportPanel" class="hidden" style="text-align:center;">
+        <h2 style="color:#38bdf8; font-size:2rem;">📊 Tinkercad Circuit Evaluation</h2>
+        <div style="font-size:3rem; font-weight:800; color:#10b981; margin:15px 0;"><span id="finalScore">0</span> Pts</div>
+        <h3 id="finalRank" style="color:#f59e0b; margin-bottom:10px;">Evaluating Rank...</h3>
+        <p id="finalSummary" style="color:#cbd5e1; max-width:550px; margin:0 auto; line-height:1.5;"></p>
+        <button class="act-btn" onclick="location.reload()">Reboot Station 🔄</button>
     </div>
 
 </div>
 
 <script>
-/* 5-Second Splash Timer */
+/* Splash Screen Driver */
 setTimeout(() => {
     document.getElementById("splash").style.display = "none";
     document.getElementById("appMainframe").classList.remove("hidden");
-    initLevel1();
+    initLvl1();
 }, 5000);
 
 /* Global State */
@@ -558,65 +406,60 @@ function triggerSound(isCorrect) {
     } catch(e) {}
 }
 
-function switchLevel(lvlNum, btn) {
-    document.querySelectorAll('.level-tab').forEach(el => el.classList.add('hidden'));
-    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+function switchTab(lvlNum) {
+    document.querySelectorAll('.level-tab').forEach(e => e.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
 
     document.getElementById('lvl' + lvlNum).classList.remove('hidden');
-    if (btn) btn.classList.add('active');
+    document.getElementById('tab' + lvlNum).classList.add('active');
 
     if (lvlNum === 1) {
-        document.getElementById("levelBadge").innerText = "Level 1: Terminal";
-        initLevel1();
+        document.getElementById("levelBadge").innerText = "Level 1: Circuit Builder";
+        initLvl1();
     } else if (lvlNum === 2) {
-        document.getElementById("levelBadge").innerText = "Level 2: Circuit Match";
-        initLevel2();
+        document.getElementById("levelBadge").innerText = "Level 2: Matcher";
+        initLvl2();
     } else if (lvlNum === 3) {
-        document.getElementById("levelBadge").innerText = "Level 3: Troll Battle";
-        initLevel3();
-    } else if (lvlNum === 4) {
-        document.getElementById("levelBadge").innerText = "Level 4: Component Sorter";
-        initLevel4();
+        document.getElementById("levelBadge").innerText = "Level 3: Inspector";
+        initLvl3();
     }
 }
 
-/* ========================================================
-   LEVEL 1: TERMINAL SIMULATOR
-   ======================================================== */
+/* ================= LEVEL 1: WIRING BUILDER ================= */
 const datasetLvl1 = [
     {
-        target: "Goal: Model and simulate virtual circuits inside your browser window without physical hardware.",
+        scenario: "Goal: Model and simulate virtual circuits safely inside your browser without burning real components.",
         optA: "🔵 Tinkercad Circuit App",
-        optB: "🔴 Spreadsheet Document",
-        correctIdx: 0,
-        info: "Tinkercad simulates electronic circuits safely online."
+        optB: "🔴 Text Document Editor",
+        correct: 0,
+        info: "Tinkercad simulates virtual circuits safely online."
     },
     {
-        target: "Goal: Restrict raw current density to prevent burning sensitive LED assets.",
+        scenario: "Goal: Prevent your delicate LED from popping or burning out due to excessive electric current.",
         optA: "🔴 Direct Copper Wire",
         optB: "🔵 Inline Safety Resistor",
-        correctIdx: 1,
-        info: "Resistors limit current to protect components."
+        correct: 1,
+        info: "Resistors limit electric current to protect LEDs."
     },
     {
-        target: "Goal: Provide the main electrical energy loop to turn on the grid tracks.",
-        optA: "🔵 9V Energy Battery",
-        optB: "🔴 Metal Case Switch",
-        correctIdx: 0,
-        info: "Batteries supply active voltage to the circuit."
+        scenario: "Goal: Supply the vital electrical current needed to turn on your circuit board.",
+        optA: "🔵 9V Battery Unit",
+        optB: "🔴 Plastic Terminal Case",
+        correct: 0,
+        info: "Batteries provide voltage current to the circuit."
     }
 ];
 
 let idx1 = 0;
 
-function initLevel1() {
+function initLvl1() {
     idx1 = 0;
-    loadQuestion1();
+    loadLvl1();
 }
 
-function loadQuestion1() {
+function loadLvl1() {
     if (idx1 >= datasetLvl1.length) {
-        switchLevel(2, document.querySelectorAll('.tab-btn')[1]);
+        switchTab(2);
         return;
     }
     attemptsLeft = 2;
@@ -625,24 +468,24 @@ function loadQuestion1() {
     document.getElementById("attemptBadge").style.background = "#f59e0b";
     document.getElementById("ledLight").classList.remove("active");
 
-    const cur = datasetLvl1[idx1];
-    document.getElementById("terminalGoalText").innerText = cur.target;
-    document.getElementById("btnOptA").innerText = cur.optA;
-    document.getElementById("btnOptB").innerText = cur.optB;
+    const item = datasetLvl1[idx1];
+    document.getElementById("scenarioText").innerText = item.scenario;
+    document.getElementById("optA").innerText = item.optA;
+    document.getElementById("optB").innerText = item.optB;
 
     const fb = document.getElementById("fbLvl1");
     fb.className = "feedback-box";
-    fb.innerText = "Analyze the circuit requirement and select the correct component wire link!";
+    fb.innerText = "Choose the correct wiring connection to safely complete the circuit!";
 }
 
-function connectWire(chosenIdx) {
+function submitLvl1(choice) {
     if (isProcessing) return;
 
-    const cur = datasetLvl1[idx1];
-    const isCorrect = (chosenIdx === cur.correctIdx);
+    const item = datasetLvl1[idx1];
+    const isRight = (choice === item.correct);
     const fb = document.getElementById("fbLvl1");
 
-    if (isCorrect) {
+    if (isRight) {
         isProcessing = true;
         triggerSound(true);
         document.getElementById("ledLight").classList.add("active");
@@ -651,203 +494,179 @@ function connectWire(chosenIdx) {
         addScore(pts);
 
         fb.className = "feedback-box correct";
-        fb.innerHTML = `⚡ LINK ESTABLISHED! (+${pts} pts) ${cur.info}`;
+        fb.innerHTML = `⚡ CIRCUIT POWERED! (+${pts} pts) ${item.info}`;
 
         setTimeout(() => {
             idx1++;
-            loadQuestion1();
+            loadLvl1();
         }, 1800);
-
     } else {
         attemptsLeft--;
         triggerSound(false);
 
         if (attemptsLeft === 1) {
             fb.className = "feedback-box warning";
-            fb.innerHTML = `⚠️ FAULT DETECTED! 1 Attempt Remaining. Rethink component choice!`;
+            fb.innerText = "⚠️ FAULT DETECTED! 1 Attempt Remaining. Rethink component choice!";
             document.getElementById("attemptBadge").innerText = "1 / 2";
             document.getElementById("attemptBadge").style.background = "#ef4444";
         } else {
             isProcessing = true;
             fb.className = "feedback-box wrong";
-            fb.innerHTML = `💥 OVERLOAD FUSE BLOWN! Note: ${cur.info}`;
+            fb.innerHTML = `💥 OVERLOAD FUSE BLOWN! Note: ${item.info}`;
 
             setTimeout(() => {
                 idx1++;
-                loadQuestion1();
+                loadLvl1();
             }, 2200);
         }
     }
 }
 
-/* ========================================================
-   LEVEL 2: CIRCUIT MATCH
-   ======================================================== */
-const cardsData2 = [
-    { id: 1, text: "LED", pair: "Emits Light" },
-    { id: 2, text: "Emits Light", pair: "LED" },
-    { id: 3, text: "Resistor", pair: "Limits Current" },
-    { id: 4, text: "Limits Current", pair: "Resistor" },
-    { id: 5, text: "Breadboard", pair: "Grid Board" },
-    { id: 6, text: "Grid Board", pair: "Breadboard" },
-    { id: 7, text: "9V Battery", pair: "Power Source" },
-    { id: 8, text: "Power Source", pair: "9V Battery" }
+/* ================= LEVEL 2: MATCHING ================= */
+const datasetLvl2 = [
+    { text: "LED", pair: "Emits Light" },
+    { text: "Emits Light", pair: "LED" },
+    { text: "Resistor", pair: "Limits Current" },
+    { text: "Limits Current", pair: "Resistor" },
+    { text: "Breadboard", pair: "Solderless Grid" },
+    { text: "Solderless Grid", pair: "Breadboard" },
+    { text: "9V Battery", pair: "Power Source" },
+    { text: "Power Source", pair: "9V Battery" }
 ];
 
-let selectedCards2 = [];
+let selectedCards = [];
 
-function initLevel2() {
-    const grid = document.getElementById("memoryGrid");
+function initLvl2() {
+    const grid = document.getElementById("matchGrid");
     grid.innerHTML = "";
-    selectedCards2 = [];
-    
-    const shuffled = [...cardsData2].sort(() => Math.random() - 0.5);
+    selectedCards = [];
 
-    shuffled.forEach((c) => {
+    const shuffled = [...datasetLvl2].sort(() => Math.random() - 0.5);
+    shuffled.forEach(c => {
         const card = document.createElement("div");
-        card.className = "card-flip";
+        card.className = "match-card";
         card.dataset.text = c.text;
         card.dataset.pair = c.pair;
         card.innerText = c.text;
-        card.onclick = () => flipCard2(card);
+        card.onclick = () => flipLvl2(card);
         grid.appendChild(card);
     });
 }
 
-function flipCard2(card) {
-    if (selectedCards2.length < 2 && !card.classList.contains("flipped")) {
+function flipLvl2(card) {
+    if (selectedCards.length < 2 && !card.classList.contains("flipped")) {
         card.classList.add("flipped");
-        selectedCards2.push(card);
+        selectedCards.push(card);
 
-        if (selectedCards2.length === 2) {
-            if (selectedCards2[0].dataset.pair === selectedCards2[1].dataset.text) {
+        if (selectedCards.length === 2) {
+            if (selectedCards[0].dataset.pair === selectedCards[1].dataset.text) {
                 triggerSound(true);
-                selectedCards2[0].classList.add("matched");
-                selectedCards2[1].classList.add("matched");
-                selectedCards2 = [];
+                selectedCards[0].classList.add("matched");
+                selectedCards[1].classList.add("matched");
+                selectedCards = [];
                 addScore(50);
-                document.getElementById("fbLvl2").innerText = "🌟 Perfect Match!";
+                document.getElementById("fbLvl2").innerText = "🌟 Perfect Pair Match!";
             } else {
                 triggerSound(false);
-                document.getElementById("fbLvl2").innerText = "❌ Not a match! Try again.";
+                document.getElementById("fbLvl2").innerText = "❌ Mismatch! Try again.";
                 setTimeout(() => {
-                    selectedCards2[0].classList.remove("flipped");
-                    selectedCards2[1].classList.remove("flipped");
-                    selectedCards2 = [];
+                    selectedCards[0].classList.remove("flipped");
+                    selectedCards[1].classList.remove("flipped");
+                    selectedCards = [];
                 }, 800);
             }
         }
     }
 }
 
-/* ========================================================
-   LEVEL 3: CIRCUIT TROLL BOSS BATTLE
-   ======================================================== */
-const bossQuestions3 = [
+/* ================= LEVEL 3: INSPECTOR ================= */
+const datasetLvl3 = [
     {
-        quote: '"I attach LEDs directly to batteries without resistors to make them brighter!"',
-        isCorrect: false,
-        info: "Connecting LEDs without resistors causes high current to burn them out!"
+        text: "Tinkercad allows browser-based hardware simulations without needing physical wires.",
+        isSafe: true,
+        info: "True! Tinkercad models and tests electronic circuits virtually."
     },
     {
-        quote: '"I use resistors in line with LEDs to control voltage and current safely."',
-        isCorrect: true,
-        info: "Resistors protect sensitive components from current overload."
+        text: "Connecting an LED directly to a 9V battery without a resistor is completely safe.",
+        isSafe: false,
+        info: "False! Raw current will burn out or pop unprotected LEDs."
+    },
+    {
+        text: "An unpressed push button creates an open circuit that stops electric current.",
+        isSafe: true,
+        info: "True! Unpressed buttons create an air gap that blocks current."
     }
 ];
 
-let bossStep3 = 0;
-let bossHP3 = 100;
+let idx3 = 0;
 
-function initLevel3() {
-    bossStep3 = 0;
-    bossHP3 = 100;
-    document.getElementById("hpBar").style.width = "100%";
-    loadBossQuestion3();
+function initLvl3() {
+    idx3 = 0;
+    loadLvl3();
 }
 
-function loadBossQuestion3() {
-    if (bossStep3 >= bossQuestions3.length) {
-        document.getElementById("fbLvl3").innerText = "🏆 Circuit Troll Defeated! Advancing to Level 4...";
-        triggerSound(true);
-        addScore(100);
-        setTimeout(() => switchLevel(4, document.querySelectorAll('.tab-btn')[3]), 1500);
+function loadLvl3() {
+    if (idx3 >= datasetLvl3.length) {
+        finishGame();
         return;
     }
-    const cur = bossQuestions3[bossStep3];
-    document.getElementById("bossQuote").innerText = cur.quote;
+    attemptsLeft = 2;
+    isProcessing = false;
+    document.getElementById("attemptBadge").innerText = "2 / 2";
+    document.getElementById("attemptBadge").style.background = "#f59e0b";
+
+    const item = datasetLvl3[idx3];
+    document.getElementById("inspectorText").innerText = `"${item.text}"`;
+
+    const fb = document.getElementById("fbLvl3");
+    fb.className = "feedback-box";
+    fb.innerText = "Is this Tinkercad setup safe or faulty?";
 }
 
-function attackBoss(userSaidCorrect) {
-    const cur = bossQuestions3[bossStep3];
-    const isRight = (userSaidCorrect === cur.isCorrect);
+function submitLvl3(userChoseTrue) {
+    if (isProcessing) return;
+
+    const item = datasetLvl3[idx3];
+    const isRight = (userChoseTrue === item.isSafe);
+    const fb = document.getElementById("fbLvl3");
 
     if (isRight) {
+        isProcessing = true;
         triggerSound(true);
-        bossHP3 -= 50;
-        document.getElementById("hpBar").style.width = bossHP3 + "%";
-        addScore(50);
-        document.getElementById("fbLvl3").innerText = "💥 Direct Hit! " + cur.info;
-        bossStep3++;
-        setTimeout(loadBossQuestion3, 1200);
-    } else {
-        triggerSound(false);
-        document.getElementById("fbLvl3").innerText = "🚨 Attack Missed! Remember: " + cur.info;
-    }
-}
+        const pts = (attemptsLeft === 2) ? 100 : 50;
+        addScore(pts);
 
-/* ========================================================
-   LEVEL 4: DRAG AND DROP
-   ======================================================== */
-function initLevel4() {
-    const draggables = document.querySelectorAll('.draggable-item');
-    const dropZones = document.querySelectorAll('.drop-zone');
-
-    draggables.forEach(item => {
-        item.addEventListener('dragstart', (e) => {
-            e.dataTransfer.setData('text/plain', item.id);
-        });
-    });
-
-    dropZones.forEach(zone => {
-        zone.addEventListener('dragover', (e) => e.preventDefault());
-        zone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            const itemId = e.dataTransfer.getData('text/plain');
-            const draggedEl = document.getElementById(itemId);
-            if(draggedEl) zone.appendChild(draggedEl);
-        });
-    });
-}
-
-function checkDragDrop() {
-    const zones = document.querySelectorAll('.drop-zone');
-    let correctCount = 0;
-
-    zones.forEach(zone => {
-        const targetCategory = zone.getAttribute('data-target');
-        const items = zone.querySelectorAll('.draggable-item');
-        items.forEach(item => {
-            if(item.getAttribute('data-cat') === targetCategory) correctCount++;
-        });
-    });
-
-    const fb = document.getElementById("fbLvl4");
-    if (correctCount === 4) {
-        triggerSound(true);
-        addScore(100);
         fb.className = "feedback-box correct";
-        fb.innerText = "🌟 Great job! All circuit components are correctly categorized!";
-        setTimeout(finishAllLevels, 1500);
+        fb.innerHTML = `🎯 CORRECT INSPECTION! (+${pts} pts) ${item.info}`;
+
+        setTimeout(() => {
+            idx3++;
+            loadLvl3();
+        }, 1800);
     } else {
+        attemptsLeft--;
         triggerSound(false);
-        fb.className = "feedback-box wrong";
-        fb.innerText = "❌ Some items are in the wrong zone. Try again!";
+
+        if (attemptsLeft === 1) {
+            fb.className = "feedback-box warning";
+            fb.innerText = "⚠️ INCORRECT! 1 Attempt Remaining. Re-evaluate scenario!";
+            document.getElementById("attemptBadge").innerText = "1 / 2";
+            document.getElementById("attemptBadge").style.background = "#ef4444";
+        } else {
+            isProcessing = true;
+            fb.className = "feedback-box wrong";
+            fb.innerHTML = `❌ OUT OF ATTEMPTS! Note: ${item.info}`;
+
+            setTimeout(() => {
+                idx3++;
+                loadLvl3();
+            }, 2200);
+        }
     }
 }
 
-function finishAllLevels() {
-    document.querySelectorAll('.level-tab').forEach(el => el.classList.add('hidden'));
+function finishGame() {
+    document.querySelectorAll('.level-tab').forEach(e => e.classList.add('hidden'));
     document.getElementById("reportPanel").classList.remove("hidden");
     document.getElementById("finalScore").innerText = currentScore;
 
@@ -855,11 +674,11 @@ function finishAllLevels() {
     let summary = "";
 
     if (currentScore >= 400) {
-        rank = "👑 Master Circuit Systems Designer";
-        summary = "Outstanding performance across all 4 Arcade Levels! You proved total mastery over Tinkercad and electronic circuit design rules.";
+        rank = "👑 Master Tinkercad Engineer";
+        summary = "Flawless circuit inspection and assembly performance! You demonstrated total command of breadboards, resistors, and virtual power sources.";
     } else {
         rank = "🌱 Junior Prototyping Trainee";
-        summary = "Good effort! Re-verify breadboard rails, resistor safety limits, and component polarities to master the workstation.";
+        summary = "Good effort! Practice more with resistor limits, component pairs, and open button gaps to master Tinkercad.";
     }
 
     document.getElementById("finalRank").innerText = rank;

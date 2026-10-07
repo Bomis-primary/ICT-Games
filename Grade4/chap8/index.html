@@ -2,17 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Internet & Netiquette Master Lab </title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Cyber Navigator: Chapter 8 Arcade Lab</title>
 
 <style>
 :root {
     --primary: #2563eb;
-    --primary-dark: #1d4ed8;
+    --dark: #0f172a;
     --success: #10b981;
     --danger: #ef4444;
     --warning: #f59e0b;
-    --dark: #0f172a;
     --panel-bg: rgba(255, 255, 255, 0.98);
 }
 
@@ -26,13 +25,13 @@
 }
 
 body {
-    background: linear-gradient(135deg, #1e3a8a, #3b82f6, #93c5fd);
+    background: linear-gradient(135deg, #0f172a, #1e3a8a, #3b82f6);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 10px;
     overflow-x: hidden;
-    padding: 12px;
 }
 
 /* Splash Screen */
@@ -42,7 +41,8 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: #ffffff;
+    background: #0f172a;
+    color: white;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -52,38 +52,34 @@ body {
     padding: 20px;
     text-align: center;
 }
+
 #splash h1 {
-    font-size: clamp(1.6rem, 5vw, 2.4rem);
-    color: #1e3a8a;
+    font-size: clamp(1.8rem, 6vw, 2.6rem);
+    color: #60a5fa;
     margin-top: 15px;
+    text-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
 }
 
 .container {
     width: 100%;
-    max-width: 1000px;
+    max-width: 950px;
     background: var(--panel-bg);
     border-radius: 20px;
-    padding: clamp(16px, 4vw, 28px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+    padding: clamp(14px, 3.5vw, 24px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
     z-index: 2;
 }
 
 .header {
     text-align: center;
-    margin-bottom: 18px;
+    margin-bottom: 12px;
     border-bottom: 2px solid #e2e8f0;
-    padding-bottom: 12px;
+    padding-bottom: 8px;
 }
 
 .header h1 {
     color: #1e3a8a;
-    font-size: clamp(1.3rem, 4vw, 1.9rem);
-}
-
-.header p {
-    color: #64748b;
-    font-size: clamp(0.85rem, 2.5vw, 0.98rem);
-    margin-top: 4px;
+    font-size: clamp(1.3rem, 4vw, 1.8rem);
 }
 
 /* Score Header Badge */
@@ -91,36 +87,31 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #eff6ff;
-    padding: 8px 16px;
+    background: #1e293b;
+    color: #f8fafc;
+    padding: 10px 16px;
     border-radius: 12px;
     margin-bottom: 15px;
     font-weight: 700;
-    color: var(--primary-dark);
     font-size: clamp(0.85rem, 2.5vw, 1rem);
-    border: 1px solid #bfdbfe;
 }
 
-/* Scrollable Responsive Tabs */
+/* Navigation Mode Buttons */
 .nav-tabs {
     display: flex;
     gap: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     overflow-x: auto;
     padding-bottom: 6px;
-    -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
 }
-
-.nav-tabs::-webkit-scrollbar {
-    display: none;
-}
+.nav-tabs::-webkit-scrollbar { display: none; }
 
 .tab-btn {
     padding: 10px 14px;
     border: none;
-    background: #e2e8f0;
-    color: #334155;
+    background: #cbd5e1;
+    color: #1e293b;
     font-weight: 700;
     border-radius: 12px;
     cursor: pointer;
@@ -133,182 +124,170 @@ body {
 .tab-btn.active {
     background: var(--primary);
     color: white;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
 }
 
-/* Activity Cards */
-.activity-card {
-    background: #f8fafc;
-    border: 2px solid #e2e8f0;
-    border-radius: 16px;
-    padding: clamp(14px, 3.5vw, 22px);
-    margin-bottom: 15px;
-}
-
-.activity-title {
-    font-size: clamp(1rem, 3.2vw, 1.15rem);
-    color: #0f172a;
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-weight: 800;
-}
-
-.page-tag {
-    background: #dbeafe;
-    color: #1e40af;
-    padding: 2px 8px;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    margin-left: auto;
-}
-
-/* Form Controls */
-.form-group {
-    margin-bottom: 16px;
-}
-
-label {
-    display: block;
-    font-weight: 600;
-    color: #334155;
-    margin-bottom: 8px;
-    font-size: clamp(0.85rem, 2.6vw, 0.95rem);
-    line-height: 1.4;
-}
-
-select {
+/* GAME 1: PACKET CATCHER CANVAS STYLES */
+.game-container {
+    position: relative;
     width: 100%;
-    padding: 12px;
-    border-radius: 10px;
-    border: 2px solid #cbd5e1;
-    font-size: clamp(0.85rem, 2.5vw, 0.95rem);
-    background: white;
-    outline: none;
-    touch-action: manipulation;
-}
-
-select:focus {
-    border-color: var(--primary);
-}
-
-.radio-group {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.radio-option {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    background: white;
-    padding: 12px;
-    border-radius: 10px;
-    border: 2px solid #cbd5e1;
-    cursor: pointer;
-    font-weight: 600;
-    color: #334155;
-    font-size: clamp(0.82rem, 2.5vw, 0.92rem);
-    line-height: 1.4;
-    transition: all 0.2s;
-}
-
-.radio-option:hover, .radio-option:active {
-    border-color: var(--primary);
-    background: #eff6ff;
-}
-
-.radio-option input[type="radio"] {
-    width: 18px;
-    height: 18px;
-    margin-top: 2px;
-    flex-shrink: 0;
-    accent-color: var(--primary);
-}
-
-/* Action Buttons */
-.check-btn {
-    width: 100%;
-    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    color: white;
-    border: none;
-    padding: 14px 20px;
-    font-size: clamp(0.9rem, 3vw, 1rem);
-    font-weight: 700;
-    border-radius: 12px;
-    cursor: pointer;
-    margin-top: 10px;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
-    transition: transform 0.2s;
-    touch-action: manipulation;
-}
-
-.check-btn:active {
-    transform: scale(0.98);
-}
-
-/* Interactive Simulator */
-.desktop-simulator {
     background: #0f172a;
     border-radius: 16px;
-    padding: 16px;
-    color: white;
-    min-height: 170px;
+    overflow: hidden;
+    border: 3px solid #334155;
+    touch-action: none;
+}
+
+canvas {
+    display: block;
+    width: 100%;
+    height: 320px;
+    background: #0f172a;
+}
+
+.controls-hint {
+    text-align: center;
+    color: #64748b;
+    font-size: 0.8rem;
+    margin-top: 6px;
+    font-weight: 600;
+}
+
+/* GAME 2: DRAG AND DROP STYLES */
+.drag-stage {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 15px;
+}
+
+.item-pool {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
     justify-content: center;
-    position: relative;
-    border: 4px solid #475569;
+    min-height: 50px;
+    background: #e2e8f0;
+    padding: 10px;
+    border-radius: 12px;
+}
+
+.draggable-item {
+    background: #2563eb;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: grab;
+    font-size: 0.85rem;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    touch-action: none;
+}
+
+.drop-zones {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+}
+
+.drop-zone {
+    background: #f1f5f9;
+    border: 2px dashed #94a3b8;
+    border-radius: 12px;
+    padding: 10px;
+    min-height: 110px;
+    text-align: center;
+}
+
+.drop-zone h4 {
+    font-size: 0.85rem;
+    color: #334155;
+    margin-bottom: 8px;
+}
+
+/* GAME 3: BOSS BATTLE STYLES */
+.boss-card {
+    background: #1e1b4b;
+    color: white;
+    border-radius: 16px;
+    padding: 16px;
+    text-align: center;
+}
+
+.boss-avatar {
+    font-size: 4rem;
+    animation: pulse 1.5s infinite alternate;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.1); }
+}
+
+.boss-hp {
+    width: 100%;
+    background: #475569;
+    height: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 10px 0;
+}
+
+.hp-fill {
+    height: 100%;
+    width: 100%;
+    background: #ef4444;
+    transition: width 0.3s;
+}
+
+.boss-options {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.action-btn {
+    background: #312e81;
+    color: white;
+    border: 2px solid #6366f1;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.85rem;
+    text-align: left;
+}
+
+.action-btn:active {
+    background: #4338ca;
+}
+
+/* Common UI */
+.btn-main {
+    width: 100%;
+    background: linear-gradient(135deg, var(--primary), #1d4ed8);
+    color: white;
+    border: none;
+    padding: 12px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
     margin-top: 10px;
 }
 
-.avatar {
-    font-size: clamp(3rem, 10vw, 3.8rem);
-    margin-bottom: 8px;
-    transition: transform 0.3s ease;
-}
-
-.bubble {
-    background: white;
-    color: #0f172a;
-    padding: 10px 16px;
-    border-radius: 12px;
+.feedback-msg {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 8px;
     font-weight: 700;
     text-align: center;
-    width: 100%;
-    max-width: 90%;
-    font-size: clamp(0.8rem, 2.6vw, 0.92rem);
-    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
-
-/* Feedback Boxes */
-.feedback-box {
-    margin-top: 15px;
-    padding: 12px;
-    border-radius: 10px;
-    font-weight: 700;
+    font-size: 0.88rem;
     display: none;
-    text-align: center;
-    font-size: clamp(0.85rem, 2.5vw, 0.92rem);
 }
 
-.feedback-box.correct {
-    background: #d1fae5;
-    color: #065f46;
-    border: 1px solid #10b981;
-    display: block;
-}
-
-.feedback-box.wrong {
-    background: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #ef4444;
-    display: block;
-}
+.feedback-msg.correct { background: #d1fae5; color: #065f46; display: block; }
+.feedback-msg.wrong { background: #fee2e2; color: #991b1b; display: block; }
 
 .hidden { display: none !important; }
 </style>
@@ -317,242 +296,98 @@ select:focus {
 
 <!-- Splash Screen -->
 <div id="splash">
-    <div style="font-size: clamp(3.5rem, 12vw, 5rem);">🌐🛡️</div>
-    <h1>Internet & Netiquette Lab</h1>
-    <p style="color: #64748b; margin-top: 5px;">Grade 4 Computer Science </p>
+    <div style="font-size: 4rem;">⚡🌐🛡️</div>
+    <h1>Cyber Navigator</h1>
+    <p style="color: #94a3b8; margin-top: 5px;">Grade 4 Chapter 8 Arcade Lab</p>
+    <button class="btn-main" style="width: 180px; margin-top: 20px;" onclick="startGameHub()">PLAY NOW 🚀</button>
 </div>
 
 <div class="container hidden" id="mainApp">
     
     <div class="header">
-        <h1>🌐Internet & Netiquette</h1>
-        <p>Interactive Study & Practice Game (Pages 83 to 88)</p>
+        <h1>🎮 Chapter 8: Arcade Lab</h1>
     </div>
 
-    <!-- Score Header -->
+    <!-- Score Badge -->
     <div class="score-badge">
-        <span>🏆Progress:</span>
-        <span id="scoreText">0 / 5 Levels Completed</span>
+        <span>⭐ TOTAL SCORE: <span id="totalScore">0</span></span>
+        <span id="levelBadge">Game 1: Data Catcher</span>
     </div>
 
     <!-- Navigation Tabs -->
     <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('tab1', this)">Internet Fundamentals</button>
-        <button class="tab-btn" onclick="switchTab('tab2', this)">Web Browsers & URLs</button>
-        <button class="tab-btn" onclick="switchTab('tab3', this)">Search Engine Lab</button>
-        <button class="tab-btn" onclick="switchTab('tab4', this)">Netiquette & Rules</button>
-        <button class="tab-btn" onclick="switchTab('tab5', this)">Live Cyber Simulator</button>
+        <button class="tab-btn active" onclick="switchGame('g1', this)">Game 1: Packet Catcher 📡</button>
+        <button class="tab-btn" onclick="switchGame('g2', this)">Game 2: Web Sorter 🔍</button>
+        <button class="tab-btn" onclick="switchGame('g3', this)">Game 3: Troll Boss Battle 🛡️</button>
     </div>
 
-    <!-- Internet Fundamentals  -->
-    <div id="tab1" class="tab-content">
-        <div class="activity-card">
-            <div class="activity-title">
-                <span>📡</span>Internet Basics & Connectivity
-                <span class="page-tag">Pages 83–84</span>
+    <!-- GAME 1: PACKET CATCHER -->
+    <div id="g1" class="game-tab">
+        <div class="game-container">
+            <canvas id="catcherCanvas"></canvas>
+        </div>
+        <p class="controls-hint">👈 Drag your finger or mouse left/right to catch the target item! Avoid Viruses 👾</p>
+        <div id="g1Feedback" class="feedback-msg"></div>
+    </div>
+
+    <!-- GAME 2: WEB SORTER DRAG & DROP -->
+    <div id="g2" class="game-tab hidden">
+        <div class="drag-stage">
+            <p style="font-size: 0.85rem; font-weight: 700; color: #334155;">Drag each item into its correct Chapter 8 category:</p>
+            
+            <div class="item-pool" id="itemPool">
+                <div class="draggable-item" draggable="true" id="i1" data-cat="browser">Google Chrome</div>
+                <div class="draggable-item" draggable="true" id="i2" data-cat="engine">Google Search</div>
+                <div class="draggable-item" draggable="true" id="i3" data-cat="url">https://www.wikipedia.org</div>
+                <div class="draggable-item" draggable="true" id="i4" data-cat="browser">MS Edge</div>
+                <div class="draggable-item" draggable="true" id="i5" data-cat="engine">Bing</div>
+            </div>
+
+            <div class="drop-zones">
+                <div class="drop-zone" data-target="browser">
+                    <h4>🌐 Web Browsers</h4>
+                </div>
+                <div class="drop-zone" data-target="engine">
+                    <h4>🔍 Search Engines</h4>
+                </div>
+                <div class="drop-zone" data-target="url">
+                    <h4>🔗 Web URLs</h4>
+                </div>
             </div>
             
-            <div class="form-group">
-                <label for="l1_q1">1. Millions of computers linked around the world to form a huge network is called the:</label>
-                <select id="l1_q1">
-                    <option value="">-- Choose Answer --</option>
-                    <option value="wrong">Web Browser</option>
-                    <option value="correct">Internet</option>
-                    <option value="wrong">Search Engine</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="l1_q2">2. What device converts digital computer signals into analog signals over telephone lines?</label>
-                <select id="l1_q2">
-                    <option value="">-- Choose Answer --</option>
-                    <option value="correct">Modem</option>
-                    <option value="wrong">Printer</option>
-                    <option value="wrong">Monitor</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="l1_q3">3. A company like Airtel, Jio, or BSNL that provides internet connection is an:</label>
-                <select id="l1_q3">
-                    <option value="">-- Choose Answer --</option>
-                    <option value="wrong">URL</option>
-                    <option value="correct">ISP (Internet Service Provider)</option>
-                    <option value="wrong">HTML</option>
-                </select>
-            </div>
-
-            <button class="check-btn" onclick="checkLevel1()">Check Level 1 Answers 🏁</button>
-            <div id="fb1" class="feedback-box"></div>
+            <button class="btn-main" onclick="checkDragDrop()">Submit Categorization 🏁</button>
+            <div id="g2Feedback" class="feedback-msg"></div>
         </div>
     </div>
 
-    <!-- Web Browsers & URLs (Pages 85-86) -->
-    <div id="tab2" class="tab-content hidden">
-        <div class="activity-card">
-            <div class="activity-title">
-                <span>🖥️</span> Level 2: Web Browsers & Web Addresses
-                <span class="page-tag">Pages 85–86</span>
-            </div>
-
-            <div class="form-group">
-                <label>1. Which software application allows you to open and view web pages on the internet?</label>
-                <div class="radio-group">
-                    <label class="radio-option">
-                        <input type="radio" name="l2_q1" value="wrong"> MS Paint
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="l2_q1" value="correct"> Web Browser (e.g., Google Chrome, Mozilla Firefox, Microsoft Edge)
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="l2_q1" value="wrong"> Calculator
-                    </label>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>2. Every web page on the World Wide Web (WWW) has a unique web address known as a:</label>
-                <div class="radio-group">
-                    <label class="radio-option">
-                        <input type="radio" name="l2_q2" value="correct"> URL (Uniform Resource Locator)
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="l2_q2" value="wrong"> CPU
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="l2_q2" value="wrong"> RAM
-                    </label>
-                </div>
-            </div>
-
-            <button class="check-btn" onclick="checkLevel2()">Check Level 2 Answers 🏁</button>
-            <div id="fb2" class="feedback-box"></div>
-        </div>
-    </div>
-
-    <!--Search Engine Lab (Pages 85-87) -->
-    <div id="tab3" class="tab-content hidden">
-        <div class="activity-card">
-            <div class="activity-title">
-                <span>🔍</span> Level 3: Search Engines & Offline Saving
-                <span class="page-tag">Pages 85–87</span>
-            </div>
-
-            <div class="form-group">
-                <label for="l3_q1">1. Google, Bing, and Yahoo are specialized websites used to find information called:</label>
-                <select id="l3_q1">
-                    <option value="">-- Select Option --</option>
-                    <option value="correct">Search Engines</option>
-                    <option value="wrong">Protocols</option>
-                    <option value="wrong">Modems</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="l3_q2">2. How can you save a web page in your web browser to read later when offline without internet?</label>
-                <select id="l3_q2">
-                    <option value="">-- Select Option --</option>
-                    <option value="wrong">Turn off the computer immediately</option>
-                    <option value="correct">Use 'Save As' or press Ctrl + S in the Web Browser</option>
-                    <option value="wrong">Type the address in ALL CAPS</option>
-                </select>
-            </div>
-
-            <button class="check-btn" onclick="checkLevel3()">Check Level 3 Answers 🏁</button>
-            <div id="fb3" class="feedback-box"></div>
-        </div>
-    </div>
-
-    <!--Netiquette & Rules (Pages 87-88) -->
-    <div id="tab4" class="tab-content hidden">
-        <div class="activity-card">
-            <div class="activity-title">
-                <span>🤝</span> Level 4: Proper Netiquette Rules
-                <span class="page-tag">Pages 87–88</span>
-            </div>
-
-            <div class="form-group">
-                <label>Scenario 1: You are typing a message to your teacher or friend online. Why should you avoid typing in ALL CAPS?</label>
-                <div class="radio-group">
-                    <label class="radio-option">
-                        <input type="radio" name="l4_q1" value="wrong"> Because it makes the text turn invisible.
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="l4_q1" value="correct"> Because typing in ALL CAPS online is considered rude and looks like SHOUTING!
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="l4_q1" value="wrong"> Because it deletes your files.
-                    </label>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Scenario 2: An online user starts sending mean or hurtful messages in a group chat. This behavior is called:</label>
-                <div class="radio-group">
-                    <label class="radio-option">
-                        <input type="radio" name="l4_q2" value="correct"> Cyberbullying (and you must block them and inform adults).
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio" name="l4_q2" value="wrong"> Good Netiquette.
-                    </label>
-                </div>
-            </div>
-
-            <button class="check-btn" onclick="checkLevel4()">Validate Netiquette Rules 🏁</button>
-            <div id="fb4" class="feedback-box"></div>
-        </div>
-    </div>
-
-    <!--Live Cyber Safety Simulator -->
-    <div id="tab5" class="tab-content hidden">
-        <div class="activity-card">
-            <div class="activity-title">
-                <span>🎮</span> Level 5: Live Netiquette Sandbox Simulator
-                <span class="page-tag">Page 88</span>
-            </div>
-            <p style="color: #64748b; margin-bottom: 12px; font-size: clamp(0.82rem, 2.5vw, 0.92rem);">Select an action below to test real-time cyber reactions!</p>
+    <!-- GAME 3: TROLL BOSS BATTLE -->
+    <div id="g3" class="game-tab hidden">
+        <div class="boss-card">
+            <div class="boss-avatar" id="bossEmoji">👾</div>
+            <h3 id="bossTitle">Cyber Troll Appears!</h3>
+            <p id="bossQuote" style="font-size: 0.85rem; color: #a5b4fc; margin-top: 4px;">"I am typing in ALL CAPS to shout at everyone!"</p>
             
-            <div class="form-group">
-                <label for="simAction">Select Online Action:</label>
-                <select id="simAction" onchange="runSimulation()">
-                    <option value="polite">Be polite and treat others with respect online 😊</option>
-                    <option value="password">Share your account password with online gaming friends 🚨</option>
-                    <option value="report">Tell a trusted parent or teacher if someone makes you uncomfortable 🛡️</option>
-                    <option value="caps">TYPE MESSAGES IN ALL CAPS AT CLASSMATES 📢</option>
-                </select>
+            <div class="boss-hp">
+                <div class="hp-fill" id="hpBar"></div>
             </div>
 
-            <div class="desktop-simulator" id="simDesktop">
-                <div class="avatar" id="simAvatar">🤖</div>
-                <div class="bubble" id="simBubble">Select an action above to see how your avatar reacts!</div>
+            <div class="boss-options" id="bossOptions">
+                <!-- Injected dynamically -->
             </div>
         </div>
+        <div id="g3Feedback" class="feedback-msg"></div>
     </div>
 
 </div>
 
 <script>
-/* Splash Driver */
-setTimeout(() => {
-    const splash = document.getElementById("splash");
-    splash.style.opacity = "0";
-    setTimeout(() => {
-        splash.style.display = "none";
-        document.getElementById("mainApp").classList.remove("hidden");
-    }, 500);
-}, 5000);
-
 /* Audio Synthesizer */
 let audioCtx = null;
 
 function playSound(type) {
     try {
-        if (!audioCtx) {
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === 'suspended') {
-            audioCtx.resume();
-        }
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
         
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
@@ -561,173 +396,310 @@ function playSound(type) {
 
         if (type === 'correct') {
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
-            osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
-            gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.45);
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+            osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.45);
+            osc.stop(audioCtx.currentTime + 0.4);
         } else if (type === 'wrong') {
             osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
-            osc.frequency.setValueAtTime(174.61, audioCtx.currentTime + 0.15); // F3
-            gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
+            osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(140, audioCtx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.35);
+            osc.stop(audioCtx.currentTime + 0.3);
         }
-    } catch(e) {}
+    } catch(e){}
 }
 
-/* Score Tracker State */
-let completedLevels = new Set();
-
-function updateProgress() {
-    const text = document.getElementById("scoreText");
-    text.innerText = completedLevels.size + " / 5 Levels Completed";
+/* Global Score */
+let score = 0;
+function addScore(pts) {
+    score += pts;
+    document.getElementById("totalScore").innerText = score;
 }
 
-/* Tab Navigation */
-function switchTab(tabId, btn) {
-    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+/* Start App */
+function startGameHub() {
+    document.getElementById("splash").style.opacity = "0";
+    setTimeout(() => {
+        document.getElementById("splash").style.display = "none";
+        document.getElementById("mainApp").classList.remove("hidden");
+        initCatcherGame();
+    }, 500);
+}
+
+/* Switch Tabs */
+function switchGame(tabId, btn) {
+    document.querySelectorAll('.game-tab').forEach(el => el.classList.add('hidden'));
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
     
     document.getElementById(tabId).classList.remove('hidden');
     btn.classList.add('active');
+
+    if(tabId === 'g1') {
+        document.getElementById("levelBadge").innerText = "Game 1: Data Catcher";
+        initCatcherGame();
+    } else if(tabId === 'g2') {
+        document.getElementById("levelBadge").innerText = "Game 2: Web Sorter";
+        initDragDrop();
+    } else if(tabId === 'g3') {
+        document.getElementById("levelBadge").innerText = "Game 3: Netiquette Boss";
+        initBossBattle();
+    }
 }
 
-/* Level 1 Evaluation */
-function checkLevel1() {
-    const q1 = document.getElementById("l1_q1").value;
-    const q2 = document.getElementById("l1_q2").value;
-    const q3 = document.getElementById("l1_q3").value;
-    const fb = document.getElementById("fb1");
+/* ========================================================
+   GAME 1: PACKET CATCHER CANVAS ENGINE
+   ======================================================== */
+let canvas, ctx;
+let basket = { x: 0, width: 70, height: 16 };
+let fallingItems = [];
+let currentTarget = "Modem";
+let targetList = ["Modem", "ISP", "Internet", "URL"];
+let targetIndex = 0;
+let catcherLoop = null;
 
-    if (q1 === 'correct' && q2 === 'correct' && q3 === 'correct') {
+function initCatcherGame() {
+    canvas = document.getElementById("catcherCanvas");
+    ctx = canvas.getContext("2d");
+    
+    // Set explicit pixel dimensions
+    canvas.width = canvas.offsetWidth;
+    canvas.height = 320;
+
+    basket.x = canvas.width / 2 - basket.width / 2;
+    currentTarget = targetList[targetIndex];
+    fallingItems = [];
+
+    // Touch and mouse listeners
+    canvas.onmousemove = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        basket.x = e.clientX - rect.left - basket.width / 2;
+    };
+
+    canvas.ontouchmove = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        if(e.touches.length > 0) {
+            basket.x = e.touches[0].clientX - rect.left - basket.width / 2;
+        }
+    };
+
+    if(catcherLoop) clearInterval(catcherLoop);
+    catcherLoop = setInterval(updateCatcher, 1000 / 30);
+    spawnItem();
+}
+
+function spawnItem() {
+    const labels = ["Modem", "ISP", "Internet", "URL", "Virus 👾"];
+    const label = labels[Math.floor(Math.random() * labels.length)];
+    fallingItems.push({
+        x: Math.random() * (canvas.width - 60) + 10,
+        y: 0,
+        label: label,
+        speed: 2.5 + Math.random() * 2
+    });
+}
+
+let spawnTimer = 0;
+function updateCatcher() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw Target Hint Text
+    ctx.fillStyle = "#60a5fa";
+    ctx.font = "bold 14px Segoe UI";
+    ctx.fillText("TARGET: CATCH '" + currentTarget + "'", 12, 26);
+
+    // Keep basket in screen bounds
+    if (basket.x < 0) basket.x = 0;
+    if (basket.x > canvas.width - basket.width) basket.x = canvas.width - basket.width;
+
+    // Draw Basket
+    ctx.fillStyle = "#10b981";
+    ctx.beginPath();
+    ctx.roundRect(basket.x, canvas.height - 25, basket.width, basket.height, 8);
+    ctx.fill();
+
+    spawnTimer++;
+    if(spawnTimer % 35 === 0) spawnItem();
+
+    // Update & Draw Items
+    for(let i = fallingItems.length - 1; i >= 0; i--) {
+        let item = fallingItems[i];
+        item.y += item.speed;
+
+        // Draw item bubble
+        ctx.fillStyle = item.label.includes("Virus") ? "#ef4444" : "#3b82f6";
+        ctx.beginPath();
+        ctx.roundRect(item.x, item.y, 60, 24, 6);
+        ctx.fill();
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 11px Segoe UI";
+        ctx.fillText(item.label, item.x + 6, item.y + 16);
+
+        // Catch Collision Detection
+        if(item.y + 24 >= canvas.height - 25 && item.x + 60 >= basket.x && item.x <= basket.x + basket.width) {
+            if(item.label === currentTarget) {
+                playSound('correct');
+                addScore(20);
+                showG1Feedback("🎉 Correct! You caught the " + currentTarget + "!", true);
+                targetIndex = (targetIndex + 1) % targetList.length;
+                currentTarget = targetList[targetIndex];
+            } else {
+                playSound('wrong');
+                showG1Feedback("❌ Oops! That wasn't the target!", false);
+            }
+            fallingItems.splice(i, 1);
+            continue;
+        }
+
+        // Remove off-screen items
+        if(item.y > canvas.height) fallingItems.splice(i, 1);
+    }
+}
+
+function showG1Feedback(msg, isCorrect) {
+    const fb = document.getElementById("g1Feedback");
+    fb.className = isCorrect ? "feedback-msg correct" : "feedback-msg wrong";
+    fb.innerText = msg;
+}
+
+
+/* ========================================================
+   GAME 2: WEB SORTER DRAG & DROP ENGINE
+   ======================================================== */
+function initDragDrop() {
+    const draggables = document.querySelectorAll('.draggable-item');
+    const dropZones = document.querySelectorAll('.drop-zone');
+
+    draggables.forEach(item => {
+        item.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', item.id);
+        });
+    });
+
+    dropZones.forEach(zone => {
+        zone.addEventListener('dragover', (e) => e.preventDefault());
+        zone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const itemId = e.dataTransfer.getData('text/plain');
+            const draggedEl = document.getElementById(itemId);
+            if(draggedEl) zone.appendChild(draggedEl);
+        });
+    });
+}
+
+function checkDragDrop() {
+    const zones = document.querySelectorAll('.drop-zone');
+    let correctCount = 0;
+    let totalItems = 5;
+
+    zones.forEach(zone => {
+        const targetCategory = zone.getAttribute('data-target');
+        const items = zone.querySelectorAll('.draggable-item');
+        items.forEach(item => {
+            if(item.getAttribute('data-cat') === targetCategory) {
+                correctCount++;
+            }
+        });
+    });
+
+    const fb = document.getElementById("g2Feedback");
+    if(correctCount === totalItems) {
         playSound('correct');
-        fb.className = "feedback-box correct";
-        fb.innerText = "🎉 Perfect! Level 1 Complete! You understand Internet, Modems, and ISPs!";
-        completedLevels.add(1);
+        addScore(50);
+        fb.className = "feedback-msg correct";
+        fb.innerText = "🌟 Great job! All Web Browsers, Search Engines, and URLs are perfectly sorted!";
     } else {
         playSound('wrong');
-        fb.className = "feedback-box wrong";
-        fb.innerText = "❌ Some answers are incorrect. Review pages 83 & 84 in Chapter 8 and try again!";
+        fb.className = "feedback-msg wrong";
+        fb.innerText = "❌ Some items are in the wrong box. Remember: Chrome/Edge are Browsers, Bing/Google are Search Engines!";
     }
-    updateProgress();
 }
 
-/* Level 2 Evaluation */
-function checkLevel2() {
-    const q1 = document.querySelector('input[name="l2_q1"]:checked');
-    const q2 = document.querySelector('input[name="l2_q2"]:checked');
-    const fb = document.getElementById("fb2");
 
-    if (!q1 || !q2) {
-        playSound('wrong');
-        fb.className = "feedback-box wrong";
-        fb.innerText = "⚠️ Please select answers for both questions!";
+/* ========================================================
+   GAME 3: NETIQUETTE BOSS BATTLE ENGINE
+   ======================================================== */
+const bossQuestions = [
+    {
+        quote: '"I am typing my entire email in ALL CAPS to you!"',
+        options: [
+            { text: "Remind them typing ALL CAPS looks like SHOUTING online.", correct: true },
+            { text: "Shout back in ALL CAPS too.", correct: false }
+        ]
+    },
+    {
+        quote: '"Give me your game password so I can give you free coins!"',
+        options: [
+            { text: "Share your password right away.", correct: false },
+            { text: "Refuse! Never share passwords with anyone online.", correct: true }
+        ]
+    },
+    {
+        quote: '"A stranger sent a strange message asking to meet outside!"',
+        options: [
+            { text: "Block them and tell a trusted adult immediately.", correct: true },
+            { text: "Go meet them alone after school.", correct: false }
+        ]
+    }
+];
+
+let bossStep = 0;
+let bossHP = 100;
+
+function initBossBattle() {
+    bossStep = 0;
+    bossHP = 100;
+    document.getElementById("hpBar").style.width = "100%";
+    loadBossQuestion();
+}
+
+function loadBossQuestion() {
+    if(bossStep >= bossQuestions.length) {
+        document.getElementById("bossTitle").innerText = "🏆 Cyber Troll Defeated!";
+        document.getElementById("bossQuote").innerText = "You have mastered Netiquette and Cyber Safety!";
+        document.getElementById("bossOptions").innerHTML = "";
+        playSound('correct');
+        addScore(50);
         return;
     }
 
-    if (q1.value === 'correct' && q2.value === 'correct') {
+    const current = bossQuestions[bossStep];
+    document.getElementById("bossQuote").innerText = current.quote;
+    
+    const container = document.getElementById("bossOptions");
+    container.innerHTML = "";
+
+    current.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "action-btn";
+        btn.innerText = opt.text;
+        btn.onclick = () => attackBoss(opt.correct);
+        container.appendChild(btn);
+    });
+}
+
+function attackBoss(isCorrect) {
+    const fb = document.getElementById("g3Feedback");
+    if(isCorrect) {
         playSound('correct');
-        fb.className = "feedback-box correct";
-        fb.innerText = "🌟 Great Job! Level 2 Complete! You mastered Web Browsers and URLs!";
-        completedLevels.add(2);
+        bossHP -= 34;
+        if(bossHP < 0) bossHP = 0;
+        document.getElementById("hpBar").style.width = bossHP + "%";
+        fb.className = "feedback-msg correct";
+        fb.innerText = "💥 Direct Hit! Perfect Netiquette Defense!";
+        bossStep++;
+        setTimeout(loadBossQuestion, 1000);
     } else {
         playSound('wrong');
         fb.className = "feedback-box wrong";
-        fb.innerText = "❌ Incorrect choice. Remember: Chrome/Edge are Browsers and addresses are URLs!";
+        fb.innerText = "🚨 Attack Missed! That violates Cyber Safety rules!";
     }
-    updateProgress();
-}
-
-/* Level 3 Evaluation */
-function checkLevel3() {
-    const q1 = document.getElementById("l3_q1").value;
-    const q2 = document.getElementById("l3_q2").value;
-    const fb = document.getElementById("fb3");
-
-    if (q1 === 'correct' && q2 === 'correct') {
-        playSound('correct');
-        fb.className = "feedback-box correct";
-        fb.innerText = "🏆 Level 3 Complete! You know Search Engines and how to save web pages offline!";
-        completedLevels.add(3);
-    } else {
-        playSound('wrong');
-        fb.className = "feedback-box wrong";
-        fb.innerText = "❌ Please review Google/Bing search engines and Ctrl+S saving options!";
-    }
-    updateProgress();
-}
-
-/* Level 4 Evaluation */
-function checkLevel4() {
-    const q1 = document.querySelector('input[name="l4_q1"]:checked');
-    const q2 = document.querySelector('input[name="l4_q2"]:checked');
-    const fb = document.getElementById("fb4");
-
-    if (!q1 || !q2) {
-        playSound('wrong');
-        fb.className = "feedback-box wrong";
-        fb.innerText = "⚠️ Please answer all scenario questions!";
-        return;
-    }
-
-    if (q1.value === 'correct' && q2.value === 'correct') {
-        playSound('correct');
-        fb.className = "feedback-box correct";
-        fb.innerText = "🌟 Outstanding! Level 4 Complete! You know Netiquette and how to handle Cyberbullying!";
-        completedLevels.add(4);
-    } else {
-        playSound('wrong');
-        fb.className = "feedback-box wrong";
-        fb.innerText = "🚨 Cyber Risk Warning! Remember: ALL CAPS means shouting, and tell adults about cyberbullying!";
-    }
-    updateProgress();
-}
-
-/* Level 5 Live Simulation */
-function runSimulation() {
-    const action = document.getElementById("simAction").value;
-    const avatar = document.getElementById("simAvatar");
-    const bubble = document.getElementById("simBubble");
-    const desktop = document.getElementById("simDesktop");
-
-    switch(action) {
-        case 'polite':
-            playSound('correct');
-            avatar.innerText = "😊";
-            avatar.style.transform = "scale(1.2)";
-            bubble.innerText = "Politeness and netiquette build a happy online environment!";
-            desktop.style.borderColor = "#10b981";
-            completedLevels.add(5);
-            break;
-        case 'password':
-            playSound('wrong');
-            avatar.innerText = "🚨";
-            avatar.style.transform = "scale(0.9)";
-            bubble.innerText = "WARNING! Never reveal passwords to anyone online!";
-            desktop.style.borderColor = "#ef4444";
-            break;
-        case 'report':
-            playSound('correct');
-            avatar.innerText = "🛡️";
-            avatar.style.transform = "scale(1.2)";
-            bubble.innerText = "Great choice! Always inform parents or teachers if you encounter unsafe content.";
-            desktop.style.borderColor = "#10b981";
-            completedLevels.add(5);
-            break;
-        case 'caps':
-            playSound('wrong');
-            avatar.innerText = "📢";
-            avatar.style.transform = "scale(0.9)";
-            bubble.innerText = "CAUTION! Writing in ALL CAPS is loud and aggressive netiquette!";
-            desktop.style.borderColor = "#f59e0b";
-            break;
-    }
-    updateProgress();
 }
 </script>
 </body>

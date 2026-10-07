@@ -2,17 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tinkercad: The Wire Weaver Puzzle</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Tinkercad Circuit Master: Multi-Level Arcade</title>
 <style>
 :root {
-    --breadboard-bg: #e2e8f0;
-    --terminal-strip: #f8fafc;
-    --panel-dark: #0f172a;
-    --accent-glow: #10b981;
-    --wire-red: #ef4444;
-    --wire-blue: #3b82f6;
-    --gold: #eab308;
+    --primary-blue: #1e3a8a;
+    --accent-cyan: #38bdf8;
+    --success-green: #10b981;
+    --error-red: #ef4444;
+    --warning-yellow: #f59e0b;
+    --panel-bg: rgba(15, 23, 42, 0.95);
 }
 
 * {
@@ -20,6 +19,8 @@
     padding: 0;
     box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -27,13 +28,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: var(--panel-dark);
-    overflow: hidden;
-    padding: 12px;
-    user-select: none;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0369a1 100%);
+    padding: 10px;
+    overflow-x: hidden;
+    color: white;
 }
 
-/* 5-Second Exclusive Splash Overlay Screen */
+/* 5-Second Exclusive Splash Overlay */
 #splash {
     position: fixed;
     top: 0;
@@ -50,402 +51,787 @@ body {
 #splash img {
     width: 250px;
     max-width: 80%;
-    animation: anchorGlow 2s infinite ease-in-out;
+    animation: bouncePulse 2s infinite ease-in-out;
 }
 
-@keyframes anchorGlow {
-    0%, 100% { transform: scale(1); filter: opacity(0.9); }
-    50% { transform: scale(1.05); filter: opacity(1); }
+@keyframes bouncePulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.06); }
 }
 
-/* Core System Layout Wrapper */
 .container {
     width: 100%;
-    max-width: 850px;
-    background: #ffffff;
-    border-radius: 24px;
-    padding: 25px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+    max-width: 900px;
+    background: var(--panel-bg);
+    border: 3px solid var(--accent-cyan);
+    border-radius: 20px;
+    padding: 16px;
+    box-shadow: 0 0 35px rgba(56, 189, 248, 0.35);
     position: relative;
     z-index: 10;
+}
+
+.hidden { display: none !important; }
+
+/* HUD Top Bar */
+.hud-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #0f172a;
+    border: 1px solid #334155;
+    padding: 10px 16px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    font-weight: 800;
+    font-size: clamp(0.85rem, 2.5vw, 1rem);
+}
+
+.badge-attempt {
+    background: var(--warning-yellow);
+    color: #0f172a;
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
+/* Navigation Tabs */
+.nav-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+}
+
+.tab-btn {
+    padding: 8px 14px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.tab-btn.active {
+    background: #0284c7;
+    color: white;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+/* Common Feedback Box */
+.feedback-box {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #334155;
+    color: white;
     text-align: center;
 }
 
-.hidden {
-    display: none !important;
-}
+.feedback-box.correct { background: #065f46; color: #a7f3d0; }
+.feedback-box.wrong { background: #991b1b; color: #fecaca; }
+.feedback-box.warning { background: #92400e; color: #fef08a; }
 
-/* Dashboard Launch Frame Panels */
-.intro-panel h1 {
-    font-size: 2.3rem;
-    color: #1e3a8a;
-    margin-bottom: 8px;
-    font-weight: 800;
-}
-
-.mode-badge {
-    display: inline-block;
-    padding: 6px 16px;
-    background: #dbeafe;
-    color: #1e40af;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 0.85rem;
-    margin-bottom: 25px;
-    text-transform: uppercase;
-}
-
-.briefing {
-    background: #f1f5f9;
-    padding: 20px;
+/* LEVEL 1: CANVAS DEFENDER */
+.canvas-wrapper {
+    position: relative;
+    width: 100%;
+    background: #050811;
+    border: 2px solid var(--accent-cyan);
     border-radius: 14px;
-    border-left: 6px solid #3b82f6;
-    text-align: left;
-    margin-bottom: 25px;
+    overflow: hidden;
+    margin-bottom: 12px;
 }
 
-.briefing ol {
-    margin-left: 20px;
-    line-height: 1.7;
-    color: #475569;
-    font-size: 0.95rem;
+canvas {
+    display: block;
+    width: 100%;
+    height: 300px;
 }
 
-button.act-btn {
-    padding: 16px 45px;
-    background: linear-gradient(135deg, #1e3a8a, #1d4ed8);
-    color: white;
-    font-size: 1.15rem;
-    font-weight: 700;
+.controls-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.tf-btn {
+    padding: 16px;
     border: none;
     border-radius: 12px;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-button.act-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(29, 78, 216, 0.4);
-}
-
-/* Real-Time Operational HUD */
-.hud {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 15px;
-    gap: 10px;
-}
-
-.hud-card {
-    background: var(--panel-dark);
+    font-size: 1.1rem;
+    font-weight: 800;
     color: white;
-    padding: 10px 20px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 0.95rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    transition: transform 0.1s;
 }
 
-/* Dynamic Goal Window Panel */
-.goal-panel {
-    background: #eff6ff;
-    border: 2px solid #bfdbfe;
-    padding: 16px;
-    border-radius: 14px;
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: #1e40af;
-    margin-bottom: 20px;
-    min-height: 75px;
+.tf-btn:active { transform: scale(0.96); }
+
+.btn-true {
+    background: linear-gradient(135deg, #10b981, #059669);
+    border: 2px solid #a7f3d0;
+}
+
+.btn-false {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    border: 2px solid #fecaca;
+}
+
+/* LEVEL 2: MATCH CARDS */
+.memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.card-flip {
+    height: 85px;
+    background: #1e293b;
+    border: 2px solid var(--accent-cyan);
+    border-radius: 12px;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-align: center;
+    cursor: pointer;
+    padding: 6px;
+    color: transparent;
+    transition: background 0.2s, color 0.2s;
 }
 
-/* Schematic Visualized Breadboard Grid Area */
-.breadboard-chassis {
-    background: var(--breadboard-bg);
-    border: 4px solid #cbd5e1;
+.card-flip.flipped {
+    background: #0284c7;
+    color: #ffffff !important;
+}
+
+.card-flip.matched {
+    background: #10b981;
+    border-color: #a7f3d0;
+    color: #ffffff !important;
+}
+
+/* LEVEL 3: BOSS BATTLE */
+.boss-card {
+    background: rgba(15, 23, 42, 0.8);
+    border: 2px solid var(--accent-cyan);
     border-radius: 16px;
-    padding: 25px;
-    margin-bottom: 25px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    position: relative;
-    box-shadow: inset 0 4px 10px rgba(0,0,0,0.06);
+    padding: 20px;
+    text-align: center;
 }
 
-.terminal-strip-row {
-    background: var(--terminal-strip);
-    border: 1px solid #94a3b8;
+.boss-avatar { font-size: 3.5rem; margin-bottom: 8px; }
+
+.boss-hp {
+    width: 100%;
+    background: #334155;
+    height: 16px;
     border-radius: 8px;
-    height: 45px;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 0 10px;
+    overflow: hidden;
+    margin: 12px 0;
 }
 
-.plug-hole {
-    width: 14px;
-    height: 14px;
-    background: #475569;
-    border-radius: 30%;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+.hp-fill {
+    height: 100%;
+    width: 100%;
+    background: var(--error-red);
+    transition: width 0.3s;
 }
 
-/* Active Choice Components Dock */
-.components-dock {
+.boss-options {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* LEVEL 4: DRAG & DROP */
+.drag-stage {
+    display: flex;
+    flex-direction: column;
     gap: 15px;
 }
 
-.wire-choice-btn {
-    background: #ffffff;
-    border: 2px solid #cbd5e1;
-    padding: 15px;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: 1.05rem;
-    color: #334155;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
+.item-pool {
     display: flex;
-    align-items: center;
-    justify-content: center;
     gap: 10px;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-}
-
-.wire-choice-btn:hover {
-    transform: translateY(-2px);
-    border-color: #3b82f6;
-    background: #f8fafc;
-}
-
-/* Live Operational Status Banner Ticker */
-.ticker-feedback {
-    margin-top: 20px;
-    padding: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-height: 70px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 2px solid #334155;
+    padding: 10px;
     border-radius: 12px;
-    text-align: left;
-    font-weight: 600;
-    font-size: 0.95rem;
-    min-height: 55px;
-    display: flex;
-    align-items: center;
-    border-left: 5px solid transparent;
-    background: #f1f5f9;
 }
 
-.ticker-feedback.good {
-    background: #ecfdf5;
-    border-left-color: var(--accent-glow);
-    color: #065f46;
-}
-
-.ticker-feedback.bad {
-    background: #fef2f2;
-    border-left-color: var(--wire-red);
-    color: #991b1b;
-}
-
-/* Assessment Ranking Scoreboard Elements */
-.rank-shell {
-    width: 140px;
-    height: 140px;
-    border-radius: 50%;
-    background: var(--panel-dark);
+.draggable-item {
+    background: #0284c7;
     color: white;
-    font-size: 2.3rem;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: grab;
+    font-size: 0.85rem;
+    touch-action: none;
+}
+
+.drop-zones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.drop-zone {
+    background: rgba(15, 23, 42, 0.8);
+    border: 2px dashed var(--accent-cyan);
+    border-radius: 12px;
+    padding: 12px;
+    min-height: 120px;
+    text-align: center;
+}
+
+.act-btn-main {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    color: white;
+    font-size: 1rem;
+    font-weight: 800;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+/* Final Report Screen */
+.report-panel h2 { color: var(--accent-cyan); font-size: 1.8rem; margin-bottom: 10px; }
+.score-circle {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #0284c7;
+    color: white;
+    font-size: 2rem;
     font-weight: 800;
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 20px auto;
-}
-
-.rank-title {
-    font-size: 1.5rem;
-    color: #1e3a8a;
-    font-weight: 800;
-    margin-bottom: 12px;
+    margin: 15px auto;
+    border: 4px solid var(--accent-cyan);
 }
 </style>
 </head>
 <body>
 
+<!-- Audio Elements -->
+<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
+
+<!-- 5-Second Exclusive Splash Overlay Screen -->
 <div id="splash">
     <img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
 
 <div class="container hidden" id="appMainframe">
-    <div id="menuPanel" class="intro-panel">
-        <h1>Tinkercad: The Wire Weaver</h1>
-        <div class="mode-badge">Logistical Circuit Linker • Interactive Grid</div>
-        
-        <div class="briefing">
-            <p style="font-weight:700; margin-bottom:10px; color:#0f172a;">Circuit Routing Protocols:</p>
-            <ol>
-                <li>Review the specific **Tinkercad Engineering Goal** displayed at the top of your workstation terminal desk.</li>
-                <li>Analyze the two colorful **Wire Link Components** waiting inside the warehouse inventory tray deck below.</li>
-                <li>Select and click the optimal component string to wire up and seal the breadboard channel grid seamlessly!</li>
-                <li>Plugging in incorrect wire configurations instantly triggers an overloading fuse error layout deduction penalty.</li>
-                <li>Exactly 10 board schematics are active. Connect them accurately to declare your System Engineering Rank!</li>
-            </ol>
-        </div>
-        <button class="act-btn" onclick="initializeWeaverShift()">Boot Workstation Terminal ➜</button>
+    
+    <div class="hud-bar">
+        <div id="levelBadge">Level 1: Space Defender</div>
+        <div>Attempts: <span class="badge-attempt" id="attemptBadge">2 / 2</span></div>
+        <div>🏆 Total Score: <span id="scoreVal">0</span></div>
     </div>
 
-    <div id="gamePanel" class="hidden">
-        <div class="hud">
-            <div class="hud-card">🔌 Routed Rails: <span id="countHUD">0</span> / 10</div>
-            <div class="hud-card" style="background:var(--gold);">🏆 Grid Continuity: <span id="scoreHUD">0</span></div>
-        </div>
-
-        <div class="goal-panel" id="goalField">Synchronizing schematic buffers...</div>
-
-        <div class="breadboard-chassis">
-            <div class="terminal-strip-row"><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div></div>
-            <div class="terminal-strip-row" style="margin-bottom: 10px;"><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div></div>
-            <div class="terminal-strip-row"><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div></div>
-        </div>
-
-        <div class="components-dock" id="choicesTray">
-            <button class="wire-choice-btn" onclick="verifyWireSelection(0)">Option A</button>
-            <button class="wire-choice-btn" onclick="verifyWireSelection(1)">Option B</button>
-        </div>
-
-        <div class="ticker-feedback" id="tickerBox">Analyze the schematic request goals, then choose the correct matching wire rail!</div>
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchLevel(1, this)">Lvl 1: Defender 🚀</button>
+        <button class="tab-btn" onclick="switchLevel(2, this)">Lvl 2: Circuit Match 🧠</button>
+        <button class="tab-btn" onclick="switchLevel(3, this)">Lvl 3: Troll Battle 👾</button>
+        <button class="tab-btn" onclick="switchLevel(4, this)">Lvl 4: Component Sorter ⚡</button>
     </div>
 
-    <div id="reportPanel" class="hidden">
-        <h1 style="color:#1e3a8a; font-size:2.2rem;">📊 Structural Integration Summary</h1>
-        <div class="rank-shell"><span id="finalScore">0</span></div>
-        <div class="rank-title" id="finalRank">Assembling Ranking Credentials...</div>
-        <p id="finalSummary" style="color:#475569; margin-bottom:25px; line-height:1.6; max-width:600px; margin-left:auto; margin-right:auto;"></p>
-        <button class="act-btn" onclick="location.reload()">Boot New Design Deck 🔄</button>
+    <!-- LEVEL 1: SPACE DEFENDER (TRUE / FALSE) -->
+    <div id="lvl1" class="level-tab">
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+        <div class="controls-panel">
+            <button class="tf-btn btn-true" onclick="fireCannon(true)">
+                ✅ TRUE / SAFE
+            </button>
+            <button class="tf-btn btn-false" onclick="fireCannon(false)">
+                ❌ FALSE / FAULT
+            </button>
+        </div>
+        <div class="feedback-box" id="fbLvl1">
+            Analyze the incoming schematic goal and select TRUE / SAFE or FALSE / FAULT!
+        </div>
     </div>
+
+    <!-- LEVEL 2: CIRCUIT MATCH -->
+    <div id="lvl2" class="level-tab hidden">
+        <p style="text-align:center; font-weight:700; font-size:0.9rem; color:#cbd5e1;">Match Tinkercad components with their electrical functions:</p>
+        <div class="memory-grid" id="memoryGrid"></div>
+        <div class="feedback-box" id="fbLvl2">Click cards to find matching pairs!</div>
+    </div>
+
+    <!-- LEVEL 3: CIRCUIT TROLL BOSS BATTLE -->
+    <div id="lvl3" class="level-tab hidden">
+        <div class="boss-card">
+            <div class="boss-avatar">👾</div>
+            <h3 id="bossTitle">Circuit Troll Appears!</h3>
+            <p id="bossQuote" style="font-size: 0.95rem; color: #38bdf8; margin-top: 6px; font-weight: 700;">"I connect LEDs straight to 9V batteries without resistors!"</p>
+            
+            <div class="boss-hp">
+                <div class="hp-fill" id="hpBar"></div>
+            </div>
+
+            <p style="font-size:0.85rem; color:#94a3b8; margin-top:10px;">Is this behavior Correct or Incorrect Circuit Design?</p>
+            <div class="boss-options">
+                <button class="tf-btn btn-true" onclick="attackBoss(true)">✅ CORRECT</button>
+                <button class="tf-btn btn-false" onclick="attackBoss(false)">❌ INCORRECT</button>
+            </div>
+        </div>
+        <div class="feedback-box" id="fbLvl3">Defeat the Circuit Troll by calling out dangerous wiring habits!</div>
+    </div>
+
+    <!-- LEVEL 4: DRAG AND DROP -->
+    <div id="lvl4" class="level-tab hidden">
+        <div class="drag-stage">
+            <p style="font-size: 0.9rem; font-weight: 700; text-align:center;">Drag each component into its correct functional zone:</p>
+            
+            <div class="item-pool" id="itemPool">
+                <div class="draggable-item" draggable="true" id="di1" data-cat="power">9V Battery</div>
+                <div class="draggable-item" draggable="true" id="di2" data-cat="safety">Resistor</div>
+                <div class="draggable-item" draggable="true" id="di3" data-cat="power">LED Light</div>
+                <div class="draggable-item" draggable="true" id="di4" data-cat="safety">Push Button</div>
+            </div>
+
+            <div class="drop-zones">
+                <div class="drop-zone" data-target="power">
+                    <h4 style="color:#10b981;">⚡ Power & Light</h4>
+                </div>
+                <div class="drop-zone" data-target="safety">
+                    <h4 style="color:#38bdf8;">🛡️ Control & Safety</h4>
+                </div>
+            </div>
+            
+            <button class="act-btn-main" onclick="checkDragDrop()">Submit Categorization 🏁</button>
+            <div class="feedback-box" id="fbLvl4">Drag items into the Power/Light or Control/Safety boxes!</div>
+        </div>
+    </div>
+
+    <!-- Final Report Screen -->
+    <div id="reportPanel" class="hidden report-panel" style="text-align:center;">
+        <h2>📊 Tinkercad Systems Audit</h2>
+        <div class="score-circle"><span id="finalScore">0</span></div>
+        <h3 id="finalRank" style="color:#f59e0b; margin-bottom:10px;">Evaluating...</h3>
+        <p id="finalSummary" style="color:#cbd5e1; font-size:0.9rem; line-height:1.5; max-width:550px; margin:0 auto;"></p>
+        <button class="act-btn-main" style="width:200px; margin:20px auto 0;" onclick="location.reload()">Reboot Mission 🔄</button>
+    </div>
+
 </div>
 
-<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
-<audio id="clapSound" src="assets/clap.mp3" preload="auto"></audio>
-
 <script>
-/* Release Mainframe precisely at 5000ms splash window lock expiration */
+/* 5-Second Splash Timer */
 setTimeout(() => {
     document.getElementById("splash").style.display = "none";
     document.getElementById("appMainframe").classList.remove("hidden");
+    initLevel1();
 }, 5000);
 
-/* Complete Chapter Circuit Diagram Configuration Problems Dataset Array */
-const puzzleDatabase = [
-    { target: "We need a software application to model, wire, and execute hardware simulations safely on a browser layout window.", opt1: "🔴 Tinkercad Simulation Tool", opt2: "🔵 MS Word Document Layout", correctIdx: 0, feedback: "Tinkercad allows browser-based execution testing without needing physical wires or batteries." },
-    { target: "Identify the vital component block that provides power current so the electronic tracks can turn on.", opt1: "🔵 9V Energy Battery Unit", opt2: "🔴 Ceramic Current Resistor", correctIdx: 0, feedback: "The battery supplies the active electric current loop to the grid lines." },
-    { target: "We want to incorporate a component that directly transforms electric lines into bright visible light outputs.", opt1: "🔴 Light Emitting Diode (LED)", opt2: "🔵 Push Button Switch Module", correctIdx: 0, feedback: "An LED converts electrical energy paths directly into glowing photon light outputs." },
-    { target: "Prevent your delicate LED from burning out or popping due to massive raw electricity overflows.", opt1: "🔵 Inline Safety Resistor", opt2: "🔴 Unprotected Copper Wire", correctIdx: 0, feedback: "Resistors intentionally restrict current density flow scales to shield sensitive assets." },
-    { target: "Select the plastic solderless prototyping terminal map board used to hold multiple components cleanly.", opt1: "🔴 Grid Terminal Breadboard", opt2: "🔵 Solid Sealed Metal Battery Case", correctIdx: 0, feedback: "Breadboards contain hundreds of interior grid plug holes to safely interlink separate component wires." },
-    { target: "We need a mechanism to deliberately open or seal the hardware wire tracks at will.", opt1: "🔵 Interactive Push-Button Switch", opt2: "🔴 Fixed Protective Resistor Block", correctIdx: 0, feedback: "Switches physically break or restore circuit rail connections when toggled manually." },
-    { target: "What state occurs inside your Tinkercad workspace when a switch is left fully unpressed?", opt1: "🔴 Circuit breaks (Open Path)", opt2: "🔵 LED glows infinitely brighter", correctIdx: 0, feedback: "An unpressed switch breaks continuity, creating an air gap that blocks electricity." },
-    { target: "The simulation is running but your schematic is completely non-responsive. Where is the fault?", opt1: "🔵 Misaligned/Proper Connections check", opt2: "🔴 Screen resolution density settings", correctIdx: 0, feedback: "Re-verifying proper component polarities and wire connections resolves most circuit simulation faults." },
-    { target: "Isolate the file asset option that has absolutely no function inside an electronic circuit board assembly workspace.", opt1: "🔴 Spreadsheet Document App", opt2: "🔵 Virtual Breadboard Rail Plate", correctIdx: 0, feedback: "Spreadsheets track accounting text tables and are completely unrelated to hardware circuit design elements." },
-    { target: "A completely sealed wire path running flawlessly from positive to negative battery points is called a/an:", opt1: "🔵 Complete Unbroken Circuit", opt2: "🔴 Damaged Incomplete Route", correctIdx: 0, feedback: "A complete circuit path allows current to loop safely without encountering blockages." }
+/* Global State */
+let currentScore = 0;
+let attemptsLeft = 2;
+let isProcessing = false;
+let audioCtx = null;
+
+function addScore(pts) {
+    currentScore += pts;
+    document.getElementById("scoreVal").innerText = currentScore;
+}
+
+function triggerSound(isCorrect) {
+    try {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        if (isCorrect) {
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(880.00, audioCtx.currentTime + 0.08);
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        } else {
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(180, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(100, audioCtx.currentTime + 0.1);
+            gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.3);
+        }
+    } catch(e) {}
+}
+
+function switchLevel(lvlNum, btn) {
+    document.querySelectorAll('.level-tab').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+    document.getElementById('lvl' + lvlNum).classList.remove('hidden');
+    if (btn) btn.classList.add('active');
+
+    if (lvlNum === 1) {
+        document.getElementById("levelBadge").innerText = "Level 1: Space Defender";
+        initLevel1();
+    } else if (lvlNum === 2) {
+        document.getElementById("levelBadge").innerText = "Level 2: Circuit Match";
+        initLevel2();
+    } else if (lvlNum === 3) {
+        document.getElementById("levelBadge").innerText = "Level 3: Troll Battle";
+        initLevel3();
+    } else if (lvlNum === 4) {
+        document.getElementById("levelBadge").innerText = "Level 4: Component Sorter";
+        initLevel4();
+    }
+}
+
+/* ========================================================
+   LEVEL 1: SPACE DEFENDER (TRUE / FALSE)
+   ======================================================== */
+const datasetLvl1 = [
+    { text: "Tinkercad allows browser-based hardware simulations without needing physical wires.", isSafe: true, info: "Correct! Tinkercad models and tests electronic circuits virtually." },
+    { text: "Connecting an LED directly to a 9V battery without a resistor is completely safe.", isSafe: false, info: "False! Raw current will burn out or pop unprotected LEDs." },
+    { text: "Breadboards contain interior grid plug holes to interlink separate component wires.", isSafe: true, info: "Correct! Breadboards allow solderless prototyping." },
+    { text: "An unpressed push button keeps a circuit completely closed so current flows infinitely.", isSafe: false, info: "False! An unpressed button creates an open circuit that blocks electricity." }
 ];
 
-let randomizedDeck = [];
-let matrixIndex = 0;
-let continuityScore = 0;
-let panelControlsEnabled = false;
+let idx1 = 0;
+let canvas, ctx, animId;
+let targetY = 20;
 
-function initializeWeaverShift() {
-    randomizedDeck = [...puzzleDatabase].sort(() => Math.random() - 0.5);
-    matrixIndex = 0;
-    continuityScore = 0;
-    panelControlsEnabled = true;
+function initLevel1() {
+    canvas = document.getElementById("gameCanvas");
+    ctx = canvas.getContext("2d");
+    canvas.width = canvas.offsetWidth;
+    canvas.height = 300;
 
-    document.getElementById("menuPanel").className = "intro-panel hidden";
-    document.getElementById("gamePanel").classList.remove("hidden");
-    
-    renderCurrentWeavePuzzle();
+    idx1 = 0;
+    loadQuestion1();
+    if (!animId) renderLoop1();
 }
 
-function renderCurrentWeavePuzzle() {
-    document.getElementById("countHUD").innerText = matrixIndex;
-    
-    const activePuzzle = randomizedDeck[matrixIndex];
-    document.getElementById("goalField").innerText = `🔧 MISSION GOAL: ${activePuzzle.target}`;
-    
-    const buttons = document.getElementById("choicesTray").getElementsByTagName("button");
-    buttons[0].innerText = activePuzzle.opt1;
-    buttons[1].innerText = activePuzzle.opt2;
-
-    document.getElementById("tickerBox").className = "ticker-feedback";
-    document.getElementById("tickerBox").innerHTML = "Select the correct component link from the tray to weave into the board holes safely.";
-    
-    panelControlsEnabled = true;
-}
-
-function verifyWireSelection(clickedIndex) {
-    if (!panelControlsEnabled) return;
-    panelControlsEnabled = false;
-
-    const currentPuzzle = randomizedDeck[matrixIndex];
-    const userChoiceCorrect = (clickedIndex === currentPuzzle.correctIdx);
-    const feedbackBox = document.getElementById("tickerBox");
-
-    if (userChoiceCorrect) {
-        continuityScore += 100;
-        // Engage double simultaneous positive audio streams
-        try { document.getElementById("correctSound").play().catch(()=>{}); } catch(e){}
-        try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
-        feedbackBox.className = "ticker-feedback good";
-        feedbackBox.innerHTML = `<strong>⚡ LINK ESTABLISHED!</strong> ${currentPuzzle.feedback}`;
-    } else {
-        continuityScore = Math.max(0, continuityScore - 50);
-        try { document.getElementById("wrongSound").play().catch(()=>{}); } catch(e){}
-        feedbackBox.className = "ticker-feedback bad";
-        feedbackBox.innerHTML = `<strong>💥 CURRENT OVERLOAD FUSE BLOWN!</strong> Connection failed. Remember: ${currentPuzzle.feedback}`;
+function loadQuestion1() {
+    if (idx1 >= datasetLvl1.length) {
+        switchLevel(2, document.querySelectorAll('.tab-btn')[1]);
+        return;
     }
+    attemptsLeft = 2;
+    isProcessing = false;
+    targetY = 20;
+    document.getElementById("attemptBadge").innerText = "2 / 2";
+    document.getElementById("attemptBadge").style.background = "#f59e0b";
+    
+    const fb = document.getElementById("fbLvl1");
+    fb.className = "feedback-box";
+    fb.innerText = "Analyze the incoming schematic goal and select TRUE / SAFE or FALSE / FAULT!";
+}
 
-    document.getElementById("scoreHUD").innerText = continuityScore;
-    matrixIndex++;
+function fireCannon(userChoseTrue) {
+    if (isProcessing) return;
 
-    // Spacing window buffer timeout delay before loading subsequent puzzle
-    setTimeout(() => {
-        if (matrixIndex < randomizedDeck.length) {
-            renderCurrentWeavePuzzle();
+    const currentItem = datasetLvl1[idx1];
+    const isCorrect = (userChoseTrue === currentItem.isSafe);
+    const fb = document.getElementById("fbLvl1");
+
+    if (isCorrect) {
+        isProcessing = true;
+        triggerSound(true);
+        const pts = (attemptsLeft === 2) ? 100 : 50;
+        addScore(pts);
+
+        fb.className = "feedback-box correct";
+        fb.innerHTML = `🎯 CORRECT! (+${pts} pts) ${currentItem.info}`;
+
+        setTimeout(() => {
+            idx1++;
+            loadQuestion1();
+        }, 1800);
+
+    } else {
+        attemptsLeft--;
+        triggerSound(false);
+
+        if (attemptsLeft === 1) {
+            fb.className = "feedback-box warning";
+            fb.innerHTML = `⚠️ INCORRECT! 1 Attempt Remaining. Rethink if this is True or False!`;
+            document.getElementById("attemptBadge").innerText = "1 / 2";
+            document.getElementById("attemptBadge").style.background = "#ef4444";
         } else {
-            compileFinalEngineeringAudit();
+            isProcessing = true;
+            fb.className = "feedback-box wrong";
+            fb.innerHTML = `💥 OUT OF ATTEMPTS! Note: ${currentItem.info}`;
+
+            setTimeout(() => {
+                idx1++;
+                loadQuestion1();
+            }, 2200);
         }
-    }, 2000);
+    }
 }
 
-function compileFinalEngineeringAudit() {
-    document.getElementById("gamePanel").className = "hidden";
-    document.getElementById("reportPanel").classList.remove("hidden");
-    
-    document.getElementById("finalScore").innerText = continuityScore;
-    try { document.getElementById("clapSound").play().catch(()=>{}); } catch(e){}
+function renderLoop1() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    let assignedTitle = "";
-    let analyticalSummary = "";
-    const designContinuityRatio = continuityScore / 1000;
+    if (idx1 < datasetLvl1.length) {
+        const item = datasetLvl1[idx1];
+        const cardWidth = Math.min(480, canvas.width - 40);
+        const cardX = (canvas.width - cardWidth) / 2;
 
-    if (designContinuityRatio >= 0.85) {
-        assignedTitle = "👑 Master Breadboard Wire Weaver";
-        analyticalSummary = "Exquisite spatial connection choices! You flawlessly routed resistors, switch contacts, and LEDs across the grid rails without causing a single system explosion. Outstanding Tinkercad systems execution.";
-    } else if (designContinuityRatio >= 0.55) {
-        assignedTitle = "💼 Senior Circuit Logic Designer";
-        analyticalSummary = "Strong logic integration run! Most terminal rails closed up seamlessly. Be more cautious about open switch breaks and grounding channels next time to claim the top certification.";
-    } else {
-        assignedTitle = "🌱 Hardware Prototyping Student";
-        analyticalSummary = "Multiple wire links triggered severe circuit faults, causing terminal grid power blackouts. Recheck the circuit connection protocols inside the handbook log and rerun the terminal shift deck!";
+        ctx.fillStyle = "rgba(15, 23, 42, 0.95)";
+        ctx.strokeStyle = attemptsLeft === 2 ? "#38bdf8" : "#ef4444";
+        ctx.lineWidth = 2;
+        
+        ctx.beginPath();
+        ctx.roundRect(cardX, targetY, cardWidth, 90, 10);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#f59e0b";
+        ctx.font = "bold 12px Segoe UI";
+        ctx.fillText("SCHEMATIC TRANSMISSION:", cardX + 15, targetY + 24);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 13px Segoe UI";
+        
+        const words = item.text.split(' ');
+        let line = '';
+        let lineY = targetY + 48;
+
+        for (let n = 0; n < words.length; n++) {
+            let testLine = line + words[n] + ' ';
+            if (ctx.measureText(testLine).width > cardWidth - 30 && n > 0) {
+                ctx.fillText(line, cardX + 15, lineY);
+                line = words[n] + ' ';
+                lineY += 18;
+            } else {
+                line = testLine;
+            }
+        }
+        ctx.fillText(line, cardX + 15, lineY);
     }
 
-    document.getElementById("finalRank").innerText = assignedTitle;
-    document.getElementById("finalSummary").innerText = analyticalSummary;
+    ctx.font = "30px Segoe UI";
+    ctx.textAlign = "center";
+    ctx.fillText("🚀", canvas.width / 2, canvas.height - 20);
+    ctx.textAlign = "left";
+
+    animId = requestAnimationFrame(renderLoop1);
+}
+
+/* ========================================================
+   LEVEL 2: CIRCUIT MATCH
+   ======================================================== */
+const cardsData2 = [
+    { id: 1, text: "LED", pair: "Emits Light" },
+    { id: 2, text: "Emits Light", pair: "LED" },
+    { id: 3, text: "Resistor", pair: "Limits Current" },
+    { id: 4, text: "Limits Current", pair: "Resistor" },
+    { id: 5, text: "Breadboard", pair: "Grid Board" },
+    { id: 6, text: "Grid Board", pair: "Breadboard" },
+    { id: 7, text: "9V Battery", pair: "Power Source" },
+    { id: 8, text: "Power Source", pair: "9V Battery" }
+];
+
+let selectedCards2 = [];
+
+function initLevel2() {
+    const grid = document.getElementById("memoryGrid");
+    grid.innerHTML = "";
+    selectedCards2 = [];
+    
+    const shuffled = [...cardsData2].sort(() => Math.random() - 0.5);
+
+    shuffled.forEach((c) => {
+        const card = document.createElement("div");
+        card.className = "card-flip";
+        card.dataset.text = c.text;
+        card.dataset.pair = c.pair;
+        card.innerText = c.text;
+        card.onclick = () => flipCard2(card);
+        grid.appendChild(card);
+    });
+}
+
+function flipCard2(card) {
+    if (selectedCards2.length < 2 && !card.classList.contains("flipped")) {
+        card.classList.add("flipped");
+        selectedCards2.push(card);
+
+        if (selectedCards2.length === 2) {
+            if (selectedCards2[0].dataset.pair === selectedCards2[1].dataset.text) {
+                triggerSound(true);
+                selectedCards2[0].classList.add("matched");
+                selectedCards2[1].classList.add("matched");
+                selectedCards2 = [];
+                addScore(50);
+                document.getElementById("fbLvl2").innerText = "🌟 Perfect Match!";
+            } else {
+                triggerSound(false);
+                document.getElementById("fbLvl2").innerText = "❌ Not a match! Try again.";
+                setTimeout(() => {
+                    selectedCards2[0].classList.remove("flipped");
+                    selectedCards2[1].classList.remove("flipped");
+                    selectedCards2 = [];
+                }, 800);
+            }
+        }
+    }
+}
+
+/* ========================================================
+   LEVEL 3: CIRCUIT TROLL BOSS BATTLE
+   ======================================================== */
+const bossQuestions3 = [
+    {
+        quote: '"I attach LEDs directly to batteries without resistors to make them brighter!"',
+        isCorrect: false,
+        info: "Connecting LEDs without resistors causes high current to burn them out!"
+    },
+    {
+        quote: '"I use resistors in line with LEDs to control voltage and current safely."',
+        isCorrect: true,
+        info: "Resistors protect sensitive components from current overload."
+    }
+];
+
+let bossStep3 = 0;
+let bossHP3 = 100;
+
+function initLevel3() {
+    bossStep3 = 0;
+    bossHP3 = 100;
+    document.getElementById("hpBar").style.width = "100%";
+    loadBossQuestion3();
+}
+
+function loadBossQuestion3() {
+    if (bossStep3 >= bossQuestions3.length) {
+        document.getElementById("fbLvl3").innerText = "🏆 Circuit Troll Defeated! Advancing to Level 4...";
+        triggerSound(true);
+        addScore(100);
+        setTimeout(() => switchLevel(4, document.querySelectorAll('.tab-btn')[3]), 1500);
+        return;
+    }
+    const cur = bossQuestions3[bossStep3];
+    document.getElementById("bossQuote").innerText = cur.quote;
+}
+
+function attackBoss(userSaidCorrect) {
+    const cur = bossQuestions3[bossStep3];
+    const isRight = (userSaidCorrect === cur.isCorrect);
+
+    if (isRight) {
+        triggerSound(true);
+        bossHP3 -= 50;
+        document.getElementById("hpBar").style.width = bossHP3 + "%";
+        addScore(50);
+        document.getElementById("fbLvl3").innerText = "💥 Direct Hit! " + cur.info;
+        bossStep3++;
+        setTimeout(loadBossQuestion3, 1200);
+    } else {
+        triggerSound(false);
+        document.getElementById("fbLvl3").innerText = "🚨 Attack Missed! Remember: " + cur.info;
+    }
+}
+
+/* ========================================================
+   LEVEL 4: DRAG AND DROP
+   ======================================================== */
+function initLevel4() {
+    const draggables = document.querySelectorAll('.draggable-item');
+    const dropZones = document.querySelectorAll('.drop-zone');
+
+    draggables.forEach(item => {
+        item.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', item.id);
+        });
+    });
+
+    dropZones.forEach(zone => {
+        zone.addEventListener('dragover', (e) => e.preventDefault());
+        zone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const itemId = e.dataTransfer.getData('text/plain');
+            const draggedEl = document.getElementById(itemId);
+            if(draggedEl) zone.appendChild(draggedEl);
+        });
+    });
+}
+
+function checkDragDrop() {
+    const zones = document.querySelectorAll('.drop-zone');
+    let correctCount = 0;
+
+    zones.forEach(zone => {
+        const targetCategory = zone.getAttribute('data-target');
+        const items = zone.querySelectorAll('.draggable-item');
+        items.forEach(item => {
+            if(item.getAttribute('data-cat') === targetCategory) correctCount++;
+        });
+    });
+
+    const fb = document.getElementById("fbLvl4");
+    if (correctCount === 4) {
+        triggerSound(true);
+        addScore(100);
+        fb.className = "feedback-box correct";
+        fb.innerText = "🌟 Great job! All circuit components are correctly categorized!";
+        setTimeout(finishAllLevels, 1500);
+    } else {
+        triggerSound(false);
+        fb.className = "feedback-box wrong";
+        fb.innerText = "❌ Some items are in the wrong zone. Try again!";
+    }
+}
+
+function finishAllLevels() {
+    document.querySelectorAll('.level-tab').forEach(el => el.classList.add('hidden'));
+    document.getElementById("reportPanel").classList.remove("hidden");
+    document.getElementById("finalScore").innerText = currentScore;
+
+    let rank = "";
+    let summary = "";
+
+    if (currentScore >= 400) {
+        rank = "👑 Master Circuit Systems Designer";
+        summary = "Outstanding performance across all 4 Arcade Levels! You proved total mastery over Tinkercad and electronic circuit design rules.";
+    } else {
+        rank = "🌱 Junior Prototyping Trainee";
+        summary = "Good effort! Re-verify breadboard rails, resistor safety limits, and component polarities to master the workstation.";
+    }
+
+    document.getElementById("finalRank").innerText = rank;
+    document.getElementById("finalSummary").innerText = summary;
 }
 </script>
 </body>

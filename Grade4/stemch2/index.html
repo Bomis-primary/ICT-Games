@@ -328,16 +328,16 @@ function playSynth(isCorrect) {
 
         if (isCorrect) {
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
             gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.35);
             osc.start();
             osc.stop(audioCtx.currentTime + 0.35);
         } else {
             osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(220, audioCtx.currentTime); // A3
-            osc.frequency.setValueAtTime(140, audioCtx.currentTime + 0.12); // D3
+            osc.frequency.setValueAtTime(220, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(140, audioCtx.currentTime + 0.12);
             gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
             osc.start();
@@ -403,7 +403,7 @@ function submitSortDecision(choseMagnet) {
         document.getElementById("scoreVal").innerText = currentScore;
 
         fb.className = "feedback-box correct";
-        fb.innerHTML = `<strong>✅ CORRECT SORT!</strong> (+${pts} pts) ${item.info}`;
+        fb.innerHTML = `<strong>✅ CORRECT ANSWER!</strong> ${item.info}`;
 
         document.getElementById("btnAttract").disabled = true;
         document.getElementById("btnReject").disabled = true;
@@ -419,7 +419,7 @@ function submitSortDecision(choseMagnet) {
 
         if (attemptsLeft === 1) {
             fb.className = "feedback-box warning";
-            fb.innerHTML = `<strong>⚠️ INCORRECT CHOICE!</strong> Try again! Hint: Check if this item is magnetic or non-magnetic.`;
+            fb.innerHTML = `<strong>⚠️ INCORRECT ANSWER!</strong> Try again! Hint: Check if this item is magnetic or non-magnetic.`;
             
             document.getElementById("attemptBadge").innerText = "Attempt 2 of 2";
             document.getElementById("attemptBadge").style.background = "#ef4444";
@@ -427,7 +427,7 @@ function submitSortDecision(choseMagnet) {
         } else {
             isProcessing = true;
             fb.className = "feedback-box wrong";
-            fb.innerHTML = `<strong>❌ OUT OF ATTEMPTS!</strong> Advancing. Note: ${item.info}`;
+            fb.innerHTML = `<strong>❌ INCORRECT ANSWER!</strong> Moving to next item. Note: ${item.info}`;
 
             document.getElementById("btnAttract").disabled = true;
             document.getElementById("btnReject").disabled = true;
@@ -457,7 +457,6 @@ function createSparks(x, y, color) {
 function renderLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Render Industrial Conveyor Belt Tracks
     beltOffset = (beltOffset + 1) % 20;
     
     ctx.fillStyle = "#334155";
@@ -468,13 +467,11 @@ function renderLoop() {
         ctx.fillRect(x, 180, 8, 100);
     }
 
-    // Render Top Electromagnet Assembly Header
     ctx.fillStyle = "#0f172a";
     ctx.fillRect(canvas.width / 2 - 40, 0, 80, 25);
     ctx.fillStyle = "#eab308";
     ctx.fillRect(canvas.width / 2 - 30, 25, 60, 10);
 
-    // Render Conveyor Item Card
     if (currentIndex < deck.length) {
         const item = deck[currentIndex];
         const cardWidth = Math.min(480, canvas.width - 40);
@@ -513,7 +510,6 @@ function renderLoop() {
         ctx.fillText(line, cardX + 16, lineY);
     }
 
-    // Render Spark Particle FX
     for (let i = particles.length - 1; i >= 0; i--) {
         let p = particles[i];
         p.x += p.vx;

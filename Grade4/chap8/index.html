@@ -3,16 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Cyber Navigator:Arcade Lab</title>
+<title>Cyber Navigator: Arcade Lab</title>
 
 <style>
 :root {
     --primary: #2563eb;
+    --primary-glow: #60a5fa;
     --dark: #0f172a;
     --success: #10b981;
     --danger: #ef4444;
     --warning: #f59e0b;
-    --panel-bg: rgba(255, 255, 255, 0.98);
+    --panel-bg: rgba(15, 23, 42, 0.85);
 }
 
 * {
@@ -24,14 +25,35 @@
     -webkit-tap-highlight-color: transparent;
 }
 
+/* Animated Cyber Grid Background */
 body {
-    background: linear-gradient(135deg, #0f172a, #1e3a8a, #3b82f6);
+    background: radial-gradient(circle at center, #1e3a8a 0%, #0f172a 100%);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 10px;
     overflow-x: hidden;
+    position: relative;
+}
+
+body::before {
+    content: "";
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background-image: 
+        linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px);
+    background-size: 30px 30px;
+    transform: perspective(500px) rotateX(60deg);
+    animation: gridMove 12s linear infinite;
+    z-index: 0;
+}
+
+@keyframes gridMove {
+    0% { transform: perspective(500px) rotateX(45deg) translateY(0); }
+    100% { transform: perspective(500px) rotateX(45deg) translateY(30px); }
 }
 
 /* Splash Screen */
@@ -41,7 +63,7 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: #0f172a;
+    background: rgba(15, 23, 42, 0.95);
     color: white;
     display: flex;
     flex-direction: column;
@@ -51,34 +73,38 @@ body {
     transition: opacity 0.5s ease;
     padding: 20px;
     text-align: center;
+    backdrop-filter: blur(10px);
 }
 
 #splash h1 {
-    font-size: clamp(1.8rem, 6vw, 2.6rem);
-    color: #60a5fa;
+    font-size: clamp(2rem, 7vw, 3rem);
+    color: var(--primary-glow);
     margin-top: 15px;
-    text-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+    text-shadow: 0 0 15px rgba(96, 165, 250, 0.8);
 }
 
 .container {
     width: 100%;
     max-width: 950px;
     background: var(--panel-bg);
+    border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 20px;
     padding: clamp(14px, 3.5vw, 24px);
-    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    backdrop-filter: blur(12px);
     z-index: 2;
+    color: white;
 }
 
 .header {
     text-align: center;
     margin-bottom: 12px;
-    border-bottom: 2px solid #e2e8f0;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
     padding-bottom: 8px;
 }
 
 .header h1 {
-    color: #1e3a8a;
+    color: var(--primary-glow);
     font-size: clamp(1.3rem, 4vw, 1.8rem);
 }
 
@@ -87,7 +113,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: #1e293b;
+    background: rgba(30, 41, 59, 0.9);
+    border: 1px solid rgba(96, 165, 250, 0.3);
     color: #f8fafc;
     padding: 10px 16px;
     border-radius: 12px;
@@ -96,7 +123,7 @@ body {
     font-size: clamp(0.85rem, 2.5vw, 1rem);
 }
 
-/* Navigation Mode Buttons */
+/* Navigation Tabs */
 .nav-tabs {
     display: flex;
     gap: 8px;
@@ -110,8 +137,8 @@ body {
 .tab-btn {
     padding: 10px 14px;
     border: none;
-    background: #cbd5e1;
-    color: #1e293b;
+    background: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
     font-weight: 700;
     border-radius: 12px;
     cursor: pointer;
@@ -119,39 +146,59 @@ body {
     font-size: clamp(0.78rem, 2.4vw, 0.88rem);
     white-space: nowrap;
     flex-shrink: 0;
+    border: 1px solid transparent;
 }
 
 .tab-btn.active {
     background: var(--primary);
     color: white;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+    box-shadow: 0 0 15px rgba(37, 99, 235, 0.6);
+    border-color: var(--primary-glow);
 }
 
-/* GAME 1: PACKET CATCHER CANVAS STYLES */
-.game-container {
+/* GAME 1: MAZE RUNNER STYLES */
+.maze-container {
     position: relative;
     width: 100%;
-    background: #0f172a;
+    background: #090d16;
     border-radius: 16px;
     overflow: hidden;
-    border: 3px solid #334155;
-    touch-action: none;
+    border: 2px solid var(--primary-glow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
 }
 
 canvas {
     display: block;
-    width: 100%;
-    height: 320px;
-    background: #0f172a;
+    background: #090d16;
+    max-width: 100%;
+    border-radius: 8px;
 }
 
-.controls-hint {
-    text-align: center;
-    color: #64748b;
-    font-size: 0.8rem;
-    margin-top: 6px;
-    font-weight: 600;
+.dpad {
+    display: grid;
+    grid-template-columns: repeat(3, 45px);
+    grid-template-rows: repeat(2, 45px);
+    gap: 5px;
+    margin-top: 10px;
+    justify-content: center;
 }
+
+.dbtn {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid var(--primary-glow);
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.dbtn:active { background: var(--primary); }
 
 /* GAME 2: DRAG AND DROP STYLES */
 .drag-stage {
@@ -165,22 +212,24 @@ canvas {
     gap: 10px;
     flex-wrap: wrap;
     justify-content: center;
-    min-height: 50px;
-    background: #e2e8f0;
+    min-height: 60px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     padding: 10px;
     border-radius: 12px;
 }
 
 .draggable-item {
-    background: #2563eb;
+    background: var(--primary);
     color: white;
     padding: 8px 14px;
     border-radius: 8px;
     font-weight: 700;
     cursor: grab;
     font-size: 0.85rem;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     touch-action: none;
+    border: 1px solid var(--primary-glow);
 }
 
 .drop-zones {
@@ -190,8 +239,8 @@ canvas {
 }
 
 .drop-zone {
-    background: #f1f5f9;
-    border: 2px dashed #94a3b8;
+    background: rgba(30, 41, 59, 0.7);
+    border: 2px dashed rgba(96, 165, 250, 0.4);
     border-radius: 12px;
     padding: 10px;
     min-height: 110px;
@@ -200,13 +249,14 @@ canvas {
 
 .drop-zone h4 {
     font-size: 0.85rem;
-    color: #334155;
+    color: var(--primary-glow);
     margin-bottom: 8px;
 }
 
 /* GAME 3: BOSS BATTLE STYLES */
 .boss-card {
-    background: #1e1b4b;
+    background: rgba(30, 27, 75, 0.8);
+    border: 1px solid #6366f1;
     color: white;
     border-radius: 16px;
     padding: 16px;
@@ -214,7 +264,7 @@ canvas {
 }
 
 .boss-avatar {
-    font-size: 4rem;
+    font-size: 3.8rem;
     animation: pulse 1.5s infinite alternate;
 }
 
@@ -225,7 +275,7 @@ canvas {
 
 .boss-hp {
     width: 100%;
-    background: #475569;
+    background: #334155;
     height: 16px;
     border-radius: 8px;
     overflow: hidden;
@@ -235,7 +285,7 @@ canvas {
 .hp-fill {
     height: 100%;
     width: 100%;
-    background: #ef4444;
+    background: var(--danger);
     transition: width 0.3s;
 }
 
@@ -247,9 +297,9 @@ canvas {
 }
 
 .action-btn {
-    background: #312e81;
+    background: rgba(49, 46, 129, 0.9);
     color: white;
-    border: 2px solid #6366f1;
+    border: 1px solid #6366f1;
     padding: 10px;
     border-radius: 10px;
     font-weight: 700;
@@ -258,8 +308,44 @@ canvas {
     text-align: left;
 }
 
-.action-btn:active {
-    background: #4338ca;
+.action-btn:active { background: #4338ca; }
+
+/* GAME 4: MATCH CARDS STYLES */
+.memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.card-flip {
+    height: 75px;
+    background: rgba(30, 41, 59, 0.9);
+    border: 2px solid var(--primary-glow);
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    padding: 5px;
+    color: transparent;
+    transition: transform 0.3s, background 0.3s;
+}
+
+.card-flip.flipped {
+    background: var(--primary);
+    color: white;
+    transform: rotateY(180deg);
+}
+
+.card-flip.matched {
+    background: var(--success);
+    border-color: #a7f3d0;
+    color: white;
+    visibility: visible;
 }
 
 /* Common UI */
@@ -274,6 +360,7 @@ canvas {
     border-radius: 10px;
     cursor: pointer;
     margin-top: 10px;
+    box-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
 }
 
 .feedback-msg {
@@ -294,6 +381,10 @@ canvas {
 </head>
 <body>
 
+<!-- Audio Assets -->
+<audio id="audioCorrect" src="assets/correct.mp3" preload="auto"></audio>
+<audio id="audioWrong" src="assets/wrong.mp3" preload="auto"></audio>
+
 <!-- Splash Screen -->
 <div id="splash">
     <div style="font-size: 4rem;">⚡🌐🛡️</div>
@@ -305,35 +396,44 @@ canvas {
 <div class="container hidden" id="mainApp">
     
     <div class="header">
-        <h1>🎮Arcade Lab</h1>
+        <h1>🎮 Arcade Lab</h1>
     </div>
 
     <!-- Score Badge -->
     <div class="score-badge">
         <span>⭐ TOTAL SCORE: <span id="totalScore">0</span></span>
-        <span id="levelBadge">Game 1: Data Catcher</span>
+        <span id="levelBadge">Game 1: Maze Runner</span>
     </div>
 
     <!-- Navigation Tabs -->
     <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchGame('g1', this)">Game 1: Packet Catcher 📡</button>
+        <button class="tab-btn active" onclick="switchGame('g1', this)">Game 1: Network Maze 🌐</button>
         <button class="tab-btn" onclick="switchGame('g2', this)">Game 2: Web Sorter 🔍</button>
-        <button class="tab-btn" onclick="switchGame('g3', this)">Game 3: Troll Boss Battle 🛡️</button>
+        <button class="tab-btn" onclick="switchGame('g3', this)">Game 3: Troll Battle 🛡️</button>
+        <button class="tab-btn" onclick="switchTabMatch('g4', this)">Game 4: Cyber Match 🧠</button>
     </div>
 
-    <!-- GAME 1: PACKET CATCHER -->
+    <!-- GAME 1: NETWORK MAZE RUNNER -->
     <div id="g1" class="game-tab">
-        <div class="game-container">
-            <canvas id="catcherCanvas"></canvas>
+        <div class="maze-container">
+            <canvas id="mazeCanvas" width="300" height="300"></canvas>
+            <div class="dpad">
+                <div></div>
+                <button class="dbtn" onclick="movePlayer(0, -1)">▲</button>
+                <div></div>
+                <button class="dbtn" onclick="movePlayer(-1, 0)">◄</button>
+                <button class="dbtn" onclick="movePlayer(0, 1)">▼</button>
+                <button class="dbtn" onclick="movePlayer(1, 0)">►</button>
+            </div>
         </div>
-        <p class="controls-hint">👈 Drag your finger or mouse left/right to catch the target item! Avoid Viruses 👾</p>
+        <p style="text-align:center; font-size: 0.8rem; color:#94a3b8; margin-top:6px;">Navigate your data packet 🟡 through Modem & ISP to reach the Goal 🏁! Avoid Malware 👾!</p>
         <div id="g1Feedback" class="feedback-msg"></div>
     </div>
 
     <!-- GAME 2: WEB SORTER DRAG & DROP -->
     <div id="g2" class="game-tab hidden">
         <div class="drag-stage">
-            <p style="font-size: 0.85rem; font-weight: 700; color: #334155;">Drag each item into its correct Chapter 8 category:</p>
+            <p style="font-size: 0.85rem; font-weight: 700; color: #cbd5e1;">Drag each item into its correct Chapter 8 category:</p>
             
             <div class="item-pool" id="itemPool">
                 <div class="draggable-item" draggable="true" id="i1" data-cat="browser">Google Chrome</div>
@@ -371,20 +471,43 @@ canvas {
                 <div class="hp-fill" id="hpBar"></div>
             </div>
 
-            <div class="boss-options" id="bossOptions">
-                <!-- Injected dynamically -->
-            </div>
+            <div class="boss-options" id="bossOptions"></div>
         </div>
         <div id="g3Feedback" class="feedback-msg"></div>
+    </div>
+
+    <!-- GAME 4: CYBER MATCH CARDS -->
+    <div id="g4" class="game-tab hidden">
+        <p style="font-size: 0.85rem; font-weight: 700; color: #cbd5e1; text-align: center;">Match terms with their definitions:</p>
+        <div class="memory-grid" id="memoryGrid"></div>
+        <div id="g4Feedback" class="feedback-msg"></div>
     </div>
 
 </div>
 
 <script>
-/* Audio Synthesizer */
+/* Audio Asset Controller with Web Audio API Fallback */
 let audioCtx = null;
 
-function playSound(type) {
+function playSoundAsset(isCorrect) {
+    const audioEl = isCorrect ? document.getElementById("audioCorrect") : document.getElementById("audioWrong");
+    
+    // Try HTML5 Audio Asset first
+    if (audioEl) {
+        audioEl.currentTime = 0;
+        let promise = audioEl.play();
+        if (promise !== undefined) {
+            promise.catch(() => {
+                // Fallback to Web Audio Synthesizer if asset fails to load
+                playSynthSound(isCorrect ? 'correct' : 'wrong');
+            });
+            return;
+        }
+    }
+    playSynthSound(isCorrect ? 'correct' : 'wrong');
+}
+
+function playSynthSound(type) {
     try {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -403,7 +526,7 @@ function playSound(type) {
             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
             osc.start();
             osc.stop(audioCtx.currentTime + 0.4);
-        } else if (type === 'wrong') {
+        } else {
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(200, audioCtx.currentTime);
             osc.frequency.setValueAtTime(140, audioCtx.currentTime + 0.15);
@@ -428,7 +551,7 @@ function startGameHub() {
     setTimeout(() => {
         document.getElementById("splash").style.display = "none";
         document.getElementById("mainApp").classList.remove("hidden");
-        initCatcherGame();
+        initMazeGame();
     }, 500);
 }
 
@@ -441,124 +564,93 @@ function switchGame(tabId, btn) {
     btn.classList.add('active');
 
     if(tabId === 'g1') {
-        document.getElementById("levelBadge").innerText = "Game 1: Data Catcher";
-        initCatcherGame();
+        document.getElementById("levelBadge").innerText = "Game 1: Network Maze";
+        initMazeGame();
     } else if(tabId === 'g2') {
         document.getElementById("levelBadge").innerText = "Game 2: Web Sorter";
         initDragDrop();
     } else if(tabId === 'g3') {
-        document.getElementById("levelBadge").innerText = "Game 3: Netiquette Boss";
+        document.getElementById("levelBadge").innerText = "Game 3: Troll Battle";
         initBossBattle();
     }
 }
 
+function switchTabMatch(tabId, btn) {
+    switchGame(tabId, btn);
+    document.getElementById("levelBadge").innerText = "Game 4: Cyber Match";
+    initMatchGame();
+}
+
 /* ========================================================
-   GAME 1: PACKET CATCHER CANVAS ENGINE
+   GAME 1: NETWORK MAZE RUNNER
    ======================================================== */
-let canvas, ctx;
-let basket = { x: 0, width: 70, height: 16 };
-let fallingItems = [];
-let currentTarget = "Modem";
-let targetList = ["Modem", "ISP", "Internet", "URL"];
-let targetIndex = 0;
-let catcherLoop = null;
+const mazeGrid = [
+    [0, 0, 1, 0, 0],
+    [1, 0, 1, 0, 1],
+    [0, 0, 0, 0, 0],
+    [0, 1, 1, 1, 0],
+    [0, 0, 0, 1, 2]
+];
+let player = { x: 0, y: 0 };
 
-function initCatcherGame() {
-    canvas = document.getElementById("catcherCanvas");
-    ctx = canvas.getContext("2d");
-    
-    // Set explicit pixel dimensions
-    canvas.width = canvas.offsetWidth;
-    canvas.height = 320;
-
-    basket.x = canvas.width / 2 - basket.width / 2;
-    currentTarget = targetList[targetIndex];
-    fallingItems = [];
-
-    // Touch and mouse listeners
-    canvas.onmousemove = (e) => {
-        const rect = canvas.getBoundingClientRect();
-        basket.x = e.clientX - rect.left - basket.width / 2;
-    };
-
-    canvas.ontouchmove = (e) => {
-        const rect = canvas.getBoundingClientRect();
-        if(e.touches.length > 0) {
-            basket.x = e.touches[0].clientX - rect.left - basket.width / 2;
-        }
-    };
-
-    if(catcherLoop) clearInterval(catcherLoop);
-    catcherLoop = setInterval(updateCatcher, 1000 / 30);
-    spawnItem();
+function initMazeGame() {
+    player = { x: 0, y: 0 };
+    drawMaze();
 }
 
-function spawnItem() {
-    const labels = ["Modem", "ISP", "Internet", "URL", "Virus 👾"];
-    const label = labels[Math.floor(Math.random() * labels.length)];
-    fallingItems.push({
-        x: Math.random() * (canvas.width - 60) + 10,
-        y: 0,
-        label: label,
-        speed: 2.5 + Math.random() * 2
-    });
-}
+function drawMaze() {
+    const canvas = document.getElementById("mazeCanvas");
+    const ctx = canvas.getContext("2d");
+    const size = 60;
+    ctx.clearRect(0, 0, 300, 300);
 
-let spawnTimer = 0;
-function updateCatcher() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Draw Target Hint Text
-    ctx.fillStyle = "#60a5fa";
-    ctx.font = "bold 14px Segoe UI";
-    ctx.fillText("TARGET: CATCH '" + currentTarget + "'", 12, 26);
-
-    // Keep basket in screen bounds
-    if (basket.x < 0) basket.x = 0;
-    if (basket.x > canvas.width - basket.width) basket.x = canvas.width - basket.width;
-
-    // Draw Basket
-    ctx.fillStyle = "#10b981";
-    ctx.beginPath();
-    ctx.roundRect(basket.x, canvas.height - 25, basket.width, basket.height, 8);
-    ctx.fill();
-
-    spawnTimer++;
-    if(spawnTimer % 35 === 0) spawnItem();
-
-    // Update & Draw Items
-    for(let i = fallingItems.length - 1; i >= 0; i--) {
-        let item = fallingItems[i];
-        item.y += item.speed;
-
-        // Draw item bubble
-        ctx.fillStyle = item.label.includes("Virus") ? "#ef4444" : "#3b82f6";
-        ctx.beginPath();
-        ctx.roundRect(item.x, item.y, 60, 24, 6);
-        ctx.fill();
-
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 11px Segoe UI";
-        ctx.fillText(item.label, item.x + 6, item.y + 16);
-
-        // Catch Collision Detection
-        if(item.y + 24 >= canvas.height - 25 && item.x + 60 >= basket.x && item.x <= basket.x + basket.width) {
-            if(item.label === currentTarget) {
-                playSound('correct');
-                addScore(20);
-                showG1Feedback("🎉 Correct! You caught the " + currentTarget + "!", true);
-                targetIndex = (targetIndex + 1) % targetList.length;
-                currentTarget = targetList[targetIndex];
+    for(let r = 0; r < 5; r++) {
+        for(let c = 0; c < 5; c++) {
+            if(mazeGrid[r][c] === 1) {
+                ctx.fillStyle = "#ef4444"; // Malware block
+                ctx.fillRect(c*size, r*size, size-2, size-2);
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "20px Segoe UI";
+                ctx.fillText("👾", c*size+18, r*size+38);
+            } else if(mazeGrid[r][c] === 2) {
+                ctx.fillStyle = "#10b981"; // Goal
+                ctx.fillRect(c*size, r*size, size-2, size-2);
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "20px Segoe UI";
+                ctx.fillText("🏁", c*size+18, r*size+38);
             } else {
-                playSound('wrong');
-                showG1Feedback("❌ Oops! That wasn't the target!", false);
+                ctx.fillStyle = "#1e293b";
+                ctx.fillRect(c*size, r*size, size-2, size-2);
             }
-            fallingItems.splice(i, 1);
-            continue;
         }
+    }
 
-        // Remove off-screen items
-        if(item.y > canvas.height) fallingItems.splice(i, 1);
+    // Draw Player
+    ctx.fillStyle = "#f59e0b";
+    ctx.beginPath();
+    ctx.arc(player.x*size + 30, player.y*size + 30, 20, 0, Math.PI*2);
+    ctx.fill();
+}
+
+function movePlayer(dx, dy) {
+    let nx = player.x + dx;
+    let ny = player.y + dy;
+
+    if(nx >= 0 && nx < 5 && ny >= 0 && ny < 5) {
+        if(mazeGrid[ny][nx] !== 1) {
+            player.x = nx;
+            player.y = ny;
+            drawMaze();
+
+            if(mazeGrid[ny][nx] === 2) {
+                playSoundAsset(true);
+                addScore(40);
+                showG1Feedback("🎉 Maze Solved! Data Packet arrived at destination safely!", true);
+            }
+        } else {
+            playSoundAsset(false);
+            showG1Feedback("👾 Watch out! Malware blocked your packet path!", false);
+        }
     }
 }
 
@@ -567,7 +659,6 @@ function showG1Feedback(msg, isCorrect) {
     fb.className = isCorrect ? "feedback-msg correct" : "feedback-msg wrong";
     fb.innerText = msg;
 }
-
 
 /* ========================================================
    GAME 2: WEB SORTER DRAG & DROP ENGINE
@@ -596,34 +687,30 @@ function initDragDrop() {
 function checkDragDrop() {
     const zones = document.querySelectorAll('.drop-zone');
     let correctCount = 0;
-    let totalItems = 5;
 
     zones.forEach(zone => {
         const targetCategory = zone.getAttribute('data-target');
         const items = zone.querySelectorAll('.draggable-item');
         items.forEach(item => {
-            if(item.getAttribute('data-cat') === targetCategory) {
-                correctCount++;
-            }
+            if(item.getAttribute('data-cat') === targetCategory) correctCount++;
         });
     });
 
     const fb = document.getElementById("g2Feedback");
-    if(correctCount === totalItems) {
-        playSound('correct');
+    if(correctCount === 5) {
+        playSoundAsset(true);
         addScore(50);
         fb.className = "feedback-msg correct";
         fb.innerText = "🌟 Great job! All Web Browsers, Search Engines, and URLs are perfectly sorted!";
     } else {
-        playSound('wrong');
+        playSoundAsset(false);
         fb.className = "feedback-msg wrong";
-        fb.innerText = "❌ Some items are in the wrong box. Remember: Chrome/Edge are Browsers, Bing/Google are Search Engines!";
+        fb.innerText = "❌ Some items are in the wrong box. Review your categories and try again!";
     }
 }
 
-
 /* ========================================================
-   GAME 3: NETIQUETTE BOSS BATTLE ENGINE
+   GAME 3: TROLL BOSS BATTLE ENGINE
    ======================================================== */
 const bossQuestions = [
     {
@@ -638,13 +725,6 @@ const bossQuestions = [
         options: [
             { text: "Share your password right away.", correct: false },
             { text: "Refuse! Never share passwords with anyone online.", correct: true }
-        ]
-    },
-    {
-        quote: '"A stranger sent a strange message asking to meet outside!"',
-        options: [
-            { text: "Block them and tell a trusted adult immediately.", correct: true },
-            { text: "Go meet them alone after school.", correct: false }
         ]
     }
 ];
@@ -664,14 +744,13 @@ function loadBossQuestion() {
         document.getElementById("bossTitle").innerText = "🏆 Cyber Troll Defeated!";
         document.getElementById("bossQuote").innerText = "You have mastered Netiquette and Cyber Safety!";
         document.getElementById("bossOptions").innerHTML = "";
-        playSound('correct');
+        playSoundAsset(true);
         addScore(50);
         return;
     }
 
     const current = bossQuestions[bossStep];
     document.getElementById("bossQuote").innerText = current.quote;
-    
     const container = document.getElementById("bossOptions");
     container.innerHTML = "";
 
@@ -687,18 +766,76 @@ function loadBossQuestion() {
 function attackBoss(isCorrect) {
     const fb = document.getElementById("g3Feedback");
     if(isCorrect) {
-        playSound('correct');
-        bossHP -= 34;
-        if(bossHP < 0) bossHP = 0;
+        playSoundAsset(true);
+        bossHP -= 50;
         document.getElementById("hpBar").style.width = bossHP + "%";
         fb.className = "feedback-msg correct";
         fb.innerText = "💥 Direct Hit! Perfect Netiquette Defense!";
         bossStep++;
         setTimeout(loadBossQuestion, 1000);
     } else {
-        playSound('wrong');
-        fb.className = "feedback-box wrong";
+        playSoundAsset(false);
+        fb.className = "feedback-msg wrong";
         fb.innerText = "🚨 Attack Missed! That violates Cyber Safety rules!";
+    }
+}
+
+/* ========================================================
+   GAME 4: CYBER MATCH CARDS ENGINE
+   ======================================================== */
+const cardsData = [
+    { id: 1, text: "ALL CAPS", pair: "SHOUTING" },
+    { id: 2, text: "SHOUTING", pair: "ALL CAPS" },
+    { id: 3, text: "URL", pair: "Web Address" },
+    { id: 4, text: "Web Address", pair: "URL" },
+    { id: 5, text: "Google", pair: "Search Engine" },
+    { id: 6, text: "Search Engine", pair: "Google" },
+    { id: 7, text: "Ctrl + S", pair: "Save Webpage" },
+    { id: 8, text: "Save Webpage", pair: "Ctrl + S" }
+];
+
+let selectedCards = [];
+
+function initMatchGame() {
+    const grid = document.getElementById("memoryGrid");
+    grid.innerHTML = "";
+    selectedCards = [];
+    
+    // Shuffle
+    const shuffled = [...cardsData].sort(() => Math.random() - 0.5);
+
+    shuffled.forEach((c, index) => {
+        const card = document.createElement("div");
+        card.className = "card-flip";
+        card.dataset.text = c.text;
+        card.dataset.pair = c.pair;
+        card.innerText = c.text;
+        card.onclick = () => flipCard(card);
+        grid.appendChild(card);
+    });
+}
+
+function flipCard(card) {
+    if (selectedCards.length < 2 && !card.classList.contains("flipped")) {
+        card.classList.add("flipped");
+        selectedCards.push(card);
+
+        if (selectedCards.length === 2) {
+            if (selectedCards[0].dataset.pair === selectedCards[1].dataset.text) {
+                playSoundAsset(true);
+                selectedCards[0].classList.add("matched");
+                selectedCards[1].classList.add("matched");
+                selectedCards = [];
+                addScore(25);
+            } else {
+                playSoundAsset(false);
+                setTimeout(() => {
+                    selectedCards[0].classList.remove("flipped");
+                    selectedCards[1].classList.remove("flipped");
+                    selectedCards = [];
+                }, 800);
+            }
+        }
     }
 }
 </script>

@@ -3,15 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Tinkercad Circuit Master: Multi-Level Arcade</title>
+<title>Tinkercad: Circuit Wiring Terminal</title>
 <style>
 :root {
-    --primary-blue: #1e3a8a;
+    --breadboard-bg: #e2e8f0;
+    --terminal-strip: #f8fafc;
+    --panel-dark: #0f172a;
+    --accent-blue: #0284c7;
     --accent-cyan: #38bdf8;
     --success-green: #10b981;
     --error-red: #ef4444;
     --warning-yellow: #f59e0b;
-    --panel-bg: rgba(15, 23, 42, 0.95);
 }
 
 * {
@@ -28,7 +30,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0369a1 100%);
+    background: #090d16;
     padding: 10px;
     overflow-x: hidden;
     color: white;
@@ -62,10 +64,10 @@ body {
 .container {
     width: 100%;
     max-width: 900px;
-    background: var(--panel-bg);
+    background: rgba(15, 23, 42, 0.95);
     border: 3px solid var(--accent-cyan);
     border-radius: 20px;
-    padding: 16px;
+    padding: 18px;
     box-shadow: 0 0 35px rgba(56, 189, 248, 0.35);
     position: relative;
     z-index: 10;
@@ -117,76 +119,122 @@ body {
 }
 
 .tab-btn.active {
-    background: #0284c7;
+    background: var(--accent-blue);
     color: white;
     box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
 }
 
-/* Common Feedback Box */
+/* Common Feedback Ticker Box */
 .feedback-box {
     margin-top: 12px;
     padding: 12px;
     border-radius: 10px;
     font-weight: 700;
     font-size: 0.9rem;
-    min-height: 48px;
+    min-height: 52px;
     display: flex;
     align-items: center;
     justify-content: center;
     background: #334155;
     color: white;
     text-align: center;
+    line-height: 1.4;
 }
 
 .feedback-box.correct { background: #065f46; color: #a7f3d0; }
 .feedback-box.wrong { background: #991b1b; color: #fecaca; }
 .feedback-box.warning { background: #92400e; color: #fef08a; }
 
-/* LEVEL 1: CANVAS DEFENDER */
-.canvas-wrapper {
+/* LEVEL 1: BREADBOARD TERMINAL SIMULATOR */
+.breadboard-chassis {
+    background: var(--breadboard-bg);
+    border: 4px solid #cbd5e1;
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 15px;
     position: relative;
-    width: 100%;
-    background: #050811;
-    border: 2px solid var(--accent-cyan);
-    border-radius: 14px;
-    overflow: hidden;
-    margin-bottom: 12px;
+    box-shadow: inset 0 4px 10px rgba(0,0,0,0.1);
 }
 
-canvas {
-    display: block;
-    width: 100%;
-    height: 300px;
+.terminal-header {
+    background: #1e293b;
+    color: #38bdf8;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    text-align: center;
 }
 
-.controls-panel {
+.breadboard-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 120px;
+}
+
+.terminal-row {
+    background: var(--terminal-strip);
+    border: 2px solid #94a3b8;
+    border-radius: 8px;
+    height: 38px;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.plug-hole {
+    width: 14px;
+    height: 14px;
+    background: #475569;
+    border-radius: 30%;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
+}
+
+.led-indicator {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #64748b;
+    border: 3px solid #334155;
+    margin: 0 auto 10px;
+    transition: all 0.3s ease;
+}
+
+.led-indicator.active {
+    background: #10b981;
+    box-shadow: 0 0 20px #10b981, 0 0 40px #10b981;
+    border-color: #a7f3d0;
+}
+
+.wire-choice-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
 }
 
-.tf-btn {
-    padding: 16px;
-    border: none;
+.wire-choice-btn {
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    padding: 14px;
     border-radius: 12px;
-    font-size: 1.1rem;
     font-weight: 800;
-    color: white;
+    font-size: 0.95rem;
+    color: #1e293b;
     cursor: pointer;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-    transition: transform 0.1s;
+    transition: all 0.2s ease;
 }
 
-.tf-btn:active { transform: scale(0.96); }
-
-.btn-true {
-    background: linear-gradient(135deg, #10b981, #059669);
-    border: 2px solid #a7f3d0;
-}
-
-.btn-false {
-    background: linear-gradient(135deg, #ef4444, #dc2626);
-    border: 2px solid #fecaca;
+.wire-choice-btn:hover {
+    border-color: var(--accent-blue);
+    background: #f1f5f9;
+    transform: translateY(-2px);
 }
 
 /* LEVEL 2: MATCH CARDS */
@@ -215,7 +263,7 @@ canvas {
 }
 
 .card-flip.flipped {
-    background: #0284c7;
+    background: var(--accent-blue);
     color: #ffffff !important;
 }
 
@@ -225,7 +273,7 @@ canvas {
     color: #ffffff !important;
 }
 
-/* LEVEL 3: BOSS BATTLE */
+/* LEVEL 3: TROLL BATTLE */
 .boss-card {
     background: rgba(15, 23, 42, 0.8);
     border: 2px solid var(--accent-cyan);
@@ -259,6 +307,19 @@ canvas {
     margin-top: 15px;
 }
 
+.tf-btn {
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 800;
+    color: white;
+    cursor: pointer;
+}
+
+.btn-true { background: linear-gradient(135deg, #10b981, #059669); }
+.btn-false { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
 /* LEVEL 4: DRAG & DROP */
 .drag-stage {
     display: flex;
@@ -279,7 +340,7 @@ canvas {
 }
 
 .draggable-item {
-    background: #0284c7;
+    background: var(--accent-blue);
     color: white;
     padding: 8px 14px;
     border-radius: 8px;
@@ -323,7 +384,7 @@ canvas {
     width: 120px;
     height: 120px;
     border-radius: 50%;
-    background: #0284c7;
+    background: var(--accent-blue);
     color: white;
     font-size: 2rem;
     font-weight: 800;
@@ -341,7 +402,7 @@ canvas {
 <audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
 <audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
 
-<!-- 5-Second Exclusive Splash Overlay Screen -->
+<!-- 5-Second Exclusive Splash Screen -->
 <div id="splash">
     <img src="assets/innovine-logo.png" alt="Innovine Logo">
 </div>
@@ -349,34 +410,38 @@ canvas {
 <div class="container hidden" id="appMainframe">
     
     <div class="hud-bar">
-        <div id="levelBadge">Level 1: Space Defender</div>
+        <div id="levelBadge">Level 1: Wiring Terminal</div>
         <div>Attempts: <span class="badge-attempt" id="attemptBadge">2 / 2</span></div>
         <div>🏆 Total Score: <span id="scoreVal">0</span></div>
     </div>
 
     <!-- Navigation Tabs -->
     <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchLevel(1, this)">Lvl 1: Defender 🚀</button>
+        <button class="tab-btn active" onclick="switchLevel(1, this)">Lvl 1: Terminal 🔌</button>
         <button class="tab-btn" onclick="switchLevel(2, this)">Lvl 2: Circuit Match 🧠</button>
         <button class="tab-btn" onclick="switchLevel(3, this)">Lvl 3: Troll Battle 👾</button>
-        <button class="tab-btn" onclick="switchLevel(4, this)">Lvl 4: Component Sorter ⚡</button>
+        <button class="tab-btn" onclick="switchLevel(4, this)">Lvl 4: Sorter ⚡</button>
     </div>
 
-    <!-- LEVEL 1: SPACE DEFENDER (TRUE / FALSE) -->
+    <!-- LEVEL 1: BREADBOARD TERMINAL SIMULATOR -->
     <div id="lvl1" class="level-tab">
-        <div class="canvas-wrapper">
-            <canvas id="gameCanvas"></canvas>
+        <div class="breadboard-chassis">
+            <div class="led-indicator" id="ledLight"></div>
+            <div class="terminal-header" id="terminalGoalText">Loading schematic...</div>
+            
+            <div class="breadboard-grid">
+                <div class="terminal-row"><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div></div>
+                <div class="terminal-row"><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div><div class="plug-hole"></div></div>
+            </div>
         </div>
-        <div class="controls-panel">
-            <button class="tf-btn btn-true" onclick="fireCannon(true)">
-                ✅ TRUE / SAFE
-            </button>
-            <button class="tf-btn btn-false" onclick="fireCannon(false)">
-                ❌ FALSE / FAULT
-            </button>
+
+        <div class="wire-choice-container" id="wireChoices">
+            <button class="wire-choice-btn" onclick="connectWire(0)" id="btnOptA">Option A</button>
+            <button class="wire-choice-btn" onclick="connectWire(1)" id="btnOptB">Option B</button>
         </div>
+
         <div class="feedback-box" id="fbLvl1">
-            Analyze the incoming schematic goal and select TRUE / SAFE or FALSE / FAULT!
+            Analyze the circuit requirement and select the correct component wire link!
         </div>
     </div>
 
@@ -387,12 +452,12 @@ canvas {
         <div class="feedback-box" id="fbLvl2">Click cards to find matching pairs!</div>
     </div>
 
-    <!-- LEVEL 3: CIRCUIT TROLL BOSS BATTLE -->
+    <!-- LEVEL 3: TROLL BOSS BATTLE -->
     <div id="lvl3" class="level-tab hidden">
         <div class="boss-card">
             <div class="boss-avatar">👾</div>
             <h3 id="bossTitle">Circuit Troll Appears!</h3>
-            <p id="bossQuote" style="font-size: 0.95rem; color: #38bdf8; margin-top: 6px; font-weight: 700;">"I connect LEDs straight to 9V batteries without resistors!"</p>
+            <p id="bossQuote" style="font-size: 0.95rem; color: #38bdf8; margin-top: 6px; font-weight: 700;">"I connect LEDs directly to batteries without resistors!"</p>
             
             <div class="boss-hp">
                 <div class="hp-fill" id="hpBar"></div>
@@ -501,7 +566,7 @@ function switchLevel(lvlNum, btn) {
     if (btn) btn.classList.add('active');
 
     if (lvlNum === 1) {
-        document.getElementById("levelBadge").innerText = "Level 1: Space Defender";
+        document.getElementById("levelBadge").innerText = "Level 1: Terminal";
         initLevel1();
     } else if (lvlNum === 2) {
         document.getElementById("levelBadge").innerText = "Level 2: Circuit Match";
@@ -516,28 +581,37 @@ function switchLevel(lvlNum, btn) {
 }
 
 /* ========================================================
-   LEVEL 1: SPACE DEFENDER (TRUE / FALSE)
+   LEVEL 1: TERMINAL SIMULATOR
    ======================================================== */
 const datasetLvl1 = [
-    { text: "Tinkercad allows browser-based hardware simulations without needing physical wires.", isSafe: true, info: "Correct! Tinkercad models and tests electronic circuits virtually." },
-    { text: "Connecting an LED directly to a 9V battery without a resistor is completely safe.", isSafe: false, info: "False! Raw current will burn out or pop unprotected LEDs." },
-    { text: "Breadboards contain interior grid plug holes to interlink separate component wires.", isSafe: true, info: "Correct! Breadboards allow solderless prototyping." },
-    { text: "An unpressed push button keeps a circuit completely closed so current flows infinitely.", isSafe: false, info: "False! An unpressed button creates an open circuit that blocks electricity." }
+    {
+        target: "Goal: Model and simulate virtual circuits inside your browser window without physical hardware.",
+        optA: "🔵 Tinkercad Circuit App",
+        optB: "🔴 Spreadsheet Document",
+        correctIdx: 0,
+        info: "Tinkercad simulates electronic circuits safely online."
+    },
+    {
+        target: "Goal: Restrict raw current density to prevent burning sensitive LED assets.",
+        optA: "🔴 Direct Copper Wire",
+        optB: "🔵 Inline Safety Resistor",
+        correctIdx: 1,
+        info: "Resistors limit current to protect components."
+    },
+    {
+        target: "Goal: Provide the main electrical energy loop to turn on the grid tracks.",
+        optA: "🔵 9V Energy Battery",
+        optB: "🔴 Metal Case Switch",
+        correctIdx: 0,
+        info: "Batteries supply active voltage to the circuit."
+    }
 ];
 
 let idx1 = 0;
-let canvas, ctx, animId;
-let targetY = 20;
 
 function initLevel1() {
-    canvas = document.getElementById("gameCanvas");
-    ctx = canvas.getContext("2d");
-    canvas.width = canvas.offsetWidth;
-    canvas.height = 300;
-
     idx1 = 0;
     loadQuestion1();
-    if (!animId) renderLoop1();
 }
 
 function loadQuestion1() {
@@ -547,30 +621,37 @@ function loadQuestion1() {
     }
     attemptsLeft = 2;
     isProcessing = false;
-    targetY = 20;
     document.getElementById("attemptBadge").innerText = "2 / 2";
     document.getElementById("attemptBadge").style.background = "#f59e0b";
-    
+    document.getElementById("ledLight").classList.remove("active");
+
+    const cur = datasetLvl1[idx1];
+    document.getElementById("terminalGoalText").innerText = cur.target;
+    document.getElementById("btnOptA").innerText = cur.optA;
+    document.getElementById("btnOptB").innerText = cur.optB;
+
     const fb = document.getElementById("fbLvl1");
     fb.className = "feedback-box";
-    fb.innerText = "Analyze the incoming schematic goal and select TRUE / SAFE or FALSE / FAULT!";
+    fb.innerText = "Analyze the circuit requirement and select the correct component wire link!";
 }
 
-function fireCannon(userChoseTrue) {
+function connectWire(chosenIdx) {
     if (isProcessing) return;
 
-    const currentItem = datasetLvl1[idx1];
-    const isCorrect = (userChoseTrue === currentItem.isSafe);
+    const cur = datasetLvl1[idx1];
+    const isCorrect = (chosenIdx === cur.correctIdx);
     const fb = document.getElementById("fbLvl1");
 
     if (isCorrect) {
         isProcessing = true;
         triggerSound(true);
+        document.getElementById("ledLight").classList.add("active");
+
         const pts = (attemptsLeft === 2) ? 100 : 50;
         addScore(pts);
 
         fb.className = "feedback-box correct";
-        fb.innerHTML = `🎯 CORRECT! (+${pts} pts) ${currentItem.info}`;
+        fb.innerHTML = `⚡ LINK ESTABLISHED! (+${pts} pts) ${cur.info}`;
 
         setTimeout(() => {
             idx1++;
@@ -583,13 +664,13 @@ function fireCannon(userChoseTrue) {
 
         if (attemptsLeft === 1) {
             fb.className = "feedback-box warning";
-            fb.innerHTML = `⚠️ INCORRECT! 1 Attempt Remaining. Rethink if this is True or False!`;
+            fb.innerHTML = `⚠️ FAULT DETECTED! 1 Attempt Remaining. Rethink component choice!`;
             document.getElementById("attemptBadge").innerText = "1 / 2";
             document.getElementById("attemptBadge").style.background = "#ef4444";
         } else {
             isProcessing = true;
             fb.className = "feedback-box wrong";
-            fb.innerHTML = `💥 OUT OF ATTEMPTS! Note: ${currentItem.info}`;
+            fb.innerHTML = `💥 OVERLOAD FUSE BLOWN! Note: ${cur.info}`;
 
             setTimeout(() => {
                 idx1++;
@@ -597,55 +678,6 @@ function fireCannon(userChoseTrue) {
             }, 2200);
         }
     }
-}
-
-function renderLoop1() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    if (idx1 < datasetLvl1.length) {
-        const item = datasetLvl1[idx1];
-        const cardWidth = Math.min(480, canvas.width - 40);
-        const cardX = (canvas.width - cardWidth) / 2;
-
-        ctx.fillStyle = "rgba(15, 23, 42, 0.95)";
-        ctx.strokeStyle = attemptsLeft === 2 ? "#38bdf8" : "#ef4444";
-        ctx.lineWidth = 2;
-        
-        ctx.beginPath();
-        ctx.roundRect(cardX, targetY, cardWidth, 90, 10);
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = "#f59e0b";
-        ctx.font = "bold 12px Segoe UI";
-        ctx.fillText("SCHEMATIC TRANSMISSION:", cardX + 15, targetY + 24);
-
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 13px Segoe UI";
-        
-        const words = item.text.split(' ');
-        let line = '';
-        let lineY = targetY + 48;
-
-        for (let n = 0; n < words.length; n++) {
-            let testLine = line + words[n] + ' ';
-            if (ctx.measureText(testLine).width > cardWidth - 30 && n > 0) {
-                ctx.fillText(line, cardX + 15, lineY);
-                line = words[n] + ' ';
-                lineY += 18;
-            } else {
-                line = testLine;
-            }
-        }
-        ctx.fillText(line, cardX + 15, lineY);
-    }
-
-    ctx.font = "30px Segoe UI";
-    ctx.textAlign = "center";
-    ctx.fillText("🚀", canvas.width / 2, canvas.height - 20);
-    ctx.textAlign = "left";
-
-    animId = requestAnimationFrame(renderLoop1);
 }
 
 /* ========================================================

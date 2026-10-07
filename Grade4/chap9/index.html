@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Innovine Email Etiquette: Space Defender Arcade</title>
+<title>Innovine Email Etiquette: Plasma Laser Defender</title>
 <style>
 :root {
     --primary-blue: #1e3a8a;
-    --accent-cyan: #06b6d4;
+    --accent-cyan: #38bdf8;
     --success-green: #10b981;
     --error-red: #ef4444;
     --warning-yellow: #f59e0b;
@@ -27,7 +27,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #0f172a;
+    background: #090d16;
     padding: 10px;
     overflow: hidden;
 }
@@ -64,7 +64,7 @@ body {
     border: 3px solid #38bdf8;
     border-radius: 20px;
     padding: 16px;
-    box-shadow: 0 0 30px rgba(56, 189, 248, 0.3);
+    box-shadow: 0 0 35px rgba(56, 189, 248, 0.35);
     color: white;
     text-align: center;
     position: relative;
@@ -94,52 +94,24 @@ body {
     border-radius: 6px;
 }
 
-/* Space Arcade Arena */
-.game-stage {
+/* Canvas Game Stage */
+.canvas-wrapper {
     position: relative;
     width: 100%;
-    height: 380px;
-    background: radial-gradient(circle at center, #1e1b4b 0%, #090d16 100%);
+    background: #050811;
     border: 2px solid #38bdf8;
     border-radius: 14px;
     overflow: hidden;
     margin-bottom: 12px;
 }
 
-/* Target Meteor Card */
-.target-card {
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 88%;
-    max-width: 500px;
-    background: rgba(15, 23, 42, 0.9);
-    border: 2px solid #f59e0b;
-    border-radius: 12px;
-    padding: 12px;
-    box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
-    transition: all 0.3s ease;
+canvas {
+    display: block;
+    width: 100%;
+    height: 380px;
 }
 
-.target-text {
-    font-size: clamp(0.95rem, 3vw, 1.1rem);
-    font-weight: 800;
-    color: #f8fafc;
-    line-height: 1.4;
-}
-
-/* Spaceship Model */
-.spaceship {
-    position: absolute;
-    bottom: 15px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 3rem;
-    transition: left 0.1s linear;
-}
-
-/* Cannon Buttons */
+/* Cannon Fire Controls */
 .controls-panel {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -154,11 +126,11 @@ body {
     font-weight: 800;
     color: white;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
     transition: transform 0.1s;
 }
 
-.shoot-btn:active { transform: scale(0.96); }
+.shoot-btn:active { transform: scale(0.95); }
 
 .btn-safe {
     background: linear-gradient(135deg, #10b981, #059669);
@@ -189,7 +161,7 @@ body {
 .feedback-box.wrong { background: #991b1b; color: #fecaca; }
 .feedback-box.warning { background: #92400e; color: #fef08a; }
 
-/* Final Score Panel */
+/* Final Report Screen */
 .report-panel h2 { color: #38bdf8; font-size: 1.8rem; margin-bottom: 10px; }
 .score-circle {
     width: 120px;
@@ -239,26 +211,21 @@ body {
             <div>🏆 Score: <span id="scoreVal">0</span></div>
         </div>
 
-        <div class="game-stage">
-            <div class="target-card" id="targetCard">
-                <div style="font-size:0.75rem; color:#f59e0b; margin-bottom:4px; font-weight:bold;">INCOMING TRANSMISSION:</div>
-                <div class="target-text" id="targetText">Loading...</div>
-            </div>
-
-            <div class="spaceship" id="ship">🚀</div>
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas"></canvas>
         </div>
 
         <div class="controls-panel">
-            <button class="shoot-btn btn-safe" onclick="fireCannon(true)">
-                🟢 FIRE SAFE LASER<br><span style="font-size:0.75rem; font-weight:normal;">(Polite / Correct Email)</span>
+            <button class="shoot-btn btn-safe" onclick="fireLaser(true)">
+                🟢 FIRE PLASMA BEAM<br><span style="font-size:0.75rem; font-weight:normal;">(Polite / Safe Practice)</span>
             </button>
-            <button class="shoot-btn btn-threat" onclick="fireCannon(false)">
-                🔴 FIRE THREAT MISSILE<br><span style="font-size:0.75rem; font-weight:normal;">(Spam / Virus / Shouting)</span>
+            <button class="shoot-btn btn-threat" onclick="fireLaser(false)">
+                🔴 FIRE TORPEDO BLAST<br><span style="font-size:0.75rem; font-weight:normal;">(Spam / Threat / Rude)</span>
             </button>
         </div>
 
         <div class="feedback-box" id="feedbackBox">
-            Identify the incoming transmission and fire the correct laser type!
+            Identify the descending target and shoot the matching laser weapon!
         </div>
     </div>
 
@@ -304,6 +271,13 @@ let currentScore = 0;
 let isProcessing = false;
 let audioCtx = null;
 
+/* Canvas & Animation Loop Variables */
+let canvas, ctx;
+let targetY = 30;
+let laserProjectiles = [];
+let particles = [];
+let animationFrameId;
+
 function triggerSound(isCorrect) {
     try {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -317,7 +291,7 @@ function triggerSound(isCorrect) {
         if (isCorrect) {
             osc.type = 'sine';
             osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
-            osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.08);
+            osc.frequency.setValueAtTime(880.00, audioCtx.currentTime + 0.08);
             gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
             osc.start();
@@ -325,7 +299,7 @@ function triggerSound(isCorrect) {
         } else {
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(180, audioCtx.currentTime);
-            osc.frequency.setValueAtTime(110, audioCtx.currentTime + 0.1);
+            osc.frequency.setValueAtTime(100, audioCtx.currentTime + 0.1);
             gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
             osc.start();
@@ -335,10 +309,18 @@ function triggerSound(isCorrect) {
 }
 
 function initGame() {
+    canvas = document.getElementById("gameCanvas");
+    ctx = canvas.getContext("2d");
+    
+    canvas.width = canvas.offsetWidth;
+    canvas.height = 380;
+
     deck = [...etiquetteDataset].sort(() => Math.random() - 0.5);
     currentIndex = 0;
     currentScore = 0;
+
     loadQuestion();
+    renderLoop();
 }
 
 function loadQuestion() {
@@ -349,42 +331,46 @@ function loadQuestion() {
 
     attemptsLeft = 2;
     isProcessing = false;
+    targetY = 30;
+    laserProjectiles = [];
+    particles = [];
 
     document.getElementById("currentNum").innerText = currentIndex + 1;
     document.getElementById("attemptBadge").innerText = "2 / 2";
     document.getElementById("attemptBadge").style.background = "#f59e0b";
     document.getElementById("scoreVal").innerText = currentScore;
 
-    const currentItem = deck[currentIndex];
-    document.getElementById("targetText").innerText = `"${currentItem.text}"`;
-
-    const card = document.getElementById("targetCard");
-    card.style.borderColor = "#f59e0b";
-    card.style.transform = "translateX(-50%) scale(1)";
-
     const fb = document.getElementById("feedbackBox");
     fb.className = "feedback-box";
-    fb.innerText = "Identify the incoming transmission and fire the correct laser type!";
+    fb.innerText = "Identify the descending target and shoot the matching laser weapon!";
 }
 
-function fireCannon(userChoseSafe) {
+function fireLaser(userChoseSafe) {
     if (isProcessing) return;
 
+    // Spawn Laser Beam from ship
+    laserProjectiles.push({
+        x: canvas.width / 2,
+        y: canvas.height - 40,
+        color: userChoseSafe ? "#10b981" : "#ef4444",
+        isSafeChoice: userChoseSafe
+    });
+
+    isProcessing = true;
+}
+
+function evaluateHit(laser) {
     const currentItem = deck[currentIndex];
-    const isCorrect = (userChoseSafe === currentItem.isSafe);
+    const isCorrect = (laser.isSafeChoice === currentItem.isSafe);
     const fb = document.getElementById("feedbackBox");
-    const card = document.getElementById("targetCard");
+
+    createExplosion(canvas.width / 2, targetY + 30, laser.color);
 
     if (isCorrect) {
-        isProcessing = true;
         triggerSound(true);
-
         const pts = (attemptsLeft === 2) ? 100 : 50;
         currentScore += pts;
         document.getElementById("scoreVal").innerText = currentScore;
-
-        card.style.borderColor = "#10b981";
-        card.style.transform = "translateX(-50%) scale(1.05)";
 
         fb.className = "feedback-box correct";
         fb.innerHTML = `🎯 DIRECT HIT! (+${pts} pts) ${currentItem.info}`;
@@ -399,17 +385,15 @@ function fireCannon(userChoseSafe) {
         triggerSound(false);
 
         if (attemptsLeft === 1) {
-            card.style.borderColor = "#ef4444";
             fb.className = "feedback-box warning";
-            fb.innerHTML = `⚠️ DEFENSE SHIELD HELD! 1 Attempt Remaining. Rethink if this is safe or a threat!`;
+            fb.innerHTML = `⚠️ SHIELD ABSORBED HIT! 1 Attempt Left. Rethink your laser choice!`;
             document.getElementById("attemptBadge").innerText = "1 / 2";
             document.getElementById("attemptBadge").style.background = "#ef4444";
+            isProcessing = false;
 
         } else {
-            isProcessing = true;
-            card.style.borderColor = "#ef4444";
             fb.className = "feedback-box wrong";
-            fb.innerHTML = `💥 TARGET MISSED! Advancing. Note: ${currentItem.info}`;
+            fb.innerHTML = `💥 TARGET ESCAPED! Advancing. Note: ${currentItem.info}`;
 
             setTimeout(() => {
                 currentIndex++;
@@ -419,7 +403,124 @@ function fireCannon(userChoseSafe) {
     }
 }
 
+function createExplosion(x, y, color) {
+    for (let i = 0; i < 25; i++) {
+        particles.push({
+            x: x,
+            y: y,
+            vx: (Math.random() - 0.5) * 8,
+            vy: (Math.random() - 0.5) * 8,
+            radius: Math.random() * 4 + 2,
+            color: color,
+            alpha: 1
+        });
+    }
+}
+
+function renderLoop() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw Background Stars
+    ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
+    for (let i = 0; i < 20; i++) {
+        ctx.fillRect((i * 47) % canvas.width, (i * 29) % canvas.height, 2, 2);
+    }
+
+    // Gentle Meteor Drift Downward
+    if (!isProcessing && targetY < 80) {
+        targetY += 0.15;
+    }
+
+    // Draw Incoming Target Card
+    if (currentIndex < deck.length) {
+        const item = deck[currentIndex];
+        const cardWidth = Math.min(500, canvas.width - 40);
+        const cardX = (canvas.width - cardWidth) / 2;
+
+        ctx.fillStyle = "rgba(15, 23, 42, 0.92)";
+        ctx.strokeStyle = attemptsLeft === 2 ? "#f59e0b" : "#ef4444";
+        ctx.lineWidth = 2;
+        
+        ctx.beginPath();
+        ctx.roundRect(cardX, targetY, cardWidth, 80, 10);
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = "#f59e0b";
+        ctx.font = "bold 12px Segoe UI";
+        ctx.fillText("INCOMING TRANSMISSION:", cardX + 15, targetY + 22);
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 14px Segoe UI";
+        
+        // Wrap Text inside Card
+        const words = item.text.split(' ');
+        let line = '';
+        let lineY = targetY + 44;
+
+        for (let n = 0; n < words.length; n++) {
+            let testLine = line + words[n] + ' ';
+            let metrics = ctx.measureText(testLine);
+            if (metrics.width > cardWidth - 30 && n > 0) {
+                ctx.fillText(line, cardX + 15, lineY);
+                line = words[n] + ' ';
+                lineY += 18;
+            } else {
+                line = testLine;
+            }
+        }
+        ctx.fillText(line, cardX + 15, lineY);
+    }
+
+    // Draw Spaceship at Bottom
+    ctx.font = "32px Segoe UI";
+    ctx.textAlign = "center";
+    ctx.fillText("🚀", canvas.width / 2, canvas.height - 15);
+
+    // Render Laser Projectiles
+    for (let i = laserProjectiles.length - 1; i >= 0; i--) {
+        let p = laserProjectiles[i];
+        p.y -= 12;
+
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.shadowBlur = 10;
+        ctx.fillRect(p.x - 3, p.y, 6, 20);
+        ctx.shadowBlur = 0;
+
+        // Collision Check
+        if (p.y <= targetY + 80) {
+            evaluateHit(p);
+            laserProjectiles.splice(i, 1);
+        }
+    }
+
+    // Render Explosion Particles
+    for (let i = particles.length - 1; i >= 0; i--) {
+        let pt = particles[i];
+        pt.x += pt.vx;
+        pt.y += pt.vy;
+        pt.alpha -= 0.03;
+
+        if (pt.alpha <= 0) {
+            particles.splice(i, 1);
+            continue;
+        }
+
+        ctx.fillStyle = pt.color;
+        ctx.globalAlpha = pt.alpha;
+        ctx.beginPath();
+        ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+    }
+
+    ctx.textAlign = "left";
+    animationFrameId = requestAnimationFrame(renderLoop);
+}
+
 function finishGame() {
+    cancelAnimationFrame(animationFrameId);
     document.getElementById("gamePanel").className = "hidden";
     document.getElementById("reportPanel").classList.remove("hidden");
     document.getElementById("finalScore").innerText = currentScore;
@@ -429,7 +530,7 @@ function finishGame() {
 
     if (currentScore >= 1000) {
         rank = "👑 Galactic Netiquette Commander";
-        summary = "Flawless defense! You accurately targeted every email transmission using Chapter 9 rules.";
+        summary = "Flawless laser defense! You accurately targeted every email transmission using Chapter 9 rules.";
     } else if (currentScore >= 650) {
         rank = "🚀 Senior Fleet Pilot";
         summary = "Great work defending the network! Watch out for uppercase shouting and suspicious email attachments next time.";

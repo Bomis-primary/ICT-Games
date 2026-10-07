@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Innovine Email Etiquette: Plasma Laser Defender</title>
+<title>Innovine Email Etiquette: Multi-Level Arcade</title>
 <style>
 :root {
     --primary-blue: #1e3a8a;
@@ -11,6 +11,7 @@
     --success-green: #10b981;
     --error-red: #ef4444;
     --warning-yellow: #f59e0b;
+    --panel-bg: rgba(30, 41, 59, 0.95);
 }
 
 * {
@@ -27,9 +28,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #090d16;
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #0369a1 100%);
     padding: 10px;
-    overflow: hidden;
+    overflow-x: hidden;
+    color: white;
 }
 
 /* 5-Second Exclusive Splash Screen */
@@ -59,21 +61,19 @@ body {
 
 .container {
     width: 100%;
-    max-width: 850px;
-    background: #1e293b;
-    border: 3px solid #38bdf8;
+    max-width: 900px;
+    background: var(--panel-bg);
+    border: 3px solid var(--accent-cyan);
     border-radius: 20px;
     padding: 16px;
     box-shadow: 0 0 35px rgba(56, 189, 248, 0.35);
-    color: white;
-    text-align: center;
     position: relative;
     z-index: 10;
 }
 
 .hidden { display: none !important; }
 
-/* HUD Top Bar */
+/* Header & HUD Bar */
 .hud-bar {
     display: flex;
     justify-content: space-between;
@@ -94,12 +94,60 @@ body {
     border-radius: 6px;
 }
 
-/* Canvas Game Stage */
+/* Navigation Tabs */
+.nav-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+}
+
+.tab-btn {
+    padding: 8px 14px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: #cbd5e1;
+    font-weight: 700;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.tab-btn.active {
+    background: #0284c7;
+    color: white;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.5);
+}
+
+/* Common Feedback Box */
+.feedback-box {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #334155;
+    color: white;
+    text-align: center;
+}
+
+.feedback-box.correct { background: #065f46; color: #a7f3d0; }
+.feedback-box.wrong { background: #991b1b; color: #fecaca; }
+.feedback-box.warning { background: #92400e; color: #fef08a; }
+
+/* LEVEL 1: CANVAS DEFENDER */
 .canvas-wrapper {
     position: relative;
     width: 100%;
     background: #050811;
-    border: 2px solid #38bdf8;
+    border: 2px solid var(--accent-cyan);
     border-radius: 14px;
     overflow: hidden;
     margin-bottom: 12px;
@@ -108,21 +156,20 @@ body {
 canvas {
     display: block;
     width: 100%;
-    height: 380px;
+    height: 300px;
 }
 
-/* Cannon Fire Controls */
 .controls-panel {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
 }
 
-.shoot-btn {
-    padding: 14px;
+.tf-btn {
+    padding: 16px;
     border: none;
     border-radius: 12px;
-    font-size: 1rem;
+    font-size: 1.1rem;
     font-weight: 800;
     color: white;
     cursor: pointer;
@@ -130,39 +177,148 @@ canvas {
     transition: transform 0.1s;
 }
 
-.shoot-btn:active { transform: scale(0.95); }
+.tf-btn:active { transform: scale(0.96); }
 
-.btn-safe {
+.btn-true {
     background: linear-gradient(135deg, #10b981, #059669);
     border: 2px solid #a7f3d0;
 }
 
-.btn-threat {
+.btn-false {
     background: linear-gradient(135deg, #ef4444, #dc2626);
     border: 2px solid #fecaca;
 }
 
-/* Feedback Box */
-.feedback-box {
+/* LEVEL 2: MATCH CARDS */
+.memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
     margin-top: 10px;
-    padding: 10px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 0.88rem;
-    min-height: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #334155;
-    color: white;
 }
 
-.feedback-box.correct { background: #065f46; color: #a7f3d0; }
-.feedback-box.wrong { background: #991b1b; color: #fecaca; }
-.feedback-box.warning { background: #92400e; color: #fef08a; }
+.card-flip {
+    height: 85px;
+    background: #1e293b;
+    border: 2px solid var(--accent-cyan);
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 800;
+    text-align: center;
+    cursor: pointer;
+    padding: 6px;
+    color: transparent;
+    transition: background 0.2s, color 0.2s;
+}
+
+.card-flip.flipped {
+    background: #0284c7;
+    color: #ffffff !important;
+}
+
+.card-flip.matched {
+    background: #10b981;
+    border-color: #a7f3d0;
+    color: #ffffff !important;
+}
+
+/* LEVEL 3: BOSS BATTLE */
+.boss-card {
+    background: rgba(15, 23, 42, 0.8);
+    border: 2px solid var(--accent-cyan);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+}
+
+.boss-avatar { font-size: 3.5rem; margin-bottom: 8px; }
+
+.boss-hp {
+    width: 100%;
+    background: #334155;
+    height: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 12px 0;
+}
+
+.hp-fill {
+    height: 100%;
+    width: 100%;
+    background: var(--error-red);
+    transition: width 0.3s;
+}
+
+.boss-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* LEVEL 4: DRAG & DROP */
+.drag-stage {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.item-pool {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-height: 70px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 2px solid #334155;
+    padding: 10px;
+    border-radius: 12px;
+}
+
+.draggable-item {
+    background: #0284c7;
+    color: white;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: grab;
+    font-size: 0.85rem;
+    touch-action: none;
+}
+
+.drop-zones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.drop-zone {
+    background: rgba(15, 23, 42, 0.8);
+    border: 2px dashed var(--accent-cyan);
+    border-radius: 12px;
+    padding: 12px;
+    min-height: 120px;
+    text-align: center;
+}
+
+.act-btn-main {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #0284c7, #0369a1);
+    color: white;
+    font-size: 1rem;
+    font-weight: 800;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+}
 
 /* Final Report Screen */
-.report-panel h2 { color: #38bdf8; font-size: 1.8rem; margin-bottom: 10px; }
+.report-panel h2 { color: var(--accent-cyan); font-size: 1.8rem; margin-bottom: 10px; }
 .score-circle {
     width: 120px;
     height: 120px;
@@ -175,18 +331,7 @@ canvas {
     justify-content: center;
     align-items: center;
     margin: 15px auto;
-    border: 4px solid #38bdf8;
-}
-.btn-restart {
-    padding: 12px 30px;
-    background: #0284c7;
-    color: white;
-    font-weight: 800;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 1rem;
-    margin-top: 15px;
+    border: 4px solid var(--accent-cyan);
 }
 </style>
 </head>
@@ -203,39 +348,98 @@ canvas {
 
 <div class="container hidden" id="appMainframe">
     
-    <!-- Active Game Arcade -->
-    <div id="gamePanel">
-        <div class="hud-bar">
-            <div>🚀 Target: <span id="currentNum">1</span> / 12</div>
-            <div>Attempts: <span class="badge-attempt" id="attemptBadge">2 / 2</span></div>
-            <div>🏆 Score: <span id="scoreVal">0</span></div>
-        </div>
+    <div class="hud-bar">
+        <div id="levelBadge">Level 1: Space Defender</div>
+        <div>Attempts: <span class="badge-attempt" id="attemptBadge">2 / 2</span></div>
+        <div>🏆 Total Score: <span id="scoreVal">0</span></div>
+    </div>
 
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchLevel(1, this)">Lvl 1: Defender 🚀</button>
+        <button class="tab-btn" onclick="switchLevel(2, this)">Lvl 2: Cyber Match 🧠</button>
+        <button class="tab-btn" onclick="switchLevel(3, this)">Lvl 3: Troll Battle 👾</button>
+        <button class="tab-btn" onclick="switchLevel(4, this)">Lvl 4: Web Sorter 📥</button>
+    </div>
+
+    <!-- LEVEL 1: SPACE DEFENDER (TRUE / FALSE) -->
+    <div id="lvl1" class="level-tab">
         <div class="canvas-wrapper">
             <canvas id="gameCanvas"></canvas>
         </div>
-
         <div class="controls-panel">
-            <button class="shoot-btn btn-safe" onclick="fireLaser(true)">
-                🟢 FIRE PLASMA BEAM<br><span style="font-size:0.75rem; font-weight:normal;">(Polite / Safe Practice)</span>
+            <button class="tf-btn btn-true" onclick="fireCannon(true)">
+                ✅ TRUE / SAFE
             </button>
-            <button class="shoot-btn btn-threat" onclick="fireLaser(false)">
-                🔴 FIRE TORPEDO BLAST<br><span style="font-size:0.75rem; font-weight:normal;">(Spam / Threat / Rude)</span>
+            <button class="tf-btn btn-false" onclick="fireCannon(false)">
+                ❌ FALSE / THREAT
             </button>
         </div>
+        <div class="feedback-box" id="fbLvl1">
+            Read the incoming transmission card and select TRUE / SAFE or FALSE / THREAT!
+        </div>
+    </div>
 
-        <div class="feedback-box" id="feedbackBox">
-            Identify the descending target and shoot the matching laser weapon!
+    <!-- LEVEL 2: CYBER MATCH -->
+    <div id="lvl2" class="level-tab hidden">
+        <p style="text-align:center; font-weight:700; font-size:0.9rem; color:#cbd5e1;">Match the Email Etiquette terms with their correct rules:</p>
+        <div class="memory-grid" id="memoryGrid"></div>
+        <div class="feedback-box" id="fbLvl2">Click cards to find matching pairs!</div>
+    </div>
+
+    <!-- LEVEL 3: TROLL BOSS BATTLE -->
+    <div id="lvl3" class="level-tab hidden">
+        <div class="boss-card">
+            <div class="boss-avatar">👾</div>
+            <h3 id="bossTitle">Cyber Troll Appears!</h3>
+            <p id="bossQuote" style="font-size: 0.95rem; color: #38bdf8; margin-top: 6px; font-weight: 700;">"I write all my emails in ALL CAPS because it's faster!"</p>
+            
+            <div class="boss-hp">
+                <div class="hp-fill" id="hpBar"></div>
+            </div>
+
+            <p style="font-size:0.85rem; color:#94a3b8; margin-top:10px;">Is this behavior Correct or Incorrect Netiquette?</p>
+            <div class="boss-options">
+                <button class="tf-btn btn-true" onclick="attackBoss(true)">✅ CORRECT</button>
+                <button class="tf-btn btn-false" onclick="attackBoss(false)">❌ INCORRECT</button>
+            </div>
+        </div>
+        <div class="feedback-box" id="fbLvl3">Defeat the Cyber Troll by calling out bad email habits!</div>
+    </div>
+
+    <!-- LEVEL 4: DRAG AND DROP -->
+    <div id="lvl4" class="level-tab hidden">
+        <div class="drag-stage">
+            <p style="font-size: 0.9rem; font-weight: 700; text-align:center;">Drag each item into its correct category:</p>
+            
+            <div class="item-pool" id="itemPool">
+                <div class="draggable-item" draggable="true" id="di1" data-cat="safe">Greeting 'Hi'</div>
+                <div class="draggable-item" draggable="true" id="di2" data-cat="threat">Spam Links</div>
+                <div class="draggable-item" draggable="true" id="di3" data-cat="safe">Closing 'Thanks'</div>
+                <div class="draggable-item" draggable="true" id="di4" data-cat="threat">ALL CAPS Text</div>
+            </div>
+
+            <div class="drop-zones">
+                <div class="drop-zone" data-target="safe">
+                    <h4 style="color:#10b981;">📥 Safe & Polite</h4>
+                </div>
+                <div class="drop-zone" data-target="threat">
+                    <h4 style="color:#ef4444;">🚫 Spam / Threat</h4>
+                </div>
+            </div>
+            
+            <button class="act-btn-main" onclick="checkDragDrop()">Submit Categorization 🏁</button>
+            <div class="feedback-box" id="fbLvl4">Drag items into the safe or threat boxes!</div>
         </div>
     </div>
 
     <!-- Final Report Screen -->
-    <div id="reportPanel" class="hidden report-panel">
-        <h2>📊 Space Defender Analytics</h2>
+    <div id="reportPanel" class="hidden report-panel" style="text-align:center;">
+        <h2>📊 Netiquette Audit Analytics</h2>
         <div class="score-circle"><span id="finalScore">0</span></div>
         <h3 id="finalRank" style="color:#f59e0b; margin-bottom:10px;">Evaluating...</h3>
         <p id="finalSummary" style="color:#cbd5e1; font-size:0.9rem; line-height:1.5; max-width:550px; margin:0 auto;"></p>
-        <button class="btn-restart" onclick="location.reload()">Reboot Mission 🔄</button>
+        <button class="act-btn-main" style="width:200px; margin:20px auto 0;" onclick="location.reload()">Reboot Mission 🔄</button>
     </div>
 
 </div>
@@ -245,38 +449,19 @@ canvas {
 setTimeout(() => {
     document.getElementById("splash").style.display = "none";
     document.getElementById("appMainframe").classList.remove("hidden");
-    initGame();
+    initLevel1();
 }, 5000);
 
-/* Dataset */
-const etiquetteDataset = [
-    { text: "Greeting the recipient with 'Hi' or 'Good morning'", isSafe: true, info: "Greeting others in an email is as important as doing so in person." },
-    { text: "TYPING THE ENTIRE MESSAGE CONTENT IN ALL UPPERCASE LETTERS", isSafe: false, info: "Writing in all capital letters fails to convey a good impression and looks like shouting online." },
-    { text: "Closing your message with 'Thank you' or 'Regards' followed by your name", isSafe: true, info: "Always close your message with a courteous line followed by your full name." },
-    { text: "Clicking links inside a Spam message claiming you won a free prize", isSafe: false, info: "Clicking unknown links or downloading files from strangers can infect computers with malicious viruses." },
-    { text: "Checking your message for proper grammar, spelling, and punctuation before sending", isSafe: true, info: "Taking time to construct a clean, accurate body shows extreme respect to the reader." },
-    { text: "Opening email attachments received from unknown strangers", isSafe: false, info: "If you receive an advertisement or a message from a stranger, do not open its attachments." },
-    { text: "Keeping the body text short, clear, and concise for effective reading", isSafe: true, info: "Keep your email text content short and clear for effective communication." },
-    { text: "Sharing your account login password with online gaming friends", isSafe: false, info: "You must keep your system logins and passwords fully confidential to protect privacy." },
-    { text: "Using polite and courteous phrasing in your requests", isSafe: true, info: "'Courteous' is one of the verified 7 Cs of effective email communication." },
-    { text: "Writing in sloppy, uncapitalized text with no punctuation everywhere", isSafe: false, info: "Avoiding standard punctuation and writing lazily creates a bad impression." },
-    { text: "Ensuring the information provided is Clear, Correct, and Complete", isSafe: true, info: "Ensuring your email is Clear, Correct, Coherent, and Complete matches the 7 Cs framework." },
-    { text: "Downloading executable zip attachments from unverified senders", isSafe: false, info: "Unknown files can run dangerous code that harms your computer hardware." }
-];
-
-let deck = [];
-let currentIndex = 0;
-let attemptsLeft = 2;
+/* Global State */
 let currentScore = 0;
+let attemptsLeft = 2;
 let isProcessing = false;
 let audioCtx = null;
 
-/* Canvas & Animation Loop Variables */
-let canvas, ctx;
-let targetY = 30;
-let laserProjectiles = [];
-let particles = [];
-let animationFrameId;
+function addScore(pts) {
+    currentScore += pts;
+    document.getElementById("scoreVal").innerText = currentScore;
+}
 
 function triggerSound(isCorrect) {
     try {
@@ -308,76 +493,88 @@ function triggerSound(isCorrect) {
     } catch(e) {}
 }
 
-function initGame() {
+function switchLevel(lvlNum, btn) {
+    document.querySelectorAll('.level-tab').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+    document.getElementById('lvl' + lvlNum).classList.remove('hidden');
+    if (btn) btn.classList.add('active');
+
+    if (lvlNum === 1) {
+        document.getElementById("levelBadge").innerText = "Level 1: Space Defender";
+        initLevel1();
+    } else if (lvlNum === 2) {
+        document.getElementById("levelBadge").innerText = "Level 2: Cyber Match";
+        initLevel2();
+    } else if (lvlNum === 3) {
+        document.getElementById("levelBadge").innerText = "Level 3: Troll Battle";
+        initLevel3();
+    } else if (lvlNum === 4) {
+        document.getElementById("levelBadge").innerText = "Level 4: Web Sorter";
+        initLevel4();
+    }
+}
+
+/* ========================================================
+   LEVEL 1: SPACE DEFENDER (TRUE / FALSE)
+   ======================================================== */
+const datasetLvl1 = [
+    { text: "Greeting the recipient with 'Hi' or 'Good morning'", isSafe: true, info: "Greeting others in an email is as important as doing so in person." },
+    { text: "TYPING THE ENTIRE MESSAGE CONTENT IN ALL UPPERCASE LETTERS", isSafe: false, info: "Writing in all capital letters fails to convey a good impression and looks like shouting online." },
+    { text: "Closing your message with 'Thank you' or 'Regards' followed by your name", isSafe: true, info: "Always close your message with a courteous line followed by your full name." },
+    { text: "Clicking links inside a Spam message claiming you won a free prize", isSafe: false, info: "Clicking unknown links or downloading files from strangers can infect computers with malicious viruses." }
+];
+
+let idx1 = 0;
+let canvas, ctx, animId;
+let targetY = 20;
+
+function initLevel1() {
     canvas = document.getElementById("gameCanvas");
     ctx = canvas.getContext("2d");
-    
     canvas.width = canvas.offsetWidth;
-    canvas.height = 380;
+    canvas.height = 300;
 
-    deck = [...etiquetteDataset].sort(() => Math.random() - 0.5);
-    currentIndex = 0;
-    currentScore = 0;
-
-    loadQuestion();
-    renderLoop();
+    idx1 = 0;
+    loadQuestion1();
+    if (!animId) renderLoop1();
 }
 
-function loadQuestion() {
-    if (currentIndex >= deck.length) {
-        finishGame();
+function loadQuestion1() {
+    if (idx1 >= datasetLvl1.length) {
+        switchLevel(2, document.querySelectorAll('.tab-btn')[1]);
         return;
     }
-
     attemptsLeft = 2;
     isProcessing = false;
-    targetY = 30;
-    laserProjectiles = [];
-    particles = [];
-
-    document.getElementById("currentNum").innerText = currentIndex + 1;
+    targetY = 20;
     document.getElementById("attemptBadge").innerText = "2 / 2";
     document.getElementById("attemptBadge").style.background = "#f59e0b";
-    document.getElementById("scoreVal").innerText = currentScore;
-
-    const fb = document.getElementById("feedbackBox");
+    
+    const fb = document.getElementById("fbLvl1");
     fb.className = "feedback-box";
-    fb.innerText = "Identify the descending target and shoot the matching laser weapon!";
+    fb.innerText = "Read the incoming transmission card and select TRUE / SAFE or FALSE / THREAT!";
 }
 
-function fireLaser(userChoseSafe) {
+function fireCannon(userChoseTrue) {
     if (isProcessing) return;
 
-    // Spawn Laser Beam from ship
-    laserProjectiles.push({
-        x: canvas.width / 2,
-        y: canvas.height - 40,
-        color: userChoseSafe ? "#10b981" : "#ef4444",
-        isSafeChoice: userChoseSafe
-    });
-
-    isProcessing = true;
-}
-
-function evaluateHit(laser) {
-    const currentItem = deck[currentIndex];
-    const isCorrect = (laser.isSafeChoice === currentItem.isSafe);
-    const fb = document.getElementById("feedbackBox");
-
-    createExplosion(canvas.width / 2, targetY + 30, laser.color);
+    const currentItem = datasetLvl1[idx1];
+    const isCorrect = (userChoseTrue === currentItem.isSafe);
+    const fb = document.getElementById("fbLvl1");
 
     if (isCorrect) {
+        isProcessing = true;
         triggerSound(true);
         const pts = (attemptsLeft === 2) ? 100 : 50;
-        currentScore += pts;
-        document.getElementById("scoreVal").innerText = currentScore;
+        addScore(pts);
 
         fb.className = "feedback-box correct";
-        fb.innerHTML = `🎯 DIRECT HIT! (+${pts} pts) ${currentItem.info}`;
+        fb.innerHTML = `🎯 CORRECT! (+${pts} pts) ${currentItem.info}`;
 
         setTimeout(() => {
-            currentIndex++;
-            loadQuestion();
+            idx1++;
+            loadQuestion1();
         }, 1800);
 
     } else {
@@ -386,82 +583,53 @@ function evaluateHit(laser) {
 
         if (attemptsLeft === 1) {
             fb.className = "feedback-box warning";
-            fb.innerHTML = `⚠️ SHIELD ABSORBED HIT! 1 Attempt Left. Rethink your laser choice!`;
+            fb.innerHTML = `⚠️ INCORRECT! 1 Attempt Remaining. Rethink if this is True or False!`;
             document.getElementById("attemptBadge").innerText = "1 / 2";
             document.getElementById("attemptBadge").style.background = "#ef4444";
-            isProcessing = false;
-
         } else {
+            isProcessing = true;
             fb.className = "feedback-box wrong";
-            fb.innerHTML = `💥 TARGET ESCAPED! Advancing. Note: ${currentItem.info}`;
+            fb.innerHTML = `💥 OUT OF ATTEMPTS! Note: ${currentItem.info}`;
 
             setTimeout(() => {
-                currentIndex++;
-                loadQuestion();
+                idx1++;
+                loadQuestion1();
             }, 2200);
         }
     }
 }
 
-function createExplosion(x, y, color) {
-    for (let i = 0; i < 25; i++) {
-        particles.push({
-            x: x,
-            y: y,
-            vx: (Math.random() - 0.5) * 8,
-            vy: (Math.random() - 0.5) * 8,
-            radius: Math.random() * 4 + 2,
-            color: color,
-            alpha: 1
-        });
-    }
-}
-
-function renderLoop() {
+function renderLoop1() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw Background Stars
-    ctx.fillStyle = "rgba(255, 255, 255, 0.3)";
-    for (let i = 0; i < 20; i++) {
-        ctx.fillRect((i * 47) % canvas.width, (i * 29) % canvas.height, 2, 2);
-    }
-
-    // Gentle Meteor Drift Downward
-    if (!isProcessing && targetY < 80) {
-        targetY += 0.15;
-    }
-
-    // Draw Incoming Target Card
-    if (currentIndex < deck.length) {
-        const item = deck[currentIndex];
-        const cardWidth = Math.min(500, canvas.width - 40);
+    if (idx1 < datasetLvl1.length) {
+        const item = datasetLvl1[idx1];
+        const cardWidth = Math.min(480, canvas.width - 40);
         const cardX = (canvas.width - cardWidth) / 2;
 
-        ctx.fillStyle = "rgba(15, 23, 42, 0.92)";
-        ctx.strokeStyle = attemptsLeft === 2 ? "#f59e0b" : "#ef4444";
+        ctx.fillStyle = "rgba(15, 23, 42, 0.95)";
+        ctx.strokeStyle = attemptsLeft === 2 ? "#38bdf8" : "#ef4444";
         ctx.lineWidth = 2;
         
         ctx.beginPath();
-        ctx.roundRect(cardX, targetY, cardWidth, 80, 10);
+        ctx.roundRect(cardX, targetY, cardWidth, 90, 10);
         ctx.fill();
         ctx.stroke();
 
         ctx.fillStyle = "#f59e0b";
         ctx.font = "bold 12px Segoe UI";
-        ctx.fillText("INCOMING TRANSMISSION:", cardX + 15, targetY + 22);
+        ctx.fillText("INCOMING EMAIL SCENARIO:", cardX + 15, targetY + 24);
 
         ctx.fillStyle = "#ffffff";
-        ctx.font = "bold 14px Segoe UI";
+        ctx.font = "bold 13px Segoe UI";
         
-        // Wrap Text inside Card
         const words = item.text.split(' ');
         let line = '';
-        let lineY = targetY + 44;
+        let lineY = targetY + 48;
 
         for (let n = 0; n < words.length; n++) {
             let testLine = line + words[n] + ' ';
-            let metrics = ctx.measureText(testLine);
-            if (metrics.width > cardWidth - 30 && n > 0) {
+            if (ctx.measureText(testLine).width > cardWidth - 30 && n > 0) {
                 ctx.fillText(line, cardX + 15, lineY);
                 line = words[n] + ' ';
                 lineY += 18;
@@ -472,71 +640,194 @@ function renderLoop() {
         ctx.fillText(line, cardX + 15, lineY);
     }
 
-    // Draw Spaceship at Bottom
-    ctx.font = "32px Segoe UI";
+    ctx.font = "30px Segoe UI";
     ctx.textAlign = "center";
-    ctx.fillText("🚀", canvas.width / 2, canvas.height - 15);
-
-    // Render Laser Projectiles
-    for (let i = laserProjectiles.length - 1; i >= 0; i--) {
-        let p = laserProjectiles[i];
-        p.y -= 12;
-
-        ctx.fillStyle = p.color;
-        ctx.shadowColor = p.color;
-        ctx.shadowBlur = 10;
-        ctx.fillRect(p.x - 3, p.y, 6, 20);
-        ctx.shadowBlur = 0;
-
-        // Collision Check
-        if (p.y <= targetY + 80) {
-            evaluateHit(p);
-            laserProjectiles.splice(i, 1);
-        }
-    }
-
-    // Render Explosion Particles
-    for (let i = particles.length - 1; i >= 0; i--) {
-        let pt = particles[i];
-        pt.x += pt.vx;
-        pt.y += pt.vy;
-        pt.alpha -= 0.03;
-
-        if (pt.alpha <= 0) {
-            particles.splice(i, 1);
-            continue;
-        }
-
-        ctx.fillStyle = pt.color;
-        ctx.globalAlpha = pt.alpha;
-        ctx.beginPath();
-        ctx.arc(pt.x, pt.y, pt.radius, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.globalAlpha = 1;
-    }
-
+    ctx.fillText("🚀", canvas.width / 2, canvas.height - 20);
     ctx.textAlign = "left";
-    animationFrameId = requestAnimationFrame(renderLoop);
+
+    animId = requestAnimationFrame(renderLoop1);
 }
 
-function finishGame() {
-    cancelAnimationFrame(animationFrameId);
-    document.getElementById("gamePanel").className = "hidden";
+/* ========================================================
+   LEVEL 2: CYBER MATCH
+   ======================================================== */
+const cardsData2 = [
+    { id: 1, text: "ALL CAPS", pair: "SHOUTING" },
+    { id: 2, text: "SHOUTING", pair: "ALL CAPS" },
+    { id: 3, text: "Greeting", pair: "Hi / Morning" },
+    { id: 4, text: "Hi / Morning", pair: "Greeting" },
+    { id: 5, text: "7 Cs", pair: "Courteous" },
+    { id: 6, text: "Courteous", pair: "7 Cs" },
+    { id: 7, text: "Spam", pair: "Virus Threat" },
+    { id: 8, text: "Virus Threat", pair: "Spam" }
+];
+
+let selectedCards2 = [];
+
+function initLevel2() {
+    const grid = document.getElementById("memoryGrid");
+    grid.innerHTML = "";
+    selectedCards2 = [];
+    
+    const shuffled = [...cardsData2].sort(() => Math.random() - 0.5);
+
+    shuffled.forEach((c) => {
+        const card = document.createElement("div");
+        card.className = "card-flip";
+        card.dataset.text = c.text;
+        card.dataset.pair = c.pair;
+        card.innerText = c.text;
+        card.onclick = () => flipCard2(card);
+        grid.appendChild(card);
+    });
+}
+
+function flipCard2(card) {
+    if (selectedCards2.length < 2 && !card.classList.contains("flipped")) {
+        card.classList.add("flipped");
+        selectedCards2.push(card);
+
+        if (selectedCards2.length === 2) {
+            if (selectedCards2[0].dataset.pair === selectedCards2[1].dataset.text) {
+                triggerSound(true);
+                selectedCards2[0].classList.add("matched");
+                selectedCards2[1].classList.add("matched");
+                selectedCards2 = [];
+                addScore(50);
+                document.getElementById("fbLvl2").innerText = "🌟 Perfect Match!";
+            } else {
+                triggerSound(false);
+                document.getElementById("fbLvl2").innerText = "❌ Not a match! Try again.";
+                setTimeout(() => {
+                    selectedCards2[0].classList.remove("flipped");
+                    selectedCards2[1].classList.remove("flipped");
+                    selectedCards2 = [];
+                }, 800);
+            }
+        }
+    }
+}
+
+/* ========================================================
+   LEVEL 3: TROLL BOSS BATTLE
+   ======================================================== */
+const bossQuestions3 = [
+    {
+        quote: '"I am writing in ALL CAPS because it looks super cool!"',
+        isCorrect: false,
+        info: "Writing in ALL CAPS is considered shouting and rude!"
+    },
+    {
+        quote: '"I always check grammar and punctuation before clicking send."',
+        isCorrect: true,
+        info: "Taking time to construct a clean email shows extreme respect."
+    }
+];
+
+let bossStep3 = 0;
+let bossHP3 = 100;
+
+function initLevel3() {
+    bossStep3 = 0;
+    bossHP3 = 100;
+    document.getElementById("hpBar").style.width = "100%";
+    loadBossQuestion3();
+}
+
+function loadBossQuestion3() {
+    if (bossStep3 >= bossQuestions3.length) {
+        document.getElementById("fbLvl3").innerText = "🏆 Cyber Troll Defeated! Advancing to Level 4...";
+        triggerSound(true);
+        addScore(100);
+        setTimeout(() => switchLevel(4, document.querySelectorAll('.tab-btn')[3]), 1500);
+        return;
+    }
+    const cur = bossQuestions3[bossStep3];
+    document.getElementById("bossQuote").innerText = cur.quote;
+}
+
+function attackBoss(userSaidCorrect) {
+    const cur = bossQuestions3[bossStep3];
+    const isRight = (userSaidCorrect === cur.isCorrect);
+
+    if (isRight) {
+        triggerSound(true);
+        bossHP3 -= 50;
+        document.getElementById("hpBar").style.width = bossHP3 + "%";
+        addScore(50);
+        document.getElementById("fbLvl3").innerText = "💥 Direct Hit! " + cur.info;
+        bossStep3++;
+        setTimeout(loadBossQuestion3, 1200);
+    } else {
+        triggerSound(false);
+        document.getElementById("fbLvl3").innerText = "🚨 Attack Missed! Remember: " + cur.info;
+    }
+}
+
+/* ========================================================
+   LEVEL 4: DRAG AND DROP
+   ======================================================== */
+function initLevel4() {
+    const draggables = document.querySelectorAll('.draggable-item');
+    const dropZones = document.querySelectorAll('.drop-zone');
+
+    draggables.forEach(item => {
+        item.addEventListener('dragstart', (e) => {
+            e.dataTransfer.setData('text/plain', item.id);
+        });
+    });
+
+    dropZones.forEach(zone => {
+        zone.addEventListener('dragover', (e) => e.preventDefault());
+        zone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            const itemId = e.dataTransfer.getData('text/plain');
+            const draggedEl = document.getElementById(itemId);
+            if(draggedEl) zone.appendChild(draggedEl);
+        });
+    });
+}
+
+function checkDragDrop() {
+    const zones = document.querySelectorAll('.drop-zone');
+    let correctCount = 0;
+
+    zones.forEach(zone => {
+        const targetCategory = zone.getAttribute('data-target');
+        const items = zone.querySelectorAll('.draggable-item');
+        items.forEach(item => {
+            if(item.getAttribute('data-cat') === targetCategory) correctCount++;
+        });
+    });
+
+    const fb = document.getElementById("fbLvl4");
+    if (correctCount === 4) {
+        triggerSound(true);
+        addScore(100);
+        fb.className = "feedback-box correct";
+        fb.innerText = "🌟 Great job! All email items are correctly categorized!";
+        setTimeout(finishAllLevels, 1500);
+    } else {
+        triggerSound(false);
+        fb.className = "feedback-box wrong";
+        fb.innerText = "❌ Some items are in the wrong zone. Try again!";
+    }
+}
+
+function finishAllLevels() {
+    document.querySelectorAll('.level-tab').forEach(el => el.classList.add('hidden'));
     document.getElementById("reportPanel").classList.remove("hidden");
     document.getElementById("finalScore").innerText = currentScore;
 
     let rank = "";
     let summary = "";
 
-    if (currentScore >= 1000) {
-        rank = "👑 Galactic Netiquette Commander";
-        summary = "Flawless laser defense! You accurately targeted every email transmission using Chapter 9 rules.";
-    } else if (currentScore >= 650) {
-        rank = "🚀 Senior Fleet Pilot";
-        summary = "Great work defending the network! Watch out for uppercase shouting and suspicious email attachments next time.";
+    if (currentScore >= 400) {
+        rank = "👑 Master Netiquette Auditor";
+        summary = "Outstanding performance across all 4 Arcade Levels! You proved total mastery over Chapter 9 Email Etiquette rules.";
     } else {
-        rank = "🌱 Cadet Trainee";
-        summary = "Network shields breached! Remember: polite greetings are safe, but passwords and stranger attachments are threats.";
+        rank = "🌱 Junior Communications Trainee";
+        summary = "Good effort! Practice more to master uppercase shouting rules, polite greetings, and spam defense.";
     }
 
     document.getElementById("finalRank").innerText = rank;
